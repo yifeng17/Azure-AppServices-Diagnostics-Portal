@@ -303,3 +303,5 @@ bower_components
 # Build Location
 wwwroot/
 build/
+dist/
+aot/
