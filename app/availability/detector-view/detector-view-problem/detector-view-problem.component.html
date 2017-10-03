@@ -1,0 +1,32 @@
+
+<div *ngIf="loading" style="margin:50px 0px 50px 10px">
+    <i class="fa fa-circle-o-notch fa-2x fa-spin spin-icon" aria-hidden="true"></i>
+    <span class="loading-message">Analyzing App for {{detectorFriendlyName}}</span>
+</div>
+
+<!-- Abnormal Time Periods Found -->
+<div *ngIf="!loading && abnormalTimePeriods && abnormalTimePeriods.length > 0">
+    <div class="focus-box focus-box" [ngClass]="{'focus-box-warning': !isHealthyNow || true }" style="background-color: #fff7ee" *ngIf="!loading">
+        <h4 class="not-bold" *ngIf="isHealthyNow">
+                {{detectorFriendlyName}} Detected {{abnormalTimePeriods.length}} Times in Last 24 Hours
+        </h4>
+        <div *ngFor="let downtime of abnormalTimePeriods | slice:0:messagesDisplayedToIndex">
+            <div>
+                <div style="color:#ab4646">
+                    <b><i class="fa fa-clock-o" aria-hidden="true"></i> {{formatDate(downtime.startTime)}} - {{formatDate(downtime.endTime)}}</b>
+                </div>
+                <p style="font-size: 14px;">{{downtime.message}}</p>
+            </div>
+        </div>
+        <p style="text-align: center" *ngIf="messagesDisplayedToIndex < abnormalTimePeriods.length"><a (click)="messagesDisplayedToIndex = messagesDisplayedToIndex + 1">Show More</a></p>
+    </div>
+
+    <solutions-expandable *ngIf="solutionUIModel && solutionUIModel.length >= 0" [solutionModel]="solutionUIModel" [title]="getSolutionTitle()"></solutions-expandable>
+</div>
+
+<!-- No Abnormal Time Periods Found -->
+<div *ngIf="!loading && (!abnormalTimePeriods || abnormalTimePeriods.length === 0)" style="margin-top: 25px;">
+    <h4 class="not-bold">
+                No Periods of {{detectorFriendlyName}} Detected in Last 24 Hours
+    </h4>
+</div>

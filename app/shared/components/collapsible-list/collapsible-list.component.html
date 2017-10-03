@@ -1,0 +1,11 @@
+<div *ngIf="title" class="row list">
+
+    <div (click)="collapsed = !collapsed" class="list-header">
+        <i id="collapse-icon" class="fa" [ngClass]="{'fa-plus': collapsed, 'fa-minus': !collapsed }"></i>
+        {{title}}
+    </div>
+
+    <div *ngIf="!collapsed" class="list-items-container">
+        <ng-content></ng-content>
+    </div>
+</div>

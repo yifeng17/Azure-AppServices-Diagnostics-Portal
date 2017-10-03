@@ -1,0 +1,40 @@
+.list{
+    margin-top:10px !important; 
+    padding: 10px !important;
+}
+.list-header{
+    font-variant: small-caps;
+    font-size: 14px;
+    font-weight: 500;
+    border-bottom:1px solid #eef;
+    cursor:pointer;
+
+    -webkit-user-select: none; /* Chrome/Safari */        
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+ */
+    -o-user-select: none;
+    user-select: none;
+}
+#collapse-icon{
+    /*float:right;*/
+    font-size: 10px;
+    padding-right: 10px;
+}
+.list-items-container{
+    margin-left:10px;
+}
+.list-item{
+    margin-top:10px;
+    cursor:pointer;
+    color:#3999c6;
+}
+.list-item:hover{
+    text-decoration: underline;
+}
+.list-item.disabled{
+    color:#8e8e8e;
+    cursor: not-allowed;
+}
+.list-item.disabled:hover{
+    text-decoration: none;
+}

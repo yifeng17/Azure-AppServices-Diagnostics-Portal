@@ -1,0 +1,6 @@
+<div class="row" [ngClass]="{'animated fadeOut': showComponent === false}" style="padding-right:10px">
+    <div class="row" style="width:50%;float:right">
+        <textarea [(ngModel)]="feedbackMessage" class="form-control" rows="3" placeholder="Enter feedback here..." autofocus></textarea>
+        <button class="btn btn-warning" (click)="onSubmit()" style="margin-top:10px;float:right">Submit</button>
+    </div>
+</div>
