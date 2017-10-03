@@ -1,0 +1,40 @@
+<div *ngIf="showLoadingMessage" style="color:#acacac">
+    <i class="fa fa-spin fa-circle-o-notch" aria-hidden="true"></i> Generating Report ...
+</div>
+
+<div *ngIf="!showLoadingMessage" class="animated fadeIn panel with-nav-tabs panel-info width-90">
+    <div class="panel-heading" style="padding:0">
+        <ul class="nav nav-tabs">
+            <li role="presentation" class="report-tab" *ngFor="let item of healthCheckpoints; let i = index" [ngClass]="{'active': i === selectedCategoryIndex}">
+                <a (click)="setCategory(i)">
+                    <i *ngIf="item.healthStatus" style="margin-right:10px" class="fa health-icon"
+                    [ngClass]="{'fa-exclamation-circle unhealthy-icon-color': item.healthStatus === 'error', 'fa-exclamation-triangle warning-icon-color': item.healthStatus === 'warning', 'fa-check-circle healthy-icon-color': item.healthStatus === 'success'}" 
+                    aria-hidden="true"></i>
+                    {{item.title}} 
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="panel-body" style="background-color:rgba(226, 245, 255, 0.15)">
+        <div class="tab-content">
+            <div class="row">
+                <app-nvD3-chart [options]="chartOptions" [data]="chartData"></app-nvD3-chart>
+            </div>
+            <div class="row">
+                <div class="panel message-container"
+                [ngClass]="{'error-message': healthCheckpoints[selectedCategoryIndex].healthStatus === 'error', 'warning-message': healthCheckpoints[selectedCategoryIndex].healthStatus === 'warning', 'success-message': healthCheckpoints[selectedCategoryIndex].healthStatus === 'success'}">
+                    <div class="panel-body">
+                        {{healthCheckpoints[selectedCategoryIndex].healthStatusMessage}}
+
+                        <div class="row" style="padding-right:20px">
+                                <button type="button" class="btn btn-link pull-right" (click)="logFullReportClick(healthCheckpoints[selectedCategoryIndex].title)"
+                                    [routerLink]="[healthCheckpoints[selectedCategoryIndex].href]">
+                                    View Full Report <i class="fa fa-chevron-right"></i>
+                                </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

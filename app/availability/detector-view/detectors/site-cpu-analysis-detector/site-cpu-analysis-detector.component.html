@@ -1,0 +1,33 @@
+<div *ngIf="showProblemsAndSolutions">
+    <detector-view-problem 
+        [detectorResponse]="detectorResponse" 
+        [detectorFriendlyName]="'High CPU'" 
+        [isHealthyNow]="isHealthyNow">
+    </detector-view-problem>
+
+    <feedback-form [source]='getDetectorName()' *ngIf="bladeOpenedFromSupportTicketFlow"></feedback-form>
+
+    <div class="divider" style="margin-bottom: 25px;margin-top: 25px"></div>
+</div>
+
+
+
+<metric-graph 
+    [metricSets]="detectorMetrics" 
+    [title]="detectorMetricsTitle" 
+    [chartType]="metricsChartType" 
+    [description]="detectorMetricsDescription" 
+    [yAxisLabel]="detectorMetricsYAxisLabel">
+</metric-graph>
+
+<instance-view-graph 
+    [metricSets]="instanceDetailMetrics" 
+    [title]="instanceDetailTitle" 
+    [chartType]="instanceDetailChartType" 
+    [yAxisLabel]="instanceDetailYAxisLabel" 
+    [description]="instanceDetailDescription"
+    (updateInstance)="logInstanceSelected($event)">
+</instance-view-graph>
+
+<feedback-form [source]='getDetectorName()'></feedback-form>
+

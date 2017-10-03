@@ -1,0 +1,112 @@
+<div class="row" style="border-bottom: 1px solid lightgrey;padding-top:10px;padding-bottom: 10px;margin-top:5px;margin-bottom:20px;">
+
+    <div class="col-xs-4">
+        <div class="row" style="font-variant: small-caps;color:#1a5d7d;font-size:11px">Application</div>
+        <div class="row" style="font-size:14px">{{siteName}}</div>
+    </div>
+    <div class="col-xs-8">
+        <div class="row" style="font-variant: small-caps;color:#1a5d7d;font-size:11px">Date (UTC)</div>
+        <div class="row" style="font-size:14px">
+            <form #myForm="ngForm" novalidate style="width:150px">
+                <my-date-picker name="mydate" [options]="myDatePickerOptions" [(ngModel)]="dateModel" (dateChanged)="RefreshData($event)" required></my-date-picker>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<div *ngIf="loadingAnalysis">
+    <i class="fa fa-circle-o-notch fa-2x fa-spin spin-icon" aria-hidden="true"></i>
+    <span [@loadingAnimation]="showLoadingMessage ? 'shown' : 'hidden'" class="loading-message">{{currentLoadingMessage}}</span>
+</div>
+
+<div class="row" *ngIf="!loadingAnalysis">
+
+    <div class="panel panel-default" *ngIf="!bladeOpenedFromSupportTicketFlow">
+
+        <div class="panel-heading">Restart Events Timeline</div>
+
+        <div class="panel-body">
+
+            <div class="dropdown">
+                <button (click)="showToolsDropdown = !showToolsDropdown" class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                          {{selectedWorker}}
+                          <span class="caret"></span>
+                        </button>
+                <ul class="dropdown-menu" style="cursor: pointer" aria-labelledby="dropdownMenu1" [ngClass]="{'show': showToolsDropdown === true, 'hide': showToolsDropdown === false}">
+                    <li *ngFor="let instance of allInstances" (click)="selectedWorker = instance;showToolsDropdown = false;">
+                        <a>{{instance}}</a>
+                    </li>
+                </ul>
+            </div>
+
+            <app-nvD3-chart [options]="chartOptions" [data]="metricsPerInstance[selectedWorker]"></app-nvD3-chart>
+        </div>
+
+    </div>
+
+    <div *ngIf="analysisResult.length !== 0" class="panel panel-info" style="border-left-width:10px;background-color:#f6fdff">
+
+        <div class="panel-heading" style="background-color:#bce8f1;color:#1a5d7d;font-size:14px;margin-top:-1px">
+            Reasons for your web app restart
+            <!--<span class="row pull-right download-report" (click)="download()">
+                <i class="fa fa-download"></i> Download Copy
+            </span>-->
+        </div>
+
+        <div class="panel-body">
+            <ul>
+                <li *ngFor="let item of analysisResult" style="list-style-type: square;margin-bottom:20px;padding-bottom:10px;font-size:13px">
+                    <div>{{item.message}}</div>
+                    <div *ngFor="let evidence of item.metaData" class="btn btn-info btn-sm" style="margin-top:10px;display:inline-block" (click)=OpenHelpulTip(evidence)>{{getHelpfulTipName(evidence)}}</div>
+                </li>
+            </ul>
+        </div>
+
+        <feedback-form [source]="'restartanalysis'"></feedback-form>
+
+    </div>
+
+    <div *ngIf="analysisResult.length === 0" class="panel panel-warning" style="border-left-width:10px;background-color:#fdfaf5">
+
+        <div class="panel-heading" style="font-size:14px;margin-top:-1px;background-color:#faebcc">
+            No Reasons Found
+        </div>
+
+        <div class="panel-body">
+            <ul>
+                <li style="list-style-type: square;margin-bottom:20px;padding-bottom:10px;font-size:13px">
+                    {{noReason.message}}
+                </li>
+            </ul>
+        </div>
+
+    </div>
+
+
+    <div class="panel panel-default" *ngIf="bladeOpenedFromSupportTicketFlow">
+
+        <div class="panel-heading">Restart Events Timeline</div>
+
+        <div class="panel-body">
+
+            <div class="dropdown">
+                <button (click)="showToolsDropdown = !showToolsDropdown" class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        {{selectedWorker}}
+                        <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" style="cursor: pointer" aria-labelledby="dropdownMenu1" [ngClass]="{'show': showToolsDropdown === true, 'hide': showToolsDropdown === false}">
+                    <li *ngFor="let instance of allInstances" (click)="selectedWorker = instance;showToolsDropdown = false;">
+                        <a>{{instance}}</a>
+                    </li>
+                </ul>
+            </div>
+
+            <app-nvD3-chart [options]="chartOptions" [data]="metricsPerInstance[selectedWorker]"></app-nvD3-chart>
+        </div>
+
+    </div>
+
+</div>
