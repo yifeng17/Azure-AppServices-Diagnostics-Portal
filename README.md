@@ -20,7 +20,7 @@
 - **Run** using `npm start`. 
 
 ## Production Build
-- **Run** `npm run aot`. Output directory: `/aot`
+- **Build** using `npm run aot`. Output directory: `/aot`
 
 # Contributing
 
