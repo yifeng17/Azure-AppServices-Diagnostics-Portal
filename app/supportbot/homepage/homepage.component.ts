@@ -26,7 +26,7 @@ export class HomepageComponent implements OnInit {
     }
 
     public openUrl(link: string, name: string, container: string): void {
-        this._logger.LogClickEvent(name, container);
+        this._logger.LogClickEvent(name, container, "Support Home");
         this._windowService.window.open(link, '_blank');
     }
 
@@ -82,10 +82,10 @@ export class HomepageComponent implements OnInit {
             collapsed: false,
             items: [{
                 title: 'MSDN Forums',
-                href: 'https://goo.gl/Guzs5D'
+                href: 'https://goo.gl/NwNyec'
             }, {
                 title: 'Stack Overflow',
-                href: 'https://stackoverflow.com/questions/tagged/azure'
+                href: 'https://goo.gl/MhG5Ec'
             }, {
                 title: '@AzureSupport',
                 href: 'https://twitter.com/intent/tweet?text=@azuresupport+%23azhelp:'
