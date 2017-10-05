@@ -261,6 +261,10 @@ a:hover{
 .panel.with-nav-tabs .nav-justified{
 	margin-bottom: -1px;
 }
+
+.nav-tabs > li {
+    outline: none;
+}
 /********************************************************************/
 /*** PANEL DEFAULT ***/
 .with-nav-tabs.panel-default .nav-tabs > li > a,
