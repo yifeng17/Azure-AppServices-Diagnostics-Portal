@@ -1,11 +1,11 @@
 const merge = require('webpack-merge');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
-const webpack = require('webpack');
 const common = require('./webpack.common.js');
 const ngToolsWebpack = require('@ngtools/webpack');
 const helpers = require('./helper');
 const path = require('path');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = merge(common, {
     entry: {
@@ -27,18 +27,26 @@ module.exports = merge(common, {
     },
     plugins: [
         new UglifyJSPlugin({
-            compress: { warnings: false }
+            compress: { warnings: false },
+            comments: false
         }),
         new ngToolsWebpack.AotPlugin({
             tsConfigPath: './tsconfig-aot.json',
             entryModule: helpers.root('app/app.module.ts#AppModule')
         }),
+        // Uncomment if you would like to analyze your bundle
+        /*
+        new BundleAnalyzerPlugin({
+            analyzerMode: 'static'
+        }),
+        */
         new CleanWebpackPlugin(
             [
                 './aot/js/',
                 './aot/css/',
                 './aot/assets/',
-                './aot/index.html'
+                './aot/index.html',
+                './aot/report.html'
             ]
         )
     ]

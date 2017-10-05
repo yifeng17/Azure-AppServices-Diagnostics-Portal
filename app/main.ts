@@ -2,6 +2,8 @@
 import './assets/global.css';
 import './assets/bot.css';
 
+import './augmentations';
+
 require("font-awesome-webpack!../font-awesome.config.js");
 
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';

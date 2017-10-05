@@ -26,7 +26,7 @@ export class ArmService {
     constructor(private _http: Http, private _authService: AuthService) {
     }
 
-    getResource<T>(resourceUri: string): Observable<T> {
+    getResource<T>(resourceUri: string): Observable<{} | T> {
         var url: string = `${this.armUrl}${resourceUri}?api-version=${this.websiteApiVersion}`
         if(resourceUri.indexOf('?') >= 0){
             url =  `${this.armUrl}${resourceUri}&api-version=${this.websiteApiVersion}`
@@ -48,7 +48,7 @@ export class ArmService {
 
         return this._http.post(url, body, { headers: this.getHeaders() })
             .map((response: Response) => response.ok)
-            .catch(this.handleError);
+            .catch((response) => { return Observable.of(false) });
     }
 
     private handleError(error: Response): any {
