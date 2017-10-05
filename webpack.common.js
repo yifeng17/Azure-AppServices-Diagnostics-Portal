@@ -8,7 +8,8 @@ module.exports = {
 
     entry: {
         // application entry points
-        'polyfills': './app/polyfills.ts'
+        'polyfills': './app/polyfills.ts',
+        'loading-css': './loading-css/loading-css.ts'
     },
 
     resolve: {
@@ -72,7 +73,7 @@ module.exports = {
     },
 
     plugins: [
-		new ExtractTextPlugin('css/[name].bundle.css'),
+		new ExtractTextPlugin('css/[name].[chunkhash].bundle.css'),
         new webpack.optimize.ModuleConcatenationPlugin(),
         new webpack.optimize.CommonsChunkPlugin({
             name: ['app', 'vendor', 'polyfills']

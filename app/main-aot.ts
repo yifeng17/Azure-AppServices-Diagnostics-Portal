@@ -1,6 +1,8 @@
 import './assets/global.css';
 import './assets/bot.css';
 
+import './augmentations';
+
 require("font-awesome-webpack!../font-awesome.config.js");
 
 import {platformBrowser} from "@angular/platform-browser";
