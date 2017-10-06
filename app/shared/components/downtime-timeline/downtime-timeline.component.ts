@@ -12,11 +12,8 @@ import 'rxjs/add/operator/map';
 export class DowntimeTimelineComponent implements OnChanges {
     downtimeDisplayInfo: any[];
 
-    rightPadding: string;
-
     constructor(){
         this.downtimeDisplayInfo = [];
-        this.rightPadding = this.inIFrame() ? '30px' : '30px';
     }
 
     @Input() appAnalysisResponse: IAppAnalysisResponse;

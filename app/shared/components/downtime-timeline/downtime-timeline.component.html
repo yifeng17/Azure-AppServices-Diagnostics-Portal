@@ -1,6 +1,6 @@
 <div class="row" style="height:30px">
     <div class="row" style="width:100%;padding-left:55px;margin-top:20px">
-        <div class="row" style="height:auto;" [ngStyle]="{'padding-right':rightPadding}" *ngIf="appAnalysisResponse">
+        <div class="row timeline-container" *ngIf="appAnalysisResponse">
             <div class="timeline-column" *ngFor="let period of downtimeDisplayInfo; let i = index"
                 [ngStyle]="{'width':period.percent + '%'}"
                 [ngClass]="{'timeline-downtime': period.isDowntime, 'timeline-downtime-selected': period.isDowntime && period.index === selectedDowntimeIndex, 'timeline-uptime': !period.isDowntime}" 
