@@ -3,7 +3,7 @@ import { IAppAnalysisResponse, IAbnormalTimePeriod } from '../../shared/models/a
 import { IDetectorAbnormalTimePeriod, IDetectorResponse } from '../../shared/models/detectorresponse';
 import { INameValuePair } from '../../shared/models/namevaluepair';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SiteService, PortalActionService, AvailabilityLoggingService } from '../../shared/services';
+import { SiteService, PortalActionService, AvailabilityLoggingService, DetectorViewStateService } from '../../shared/services';
 import { SolutionFactory } from '../../shared/models/solution-ui-model/solutionfactory';
 import { SupportBladeDefinitions } from '../../shared/models/portal';
 import { ObservationsComponent } from './observations.component';
@@ -15,8 +15,9 @@ import { ObservationsComponent } from './observations.component';
 })
 export class ObservationsPerformanceComponent extends ObservationsComponent implements OnInit, OnChanges {
 
-    constructor(protected _route: ActivatedRoute, protected _router: Router, protected _portalActionService: PortalActionService, protected _logger: AvailabilityLoggingService, protected _siteService: SiteService) {
-        super(_route, _router, _portalActionService, _logger, _siteService);
+    constructor(protected _route: ActivatedRoute, protected _router: Router, protected _portalActionService: PortalActionService, 
+        protected _logger: AvailabilityLoggingService, protected _siteService: SiteService, protected _detectorViewService: DetectorViewStateService) {
+        super(_route, _router, _portalActionService, _logger, _siteService, _detectorViewService);
     }
 
     ngOnInit(): void {

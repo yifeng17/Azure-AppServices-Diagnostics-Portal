@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
-import { AppAnalysisService, AvailabilityLoggingService, AuthService } from '../../../../shared/services';
-import { IDetectorResponse } from '../../../../shared/models/detectorresponse';
+import { AppAnalysisService, AvailabilityLoggingService, AuthService, DetectorViewStateService } from '../../../../shared/services';
+import { IDetectorResponse, IDetectorAbnormalTimePeriod } from '../../../../shared/models/detectorresponse';
 import { DetectorViewInstanceDetailComponent } from '../../detector-view-instance-detail/detector-view-instance-detail.component';
 import { StartupInfo } from '../../../../shared/models/portal';
 declare let d3: any;
@@ -14,8 +14,10 @@ export class SiteCpuAnalysisDetectorComponent extends DetectorViewInstanceDetail
 
     showProblemsAndSolutions: boolean = false;
     bladeOpenedFromSupportTicketFlow: boolean = false;
+    highlightedAbnormalTimePeriod: IDetectorAbnormalTimePeriod;
 
-    constructor(protected _route: ActivatedRoute, protected _appAnalysisService: AppAnalysisService, protected _logger: AvailabilityLoggingService, private _authService: AuthService) {
+    constructor(protected _route: ActivatedRoute, protected _appAnalysisService: AppAnalysisService, protected _logger: AvailabilityLoggingService, 
+        private _authService: AuthService, private _detectorViewService: DetectorViewStateService) {
         super(_route, _appAnalysisService, _logger);
         this.detectorMetricsTitle = "Overall CPU Usage per Instance";
         this.detectorMetricsDescription = "This graphs shows the total CPU usage on each of the instances where your application is running. " +
@@ -28,6 +30,12 @@ export class SiteCpuAnalysisDetectorComponent extends DetectorViewInstanceDetail
         this._authService.getStartupInfo().subscribe((startupInfo: StartupInfo) => {
             this.bladeOpenedFromSupportTicketFlow = startupInfo.source !== undefined && startupInfo.source.toLowerCase() === 'casesubmission';
         });
+    }
+
+    ngOnInit() {
+        super.ngOnInit();
+        this.highlightedAbnormalTimePeriod = this._detectorViewService.getDetectorViewState(this.getDetectorName());
+        console.log(this.highlightedAbnormalTimePeriod);
     }
 
     processDetectorResponse(response: IDetectorResponse) {

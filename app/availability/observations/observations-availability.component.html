@@ -39,7 +39,7 @@
                         </tbody>
                     </table>
                     <ul style="list-style: none">
-                        <li *ngIf="showDetectorViewLink(downtime.source)"><a [routerLink]="['../detectors/' + downtime.source]" (click)="logDetectorViewClick(downtime)">View Details <i class="fa fa-arrow-circle-o-right" style="font-size: 15px" ></i></a></li>
+                        <li *ngIf="showDetectorViewLink(downtime.source)"><a (click)="detectorViewClick(downtime)">View Details <i class="fa fa-arrow-circle-o-right" style="font-size: 15px" ></i></a></li>
                     </ul>
                 </span>
             </ul>
