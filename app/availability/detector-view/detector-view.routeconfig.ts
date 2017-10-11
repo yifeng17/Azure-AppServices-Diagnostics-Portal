@@ -9,6 +9,7 @@ import { FrebAnalysisDetectorComponent } from './detectors/freb-analysis-detecto
 import { PhpLogAnalyzerComponent } from './detectors/php-log-analyzer-detector/php-log-analyzer-detector.component';
 import { CommittedMemoryUsageComponent } from './detectors/committed-memory-detector/committed-memory-detector.component';
 import { PageFileOperationsComponent } from './detectors/page-operations-detector/page-operations-detector.component';
+import { AspNetCoreComponent } from "./detectors/aspnetcore-detector/aspnetcore-detector.component";
 
 export const DetectorViewRouteConfig: Route[] = [
     {
@@ -58,6 +59,13 @@ export const DetectorViewRouteConfig: Route[] = [
         component: PageFileOperationsComponent,
         data: {
             navigationTitle: 'Page File Operations'
+        } 
+    },
+    { 
+        path: 'aspnetcore', 
+        component: AspNetCoreComponent,
+        data: {
+            navigationTitle: 'AspNetCore Logs'
         } 
     },
     { 
