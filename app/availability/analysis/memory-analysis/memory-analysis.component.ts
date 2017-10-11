@@ -65,7 +65,7 @@ export class MemoryAnalysisComponent implements OnInit {
 
     getSummaryViewModel(summaryDowntime: IAbnormalTimePeriod, detectorName: string, topLevelSeries: string = '', excludeTopLevelInDetail: boolean = true): SummaryViewModel {
 
-        let downtime = summaryDowntime ? summaryDowntime.events.find(detector => detector.source === detectorName) : undefined;
+        let downtime = summaryDowntime ? summaryDowntime.events.find(detector => detector.source === detectorName) : null;
         let health = !downtime ?
             SummaryHealthStatus.Healthy : downtime.metaData[0].find(nvp => nvp.name === 'CurrentHealth').value === "Unhealthy" ?
                 SummaryHealthStatus.Error : SummaryHealthStatus.Warning
@@ -82,8 +82,8 @@ export class MemoryAnalysisComponent implements OnInit {
             loading: false,
             detectorAbnormalTimePeriod: downtime,
             detectorData: detectorResponse,
-            mainMetricSets: topLevelSeries !== '' ? detectorResponse.metrics.filter(x => x.name === topLevelSeries) : detectorResponse.metrics,
-            detailMetricSets: topLevelSeries !== '' ? excludeTopLevelInDetail ? detectorResponse.metrics.filter(x => x.name !== topLevelSeries) : detectorResponse.metrics : null,
+            mainMetricSets: detectorResponse ? (topLevelSeries !== '' ? detectorResponse.metrics.filter(x => x.name === topLevelSeries) : detectorResponse.metrics) : null,
+            detailMetricSets: topLevelSeries !== '' && detectorResponse ? excludeTopLevelInDetail ? detectorResponse.metrics.filter(x => x.name !== topLevelSeries) : detectorResponse.metrics : null,
             mainMetricGraphTitle: graphMetaData.mainGraphTitle,
             mainMetricGraphDescription: graphMetaData.mainGraphDescriptions,
             perInstanceGraphTitle: graphMetaData.perInstanceGraphTitle,
