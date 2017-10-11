@@ -27,6 +27,7 @@ import { CommittedMemoryUsageComponent } from './detector-view/detectors/committ
 import { PageFileOperationsComponent } from './detector-view/detectors/page-operations-detector/page-operations-detector.component';
 import { ToolsMenuComponent } from './tools-menu/tools-menu.component';
 import { AvailabilityAndPerformanceCategoryRouteConfig } from './availability.routeconfig';
+import { AspNetCoreComponent } from "./detector-view/detectors/aspnetcore-detector/aspnetcore-detector.component";
 
 import { UriElementsService } from '../shared/services'
 
@@ -54,7 +55,8 @@ import { UriElementsService } from '../shared/services'
         PhpLogAnalyzerComponent,
         MemoryAnalysisComponent,
         CommittedMemoryUsageComponent,
-        PageFileOperationsComponent
+        PageFileOperationsComponent,
+        AspNetCoreComponent
     ],
     imports: [
         RouterModule.forChild(AvailabilityAndPerformanceCategoryRouteConfig),
