@@ -2,6 +2,7 @@
 # Azure Web Apps Support Center
 
 ## Prerequisites
+- [Node 6.*](https://nodejs.org/en/download/)
 - Node Package Manager (npm)
 - Typescript
   `npm install -g typescript`
