@@ -17,7 +17,7 @@ export class AspNetCoreComponent extends DetectorViewBaseComponent {
 
     constructor(protected _route: ActivatedRoute, protected _appAnalysisService: AppAnalysisService) {
         super(_route, _appAnalysisService);
-        this.detectorMetricsTitle = "AspNetCore";
+        this.detectorMetricsTitle = "AspNetCore Error Timeline";
         this.detectorMetricsDescription = "The above graph displays events via event log";
         this.showMetadata = false;
     }

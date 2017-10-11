@@ -65,7 +65,7 @@ export const DetectorViewRouteConfig: Route[] = [
         path: 'aspnetcore', 
         component: AspNetCoreComponent,
         data: {
-            navigationTitle: 'AspNetCore'
+            navigationTitle: 'AspNetCore Logs'
         } 
     },
     { 
