@@ -4,6 +4,7 @@ import { AppAnalysisService, AvailabilityLoggingService, AuthService, DetectorVi
 import { IDetectorResponse, IDetectorAbnormalTimePeriod } from '../../../../shared/models/detectorresponse';
 import { DetectorViewInstanceDetailComponent } from '../../detector-view-instance-detail/detector-view-instance-detail.component';
 import { StartupInfo } from '../../../../shared/models/portal';
+import { AbnormalTimePeriodHelper } from '../../../../shared/utilities/abnormalTimePeriodHelper';
 declare let d3: any;
 
 @Component({
@@ -15,8 +16,10 @@ export class SiteCpuAnalysisDetectorComponent extends DetectorViewInstanceDetail
     showProblemsAndSolutions: boolean = false;
     bladeOpenedFromSupportTicketFlow: boolean = false;
     highlightedAbnormalTimePeriod: IDetectorAbnormalTimePeriod;
+    instancesToSelect: string[];
+    instanceToSelect: string;
 
-    constructor(protected _route: ActivatedRoute, protected _appAnalysisService: AppAnalysisService, protected _logger: AvailabilityLoggingService, 
+    constructor(protected _route: ActivatedRoute, protected _appAnalysisService: AppAnalysisService, protected _logger: AvailabilityLoggingService,
         private _authService: AuthService, private _detectorViewService: DetectorViewStateService) {
         super(_route, _appAnalysisService, _logger);
         this.detectorMetricsTitle = "Overall CPU Usage per Instance";
@@ -35,7 +38,13 @@ export class SiteCpuAnalysisDetectorComponent extends DetectorViewInstanceDetail
     ngOnInit() {
         super.ngOnInit();
         this.highlightedAbnormalTimePeriod = this._detectorViewService.getDetectorViewState(this.getDetectorName());
-        console.log(this.highlightedAbnormalTimePeriod);
+
+        if (this.highlightedAbnormalTimePeriod) {
+            this.instancesToSelect = AbnormalTimePeriodHelper.getMetaDataValues(this.highlightedAbnormalTimePeriod, "instancename");
+            if (this.instancesToSelect.length > 0) {
+                this.instanceToSelect = this.instancesToSelect[0];
+            }
+        }
     }
 
     processDetectorResponse(response: IDetectorResponse) {

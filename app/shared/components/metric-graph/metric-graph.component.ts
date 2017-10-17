@@ -27,6 +27,7 @@ export class MetricGraphComponent implements OnInit {
     @Input() description: string;
     @Input() chartType: ChartType;
     @Input() yAxisLabel: string;
+    @Input() instancesToSelect: string[] = [];
 
     chartData: ChartSeries[];
     chartOptions: any;
@@ -39,7 +40,7 @@ export class MetricGraphComponent implements OnInit {
                 this.chartOptions.chart.type = ChartType[this.chartType].toString();
                 this.chartOptions.chart.yAxis.axisLabel = this.yAxisLabel;
                 this.chartOptions.chart.margin.bottom = 40;
-                this.chartData = GraphHelper.parseMetricsToChartDataPerInstance(metricSets, 0, false);
+                this.chartData = GraphHelper.parseMetricsToChartDataPerInstance(metricSets, 0, false, this.instancesToSelect);
             }
         });
     }

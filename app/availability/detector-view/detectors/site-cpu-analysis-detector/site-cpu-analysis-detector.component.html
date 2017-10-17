@@ -1,8 +1,9 @@
-<div *ngIf="showProblemsAndSolutions">
+<div>
     <detector-view-problem 
         [detectorResponse]="detectorResponse" 
         [detectorFriendlyName]="'High CPU'" 
-        [isHealthyNow]="isHealthyNow">
+        [isHealthyNow]="isHealthyNow"
+        [highlightedDowntime]="highlightedAbnormalTimePeriod">
     </detector-view-problem>
 
     <feedback-form [source]='getDetectorName()' *ngIf="bladeOpenedFromSupportTicketFlow"></feedback-form>
@@ -10,7 +11,23 @@
     <div class="divider" style="margin-bottom: 25px;margin-top: 25px"></div>
 </div>
 
-<div *ngIf="highlightedAbnormalTimePeriod">{{highlightedAbnormalTimePeriod.message}}</div>
+<!--<div *ngIf="highlightedAbnormalTimePeriod" class="downtime-summary">
+    <ul style="list-style: none">
+        <li><b>Start Time:</b> {{highlightedAbnormalTimePeriod.startTime}}</li>
+        <li><b>End Time:</b> {{highlightedAbnormalTimePeriod.endTime}}</li>
+        <li><b>Message:</b> {{highlightedAbnormalTimePeriod.message}}</li>
+    </ul>
+</div>-->
+
+<!--<div class="focus-box focus-box-warning" *ngIf="highlightedAbnormalTimePeriod">
+    <h4 class="not-bold">
+        {{highlightedAbnormalTimePeriod.message}}
+    </h4>
+    <ul style="list-style: none">
+        <li><b>Start Time:</b> {{highlightedAbnormalTimePeriod.startTime}}</li>
+        <li><b>End Time:</b> {{highlightedAbnormalTimePeriod.endTime}}</li>
+    </ul>
+</div>-->
 
 
 <metric-graph 
@@ -18,7 +35,8 @@
     [title]="detectorMetricsTitle" 
     [chartType]="metricsChartType" 
     [description]="detectorMetricsDescription" 
-    [yAxisLabel]="detectorMetricsYAxisLabel">
+    [yAxisLabel]="detectorMetricsYAxisLabel"
+    [instancesToSelect]="instancesToSelect">
 </metric-graph>
 
 <instance-view-graph 
@@ -27,6 +45,7 @@
     [chartType]="instanceDetailChartType" 
     [yAxisLabel]="instanceDetailYAxisLabel" 
     [description]="instanceDetailDescription"
+    [selectedInstance]="instanceToSelect"
     (updateInstance)="logInstanceSelected($event)">
 </instance-view-graph>
 

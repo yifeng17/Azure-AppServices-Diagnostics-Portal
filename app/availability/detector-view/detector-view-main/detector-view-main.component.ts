@@ -39,6 +39,8 @@ export class DetectorViewMainComponent implements OnInit {
         this.resourceGroup = this._route.snapshot.params['resourcegroup'];
         this.siteName = this._route.snapshot.params['sitename'];
         this.slotName = this._route.snapshot.params['slot'] ? this._route.snapshot.params['slot'] : '';
+
+        this.displayTopLevelGraph = this._route.firstChild.snapshot.routeConfig.path.indexOf('sitecpuanalysis') < 0;
     }
 
     logBackToAnalysis(){
