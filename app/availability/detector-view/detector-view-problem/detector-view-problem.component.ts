@@ -44,7 +44,7 @@ export class DetectorViewProblemComponent implements OnInit {
             let rank = 0;
             this.highlightedDowntime.solutions.forEach((solution: ISolution) => {
                 let uiModel = SolutionFactory.getSolutionById(rank, solution.id, solution.data, this._siteService, this._portalActionService, this._logger);
-                if (uiModel) {
+                if (uiModel && !this.solutionUIModel.find((model) => model.properties.id === solution.id)) {
                     this.solutionUIModel.push(uiModel);
                     rank++;
                 }

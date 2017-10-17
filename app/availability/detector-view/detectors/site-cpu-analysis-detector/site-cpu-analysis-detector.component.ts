@@ -41,7 +41,11 @@ export class SiteCpuAnalysisDetectorComponent extends DetectorViewInstanceDetail
 
         if (this.highlightedAbnormalTimePeriod) {
             this.instancesToSelect = AbnormalTimePeriodHelper.getMetaDataValues(this.highlightedAbnormalTimePeriod, "instancename");
+            if (!this.instancesToSelect || this.instancesToSelect.length === 0) {
+                this.instancesToSelect = AbnormalTimePeriodHelper.getMetaDataValues(this.highlightedAbnormalTimePeriod, "instance");
+            }
             if (this.instancesToSelect.length > 0) {
+                console.log(this.instancesToSelect);
                 this.instanceToSelect = this.instancesToSelect[0];
             }
         }
