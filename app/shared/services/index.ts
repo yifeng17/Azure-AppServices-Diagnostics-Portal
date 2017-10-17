@@ -25,3 +25,4 @@ export * from "./server-farm-data.service"
 export * from "./site.service";
 export * from "./appanalysis.service";
 export * from "./portal-action.service";
+export * from "./detector-view-state.service";

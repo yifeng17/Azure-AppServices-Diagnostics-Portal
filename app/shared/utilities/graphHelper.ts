@@ -64,7 +64,7 @@ export class GraphHelper {
 
     }
 
-    static parseMetricsToChartDataPerInstance(metricSets: IMetricSet[], defaultMetricValue: number = 0, area: boolean = false): ChartSeries[] {
+    static parseMetricsToChartDataPerInstance(metricSets: IMetricSet[], defaultMetricValue: number = 0, area: boolean = false, instancesToSelect: string[] = []): ChartSeries[] {
         var chartData: ChartSeries[] = [];
 
         if(!metricSets){
@@ -72,7 +72,7 @@ export class GraphHelper {
         }
 
         metricSets.forEach(metricSet => {
-            this.parseMetricSetToChartDataPerInstance(metricSet, defaultMetricValue, area).forEach(series => {
+            this.parseMetricSetToChartDataPerInstance(metricSet, defaultMetricValue, area, instancesToSelect).forEach(series => {
                 if(!(series === undefined)){
                     chartData.push(series);
                 }
@@ -82,7 +82,7 @@ export class GraphHelper {
         return chartData;
     }
 
-    static parseMetricSetToChartDataPerInstance(metricSet: IMetricSet, defaultMetricValue: number = 0, area: boolean = false): ChartSeries[] {
+    static parseMetricSetToChartDataPerInstance(metricSet: IMetricSet, defaultMetricValue: number = 0, area: boolean = false, instancesToSelect: string[] = []): ChartSeries[] {
         var chartData: ChartSeries[] = [];
 
         if(!metricSet || metricSet.values.length <= 0){
@@ -115,7 +115,8 @@ export class GraphHelper {
                     isAggregated: isAggregated,
                     roleInstance: roleInstance,
                     values: [],
-                    area: area
+                    area: area,
+                    disabled: instancesToSelect && instancesToSelect.length > 0 && instancesToSelect.indexOf(roleInstance) < 0
                 });
             }
         });

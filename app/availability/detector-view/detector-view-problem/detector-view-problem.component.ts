@@ -24,6 +24,7 @@ export class DetectorViewProblemComponent implements OnInit {
 
     @Input() detectorFriendlyName: string;
     @Input() isHealthyNow: boolean;
+    @Input() highlightedDowntime: IDetectorAbnormalTimePeriod;
 
     downtimeMessage: string;
     downtimeTime: string;
@@ -36,52 +37,65 @@ export class DetectorViewProblemComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this._detectorResponseSubject.subscribe((detectorResponse: IDetectorResponse) => {
-            if (detectorResponse) {
-                if (detectorResponse.abnormalTimePeriods.length > 0) {
-                    let lastDowntime = detectorResponse.abnormalTimePeriods[detectorResponse.abnormalTimePeriods.length - 1];
-                    let lastDowntimeEndTime = new Date(lastDowntime.endTime);
-                    let detectorResponseEndTime = new Date(detectorResponse.endTime);
-                    let tenMinutesInMs = 600000;
+        if (this.highlightedDowntime) {
+            this.isHealthyNow = false;
+            this.abnormalTimePeriods.push(this.highlightedDowntime);
 
-                    if ((lastDowntimeEndTime.getTime() + tenMinutesInMs) >= detectorResponseEndTime.getTime()) {
-                        this.isHealthyNow = false;
+            let rank = 0;
+            this.highlightedDowntime.solutions.forEach((solution: ISolution) => {
+                let uiModel = SolutionFactory.getSolutionById(rank, solution.id, solution.data, this._siteService, this._portalActionService, this._logger);
+                if (uiModel && !this.solutionUIModel.find((model) => model.properties.id === solution.id)) {
+                    this.solutionUIModel.push(uiModel);
+                    rank++;
+                }
+            });
+            this.loading = false;
+        }
+        else {
+            this._detectorResponseSubject.subscribe((detectorResponse: IDetectorResponse) => {
+                if (detectorResponse) {
+                    if (detectorResponse.abnormalTimePeriods.length > 0) {
+                        let lastDowntime = detectorResponse.abnormalTimePeriods[detectorResponse.abnormalTimePeriods.length - 1];
+                        let lastDowntimeEndTime = new Date(lastDowntime.endTime);
+                        let detectorResponseEndTime = new Date(detectorResponse.endTime);
+                        let tenMinutesInMs = 600000;
+                        let rank = 0;
+
+                        this.isHealthyNow = !((lastDowntimeEndTime.getTime() + tenMinutesInMs) >= detectorResponseEndTime.getTime());
                         this.abnormalTimePeriods.push(lastDowntime);
 
-                        let rank = 0;
-                        lastDowntime.solutions.forEach((solution: ISolution) => {
-                            let uiModel = SolutionFactory.getSolutionById(rank, solution.id, solution.data, this._siteService, this._portalActionService, this._logger);
-                            if (uiModel) {
-                                this.solutionUIModel.push(uiModel);
-                                rank++;
-                            }
-                        });
-                    } else {
-                        this.isHealthyNow = true;
-                        let rank = 0;
-                        detectorResponse.abnormalTimePeriods.forEach((element: IDetectorAbnormalTimePeriod) => {
-                            this.abnormalTimePeriods.push(element);
-                            element.solutions.forEach((solution: ISolution) => {
-                                if (this.solutionUIModel.findIndex((x: SolutionUIModelBase) => x.properties.id === solution.id) < 0) {
-                                    let uiModel = SolutionFactory.getSolutionById(rank, solution.id, solution.data, this._siteService, this._portalActionService, this._logger);
-                                    if (uiModel) {
-                                        this.solutionUIModel.push(uiModel);
-                                        rank++;
-                                    }
+                        if (!this.isHealthyNow) {
+                            lastDowntime.solutions.forEach((solution: ISolution) => {
+                                let uiModel = SolutionFactory.getSolutionById(rank, solution.id, solution.data, this._siteService, this._portalActionService, this._logger);
+                                if (uiModel) {
+                                    this.solutionUIModel.push(uiModel);
+                                    rank++;
                                 }
                             });
+                        }
+                        else {
+                            detectorResponse.abnormalTimePeriods.forEach((element: IDetectorAbnormalTimePeriod) => {
+                                element.solutions.forEach((solution: ISolution) => {
+                                    if (this.solutionUIModel.findIndex((x: SolutionUIModelBase) => x.properties.id === solution.id) < 0) {
+                                        let uiModel = SolutionFactory.getSolutionById(rank, solution.id, solution.data, this._siteService, this._portalActionService, this._logger);
+                                        if (uiModel) {
+                                            this.solutionUIModel.push(uiModel);
+                                            rank++;
+                                        }
+                                    }
+                                });
 
-                            this.abnormalTimePeriods = this.abnormalTimePeriods.sort((a: IDetectorAbnormalTimePeriod, b: IDetectorAbnormalTimePeriod) => {
-                                return new Date(b.startTime).getTime() - new Date(a.startTime).getTime();
-                            })
+                                this.abnormalTimePeriods = this.abnormalTimePeriods.sort((a: IDetectorAbnormalTimePeriod, b: IDetectorAbnormalTimePeriod) => {
+                                    return new Date(b.startTime).getTime() - new Date(a.startTime).getTime();
+                                })
 
-                        });
+                            });
+                        }
                     }
+                    this.loading = false;
                 }
-                this.loading = false;
-            }
-
-        });
+            });
+        }
     }
 
     getSolutionTitle(): string {

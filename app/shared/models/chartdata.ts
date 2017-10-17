@@ -5,6 +5,7 @@ export interface ChartSeries {
     area: boolean;
     roleInstance: string;
     isAggregated: boolean;
+    disabled: boolean;
 }
 
 export interface ChartPoint {
