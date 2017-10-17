@@ -11,24 +11,9 @@
     <div class="divider" style="margin-bottom: 25px;margin-top: 25px"></div>
 </div>
 
-<!--<div *ngIf="highlightedAbnormalTimePeriod" class="downtime-summary">
-    <ul style="list-style: none">
-        <li><b>Start Time:</b> {{highlightedAbnormalTimePeriod.startTime}}</li>
-        <li><b>End Time:</b> {{highlightedAbnormalTimePeriod.endTime}}</li>
-        <li><b>Message:</b> {{highlightedAbnormalTimePeriod.message}}</li>
-    </ul>
-</div>-->
-
-<!--<div class="focus-box focus-box-warning" *ngIf="highlightedAbnormalTimePeriod">
-    <h4 class="not-bold">
-        {{highlightedAbnormalTimePeriod.message}}
-    </h4>
-    <ul style="list-style: none">
-        <li><b>Start Time:</b> {{highlightedAbnormalTimePeriod.startTime}}</li>
-        <li><b>End Time:</b> {{highlightedAbnormalTimePeriod.endTime}}</li>
-    </ul>
-</div>-->
-
+<div style="padding:10px" *ngIf="instanceSelectedDescription">
+    <i><i class="fa fa-line-chart" style="padding:5px;color:rgb(84, 143, 255)"></i>{{instanceSelectedDescription}}</i>
+</div>
 
 <metric-graph 
     [metricSets]="detectorMetrics" 

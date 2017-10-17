@@ -18,6 +18,7 @@ export class SiteCpuAnalysisDetectorComponent extends DetectorViewInstanceDetail
     highlightedAbnormalTimePeriod: IDetectorAbnormalTimePeriod;
     instancesToSelect: string[];
     instanceToSelect: string;
+    instanceSelectedDescription: string;
 
     constructor(protected _route: ActivatedRoute, protected _appAnalysisService: AppAnalysisService, protected _logger: AvailabilityLoggingService,
         private _authService: AuthService, private _detectorViewService: DetectorViewStateService) {
@@ -46,6 +47,7 @@ export class SiteCpuAnalysisDetectorComponent extends DetectorViewInstanceDetail
             }
             if (this.instancesToSelect.length > 0) {
                 this.instanceToSelect = this.instancesToSelect[0];
+                this.instanceSelectedDescription = "Based on the selected high CPU period above, the following instance(s) were automatically selected: " + this.instancesToSelect.join(", ");
             }
         }
     }
