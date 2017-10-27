@@ -26,6 +26,7 @@ import { CollapsibleListItemComponent } from './components/collapsible-list/coll
 import { CollapsibleListComponent } from './components/collapsible-list/collapsible-list.component';
 import { SupportToolsComponent } from './components/support-tools/support-tools.component';
 import { ExpandableSummaryComponent } from './components/expandable-summary/expandable-summary.component';
+import { AppInsightsTileComponent } from './components/app-insights/app-insights-tile.component';
 
 @NgModule({
     declarations: [
@@ -45,7 +46,8 @@ import { ExpandableSummaryComponent } from './components/expandable-summary/expa
         CollapsibleListComponent,
         CollapsibleListItemComponent,
         SupportToolsComponent,
-        ExpandableSummaryComponent
+        ExpandableSummaryComponent,
+        AppInsightsTileComponent
     ],
     imports: [
         HttpModule,
@@ -73,7 +75,8 @@ import { ExpandableSummaryComponent } from './components/expandable-summary/expa
         CollapsibleListComponent,
         CollapsibleListItemComponent,
         SupportToolsComponent,
-        ExpandableSummaryComponent
+        ExpandableSummaryComponent,
+        AppInsightsTileComponent
     ]
 })
 export class SharedModule {
