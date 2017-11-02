@@ -25,7 +25,7 @@ export class SiteService {
     // I am making the assumption that two sites on the same server farm must be in the same sub 
     // but they don't necessarily have to be in the same resource group
     private findTargetedSite(siteName: string): Site {
-        if (this.currentSite.properties.name != siteName) {
+        if (this.currentSite.properties.name.toLowerCase() != siteName.toLowerCase()) {
             return this._serverFarmService.getSiteInServerFarm(siteName);
         }
         return this.currentSite;

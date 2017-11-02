@@ -55,7 +55,7 @@ export class AppComponent implements OnInit {
                         this._router.navigate([adjustedResourceId + '/diagnostics/availability/memoryanalysis']);
                         break;
                     default:
-                        this._router.navigate([adjustedResourceId + '/diagnostics']);
+                        this._router.navigate([adjustedResourceId + '/diagnostics/availability/analysis']);
                         break;
                 }
             });

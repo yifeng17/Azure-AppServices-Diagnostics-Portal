@@ -10,7 +10,7 @@
         <br/>
 
         <div class="row" >
-            <div class="col-md-9">
+            <div class="col-md-12">
                 <div *ngIf="loadingAnalysis">
                     <i class="fa fa-circle-o-notch fa-2x fa-spin spin-icon" aria-hidden="true"></i>
                     <span [@loadingAnimation]="showLoadingMessage ? 'shown' : 'hidden'" class="loading-message">{{loadingMessages[loadingMessageIndex]}}</span>
@@ -22,13 +22,11 @@
                     [openedFromTicketFlow]="bladeOpenedFromSupportTicketFlow">
                 </observations-availability>
                 <br/>
-                <solution-list *ngIf="abnormalTimePeriods && selectedTimePeriodIndex >= 0" 
+                <!--<solution-list *ngIf="abnormalTimePeriods && selectedTimePeriodIndex >= 0" 
                     [abnormalTimePeriod]="abnormalTimePeriods[selectedTimePeriodIndex]"
                     [openedFromTicketFlow]="bladeOpenedFromSupportTicketFlow">
-                </solution-list>
-            </div>
-            <div class="col-md-3" style="padding-top:15px">
-                <tools-menu [displayTools]="!bladeOpenedFromSupportTicketFlow"></tools-menu>
+                </solution-list>-->
+                <solutions-widget></solutions-widget>
             </div>
         </div>
     </div>

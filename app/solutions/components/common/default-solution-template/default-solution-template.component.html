@@ -1,0 +1,15 @@
+<div class="solution-container">
+    <div class="title-container">
+
+        <div class="header1">{{title}}</div>
+
+        <div>
+            <solution-type-tag *ngFor="let tag of tags" [tagType]="tag" textSize="14px"></solution-type-tag>
+        </div>
+    </div>
+
+    <div>
+        <p>{{description}}</p>
+    </div>
+    <ng-content></ng-content>
+</div>

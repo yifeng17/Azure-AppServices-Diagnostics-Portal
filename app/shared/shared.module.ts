@@ -7,7 +7,7 @@ import { HttpModule } from '@angular/http';
 import {
     PortalService, BroadcastService, AuthService, ArmService, UriElementsService, PortalActionService,
     SiteService, AppAnalysisService, WindowService, ServerFarmDataService, RBACService, LoggingService, 
-    AvailabilityLoggingService, BotLoggingService, DetectorViewStateService
+    AvailabilityLoggingService, BotLoggingService, DetectorViewStateService, SolutionFactoryService
 } from './services';
 import { LimitToFilter } from './utilities/limitToFilter.pipe';
 import { nvD3 } from './utilities/nvd3graph.component';
@@ -26,6 +26,9 @@ import { CollapsibleListItemComponent } from './components/collapsible-list/coll
 import { CollapsibleListComponent } from './components/collapsible-list/collapsible-list.component';
 import { SupportToolsComponent } from './components/support-tools/support-tools.component';
 import { ExpandableSummaryComponent } from './components/expandable-summary/expandable-summary.component';
+import { VerticalDisplayListComponent } from './components/vertical-display-list/vertical-display-list.component';
+import { VerticalDisplayListItemComponent } from './components/vertical-display-list/vertical-display-list-item/vertical-display-list-item.component';
+import { SolutionTypeTagComponent } from './components/solution-type-tag/solution-type-tag.component';
 
 @NgModule({
     declarations: [
@@ -45,7 +48,10 @@ import { ExpandableSummaryComponent } from './components/expandable-summary/expa
         CollapsibleListComponent,
         CollapsibleListItemComponent,
         SupportToolsComponent,
-        ExpandableSummaryComponent
+        ExpandableSummaryComponent,
+        VerticalDisplayListComponent,
+        VerticalDisplayListItemComponent,
+        SolutionTypeTagComponent
     ],
     imports: [
         HttpModule,
@@ -73,7 +79,10 @@ import { ExpandableSummaryComponent } from './components/expandable-summary/expa
         CollapsibleListComponent,
         CollapsibleListItemComponent,
         SupportToolsComponent,
-        ExpandableSummaryComponent
+        ExpandableSummaryComponent,
+        VerticalDisplayListComponent,
+        VerticalDisplayListItemComponent,
+        SolutionTypeTagComponent
     ]
 })
 export class SharedModule {
@@ -95,7 +104,8 @@ export class SharedModule {
                 LoggingService,
                 AvailabilityLoggingService,
                 BotLoggingService,
-                DetectorViewStateService
+                DetectorViewStateService,
+                SolutionFactoryService
             ]
         }
     }
