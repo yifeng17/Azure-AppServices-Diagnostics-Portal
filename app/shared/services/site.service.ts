@@ -3,7 +3,8 @@ import { Http, Headers, Response } from '@angular/http';
 import { ArmService, AuthService, UriElementsService, ServerFarmDataService } from '../services';
 import { Observable } from 'rxjs/Observable';
 import { StartupInfo } from '../models/portal';
-import { Site } from '../models/site'
+import { Site } from '../models/site';
+import { ArmObj } from '../models/armObj';
 
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
@@ -66,6 +67,20 @@ export class SiteService {
 
         return this._http.post(url, body, { headers: requestHeaders })
             .map((response: Response) => response.ok);
+    }
+
+    getSiteAppSettings(subscriptionId: string, resourceGroup: string, siteName: string, slot: string = ''): Observable<any> {
+
+        let url: string = this._uriElementsService.getListAppSettingsUrl(subscriptionId, resourceGroup, siteName, slot);
+
+        return this._armClient.postArmResource(url, {});
+    }
+
+    updateSiteAppSettings(subscriptionId: string, resourceGroup: string, siteName: string, slot: string = '', body: any): Observable<ArmObj> {
+
+        let url: string = this._uriElementsService.getUpdateAppSettingsUrl(subscriptionId, resourceGroup, siteName, slot);
+
+        return this._armClient.putArmResource(url, body);
     }
 
     private _getHeaders(): Headers {

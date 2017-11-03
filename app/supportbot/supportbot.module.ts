@@ -19,6 +19,8 @@ import { MainMenuComponent } from './message-flow/main-menu/main-menu.component'
 import { HealthCheckComponent } from './message-flow/health-check/health-check.component';
 import { FeedbackComponent } from './message-flow/feedback/feedback.component';
 
+import { AppInsightsSettingsComponent } from '../shared/components/app-insights/app-insights-settings.component';
+
 const _siteResourceUrl: string = 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/sites/:sitename';
 const _slotResourceUrl: string = 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/sites/:sitename/slots/:slot';
 
@@ -50,6 +52,20 @@ const _slotResourceUrl: string = 'subscriptions/:subscriptionid/resourcegroups/:
                 data: {
                     navigationTitle: 'Home (Preview)',
                     cacheComponent: true
+                }
+            },
+            {
+                path: _siteResourceUrl + '/diagnostics/settings/appinsights',
+                component: AppInsightsSettingsComponent,
+                data: {
+                    navigationTitle: 'Application Insights Settings'
+                }
+            },
+            {
+                path: _slotResourceUrl + '/diagnostics/settings/appinsights Settings',
+                component: AppInsightsSettingsComponent,
+                data: {
+                    navigationTitle: 'Application Insights'
                 }
             }]
         ),

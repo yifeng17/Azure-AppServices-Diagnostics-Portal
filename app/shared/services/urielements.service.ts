@@ -8,6 +8,9 @@ export class UriElementsService {
     private _siteResourceDiagnosticsPrefix: string = "/diagnostics";
 
     private _siteRestartUrlFormat: string = "/restart";
+    private _listAppSettingsUrlFormat: string = "/config/appsettings/list";
+    private _updateAppSettingsUrlFormat: string = "/config/appsettings";
+
     private _analysisResourceFormat: string = this._siteResourceDiagnosticsPrefix + "/{analysisName}";
     private _detectorsUrlFormat: string = this._siteResourceDiagnosticsPrefix + "/detectors";
     private _detectorResourceFormat: string = this._detectorsUrlFormat + "/{detectorName}";
@@ -56,6 +59,14 @@ export class UriElementsService {
 
     getDiagnosticPropertiesUrl(subscriptionId: string, resourceGroup: string, siteName: string, slot: string = ''): string {
         return this._getSiteResourceUrl(subscriptionId, resourceGroup, siteName, slot) + this._diagnosticPropertiesFormat;
+    }
+
+    getListAppSettingsUrl(subscriptionId: string, resourceGroup: string, siteName: string, slot: string = ''): string {
+        return this._getSiteResourceUrl(subscriptionId, resourceGroup, siteName, slot) + this._listAppSettingsUrlFormat;
+    }
+
+    getUpdateAppSettingsUrl(subscriptionId: string, resourceGroup: string, siteName: string, slot: string = ''): string {
+        return this._getSiteResourceUrl(subscriptionId, resourceGroup, siteName, slot) + this._updateAppSettingsUrlFormat;
     }
 
     private _getSiteResourceUrl(subscriptionId: string, resourceGroup: string, siteName: string, slot: string = '') {

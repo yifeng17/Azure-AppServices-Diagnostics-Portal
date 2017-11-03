@@ -7,7 +7,7 @@ import { HttpModule } from '@angular/http';
 import {
     PortalService, BroadcastService, AuthService, ArmService, UriElementsService, PortalActionService,
     SiteService, AppAnalysisService, WindowService, ServerFarmDataService, RBACService, LoggingService, 
-    AvailabilityLoggingService, BotLoggingService, DetectorViewStateService
+    AvailabilityLoggingService, BotLoggingService, DetectorViewStateService, AppInsightsService
 } from './services';
 import { LimitToFilter } from './utilities/limitToFilter.pipe';
 import { nvD3 } from './utilities/nvd3graph.component';
@@ -27,6 +27,7 @@ import { CollapsibleListComponent } from './components/collapsible-list/collapsi
 import { SupportToolsComponent } from './components/support-tools/support-tools.component';
 import { ExpandableSummaryComponent } from './components/expandable-summary/expandable-summary.component';
 import { AppInsightsTileComponent } from './components/app-insights/app-insights-tile.component';
+import { AppInsightsSettingsComponent } from './components/app-insights/app-insights-settings.component';
 
 @NgModule({
     declarations: [
@@ -47,12 +48,14 @@ import { AppInsightsTileComponent } from './components/app-insights/app-insights
         CollapsibleListItemComponent,
         SupportToolsComponent,
         ExpandableSummaryComponent,
-        AppInsightsTileComponent
+        AppInsightsTileComponent,
+        AppInsightsSettingsComponent
     ],
     imports: [
         HttpModule,
         CommonModule,
-        FormsModule
+        FormsModule,
+        RouterModule
     ],
     exports: [
         CommonModule,
@@ -76,7 +79,8 @@ import { AppInsightsTileComponent } from './components/app-insights/app-insights
         CollapsibleListItemComponent,
         SupportToolsComponent,
         ExpandableSummaryComponent,
-        AppInsightsTileComponent
+        AppInsightsTileComponent,
+        AppInsightsSettingsComponent
     ]
 })
 export class SharedModule {
@@ -98,7 +102,8 @@ export class SharedModule {
                 LoggingService,
                 AvailabilityLoggingService,
                 BotLoggingService,
-                DetectorViewStateService
+                DetectorViewStateService,
+                AppInsightsService
             ]
         }
     }

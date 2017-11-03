@@ -22,14 +22,14 @@ export class ArmService {
     public armApiVersion = '2016-02-01'
     public storageApiVersion = '2015-05-01-preview';
     public websiteApiVersion = '2015-08-01';
-   
+
     constructor(private _http: Http, private _authService: AuthService) {
     }
 
     getResource<T>(resourceUri: string): Observable<{} | T> {
         var url: string = `${this.armUrl}${resourceUri}?api-version=${this.websiteApiVersion}`
-        if(resourceUri.indexOf('?') >= 0){
-            url =  `${this.armUrl}${resourceUri}&api-version=${this.websiteApiVersion}`
+        if (resourceUri.indexOf('?') >= 0) {
+            url = `${this.armUrl}${resourceUri}&api-version=${this.websiteApiVersion}`
         }
 
         return this._http.get(url, {
@@ -49,6 +49,18 @@ export class ArmService {
         return this._http.post(url, body, { headers: this.getHeaders() })
             .map((response: Response) => response.ok)
             .catch((response) => { return Observable.of(false) });
+    }
+
+    postResourceExtended(resourceUri: string, body: any): Observable<any> {
+
+        var url = `${this.armUrl}${resourceUri}?api-version=${this.websiteApiVersion}`;
+        if (body) {
+            body = JSON.stringify(body);
+        }
+
+        return this._http.post(url, body, { headers: this.getHeaders() })
+            .map((response: Response) => response.json())
+            .catch((response) => { return Observable.of({}) });
     }
 
     private handleError(error: Response): any {
