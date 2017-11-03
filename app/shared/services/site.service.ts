@@ -4,6 +4,7 @@ import { ArmService, AuthService, UriElementsService, ServerFarmDataService } fr
 import { Observable } from 'rxjs/Observable';
 import { StartupInfo } from '../models/portal';
 import { Site } from '../models/site'
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
@@ -14,12 +15,19 @@ export class SiteService {
 
     public currentSite: Site;
 
+    private siteBehaviorSubject: BehaviorSubject<Site> = new BehaviorSubject<Site>(null);
+
     constructor(private _armClient: ArmService, private _authService: AuthService, private _http: Http, private _uriElementsService: UriElementsService, private _serverFarmService: ServerFarmDataService) {
         this._authService.getStartupInfo().flatMap((startUpInfo: StartupInfo) => {
             return this._armClient.getArmResource(startUpInfo.resourceId);
         }).subscribe((site: Site) => {
             this.currentSite = site;
+            this.siteBehaviorSubject.next(this.currentSite);
         });
+    }
+
+    public getCurrentSite(): BehaviorSubject<Site> {
+        return this.siteBehaviorSubject;
     }
 
     // I am making the assumption that two sites on the same server farm must be in the same sub 
