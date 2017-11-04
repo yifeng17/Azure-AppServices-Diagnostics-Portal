@@ -13,6 +13,8 @@ export class AppInsightsService {
     public appKey_AppSettingStr: string = "SUPPORTCNTR_APPINSIGHTS_APPKEY";
     public resourceUri_AppSettingStr: string = "SUPPORTCNTR_APPINSIGHTS_URI";
 
+    private appInsights_KeyStr: string = "WEBAPP_SUPPORTCNTR_READONLYKEY";
+
     public appInsightsSettings: any = {
         validForStack: undefined,
         enabledForWebApp: undefined,
@@ -59,7 +61,7 @@ export class AppInsightsService {
                         }
                     });
                 }
-                else{
+                else {
                     this.appInsightsSettings.enabledForWebApp = false;
                 }
             });
@@ -77,10 +79,6 @@ export class AppInsightsService {
                     }
                 });
         });
-
-        setInterval(() => {
-            console.log(this.appInsightsSettings);
-        }, 1000);
     }
 
     GetAIResourceForResource(resouceUri: string): Observable<string> {
@@ -88,8 +86,8 @@ export class AppInsightsService {
             return Observable.fromPromise(this.windowService.window.MsPortalFx.Services.Rpc.invokeCallback(this.appInsightsExtension, "GetAIResourceForResource", resouceUri));
         }
 
-        return Observable.from(['']);
-        //return Observable.from(['/subscriptions/1402be24-4f35-4ab7-a212-2cd496ebdf14/resourceGroups/Default-ApplicationInsights-EastUS/providers/microsoft.insights/components/highcpuscenario2']);
+        //return Observable.from(['']);
+        return Observable.from(['/subscriptions/1402be24-4f35-4ab7-a212-2cd496ebdf14/resourceGroups/Default-ApplicationInsights-EastUS/providers/microsoft.insights/components/highcpuscenario2']);
     }
 
     GetAIResourceByIkey(ikey: string, subscriptionId: string): Observable<string> {
@@ -98,6 +96,18 @@ export class AppInsightsService {
         }
 
         return Observable.from(['']);
+    }
+
+    GenerateAppInsightsAccessKey(): Observable<any> {
+
+        let url: string = `${this.appInsightsSettings.resourceUri}/ApiKeys`;
+        let body: any = {
+            name: this.appInsights_KeyStr,
+            linkedReadProperties: [`${this.appInsightsSettings.resourceUri}/api`],
+            linkedWriteProperties: []
+        };
+
+        return this.armService.postArmResource(url, body, '2015-05-01');
     }
 
     private isNotNullOrEmpty(item: any): boolean {

@@ -18,16 +18,7 @@ export class AppInsightsSettingsComponent implements OnInit {
     siteName: string;
     slotName: string;
 
-    loadingAppInsights: boolean;
-    loadingAppInsightsConnectionWithSupportCenter: boolean;
-
-    appInsightsPresent: boolean;
-    appInsightsPresentText: string;
-
-    appInsightsConnected: boolean;
-    appInsightsConnectedText: string;
-
-    constructor(private _route: ActivatedRoute, private siteService: SiteService, private authService: AuthService, private appInsightsService: AppInsightsService) {
+    constructor(private _route: ActivatedRoute, private siteService: SiteService, private authService: AuthService, public appInsightsService: AppInsightsService) {
     }
 
     ngOnInit(): void {
@@ -36,39 +27,29 @@ export class AppInsightsSettingsComponent implements OnInit {
         this.resourceGroup = this._route.snapshot.params['resourcegroup'];
         this.siteName = this._route.snapshot.params['sitename'];
         this.slotName = this._route.snapshot.params['slot'] ? this._route.snapshot.params['slot'] : '';
-
-        this.checkForAppInsightsResource();
-
-        this.siteService.getSiteAppSettings(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName)
-            .subscribe(data => {
-                let armResponse: ArmObj = data;
-                console.log(armResponse);
-
-                armResponse.properties['SUPPORTCNTR_APPINSIGHTS_APPID'] = '1234567890';
-                this.siteService.updateSiteAppSettings(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, armResponse)
-                .subscribe(data =>{});
-            });
     }
 
-    checkForAppInsightsResource(): void {
+    connectAppInsightsWithSupportCenter(): void {
 
-        this.loadingAppInsights = true;
-        this.appInsightsPresentText = "checking for resource";
-        this.authService.getStartupInfo().subscribe((startupInfo: StartupInfo) => {
+        this.appInsightsService.GenerateAppInsightsAccessKey().subscribe(data => {
+            if (data && data.apiKey && data.apiKey !== '') {
 
-            this.appInsightsService.GetAIResourceForResource(startupInfo.resourceId).subscribe((aiResource: string) => {
+                this.siteService.getSiteAppSettings(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName).subscribe(settingsResponse => {
 
-                this.loadingAppInsights = false;
+                    if (settingsResponse && settingsResponse.properties) {
+                        settingsResponse.properties[this.appInsightsService.appId_AppSettingStr] = this.appInsightsService.appInsightsSettings.appId;
+                        settingsResponse.properties[this.appInsightsService.appKey_AppSettingStr] = data.apiKey;
+                        settingsResponse.properties[this.appInsightsService.resourceUri_AppSettingStr] = this.appInsightsService.appInsightsSettings.resourceUri;
 
-                if (aiResource && aiResource !== '') {
-                    this.appInsightsPresent = true;
-                    this.appInsightsPresentText = "Application Insights Enabled";
-                }
-                else {
-                    this.appInsightsPresent = false;
-                    this.appInsightsPresentText = "No Application Insights Resource Found";
-                }
-            });
-        });
+                        this.siteService.updateSiteAppSettings(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, settingsResponse).subscribe(updateResponse=>{
+                            console.log(updateResponse);
+                            this.appInsightsService.appInsightsSettings.connectedWithSupportCenter = true;
+                        });
+
+                    }
+                });
+
+            }
+        })
     }
 }

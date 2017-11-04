@@ -51,18 +51,6 @@ export class ArmService {
             .catch((response) => { return Observable.of(false) });
     }
 
-    postResourceExtended(resourceUri: string, body: any): Observable<any> {
-
-        var url = `${this.armUrl}${resourceUri}?api-version=${this.websiteApiVersion}`;
-        if (body) {
-            body = JSON.stringify(body);
-        }
-
-        return this._http.post(url, body, { headers: this.getHeaders() })
-            .map((response: Response) => response.json())
-            .catch((response) => { return Observable.of({}) });
-    }
-
     private handleError(error: Response): any {
         return Observable.throw(error.json().error || 'Server error');
     }
@@ -151,8 +139,8 @@ export class ArmService {
     }
 
     // From Support Center Project
-    postArmResource(resourceId: string, body: any) {
-        var url = `${this.armUrl}${resourceId}?api-version=${this.websiteApiVersion}`;
+    postArmResource(resourceId: string, body: any, apiVersion?: string) {
+        var url = `${this.armUrl}${resourceId}?api-version=${apiVersion ? apiVersion : this.websiteApiVersion}`;
         if (body) {
             body = JSON.stringify(body);
         }

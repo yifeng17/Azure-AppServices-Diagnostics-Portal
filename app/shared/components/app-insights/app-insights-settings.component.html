@@ -8,7 +8,6 @@
             <a class="hyperlink" href="https://goo.gl/qdmXMv" target="_blank">Learn More</a>
         </div>
     </div>
-
     <div style="margin-top:10px;position:relative">
 
         <div style="position:absolute;top:10px;left:35px;width:1px;height:100%;background-color:#dcdcdc;z-index:-1"></div>
@@ -16,51 +15,72 @@
         <div style="padding:10px">
             <div style="display:inline-block;vertical-align:middle">
                 
-                <div [ngClass]="{'marker-green': appInsightsPresent === true, 'marker-red': appInsightsPresent === false}">
-                        <i class="fa health-icon" [ngClass]="{'fa-check healthy-icon-color' : appInsightsPresent === true, 'fa-times unhealthy-icon-color' : appInsightsPresent === false}" aria-hidden="true"></i>
+                <div [ngClass]="{'marker-green': appInsightsService.appInsightsSettings.enabledForWebApp === true, 'marker-red': appInsightsService.appInsightsSettings.enabledForWebApp === false}">
+                        <i class="fa health-icon" [ngClass]="{'fa-check healthy-icon-color' : appInsightsService.appInsightsSettings.enabledForWebApp === true, 'fa-times unhealthy-icon-color' : appInsightsService.appInsightsSettings.enabledForWebApp === false}" aria-hidden="true"></i>
                 </div>
             </div>
             <div style="display:inline-block;vertical-align:text-top;padding-left:10px">
-                <div style="font-weight:500;font-size:14px;text-decoration:underline">{{appInsightsPresentText}}</div>
-                <div *ngIf="!appInsightsPresent" style="margin-top:10px">
-                    <div style="color:#505050">
-                        Looks like there is no application insights resource associated with your app <span style="font-weight:500;color:black">{{siteName}}</span>. <br />Using application insights will help you detect and diagnose issues in your web application code very easily.
-                    </div>
-                    
-                    <button type="button" class="btn btn-info" style="min-width:200px;margin-top:10px" (click)="onClick(item)">
-                            Create Application Insights <i class="fa fa-chevron-right" style="margin-left:10px"></i>
-                    </button>
 
+                <div *ngIf="appInsightsService.appInsightsSettings.enabledForWebApp === false">
+                    <div style="font-weight:500;font-size:14px;text-decoration:underline">No Application Insights Resource Found</div>
+                    <div style="margin-top:10px">
+                        <div style="color:#505050">
+                            Looks like there is no application insights resource associated with your app <span style="font-weight:500;color:black">{{siteName}}</span>. <br />Using application insights will help you detect and diagnose issues in your web application code very easily.
+                        </div>
+                        
+                        <button type="button" class="btn btn-info" style="min-width:200px;margin-top:10px" (click)="onClick(item)">
+                                Create Application Insights <i class="fa fa-chevron-right" style="margin-left:10px"></i>
+                        </button>
+    
+                    </div>
                 </div>
 
-                <div *ngIf="appInsightsPresent" style="margin-top:10px">
-                        <div style="color:#505050">
-                            Your application <span style="font-weight:500;color:black">{{siteName}}</span> is associated with the App insights Resource : <span style="font-weight:500;color:black">AppInsightsResource</span>.
-                            <a class="hyperlink" style="margin-left:5px">(open/change)</a>
-                            <br />
-                        </div>
+                <div *ngIf="appInsightsService.appInsightsSettings.enabledForWebApp">
+                        <div style="font-weight:500;font-size:14px;text-decoration:underline">Application Insights Enabled</div>                        
+                    <div style="margin-top:10px">
+                            <div style="color:#505050">
+                                Your application <span style="font-weight:500;color:black">{{siteName}}</span> is associated with the App insights Resource : <span style="font-weight:500;color:black">{{appInsightsService.appInsightsSettings.name}}</span>.
+                                <a class="hyperlink" style="margin-left:5px">(open/change)</a>
+                                <br />
+                            </div>
                     </div>
+                </div>
+                
             </div>
         </div>
 
         <div style="padding:10px">
             <div style="display:inline-block;vertical-align:middle">
-                    <div class="marker-red">
-                            <i class="fa health-icon fa-times unhealthy-icon-color" aria-hidden="true"></i>
+                    <div [ngClass]="{'marker-green': appInsightsService.appInsightsSettings.connectedWithSupportCenter === true, 'marker-red': appInsightsService.appInsightsSettings.connectedWithSupportCenter === false}">
+                            <i class="fa health-icon" [ngClass]="{'fa-check healthy-icon-color' : appInsightsService.appInsightsSettings.connectedWithSupportCenter === true, 'fa-times unhealthy-icon-color' : appInsightsService.appInsightsSettings.connectedWithSupportCenter === false}" aria-hidden="true"></i>
                     </div>
             </div>
             <div style="display:inline-block;vertical-align:text-top;padding-left:10px">
+                
+                <div *ngIf="appInsightsService.appInsightsSettings.connectedWithSupportCenter === false">
                     <div style="font-weight:500;font-size:14px;text-decoration:underline">Not Connected with Support Center</div>
                     
                     <div style="margin-top:10px">
                         <div style="color:#505050">
-                            Looks like your application insights resource <span style="font-weight:500;color:black">AppInsightsResource</span> is not connected with Support Center. <br />Connect your application insights resource with support center to gain better insights about your failures and correlation with platform events.
+                            Looks like your application insights resource <span style="font-weight:500;color:black">{{appInsightsService.appInsightsSettings.name}}</span> is not connected with Support Center. <br />Connect your application insights resource with support center to gain better insights about your failures and correlation with platform events.
                         </div>
                         
-                        <button type="button" class="btn btn-info" style="min-width:200px;margin-top:10px" (click)="onClick(item)">
+                        <button type="button" class="btn btn-info" style="min-width:200px;margin-top:10px" (click)="connectAppInsightsWithSupportCenter()">
                                 Connect App Insights with Support Center 
                         </button>
                     </div>
+                </div>
+
+                <div *ngIf="appInsightsService.appInsightsSettings.connectedWithSupportCenter === true">
+                        <div style="font-weight:500;font-size:14px;text-decoration:underline">Connected with Support Center</div>
+                        
+                        <div style="margin-top:10px">
+                            <div style="color:#505050">
+                                Your application insights resource <span style="font-weight:500;color:black">{{appInsightsService.appInsightsSettings.name}}</span> is connected with Support Center.
+                            </div>
+                        </div>
+                    </div>
+
             </div>
         </div>
     </div>

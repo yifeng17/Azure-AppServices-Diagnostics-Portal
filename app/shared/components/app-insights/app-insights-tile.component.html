@@ -8,7 +8,6 @@
     </div>
     <div>
         <div style="padding:10px">
-            
             <div>
                 <div style="display:inline-block">
                     <i *ngIf="appInsightsService.appInsightsSettings.enabledForWebApp === undefined" class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true"></i>
@@ -33,20 +32,31 @@
                 <div style="display:inline">
                     
                     <div style="display:inline-block;height:40px;vertical-align: text-bottom">
-                            <i class="fa health-icon fa-times-circle unhealthy-icon-color" aria-hidden="true"></i>
+                        <i *ngIf="appInsightsService.appInsightsSettings.connectedWithSupportCenter === undefined" class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true"></i>
+                        <i *ngIf="appInsightsService.appInsightsSettings.connectedWithSupportCenter" class="fa health-icon fa-check-circle healthy-icon-color" aria-hidden="true"></i>
+                        <i *ngIf="appInsightsService.appInsightsSettings.connectedWithSupportCenter === false" class="fa health-icon fa-times-circle unhealthy-icon-color" aria-hidden="true"></i>
                     </div> 
                     <div style="display:inline-block">
-                            <div>Not Connected</div>
-                            <div style="margin-top:-5px">
-                                (With Support Center)
-                                <div class="tool-tip" style="height:21px">
-                                        <i class="fa fa-info-circle" style="color:#676767;float:right;padding-top:10px"></i>
-                                        <span class="tool-tip-text" style="font-variant:normal; width:150px">Application Insights helps you detect and diagnose issues in your web application code.</span>
-                                    </div>
-                            </div>
+                        
+                        <div *ngIf="appInsightsService.appInsightsSettings.connectedWithSupportCenter">
+                            Connected
+                        </div>
+
+                        <div *ngIf="appInsightsService.appInsightsSettings.connectedWithSupportCenter === false">
+                            Not Connected
+                        </div>
+
+
+                        <div style="margin-top:-5px">
+                            (With Support Center)
+                            <div class="tool-tip" style="height:21px">
+                                    <i class="fa fa-info-circle" style="color:#676767;float:right;padding-top:10px"></i>
+                                    <span class="tool-tip-text" style="font-variant:normal; width:150px">Application Insights helps you detect and diagnose issues in your web application code.</span>
+                                </div>
+                        </div>
                     </div>
                 </div>
-                <div style="display:inline-block" class="pull-right hyperlink" [ngClass]="{'disabled1': appInsightsPresent === false}" [routerLink]="['settings/appinsights']">
+                <div style="display:inline-block" class="pull-right hyperlink" [ngClass]="{'disabled1': appInsightsService.appInsightsSettings.enabledForWebApp === false}" [routerLink]="['settings/appinsights']">
                         edit
                 </div>
             </div>
