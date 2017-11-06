@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { SolutionBaseComponent } from '../../common/solution-base/solution-base.component';
 import { SolutionData } from '../../../../shared/models/solution';
-import { ServerFarmDataService } from '../../../../shared/services/server-farm-data.service';
+import { ServerFarmDataService, PortalActionService } from '../../../../shared/services';
 import { ServerFarm } from '../../../../shared/models/server-farm';
 
 
@@ -34,7 +34,7 @@ export class ScaleUpSolutionComponent implements SolutionBaseComponent {
 
     secondarySuggestion: string;
 
-    constructor(private _serverFarmService: ServerFarmDataService) {
+    constructor(private _serverFarmService: ServerFarmDataService, private _portalActionService: PortalActionService) {
         this._serverFarmService.getSiteServerFarm().subscribe(serverFarm => {
             if (serverFarm) {
                 console.log(serverFarm);
@@ -61,5 +61,9 @@ export class ScaleUpSolutionComponent implements SolutionBaseComponent {
         else {
             this.suggestion = 'You are already scaled to the maximum instance size. You could try scaling out instead.'
         }
+    }
+
+    openBlade() {
+        this._portalActionService.openBladeScaleUpBlade();
     }
 }
