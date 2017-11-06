@@ -6,8 +6,8 @@ import { HttpModule } from '@angular/http';
 
 import {
     PortalService, BroadcastService, AuthService, ArmService, UriElementsService, PortalActionService,
-    SiteService, AppAnalysisService, WindowService, ServerFarmDataService, RBACService, LoggingService, 
-    AvailabilityLoggingService, BotLoggingService, DetectorViewStateService, AppInsightsService
+    SiteService, AppAnalysisService, WindowService, ServerFarmDataService, RBACService, LoggingService,
+    AvailabilityLoggingService, BotLoggingService, DetectorViewStateService, AppInsightsService, AppInsightsQueryService
 } from './services';
 import { LimitToFilter } from './utilities/limitToFilter.pipe';
 import { nvD3 } from './utilities/nvd3graph.component';
@@ -28,6 +28,8 @@ import { SupportToolsComponent } from './components/support-tools/support-tools.
 import { ExpandableSummaryComponent } from './components/expandable-summary/expandable-summary.component';
 import { AppInsightsTileComponent } from './components/app-insights/app-insights-tile.component';
 import { AppInsightsSettingsComponent } from './components/app-insights/app-insights-settings.component';
+import { AppInsightsDependenciesComponent } from './components/app-insights/dependencies/app-insights-dependencies.component';
+import { AppInsightsExceptionsComponent } from './components/app-insights/exceptions/app-insights-exceptions.component';
 
 @NgModule({
     declarations: [
@@ -49,7 +51,9 @@ import { AppInsightsSettingsComponent } from './components/app-insights/app-insi
         SupportToolsComponent,
         ExpandableSummaryComponent,
         AppInsightsTileComponent,
-        AppInsightsSettingsComponent
+        AppInsightsSettingsComponent,
+        AppInsightsExceptionsComponent,
+        AppInsightsDependenciesComponent
     ],
     imports: [
         HttpModule,
@@ -80,7 +84,9 @@ import { AppInsightsSettingsComponent } from './components/app-insights/app-insi
         SupportToolsComponent,
         ExpandableSummaryComponent,
         AppInsightsTileComponent,
-        AppInsightsSettingsComponent
+        AppInsightsSettingsComponent,
+        AppInsightsDependenciesComponent,
+        AppInsightsExceptionsComponent
     ]
 })
 export class SharedModule {
@@ -103,7 +109,8 @@ export class SharedModule {
                 AvailabilityLoggingService,
                 BotLoggingService,
                 DetectorViewStateService,
-                AppInsightsService
+                AppInsightsService,
+                AppInsightsQueryService
             ]
         }
     }

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
-import { AuthService, AppInsightsService, AppAnalysisService, SiteService } from '../../services';
+import { AuthService, AppInsightsService, AppAnalysisService, SiteService, AppInsightsQueryService } from '../../services';
 import { StartupInfo } from '../../models/portal';
 import { ArmObj } from '../../models/armObj';
 
@@ -22,7 +22,7 @@ export class AppInsightsSettingsComponent implements OnInit {
     connectingAppInsightsSubAction: string;
     buttonText: string;
 
-    constructor(private _route: ActivatedRoute, private siteService: SiteService, private authService: AuthService, public appInsightsService: AppInsightsService) {
+    constructor(private _route: ActivatedRoute, private siteService: SiteService, private authService: AuthService, public appInsightsService: AppInsightsService, public appInsightsQueryService: AppInsightsQueryService) {
         this.buttonText = "Connect App Insights with Support Center";
         this.connectingAppInsights = false;
         this.connectingAppInsightsSubAction = "Generating Read-Only API Key ...";
@@ -35,6 +35,10 @@ export class AppInsightsSettingsComponent implements OnInit {
         this.resourceGroup = this._route.snapshot.params['resourcegroup'];
         this.siteName = this._route.snapshot.params['sitename'];
         this.slotName = this._route.snapshot.params['slot'] ? this._route.snapshot.params['slot'] : '';
+
+        this.appInsightsQueryService.GetTopExceptions(new Date(), new Date()).subscribe(data => {
+            console.log(data);
+        });
     }
 
     connectAppInsightsWithSupportCenter(): void {

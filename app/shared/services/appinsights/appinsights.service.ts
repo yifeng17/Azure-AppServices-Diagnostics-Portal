@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
+import { Http, Headers, Response, Request } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
-import { WindowService, AuthService, SiteService, AppAnalysisService, ArmService } from '../../shared/services';
-import { StartupInfo } from '../../shared/models/portal';
-import { ArmObj } from '../../shared/models/armObj';
+import { WindowService, AuthService, SiteService, AppAnalysisService, ArmService } from '../../../shared/services';
+import { StartupInfo } from '../../../shared/models/portal';
+import { ArmObj } from '../../../shared/models/armObj';
 
 @Injectable()
 export class AppInsightsService {
@@ -15,8 +16,6 @@ export class AppInsightsService {
     public appKey_AppSettingStr: string = "SUPPORTCNTR_APPINSIGHTS_APPKEY";
     public resourceUri_AppSettingStr: string = "SUPPORTCNTR_APPINSIGHTS_URI";
 
-    
-
     public appInsightsSettings: any = {
         validForStack: undefined,
         enabledForWebApp: undefined,
@@ -26,7 +25,7 @@ export class AppInsightsService {
         appId: undefined
     };
 
-    constructor(private authService: AuthService, private armService: ArmService, private windowService: WindowService, private siteService: SiteService, private appAnalysisService: AppAnalysisService) {
+    constructor(private http: Http, private authService: AuthService, private armService: ArmService, private windowService: WindowService, private siteService: SiteService, private appAnalysisService: AppAnalysisService) {
     }
 
     LoadAppInsightsSettings(resourceUri: string, subscription: string, resourceGroup: string, siteName: string, slotName: string = ''): void {
@@ -109,7 +108,21 @@ export class AppInsightsService {
             linkedWriteProperties: []
         };
 
+        // TODO: if the key already exists, then delete it first else the call the fail with 400
         return this.armService.postArmResource(url, body, '2015-05-01');
+    }
+
+    ExecuteQuery(query: string): Observable<any> {
+        if (!this.isNotNullOrEmpty(query)) {
+            return Observable.from([]);
+        }
+
+        let url: string = `${this.appInsightsApiEndpoint}${this.appInsightsSettings.appId}/query?query=${encodeURIComponent(query)}`;
+
+        return this.http.get(url, {
+            headers: this.armService.getHeaders()
+        })
+            .map((response: Response) => response.json());
     }
 
     private isNotNullOrEmpty(item: any): boolean {

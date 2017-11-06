@@ -26,4 +26,5 @@ export * from "./site.service";
 export * from "./appanalysis.service";
 export * from "./portal-action.service";
 export * from "./detector-view-state.service";
-export * from "./appinsights.service";
+export * from "./appinsights/appinsights.service";
+export * from "./appinsights/appinsights-query.service";
