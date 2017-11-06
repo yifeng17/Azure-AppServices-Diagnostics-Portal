@@ -8,12 +8,14 @@ import { ArmObj } from '../../shared/models/armObj';
 export class AppInsightsService {
 
     private appInsightsExtension = "AppInsightsExtension";
+    private appInsights_KeyStr: string = "WEBAPP_SUPPORTCNTR_READONLYKEY";
+    private appInsightsApiEndpoint: string = "https://api.applicationinsights.io/v1/apps/";
 
     public appId_AppSettingStr: string = "SUPPORTCNTR_APPINSIGHTS_APPID";
     public appKey_AppSettingStr: string = "SUPPORTCNTR_APPINSIGHTS_APPKEY";
     public resourceUri_AppSettingStr: string = "SUPPORTCNTR_APPINSIGHTS_URI";
 
-    private appInsights_KeyStr: string = "WEBAPP_SUPPORTCNTR_READONLYKEY";
+    
 
     public appInsightsSettings: any = {
         validForStack: undefined,
