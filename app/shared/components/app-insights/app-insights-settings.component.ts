@@ -18,7 +18,15 @@ export class AppInsightsSettingsComponent implements OnInit {
     siteName: string;
     slotName: string;
 
+    connectingAppInsights: boolean;
+    connectingAppInsightsSubAction: string;
+    buttonText: string;
+
     constructor(private _route: ActivatedRoute, private siteService: SiteService, private authService: AuthService, public appInsightsService: AppInsightsService) {
+        this.buttonText = "Connect App Insights with Support Center";
+        this.connectingAppInsights = false;
+        this.connectingAppInsightsSubAction = "Generating Read-Only API Key ...";
+
     }
 
     ngOnInit(): void {
@@ -31,6 +39,12 @@ export class AppInsightsSettingsComponent implements OnInit {
 
     connectAppInsightsWithSupportCenter(): void {
 
+        if (this.connectingAppInsights) {
+            return;
+        }
+
+        this.connectingAppInsights = true;
+        this.connectingAppInsightsSubAction = "Generating Read-Only API Key ...";
         this.appInsightsService.GenerateAppInsightsAccessKey().subscribe(data => {
             if (data && data.apiKey && data.apiKey !== '') {
 
@@ -41,11 +55,12 @@ export class AppInsightsSettingsComponent implements OnInit {
                         settingsResponse.properties[this.appInsightsService.appKey_AppSettingStr] = data.apiKey;
                         settingsResponse.properties[this.appInsightsService.resourceUri_AppSettingStr] = this.appInsightsService.appInsightsSettings.resourceUri;
 
-                        this.siteService.updateSiteAppSettings(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, settingsResponse).subscribe(updateResponse=>{
-                            console.log(updateResponse);
-                            this.appInsightsService.appInsightsSettings.connectedWithSupportCenter = true;
-                        });
+                        this.connectingAppInsightsSubAction = "Updating Web-App Application Settings ...";
+                        this.siteService.updateSiteAppSettings(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, settingsResponse).subscribe(updateResponse => {
 
+                            this.appInsightsService.appInsightsSettings.connectedWithSupportCenter = true;
+                            this.connectingAppInsights = false;
+                        });
                     }
                 });
 

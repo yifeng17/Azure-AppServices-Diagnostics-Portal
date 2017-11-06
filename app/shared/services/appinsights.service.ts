@@ -87,7 +87,7 @@ export class AppInsightsService {
         }
 
         //return Observable.from(['']);
-        return Observable.from(['/subscriptions/1402be24-4f35-4ab7-a212-2cd496ebdf14/resourceGroups/Default-ApplicationInsights-EastUS/providers/microsoft.insights/components/highcpuscenario2']);
+        return Observable.from(['/subscriptions/1402be24-4f35-4ab7-a212-2cd496ebdf14/resourceGroups/shgup/providers/microsoft.insights/components/SupportCenteDeflectionMetrics']);
     }
 
     GetAIResourceByIkey(ikey: string, subscriptionId: string): Observable<string> {
