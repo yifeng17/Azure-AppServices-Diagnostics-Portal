@@ -35,10 +35,6 @@ export class AppInsightsSettingsComponent implements OnInit {
         this.resourceGroup = this._route.snapshot.params['resourcegroup'];
         this.siteName = this._route.snapshot.params['sitename'];
         this.slotName = this._route.snapshot.params['slot'] ? this._route.snapshot.params['slot'] : '';
-
-        this.appInsightsQueryService.GetTopExceptions(new Date(), new Date()).subscribe(data => {
-            console.log(data);
-        });
     }
 
     connectAppInsightsWithSupportCenter(): void {

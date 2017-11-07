@@ -25,11 +25,11 @@ export class ArmService {
 
     constructor(private _http: Http, private _authService: AuthService) {
     }
-
-    getResource<T>(resourceUri: string): Observable<{} | T> {
-        var url: string = `${this.armUrl}${resourceUri}?api-version=${this.websiteApiVersion}`
+    
+    getResource<T>(resourceUri: string, apiVersion?: string): Observable<{} | T> {
+        var url: string = `${this.armUrl}${resourceUri}?api-version=${apiVersion ? apiVersion : this.websiteApiVersion}`
         if (resourceUri.indexOf('?') >= 0) {
-            url = `${this.armUrl}${resourceUri}&api-version=${this.websiteApiVersion}`
+            url = `${this.armUrl}${resourceUri}&api-version=${apiVersion ? apiVersion : this.websiteApiVersion}`
         }
 
         return this._http.get(url, {

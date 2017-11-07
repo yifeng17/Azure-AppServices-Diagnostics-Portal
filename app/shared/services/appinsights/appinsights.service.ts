@@ -88,7 +88,7 @@ export class AppInsightsService {
         }
 
         //return Observable.from(['']);
-        return Observable.from(['/subscriptions/1402be24-4f35-4ab7-a212-2cd496ebdf14/resourceGroups/shgup/providers/microsoft.insights/components/SupportCenteDeflectionMetrics']);
+        return Observable.from(['/subscriptions/0d3ae56c-deaf-4982-b514-33d016d4a683/resourcegroups/Support-RG/providers/microsoft.insights/components/SupportPortal-AppInsights']);
     }
 
     GetAIResourceByIkey(ikey: string, subscriptionId: string): Observable<string> {
@@ -117,12 +117,8 @@ export class AppInsightsService {
             return Observable.from([]);
         }
 
-        let url: string = `${this.appInsightsApiEndpoint}${this.appInsightsSettings.appId}/query?query=${encodeURIComponent(query)}`;
-
-        return this.http.get(url, {
-            headers: this.armService.getHeaders()
-        })
-            .map((response: Response) => response.json());
+        let resourceUri: string = `${this.appInsightsSettings.resourceUri}/api/query?query=${encodeURIComponent(query)}`;
+        return this.armService.getResource<any>(resourceUri, '2015-05-01');
     }
 
     private isNotNullOrEmpty(item: any): boolean {
