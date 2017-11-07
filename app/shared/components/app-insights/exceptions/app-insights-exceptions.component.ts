@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
-import { AuthService, AppInsightsQueryService } from '../../../services';
+import { AppInsightsService, AppInsightsQueryService } from '../../../services';
 
 @Component({
     selector: 'app-insights-exceptions',
@@ -19,9 +19,10 @@ export class AppInsightsExceptionsComponent implements OnInit, OnChanges {
     @Input() startTime: string;
     @Input() endTime: string;
 
+    loading: boolean;
     exceptions: any = [];
 
-    constructor(private _route: ActivatedRoute, private authService: AuthService, public appInsightsQueryService: AppInsightsQueryService) {
+    constructor(private _route: ActivatedRoute, private appInsightsService: AppInsightsService, public appInsightsQueryService: AppInsightsQueryService) {
         this.exceptions = [];
     }
 
@@ -35,12 +36,13 @@ export class AppInsightsExceptionsComponent implements OnInit, OnChanges {
 
     ngOnChanges(changes: SimpleChanges): void {
 
-        if (changes['startTime']) {
+        if (changes['startTime'] && this.appInsightsService.appInsightsSettings.validForStack) {
             this.exceptions = [];
+            this.loading = true;
             this.appInsightsQueryService.GetTopExceptions(this.startTime, this.endTime).subscribe((data: any) => {
                 let rows = data["Tables"][0]["Rows"];
-                console.log(data);
                 this.parseRowsIntoExceptions(rows);
+                this.loading = false;
             });
         }
     }
