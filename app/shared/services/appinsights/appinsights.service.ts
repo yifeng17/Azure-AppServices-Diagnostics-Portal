@@ -108,7 +108,9 @@ export class AppInsightsService {
             linkedWriteProperties: []
         };
 
-        // TODO: if the key already exists, then delete it first else the call the fail with 400
+        //this.armService.getArmResource(url, '2015-05-01')
+
+
         return this.armService.postArmResource(url, body, '2015-05-01');
     }
 

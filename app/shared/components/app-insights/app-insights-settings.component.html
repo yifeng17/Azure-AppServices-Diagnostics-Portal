@@ -66,19 +66,19 @@
             <div style="display:inline-block;vertical-align:text-top;padding-left:10px">
 
                 <div *ngIf="appInsightsService.appInsightsSettings.connectedWithSupportCenter === false">
-                    <div style="font-weight:500;font-size:14px;text-decoration:underline">Not Connected with Support Center</div>
+                    <div style="font-weight:500;font-size:14px;text-decoration:underline">Not Connected with App Service diagnostics</div>
 
                     <div style="margin-top:10px">
                         <div style="color:#505050">
                             Looks like your application insights resource
-                            <span style="font-weight:500;color:black">{{appInsightsService.appInsightsSettings.name}}</span> is not connected with Support Center.
-                            <br />Connect your application insights resource with support center to gain better insights about
+                            <span style="font-weight:500;color:black">{{appInsightsService.appInsightsSettings.name}}</span> is not connected with App Service diagnostics.
+                            <br />Connect your application insights resource with App Service diagnostics to gain better insights about
                             your failures and correlation with platform events.
                         </div>
 
                         <button type="button" class="btn btn-info" style="min-width:200px;margin-top:10px" (click)="connectAppInsightsWithSupportCenter()">
                             <i *ngIf="connectingAppInsights" class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true" style="color:white"></i>
-                            Connect App Insights with Support Center
+                            Connect App Insights with App Service diagnostics
                         </button>
 
                         <div *ngIf="connectingAppInsights" style="color:#8f8f8f;margin-top:5px;margin-left:30px;font-size:13px">
@@ -88,12 +88,12 @@
                 </div>
 
                 <div *ngIf="appInsightsService.appInsightsSettings.connectedWithSupportCenter === true">
-                    <div style="font-weight:500;font-size:14px;text-decoration:underline">Connected with Support Center</div>
+                    <div style="font-weight:500;font-size:14px;text-decoration:underline">Connected with App Service diagnostics</div>
 
                     <div style="margin-top:10px">
                         <div style="color:#505050">
                             Your application insights resource
-                            <span style="font-weight:500;color:black">{{appInsightsService.appInsightsSettings.name}}</span> is connected with Support Center.
+                            <span style="font-weight:500;color:black">{{appInsightsService.appInsightsSettings.name}}</span> is connected with App Service diagnostics.
                         </div>
                     </div>
                 </div>
