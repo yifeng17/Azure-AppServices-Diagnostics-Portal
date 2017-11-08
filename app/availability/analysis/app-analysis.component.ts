@@ -111,8 +111,6 @@ export class AppAnalysisComponent implements OnInit {
         this.abnormalTimePeriods = null;
         this.analysisResponse = null;
 
-        this._appAnalysisService.invalidateCache();
-
         this.topLevelGraphRefreshIndex++;
 
         this.startLoadingMessage();

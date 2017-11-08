@@ -332,7 +332,6 @@ export class WebAppRestartComponent implements OnInit {
         this._logger.LogMessage(`New Date Selected :${event.formatted}`);
 
         let currentDate: Date = GraphHelper.convertToUTCTime(new Date());
-        this._analysisService.invalidateCache();
         this.startLoadingMessage();
         this.showToolsDropdown = false;
 
