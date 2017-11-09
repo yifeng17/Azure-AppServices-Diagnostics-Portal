@@ -39,13 +39,44 @@ export class ArmService {
         return this._cache.get(url, request, invalidateCache);
     }
 
-    postResource<T>(resourceUri: string, body?: any, apiVersion?: string, invalidateCache: boolean = false): Observable<boolean | {} | ResponseMessageEnvelope<T>> {
+    getResourceWithoutEnvelope<T>(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Observable<{} | T> {
         var url: string = `${this.armUrl}${resourceUri}${resourceUri.indexOf('?') >= 0 ? '&' : '?'}api-version=${!!apiVersion ? apiVersion : this.websiteApiVersion}`
+
+        let request = this._http.get(url, {
+            headers: this.getHeaders()
+        })
+            .map((response: Response) => (<T>response.json()))
+            .catch(this.handleError);
+
+        return this._cache.get(url, request, invalidateCache);
+    }
+
+    postResource<T,S>(resourceUri: string, body?: S, apiVersion?: string, invalidateCache: boolean = false): Observable<boolean | {} | ResponseMessageEnvelope<T>> {
+        var url: string = `${this.armUrl}${resourceUri}${resourceUri.indexOf('?') >= 0 ? '&' : '?'}api-version=${!!apiVersion ? apiVersion : this.websiteApiVersion}`
+        let bodyString: string = '';
         if (body) {
-            body = JSON.stringify(body);
+            bodyString = JSON.stringify(body);
         }
 
-        let request = this._http.post(url, body, { headers: this.getHeaders() })
+        let request = this._http.post(url, bodyString, { headers: this.getHeaders() })
+            .map((response: Response) => {
+                let body = response.text();
+
+                return body && body.length > 0 ? <ResponseMessageEnvelope<T>>(response.json()) : response.ok;      
+            })
+            .catch(this.handleError);
+        
+        return this._cache.get(url, request, invalidateCache);
+    }
+
+    putResource<T,S>(resourceUri: string, body?: S, apiVersion?: string, invalidateCache: boolean = false): Observable<boolean | {} | ResponseMessageEnvelope<T>> {
+        var url: string = `${this.armUrl}${resourceUri}${resourceUri.indexOf('?') >= 0 ? '&' : '?'}api-version=${!!apiVersion ? apiVersion : this.websiteApiVersion}`
+        let bodyString: string = '';
+        if (body) {
+            bodyString = JSON.stringify(body);
+        }
+
+        let request = this._http.put(url, bodyString, { headers: this.getHeaders() })
             .map((response: Response) => {
                 let body = response.text();
 

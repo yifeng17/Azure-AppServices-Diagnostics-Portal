@@ -19,7 +19,7 @@ export class AppAnalysisService {
 
     getAnalysisResource(subscriptionId: string, resourceGroup: string, siteName: string, slot: string, diagnosticCategory:string, analysisName: string, invalidateCache: boolean = false, startTime: string = '', endTime: string = ''): Observable<IAppAnalysisResponse> {
         let resourceUrl: string = this._uriElementsService.getAnalysisResourceUrl(subscriptionId, resourceGroup, siteName, diagnosticCategory, analysisName, slot, startTime, endTime);
-        return this._armService.postResource<ResponseMessageEnvelope<IAppAnalysisResponse>>(resourceUrl, null, null, invalidateCache)
+        return this._armService.postResource<ResponseMessageEnvelope<IAppAnalysisResponse>, any>(resourceUrl, null, null, invalidateCache)
             .map((response: ResponseMessageEnvelope<IAppAnalysisResponse>) => <IAppAnalysisResponse>response.properties)
             .catch(this.handleError);
     }
@@ -35,7 +35,7 @@ export class AppAnalysisService {
     getDetectorResource(subscriptionId: string, resourceGroup: string, siteName: string, slot: string, diagnosticCategory:string, detectorName: string, invalidateCache: boolean = false, startTime: string = '', endTime: string = ''): Observable<IDetectorResponse> {
         let resourceUrl: string = this._uriElementsService.getDetectorResourceUrl(subscriptionId, resourceGroup, siteName, slot, diagnosticCategory, detectorName, startTime, endTime);
 
-        return this._armService.postResource<ResponseMessageEnvelope<IDetectorResponse>>(resourceUrl, null, null, invalidateCache)
+        return this._armService.postResource<ResponseMessageEnvelope<IDetectorResponse>, any>(resourceUrl, null, null, invalidateCache)
             .map((response: ResponseMessageEnvelope<IDetectorResponse>) => <IDetectorResponse>response.properties)
             .do((data: IDetectorResponse) => {
 
