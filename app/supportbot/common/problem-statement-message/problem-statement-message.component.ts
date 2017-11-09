@@ -51,7 +51,7 @@ export class ProblemStatementMessageComponent implements OnInit, AfterViewInit, 
         this.siteName = this._route.snapshot.params['sitename'];
         this.slotName = this._route.snapshot.params['slot'] ? this._route.snapshot.params['slot'] : '';
 
-        this._appAnalysisService.getDetectorResource(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, 'sitecpuanalysis').subscribe(response => {
+        this._appAnalysisService.getDetectorResource(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, 'availability', 'sitecpuanalysis').subscribe(response => {
             this.detectorResponse = response;
         });
     }

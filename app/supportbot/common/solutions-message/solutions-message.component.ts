@@ -37,7 +37,7 @@ export class SolutionsMessageComponent implements OnInit, AfterViewInit, IChatMe
         this.siteName = this._route.snapshot.params['sitename'];
         this.slotName = this._route.snapshot.params['slot'] ? this._route.snapshot.params['slot'] : '';
 
-        this._appAnalysisService.getDetectorResource(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, 'sitecpuanalysis').subscribe(response => {
+        this._appAnalysisService.getDetectorResource(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, 'availability', 'sitecpuanalysis').subscribe(response => {
             this.detectorResponse = response;
             if(response.abnormalTimePeriods.length > 0){
                 response.abnormalTimePeriods[response.abnormalTimePeriods.length - 1].solutions.forEach(solution => this.solutions.push(solution));

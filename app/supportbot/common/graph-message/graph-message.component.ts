@@ -49,7 +49,7 @@ export class GraphMessageComponent implements OnInit, AfterViewInit, IChatMessag
         this.siteName = this._route.snapshot.params['sitename'];
         this.slotName = this._route.snapshot.params['slot'] ? this._route.snapshot.params['slot'] : '';
 
-        this._appAnalysisService.getDetectorResource(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, 'sitecpuanalysis').subscribe(response => {
+        this._appAnalysisService.getDetectorResource(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, 'availability', 'sitecpuanalysis').subscribe(response => {
             this.detectorMetrics = response.metrics.filter(x => x.name === "Overall CPU Percent");
             this.instanceDetailMetrics = response.metrics.filter(x => x.name !== "Overall CPU Percent");
             this.loading = false;

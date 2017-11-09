@@ -7,7 +7,7 @@ import { HttpModule } from '@angular/http';
 import {
     PortalService, BroadcastService, AuthService, ArmService, UriElementsService, PortalActionService,
     SiteService, AppAnalysisService, WindowService, ServerFarmDataService, RBACService, LoggingService, 
-    AvailabilityLoggingService, BotLoggingService, DetectorViewStateService, SolutionFactoryService
+    AvailabilityLoggingService, BotLoggingService, DetectorViewStateService, CacheService, SolutionFactoryService
 } from './services';
 import { LimitToFilter } from './utilities/limitToFilter.pipe';
 import { nvD3 } from './utilities/nvd3graph.component';
@@ -105,6 +105,7 @@ export class SharedModule {
                 AvailabilityLoggingService,
                 BotLoggingService,
                 DetectorViewStateService,
+                CacheService,
                 SolutionFactoryService
             ]
         }

@@ -33,7 +33,7 @@ export class AuthService {
                     sessionId : null,
                     token : "",
                     subscriptions : null,
-                    resourceId: "/subscriptions/1402be24-4f35-4ab7-a212-2cd496ebdf14/resourceGroups/netpractice/providers/Microsoft.Web/sites/netpractice"
+                    resourceId: ""
                 }
             )
         }
