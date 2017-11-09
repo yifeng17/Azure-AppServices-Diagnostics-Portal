@@ -1,0 +1,19 @@
+<metric-graph [metricSets]="detectorMetrics" [title]="detectorMetricsTitle" [chartType]="metricsChartType" [yAxisLabel]="detectorMetricsYAxisLabel"></metric-graph>
+
+<table *ngIf="showMetadata" class="table table-bordered" style="margin-top:8px;margin-bottom:5px;">
+    <thead>
+        <tr>
+            <th style="width:220px;">Time</th>
+            <th>Message</th>
+                
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let row of detectorResponse.data">
+            <td *ngFor="let col of row" >{{col.value}}</td>
+        </tr>
+    </tbody>
+</table>
+
+<br/>
+<feedback-form [source]='getDetectorName()'></feedback-form>

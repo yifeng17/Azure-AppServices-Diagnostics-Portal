@@ -36,6 +36,7 @@ export class SupportToolsComponent  {
             })
             .subscribe((hasPermission: boolean) => {
                 this.hasReadAccessToServerFarm = hasPermission;
+                //disable for Linux
                 this.initialize();
             })
     }

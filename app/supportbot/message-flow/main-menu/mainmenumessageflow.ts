@@ -14,7 +14,7 @@ export class MainMenuMessageFlow implements IMessageFlowProvider {
 
         var mainMenuGroup: MessageGroup = new MessageGroup('main-menu', [], 'health-check');
         mainMenuGroup.messages.push(new TextMessage('Here are some of the things that I can help you with:', MessageSender.System, 2000));
-        mainMenuGroup.messages.push(new MainMenuMessage(this._getCategories()));
+        mainMenuGroup.messages.push(new MainMenuMessage(this._getLinuxCategories()));
 
         messageGroupList.push(mainMenuGroup);
 
@@ -37,6 +37,16 @@ export class MainMenuMessageFlow implements IMessageFlowProvider {
         }, {
             name: 'Web App Restarted',
             href: 'availability/apprestartanalysis'
+        }];
+    }
+
+        private _getLinuxCategories(): { name: string, href: string }[] {
+        return [{
+            name: 'Web App Down',
+            href: 'availability/analysis'
+        }, {
+            name: 'Web App Slow',
+            href: 'performance/analysis'
         }];
     }
 }
