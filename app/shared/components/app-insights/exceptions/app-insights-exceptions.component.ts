@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
-import { AppInsightsService, AppInsightsQueryService } from '../../../services';
+import { AppInsightsService, AppInsightsQueryService, PortalActionService } from '../../../services';
 
 @Component({
     selector: 'app-insights-exceptions',
@@ -22,7 +22,7 @@ export class AppInsightsExceptionsComponent implements OnInit, OnChanges {
     loading: boolean;
     exceptions: any = [];
 
-    constructor(private _route: ActivatedRoute, private appInsightsService: AppInsightsService, public appInsightsQueryService: AppInsightsQueryService) {
+    constructor(private _route: ActivatedRoute, private appInsightsService: AppInsightsService, private appInsightsQueryService: AppInsightsQueryService, private portalActionService: PortalActionService) {
         this.exceptions = [];
     }
 
@@ -59,5 +59,9 @@ export class AppInsightsExceptionsComponent implements OnInit, OnChanges {
                 count: element[2]
             });
         });
+    }
+
+    OpenAppInsights() {
+        this.portalActionService.openAppInsightsBlade();
     }
 }

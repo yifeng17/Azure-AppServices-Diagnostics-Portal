@@ -91,8 +91,7 @@ export class AppInsightsService {
             return Observable.fromPromise(this.windowService.window.MsPortalFx.Services.Rpc.invokeCallback(this.appInsightsExtension, "GetAIResourceForResource", resouceUri));
         }
 
-        //return Observable.from(['']);
-        return Observable.from(['/subscriptions/0d3ae56c-deaf-4982-b514-33d016d4a683/resourcegroups/Support-RG/providers/microsoft.insights/components/SupportPortal-AppInsights']);
+        return Observable.from(['']);
     }
 
     GetAIResourceByIkey(ikey: string, subscriptionId: string): Observable<string> {

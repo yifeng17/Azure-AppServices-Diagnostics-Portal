@@ -23,8 +23,8 @@
                     </div>
                 </div>
                 <div style="display:inline-block" class="pull-right hyperlink">
-                    <div *ngIf="appInsightsService.appInsightsSettings.enabledForWebApp">open</div>
-                    <div *ngIf="appInsightsService.appInsightsSettings.enabledForWebApp === false">create</div>
+                    <div *ngIf="appInsightsService.appInsightsSettings.enabledForWebApp" (click)="OpenAppInsights()">open</div>
+                    <div *ngIf="appInsightsService.appInsightsSettings.enabledForWebApp === false" (click)="OpenAppInsights()">create</div>
                 </div>
             </div>
 
