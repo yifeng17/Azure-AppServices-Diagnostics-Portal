@@ -69,6 +69,24 @@ export class ArmService {
         return this._cache.get(url, request, invalidateCache);
     }
 
+    postResourceWithoutEnvelope<T, S>(resourceUri: string, body?: S, apiVersion?: string, invalidateCache: boolean = false): Observable<boolean | {} | T> {
+        var url: string = `${this.armUrl}${resourceUri}${resourceUri.indexOf('?') >= 0 ? '&' : '?'}api-version=${!!apiVersion ? apiVersion : this.websiteApiVersion}`
+        let bodyString: string = '';
+        if (body) {
+            bodyString = JSON.stringify(body);
+        }
+
+        let request = this._http.post(url, bodyString, { headers: this.getHeaders() })
+            .map((response: Response) => {
+                let body = response.text();
+
+                return body && body.length > 0 ? <T>(response.json()) : response.ok;
+            })
+            .catch(this.handleError);
+
+        return this._cache.get(url, request, invalidateCache);
+    }
+
 
     putResource<T, S>(resourceUri: string, body?: S, apiVersion?: string, invalidateCache: boolean = false): Observable<boolean | {} | ResponseMessageEnvelope<T>> {
         var url: string = `${this.armUrl}${resourceUri}${resourceUri.indexOf('?') >= 0 ? '&' : '?'}api-version=${!!apiVersion ? apiVersion : this.websiteApiVersion}`
@@ -82,6 +100,24 @@ export class ArmService {
                 let body = response.text();
 
                 return body && body.length > 0 ? <ResponseMessageEnvelope<T>>(response.json()) : response.ok;
+            })
+            .catch(this.handleError);
+
+        return this._cache.get(url, request, invalidateCache);
+    }
+
+    putResourceWithoutEnvelope<T, S>(resourceUri: string, body?: S, apiVersion?: string, invalidateCache: boolean = false): Observable<boolean | {} | T> {
+        var url: string = `${this.armUrl}${resourceUri}${resourceUri.indexOf('?') >= 0 ? '&' : '?'}api-version=${!!apiVersion ? apiVersion : this.websiteApiVersion}`
+        let bodyString: string = '';
+        if (body) {
+            bodyString = JSON.stringify(body);
+        }
+
+        let request = this._http.put(url, bodyString, { headers: this.getHeaders() })
+            .map((response: Response) => {
+                let body = response.text();
+
+                return body && body.length > 0 ? <T>(response.json()) : response.ok;
             })
             .catch(this.handleError);
 

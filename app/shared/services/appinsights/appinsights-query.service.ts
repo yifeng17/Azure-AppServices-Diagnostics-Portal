@@ -1,23 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
-import { AppInsightsService } from '../../../shared/services';
-import { ICache } from '../../../shared/models/icache';
+import { AppInsightsService, CacheService } from '../../../shared/services';
 
 @Injectable()
 export class AppInsightsQueryService {
 
-    private exceptionsCache: ICache<any>;
-    private dependenciesCache: ICache<any>;
-
-    constructor(private appinsightsService: AppInsightsService) {
-        this.invalidateCache();
+    constructor(private appinsightsService: AppInsightsService, private cache: CacheService) {
     }
 
-    GetTopExceptions(startTimeUTC: string, endTimeUTC: string, recordsLimit: number = 5) {
-
-        if (this.exceptionsCache && this.exceptionsCache[startTimeUTC]) {
-            return Observable.of<any>(this.exceptionsCache[startTimeUTC]);
-        }
+    GetTopExceptions(startTimeUTC: string, endTimeUTC: string, recordsLimit: number = 5, invalidateCache: boolean = false) {
 
         let query: string = `
         exceptions
@@ -26,10 +17,9 @@ export class AppInsightsQueryService {
         | summarize count() by outerMessage, problemId
         | top ${recordsLimit} by count_ desc`;
 
-        return this.appinsightsService.ExecuteQuery(query)
-            .do(data => {
-                this.exceptionsCache[startTimeUTC] = data;
-            });
+        let requests = this.appinsightsService.ExecuteQuery(query);
+
+        return this.cache.get(`${startTimeUTC}--${endTimeUTC}`, requests, invalidateCache)
     }
 
     GetTopSlowestDependencies(startTimeUTC: Date, endTimeUTC: Date, dependencyCallCountLowerBound?: number) {
@@ -42,11 +32,6 @@ export class AppInsightsQueryService {
         | top 5 by percentile_duration_50  desc`;
 
         return this.appinsightsService.ExecuteQuery(query);
-    }
-
-    invalidateCache(): void {
-        this.exceptionsCache = {};
-        this.dependenciesCache = {};
     }
 
     private isNotNullOrEmpty(item: any): boolean {

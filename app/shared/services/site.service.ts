@@ -84,14 +84,14 @@ export class SiteService {
 
         let url: string = this._uriElementsService.getListAppSettingsUrl(subscriptionId, resourceGroup, siteName, slot);
 
-        return this._armClient.postArmResource(url, {});
+        return this._armClient.postResource(url, {});
     }
 
-    updateSiteAppSettings(subscriptionId: string, resourceGroup: string, siteName: string, slot: string = '', body: any): Observable<ArmObj> {
+    updateSiteAppSettings(subscriptionId: string, resourceGroup: string, siteName: string, slot: string = '', body: any): Observable<any> {
 
         let url: string = this._uriElementsService.getUpdateAppSettingsUrl(subscriptionId, resourceGroup, siteName, slot);
 
-        return this._armClient.putArmResource(url, body);
+        return this._armClient.putResource(url, body);
     }
 
     private _getHeaders(): Headers {

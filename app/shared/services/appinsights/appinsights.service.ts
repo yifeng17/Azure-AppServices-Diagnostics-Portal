@@ -54,7 +54,7 @@ export class AppInsightsService {
                     this.appInsightsSettings.resourceUri = aiResource;
 
                     // Do a get on the resource to fill the app id and name.
-                    this.armService.getArmResource(aiResource, '2015-05-01').subscribe((armResponse: ArmObj) => {
+                    this.armService.getResourceWithoutEnvelope(aiResource, '2015-05-01').subscribe((armResponse: any) => {
                         if (armResponse && armResponse.properties) {
                             if (this.isNotNullOrEmpty(armResponse.properties["AppId"])) {
                                 this.appInsightsSettings.appId = armResponse.properties["AppId"];
@@ -128,7 +128,7 @@ export class AppInsightsService {
             linkedWriteProperties: []
         };
 
-        return this.armService.postArmResource(url, body, '2015-05-01');
+        return this.armService.postResourceWithoutEnvelope<any, any>(url, body, '2015-05-01');
     }
 
     ExecuteQuery(query: string): Observable<any> {
