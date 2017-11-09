@@ -34,7 +34,8 @@
             No Exceptions found during this time.
         </div>
 
-        <div class="alert alert-warning" role="alert" style="margin-bottom:0" *ngIf="!appInsightsService.appInsightsSettings.connectedWithSupportCenter">
+        <!-- TODO : Enable this code when shipping App Insights Connection-->
+        <!--<div class="alert alert-warning" role="alert" style="margin-bottom:0" *ngIf="!appInsightsService.appInsightsSettings.connectedWithSupportCenter">
             Looks like your application insights resource
             <span style="font-weight:500;color:black">{{appInsightsService.appInsightsSettings.name}}</span> is not connected with App Service diagnostics. Connect
             your application insights resource with App Service diagnostics to gain better insights about your failures and
@@ -42,6 +43,6 @@
 
             <span style="margin-left:5px" class="hyperlink" [routerLink]="['../../settings/appinsights']">Edit Settings</span>
 
-        </div>
+        </div>-->
     </div>
 </div>

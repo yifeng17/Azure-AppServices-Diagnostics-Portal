@@ -35,7 +35,11 @@ export class AppInsightsService {
             // Check the stack of the web app to determine whether App Insights can be shown as an option
             this.appAnalysisService.getDiagnosticProperties(subscription, resourceGroup, siteName, slotName).subscribe(data => {
 
-                if (data && data.appStack && data.appStack.toLowerCase().indexOf('asp.net') > -1) {
+                if (!data)   // new app
+                {
+                    this.appInsightsSettings.validForStack = true;
+                }
+                else if (data.appStack && data.appStack.toLowerCase().indexOf('asp.net') > -1) {
                     this.appInsightsSettings.validForStack = true;
                 }
                 else {
@@ -68,7 +72,7 @@ export class AppInsightsService {
             });
 
             // Check if App Insights is connected to Support Center.
-            this.siteService.getSiteAppSettings(subscription, resourceGroup, siteName, slotName)
+            /*this.siteService.getSiteAppSettings(subscription, resourceGroup, siteName, slotName)
                 .subscribe(data => {
                     if (data && data.properties && this.isNotNullOrEmpty(data.properties[this.appId_AppSettingStr]) && this.isNotNullOrEmpty(data.properties[this.appKey_AppSettingStr]) && this.isNotNullOrEmpty(data.properties[this.resourceUri_AppSettingStr])) {
 
@@ -78,7 +82,7 @@ export class AppInsightsService {
                     else {
                         this.appInsightsSettings.connectedWithSupportCenter = false;
                     }
-                });
+                });*/
         });
     }
 
@@ -99,6 +103,22 @@ export class AppInsightsService {
         return Observable.from(['']);
     }
 
+    DeleteAppInsightsAccessKeyIfExists(): Observable<any> {
+
+        let url: string = `${this.armService.armUrl}${this.appInsightsSettings.resourceUri}/ApiKeys?api-version=2015-05-01`;
+        return this.http.get(url).do((data: any) => {
+            if (data && data.length && data.length > 0) {
+
+                data.forEach(element => {
+                    if (element["name"].toLowerCase() === this.appInsights_KeyStr.toLowerCase()) {
+
+                        this.http.delete(`${this.armService.armUrl}${element["id"]}?api-version=2015-05-01`);
+                    }
+                });
+            }
+        });
+    }
+
     GenerateAppInsightsAccessKey(): Observable<any> {
 
         let url: string = `${this.appInsightsSettings.resourceUri}/ApiKeys`;
@@ -107,9 +127,6 @@ export class AppInsightsService {
             linkedReadProperties: [`${this.appInsightsSettings.resourceUri}/api`],
             linkedWriteProperties: []
         };
-
-        //this.armService.getArmResource(url, '2015-05-01')
-
 
         return this.armService.postArmResource(url, body, '2015-05-01');
     }
