@@ -6,8 +6,8 @@ import { HttpModule } from '@angular/http';
 
 import {
     PortalService, BroadcastService, AuthService, ArmService, UriElementsService, PortalActionService,
-    SiteService, AppAnalysisService, WindowService, ServerFarmDataService, RBACService, LoggingService, 
-    AvailabilityLoggingService, BotLoggingService, DetectorViewStateService, CacheService, SolutionFactoryService
+    SiteService, AppAnalysisService, WindowService, ServerFarmDataService, RBACService, LoggingService,     
+    AvailabilityLoggingService, BotLoggingService, DetectorViewStateService, CacheService, SolutionFactoryService, DaasService
 } from './services';
 import { LimitToFilter } from './utilities/limitToFilter.pipe';
 import { nvD3 } from './utilities/nvd3graph.component';
@@ -29,12 +29,18 @@ import { ExpandableSummaryComponent } from './components/expandable-summary/expa
 import { VerticalDisplayListComponent } from './components/vertical-display-list/vertical-display-list.component';
 import { VerticalDisplayListItemComponent } from './components/vertical-display-list/vertical-display-list-item/vertical-display-list-item.component';
 import { SolutionTypeTagComponent } from './components/solution-type-tag/solution-type-tag.component';
+import { GroupByPipe } from './pipes/groupBy.pipe';
+import { MapValuesPipe } from './pipes/mapValues.pipe';
+
+
 
 @NgModule({
     declarations: [
         LimitToFilter,
         nvD3,
-        MarkupPipe,
+        MarkupPipe,       
+        GroupByPipe,
+        MapValuesPipe,
         BlogComponent,
         OpenTicketComponent,
         DowntimeTimelineComponent,
@@ -65,7 +71,9 @@ import { SolutionTypeTagComponent } from './components/solution-type-tag/solutio
         LimitToFilter,
         RouterModule,
         nvD3,
-        MarkupPipe,
+        MarkupPipe,      
+        GroupByPipe,
+        MapValuesPipe,
         BlogComponent,
         OpenTicketComponent,
         DowntimeTimelineComponent,
@@ -105,8 +113,9 @@ export class SharedModule {
                 AvailabilityLoggingService,
                 BotLoggingService,
                 DetectorViewStateService,
-                CacheService,
-                SolutionFactoryService
+                SolutionFactoryService,
+                DaasService,
+                CacheService                
             ]
         }
     }

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { SiteProfilingInfo } from '../models/solution-metadata';
 
 @Injectable()
 export class UriElementsService {
@@ -26,6 +27,52 @@ export class UriElementsService {
     /*
         TODO : Need to add start time and end time parameters
     */
+
+    
+    private _diagnosticsPath = "/extensions/daas/api/";
+    private _diagnosticsSessionsAllPath = this._diagnosticsPath + "sessions/all";
+    private _diagnosticsSessionsPath = this._diagnosticsPath + "sessions";
+    private _diagnosticsSessionsDetailsPath = this._diagnosticsPath + "sessions" + "/{type}/{details} ";
+    private _diagnosticsDiagnosersPath = this._diagnosticsPath + "diagnosers";
+    private _diagnosticsInstancesPath = this._diagnosticsPath + "instances";
+    private _diagnosticsSingleSessionPath = this._diagnosticsPath + "session/{sessionId}/{details}";
+    private _diagnosticsWebJobStatePath = this._diagnosticsPath + "daaswebjobstate";
+    private _diagnosticsWebJobStartPath = this._diagnosticsPath + "daaswebjobstart";
+    
+    getDiagnosticsDiagnosersUrl(site: SiteProfilingInfo) {
+        return this._getSiteResourceUrl(site.subscriptionId, site.resourceGroupName, site.siteName, site.slot) + this._diagnosticsDiagnosersPath;
+    };
+
+    getAllDiagnosticsSessionsUrl(site: SiteProfilingInfo) {
+        return this._getSiteResourceUrl(site.subscriptionId, site.resourceGroupName, site.siteName, site.slot) + this._diagnosticsSessionsAllPath;
+    };
+
+    getDiagnosticsSessionsUrl(site: SiteProfilingInfo) {
+        return this._getSiteResourceUrl(site.subscriptionId, site.resourceGroupName, site.siteName, site.slot) + this._diagnosticsSessionsPath;
+    };
+
+    getDiagnosticsSessionsDetailsUrl(site: SiteProfilingInfo, type:string, detailed:boolean) {
+        return this._getSiteResourceUrl(site.subscriptionId, site.resourceGroupName, site.siteName, site.slot) + this._diagnosticsSessionsDetailsPath.replace("{type}", type)
+        .replace("{details}", detailed.toString());
+    };
+
+    getDiagnosticsInstancesUrl(site: SiteProfilingInfo) {
+        return this._getSiteResourceUrl(site.subscriptionId, site.resourceGroupName, site.siteName, site.slot) + this._diagnosticsInstancesPath;
+    };
+
+    getDiagnosticsSingleSessionUrl(site: SiteProfilingInfo, sessionId: string, detailed: boolean) {
+        return this._getSiteResourceUrl(site.subscriptionId, site.resourceGroupName, site.siteName, site.slot) + this._diagnosticsSingleSessionPath
+        .replace("{sessionId}", sessionId)
+        .replace("{details}", detailed.toString());
+    };
+
+    getDiagnosticsWebJobStateUrl(site: SiteProfilingInfo) {
+        return this._getSiteResourceUrl(site.subscriptionId, site.resourceGroupName, site.siteName, site.slot) + this._diagnosticsWebJobStatePath;
+    };
+
+    getDiagnosticsWebJobStartUrl(site: SiteProfilingInfo) {
+        return this._getSiteResourceUrl(site.subscriptionId, site.resourceGroupName, site.siteName, site.slot) + this._diagnosticsWebJobStartPath;
+    };
 
     getSiteRestartUrl(subscriptionId: string, resourceGroup: string, siteName: string, slot: string = ''): string {
         return this._getSiteResourceUrl(subscriptionId, resourceGroup, siteName, slot) + this._siteRestartUrlFormat;

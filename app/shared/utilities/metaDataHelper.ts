@@ -1,5 +1,5 @@
 import { INameValuePair } from '../models/namevaluepair';
-import { AdvancedApplicationRestartInfo, InstanceInfo } from '../models/solution-metadata';
+import { AdvancedApplicationRestartInfo, InstanceInfo, SiteProfilingInfo } from '../models/solution-metadata';
 
 export class MetaDataHelper {
 
@@ -31,6 +31,35 @@ export class MetaDataHelper {
         }
 
         return values;
+    }
+
+    static getProfilingData(metaData: INameValuePair[][]): SiteProfilingInfo {
+        if(metaData.length > 0) {
+
+            var siteNameWithSlot = MetaDataHelper.getValueForName(metaData[0], 'sitename');
+            var siteName = "";
+            var slotName = "";
+
+            if (siteNameWithSlot.indexOf('(') >= 0) {
+                let parts = siteNameWithSlot.split('(');
+                siteName = parts[0];
+                slotName = parts[1].replace(')', '');
+            }
+            else
+            {
+                siteName = siteNameWithSlot;
+            }
+
+            let profilingInfo: SiteProfilingInfo = {
+                subscriptionId: MetaDataHelper.getValueForName(metaData[0], 'subscriptionid'),
+                resourceGroupName: MetaDataHelper.getValueForName(metaData[0], 'resourcegroup'), 
+                siteName: siteName,
+                slot:slotName,
+                instances: []
+            }           
+
+            return profilingInfo;
+        }
     }
 
     static getAdvancedApplicationRestartData(metaData: INameValuePair[][]): AdvancedApplicationRestartInfo {
