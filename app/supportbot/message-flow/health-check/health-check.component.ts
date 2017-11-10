@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 import { IChatMessageComponent } from '../../interfaces/ichatmessagecomponent';
-import { AppAnalysisService, BotLoggingService } from '../../../shared/services';
+import { AppAnalysisService, BotLoggingService, SiteService } from '../../../shared/services';
 import { Cache } from '../../../shared/models/icache';
 import { IDetectorResponse } from '../../../shared/models/detectorresponse';
 import { IAppAnalysisResponse } from '../../../shared/models/appanalysisresponse';
@@ -11,6 +11,8 @@ import { GraphHelper } from '../../../shared/utilities/graphHelper';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
 import * as _ from 'underscore';
+import { OperatingSystem, Site, SiteExtensions } from '../../../shared/models/site';
+import { BehaviorSubject } from 'rxjs';
 declare let d3: any;
 
 @Component({
@@ -30,82 +32,99 @@ export class HealthCheckComponent implements OnInit, AfterViewInit, IChatMessage
     showLoadingMessage: boolean;
     chartOptions: any;
     chartData: any;
+    healthCheckpointsSubject: BehaviorSubject<any[]> = new BehaviorSubject(null);
     healthCheckpoints: any[];
     selectedCategoryIndex: number;
+
+    currentSite: Site;
 
     private _requestsColors: [string] = ["rgb(0, 188, 242)", "rgb(127, 186, 0)", "rgb(155, 79, 150)", "rgb(255, 140, 0)", "rgb(232, 17, 35)"];
     private _analysisData: Cache<IAppAnalysisResponse>;
 
-    constructor(private _route: ActivatedRoute, private _analysisService: AppAnalysisService, private _logger: BotLoggingService) {
+    constructor(private _route: ActivatedRoute, private _analysisService: AppAnalysisService, private _logger: BotLoggingService, private _siteService: SiteService) {
         this.showLoadingMessage = true;
         this._analysisData = {};
 
         this._logger.LogHealthCheckInvoked();
 
-        this.healthCheckpoints = [{
-            category: 'availability',
-            detector: 'runtimeavailability',
-            title: 'Requests and Errors',
-            graphOptions: (() => {
-                var options = GraphHelper.getDefaultChartOptions('lineChart', this._requestsColors, 300);
-                options.chart.yAxis.tickFormat = d3.format('d');
-                options.chart.yAxis.axisLabel = 'Request Count';
-                options.chart.forceY = [0, 10];
-                return options;
-            })(),
-            graphData: [],
-            href: 'availability/analysis',
-            healthStatus: undefined,
-            healthStatusMessage: undefined
-        }, {
-            category: 'availability',
-            detector: 'sitelatency',
-            title: 'App Performance',
-            graphOptions: (() => {
-                var options = GraphHelper.getDefaultChartOptions('lineChart', this._requestsColors, 300);
-                options.chart.yAxis.tickFormat = d3.format('d');
-                options.chart.yAxis.axisLabel = 'Response Time (ms)';
-                options.chart.forceY = [0, 10];
+        this._siteService.currentSite.subscribe(site => {
+            let checkpoints: any[] = [];
 
-                return options;
-            })(),
-            graphData: [],
-            href: 'performance/analysis',
-            healthStatus: undefined,
-            healthStatusMessage: undefined
-        }, {
-            category: 'availability',
-            detector: 'sitecpuanalysis',
-            title: 'CPU Usage',
-            graphOptions: (() => {
-                var options = GraphHelper.getDefaultChartOptions('lineChart', this._requestsColors, 300);
-                options.chart.yAxis.tickFormat = d3.format('.1f');
-                options.chart.yAxis.axisLabel = 'CPU Usage (%)';
-                options.chart.forceY = [0, 10];
+            checkpoints.push({
+                category: 'availability',
+                detector: 'runtimeavailability',
+                title: 'Requests and Errors',
+                graphOptions: (() => {
+                    var options = GraphHelper.getDefaultChartOptions('lineChart', this._requestsColors, 300);
+                    options.chart.yAxis.tickFormat = d3.format('d');
+                    options.chart.yAxis.axisLabel = 'Request Count';
+                    options.chart.forceY = [0, 10];
+                    return options;
+                })(),
+                graphData: [],
+                href: 'availability/analysis',
+                healthStatus: undefined,
+                healthStatusMessage: undefined
+            });
 
-                return options;
-            })(),
-            graphData: [],
-            href: 'availability/detectors/sitecpuanalysis',
-            healthStatus: undefined,
-            healthStatusMessage: undefined
-        }, {
-            category: 'availability',
-            detector: 'sitememoryanalysis',
-            title: 'Memory Usage',
-            graphOptions: (() => {
-                var options = GraphHelper.getDefaultChartOptions('lineChart', this._requestsColors, 300);
-                options.chart.yAxis.tickFormat = d3.format('.1f');
-                options.chart.yAxis.axisLabel = 'Memory Usage (%)';
-                options.chart.forceY = [0, 10];
+            checkpoints.push({
+                category: 'availability',
+                detector: 'sitelatency',
+                title: 'App Performance',
+                graphOptions: (() => {
+                    var options = GraphHelper.getDefaultChartOptions('lineChart', this._requestsColors, 300);
+                    options.chart.yAxis.tickFormat = d3.format('d');
+                    options.chart.yAxis.axisLabel = 'Response Time (ms)';
+                    options.chart.forceY = [0, 10];
 
-                return options;
-            })(),
-            graphData: [],
-            href: 'availability/memoryanalysis',
-            healthStatus: undefined,
-            healthStatusMessage: undefined
-        }];
+                    return options;
+                })(),
+                graphData: [],
+                href: 'performance/analysis',
+                healthStatus: undefined,
+                healthStatusMessage: undefined
+            });
+
+            if (SiteExtensions.operatingSystem(site) === OperatingSystem.windows) {
+                checkpoints.push({
+                    category: 'availability',
+                    detector: 'sitecpuanalysis',
+                    title: 'CPU Usage',
+                    graphOptions: (() => {
+                        var options = GraphHelper.getDefaultChartOptions('lineChart', this._requestsColors, 300);
+                        options.chart.yAxis.tickFormat = d3.format('.1f');
+                        options.chart.yAxis.axisLabel = 'CPU Usage (%)';
+                        options.chart.forceY = [0, 10];
+
+                        return options;
+                    })(),
+                    graphData: [],
+                    href: 'availability/detectors/sitecpuanalysis',
+                    healthStatus: undefined,
+                    healthStatusMessage: undefined
+                });
+
+                checkpoints.push({
+                    category: 'availability',
+                    detector: 'sitememoryanalysis',
+                    title: 'Memory Usage',
+                    graphOptions: (() => {
+                        var options = GraphHelper.getDefaultChartOptions('lineChart', this._requestsColors, 300);
+                        options.chart.yAxis.tickFormat = d3.format('.1f');
+                        options.chart.yAxis.axisLabel = 'Memory Usage (%)';
+                        options.chart.forceY = [0, 10];
+
+                        return options;
+                    })(),
+                    graphData: [],
+                    href: 'availability/memoryanalysis',
+                    healthStatus: undefined,
+                    healthStatusMessage: undefined
+                });
+            }
+            this.healthCheckpoints = checkpoints;
+            this.healthCheckpointsSubject.next(checkpoints);
+        });
     }
 
     ngOnInit(): void {
@@ -133,32 +152,38 @@ export class HealthCheckComponent implements OnInit, AfterViewInit, IChatMessage
     }
 
     private _loadData() {
-        var detectorsObservable = Observable.forkJoin(this._getDetectorTasks());
-        var analysisObservable = Observable.forkJoin(this._getAnalysisTasks());
-        var mergedObservable = Observable.forkJoin<IDetectorResponse[], IAppAnalysisResponse[]>(detectorsObservable, analysisObservable);
+        this.healthCheckpointsSubject.subscribe(checkpoints => {
+            if (checkpoints) {
+                var detectorsObservable = Observable.forkJoin(this._getDetectorTasks(checkpoints));
+                var analysisObservable = Observable.forkJoin(this._getAnalysisTasks());
+                var mergedObservable = Observable.forkJoin<IDetectorResponse[], IAppAnalysisResponse[]>(detectorsObservable, analysisObservable);
 
-        mergedObservable.subscribe(data => {
-            this._parseDataIntoCategories(data);
-        }, onError => { },
-            () => {
+                mergedObservable.subscribe(data => {
+                    this._parseDataIntoCategories(data);
+                }, onError => { },
+                    () => {
 
-                this.setCategory(0);
-                this.showLoadingMessage = false;
+                        this.setCategory(0);
+                        this.showLoadingMessage = false;
 
-                setTimeout(() => {
-                    this.onViewUpdate.emit();
-                }, 100);
+                        setTimeout(() => {
+                            this.onViewUpdate.emit();
+                        }, 100);
 
-                setTimeout(() => {
-                    this.onComplete.emit({ status: true });
-                }, 2000);
-            });
+                        setTimeout(() => {
+                            this.onComplete.emit({ status: true });
+                        }, 2000);
+                    });
+            }
+        })
+
     }
 
-    private _getDetectorTasks(): Observable<IDetectorResponse>[] {
+    private _getDetectorTasks(checkpoints: any[]): Observable<IDetectorResponse>[] {
 
         var result: Observable<IDetectorResponse>[] = [];
-        this.healthCheckpoints.forEach((item) => {
+
+        checkpoints.forEach((item) => {
             result.push(this._analysisService.getDetectorResource(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, item.category, item.detector));
         });
 
@@ -260,31 +285,31 @@ export class HealthCheckComponent implements OnInit, AfterViewInit, IChatMessage
                         }
 
                         break;
-                        case 'sitememoryanalysis':
-                            let memoryMetrics = item.metrics.filter(p => (p.name.toLowerCase().indexOf('percent') > -1));
-                            category.graphData = GraphHelper.parseMetricsToChartDataPerInstance(memoryMetrics);
-    
-                            var currentHealth = undefined;
-                            if (item.data && item.data.length > 0) {
-                                currentHealth = item.data[0].find(p => p.name.toLocaleLowerCase() === "currenthealth");
-                            }
-    
-                            if (currentHealth && currentHealth.value.toLocaleLowerCase() === 'unhealthy') {
-                                category.healthStatus = 'error';
-                                category.healthStatusMessage = 'Your Web App is currently experiencing high memory usage. Please "View Full Report" to further analyze your memory usage per instance breakdown.';
+                    case 'sitememoryanalysis':
+                        let memoryMetrics = item.metrics.filter(p => (p.name.toLowerCase().indexOf('percent') > -1));
+                        category.graphData = GraphHelper.parseMetricsToChartDataPerInstance(memoryMetrics);
+
+                        var currentHealth = undefined;
+                        if (item.data && item.data.length > 0) {
+                            currentHealth = item.data[0].find(p => p.name.toLocaleLowerCase() === "currenthealth");
+                        }
+
+                        if (currentHealth && currentHealth.value.toLocaleLowerCase() === 'unhealthy') {
+                            category.healthStatus = 'error';
+                            category.healthStatusMessage = 'Your Web App is currently experiencing high memory usage. Please "View Full Report" to further analyze your memory usage per instance breakdown.';
+                        }
+                        else {
+                            if (item.abnormalTimePeriods && item.abnormalTimePeriods.length > 0) {
+                                category.healthStatus = 'warning';
+                                category.healthStatusMessage = 'Your Web App has experienced high memory usage in the last 24 hours. Please "View Full Report" to further analyze your memory usage per instance breakdown.';
                             }
                             else {
-                                if (item.abnormalTimePeriods && item.abnormalTimePeriods.length > 0) {
-                                    category.healthStatus = 'warning';
-                                    category.healthStatusMessage = 'Your Web App has experienced high memory usage in the last 24 hours. Please "View Full Report" to further analyze your memory usage per instance breakdown.';
-                                }
-                                else {
-                                    category.healthStatus = 'success';
-                                    category.healthStatusMessage = 'Your Web App currently has normal memory usage. Check out "View Full Report" if you would like to check the memory usage per instance breakdown.';
-                                }
+                                category.healthStatus = 'success';
+                                category.healthStatusMessage = 'Your Web App currently has normal memory usage. Check out "View Full Report" if you would like to check the memory usage per instance breakdown.';
                             }
-    
-                            break;
+                        }
+
+                        break;
                     default:
                         category.graphData = GraphHelper.parseMetricsToChartData(item.metrics);
                         break;
