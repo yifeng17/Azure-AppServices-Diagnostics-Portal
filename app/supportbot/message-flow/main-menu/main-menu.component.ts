@@ -65,11 +65,9 @@ export class MainMenuComponent implements OnInit, AfterViewInit, IChatMessageCom
             href: 'performance/analysis'
         });
 
-        console.log(SiteExtensions.operatingSystem(site));
-
         if (SiteExtensions.operatingSystem(site) === OperatingSystem.linux) {
             categories.push({
-                name: 'Docker Container Start/Stop',
+                name: 'Container Initialization',
                 href: 'availability/detectors/dockercontainerstartstop'
             });
         }

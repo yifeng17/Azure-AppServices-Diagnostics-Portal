@@ -14,38 +14,17 @@ export class MainMenuMessageFlow implements IMessageFlowProvider {
 
         var mainMenuGroup: MessageGroup = new MessageGroup('main-menu', [], 'health-check');
         mainMenuGroup.messages.push(new TextMessage('Here are some of the things that I can help you with:', MessageSender.System, 2000));
-        mainMenuGroup.messages.push(new MainMenuMessage(this._getCategories()));
+        mainMenuGroup.messages.push(new MainMenuMessage());
 
         messageGroupList.push(mainMenuGroup);
 
         return messageGroupList;
     }
-
-    private _getCategories(): { name: string, href: string }[] {
-        return [{
-            name: 'Web App Down',
-            href: 'availability/analysis'
-        }, {
-            name: 'Web App Slow',
-            href: 'performance/analysis'
-        }, {
-            name: 'High CPU Usage',
-            href: 'availability/detectors/sitecpuanalysis'
-        }, {
-            name: 'High Memory Usage',
-            href: 'availability/memoryanalysis'
-        }, {
-            name: 'Web App Restarted',
-            href: 'availability/apprestartanalysis'
-        }];
-    }
 }
 
 export class MainMenuMessage extends Message {
-    constructor(categories: { name: string, href: string }[], messageDelayInMs: number = 1000) {
+    constructor(messageDelayInMs: number = 1000) {
         
-        super(MainMenuComponent, {
-            categories: categories
-        }, messageDelayInMs);
+        super(MainMenuComponent, {}, messageDelayInMs);
     }
 }

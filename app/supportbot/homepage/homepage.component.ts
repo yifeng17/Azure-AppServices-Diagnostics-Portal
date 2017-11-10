@@ -21,7 +21,8 @@ export class HomepageComponent implements OnInit {
         this._siteService.currentSite.subscribe(site => {
             if (site) {
                 if (SiteExtensions.operatingSystem(site) == OperatingSystem.linux) {
-                    // todo
+                    this.listCollection.push(this._getLinuxFAQItems());
+                    this.listCollection.push(this._getLinuxResourceCenterItems());
                 } else {
                     this.listCollection.push(this._getFAQItems());
                     this.listCollection.push(this._getResourceCenterItems());
@@ -31,7 +32,7 @@ export class HomepageComponent implements OnInit {
                 this.listCollection.push(this._getRecentUpdateItems());
                 this.listCollection.push(this._getContributeItems());
             }
-        })
+        });
 
         this.toolsContainerHeight = this._windowService.window.innerHeight - 60;
     }
@@ -67,6 +68,29 @@ export class HomepageComponent implements OnInit {
         }
     }
 
+    private _getLinuxResourceCenterItems() {
+        return {
+            title: 'Resource Center',
+            collapsed: true,
+            items: [{
+                title: 'Quick Starts',
+                href: 'https://goo.gl/exFu9W'
+            }, {
+                title: 'App Service Team Blog',
+                href: 'https://goo.gl/44J8ki'
+            }, {
+                title: 'How-To Docs',
+                href: 'https://goo.gl/FjrtHn'
+            }, {
+                title: 'App Service Overview',
+                href: 'https://goo.gl/6sKo3y'
+            }, {
+                title: 'About Azure Support Plans',
+                href: 'https://goo.gl/1JzP1P'
+            }]
+        }
+    }
+
     private _getFAQItems() {
         return {
             title: 'FAQs',
@@ -83,6 +107,17 @@ export class HomepageComponent implements OnInit {
             }, {
                 title: 'Configuration and Management FAQs',
                 href: 'https://goo.gl/AVqGCS'
+            }]
+        }
+    }
+
+    private _getLinuxFAQItems() {
+        return {
+            title: 'FAQs',
+            collapsed: false,
+            items: [{
+                title: 'Azure App Service on Linux FAQ',
+                href: 'https://goo.gl/Mu1LCE'
             }]
         }
     }

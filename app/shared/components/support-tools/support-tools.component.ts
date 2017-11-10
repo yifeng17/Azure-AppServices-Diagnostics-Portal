@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { PortalActionService, ArmService, AuthService, RBACService, LoggingService } from '../../services';
 import { SupportBladeDefinitions } from '../../models/portal';
-import { Site } from '../../models/site';
+import { Site, SiteExtensions, OperatingSystem } from '../../models/site';
 import { StartupInfo } from '../../models/portal';
 import { ResponseMessageEnvelope } from '../../models/responsemessageenvelope';
 
@@ -37,7 +37,11 @@ export class SupportToolsComponent  {
             })
             .subscribe((hasPermission: boolean) => {
                 this.hasReadAccessToServerFarm = hasPermission;
-                this.initialize();
+                //disable for Linux
+
+                if (SiteExtensions.operatingSystem(this.currentSite) === OperatingSystem.windows) {
+                    this.initialize();
+                }
             })
     }
 

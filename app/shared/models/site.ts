@@ -31,7 +31,8 @@ export interface SiteRestartData {
     siteName: string;
 }
 
+// Flags
 export enum OperatingSystem {
-    windows,
-    linux
+    windows = 1 << 0,
+    linux = 1 << 1
 }
