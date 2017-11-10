@@ -2,6 +2,7 @@
 
 export interface Site {
     name: string;
+    kind: string;
     state: string;
     hostNames: string[];
     enabledHostNames: string[];
@@ -17,7 +18,20 @@ export interface Site {
     resourceGroup: string;
 }
 
+export class SiteExtensions {
+    public static operatingSystem(site: Site): OperatingSystem {
+        // console.log(tsitehis.kind);
+        // console.log(this.kind.split(',').indexOf('linux') > 0 ? OperatingSystem.linux : OperatingSystem.windows);
+        return site.kind.split(',').indexOf('linux') > 0 ? OperatingSystem.linux : OperatingSystem.windows;
+    }
+}
+
 export interface SiteRestartData {
     resourceUri: string;
     siteName: string;
+}
+
+export enum OperatingSystem {
+    windows,
+    linux
 }

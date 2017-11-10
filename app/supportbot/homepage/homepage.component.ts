@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { WindowService, LoggingService } from '../../shared/services';
+import { WindowService, LoggingService, SiteService } from '../../shared/services';
+import { OperatingSystem, SiteExtensions } from '../../shared/models/site';
 
 @Component({
     selector: 'home-page',
@@ -11,17 +12,27 @@ export class HomepageComponent implements OnInit {
     public listCollection: any;
     public toolsContainerHeight: number;
 
-    constructor(private _windowService: WindowService, private _logger: LoggingService) {
+    constructor(private _windowService: WindowService, private _siteService: SiteService, private _logger: LoggingService) {
         this.listCollection = [];
         this.toolsContainerHeight = 0;
     }
 
     ngOnInit(): void {
-        this.listCollection.push(this._getFAQItems());
-        this.listCollection.push(this._getResourceCenterItems());
-        this.listCollection.push(this._getCommunityItems());
-        this.listCollection.push(this._getRecentUpdateItems());
-        this.listCollection.push(this._getContributeItems());
+        this._siteService.currentSite.subscribe(site => {
+            if (site) {
+                if (SiteExtensions.operatingSystem(site) == OperatingSystem.linux) {
+                    // todo
+                } else {
+                    this.listCollection.push(this._getFAQItems());
+                    this.listCollection.push(this._getResourceCenterItems());
+                }
+    
+                this.listCollection.push(this._getCommunityItems());
+                this.listCollection.push(this._getRecentUpdateItems());
+                this.listCollection.push(this._getContributeItems());
+            }
+        })
+
         this.toolsContainerHeight = this._windowService.window.innerHeight - 60;
     }
 
