@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { IAbnormalTimePeriod } from '../../shared/models/appanalysisresponse';
 import { ActivatedRoute } from '@angular/router';
-import { PortalActionService, ArmService, PortalService, RBACService, LoggingService } from '../../shared/services';
+import { PortalActionService, ArmService, AuthService, RBACService, LoggingService } from '../../shared/services';
 import { SupportBladeDefinitions } from '../../shared/models/portal';
 import { Site } from '../../shared/models/site';
 import { StartupInfo } from '../../shared/models/portal';
@@ -25,11 +25,11 @@ export class ToolsMenuComponent  {
 
     @Input() displayTools: boolean;
 
-    constructor(private _portalActionService: PortalActionService, private _armService: ArmService, private _portalService: PortalService, private _rbacService: RBACService, private _logger: LoggingService) {
+    constructor(private _portalActionService: PortalActionService, private _armService: ArmService, private _authService: AuthService, private _rbacService: RBACService, private _logger: LoggingService) {
         this.supportTools = [];
         this.premiumTools = [];
 
-        this._portalService.getStartupInfo()
+        this._authService.getStartupInfo()
             .flatMap((startUpInfo: StartupInfo) => {
                 return this._armService.getResource<Site>(startUpInfo.resourceId);
             })
