@@ -23,6 +23,7 @@ import { SiteMemoryAnalysisDetectorComponent } from './detector-view/detectors/s
 import { ThreadDetectorComponent } from './detector-view/detectors/thread-detector/thread-detector.component';
 import { FrebAnalysisDetectorComponent } from './detector-view/detectors/freb-analysis-detector/freb-analysis-detector.component';
 import { PhpLogAnalyzerComponent } from './detector-view/detectors/php-log-analyzer-detector/php-log-analyzer-detector.component';
+import { DockerContainerIntializationComponent } from './detector-view/detectors/docker-container-start-stop-detector/docker-container-start-stop-detector.component';
 import { CommittedMemoryUsageComponent } from './detector-view/detectors/committed-memory-detector/committed-memory-detector.component';
 import { PageFileOperationsComponent } from './detector-view/detectors/page-operations-detector/page-operations-detector.component';
 import { ToolsMenuComponent } from './tools-menu/tools-menu.component';
@@ -53,6 +54,7 @@ import { UriElementsService } from '../shared/services'
         ThreadDetectorComponent,
         FrebAnalysisDetectorComponent,
         PhpLogAnalyzerComponent,
+        DockerContainerIntializationComponent,
         MemoryAnalysisComponent,
         CommittedMemoryUsageComponent,
         PageFileOperationsComponent,
