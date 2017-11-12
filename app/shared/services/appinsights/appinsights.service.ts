@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, Response, Request } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
-import { WindowService, AuthService, SiteService, AppAnalysisService, ArmService } from '../../../shared/services';
+import { AuthService, SiteService, AppAnalysisService, ArmService, PortalService } from '../../../shared/services';
 import { StartupInfo } from '../../../shared/models/portal';
 import { ArmObj } from '../../../shared/models/armObj';
+import { Verbs } from '../../../shared/models/portal';
 
 @Injectable()
 export class AppInsightsService {
@@ -25,12 +26,14 @@ export class AppInsightsService {
         appId: undefined
     };
 
-    constructor(private http: Http, private authService: AuthService, private armService: ArmService, private windowService: WindowService, private siteService: SiteService, private appAnalysisService: AppAnalysisService) {
+    constructor(private http: Http, private authService: AuthService, private armService: ArmService, private siteService: SiteService, private appAnalysisService: AppAnalysisService, private portalService: PortalService) {
     }
 
     LoadAppInsightsSettings(resourceUri: string, subscription: string, resourceGroup: string, siteName: string, slotName: string = ''): void {
 
         this.authService.getStartupInfo().subscribe((startupInfo: StartupInfo) => {
+
+            this.GetAIResourceForResource(startupInfo.resourceId);
 
             // Check the stack of the web app to determine whether App Insights can be shown as an option
             this.appAnalysisService.getDiagnosticProperties(subscription, resourceGroup, siteName, slotName).subscribe(data => {
@@ -48,7 +51,7 @@ export class AppInsightsService {
             });
 
             // Check if App insights is already enabled for the web app.
-            this.GetAIResourceForResource(startupInfo.resourceId).subscribe((aiResource: string) => {
+            this.portalService.getAppInsightsResourceInfo().subscribe((aiResource: string) => {
                 if (aiResource && aiResource !== '') {
                     this.appInsightsSettings.enabledForWebApp = true;
                     this.appInsightsSettings.resourceUri = aiResource;
@@ -86,21 +89,13 @@ export class AppInsightsService {
         });
     }
 
-    GetAIResourceForResource(resouceUri: string): Observable<string> {
-        if (this.windowService.window.MsPortalFx) {
-            return Observable.fromPromise(this.windowService.window.MsPortalFx.Services.Rpc.invokeCallback(this.appInsightsExtension, "GetAIResourceForResource", resouceUri));
-        }
+    GetAIResourceForResource(resouceUri: string) {
 
-        return Observable.from(['']);
+        this.portalService.postMessage(Verbs.getAppInsightsResource, JSON.stringify({
+            resourceUri: resouceUri
+        }));
     }
 
-    GetAIResourceByIkey(ikey: string, subscriptionId: string): Observable<string> {
-        if (this.windowService.window.MsPortalFx) {
-            return Observable.fromPromise(this.windowService.window.MsPortalFx.Services.Rpc.invokeCallback(this.appInsightsExtension, "GetAIResourceByIkey", ikey, subscriptionId));
-        }
-
-        return Observable.from(['']);
-    }
 
     DeleteAppInsightsAccessKeyIfExists(): Observable<any> {
 

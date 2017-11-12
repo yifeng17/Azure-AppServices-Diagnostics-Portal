@@ -10,7 +10,10 @@
         <div style="padding:10px">
             <div>
                 <div style="display:inline-block">
-                    <i *ngIf="appInsightsService.appInsightsSettings.enabledForWebApp === undefined" class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true"></i>
+                    <div *ngIf="appInsightsService.appInsightsSettings.enabledForWebApp === undefined">
+                        <i class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true"></i>
+                        Checking App Insights
+                    </div>
                     
                     <div *ngIf="appInsightsService.appInsightsSettings.enabledForWebApp">
                         <i class="fa health-icon fa-check-circle healthy-icon-color" aria-hidden="true"></i>
