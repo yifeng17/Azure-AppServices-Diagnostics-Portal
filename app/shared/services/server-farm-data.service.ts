@@ -15,7 +15,7 @@ import 'rxjs/add/observable/throw';
 export class ServerFarmDataService {
     private siteResourceId: string;
 
-    public siteServerFarm: BehaviorSubject<ResponseMessageEnvelope<ServerFarm>> = new BehaviorSubject(null);
+    public siteServerFarm: BehaviorSubject<ServerFarm> = new BehaviorSubject(null);
     public hasServerFarmAccess: BehaviorSubject<boolean> = new BehaviorSubject(null);
     public sitesInServerFarm: BehaviorSubject<Site[]> = new BehaviorSubject(null);
 
@@ -37,9 +37,10 @@ export class ServerFarmDataService {
             })
             .flatMap((hasPermission: boolean) => {
                 this.hasServerFarmAccess.next(hasPermission);
-                return this._armService.getResource<ServerFarm>(this.currentSite.serverFarmId);
+                return this._armService.getResourceWithoutEnvelope<ServerFarm>(this.currentSite.serverFarmId);
             })
-            .flatMap((serverFarm: ResponseMessageEnvelope<ServerFarm>) => {
+            .flatMap((serverFarm: ServerFarm) => {
+                serverFarm = this.addAdditionalProperties(serverFarm);
                 this.siteServerFarm.next(serverFarm);
                 return this._armService.getResourceCollection<Site>(serverFarm.id + "/sites");
             })

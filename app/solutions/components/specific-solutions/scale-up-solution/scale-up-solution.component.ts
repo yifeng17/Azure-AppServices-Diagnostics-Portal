@@ -35,9 +35,8 @@ export class ScaleUpSolutionComponent implements SolutionBaseComponent {
     secondarySuggestion: string;
 
     constructor(private _serverFarmService: ServerFarmDataService, private _portalActionService: PortalActionService) {
-        this._serverFarmService.getSiteServerFarm().subscribe(serverFarm => {
+        this._serverFarmService.siteServerFarm.subscribe(serverFarm => {
             if (serverFarm) {
-                console.log(serverFarm);
                 this.currentServerFarm = serverFarm;
                 this.generateSuggestion();
             }
