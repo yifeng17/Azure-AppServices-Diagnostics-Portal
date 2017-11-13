@@ -26,6 +26,8 @@ export class DetectorViewBaseComponent implements OnInit {
     detectorMetricsYAxisLabel: string;
     detectorMetricsDescription: string;
 
+    chartOptions: any;
+
     isHealthyNow: boolean = true;
 
     metricsChartType: ChartType = ChartType.multiBarChart;

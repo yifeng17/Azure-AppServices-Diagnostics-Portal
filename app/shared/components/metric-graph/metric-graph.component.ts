@@ -13,7 +13,10 @@ import 'rxjs/add/operator/map';
 })
 export class MetricGraphComponent implements OnInit {
     constructor() {
-        this.chartOptions = GraphHelper.getDefaultChartOptions();
+        if(this.chartOptions === null)
+        {
+            this.chartOptions = GraphHelper.getDefaultChartOptions();
+        }
         this.chartType = ChartType.lineChart;
     }
 
@@ -28,9 +31,9 @@ export class MetricGraphComponent implements OnInit {
     @Input() chartType: ChartType;
     @Input() yAxisLabel: string;
     @Input() instancesToSelect: string[] = [];
+    @Input() chartOptions: any;
 
     chartData: ChartSeries[];
-    chartOptions: any;
 
     showDescription: boolean = true;
 

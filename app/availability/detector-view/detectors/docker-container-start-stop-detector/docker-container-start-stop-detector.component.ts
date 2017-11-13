@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AppAnalysisService, PortalActionService, WindowService, AvailabilityLoggingService } from '../../../../shared/services';
 import { IDetectorResponse } from '../../../../shared/models/detectorresponse';
 import { DetectorViewBaseComponent } from '../../detector-view-base/detector-view-base.component';
+import { GraphHelper } from '../../../../shared/utilities/graphHelper';
 
 declare let d3: any;
 
@@ -20,6 +21,9 @@ export class DockerContainerIntializationComponent extends DetectorViewBaseCompo
         this.detectorMetricsTitle = "Docker Container Intialization";
         this.detectorMetricsDescription = "The above graph displays when container started, stopped or failed to start";
         this.showMetadata = false;
+        this.chartOptions = GraphHelper.getDefaultChartOptions();
+        this.chartOptions.chart.useInteractiveGuideline = false;
+        this.chartOptions.chart.yAxis.tickFormat = d3.format('d');
     }
 
     processDetectorResponse(response: IDetectorResponse){
@@ -29,5 +33,13 @@ export class DockerContainerIntializationComponent extends DetectorViewBaseCompo
     }
     getDetectorName(): string {
         return 'dockercontainerstartstop';
+    }
+
+    formatDate(dateString: string): string {
+        var date = new Date(dateString);
+
+        return date.getUTCMonth() + '/' + date.getUTCDate() + ' ' + (date.getUTCHours() < 10 ? '0' : '') + date.getUTCHours()
+            + ':' + (date.getUTCMinutes() < 10 ? '0' : '') + date.getUTCMinutes()
+            + ':' + (date.getUTCSeconds() < 10 ? '0' : '') + date.getUTCSeconds();
     }
 }
