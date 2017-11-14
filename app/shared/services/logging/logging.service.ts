@@ -40,8 +40,8 @@ export class LoggingService {
                 let providerIndex = parts.indexOf('providers');
                 this._resourceType = providerIndex !== -1 ? parts[providerIndex + 1] + '/' + parts[providerIndex + 2] : '';
 
-                this._armServiceInstance.getResource<IDiagnosticProperties>(this._startUpInfo.resourceId + '/diagnostics/properties').subscribe((properties: ResponseMessageEnvelope<IDiagnosticProperties>) => {
-                    this.appStackInfo = properties.properties.appStack;
+                this._armServiceInstance.getResource<IDiagnosticProperties>(this._startUpInfo.resourceId + '/diagnostics/properties').subscribe((envelope: ResponseMessageEnvelope<IDiagnosticProperties>) => {
+                    this.appStackInfo = envelope.properties.appStack;
                 });
 
                 this._armServiceInstance.getResource<Site>(this._startUpInfo.resourceId).subscribe((site: ResponseMessageEnvelope<Site>) => {
@@ -59,8 +59,6 @@ export class LoggingService {
                     this._supportTopicId = this._startUpInfo.supportTopicId;
                 }
             }
-
-            
 
             this.LogStartUpInfo(this._startUpInfo);
         });
@@ -84,8 +82,6 @@ export class LoggingService {
         if (args) {
             Object.keys(args).forEach((key: string) => combinedArgs[key] = args[key]);
         }
-
-        console.log(combinedArgs);
 
         this._portalServiceInstance.logAction(id, category, combinedArgs);
     }
