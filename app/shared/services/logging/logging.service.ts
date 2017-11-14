@@ -16,7 +16,7 @@ export class LoggingService {
     private _resourceType: string = '';
     private _ticketBladeWorkflowId: string = '';
     private _supportTopicId: string = '';
-    
+
     public platform: string = '';
     public appStackInfo: string = '';
 
@@ -41,11 +41,15 @@ export class LoggingService {
                 this._resourceType = providerIndex !== -1 ? parts[providerIndex + 1] + '/' + parts[providerIndex + 2] : '';
 
                 this._armServiceInstance.getResource<IDiagnosticProperties>(this._startUpInfo.resourceId + '/diagnostics/properties').subscribe((envelope: ResponseMessageEnvelope<IDiagnosticProperties>) => {
-                    this.appStackInfo = envelope.properties.appStack;
+                    if (envelope && envelope.properties) {
+                        this.appStackInfo = envelope.properties.appStack;
+                    }
                 });
 
                 this._armServiceInstance.getResource<Site>(this._startUpInfo.resourceId).subscribe((site: ResponseMessageEnvelope<Site>) => {
-                    this.platform = SiteExtensions.operatingSystem(site.properties) === OperatingSystem.windows ? 'windows' : 'linux';
+                    if (site && site.properties) {
+                        this.platform = SiteExtensions.operatingSystem(site.properties) === OperatingSystem.windows ? 'windows' : 'linux';
+                    }
                 });
             }
 
