@@ -163,12 +163,5 @@ export class AppAnalysisComponent implements OnInit {
 
                 }, 500);
             });
-
-        // Ideally we want to put this call on startup. We can't put this call in logging service as that will create a cyclic dependency.
-        this._appAnalysisService.getDiagnosticProperties(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, invalidateCache).subscribe(data => {
-            if (data && data.appStack) {
-                self._logger.appStackInfo = data.appStack;
-            }
-        });
     }
 }
