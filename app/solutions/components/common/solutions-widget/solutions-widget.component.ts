@@ -52,6 +52,11 @@ export class SolutionsWidgetComponent implements OnInit {
                 this.solutions.push(t);
             }
 
+            if (this.solutions.findIndex(x => x.data.solution.id === 4) < 0) {
+                let t = this._solutionFactoryService.getSolutionById(<ISolution>{ id: 4 });
+                this.solutions.push(t);
+            }
+
             if (this.solutions.findIndex(x => x.data.solution.id === 104) < 0) {
                 let t = this._solutionFactoryService.getSolutionById(sampleProfiler);
                 this.solutions.push(t);

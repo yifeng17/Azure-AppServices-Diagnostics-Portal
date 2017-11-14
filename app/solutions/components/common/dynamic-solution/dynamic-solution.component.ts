@@ -5,6 +5,7 @@ import { SolutionBaseComponent } from '../solution-base/solution-base.component'
 import { SiteRestartComponent } from '../../specific-solutions/site-restart-solution/site-restart-solution.component';
 import { ScaleUpSolutionComponent } from '../../specific-solutions/scale-up-solution/scale-up-solution.component';
 import { ProfilingComponent } from '../../specific-solutions/profiling-solution/profiling-solution.component';
+import { ScaleOutSolutionComponent } from '../../specific-solutions/scale-out-solution/scale-out-solution.component';
 
 
 @Component({
@@ -12,7 +13,7 @@ import { ProfilingComponent } from '../../specific-solutions/profiling-solution/
     template: `
     <div dynamic-solution-placeholder></div>
     `,
-    entryComponents: [SiteRestartComponent, ScaleUpSolutionComponent,ProfilingComponent]
+    entryComponents: [SiteRestartComponent, ScaleUpSolutionComponent, ScaleOutSolutionComponent, ProfilingComponent]
 })
 export class DynamicSolutionComponent implements AfterViewInit {
     currentComponent = null;

@@ -10,6 +10,8 @@ import { ScaleUpSolutionComponent } from './components/specific-solutions/scale-
 import { DefaultSolutionTemplateComponent } from './components/common/default-solution-template/default-solution-template.component';
 import { ProfilingComponent } from './components/specific-solutions/profiling-solution/profiling-solution.component';
 import { SolutionOperationComponent } from './components/common/solution-operation/solution-operation.component';
+import { ScaleOutSolutionComponent } from './components/specific-solutions/scale-out-solution/scale-out-solution.component';
+import { SplitSitesIntoDifferentServerFarmsSolutionComponent } from './components/specific-solutions/split-sites-serverfarms-solution/split-sites-serverfarms-solution.component';
 
 @NgModule({
     declarations: [
@@ -18,9 +20,11 @@ import { SolutionOperationComponent } from './components/common/solution-operati
         SolutionsWidgetComponent,
         SiteRestartComponent,
         ScaleUpSolutionComponent,
+        ScaleOutSolutionComponent,
         DefaultSolutionTemplateComponent,
         ProfilingComponent,
-        SolutionOperationComponent
+        SolutionOperationComponent,
+        SplitSitesIntoDifferentServerFarmsSolutionComponent
     ],
     imports: [
         SharedModule

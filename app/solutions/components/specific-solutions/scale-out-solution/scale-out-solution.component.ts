@@ -19,12 +19,12 @@ export class ScaleOutSolutionComponent implements SolutionBaseComponent {
     description: string = "Increase the number of the instances in your app service plan. The requests to your app will be spread across all instances.";
 
     whyToScale: string[] = [
-        "Your app is designed to do a lot of processing that requires a high amount of CPU and you want more cores for each instance",
-        "Your app is designed to need a lot of memory. You want each instance to have a larger RAM size. "
+        "Your app is consistently using high levels of CPU on every instance.",
+        "Your app is designed to do a lot of computation on each request or handle a high request load. Adding more instances can help spread the computational load across more instances. "
     ];
 
     whyNotToScale: string[] = [
-        "Your app is experiencing high CPU or memory, but it is not designed to. This could be the result of a bug in your app code and scaling will not necessarily help.",
+        "You have numerous apps in this app service plan and you are running out of memory. Since apps often need a baseline amount of memory to run, scaling out will not always alleviate memory issues.",
         "You experience high resource usage during the hours of peak traffic for your app. A more cost effective solution would be AutoScale."
     ];
 
@@ -50,19 +50,20 @@ export class ScaleOutSolutionComponent implements SolutionBaseComponent {
 
         // TODO: if it is an ASE, we should offer premium sized instances
 
-        if (sizeId < 3) {
-            this.suggestion = `You can increase your App Service Plan to the next tier <b>${this.currentServerFarm.sku.family + (sizeId + 1)}</b>. ` +
-                `This would increase your RAM size to <b>${this.currentServerFarm.additionalProperties.ramInGB * 2}GB</b> ` +
-                `and the number of cores to <b>${this.currentServerFarm.additionalProperties.cores * 2}</b>.`
+        if (this.currentServerFarm.sku.capacity > 1){
+            this.suggestion = `Your current App Service Plan has <b>${this.currentServerFarm.sku.capacity}</b> instances ` + 
+            `with <b>${this.currentServerFarm.additionalProperties.cores} CPU core${this.currentServerFarm.additionalProperties.cores > 1 ? 's' : ''}</b> each. ` +
+                `You can use the below button to open the blade where you can add additional instances. `;
 
-            this.secondarySuggestion = "<b>Note:</b> Scaling up will increase the cost of your App Service Plan. You can try scaling up and see if it solves your problem, and if not scale back down."
+            this.secondarySuggestion = "<b>Note:</b> Scaling out will increase the cost of your App Service Plan. You can try scaling out and see if it solves your problem, and if not scale back to a lower number of instances."
         }
-        else {
-            this.suggestion = 'You are already scaled to the maximum instance size. You could try scaling out instead.'
+        else if (this.currentServerFarm.sku.capacity === 1) {
+            this.suggestion =  `Your current App Service Plan has only ${this.currentServerFarm.sku.capacity} instance. ` +
+            `We suggest scaling out to at least two instances to make sure that when we do infrastructure upgrades, your app has the best chance of being highly available.`
         }
     }
 
     openBlade() {
-        this._portalActionService.openBladeScaleUpBlade();
+        this._portalActionService.openBladeScaleOutBlade();
     }
 }

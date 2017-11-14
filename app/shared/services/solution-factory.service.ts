@@ -6,6 +6,7 @@ import { ISolution, SolutionData } from '../models/solution';
 import { LoggingService } from '../services/logging/logging.service';
 import { SolutionTypeTag } from '../models/solution-type-tag';
 import { ProfilingComponent } from '../../solutions/components/specific-solutions/profiling-solution/profiling-solution.component';
+import { ScaleOutSolutionComponent } from '../../solutions/components/specific-solutions/scale-out-solution/scale-out-solution.component';
 
 @Injectable()
 export class SolutionFactoryService {
@@ -23,8 +24,8 @@ export class SolutionFactoryService {
             //     return new InlineSolutions.RestartSiteSolution(rank, parameters, _logger, siteService);
             case 3:
                 return new SolutionHolder(ScaleUpSolutionComponent, <SolutionData>{ title: "Scale Up App Service Plan", tags: [SolutionTypeTag.Mitigation], solution: solution });
-            // case 4:
-            //     return new BladeSolutions.OpenScaleOutBlade(rank, parameters, _logger, portalActionService);
+            case 4:
+                return new SolutionHolder(ScaleOutSolutionComponent, <SolutionData>{ title: "Scale Out App Service Plan", tags: [SolutionTypeTag.Mitigation], solution: solution });
             // case 5: // TODO: Reboot Worker;
             // case 6:
             //     // TODO: Subscribe to incidents.
