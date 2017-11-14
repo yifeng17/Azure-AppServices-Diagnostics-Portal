@@ -557,7 +557,7 @@ export class ContianerStartFailedSolutions extends SolutionUIModelBase {
 
         this.properties.id = 113;
         this.properties.title = "Check app settings for port or app code";
-        this.properties.description = "Your container was either failing to start or started but failed to respond with a healthy status code. This resulted in failure to start the web app and the site keeps responding with a 404. If you are using built-in image please investigate your app code. If you are using a custom image please look at your docker file and your app code. Another possible cause is your specified WEBSITE_PORT appsetting is incorrect.";
+        this.properties.description = "Your container was either failing to start or started but failed to respond with a healthy status code. This resulted in a failure to start the web app, which keeps responding with a 404 Not Found. If you are using a built-in image please investigate your app code. If you are using a custom image please look at your docker file and your app code. Another possible cause is your specified WEBSITE_PORT appsetting is incorrect.";
 
         this.properties.type = Enums.SolutionType.QuickSolution;
     }
