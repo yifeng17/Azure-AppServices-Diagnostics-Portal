@@ -1,9 +1,10 @@
 import { Component, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { PortalActionService, ArmService, PortalService, RBACService, LoggingService } from '../../services';
+import { PortalActionService, ArmService, AuthService, RBACService, LoggingService } from '../../services';
 import { SupportBladeDefinitions } from '../../models/portal';
-import { Site } from '../../models/site';
+import { Site, SiteExtensions, OperatingSystem } from '../../models/site';
 import { StartupInfo } from '../../models/portal';
+import { ResponseMessageEnvelope } from '../../models/responsemessageenvelope';
 
 @Component({
     selector: 'support-tools',
@@ -22,22 +23,25 @@ export class SupportToolsComponent  {
     hasReadAccessToServerFarm: boolean;
     initialized: boolean = false;
 
-    constructor(private _portalActionService: PortalActionService, private _armService: ArmService, private _portalService: PortalService, private _rbacService: RBACService, private _logger: LoggingService) {
+    constructor(private _portalActionService: PortalActionService, private _armService: ArmService, private _authService: AuthService, private _rbacService: RBACService, private _logger: LoggingService) {
         this.supportTools = [];
         this.premiumTools = [];
 
-        this._portalService.getStartupInfo()        
+        this._authService.getStartupInfo()        
             .flatMap((startUpInfo: StartupInfo) => {
                 return this._armService.getResource<Site>(startUpInfo.resourceId);
             })
-            .flatMap((site: Site) => {
-                this.currentSite = site;
+            .flatMap((site: ResponseMessageEnvelope<Site>) => {
+                this.currentSite = site.properties;
                 return this._rbacService.hasPermission(this.currentSite.serverFarmId, [this._rbacService.readScope]);
             })
             .subscribe((hasPermission: boolean) => {
                 this.hasReadAccessToServerFarm = hasPermission;
                 //disable for Linux
-                this.initialize();
+
+                if (SiteExtensions.operatingSystem(this.currentSite) === OperatingSystem.windows) {
+                    this.initialize();
+                }
             })
     }
 
