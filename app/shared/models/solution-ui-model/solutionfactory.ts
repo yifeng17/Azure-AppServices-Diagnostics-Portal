@@ -73,6 +73,8 @@ export class SolutionFactory {
                 return new OtherSolutions.EnablePHPLogging(rank, parameters, _logger, siteService);
             case 111:
                 return new OtherSolutions.CheckPHPLogs(rank, parameters, _logger, siteService);
+            case 113:
+                return new OtherSolutions.ContianerStartFailedSolutions(rank, _logger);
             default:
                 _logger.LogMissingSolution(id);
                 return null;
