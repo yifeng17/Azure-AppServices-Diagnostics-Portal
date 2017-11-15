@@ -19,18 +19,13 @@ export class SiteService {
     //TODO: This should be deprecated, but leaving it for now while we move to new solutions
     public currentSiteStatic: Site;
 
-    private siteBehaviorSubject: BehaviorSubject<Site> = new BehaviorSubject<Site>(null);
-
     constructor(private _armClient: ArmService, private _authService: AuthService, private _http: Http, private _uriElementsService: UriElementsService, private _serverFarmService: ServerFarmDataService) {
         this._authService.getStartupInfo().flatMap((startUpInfo: StartupInfo) => {
             return this._armClient.getResource<Site>(startUpInfo.resourceId);
         }).subscribe((site: ResponseMessageEnvelope<Site>) => {
+            this.currentSiteStatic = site.properties;
             this.currentSite.next(site.properties);
         });
-    }
-
-    public getCurrentSite(): BehaviorSubject<Site> {
-        return this.siteBehaviorSubject;
     }
 
     // I am making the assumption that two sites on the same server farm must be in the same sub 
@@ -59,13 +54,13 @@ export class SiteService {
                 slotName = parts[1].replace(')', '');
             }
     
-            let resourceUri: string = this._uriElementsService.getSiteRestartUrl(subscriptionId, targetedSite.resourceGroup, mainSiteName, slotName);
+            let resourceUri: string = '';//this._uriElementsService.getSiteRestartUrl(subscriptionId, targetedSite.resourceGroup, mainSiteName, slotName);
             return <Observable<boolean>>(this._armClient.postResource(resourceUri, null, null, true));
         });
     }
 
     killW3wpOnInstance(subscriptionId: string, resourceGroup: string, siteName: string, scmHostName: string, instanceId: string): Observable<boolean> {
-        return this.findTargetedSite(siteName).flatMap(targetedSite => {
+        return this.findTargetedSite(siteName).flatMap((targetedSite: Site) => {
             if (targetedSite.enabledHostNames.length > 0) {
                 let scmHostNameFromSiteObject = targetedSite.enabledHostNames.find(hostname => hostname.indexOf(".scm.") > 0);
                 if (scmHostNameFromSiteObject !== null && scmHostNameFromSiteObject.length > 0) {
@@ -80,7 +75,7 @@ export class SiteService {
             };
     
             let requestHeaders: Headers = this._getHeaders();
-    
+
             return this._http.post(url, body, { headers: requestHeaders })
                 .map((response: Response) => response.ok);
         })

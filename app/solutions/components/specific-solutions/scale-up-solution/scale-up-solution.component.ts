@@ -46,6 +46,7 @@ export class ScaleUpSolutionComponent implements SolutionBaseComponent {
     }
 
     ngOnInit() {
+        this.data.solution.order = this.data.solution.order ? this.data.solution.order : 9999;
         this._logger.LogSolutionDisplayed('Scale Up', this.data.solution.order.toString(), 'bot-sitecpuanalysis');
     }
 

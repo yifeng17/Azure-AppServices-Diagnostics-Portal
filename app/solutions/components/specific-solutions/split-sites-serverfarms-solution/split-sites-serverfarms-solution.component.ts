@@ -46,6 +46,10 @@ export class SplitSitesIntoDifferentServerFarmsSolutionComponent implements Solu
         });
     }
 
+    ngOnInit() {
+        this.data.solution.order = this.data.solution.order ? this.data.solution.order : 9999;
+    }
+
     generateSuggestion() {
         if (this.sitesInServerFarm && this.sitesInServerFarm.length >= 3) {
             this.suggestion = `There are ${this.sitesInServerFarm.length} apps in this App Service Plan including: <b>${this.sitesInServerFarm.map(x => x.name).slice(0, 2).join(', ')}</b>`;

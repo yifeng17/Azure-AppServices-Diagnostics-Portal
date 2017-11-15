@@ -20,10 +20,6 @@ export class HealthCheckMessageFlow implements IMessageFlowProvider {
     GetMessageFlowList(): MessageGroup[] {
         var messageGroupList: MessageGroup[] = [];
 
-        let nextAfterHealthCheck = AuthService.newFeatureEnabled ? 'cpuanalysis' : 'feedback';
-
-        console.log(nextAfterHealthCheck);
-
         var healthCheckGroup: MessageGroup = new MessageGroup('health-check', [], this._getHealthCheckNextGroupId.bind(this));
         healthCheckGroup.messages.push(new TextMessage('First, would you like me to perform a health checkup on your Web App?', MessageSender.System, 2000));
         healthCheckGroup.messages.push(new TextMessage('A health checkup analyzes your Web App and gives you a quick and in-depth overview of your app health according to requests and errors, app performance, CPU usage, and memory usage.', MessageSender.System, 500));
@@ -100,13 +96,6 @@ export class HealthCheckMessageFlow implements IMessageFlowProvider {
         group.messages.push(new TextMessage('Great, give me a moment while I perform your health checkup…', MessageSender.System, 1000));
         group.messages.push(new TextMessage('Once your health checkup is complete, please use the tabs to navigate between the different categories. Click ‘View Full Report’ to get more details and potential quick solutions and troubleshooting advice.', MessageSender.System, 1000));
         group.messages.push(new HealthCheckMessage());
-        if (!AuthService.newFeatureEnabled) {
-            group.messages.push(new TextMessage('Thanks for coming in for your health checkup. Did you find the health checkup helpful?', MessageSender.System, 2500));
-            group.messages.push(new ButtonListMessage(this._getButtonListForHealthCheckFeedback(), 'Was health checkup useful?'));
-            group.messages.push(new TextMessage('Yes, thank you!', MessageSender.User, 100));
-            group.messages.push(new TextMessage('Great, I\'m glad I could be of help!', MessageSender.System));
-        }
-
     }
 }
 

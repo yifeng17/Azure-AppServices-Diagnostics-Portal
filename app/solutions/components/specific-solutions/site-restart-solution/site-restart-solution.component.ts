@@ -36,8 +36,14 @@ export class SiteRestartComponent implements SolutionBaseComponent, OnInit {
     restartAppSuccessMessage: string = "App Restart Successful. Check and see if this issue is resolved."
     restartAppFailureMessage: string = "App Restart Failed. Please try again or try a different solution."
 
+    targetedRestartAppStatus: { instance: string, status: ActionStatus }[];
+    targetedRestartAppSuccessMessage: string = "App Restarted Successfully on Instance"
+    targetedRestartAppFailureMessage: string = "App Restart Failed on Instance, you could try doing a full app restart instead."
+
     siteToBeRestarted: ApplicationRestartInfo;
     instanceList: string;
+
+    actionStatus = ActionStatus;
 
     constructor(private _siteService: SiteService, _portalActionService: PortalActionService, _serverFarmService: ServerFarmDataService, private _logger: AvailabilityLoggingService) {
         
@@ -45,6 +51,7 @@ export class SiteRestartComponent implements SolutionBaseComponent, OnInit {
 
     ngOnInit(): void {
         this.includeTargetedAppRestart = this.data.solution.id === 1;
+        this.data.solution.order = this.data.solution.order ? this.data.solution.order : 9999;
 
         if (this.includeTargetedAppRestart) {
             this.siteToBeRestarted = MetaDataHelper.getAdvancedApplicationRestartData(this.data.solution.data);
@@ -72,11 +79,19 @@ export class SiteRestartComponent implements SolutionBaseComponent, OnInit {
 
     advancedAppRestartSite() {
         //TODO: scmhostname
+        this.targetedRestartAppStatus = [];
         this._logger.LogSolutionTried('Advanced App Restart', this.data.solution.order.toString(), 'inline', '')
         this.siteToBeRestarted.instances.forEach(instance => {
+            this.targetedRestartAppStatus.push({ instance: instance.machineName, status: ActionStatus.Running });
             this._siteService.killW3wpOnInstance(this.siteToBeRestarted.subscriptionId, this.siteToBeRestarted.resourceGroupName, this.siteToBeRestarted.siteName,
-                '', instance.machineName);
+                '', instance.instanceId).subscribe(response => {
+                    let instanceStatus = this.targetedRestartAppStatus.find(status => status.instance === instance.machineName);
+                    instanceStatus.status = ActionStatus.Passed;
+                },
+                error => {
+                    let instanceStatus = this.targetedRestartAppStatus.find(status => status.instance === instance.machineName);
+                    instanceStatus.status = ActionStatus.Failed;
+                });
         })
-
     }
 }

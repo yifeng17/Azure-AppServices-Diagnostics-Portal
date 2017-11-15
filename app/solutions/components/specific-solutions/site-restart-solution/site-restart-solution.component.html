@@ -29,6 +29,16 @@
             <div style="text-align:right">
                 <button class="btn btn-primary" (click)="advancedAppRestartSite()">Restart App On Specified Instances</button>
             </div>
+
+            <div *ngIf="targetedRestartAppStatus && targetedRestartAppStatus.length > 0">
+                Status for each instance:
+                <div *ngFor="let instanceStatus of targetedRestartAppStatus">
+                     {{instanceStatus.instance}}: 
+                        <i class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true" *ngIf="instanceStatus.status === actionStatus.Running"></i>
+                        <span *ngIf="instanceStatus.status === actionStatus.Passed">{{targetedRestartAppSuccessMessage}}</span>
+                        <span *ngIf="instanceStatus.status === actionStatus.Failed">{{targetedRestartAppFailureMessage}}</span>
+                </div>
+            </div>
         </div>
     </div>
 
