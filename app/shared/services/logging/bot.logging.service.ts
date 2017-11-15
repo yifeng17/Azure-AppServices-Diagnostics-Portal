@@ -12,4 +12,11 @@ export class BotLoggingService extends LoggingService {
     LogHealthCheckInvoked(): void {
         this._log(BotEventType[BotEventType.HealthCheckInvoked], 'Support Home');
     }
+
+    LogDetectorViewInBot(detector: string, displayed: boolean){
+        this._log(BotEventType[BotEventType.DetectorViewChatDisplayed], 'Support Home', {
+            detector: detector,
+            displayed: displayed
+        });
+    }
 }

@@ -4,14 +4,14 @@ import { Message, TextMessage, MessageSender, ButtonActionType, ButtonListMessag
 import { MessageGroup } from '../../models/message-group';
 import { RegisterMessageFlowWithFactory } from '../message-flow.factory';
 import { HealthCheckComponent } from './health-check.component';
-import { AuthService, AppAnalysisService } from '../../../shared/services';
+import { AuthService, AppAnalysisService, BotLoggingService } from '../../../shared/services';
 import { CpuAnalysisChatFlow } from '../cpu-analysis-chat/cpu-analysis-chat-flow';
 
 @Injectable()
 @RegisterMessageFlowWithFactory()
 export class HealthCheckMessageFlow implements IMessageFlowProvider {
 
-    constructor(private _appAnalysisService: AppAnalysisService, private _cpuAnalysisChatFlow: CpuAnalysisChatFlow) { }
+    constructor(private _appAnalysisService: AppAnalysisService, private _cpuAnalysisChatFlow: CpuAnalysisChatFlow, private _logger: BotLoggingService) { }
 
     private _self: HealthCheckMessageFlow = this;
 
@@ -53,7 +53,9 @@ export class HealthCheckMessageFlow implements IMessageFlowProvider {
     }
 
     private _getHealthCheckNextGroupId(): string {
-        return this._cpuAnalysisChatFlow.cpuDetectorResponse && this._cpuAnalysisChatFlow.cpuDetectorResponse.abnormalTimePeriods.length > 0 ? 'cpuanalysis' : 'feedback';
+        let nextId = this._cpuAnalysisChatFlow.cpuDetectorResponse && this._cpuAnalysisChatFlow.cpuDetectorResponse.abnormalTimePeriods.length > 0 ? 'cpuanalysis' : 'feedbackprompt';
+        this._logger.LogDetectorViewInBot('sitecpuanalysis', nextId === 'cpuanalysis' ? true : false);
+        return nextId;
     }
 
     private _getButtonListForHealthCheck(): any {

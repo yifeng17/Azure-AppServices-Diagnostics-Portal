@@ -28,7 +28,9 @@ export class SiteRestartComponent implements SolutionBaseComponent, OnInit {
     ]
 
     advancedAppRestartDescription: string =
-    "Advanced Application Restart is the perfect solution if your app is running on multiple instances but you only want to restart your app on specific instances.";
+    "Advanced Application Restart is the perfect solution if your app is running on multiple instances but you only want to restart your app on specific instances. " +
+        "This method relies on your kudu app, which runs alongside your app, to restart your app on each instance. If you have one or more instances where CPU is very high, " +
+        "it may mean that this method may not work, and you may want to try doing a full app restart.";
 
     appRestartDescription: string = "An App Restart will kill the app process on all instances."
 
@@ -38,7 +40,7 @@ export class SiteRestartComponent implements SolutionBaseComponent, OnInit {
 
     targetedRestartAppStatus: { instance: string, status: ActionStatus }[];
     targetedRestartAppSuccessMessage: string = "App Restarted Successfully on Instance"
-    targetedRestartAppFailureMessage: string = "App Restart Failed on Instance, you could try doing a full app restart instead."
+    targetedRestartAppFailureMessage: string = "App Restart Failed on Instance"
 
     siteToBeRestarted: ApplicationRestartInfo;
     instanceList: string;

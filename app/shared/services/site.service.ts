@@ -54,7 +54,7 @@ export class SiteService {
                 slotName = parts[1].replace(')', '');
             }
     
-            let resourceUri: string = '';//this._uriElementsService.getSiteRestartUrl(subscriptionId, targetedSite.resourceGroup, mainSiteName, slotName);
+            let resourceUri: string = this._uriElementsService.getSiteRestartUrl(subscriptionId, targetedSite.resourceGroup, mainSiteName, slotName);
             return <Observable<boolean>>(this._armClient.postResource(resourceUri, null, null, true));
         });
     }

@@ -33,7 +33,7 @@
             <div *ngIf="targetedRestartAppStatus && targetedRestartAppStatus.length > 0">
                 Status for each instance:
                 <div *ngFor="let instanceStatus of targetedRestartAppStatus">
-                     {{instanceStatus.instance}}: 
+                     <b>{{instanceStatus.instance}}: </b>
                         <i class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true" *ngIf="instanceStatus.status === actionStatus.Running"></i>
                         <span *ngIf="instanceStatus.status === actionStatus.Passed">{{targetedRestartAppSuccessMessage}}</span>
                         <span *ngIf="instanceStatus.status === actionStatus.Failed">{{targetedRestartAppFailureMessage}}</span>

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, isDevMode } from '@angular/core';
 import { PortalService, AuthService, ArmService } from '../';
 import { StartupInfo } from '../../models/portal';
 import { CommonLogEventType } from './events.enumerations';
@@ -85,6 +85,10 @@ export class LoggingService {
         Object.keys(commonArgs).forEach((key: string) => combinedArgs[key] = commonArgs[key]);
         if (args) {
             Object.keys(args).forEach((key: string) => combinedArgs[key] = args[key]);
+        }
+
+        if (isDevMode()) {
+            console.log({ id: id, category: category, args: args });
         }
 
         this._portalServiceInstance.logAction(id, category, combinedArgs);

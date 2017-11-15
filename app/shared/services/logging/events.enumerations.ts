@@ -24,10 +24,12 @@ export enum AvailabilityEventType {
     AppRestartAnalysisSummary,
     MemorySummaryStatus,
     SummaryViewExpanded, 
-    SolutionDisplayed
+    SolutionDisplayed,
+    SolutionFeedback
 }
 
 export enum BotEventType{
     HealthCheckInvoked,
-    HealthCheckReportStats
+    HealthCheckReportStats,
+    DetectorViewChatDisplayed
 }

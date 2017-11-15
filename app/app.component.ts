@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, isDevMode } from '@angular/core';
 import { AuthService, WindowService, LoggingService } from './shared/services';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { INavigationItem } from "./shared/models/inavigationitem";
@@ -29,6 +29,11 @@ export class AppComponent implements OnInit {
 
     ngOnInit() {
         this.contentMaxHeight = this._windowService.window.innerHeight - 55;
+
+        if (isDevMode()) {
+            console.log('%c Support Center is running in dev mode', 'color: orange')
+            console.log('%c Logs that are normally published to the portal kusto logs will show up in the console', 'color: orange')
+        }
 
         this._authService.getStartupInfo()
             .subscribe(info => {

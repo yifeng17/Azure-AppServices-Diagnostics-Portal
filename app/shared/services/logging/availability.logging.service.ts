@@ -127,4 +127,13 @@ export class AvailabilityLoggingService extends LoggingService {
             status: status
         });
     }
+
+    LogSolutionFeedback(solutionName: string, helpful: boolean) {
+        this._log(AvailabilityEventType[AvailabilityEventType.SolutionFeedback], "Availability", {
+            source: solutionName,
+            helpful: helpful
+        });
+    }
+
+
 }

@@ -12,6 +12,7 @@ import { ProfilingComponent } from './components/specific-solutions/profiling-so
 import { SolutionOperationComponent } from './components/common/solution-operation/solution-operation.component';
 import { ScaleOutSolutionComponent } from './components/specific-solutions/scale-out-solution/scale-out-solution.component';
 import { SplitSitesIntoDifferentServerFarmsSolutionComponent } from './components/specific-solutions/split-sites-serverfarms-solution/split-sites-serverfarms-solution.component';
+import { SolutionFeedbackComponent } from './components/common/solution-feedback/solution-feedback.component';
 
 @NgModule({
     declarations: [
@@ -24,7 +25,8 @@ import { SplitSitesIntoDifferentServerFarmsSolutionComponent } from './component
         DefaultSolutionTemplateComponent,
         ProfilingComponent,
         SolutionOperationComponent,
-        SplitSitesIntoDifferentServerFarmsSolutionComponent
+        SplitSitesIntoDifferentServerFarmsSolutionComponent,
+        SolutionFeedbackComponent
     ],
     imports: [
         SharedModule

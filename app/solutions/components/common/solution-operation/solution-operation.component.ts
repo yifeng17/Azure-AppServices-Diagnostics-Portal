@@ -8,9 +8,7 @@ import { ActionStatus } from '../../../../shared/models/enumerations';
 @Component({
     selector: 'solution-operation',
     templateUrl: 'solution-operation.component.html',
-    styleUrls: ['../../../styles/solutions.css'//,
-       // 'scale-up-solution.component.css'
-    ]
+    styleUrls: ['../../../styles/solutions.css' ]
 })
 export class SolutionOperationComponent {
 
