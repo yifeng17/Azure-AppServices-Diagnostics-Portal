@@ -12,13 +12,13 @@ export * from "./broadcast.service";
 export * from "./cache.service";
 export * from "./portal.service";
 export * from "./auth.service";
+export * from "./arm.service";
 
 // Logging Services
 export * from "./logging/logging.service";
 export * from "./logging/availability.logging.service";
 export * from "./logging/bot.logging.service";
 
-export * from "./arm.service";
 export * from "./urielements.service";
 
 export * from "./rbac.service";

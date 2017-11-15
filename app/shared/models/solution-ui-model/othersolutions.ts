@@ -550,3 +550,18 @@ export class RevertChanges extends SolutionUIModelBase {
     run(): void {
     }
 }
+
+export class ContianerStartFailedSolutions extends SolutionUIModelBase {
+    constructor(rank: number, _logger: AvailabilityLoggingService) {
+        super(rank, new SolutionProperties(), _logger);
+
+        this.properties.id = 113;
+        this.properties.title = "Check app settings for port or app code";
+        this.properties.description = "Your container was either failing to start or started but failed to respond with a healthy status code. This resulted in a failure to start the web app, which keeps responding with a 404 Not Found. If you are using a built-in image please investigate your app code. If you are using a custom image please look at your docker file and your app code. Another possible cause is your specified WEBSITE_PORT appsetting is incorrect.";
+
+        this.properties.type = Enums.SolutionType.QuickSolution;
+    }
+
+    run(): void {
+    }
+}
