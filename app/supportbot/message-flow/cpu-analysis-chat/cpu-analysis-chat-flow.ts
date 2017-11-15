@@ -1,39 +1,67 @@
 import { Injectable } from '@angular/core';
 import { IMessageFlowProvider } from '../../interfaces/imessageflowprovider';
-import { Message, TextMessage, ButtonActionType, ButtonListMessage, MessageSender} from '../../models/message';
+import { Message, TextMessage, ButtonActionType, ButtonListMessage, MessageSender } from '../../models/message';
 import { MessageGroup } from '../../models/message-group';
 import { RegisterMessageFlowWithFactory } from '../message-flow.factory';
 import { SolutionsMessage } from '../../common/solutions-message/solutions-message.component';
 import { GraphMessage } from '../../common/graph-message/graph-message.component';
 import { ProblemStatementMessage } from '../../common/problem-statement-message/problem-statement-message.component';
+import { AppAnalysisService, AuthService } from '../../../shared/services';
+import { IDetectorResponse } from '../../../shared/models/detectorresponse';
 
 
 @Injectable()
 @RegisterMessageFlowWithFactory()
 export class CpuAnalysisChatFlow implements IMessageFlowProvider {
+
+    public cpuDetectorResponse: IDetectorResponse;
+
+    private subscription;
+    private resourceGroup;
+    private siteName;
+    private slotName;
+
+    constructor(private _appAnalysisService: AppAnalysisService, private _authService: AuthService) {
+        this._authService.getStartupInfo().subscribe(info => {
+            let pieces = info.resourceId.toLowerCase().split('/');
+            this.subscription = pieces[pieces.indexOf('subscriptions') + 1];
+            this.resourceGroup = pieces[pieces.indexOf('resourcegroups') + 1];
+            this.siteName = pieces[pieces.indexOf('sites') + 1];
+            this.slotName = pieces.indexOf('slots') >= 0 ? pieces[pieces.indexOf('slots') + 1] : '';
+
+            this._getCpuDetectorResponse();
+        })
+    }
+
     GetMessageFlowList(): MessageGroup[] {
         var messageGroupList: MessageGroup[] = [];
 
-        var cpuAnalysisGroup: MessageGroup = new MessageGroup('cpuanalysis', [], 'feedbackprompt');
+        var cpuAnalysisGroup: MessageGroup = new MessageGroup('cpuanalysis', [], () => 'feedbackprompt');
         cpuAnalysisGroup.messages.push(new TextMessage('I noticed that your app was experiencing high CPU usage within the last 24 hours. Would you like me to show you more details about the issues we found?'));
         cpuAnalysisGroup.messages.push(new ButtonListMessage(this._getButtonListForHealthCheck(), 'Show CPU Analysis'));
         cpuAnalysisGroup.messages.push(new TextMessage('Yes I want to see CPU issues', MessageSender.User, 0));
-        cpuAnalysisGroup.messages.push(new ProblemStatementMessage(2000));        
+        cpuAnalysisGroup.messages.push(new ProblemStatementMessage(2000));
         cpuAnalysisGroup.messages.push(new TextMessage('Below is your CPU Usage for the last 24 hours. The first graph shows the overall CPU usage on each instance. The second graph shows the CPU usage breakdown per app, according to the specific instance selected in the dropdown.', MessageSender.System, 2000));
         cpuAnalysisGroup.messages.push(new GraphMessage(0));
         cpuAnalysisGroup.messages.push(new TextMessage('Would you like to see the troubleshooting suggestions that I have tailored to your specific issue?', MessageSender.System, 3000));
         cpuAnalysisGroup.messages.push(new ButtonListMessage(this._getButtonListForSolutionPrompt(), 'Show CPU solutions'));
-        cpuAnalysisGroup.messages.push(new TextMessage('Yes!', MessageSender.User, 0));        
+        cpuAnalysisGroup.messages.push(new TextMessage('Yes!', MessageSender.User, 0));
         cpuAnalysisGroup.messages.push(new SolutionsMessage(2000));
 
         messageGroupList.push(cpuAnalysisGroup);
 
-        var noCpuAnalysisGroup: MessageGroup = new MessageGroup('nocpuanalysis', [], 'feedbackprompt');
+        var noCpuAnalysisGroup: MessageGroup = new MessageGroup('nocpuanalysis', [], () => 'feedbackprompt');
         noCpuAnalysisGroup.messages.push(new TextMessage('No problem. You can still access all the data by going to \'High CPU\' above'));
 
         messageGroupList.push(noCpuAnalysisGroup);
 
         return messageGroupList;
+    }
+
+    private _getCpuDetectorResponse() {
+        this._appAnalysisService.getDetectorResource(this.subscription, this.resourceGroup, this.siteName, this.slotName, 'availability', 'sitecpuanalysis').subscribe(response => {
+            this.cpuDetectorResponse = response;
+        })
     }
 
     private _getButtonListForHealthCheck(): any {

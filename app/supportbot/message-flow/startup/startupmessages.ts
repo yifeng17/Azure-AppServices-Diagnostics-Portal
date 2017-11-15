@@ -12,7 +12,7 @@ export class StartupMessages implements IMessageFlowProvider {
 
         var messageGroupList: MessageGroup[] = [];
 
-        var welcomeMessageGroup: MessageGroup = new MessageGroup('startup', [], 'main-menu');
+        var welcomeMessageGroup: MessageGroup = new MessageGroup('startup', [], () => 'main-menu');
         welcomeMessageGroup.messages.push(new TextMessage('Hello! Welcome to App Service diagnostics! I’m here to help you diagnose and solve problems with your Web App.'));
 
         messageGroupList.push(welcomeMessageGroup);

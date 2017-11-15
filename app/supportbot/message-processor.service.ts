@@ -3,17 +3,31 @@ import { Message, ButtonActionType } from './models/message';
 import { MessageGroup } from './models/message-group';
 import { MessageFlowFactory } from './message-flow/message-flow.factory';
 import { HealthCheckMessageFlow }  from './message-flow/health-check/healthcheckmessageflow';
+import { IMessageFlowProvider } from './interfaces/imessageflowprovider';
 
 @Injectable()
 export class MessageProcessor {
+    private _messageFlowProviders: IMessageFlowProvider[];
     private _messageGroups: MessageGroup[] = [];
     private _startingKey: string = 'startup';
     private _currentKey: string;
     private _currentMessageGroup: MessageGroup;
     private _currentMessageIterator: number;
 
-    constructor(private _healthCheckFlow: HealthCheckMessageFlow, _injector: Injector) {
-        this._messageGroups = MessageFlowFactory.getMessageGroups();
+    constructor(private _injector: Injector) {
+        //this._messageGroups = MessageFlowFactory.getMessageGroups();
+
+        this._messageFlowProviders = MessageFlowFactory.getMessageFlowProviders().map(provider => {
+            return this._injector.get(provider);
+        })
+
+        let messageGroups: MessageGroup[] = [];
+        this._messageFlowProviders.forEach(provider => {
+            messageGroups = messageGroups.concat(provider.GetMessageFlowList());
+        })
+
+        this._messageGroups = messageGroups;
+
         this._currentKey = this._startingKey;
         this._currentMessageIterator = 0;
         this._currentMessageGroup = this._getMessageGroupByKey(this._currentKey);
@@ -41,12 +55,12 @@ export class MessageProcessor {
         }
 
         if (this._currentMessageIterator >= this._currentMessageGroup.messages.length) {
-            if (this._currentMessageGroup.next_key === undefined || this._currentMessageGroup.next_key === '') {
+            if (this._currentMessageGroup.next_key === undefined || this._currentMessageGroup.next_key() === '') {
                 return null;
             }
 
             this._currentMessageIterator = 0;
-            this._currentKey = this._currentMessageGroup.next_key;
+            this._currentKey = this._currentMessageGroup.next_key();
 
             this._currentMessageGroup = this._getMessageGroupByKey(this._currentKey);
         }

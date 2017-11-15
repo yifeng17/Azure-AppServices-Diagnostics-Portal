@@ -21,7 +21,7 @@ import { HealthCheckComponent } from './message-flow/health-check/health-check.c
 import { FeedbackComponent } from './message-flow/feedback/feedback.component';
 import { SolutionsMessageComponent } from './common/solutions-message/solutions-message.component';
 import { GraphMessageComponent } from './common/graph-message/graph-message.component';
-import { CpuAnalysisChatFlow } from './message-flow/cpu-analysis-chat/cpu-analysis-chat-flow.component';
+import { CpuAnalysisChatFlow } from './message-flow/cpu-analysis-chat/cpu-analysis-chat-flow';
 import { ProblemStatementMessageComponent } from './common/problem-statement-message/problem-statement-message.component';
 
 const _siteResourceUrl: string = 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/sites/:sitename';

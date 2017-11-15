@@ -6,6 +6,7 @@ import { SiteRestartComponent } from '../../specific-solutions/site-restart-solu
 import { ScaleUpSolutionComponent } from '../../specific-solutions/scale-up-solution/scale-up-solution.component';
 import { ProfilingComponent } from '../../specific-solutions/profiling-solution/profiling-solution.component';
 import { ScaleOutSolutionComponent } from '../../specific-solutions/scale-out-solution/scale-out-solution.component';
+import { SplitSitesIntoDifferentServerFarmsSolutionComponent } from '../../specific-solutions/split-sites-serverfarms-solution/split-sites-serverfarms-solution.component';
 
 
 @Component({
@@ -13,7 +14,7 @@ import { ScaleOutSolutionComponent } from '../../specific-solutions/scale-out-so
     template: `
     <div dynamic-solution-placeholder></div>
     `,
-    entryComponents: [SiteRestartComponent, ScaleUpSolutionComponent, ScaleOutSolutionComponent, ProfilingComponent]
+    entryComponents: [SiteRestartComponent, ScaleUpSolutionComponent, ScaleOutSolutionComponent, ProfilingComponent, SplitSitesIntoDifferentServerFarmsSolutionComponent]
 })
 export class DynamicSolutionComponent implements AfterViewInit {
     currentComponent = null;

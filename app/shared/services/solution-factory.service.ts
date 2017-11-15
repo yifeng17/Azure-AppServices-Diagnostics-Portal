@@ -7,6 +7,7 @@ import { LoggingService } from '../services/logging/logging.service';
 import { SolutionTypeTag } from '../models/solution-type-tag';
 import { ProfilingComponent } from '../../solutions/components/specific-solutions/profiling-solution/profiling-solution.component';
 import { ScaleOutSolutionComponent } from '../../solutions/components/specific-solutions/scale-out-solution/scale-out-solution.component';
+import { SplitSitesIntoDifferentServerFarmsSolutionComponent } from '../../solutions/components/specific-solutions/split-sites-serverfarms-solution/split-sites-serverfarms-solution.component';
 
 @Injectable()
 export class SolutionFactoryService {
@@ -43,8 +44,8 @@ export class SolutionFactoryService {
             //     // TODO : Scale Up ASE
             //     _logger.LogMissingSolution(id);
             //     return null;
-            // case 12:
-            //     return new OtherSolutions.SplitAppsIntoDifferentServerFarms(rank, _logger);
+            case 12:
+                return new SolutionHolder(SplitSitesIntoDifferentServerFarmsSolutionComponent, <SolutionData>{ title: "Move Apps to New ASP", tags: [SolutionTypeTag.Mitigation], solution: solution });
             // case 13:
             //     return new OtherSolutions.CheckWebConfig(rank, parameters, _logger, siteService);
             // case 14:

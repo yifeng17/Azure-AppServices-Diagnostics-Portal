@@ -8,19 +8,24 @@ import { FeedbackComponent } from './feedback.component';
 @Injectable()
 @RegisterMessageFlowWithFactory()
 export class FeedbackMessageFlow implements IMessageFlowProvider {
+
+    constructor() {
+        console.log('FeedbackMessageFlow instantiated');
+    }
+
     GetMessageFlowList(): MessageGroup[] {
         var messageGroupList: MessageGroup[] = [];
 
-        var feedbackPromptGroup: MessageGroup = new MessageGroup('feedbackprompt', [], 'feedback');
+        var feedbackPromptGroup: MessageGroup = new MessageGroup('feedbackprompt', [], () => 'feedback');
 
         feedbackPromptGroup.messages.push(new TextMessage('Thanks for using App Service diagnostics. Did you find this experience useful?', MessageSender.System, 2500));
         feedbackPromptGroup.messages.push(new ButtonListMessage(this._getButtonListForHealthCheckFeedback(), 'Was diagnoser useful?'));
         feedbackPromptGroup.messages.push(new TextMessage('Yes, thank you!', MessageSender.User, 100));
         feedbackPromptGroup.messages.push(new TextMessage('Great, I\'m glad I could be of help!', MessageSender.System));
-        
+
         messageGroupList.push(feedbackPromptGroup);
 
-        var feedbackGroup: MessageGroup = new MessageGroup('feedback', [], '');
+        var feedbackGroup: MessageGroup = new MessageGroup('feedback', [], () => '');
         feedbackGroup.messages.push(new TextMessage('Please help me improve by providing some feedback. What was my most/least helpful feature? What features would you like to see?'));
         feedbackGroup.messages.push(new FeedbackMessage());
         feedbackGroup.messages.push(new TextMessage('Thank you!'));

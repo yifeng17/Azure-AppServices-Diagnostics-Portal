@@ -12,7 +12,7 @@ export class MainMenuMessageFlow implements IMessageFlowProvider {
 
         var messageGroupList: MessageGroup[] = [];
 
-        var mainMenuGroup: MessageGroup = new MessageGroup('main-menu', [], 'health-check');
+        var mainMenuGroup: MessageGroup = new MessageGroup('main-menu', [], () => 'health-check');
         mainMenuGroup.messages.push(new TextMessage('Here are some of the things that I can help you with:', MessageSender.System, 2000));
         mainMenuGroup.messages.push(new MainMenuMessage());
 

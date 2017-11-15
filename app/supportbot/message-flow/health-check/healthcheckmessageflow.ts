@@ -4,11 +4,16 @@ import { Message, TextMessage, MessageSender, ButtonActionType, ButtonListMessag
 import { MessageGroup } from '../../models/message-group';
 import { RegisterMessageFlowWithFactory } from '../message-flow.factory';
 import { HealthCheckComponent } from './health-check.component';
-import { AuthService } from '../../../shared/services';
+import { AuthService, AppAnalysisService } from '../../../shared/services';
+import { CpuAnalysisChatFlow } from '../cpu-analysis-chat/cpu-analysis-chat-flow';
 
 @Injectable()
 @RegisterMessageFlowWithFactory()
 export class HealthCheckMessageFlow implements IMessageFlowProvider {
+
+    constructor(private _appAnalysisService: AppAnalysisService, private _cpuAnalysisChatFlow: CpuAnalysisChatFlow) { }
+
+    private _self: HealthCheckMessageFlow = this;
 
     private newFeatureEnabled: boolean = false;
 
@@ -19,7 +24,7 @@ export class HealthCheckMessageFlow implements IMessageFlowProvider {
 
         console.log(nextAfterHealthCheck);
 
-        var healthCheckGroup: MessageGroup = new MessageGroup('health-check', [], nextAfterHealthCheck);
+        var healthCheckGroup: MessageGroup = new MessageGroup('health-check', [], this._getHealthCheckNextGroupId.bind(this));
         healthCheckGroup.messages.push(new TextMessage('First, would you like me to perform a health checkup on your Web App?', MessageSender.System, 2000));
         healthCheckGroup.messages.push(new TextMessage('A health checkup analyzes your Web App and gives you a quick and in-depth overview of your app health according to requests and errors, app performance, CPU usage, and memory usage.', MessageSender.System, 500));
         healthCheckGroup.messages.push(new ButtonListMessage(this._getButtonListForHealthCheck(), 'Run health checkup'));
@@ -28,7 +33,7 @@ export class HealthCheckMessageFlow implements IMessageFlowProvider {
 
         messageGroupList.push(healthCheckGroup);
 
-        var healthCheckLaterGroup: MessageGroup = new MessageGroup('health-check-later', [], 'feedbackprompt');
+        var healthCheckLaterGroup: MessageGroup = new MessageGroup('health-check-later', [], () => 'feedbackprompt');
         healthCheckLaterGroup.messages.push(new TextMessage('Maybe later.', MessageSender.User, 100));
         healthCheckLaterGroup.messages.push(new TextMessage('Feel free to explore the above tiles to learn more about the health of your Web App and discover additional resources for troubleshooting in the right hand column.', MessageSender.System));
         healthCheckLaterGroup.messages.push(new TextMessage('However, I highly encourage that you perform a health checkup on your Web App.', MessageSender.System));
@@ -38,17 +43,21 @@ export class HealthCheckMessageFlow implements IMessageFlowProvider {
 
         messageGroupList.push(healthCheckLaterGroup);
 
-        var noHealthCheckGroup: MessageGroup = new MessageGroup('no-health-check', [], 'feedback');
+        var noHealthCheckGroup: MessageGroup = new MessageGroup('no-health-check', [], () => 'feedback');
         noHealthCheckGroup.messages.push(new TextMessage('No. Maybe another time.', MessageSender.User, 100));
         noHealthCheckGroup.messages.push(new TextMessage('Sorry to hear that I could not be of more help. Please explore our additional resources in the right hand column, especially our popular Support Tools, FAQs, and Community forums.', MessageSender.System));
         messageGroupList.push(noHealthCheckGroup);
 
-        var furtherAssistanceGroup: MessageGroup = new MessageGroup('further-assistance', [], 'feedback');
+        var furtherAssistanceGroup: MessageGroup = new MessageGroup('further-assistance', [], () => 'feedback');
         furtherAssistanceGroup.messages.push(new TextMessage('I need further assistance.', MessageSender.User, 100));
         furtherAssistanceGroup.messages.push(new TextMessage('Sorry to hear that I could not be of more help. Please explore our additional resources in the right hand column, especially our popular Support Tools, FAQs, and Community forums.', MessageSender.System));
         messageGroupList.push(furtherAssistanceGroup);
 
         return messageGroupList;
+    }
+
+    private _getHealthCheckNextGroupId(): string {
+        return this._cpuAnalysisChatFlow.cpuDetectorResponse && this._cpuAnalysisChatFlow.cpuDetectorResponse.abnormalTimePeriods.length > 0 ? 'cpuanalysis' : 'feedback';
     }
 
     private _getButtonListForHealthCheck(): any {
