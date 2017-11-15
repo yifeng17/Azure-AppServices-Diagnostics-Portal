@@ -1,59 +1,42 @@
 <default-solution-template [title]="title" [description]="description" [tags]="data.tags">
-
-
-
-
-    <div class="header2">Option #1: Advanced Application Restart</div>
-    <p>{{advancedAppRestartDescription}}</p>
-
-    <div class="action-box">
-        <div>
-            <!-- <div  style="font-size:16px">
-                    App to be restarted: <b style="color:#286090"></b> 
-                </div>
-                 -->
-            <!-- Instances: {{instanceList}} -->
-            <!-- <ul>
-                    <li *ngFor="let instance of siteToBeRestarted.instances">{{instance.machineName}}</li>
-                </ul> -->
+    <div *ngIf="includeTargetedAppRestart">
+        <div class="header2">Option #1: Advanced Application Restart</div>
+        <p>{{advancedAppRestartDescription}}</p>
+    
+        <div class="action-box">
             <div>
-                We detected the following site as the 
+
+                <div>
+                    We detected the following app as the cause of High CPU
+                </div>
+                <table style="border:none;margin-bottom: 10px;">
+                    <tr>
+                        <td>App to be Restarted: </td>
+                        <td class="highlight-blue">
+                            <b>{{siteToBeRestarted.siteName}}</b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Unhealthy Instance(s):
+                        </td>
+                        <td class="highlight-blue">
+                                {{instanceList}}
+                        </td>
+                    </tr>
+                </table>
             </div>
-            <table style="border:none;margin-bottom: 10px;">
-                <tr>
-                    <td>App to be Restarted: </td>
-                    <td class="highlight-blue">
-                        <b>{{siteToBeRestarted.siteName}}</b>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Unhealthy Instance(s):
-                    </td>
-                    <td class="highlight-blue">
-                            {{instanceList}}
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <div style="text-align:right">
-            <button class="btn btn-primary" (click)="advancedAppRestartSite()">Restart App On Specified Instances</button>
+            <div style="text-align:right">
+                <button class="btn btn-primary" (click)="advancedAppRestartSite()">Restart App On Specified Instances</button>
+            </div>
         </div>
     </div>
 
-    <div class="header2">Option #2: App Restart</div>
+    <div class="header2"><span *ngIf="includeTargetedAppRestart">Option #2:</span> App Restart</div>
     <p>{{appRestartDescription}}</p>
 
     <div class="action-box">
         <div>
-            <!-- <div  style="font-size:16px">
-                    App to be restarted: <b style="color:#286090"></b> 
-                </div>
-                 -->
-            <!-- Instances: {{instanceList}} -->
-            <!-- <ul>
-                    <li *ngFor="let instance of siteToBeRestarted.instances">{{instance.machineName}}</li>
-                </ul> -->
             <table style="border:none">
                 <tr>
                     <td>App to be Restarted: </td>

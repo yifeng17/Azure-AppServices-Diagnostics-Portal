@@ -21,8 +21,8 @@ export class SolutionFactoryService {
         switch (solution.id) {
             case 1:
                 return new SolutionHolder(SiteRestartComponent, <SolutionData>{ title: "Restart App", tags: [SolutionTypeTag.Mitigation], solution: solution });
-            // case 2:
-            //     return new InlineSolutions.RestartSiteSolution(rank, parameters, _logger, siteService);
+            case 2:
+                return new SolutionHolder(SiteRestartComponent, <SolutionData>{ title: "Restart App", tags: [SolutionTypeTag.Mitigation], solution: solution });
             case 3:
                 return new SolutionHolder(ScaleUpSolutionComponent, <SolutionData>{ title: "Scale Up App Service Plan", tags: [SolutionTypeTag.Mitigation], solution: solution });
             case 4:

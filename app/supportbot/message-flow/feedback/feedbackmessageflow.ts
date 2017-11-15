@@ -9,10 +9,6 @@ import { FeedbackComponent } from './feedback.component';
 @RegisterMessageFlowWithFactory()
 export class FeedbackMessageFlow implements IMessageFlowProvider {
 
-    constructor() {
-        console.log('FeedbackMessageFlow instantiated');
-    }
-
     GetMessageFlowList(): MessageGroup[] {
         var messageGroupList: MessageGroup[] = [];
 

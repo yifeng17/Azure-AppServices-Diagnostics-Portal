@@ -45,6 +45,14 @@ export class AvailabilityLoggingService extends LoggingService {
         });
     }
 
+    LogSolutionDisplayed(name: string, order: string, source: string) {
+        this._log(AvailabilityEventType[AvailabilityEventType.SolutionDisplayed], "Availability", {
+            solution: name,
+            order: order,
+            source: source
+        });
+    }
+
     LogSolutionTried(name: string, order: string, actionType: string, actionName: string, downtimeStartTime: string = "", downtimeEndTime: string = "", isDowntimeNow: string = "") {
 
         this._log(AvailabilityEventType[AvailabilityEventType.SolutionTried], "Availability", {

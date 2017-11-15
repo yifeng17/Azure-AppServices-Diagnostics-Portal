@@ -1,5 +1,5 @@
 import { INameValuePair } from '../models/namevaluepair';
-import { AdvancedApplicationRestartInfo, InstanceInfo, SiteProfilingInfo } from '../models/solution-metadata';
+import { ApplicationRestartInfo, InstanceInfo, SiteProfilingInfo, SiteInfoMetaData } from '../models/solution-metadata';
 
 export class MetaDataHelper {
 
@@ -62,14 +62,22 @@ export class MetaDataHelper {
         }
     }
 
-    static getAdvancedApplicationRestartData(metaData: INameValuePair[][]): AdvancedApplicationRestartInfo {
+    static getRestartData(metaData: INameValuePair[][]): ApplicationRestartInfo {
         if(metaData.length > 0) {
-            let restartInfo: AdvancedApplicationRestartInfo = {
+            let restartInfo: ApplicationRestartInfo = {
                 subscriptionId: MetaDataHelper.getValueForName(metaData[0], 'subscriptionid'),
                 resourceGroupName: MetaDataHelper.getValueForName(metaData[0], 'resourcegroup'), 
                 siteName: MetaDataHelper.getValueForName(metaData[0], 'sitename'),
                 instances: []
             }
+
+            return restartInfo;
+        }
+    }
+
+    static getAdvancedApplicationRestartData(metaData: INameValuePair[][]): ApplicationRestartInfo {
+        if(metaData.length > 0) {
+            let restartInfo = this.getRestartData(metaData);
 
             metaData.forEach((nameValuePairSet: INameValuePair[]) => {
                 restartInfo.instances.push(<InstanceInfo>{

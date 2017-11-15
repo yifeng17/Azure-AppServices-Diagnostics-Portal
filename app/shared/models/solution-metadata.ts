@@ -1,12 +1,10 @@
-
-
 export class SiteInfoMetaData {
     subscriptionId: string;
     resourceGroupName: string;
     siteName: string;
 }
 
-export class AdvancedApplicationRestartInfo extends SiteInfoMetaData {
+export class ApplicationRestartInfo extends SiteInfoMetaData {
     instances: InstanceInfo[];
 }
 

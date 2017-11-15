@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { SolutionBaseComponent } from '../../common/solution-base/solution-base.component';
 import { SolutionData } from '../../../../shared/models/solution';
-import { ServerFarmDataService, PortalActionService } from '../../../../shared/services';
+import { ServerFarmDataService, PortalActionService, AvailabilityLoggingService } from '../../../../shared/services';
 import { ServerFarm } from '../../../../shared/models/server-farm';
 
 
@@ -34,7 +34,7 @@ export class ScaleUpSolutionComponent implements SolutionBaseComponent {
 
     secondarySuggestion: string;
 
-    constructor(private _serverFarmService: ServerFarmDataService, private _portalActionService: PortalActionService) {
+    constructor(private _serverFarmService: ServerFarmDataService, private _portalActionService: PortalActionService, private _logger: AvailabilityLoggingService) {
         this._serverFarmService.siteServerFarm.subscribe(serverFarm => {
             if (serverFarm) {
                 this.currentServerFarm = serverFarm;
@@ -43,6 +43,10 @@ export class ScaleUpSolutionComponent implements SolutionBaseComponent {
         }, error => {
             //TODO: handle error
         })
+    }
+
+    ngOnInit() {
+        this._logger.LogSolutionDisplayed('Scale Up', this.data.solution.order.toString(), 'bot-sitecpuanalysis');
     }
 
     generateSuggestion() {
@@ -63,6 +67,7 @@ export class ScaleUpSolutionComponent implements SolutionBaseComponent {
     }
 
     openBlade() {
+        this._logger.LogSolutionTried('Scale Up', this.data.solution.order.toString(), 'blade', '');
         this._portalActionService.openBladeScaleUpBlade();
     }
 }

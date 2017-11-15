@@ -2,8 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { SolutionBaseComponent } from '../../common/solution-base/solution-base.component';
 import { SolutionData } from '../../../../shared/models/solution';
 import { MetaDataHelper } from '../../../../shared/utilities/metaDataHelper';
-import { AdvancedApplicationRestartInfo } from '../../../../shared/models/solution-metadata';
-import { PortalActionService, SiteService, ServerFarmDataService } from '../../../../shared/services';
+import { ApplicationRestartInfo } from '../../../../shared/models/solution-metadata';
+import { PortalActionService, SiteService, ServerFarmDataService, AvailabilityLoggingService } from '../../../../shared/services';
 import { ActionStatus } from '../../../../shared/models/enumerations';
 
 @Component({
@@ -15,6 +15,8 @@ import { ActionStatus } from '../../../../shared/models/enumerations';
 export class SiteRestartComponent implements SolutionBaseComponent, OnInit {
 
     @Input() data: SolutionData;
+
+    includeTargetedAppRestart: boolean = true;
 
     title: string = "Perform a Web App Restart";
     description: string = "If your app is in a bad state, performing a web app restart can be enough to fix the problem in some cases. There are different types of restart, Advanced Application Restart and the standard App Restart";
@@ -34,20 +36,30 @@ export class SiteRestartComponent implements SolutionBaseComponent, OnInit {
     restartAppSuccessMessage: string = "App Restart Successful. Check and see if this issue is resolved."
     restartAppFailureMessage: string = "App Restart Failed. Please try again or try a different solution."
 
-    siteToBeRestarted: AdvancedApplicationRestartInfo;
+    siteToBeRestarted: ApplicationRestartInfo;
     instanceList: string;
 
-    constructor(private _siteService: SiteService, _portalActionService: PortalActionService, _serverFarmService: ServerFarmDataService) {
-
+    constructor(private _siteService: SiteService, _portalActionService: PortalActionService, _serverFarmService: ServerFarmDataService, private _logger: AvailabilityLoggingService) {
+        
     }
 
     ngOnInit(): void {
-        this.siteToBeRestarted = MetaDataHelper.getAdvancedApplicationRestartData(this.data.solution.data);
-        this.instanceList = this.siteToBeRestarted.instances.map(instance => instance.machineName).join(", ")
+        this.includeTargetedAppRestart = this.data.solution.id === 1;
+
+        if (this.includeTargetedAppRestart) {
+            this.siteToBeRestarted = MetaDataHelper.getAdvancedApplicationRestartData(this.data.solution.data);
+            this.instanceList = this.siteToBeRestarted.instances.map(instance => instance.machineName).join(", ");
+            this._logger.LogSolutionDisplayed('Advanced App Restart', this.data.solution.order.toString(), 'bot-sitecpuanalysis');
+        }
+        else {
+            this.siteToBeRestarted = MetaDataHelper.getRestartData(this.data.solution.data);
+        }
+
+        this._logger.LogSolutionDisplayed('App Restart', this.data.solution.order.toString(), 'bot-sitecpuanalysis');
     }
 
     restartSite() {
-        //TODO: logging
+        this._logger.LogSolutionTried('App Restart', this.data.solution.order.toString(), 'inline', '');
         this.restartAppStatus = ActionStatus.Running
         this._siteService.restartSite(this.siteToBeRestarted.subscriptionId, this.siteToBeRestarted.resourceGroupName, this.siteToBeRestarted.siteName).subscribe(
             response => {
@@ -59,8 +71,8 @@ export class SiteRestartComponent implements SolutionBaseComponent, OnInit {
     }
 
     advancedAppRestartSite() {
-        //TODO: logging
         //TODO: scmhostname
+        this._logger.LogSolutionTried('Advanced App Restart', this.data.solution.order.toString(), 'inline', '')
         this.siteToBeRestarted.instances.forEach(instance => {
             this._siteService.killW3wpOnInstance(this.siteToBeRestarted.subscriptionId, this.siteToBeRestarted.resourceGroupName, this.siteToBeRestarted.siteName,
                 '', instance.machineName);

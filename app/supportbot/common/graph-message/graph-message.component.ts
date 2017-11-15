@@ -63,6 +63,10 @@ export class GraphMessageComponent implements OnInit, AfterViewInit, IChatMessag
             status: true
         });
     }
+
+    logInstanceSelected(event: any): void {
+        //TODO
+    }
 }
 
 export class GraphMessage extends Message {
