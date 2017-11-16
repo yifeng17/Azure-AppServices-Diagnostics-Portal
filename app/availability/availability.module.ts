@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { SharedModule } from '../shared/shared.module';
+import { SolutionsModule } from '../solutions/solutions.module';
 import { MyDatePickerModule } from 'mydatepicker';
 
 import { AvailabilityComponent } from './availability.component';
@@ -63,12 +64,14 @@ import { UriElementsService } from '../shared/services'
     imports: [
         RouterModule.forChild(AvailabilityAndPerformanceCategoryRouteConfig),
         SharedModule,
-        MyDatePickerModule 
+        MyDatePickerModule,
+        SolutionsModule
     ],
     exports: [
         ObservationsComponent,
         ObservationsAvailabilityComponent,
-        ObservationsPerformanceComponent
+        ObservationsPerformanceComponent,
+        DetectorViewProblemComponent
     ]
 })
 export class AvailabilityModule {

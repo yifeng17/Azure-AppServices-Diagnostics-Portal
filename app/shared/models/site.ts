@@ -18,6 +18,13 @@ export interface Site {
     resourceGroup: string;
 }
 
+export class SiteInfoMetaData {
+    subscriptionId: string;
+    resourceGroupName: string;
+    siteName: string;
+    slot: string;
+}
+
 export class SiteExtensions {
     public static operatingSystem(site: Site): OperatingSystem {
         // console.log(tsitehis.kind);

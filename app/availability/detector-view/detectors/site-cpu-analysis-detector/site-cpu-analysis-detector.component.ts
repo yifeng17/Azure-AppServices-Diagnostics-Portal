@@ -4,7 +4,7 @@ import { AppAnalysisService, AvailabilityLoggingService, AuthService, DetectorVi
 import { IDetectorResponse, IDetectorAbnormalTimePeriod } from '../../../../shared/models/detectorresponse';
 import { DetectorViewInstanceDetailComponent } from '../../detector-view-instance-detail/detector-view-instance-detail.component';
 import { StartupInfo } from '../../../../shared/models/portal';
-import { AbnormalTimePeriodHelper } from '../../../../shared/utilities/abnormalTimePeriodHelper';
+import { MetaDataHelper } from '../../../../shared/utilities/metaDataHelper';
 declare let d3: any;
 
 @Component({
@@ -41,9 +41,9 @@ export class SiteCpuAnalysisDetectorComponent extends DetectorViewInstanceDetail
         this.highlightedAbnormalTimePeriod = this._detectorViewService.getDetectorViewState(this.getDetectorName());
 
         if (this.highlightedAbnormalTimePeriod) {
-            this.instancesToSelect = AbnormalTimePeriodHelper.getMetaDataValues(this.highlightedAbnormalTimePeriod, "instancename");
+            this.instancesToSelect = MetaDataHelper.getMetaDataValues(this.highlightedAbnormalTimePeriod.metaData, "instancename");
             if (!this.instancesToSelect || this.instancesToSelect.length === 0) {
-                this.instancesToSelect = AbnormalTimePeriodHelper.getMetaDataValues(this.highlightedAbnormalTimePeriod, "instance");
+                this.instancesToSelect = MetaDataHelper.getMetaDataValues(this.highlightedAbnormalTimePeriod.metaData, "instance");
             }
             if (this.instancesToSelect.length > 0) {
                 this.instanceToSelect = this.instancesToSelect[0];

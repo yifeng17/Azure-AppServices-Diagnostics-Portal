@@ -45,6 +45,14 @@ export class AvailabilityLoggingService extends LoggingService {
         });
     }
 
+    LogSolutionDisplayed(name: string, order: string, source: string) {
+        this._log(AvailabilityEventType[AvailabilityEventType.SolutionDisplayed], "Availability", {
+            solution: name,
+            order: order,
+            source: source
+        });
+    }
+
     LogSolutionTried(name: string, order: string, actionType: string, actionName: string, downtimeStartTime: string = "", downtimeEndTime: string = "", isDowntimeNow: string = "") {
 
         this._log(AvailabilityEventType[AvailabilityEventType.SolutionTried], "Availability", {
@@ -119,4 +127,13 @@ export class AvailabilityLoggingService extends LoggingService {
             status: status
         });
     }
+
+    LogSolutionFeedback(solutionName: string, helpful: boolean) {
+        this._log(AvailabilityEventType[AvailabilityEventType.SolutionFeedback], "Availability", {
+            source: solutionName,
+            helpful: helpful
+        });
+    }
+
+
 }
