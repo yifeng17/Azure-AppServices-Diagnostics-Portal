@@ -1,8 +1,4 @@
-export class SiteInfoMetaData {
-    subscriptionId: string;
-    resourceGroupName: string;
-    siteName: string;
-}
+import { SiteInfoMetaData } from "./site";
 
 export class ApplicationRestartInfo extends SiteInfoMetaData {
     instances: InstanceInfo[];

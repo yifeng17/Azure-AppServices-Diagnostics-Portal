@@ -1,5 +1,5 @@
 import { INameValuePair } from '../models/namevaluepair';
-import { ApplicationRestartInfo, InstanceInfo, SiteProfilingInfo, SiteInfoMetaData } from '../models/solution-metadata';
+import { ApplicationRestartInfo, InstanceInfo, SiteProfilingInfo } from '../models/solution-metadata';
 
 export class MetaDataHelper {
 
@@ -68,6 +68,7 @@ export class MetaDataHelper {
                 subscriptionId: MetaDataHelper.getValueForName(metaData[0], 'subscriptionid'),
                 resourceGroupName: MetaDataHelper.getValueForName(metaData[0], 'resourcegroup'), 
                 siteName: MetaDataHelper.getValueForName(metaData[0], 'sitename'),
+                slot: '', // In this case slot is part of siteName - TODO: reconsider changing this on back end
                 instances: []
             }
 

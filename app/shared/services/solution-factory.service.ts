@@ -45,7 +45,7 @@ export class SolutionFactoryService {
             //     _logger.LogMissingSolution(id);
             //     return null;
             case 12:
-                return new SolutionHolder(SplitSitesIntoDifferentServerFarmsSolutionComponent, <SolutionData>{ title: "Move Apps to New ASP", tags: [SolutionTypeTag.Mitigation], solution: solution });
+                return new SolutionHolder(SplitSitesIntoDifferentServerFarmsSolutionComponent, <SolutionData>{ title: "Split Apps Between ASPs", tags: [SolutionTypeTag.Mitigation], solution: solution });
             // case 13:
             //     return new OtherSolutions.CheckWebConfig(rank, parameters, _logger, siteService);
             // case 14:

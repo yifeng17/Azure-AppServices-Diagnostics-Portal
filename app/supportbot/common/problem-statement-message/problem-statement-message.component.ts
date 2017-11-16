@@ -8,66 +8,36 @@ import { IMetricSet, IDetectorResponse } from '../../../shared/models/detectorre
 import { BotLoggingService, AppAnalysisService } from '../../../shared/services';
 import { Message } from '../../models/message';
 import { ChartType } from '../../../shared/models/chartdata';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
     templateUrl: 'problem-statement-message.component.html'
 })
-export class ProblemStatementMessageComponent implements OnInit, AfterViewInit, IChatMessageComponent {
+export class ProblemStatementMessageComponent implements AfterViewInit, IChatMessageComponent {
 
     @Output() onViewUpdate = new EventEmitter();
     @Output() onComplete = new EventEmitter<{ status: boolean, data?: any }>();
 
-    subscriptionId: string;
-    resourceGroup: string;
-    siteName: string;
-    slotName: string;
-
-    loading: boolean = true;
-
-    detectorMetrics: IMetricSet[];
-    instanceDetailMetrics: IMetricSet[];
-
-    detectorMetricsTitle: string;
-    detectorMetricsDescription: string;
-    instanceDetailTitle: string;
-    instanceDetailDescription: string;
-
     detectorResponse: IDetectorResponse;
 
-    metricsChartType: ChartType = ChartType.lineChart
-
-    constructor(private injector: Injector, private _logger: BotLoggingService, private _route: ActivatedRoute,  private _appAnalysisService: AppAnalysisService) {
-        this.detectorMetricsTitle = "Overall CPU Usage per Instance";
-        this.detectorMetricsDescription = "This graphs shows the total CPU usage on each of the instances where your application is running. " +
-            "Below you can look at a specific instance and see how much CPU each app is consuming."
-        this.instanceDetailTitle = "App CPU Usage Breakdown";
-        this.instanceDetailDescription = "This shows the average CPU usage, in percent out of 100, for each application in the given time window."
-    
-    }
-
-    ngOnInit(): void {
-        this.subscriptionId = this._route.snapshot.params['subscriptionid'];
-        this.resourceGroup = this._route.snapshot.params['resourcegroup'];
-        this.siteName = this._route.snapshot.params['sitename'];
-        this.slotName = this._route.snapshot.params['slot'] ? this._route.snapshot.params['slot'] : '';
-
-        this._appAnalysisService.getDetectorResource(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, 'availability', 'sitecpuanalysis').subscribe(response => {
-            this.detectorResponse = response;
-        });
-    }
+    constructor(private injector: Injector, private _logger: BotLoggingService, private _route: ActivatedRoute,  private _appAnalysisService: AppAnalysisService) { }
 
     ngAfterViewInit(): void {
-        this.onViewUpdate.emit();
-        
-        this.onComplete.emit({
-            status: true
+        (<BehaviorSubject<IDetectorResponse>>this.injector.get('response')).subscribe(detectorResponse => {
+            this.detectorResponse = detectorResponse; 
+
+            this.onViewUpdate.emit();
+
+            this.onComplete.emit({
+                status: true
+            });
         });
     }
 }
 
 export class ProblemStatementMessage extends Message {
-    constructor(messageDelayInMs: number = 500) {
+    constructor(response: BehaviorSubject<IDetectorResponse>, messageDelayInMs: number = 500) {
         //TODO: add solution data
-        super(ProblemStatementMessageComponent, {}, messageDelayInMs);
+        super(ProblemStatementMessageComponent, { response: response }, messageDelayInMs);
     }
 }
