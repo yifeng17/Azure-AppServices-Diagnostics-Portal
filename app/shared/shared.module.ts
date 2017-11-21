@@ -60,7 +60,7 @@ import { MapValuesPipe } from './pipes/mapValues.pipe';
         AppInsightsTileComponent,
         AppInsightsSettingsComponent,
         AppInsightsExceptionsComponent,
-        AppInsightsDependenciesComponent
+        AppInsightsDependenciesComponent,
         VerticalDisplayListComponent,
         VerticalDisplayListItemComponent,
         SolutionTypeTagComponent
@@ -98,7 +98,7 @@ import { MapValuesPipe } from './pipes/mapValues.pipe';
         AppInsightsTileComponent,
         AppInsightsSettingsComponent,
         AppInsightsDependenciesComponent,
-        AppInsightsExceptionsComponent
+        AppInsightsExceptionsComponent,
         VerticalDisplayListComponent,
         VerticalDisplayListItemComponent,
         SolutionTypeTagComponent
