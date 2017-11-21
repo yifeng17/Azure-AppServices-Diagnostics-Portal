@@ -2,9 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
-import { AuthService, AppInsightsService, AppAnalysisService, SiteService, AppInsightsQueryService } from '../../services';
-import { StartupInfo } from '../../models/portal';
-import { ArmObj } from '../../models/armObj';
+import { AuthService, AppInsightsService, AppAnalysisService, SiteService, AppInsightsQueryService } from '../../shared/services';
+import { StartupInfo } from '../../shared/models/portal';
+import { ArmObj } from '../../shared/models/armObj';
 
 @Component({
     selector: 'app-insights-settings',

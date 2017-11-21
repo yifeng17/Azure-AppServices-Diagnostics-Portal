@@ -1,8 +1,7 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
-import { AppInsightsService, AppInsightsQueryService, PortalActionService } from '../../../services';
+import { AppInsightsService, AppInsightsQueryService, PortalActionService } from '../../../shared/services';
 
 @Component({
     selector: 'app-insights-exceptions',

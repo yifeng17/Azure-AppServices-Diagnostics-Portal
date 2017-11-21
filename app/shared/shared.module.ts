@@ -26,10 +26,6 @@ import { CollapsibleListItemComponent } from './components/collapsible-list/coll
 import { CollapsibleListComponent } from './components/collapsible-list/collapsible-list.component';
 import { SupportToolsComponent } from './components/support-tools/support-tools.component';
 import { ExpandableSummaryComponent } from './components/expandable-summary/expandable-summary.component';
-import { AppInsightsTileComponent } from './components/app-insights/app-insights-tile.component';
-import { AppInsightsSettingsComponent } from './components/app-insights/app-insights-settings.component';
-import { AppInsightsDependenciesComponent } from './components/app-insights/dependencies/app-insights-dependencies.component';
-import { AppInsightsExceptionsComponent } from './components/app-insights/exceptions/app-insights-exceptions.component';
 import { VerticalDisplayListComponent } from './components/vertical-display-list/vertical-display-list.component';
 import { VerticalDisplayListItemComponent } from './components/vertical-display-list/vertical-display-list-item/vertical-display-list-item.component';
 import { SolutionTypeTagComponent } from './components/solution-type-tag/solution-type-tag.component';
@@ -57,10 +53,6 @@ import { MapValuesPipe } from './pipes/mapValues.pipe';
         CollapsibleListItemComponent,
         SupportToolsComponent,
         ExpandableSummaryComponent,
-        AppInsightsTileComponent,
-        AppInsightsSettingsComponent,
-        AppInsightsExceptionsComponent,
-        AppInsightsDependenciesComponent,
         VerticalDisplayListComponent,
         VerticalDisplayListItemComponent,
         SolutionTypeTagComponent
@@ -95,10 +87,6 @@ import { MapValuesPipe } from './pipes/mapValues.pipe';
         CollapsibleListItemComponent,
         SupportToolsComponent,
         ExpandableSummaryComponent,
-        AppInsightsTileComponent,
-        AppInsightsSettingsComponent,
-        AppInsightsDependenciesComponent,
-        AppInsightsExceptionsComponent,
         VerticalDisplayListComponent,
         VerticalDisplayListItemComponent,
         SolutionTypeTagComponent

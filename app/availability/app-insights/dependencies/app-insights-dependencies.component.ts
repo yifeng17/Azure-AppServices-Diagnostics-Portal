@@ -2,12 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
-import { AuthService, AppInsightsService, AppAnalysisService } from '../../../services';
+import { AuthService, AppInsightsService, AppAnalysisService } from '../../../shared/services';
 
 @Component({
     selector: 'app-insights-dependencies',
-    templateUrl: 'app-insights-dependencies.component.html',
-    //styleUrls: ['app-insights-dependencies.component.css']
+    templateUrl: 'app-insights-dependencies.component.html'
 })
 export class AppInsightsDependenciesComponent implements OnInit {
 

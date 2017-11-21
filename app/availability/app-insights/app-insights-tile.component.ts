@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { AppInsightsService, PortalActionService } from '../../services';
-import { StartupInfo } from '../../models/portal';
+import { AppInsightsService, PortalActionService } from '../../shared/services';
+import { StartupInfo } from '../../shared/models/portal';
 
 @Component({
     selector: 'app-insights-tile',
