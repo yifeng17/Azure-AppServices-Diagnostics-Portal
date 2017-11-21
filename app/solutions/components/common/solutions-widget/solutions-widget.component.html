@@ -1,0 +1,5 @@
+<vertical-display-list>
+    <vertical-display-list-item [name]="solution.data.title" [tags]="solution.data.tags" *ngFor="let solution of solutions">
+        <dynamic-solution [solutionHolder]="solution"></dynamic-solution>
+    </vertical-display-list-item>
+</vertical-display-list>

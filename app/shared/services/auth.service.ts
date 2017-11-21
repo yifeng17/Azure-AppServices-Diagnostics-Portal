@@ -8,6 +8,7 @@ import {StartupInfo} from '../models/portal';
 export class AuthService {
     public inIFrame: boolean;
     private currentToken: string;
+
     constructor(private _http: Http, private _portalService: PortalService) {
         this.inIFrame = window.parent !== window;
         this.getStartupInfo().subscribe(info => this.currentToken = info.token);

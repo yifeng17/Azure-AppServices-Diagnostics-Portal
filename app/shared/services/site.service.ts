@@ -3,26 +3,29 @@ import { Http, Headers, Response } from '@angular/http';
 import { ArmService, AuthService, UriElementsService, ServerFarmDataService } from '../services';
 import { Observable } from 'rxjs/Observable';
 import { StartupInfo } from '../models/portal';
-import { Site } from '../models/site';
+import { Site, SiteInfoMetaData } from '../models/site'
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { ResponseMessageEnvelope } from '../models/responsemessageenvelope';
 
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
-import { BehaviorSubject } from 'rxjs';
 
 @Injectable()
 export class SiteService {
 
     public currentSite: BehaviorSubject<Site> = new BehaviorSubject<Site>(null);
+    public currentSiteMetaData: BehaviorSubject<SiteInfoMetaData> = new BehaviorSubject<SiteInfoMetaData>(null);
 
     //TODO: This should be deprecated, but leaving it for now while we move to new solutions
     public currentSiteStatic: Site;
 
     constructor(private _armClient: ArmService, private _authService: AuthService, private _http: Http, private _uriElementsService: UriElementsService, private _serverFarmService: ServerFarmDataService) {
         this._authService.getStartupInfo().flatMap((startUpInfo: StartupInfo) => {
+            this._populateSiteInfo(startUpInfo.resourceId);
             return this._armClient.getResource<Site>(startUpInfo.resourceId);
         }).subscribe((site: ResponseMessageEnvelope<Site>) => {
+            this.currentSiteStatic = site.properties;
             this.currentSite.next(site.properties);
         });
     }
@@ -97,7 +100,7 @@ export class SiteService {
     }
 
     killW3wpOnInstance(subscriptionId: string, resourceGroup: string, siteName: string, scmHostName: string, instanceId: string): Observable<boolean> {
-        return this.findTargetedSite(siteName).flatMap(targetedSite => {
+        return this.findTargetedSite(siteName).flatMap((targetedSite: Site) => {
             if (targetedSite.enabledHostNames.length > 0) {
                 let scmHostNameFromSiteObject = targetedSite.enabledHostNames.find(hostname => hostname.indexOf(".scm.") > 0);
                 if (scmHostNameFromSiteObject !== null && scmHostNameFromSiteObject.length > 0) {
@@ -130,6 +133,16 @@ export class SiteService {
         let url: string = this._uriElementsService.getUpdateAppSettingsUrl(subscriptionId, resourceGroup, siteName, slot);
 
         return this._armClient.putResource(url, body);
+    }
+
+    private _populateSiteInfo(resourceId: string): void {
+        let pieces = resourceId.toLowerCase().split('/');
+        this.currentSiteMetaData.next(<SiteInfoMetaData>{
+            subscriptionId: pieces[pieces.indexOf('subscriptions') + 1],
+            resourceGroupName: pieces[pieces.indexOf('resourcegroups') + 1],
+            siteName: pieces[pieces.indexOf('sites') + 1],
+            slot: pieces.indexOf('slots') >= 0 ? pieces[pieces.indexOf('slots') + 1] : ''
+        });
     }
 
     private _getHeaders(): Headers {

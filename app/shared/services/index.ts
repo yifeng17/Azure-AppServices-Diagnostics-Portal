@@ -12,20 +12,23 @@ export * from "./broadcast.service";
 export * from "./cache.service";
 export * from "./portal.service";
 export * from "./auth.service";
+export * from "./arm.service";
 
 // Logging Services
 export * from "./logging/logging.service";
 export * from "./logging/availability.logging.service";
 export * from "./logging/bot.logging.service";
 
-export * from "./arm.service";
 export * from "./urielements.service";
 
 export * from "./rbac.service";
 export * from "./server-farm-data.service"
 export * from "./site.service";
 export * from "./appanalysis.service";
+export * from "./daas.service";
 export * from "./portal-action.service";
 export * from "./detector-view-state.service";
 export * from "./appinsights/appinsights.service";
 export * from "./appinsights/appinsights-query.service";
+export * from "./solution-factory.service";
+

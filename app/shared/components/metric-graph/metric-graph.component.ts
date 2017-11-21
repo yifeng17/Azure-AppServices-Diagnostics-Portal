@@ -13,7 +13,6 @@ import 'rxjs/add/operator/map';
 })
 export class MetricGraphComponent implements OnInit {
     constructor() {
-        this.chartOptions = GraphHelper.getDefaultChartOptions();
         this.chartType = ChartType.lineChart;
     }
 
@@ -28,13 +27,19 @@ export class MetricGraphComponent implements OnInit {
     @Input() chartType: ChartType;
     @Input() yAxisLabel: string;
     @Input() instancesToSelect: string[] = [];
+    @Input() chartOptions: any;
 
     chartData: ChartSeries[];
-    chartOptions: any;
 
     showDescription: boolean = true;
 
     ngOnInit() {
+
+        if(!this.chartOptions)
+        {
+            this.chartOptions = GraphHelper.getDefaultChartOptions();
+        }
+
         this._metricSetsSubject.subscribe((metricSets: IMetricSet[]) => {
             if(metricSets){
                 this.chartOptions.chart.type = ChartType[this.chartType].toString();

@@ -1,5 +1,6 @@
 import { SolutionType } from './enumerations';
 import { INameValuePair } from './namevaluepair';
+import { SolutionTypeTag } from './solution-type-tag';
 
 export interface ISolution {
     id: number;
@@ -9,4 +10,10 @@ export interface ISolution {
     type: SolutionType;
     data: INameValuePair[][];
     metadata: INameValuePair[][];
+}
+
+export interface SolutionData {
+    title: string;
+    tags: SolutionTypeTag[];
+    solution: ISolution;
 }

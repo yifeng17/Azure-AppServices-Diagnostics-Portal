@@ -1,7 +1,10 @@
-import { Injectable } from '@angular/core';
-import { PortalService, AuthService } from '../';
+import { Injectable, isDevMode } from '@angular/core';
+import { PortalService, AuthService, ArmService } from '../';
 import { StartupInfo } from '../../models/portal';
 import { CommonLogEventType } from './events.enumerations';
+import { SiteExtensions, OperatingSystem, Site } from '../../models/site';
+import { IDiagnosticProperties } from '../../models/diagnosticproperties';
+import { ResponseMessageEnvelope } from '../../models/responsemessageenvelope';
 
 @Injectable()
 export class LoggingService {
@@ -13,44 +16,55 @@ export class LoggingService {
     private _resourceType: string = '';
     private _ticketBladeWorkflowId: string = '';
     private _supportTopicId: string = '';
+
+    public platform: string = '';
     public appStackInfo: string = '';
 
-    constructor(private _portalServiceInstance: PortalService, private _authServiceInstance: AuthService) {
-
-        let self = this;
-
+    constructor(private _portalServiceInstance: PortalService, private _authServiceInstance: AuthService, private _armServiceInstance: ArmService) {
         this._authServiceInstance.getStartupInfo().subscribe(data => {
 
-            self._startUpInfo = data;
+            this._startUpInfo = data;
 
-            if (self._startUpInfo && self._startUpInfo.resourceId) {
-                let parts = self._startUpInfo.resourceId.toLowerCase().split('/');
+            if (this._startUpInfo && this._startUpInfo.resourceId) {
+                let parts = this._startUpInfo.resourceId.toLowerCase().split('/');
 
                 let subscriptionIndex = parts.indexOf('subscriptions');
-                self._subscriptionId = subscriptionIndex !== -1 ? parts[subscriptionIndex + 1] : '';
+                this._subscriptionId = subscriptionIndex !== -1 ? parts[subscriptionIndex + 1] : '';
 
                 let resourceGroupIndex = parts.indexOf('resourcegroups');
-                self._resourceGroup = resourceGroupIndex !== -1 ? parts[resourceGroupIndex + 1] : '';
+                this._resourceGroup = resourceGroupIndex !== -1 ? parts[resourceGroupIndex + 1] : '';
 
                 let siteIndex = parts.indexOf('sites');
-                self._resourceName = siteIndex !== -1 ? parts[siteIndex + 1] : '';
+                this._resourceName = siteIndex !== -1 ? parts[siteIndex + 1] : '';
 
                 let providerIndex = parts.indexOf('providers');
-                self._resourceType = providerIndex !== -1 ? parts[providerIndex + 1] + '/' + parts[providerIndex + 2] : '';
+                this._resourceType = providerIndex !== -1 ? parts[providerIndex + 1] + '/' + parts[providerIndex + 2] : '';
+
+                this._armServiceInstance.getResource<IDiagnosticProperties>(this._startUpInfo.resourceId + '/diagnostics/properties').subscribe((envelope: ResponseMessageEnvelope<IDiagnosticProperties>) => {
+                    if (envelope && envelope.properties) {
+                        this.appStackInfo = envelope.properties.appStack;
+                    }
+                });
+
+                this._armServiceInstance.getResource<Site>(this._startUpInfo.resourceId).subscribe((site: ResponseMessageEnvelope<Site>) => {
+                    if (site && site.properties) {
+                        this.platform = SiteExtensions.operatingSystem(site.properties) === OperatingSystem.windows ? 'windows' : 'linux';
+                    }
+                });
             }
 
-            if (self._startUpInfo) {
+            if (this._startUpInfo) {
 
-                if (self._startUpInfo.workflowId) {
-                    self._ticketBladeWorkflowId = self._startUpInfo.workflowId;
+                if (this._startUpInfo.workflowId) {
+                    this._ticketBladeWorkflowId = this._startUpInfo.workflowId;
                 }
 
-                if (self._startUpInfo.supportTopicId) {
-                    self._supportTopicId = self._startUpInfo.supportTopicId;
+                if (this._startUpInfo.supportTopicId) {
+                    this._supportTopicId = this._startUpInfo.supportTopicId;
                 }
             }
 
-            this.LogStartUpInfo(self._startUpInfo);
+            this.LogStartUpInfo(this._startUpInfo);
         });
     }
 
@@ -63,6 +77,7 @@ export class LoggingService {
             resourceType: this._resourceType,
             resourceName: this._resourceName,
             appStack: this.appStackInfo,
+            platform: this.platform,
             supportTopicId: this._supportTopicId
         };
 
@@ -70,6 +85,10 @@ export class LoggingService {
         Object.keys(commonArgs).forEach((key: string) => combinedArgs[key] = commonArgs[key]);
         if (args) {
             Object.keys(args).forEach((key: string) => combinedArgs[key] = args[key]);
+        }
+
+        if (isDevMode()) {
+            console.log({ id: id, category: category, args: args });
         }
 
         this._portalServiceInstance.logAction(id, category, combinedArgs);

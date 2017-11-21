@@ -1,12 +1,17 @@
 import { MessageGroup } from '../models/message-group';
+import { IMessageFlowProvider } from '../interfaces/imessageflowprovider';
 
 export class MessageFlowFactory {
-    private static _registeredMessageFlowProviders: any[] = [];
+    public static _registeredMessageFlowProviders: any[] = [];
 
     public static registerMessageFlowProvider(messageFlowProvider: any) {
         if (messageFlowProvider) {
             this._registeredMessageFlowProviders.push(messageFlowProvider);
         }
+    }
+
+    public static getMessageFlowProviders(): any[] {
+        return this._registeredMessageFlowProviders;
     }
 
     public static getMessageGroups(): MessageGroup[] {
@@ -22,7 +27,7 @@ export class MessageFlowFactory {
 
 // Custom Decorator for Message Providers to register with Factory.
 export function RegisterMessageFlowWithFactory() {
-    return function (target) {
+    return function (target: any) {
         MessageFlowFactory.registerMessageFlowProvider(target);
     }
 }

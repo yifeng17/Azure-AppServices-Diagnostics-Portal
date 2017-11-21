@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { LoggingService, PortalService, AuthService } from '../';
+import { LoggingService, PortalService, AuthService, ArmService } from '../';
 import { AvailabilityEventType } from './events.enumerations';
 import { SummaryHealthStatus } from '../../../shared/models/summary-view-model';
 
 @Injectable()
 export class AvailabilityLoggingService extends LoggingService {
 
-    constructor(private _portalService: PortalService, private _authService: AuthService) {
-        super(_portalService, _authService);
+    constructor(private _portalService: PortalService, private _authService: AuthService, private _armService: ArmService) {
+        super(_portalService, _authService, _armService);
     }
 
     LogAnalysisInitialized(analysisName, category: string = 'Availability') {
@@ -42,6 +42,14 @@ export class AvailabilityLoggingService extends LoggingService {
             downtimeStartTime: downtimeStartTime,
             downtimeEndTime: downtimeEndTime,
             isDowntimeNow: isDowntimeNow
+        });
+    }
+
+    LogSolutionDisplayed(name: string, order: string, source: string) {
+        this._log(AvailabilityEventType[AvailabilityEventType.SolutionDisplayed], "Availability", {
+            solution: name,
+            order: order,
+            source: source
         });
     }
 
@@ -119,4 +127,13 @@ export class AvailabilityLoggingService extends LoggingService {
             status: status
         });
     }
+
+    LogSolutionFeedback(solutionName: string, helpful: boolean) {
+        this._log(AvailabilityEventType[AvailabilityEventType.SolutionFeedback], "Availability", {
+            source: solutionName,
+            helpful: helpful
+        });
+    }
+
+
 }

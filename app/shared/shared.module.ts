@@ -6,9 +6,8 @@ import { HttpModule } from '@angular/http';
 
 import {
     PortalService, BroadcastService, AuthService, ArmService, UriElementsService, PortalActionService,
-    SiteService, AppAnalysisService, WindowService, ServerFarmDataService, RBACService, LoggingService, 
-    AvailabilityLoggingService, BotLoggingService, DetectorViewStateService, CacheService, AppInsightsService, AppInsightsQueryService, 
-
+    SiteService, AppAnalysisService, WindowService, ServerFarmDataService, RBACService, LoggingService,     
+    AvailabilityLoggingService, BotLoggingService, DetectorViewStateService, CacheService, SolutionFactoryService, DaasService, AppInsightsService, AppInsightsQueryService
 } from './services';
 import { LimitToFilter } from './utilities/limitToFilter.pipe';
 import { nvD3 } from './utilities/nvd3graph.component';
@@ -31,12 +30,19 @@ import { AppInsightsTileComponent } from './components/app-insights/app-insights
 import { AppInsightsSettingsComponent } from './components/app-insights/app-insights-settings.component';
 import { AppInsightsDependenciesComponent } from './components/app-insights/dependencies/app-insights-dependencies.component';
 import { AppInsightsExceptionsComponent } from './components/app-insights/exceptions/app-insights-exceptions.component';
+import { VerticalDisplayListComponent } from './components/vertical-display-list/vertical-display-list.component';
+import { VerticalDisplayListItemComponent } from './components/vertical-display-list/vertical-display-list-item/vertical-display-list-item.component';
+import { SolutionTypeTagComponent } from './components/solution-type-tag/solution-type-tag.component';
+import { GroupByPipe } from './pipes/groupBy.pipe';
+import { MapValuesPipe } from './pipes/mapValues.pipe';
 
 @NgModule({
     declarations: [
         LimitToFilter,
         nvD3,
-        MarkupPipe,
+        MarkupPipe,       
+        GroupByPipe,
+        MapValuesPipe,
         BlogComponent,
         OpenTicketComponent,
         DowntimeTimelineComponent,
@@ -55,6 +61,9 @@ import { AppInsightsExceptionsComponent } from './components/app-insights/except
         AppInsightsSettingsComponent,
         AppInsightsExceptionsComponent,
         AppInsightsDependenciesComponent
+        VerticalDisplayListComponent,
+        VerticalDisplayListItemComponent,
+        SolutionTypeTagComponent
     ],
     imports: [
         HttpModule,
@@ -69,7 +78,9 @@ import { AppInsightsExceptionsComponent } from './components/app-insights/except
         LimitToFilter,
         RouterModule,
         nvD3,
-        MarkupPipe,
+        MarkupPipe,      
+        GroupByPipe,
+        MapValuesPipe,
         BlogComponent,
         OpenTicketComponent,
         DowntimeTimelineComponent,
@@ -88,6 +99,9 @@ import { AppInsightsExceptionsComponent } from './components/app-insights/except
         AppInsightsSettingsComponent,
         AppInsightsDependenciesComponent,
         AppInsightsExceptionsComponent
+        VerticalDisplayListComponent,
+        VerticalDisplayListItemComponent,
+        SolutionTypeTagComponent
     ]
 })
 export class SharedModule {
@@ -112,7 +126,9 @@ export class SharedModule {
                 DetectorViewStateService,
                 AppInsightsService,
                 AppInsightsQueryService,
-                CacheService
+                CacheService,
+                SolutionFactoryService,
+                DaasService               
             ]
         }
     }

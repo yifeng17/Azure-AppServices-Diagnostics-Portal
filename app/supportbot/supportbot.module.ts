@@ -2,6 +2,7 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { SharedModule } from '../shared/shared.module';
 import { AvailabilityModule } from '../availability/availability.module';
+import { SolutionsModule } from '../solutions/solutions.module';
 
 import { StartupMessages } from './message-flow/startup/startupmessages';
 import { MainMenuMessageFlow } from './message-flow/main-menu/mainmenumessageflow';
@@ -18,6 +19,10 @@ import { LoadingMessageComponent } from './common/loading-message/loading-messag
 import { MainMenuComponent } from './message-flow/main-menu/main-menu.component';
 import { HealthCheckComponent } from './message-flow/health-check/health-check.component';
 import { FeedbackComponent } from './message-flow/feedback/feedback.component';
+import { SolutionsMessageComponent } from './common/solutions-message/solutions-message.component';
+import { GraphMessageComponent } from './common/graph-message/graph-message.component';
+import { CpuAnalysisChatFlow } from './message-flow/cpu-analysis-chat/cpu-analysis-chat-flow';
+import { ProblemStatementMessageComponent } from './common/problem-statement-message/problem-statement-message.component';
 
 import { AppInsightsSettingsComponent } from '../shared/components/app-insights/app-insights-settings.component';
 
@@ -34,7 +39,10 @@ const _slotResourceUrl: string = 'subscriptions/:subscriptionid/resourcegroups/:
         MainMenuComponent,
         ButtonMessageComponent,
         HealthCheckComponent,
-        FeedbackComponent
+        FeedbackComponent,
+        SolutionsMessageComponent,
+        GraphMessageComponent,
+        ProblemStatementMessageComponent
     ],
     imports: [
         RouterModule.forChild(
@@ -42,7 +50,7 @@ const _slotResourceUrl: string = 'subscriptions/:subscriptionid/resourcegroups/:
                 path: _siteResourceUrl + '/diagnostics',
                 component: HomepageComponent,
                 data: {
-                    navigationTitle: 'Home (Preview)',
+                    navigationTitle: 'Home',
                     cacheComponent: true
                 }
             },
@@ -50,7 +58,7 @@ const _slotResourceUrl: string = 'subscriptions/:subscriptionid/resourcegroups/:
                 path: _slotResourceUrl + '/diagnostics',
                 component: HomepageComponent,
                 data: {
-                    navigationTitle: 'Home (Preview)',
+                    navigationTitle: 'Home',
                     cacheComponent: true
                 }
             },
@@ -70,7 +78,8 @@ const _slotResourceUrl: string = 'subscriptions/:subscriptionid/resourcegroups/:
             }]
         ),
         SharedModule,
-        AvailabilityModule
+        AvailabilityModule,
+        SolutionsModule
     ],
     exports: [
         HomepageComponent
@@ -80,6 +89,7 @@ const _slotResourceUrl: string = 'subscriptions/:subscriptionid/resourcegroups/:
         MainMenuMessageFlow,
         HealthCheckMessageFlow,
         FeedbackMessageFlow,
+        CpuAnalysisChatFlow,
         MessageProcessor
     ]
 })
