@@ -32,7 +32,7 @@ export class SiteService {
     private findTargetedSite(siteName: string): Observable<Site> {
         siteName = siteName.toLowerCase();
         return this.currentSite.flatMap(site => {
-            if(site.name.toLowerCase() === siteName) {
+            if (site.name.toLowerCase() === siteName) {
                 return Observable.of<Site>(site);
             }
 
@@ -42,17 +42,55 @@ export class SiteService {
         })
     }
 
+    parseResourceUri(resourceUri: string): any {
+
+        var output = {
+            subscriptionId: '',
+            resourceGroup: '',
+            siteName: '',
+            slotName: ''
+        };
+
+        if (!resourceUri) {
+            return output;
+        }
+
+        let resourceUriParts = resourceUri.split("/");
+
+        let subscriptionIndex = resourceUriParts.indexOf('subscriptions');
+        if (subscriptionIndex > -1) {
+            output.subscriptionId = resourceUriParts[subscriptionIndex + 1];
+        }
+
+        let resourceGroupIndex = resourceUriParts.indexOf('resourceGroups');
+        if (resourceGroupIndex > -1) {
+            output.resourceGroup = resourceUriParts[resourceGroupIndex + 1];
+        }
+
+        let sitesIndex = resourceUriParts.indexOf('sites');
+        if (sitesIndex > -1) {
+            output.siteName = resourceUriParts[sitesIndex + 1];
+        }
+
+        let slotIndex = resourceUriParts.indexOf('slots');
+        if (slotIndex > -1) {
+            output.slotName = resourceUriParts[slotIndex + 1];
+        }
+
+        return output;
+    }
+
     restartSite(subscriptionId: string, resourceGroup: string, siteName: string): Observable<boolean> {
         return this.findTargetedSite(siteName).flatMap((targetedSite: Site) => {
             var slotName = '';
             var mainSiteName = targetedSite.name;
-    
+
             if (targetedSite.name.indexOf('(') >= 0) {
                 let parts = targetedSite.name.split('(');
                 mainSiteName = parts[0];
                 slotName = parts[1].replace(')', '');
             }
-    
+
             let resourceUri: string = this._uriElementsService.getSiteRestartUrl(subscriptionId, targetedSite.resourceGroup, mainSiteName, slotName);
             return <Observable<boolean>>(this._armClient.postResource(resourceUri, null, null, true));
         });
@@ -66,15 +104,15 @@ export class SiteService {
                     scmHostName = scmHostNameFromSiteObject;
                 }
             }
-    
+
             let url: string = this._uriElementsService.getKillSiteProcessUrl(subscriptionId, targetedSite.resourceGroup, targetedSite.name);
             let body: any = {
                 "InstanceId": instanceId,
                 "ScmHostName": scmHostName
             };
-    
+
             let requestHeaders: Headers = this._getHeaders();
-    
+
             return this._http.post(url, body, { headers: requestHeaders })
                 .map((response: Response) => response.ok);
         })

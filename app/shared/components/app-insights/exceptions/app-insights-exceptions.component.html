@@ -1,6 +1,6 @@
 <div *ngIf="appInsightsService.appInsightsSettings.validForStack && appInsightsService.appInsightsSettings.enabledForWebApp"
-    class="panel panel-default" style="margin-top:15px;margin-bottom:20px">
-    <div class="panel-heading" style="font-weight:500;font-size:15px">
+    class="panel panel-default" style="margin-top:15px;margin-bottom:20px;background-color:transparent">
+    <div class="panel-heading" style="font-weight:500;font-size:14px">
         <img src="https://azure.microsoft.com/svghandler/application-insights/?width=18&height=18"> Top Server Exceptions During This Time
         <div class="pull-right hyperlink" style="font-size:13px" (click)="OpenAppInsights()">
             View More in App Insights
@@ -21,7 +21,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let item of exceptions" style="font-size:14px">
+                <tr *ngFor="let item of exceptions" style="font-size:13px">
                     <td>{{item.message}}</td>
                     <td>{{item.exception}}</td>
                     <td>{{item.count}}</td>

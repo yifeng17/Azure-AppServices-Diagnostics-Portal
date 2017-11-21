@@ -36,15 +36,21 @@ export class AppInsightsExceptionsComponent implements OnInit, OnChanges {
 
     ngOnChanges(changes: SimpleChanges): void {
 
-        if (changes['startTime'] && this.appInsightsService.appInsightsSettings.validForStack) {
-            this.exceptions = [];
-            this.loading = true;
-            this.appInsightsQueryService.GetTopExceptions(this.startTime, this.endTime).subscribe((data: any) => {
-                let rows = data["Tables"][0]["Rows"];
-                this.parseRowsIntoExceptions(rows);
-                this.loading = false;
-            });
-        }
+        this.appInsightsService.loadAppDiagnosticPropertiesObservable.subscribe(propertiesLoadStatus => {
+
+            if (changes['startTime'] && this.appInsightsService.appInsightsSettings.validForStack) {
+                this.exceptions = [];
+                this.loading = true;
+                this.appInsightsService.loadAppInsightsResourceObservable.subscribe(loadStatus => {
+                    this.appInsightsQueryService.GetTopExceptions(this.startTime, this.endTime).subscribe((data: any) => {
+                        let rows = data["Tables"][0]["Rows"];
+                        this.parseRowsIntoExceptions(rows);
+                        this.loading = false;
+                    });
+                });
+            }
+
+        });
     }
 
     parseRowsIntoExceptions(rows: any) {

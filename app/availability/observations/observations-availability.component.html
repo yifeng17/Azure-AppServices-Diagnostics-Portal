@@ -23,7 +23,7 @@
 
         <app-insights-exceptions [startTime]="analysisResponse.abnormalTimePeriods[selectedDowntimeIndex].startTime" [endTime]="analysisResponse.abnormalTimePeriods[selectedDowntimeIndex].endTime"></app-insights-exceptions>
 
-        <span style="font-weight:500">Other Observations:</span> 
+        <span style="font-weight:500" *ngIf="analysisResponse.abnormalTimePeriods[selectedDowntimeIndex].events.length > 0">Other Observations:</span> 
         <div class="observation">
             <ul>
                 <span *ngFor="let downtime of analysisResponse.abnormalTimePeriods[selectedDowntimeIndex].events">
