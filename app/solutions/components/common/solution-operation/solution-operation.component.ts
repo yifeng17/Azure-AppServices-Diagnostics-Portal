@@ -21,10 +21,4 @@ export class SolutionOperationComponent {
 
     // Need to make local copy of enum to be used in the template
     actionStatus = ActionStatus;
-    
-    ngOnChanges(changes: SimpleChanges){
-        if(changes && changes['operationStatus']){
-            console.log(changes['operationStatus']);
-        }
-    }
 }

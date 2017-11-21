@@ -32,8 +32,6 @@ export class SolutionsWidgetComponent implements OnInit {
         this._solutionModelSubject.subscribe((solutions: ISolution[]) => {
             solutions = this.updateSolutions(solutions);
 
-            this._injectSampleData();
-
             solutions.forEach(solution => {
                 if (!this.solutions.find(holder => holder.data.solution.id === solution.id)) {
                     let solutionHolder = this._solutionFactoryService.getSolutionById(solution);
