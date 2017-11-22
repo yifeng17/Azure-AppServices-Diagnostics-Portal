@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
-import { AppInsightsService, AppInsightsQueryService, PortalActionService } from '../../../shared/services';
+import { AppInsightsService, AppInsightsQueryService, PortalActionService, AvailabilityLoggingService } from '../../../shared/services';
 
 @Component({
     selector: 'app-insights-exceptions',
@@ -20,9 +20,11 @@ export class AppInsightsExceptionsComponent implements OnInit, OnChanges {
 
     loading: boolean;
     exceptions: any = [];
+    exceptionTypes: string[];
 
-    constructor(private _route: ActivatedRoute, private appInsightsService: AppInsightsService, private appInsightsQueryService: AppInsightsQueryService, private portalActionService: PortalActionService) {
+    constructor(private _route: ActivatedRoute, private appInsightsService: AppInsightsService, private appInsightsQueryService: AppInsightsQueryService, private portalActionService: PortalActionService, private logger: AvailabilityLoggingService) {
         this.exceptions = [];
+        this.exceptionTypes = [];
     }
 
     ngOnInit(): void {
@@ -45,6 +47,8 @@ export class AppInsightsExceptionsComponent implements OnInit, OnChanges {
                         let rows = data["Tables"][0]["Rows"];
                         this.parseRowsIntoExceptions(rows);
                         this.loading = false;
+
+                        this.logger.LogAppInsightsExceptionSummary(this.startTime, this.endTime, this.exceptionTypes);
                     });
                 });
             }
@@ -61,12 +65,15 @@ export class AppInsightsExceptionsComponent implements OnInit, OnChanges {
             this.exceptions.push({
                 message: element[0],
                 exception: element[1],
-                count: element[2]
+                count: element[3]
             });
+
+            this.exceptionTypes.push(`${element[2]} [Count : ${element[3]}]`);
         });
     }
 
     OpenAppInsights() {
         this.portalActionService.openAppInsightsBlade();
+        this.logger.LogClickEvent('Application Insights Blade', 'App Analysis');
     }
 }

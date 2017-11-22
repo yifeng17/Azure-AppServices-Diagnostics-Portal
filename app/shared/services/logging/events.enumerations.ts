@@ -25,7 +25,9 @@ export enum AvailabilityEventType {
     MemorySummaryStatus,
     SummaryViewExpanded, 
     SolutionDisplayed,
-    SolutionFeedback
+    SolutionFeedback,
+    AppInsightsSettings,
+    AppInsightsExceptionSummary
 }
 
 export enum BotEventType{

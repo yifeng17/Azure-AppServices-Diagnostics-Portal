@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, Response, Request } from '@angular/http';
 import { Observable, ReplaySubject } from 'rxjs/Rx';
-import { AuthService, SiteService, AppAnalysisService, ArmService, PortalService } from '../../../shared/services';
+import { AuthService, SiteService, AppAnalysisService, ArmService, PortalService, AvailabilityLoggingService } from '../../../shared/services';
 import { StartupInfo } from '../../../shared/models/portal';
 import { ArmObj } from '../../../shared/models/armObj';
 import { Verbs } from '../../../shared/models/portal';
@@ -18,8 +18,8 @@ export class AppInsightsService {
     public appKey_AppSettingStr: string = "SUPPORTCNTR_APPINSIGHTS_APPKEY";
     public resourceUri_AppSettingStr: string = "SUPPORTCNTR_APPINSIGHTS_URI";
 
-    public loadAppInsightsResourceObservable : ReplaySubject<boolean>;
-    public loadAppDiagnosticPropertiesObservable : ReplaySubject<boolean>;
+    public loadAppInsightsResourceObservable: ReplaySubject<boolean>;
+    public loadAppDiagnosticPropertiesObservable: ReplaySubject<boolean>;
 
     public appInsightsSettings: any = {
         validForStack: undefined,
@@ -30,7 +30,7 @@ export class AppInsightsService {
         appId: undefined
     };
 
-    constructor(private http: Http, private authService: AuthService, private armService: ArmService, private siteService: SiteService, private appAnalysisService: AppAnalysisService, private portalService: PortalService) {
+    constructor(private http: Http, private authService: AuthService, private armService: ArmService, private siteService: SiteService, private appAnalysisService: AppAnalysisService, private portalService: PortalService, private logger: AvailabilityLoggingService) {
 
         this.loadAppInsightsResourceObservable = new ReplaySubject<boolean>(1);
         this.loadAppDiagnosticPropertiesObservable = new ReplaySubject<boolean>(1);
@@ -49,11 +49,7 @@ export class AppInsightsService {
         // Check the stack of the web app to determine whether App Insights can be shown as an option
         this.appAnalysisService.getDiagnosticProperties(subscription, resourceGroup, siteName, slotName).subscribe(data => {
 
-            if (!data)   // new app
-            {
-                this.appInsightsSettings.validForStack = true;
-            }
-            else if (data.appStack && data.appStack.toLowerCase().indexOf('asp.net') > -1) {
+            if (data && data.appStack && data.appStack.toLowerCase().indexOf('asp.net') > -1) {
                 this.appInsightsSettings.validForStack = true;
             }
             else {
@@ -66,7 +62,7 @@ export class AppInsightsService {
         // Check if App insights is already enabled for the web app.
         this.portalService.getAppInsightsResourceInfo().subscribe((aiResource: string) => {
             if (aiResource && aiResource !== '') {
-                this.appInsightsSettings.enabledForWebApp = true;
+                this.appInsightsSettings.enabledForWebApp = true
                 this.appInsightsSettings.resourceUri = aiResource;
 
                 // Do a get on the resource to fill the app id and name.
@@ -86,6 +82,8 @@ export class AppInsightsService {
             else {
                 this.appInsightsSettings.enabledForWebApp = false;
             }
+
+            this.logger.LogAppInsightsSettings(this.appInsightsSettings.enabledForWebApp);
         });
 
         // Check if App Insights is connected to Support Center.
