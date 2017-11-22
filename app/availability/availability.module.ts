@@ -30,6 +30,11 @@ import { PageFileOperationsComponent } from './detector-view/detectors/page-oper
 import { ToolsMenuComponent } from './tools-menu/tools-menu.component';
 import { AvailabilityAndPerformanceCategoryRouteConfig } from './availability.routeconfig';
 import { AspNetCoreComponent } from "./detector-view/detectors/aspnetcore-detector/aspnetcore-detector.component";
+import { AppInsightsTileComponent } from './app-insights/app-insights-tile.component';
+import { AppInsightsSettingsComponent } from './app-insights/app-insights-settings.component';
+import { AppInsightsExceptionsComponent } from './app-insights/exceptions/app-insights-exceptions.component';
+import { AppInsightsDependenciesComponent } from './app-insights/dependencies/app-insights-dependencies.component';
+
 
 import { UriElementsService } from '../shared/services'
 
@@ -59,7 +64,11 @@ import { UriElementsService } from '../shared/services'
         MemoryAnalysisComponent,
         CommittedMemoryUsageComponent,
         PageFileOperationsComponent,
-        AspNetCoreComponent
+        AspNetCoreComponent,
+        AppInsightsTileComponent,
+        AppInsightsSettingsComponent,
+        AppInsightsExceptionsComponent,
+        AppInsightsDependenciesComponent
     ],
     imports: [
         RouterModule.forChild(AvailabilityAndPerformanceCategoryRouteConfig),
@@ -71,7 +80,9 @@ import { UriElementsService } from '../shared/services'
         ObservationsComponent,
         ObservationsAvailabilityComponent,
         ObservationsPerformanceComponent,
-        DetectorViewProblemComponent
+        DetectorViewProblemComponent,
+        AppInsightsTileComponent,
+        AppInsightsSettingsComponent
     ]
 })
 export class AvailabilityModule {
