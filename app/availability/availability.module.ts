@@ -37,6 +37,7 @@ import { AppInsightsDependenciesComponent } from './app-insights/dependencies/ap
 
 
 import { UriElementsService } from '../shared/services'
+import { TcpConnectionsAnalysisComponent } from './analysis/tcpconnectionsanalysis/tcp-connections-analysis.component';
 
 @NgModule({
     declarations: [
@@ -65,6 +66,7 @@ import { UriElementsService } from '../shared/services'
         CommittedMemoryUsageComponent,
         PageFileOperationsComponent,
         AspNetCoreComponent,
+        TcpConnectionsAnalysisComponent,
         AppInsightsTileComponent,
         AppInsightsSettingsComponent,
         AppInsightsExceptionsComponent,
