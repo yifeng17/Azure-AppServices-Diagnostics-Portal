@@ -14,7 +14,7 @@ export class AppInsightsQueryService {
         exceptions
         | where timestamp >= datetime(${startTimeUTC}) and timestamp <= datetime(${endTimeUTC})  
         | where client_Type == "PC" 
-        | summarize count() by outerMessage, problemId
+        | summarize count() by outerMessage, problemId, type
         | top ${recordsLimit} by count_ desc`;
 
         let requests = this.appinsightsService.ExecuteQuery(query);

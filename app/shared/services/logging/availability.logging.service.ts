@@ -135,5 +135,17 @@ export class AvailabilityLoggingService extends LoggingService {
         });
     }
 
+    LogAppInsightsSettings(appInsightsEnabled: boolean){
+        this._log(AvailabilityEventType[AvailabilityEventType.AppInsightsSettings], "Availability", {
+            enabled: appInsightsEnabled
+        });
+    }
 
+    LogAppInsightsExceptionSummary(startTime: string, endTime: string, exceptionTypes: string[]) {
+        this._log(AvailabilityEventType[AvailabilityEventType.AppInsightsExceptionSummary], "Availability", {
+            startTime: startTime,
+            endTime: endTime,
+            exceptionTypes: exceptionTypes ? exceptionTypes.toString().replace(new RegExp(',', 'g'), '|') : ''
+        });
+    }
 }

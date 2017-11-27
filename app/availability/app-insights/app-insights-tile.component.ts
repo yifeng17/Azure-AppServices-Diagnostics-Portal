@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { AppInsightsService, PortalActionService } from '../../shared/services';
+import { AppInsightsService, PortalActionService, LoggingService } from '../../shared/services';
 import { StartupInfo } from '../../shared/models/portal';
 
 @Component({
@@ -16,10 +16,11 @@ export class AppInsightsTileComponent {
     siteName: string;
     slotName: string;
 
-    constructor(public appInsightsService: AppInsightsService, public portalActionService: PortalActionService) {
+    constructor(public appInsightsService: AppInsightsService, public portalActionService: PortalActionService, private logger: LoggingService) {
     }
 
     OpenAppInsights() {
         this.portalActionService.openAppInsightsBlade();
+        this.logger.LogClickEvent('Application Insights Blade', 'Home Page');
     }
 }
