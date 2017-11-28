@@ -207,6 +207,8 @@ export class HealthCheckComponent implements OnInit, AfterViewInit, IChatMessage
         let detectorResponses = data[0];
         let analysisResponses = data[1];
 
+        var healthCheckResultForLogging: string[] = [];
+
         detectorResponses.forEach((item: IDetectorResponse) => {
             let name = item.detectorDefinition.name;
             let category = _.find(this.healthCheckpoints, (entry) => {
@@ -240,6 +242,8 @@ export class HealthCheckComponent implements OnInit, AfterViewInit, IChatMessage
                             }
                         }
 
+                        healthCheckResultForLogging.push(`Availability-${this._getLevelIndicator(category.healthStatus)}`);
+
                         break;
                     case 'sitelatency':
                         category.graphData = GraphHelper.parseMetricsToChartData(item.metrics);
@@ -259,6 +263,9 @@ export class HealthCheckComponent implements OnInit, AfterViewInit, IChatMessage
                             category.healthStatus = 'success';
                             category.healthStatusMessage = 'Your Web App currently has no performance issues. Check out "View Full Report" if you would like to check your Web App response time.';
                         }
+
+                        healthCheckResultForLogging.push(`Performance-${this._getLevelIndicator(category.healthStatus)}`);
+                        
                         break;
                     case 'sitecpuanalysis':
                         let metrics = item.metrics.filter(p => (p.name.toLowerCase().indexOf('percent') > -1));
@@ -283,6 +290,8 @@ export class HealthCheckComponent implements OnInit, AfterViewInit, IChatMessage
                                 category.healthStatusMessage = 'Your Web App currently has normal CPU usage. Check out "View Full Report" if you would like to check the CPU usage per instance breakdown.';
                             }
                         }
+
+                        healthCheckResultForLogging.push(`CPU Usage-${this._getLevelIndicator(category.healthStatus)}`);
 
                         break;
                     case 'sitememoryanalysis':
@@ -309,6 +318,8 @@ export class HealthCheckComponent implements OnInit, AfterViewInit, IChatMessage
                             }
                         }
 
+                        healthCheckResultForLogging.push(`Memory Usage-${this._getLevelIndicator(category.healthStatus)}`);
+                        
                         break;
                     default:
                         category.graphData = GraphHelper.parseMetricsToChartData(item.metrics);
@@ -316,5 +327,21 @@ export class HealthCheckComponent implements OnInit, AfterViewInit, IChatMessage
                 }
             }
         });
+
+        if(healthCheckResultForLogging && healthCheckResultForLogging.length > 0){
+            this._logger.LogHealthCheckResults(healthCheckResultForLogging);            
+        }
+    }
+
+    private _getLevelIndicator(level: string): string {
+
+        switch (level.toLowerCase()) {
+            case 'warning':
+                return 'yellow';
+            case 'error':
+                return 'red';
+            default:
+                return 'green';
+        }
     }
 }

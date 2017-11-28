@@ -21,6 +21,6 @@ export class AppInsightsTileComponent {
 
     OpenAppInsights() {
         this.portalActionService.openAppInsightsBlade();
-        this.logger.LogClickEvent('Application Insights Blade', 'Home Page');
+        this.logger.LogClickEvent('Application Insights Blade', 'Support Home');
     }
 }

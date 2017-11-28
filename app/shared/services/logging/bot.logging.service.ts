@@ -13,10 +13,16 @@ export class BotLoggingService extends LoggingService {
         this._log(BotEventType[BotEventType.HealthCheckInvoked], 'Support Home');
     }
 
-    LogDetectorViewInBot(detector: string, displayed: boolean){
+    LogDetectorViewInBot(detector: string, displayed: boolean) {
         this._log(BotEventType[BotEventType.DetectorViewChatDisplayed], 'Support Home', {
             detector: detector,
             displayed: displayed
+        });
+    }
+
+    LogHealthCheckResults(healthCheckResults: string[]): void {
+        this._log(BotEventType[BotEventType.HealthCheckResults], 'Support Home', {
+            results: healthCheckResults ? healthCheckResults.toString().replace(new RegExp(',', 'g'), '|') : ''
         });
     }
 }

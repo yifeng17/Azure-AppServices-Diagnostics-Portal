@@ -32,6 +32,7 @@ export enum AvailabilityEventType {
 
 export enum BotEventType{
     HealthCheckInvoked,
+    HealthCheckResults,
     HealthCheckReportStats,
     DetectorViewChatDisplayed
 }
