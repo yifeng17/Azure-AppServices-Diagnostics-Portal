@@ -22,7 +22,7 @@ export class AppInsightsExceptionsComponent implements OnInit, OnChanges {
     exceptions: any = [];
     exceptionTypes: string[];
 
-    constructor(private _route: ActivatedRoute, private appInsightsService: AppInsightsService, private appInsightsQueryService: AppInsightsQueryService, private portalActionService: PortalActionService, private logger: AvailabilityLoggingService) {
+    constructor(private _route: ActivatedRoute, public appInsightsService: AppInsightsService, private appInsightsQueryService: AppInsightsQueryService, private portalActionService: PortalActionService, private logger: AvailabilityLoggingService) {
         this.exceptions = [];
         this.exceptionTypes = [];
     }
