@@ -20,7 +20,7 @@ export class TcpConnectionsAnalysisComponent implements OnInit {
     connectionsUsageViewModel: SummaryViewModel;
     openSocketCountViewModel: SummaryViewModel;
 
-    readonly ConnectionRejections: string = "portexhaustion";
+    ConnectionRejections: string = "portexhaustion";
     readonly TcpConnections: string = "tcpconnectionsusage";
     readonly OpenSocketCount: string = "tcpopensocketcount";
 
@@ -41,10 +41,7 @@ export class TcpConnectionsAnalysisComponent implements OnInit {
         this.siteName = this._route.snapshot.params['sitename'];
         this.slotName = this._route.snapshot.params['slot'] ? this._route.snapshot.params['slot'] : '';
 
-        this.getSummaryViewModel(this.ConnectionRejections, 'Port Rejection', false)
-            .subscribe(data => {
-            this.connnectionsRejectionsViewModel = data;
-            });
+        this.getSummaryViewModelForConnectionRejections();
 
         this.getSummaryViewModel(this.TcpConnections, 'Outbound', false)
             .subscribe(data => {
@@ -55,6 +52,24 @@ export class TcpConnectionsAnalysisComponent implements OnInit {
             .subscribe(data => {
             this.openSocketCountViewModel = data;
             });
+    }
+
+    getSummaryViewModelForConnectionRejections() {
+
+        this._appAnalysisService.getDetectors(this.subscriptionId,this.resourceGroup,this.siteName, "availability", this.slotName)
+        .subscribe(response =>{
+            if (response.find(d => d.name === 'portrejections')){
+                this.ConnectionRejections = "portrejections";
+            }
+            else {
+                this.ConnectionRejections = "portexhaustion";
+            }     
+
+            this.getSummaryViewModel(this.ConnectionRejections, 'Port Rejection', false)
+            .subscribe(data => {
+            this.connnectionsRejectionsViewModel = data;
+            });        
+        });
     }
 
     getSummaryViewModel(detectorName: string, topLevelSeries: string = '', excludeTopLevelInDetail: boolean = true): Observable<SummaryViewModel> {
