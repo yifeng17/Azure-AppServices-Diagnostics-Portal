@@ -58,14 +58,14 @@ export class SiteService {
             return output;
         }
 
-        let resourceUriParts = resourceUri.split("/");
+        let resourceUriParts = resourceUri.toLowerCase().split("/");
 
         let subscriptionIndex = resourceUriParts.indexOf('subscriptions');
         if (subscriptionIndex > -1) {
             output.subscriptionId = resourceUriParts[subscriptionIndex + 1];
         }
 
-        let resourceGroupIndex = resourceUriParts.indexOf('resourceGroups');
+        let resourceGroupIndex = resourceUriParts.indexOf('resourcegroups');
         if (resourceGroupIndex > -1) {
             output.resourceGroup = resourceUriParts[resourceGroupIndex + 1];
         }
