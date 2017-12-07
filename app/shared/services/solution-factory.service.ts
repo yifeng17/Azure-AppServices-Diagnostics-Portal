@@ -16,7 +16,7 @@ export class SolutionFactoryService {
 
     }
 
-    getSolutionById(solution: ISolution): SolutionHolder {
+    getSolution(solution: ISolution): SolutionHolder {
 
         switch (solution.id) {
             case 1:
@@ -66,8 +66,8 @@ export class SolutionFactoryService {
             //     return new OtherSolutions.CheckAutoHeal(rank, _logger);
             // case 103:
             //     return new OtherSolutions.GetDumpOfProcess(rank, _logger);
-             case 104:
-             return new SolutionHolder(ProfilingComponent, <SolutionData>{ title: "Remote Profile WebApp", tags: [SolutionTypeTag.Investigation], solution: solution });
+            // case 104:
+            // return new SolutionHolder(ProfilingComponent, <SolutionData>{ title: "Remote Profile WebApp", tags: [SolutionTypeTag.Investigation], solution: solution });
             // case 105:
             //     return new OtherSolutions.UpgradeDatabase(rank, _logger);
             // case 106:

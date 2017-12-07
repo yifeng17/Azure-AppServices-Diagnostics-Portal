@@ -2,7 +2,7 @@ import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { SolutionBaseComponent } from '../../common/solution-base/solution-base.component';
 import { SolutionData } from '../../../../shared/models/solution';
 import { MetaDataHelper } from '../../../../shared/utilities/metaDataHelper';
-import { SiteService, DaasService, WindowService, AvailabilityLoggingService } from '../../../../shared/services'
+import { SiteService, DaasService, WindowService, AvailabilityLoggingService, ServerFarmDataService } from '../../../../shared/services'
 import { SiteProfilingInfo } from '../../../../shared/models/solution-metadata';
 import { Subscription } from 'rxjs';
 import { TimerObservable } from 'rxjs/observable/TimerObservable';
@@ -46,31 +46,52 @@ export class ProfilingComponent implements SolutionBaseComponent, OnInit, OnDest
     scmPath: string;
     SessionCompleted:boolean;
 
-    constructor(private _siteService: SiteService, private _daasService: DaasService, private _windowService: WindowService, private _logger: AvailabilityLoggingService) {
+    couldNotFindSite:boolean = false;
+
+    constructor(private _siteService: SiteService, private _daasService: DaasService, private _windowService: WindowService, private _logger: AvailabilityLoggingService, private serverFarmService: ServerFarmDataService) {
     }
 
     ngOnInit(): void {
 
         this._logger.LogSolutionDisplayed('CLR Profiling', this.data.solution.order.toString(), 'bot-sitecpuanalysis');
         
-        this.siteToBeProfiled = MetaDataHelper.getProfilingData(this.data.solution.data);         
+        this.siteToBeProfiled = MetaDataHelper.getProfilingData(this.data.solution.data);  
+        let siteInfo = MetaDataHelper.getProfilingData(this.data.solution.data);        
         this.SessionCompleted = false;
 
-        //TODO:: How would this look for ASE ?
-        if (this.siteToBeProfiled.slot.length > 0)
-        {
-            this.scmPath = `https://${this.siteToBeProfiled.siteName}-${this.siteToBeProfiled.slot}.scm.azurewebsites.net`;
-        }
-        else
-        {
-            this.scmPath = `https://${this.siteToBeProfiled.siteName}.scm.azurewebsites.net`;
-        }
-        
-        this._daasService.getInstances(this.siteToBeProfiled)
-            .subscribe(result => {
-                this.instances = result;
-                this.checkRunningSessions();                
-            });
+        this.serverFarmService.sitesInServerFarm.subscribe(sites => {
+            let targetedSite = sites.find(site => site.name.toLowerCase() === siteInfo.siteName.toLowerCase());
+
+            if (targetedSite) {
+                let siteName = targetedSite.name;
+                let slotName = '';
+                if (targetedSite.name.indexOf('(') >= 0) {
+                    let parts = targetedSite.name.split('(');
+                    siteName = parts[0];
+                    slotName = parts[1].replace(')', '');
+                }
+    
+                if (targetedSite) {
+                    this.siteToBeProfiled = <SiteProfilingInfo>{
+                        subscriptionId: siteInfo.subscriptionId,
+                        resourceGroupName: targetedSite.resourceGroup,
+                        siteName: siteName,
+                        slot: slotName
+                    }
+                }
+    
+                this.scmPath = targetedSite.hostNames.find(hostname => hostname.indexOf('.scm.') > 0);
+    
+                this._daasService.getInstances(this.siteToBeProfiled)
+                    .subscribe(result => {
+                        this.instances = result;
+                        this.checkRunningSessions();                
+                    });
+            }
+            else {
+                this.couldNotFindSite = true;
+            }
+        });
     }
 
     takeTopFiveProfilingSessions(sessions: Session[]): Session[] {
@@ -88,6 +109,7 @@ export class ProfilingComponent implements SolutionBaseComponent, OnInit, OnDest
         }
         return arrayToReturn;
     }
+    
     checkRunningSessions() {
         this.checkingExistingSessions = true;
         this._daasService.getDaasSessionsWithDetails(this.siteToBeProfiled)
