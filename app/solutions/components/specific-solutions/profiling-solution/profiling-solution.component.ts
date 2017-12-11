@@ -48,18 +48,17 @@ export class ProfilingComponent implements SolutionBaseComponent, OnInit, OnDest
 
     couldNotFindSite:boolean = false;
 
-    constructor(private _siteService: SiteService, private _daasService: DaasService, private _windowService: WindowService, private _logger: AvailabilityLoggingService, private serverFarmService: ServerFarmDataService) {
+    constructor(private _siteService: SiteService, private _daasService: DaasService, private _windowService: WindowService, private _logger: AvailabilityLoggingService, private _serverFarmService: ServerFarmDataService) {
     }
 
     ngOnInit(): void {
 
         this._logger.LogSolutionDisplayed('CLR Profiling', this.data.solution.order.toString(), 'bot-sitecpuanalysis');
         
-        this.siteToBeProfiled = MetaDataHelper.getProfilingData(this.data.solution.data);  
         let siteInfo = MetaDataHelper.getProfilingData(this.data.solution.data);        
         this.SessionCompleted = false;
 
-        this.serverFarmService.sitesInServerFarm.subscribe(sites => {
+        this._serverFarmService.sitesInServerFarm.subscribe(sites => {
             let targetedSite = sites.find(site => site.name.toLowerCase() === siteInfo.siteName.toLowerCase());
 
             if (targetedSite) {
@@ -71,13 +70,11 @@ export class ProfilingComponent implements SolutionBaseComponent, OnInit, OnDest
                     slotName = parts[1].replace(')', '');
                 }
     
-                if (targetedSite) {
-                    this.siteToBeProfiled = <SiteProfilingInfo>{
-                        subscriptionId: siteInfo.subscriptionId,
-                        resourceGroupName: targetedSite.resourceGroup,
-                        siteName: siteName,
-                        slot: slotName
-                    }
+                this.siteToBeProfiled = <SiteProfilingInfo>{
+                    subscriptionId: siteInfo.subscriptionId,
+                    resourceGroupName: targetedSite.resourceGroup,
+                    siteName: siteName,
+                    slot: slotName
                 }
     
                 this.scmPath = targetedSite.hostNames.find(hostname => hostname.indexOf('.scm.') > 0);
@@ -109,7 +106,7 @@ export class ProfilingComponent implements SolutionBaseComponent, OnInit, OnDest
         }
         return arrayToReturn;
     }
-    
+
     checkRunningSessions() {
         this.checkingExistingSessions = true;
         this._daasService.getDaasSessionsWithDetails(this.siteToBeProfiled)
