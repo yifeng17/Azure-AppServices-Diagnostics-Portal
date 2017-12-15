@@ -14,6 +14,7 @@ import { ScaleOutSolutionComponent } from './components/specific-solutions/scale
 import { SplitSitesIntoDifferentServerFarmsSolutionComponent } from './components/specific-solutions/split-sites-serverfarms-solution/split-sites-serverfarms-solution.component';
 import { SolutionFeedbackComponent } from './components/common/solution-feedback/solution-feedback.component';
 import { MemoryDumpComponent } from './components/specific-solutions/memorydump-solution/memorydump-solution.component';
+import { RevertDeploymentComponent } from './components/specific-solutions/revert-deployment-solution/revert-deployment-solution.component';
 
 @NgModule({
     declarations: [
@@ -28,7 +29,8 @@ import { MemoryDumpComponent } from './components/specific-solutions/memorydump-
         MemoryDumpComponent,
         SolutionOperationComponent,
         SplitSitesIntoDifferentServerFarmsSolutionComponent,
-        SolutionFeedbackComponent
+        SolutionFeedbackComponent,
+        RevertDeploymentComponent
     ],
     imports: [
         SharedModule

@@ -8,6 +8,7 @@ import { ProfilingComponent } from '../../specific-solutions/profiling-solution/
 import { ScaleOutSolutionComponent } from '../../specific-solutions/scale-out-solution/scale-out-solution.component';
 import { SplitSitesIntoDifferentServerFarmsSolutionComponent } from '../../specific-solutions/split-sites-serverfarms-solution/split-sites-serverfarms-solution.component';
 import { MemoryDumpComponent } from '../../specific-solutions/memorydump-solution/memorydump-solution.component';
+import { RevertDeploymentComponent } from '../../specific-solutions/revert-deployment-solution/revert-deployment-solution.component';
 
 
 @Component({
@@ -15,7 +16,7 @@ import { MemoryDumpComponent } from '../../specific-solutions/memorydump-solutio
     template: `
     <div dynamic-solution-placeholder></div>
     `,
-    entryComponents: [SiteRestartComponent, ScaleUpSolutionComponent, ScaleOutSolutionComponent, ProfilingComponent, MemoryDumpComponent, SplitSitesIntoDifferentServerFarmsSolutionComponent]
+    entryComponents: [SiteRestartComponent, ScaleUpSolutionComponent, ScaleOutSolutionComponent, ProfilingComponent, MemoryDumpComponent, SplitSitesIntoDifferentServerFarmsSolutionComponent, RevertDeploymentComponent]
 })
 export class DynamicSolutionComponent implements AfterViewInit {
     currentComponent = null;

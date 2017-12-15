@@ -32,6 +32,8 @@ export class SolutionsWidgetComponent implements OnInit {
         this._solutionModelSubject.subscribe((solutions: ISolution[]) => {
             solutions = this.updateSolutions(solutions);
 
+            //this._injectSampleData();
+
             solutions.forEach(solution => {
                 if (!this.solutions.find(holder => holder.data.solution.id === solution.id)) {
                     let solutionHolder = this._solutionFactoryService.getSolution(solution);
@@ -43,8 +45,6 @@ export class SolutionsWidgetComponent implements OnInit {
                     }
                 }
             });
-
-            //this._injectSampleData();
 
             // TEMP: Add a scale out solution if there are none other available
             if (this.solutions.length <= 0) {
@@ -76,6 +76,11 @@ export class SolutionsWidgetComponent implements OnInit {
 
         if (this.solutions.findIndex(x => x.data.solution.id === 12) < 0) {
             let t = this._solutionFactoryService.getSolution(<ISolution>{ id: 12 });
+            this.solutions.push(t);
+        }
+
+        if (this.solutions.findIndex(x => x.data.solution.id === 17) < 0) {
+            let t = this._solutionFactoryService.getSolution(<ISolution>{ id: 17 });
             this.solutions.push(t);
         }
 
