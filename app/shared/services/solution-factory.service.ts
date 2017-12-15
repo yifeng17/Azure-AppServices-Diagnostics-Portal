@@ -9,6 +9,7 @@ import { ProfilingComponent } from '../../solutions/components/specific-solution
 import { ScaleOutSolutionComponent } from '../../solutions/components/specific-solutions/scale-out-solution/scale-out-solution.component';
 import { SplitSitesIntoDifferentServerFarmsSolutionComponent } from '../../solutions/components/specific-solutions/split-sites-serverfarms-solution/split-sites-serverfarms-solution.component';
 import { MemoryDumpComponent } from '../../solutions/components/specific-solutions/memorydump-solution/memorydump-solution.component';
+import { RevertDeploymentComponent } from '../../solutions/components/specific-solutions/revert-deployment-solution/revert-deployment-solution.component';
 
 @Injectable()
 export class SolutionFactoryService {
@@ -55,8 +56,8 @@ export class SolutionFactoryService {
             //     return new OtherSolutions.EnableStdOutRedirection(rank, parameters, _logger, siteService);
             // case 16:
             //     return new OtherSolutions.CheckStdOutLog(rank, parameters, _logger);
-            // case 17:
-            //     return new OtherSolutions.RevertChanges(rank, _logger);
+            case 17:
+                return new SolutionHolder(RevertDeploymentComponent, <SolutionData>{ title: "Revert Deployment", tags: [SolutionTypeTag.Mitigation], solution: solution });
             // case 18:
             //     return new OtherSolutions.FixStdOutLogPath(rank, parameters, _logger, siteService);
             // case 100:
