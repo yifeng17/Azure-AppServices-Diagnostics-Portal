@@ -30,6 +30,6 @@ export class RevertDeploymentComponent implements SolutionBaseComponent {
 
     ngOnInit() {
         this.data.solution.order = this.data.solution.order ? this.data.solution.order : 9999;
-        this._logger.LogSolutionDisplayed('Scale Out', this.data.solution.order.toString(), 'bot-sitecpuanalysis');
+        this._logger.LogSolutionDisplayed('Revert Deployment', this.data.solution.order.toString(), 'bot-sitecpuanalysis');
     }
 }
