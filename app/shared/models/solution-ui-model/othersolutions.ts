@@ -296,7 +296,7 @@ export class IncreasePHPTimeOUt extends SolutionUIModelBase {
     run(): void {
         if (this._parameters && this._parameters.length > 0) {
             let siteName = this._parameters[0].find(p => p.name.toLowerCase() === "sitename");
-            if (siteName && siteName.value === this._siteService.currentSiteStatic.name) {
+            if (siteName && siteName.value.toLowerCase() === this._siteService.currentSiteStatic.name.toLowerCase()) {
                 //Temporary. We need to get scm hostname from the API.
                 let scmHostName = this._siteService.currentSiteStatic.enabledHostNames.find(x => x.indexOf(".scm.") > 0);
                 if (scmHostName) {
@@ -332,7 +332,7 @@ export class SetPHPMemoryLimit extends SolutionUIModelBase {
     run(): void {
         if (this._parameters && this._parameters.length > 0) {
             let siteName = this._parameters[0].find(p => p.name.toLowerCase() === "sitename");
-            if (siteName && siteName.value === this._siteService.currentSiteStatic.name) {
+            if (siteName && siteName.value.toLowerCase() === this._siteService.currentSiteStatic.name.toLowerCase()) {
                 //Temporary. We need to get scm hostname from the API.
                 let scmHostName = this._siteService.currentSiteStatic.enabledHostNames.find(x => x.indexOf(".scm.") > 0);
                 if (scmHostName) {
@@ -374,7 +374,7 @@ export class EnablePHPLogging extends SolutionUIModelBase {
     run(): void {
         if (this._parameters && this._parameters.length > 0) {
             let siteName = this._parameters[0].find(p => p.name.toLowerCase() === "sitename");
-            if (siteName && siteName.value === this._siteService.currentSiteStatic.name) {
+            if (siteName && siteName.value.toLowerCase() === this._siteService.currentSiteStatic.name.toLowerCase()) {
                 //Temporary. We need to get scm hostname from the API.
                 let scmHostName = this._siteService.currentSiteStatic.enabledHostNames.find(x => x.indexOf(".scm.") > 0);
                 if (scmHostName) {
@@ -402,7 +402,7 @@ export class CheckPHPLogs extends SolutionUIModelBase {
     run(): void {
         if (this._parameters && this._parameters.length > 0) {
             let siteName = this._parameters[0].find(p => p.name.toLowerCase() === "sitename");
-            if (siteName && siteName.value === this._siteService.currentSiteStatic.name) {
+            if (siteName && siteName.value.toLowerCase() === this._siteService.currentSiteStatic.name.toLowerCase()) {
                 //Temporary. We need to get scm hostname from the API.
                 let scmHostName = this._siteService.currentSiteStatic.enabledHostNames.find(x => x.indexOf(".scm.") > 0);
 
@@ -474,7 +474,7 @@ export class EnableStdOutRedirection extends SolutionUIModelBase {
             let resourceGroup = this._parameters[0].find(p => p.name.toLowerCase() === "resourcegroup").value;
             let siteName = this._parameters[0].find(p => p.name.toLowerCase() === "sitename").value;
 
-            if (siteName && siteName === this._siteService.currentSiteStatic.name) {
+            if (siteName && siteName.toLowerCase() === this._siteService.currentSiteStatic.name.toLowerCase()) {
                 let scmHostName = this._siteService.currentSiteStatic.enabledHostNames.find(x => x.indexOf(".scm.") > 0);
 
                 if (scmHostName) {
@@ -513,7 +513,7 @@ export class FixStdOutLogPath extends SolutionUIModelBase {
             let resourceGroup = this._parameters[0].find(p => p.name.toLowerCase() === "resourcegroup").value;
             let siteName = this._parameters[0].find(p => p.name.toLowerCase() === "sitename").value;
 
-            if (siteName && siteName === this._siteService.currentSiteStatic.name) {
+            if (siteName && siteName.toLowerCase() === this._siteService.currentSiteStatic.name.toLowerCase()) {
                 let scmHostName = this._siteService.currentSiteStatic.enabledHostNames.find(x => x.indexOf(".scm.") > 0);
                 if (scmHostName) {
                     this._logger.LogSolutionTried(this.properties.title, this.rank.toString(), 'other', this.properties.actionText);
