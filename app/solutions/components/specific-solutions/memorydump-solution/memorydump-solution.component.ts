@@ -85,7 +85,7 @@ export class MemoryDumpComponent implements SolutionBaseComponent, OnInit, OnDes
                     slot: slotName
                 }
 
-                this.scmPath = targetedSite.hostNames.find(hostname => hostname.indexOf('.scm.') > 0);
+                this.scmPath = targetedSite.enabledHostNames.find(hostname => hostname.indexOf('.scm.') > 0);
 
                 this._daasService.getInstances(this.siteToBeDumped)
                     .subscribe(result => {

@@ -85,7 +85,7 @@ export class ProfilingComponent implements SolutionBaseComponent, OnInit, OnDest
                     slot: slotName
                 }
 
-                this.scmPath = targetedSite.hostNames.find(hostname => hostname.indexOf('.scm.') > 0);
+                this.scmPath = targetedSite.enabledHostNames.find(hostname => hostname.indexOf('.scm.') > 0);
                 
                 this.retrievingInstances = true;
                 this._daasService.getInstances(this.siteToBeProfiled).retry(2)
@@ -271,7 +271,7 @@ export class ProfilingComponent implements SolutionBaseComponent, OnInit, OnDest
     }
 
     openReport(url: string) {
-        this._windowService.open(`${this.scmPath}/api/vfs/data/DaaS/${url}`);
+        this._windowService.open(`https://${this.scmPath}/api/vfs/data/DaaS/${url}`);
     }
 
     ngOnDestroy(): void {
