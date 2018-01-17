@@ -25,7 +25,7 @@
                                     <ul *ngIf="diagnoser.Reports.length > 0" style="list-style: none;">
                                         <li *ngFor="let report of diagnoser.Reports">
                                             {{ getInstanceNameFromReport(report.FileName) }}
-                                            <a href="{{ scmPath }}/api/vfs/data/DaaS/{{ report.RelativePath }}" style="cursor: pointer" target="_blank">
+                                            <a (click)="openReport(report.RelativePath)" style="cursor: pointer">
                                                 <i class="fa fa-external-link" aria-hidden="true"></i>
                                             </a>
                                         </li>

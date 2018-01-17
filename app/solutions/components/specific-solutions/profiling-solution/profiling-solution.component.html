@@ -74,6 +74,6 @@
         <li *ngFor="let statement of thingsToKnowBefore">{{statement}}</li>
     </ul>
 
-    <daas-sessions SessionType="CLR Profiler" [checkingExistingSessions]="checkingExistingSessions" [Sessions]="Sessions"></daas-sessions>
+    <daas-sessions SessionType="CLR Profiler" [scmPath]="scmPath" [checkingExistingSessions]="checkingExistingSessions" [Sessions]="Sessions"></daas-sessions>
 
 </default-solution-template>

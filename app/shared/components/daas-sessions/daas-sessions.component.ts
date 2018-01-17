@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Session } from '../../models/daas';
+import { WindowService } from '../../services/index';
 
 @Component({
     selector: 'daas-sessions',
@@ -13,7 +14,13 @@ export class DaasSessionsComponent {
     @Input() public Sessions: Session[];
     @Input() public SessionType: string;
 
+    @Input() public scmPath: string;
+
     DiagnoserHeading:string;
+
+    constructor(private _windowService: WindowService) {
+        
+    }
 
     ngOnInit(): void {
 
@@ -41,5 +48,9 @@ export class DaasSessionsComponent {
         else {
             return reportName;
         }
+    }
+
+    openReport(url: string) {
+        this._windowService.open(`https://${this.scmPath}/api/vfs/data/DaaS/${url}`);
     }
 }
