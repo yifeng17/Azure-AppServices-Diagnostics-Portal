@@ -1,6 +1,7 @@
-import { Component, Input, OnInit, AfterContentInit, ContentChildren, QueryList } from '@angular/core';
+import { Component, Input, OnInit, ContentChildren, QueryList } from '@angular/core';
 import { VerticalDisplayListItemComponent } from './vertical-display-list-item/vertical-display-list-item.component';
 import { SolutionTypeTag } from '../../models/solution-type-tag';
+import { BehaviorSubject } from 'rxjs';
 
 
 @Component({
@@ -8,18 +9,16 @@ import { SolutionTypeTag } from '../../models/solution-type-tag';
     templateUrl: 'vertical-display-list.component.html',
     styleUrls: ['vertical-display-list.component.css']
 })
-export class VerticalDisplayListComponent implements AfterContentInit {
+export class VerticalDisplayListComponent {
     @ContentChildren(VerticalDisplayListItemComponent) listItems: QueryList<VerticalDisplayListItemComponent>;
 
     titles: VerticalDisplayListMetaData[];
 
-    ngAfterContentInit() {
-        if(this.listItems.length > 0){
-            this.listItems.toArray()[0].metaData.isSelected = true;
-        }
-    }
+    @Input() showTitle: boolean = true;
 
-    selectItem(item: VerticalDisplayListItemComponent){
+    @Input() smallMenu: boolean = false;
+
+    selectItem(item: VerticalDisplayListItemComponent) {
         this.listItems.forEach(item => item.metaData.isSelected = false);
         item.metaData.isSelected = true;
     }

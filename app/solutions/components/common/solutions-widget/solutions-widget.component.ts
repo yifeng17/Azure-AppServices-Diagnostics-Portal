@@ -5,7 +5,6 @@ import { PortalActionService, AvailabilityLoggingService, WindowService, Solutio
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { SolutionFactory } from '../../../../shared/models/solution-ui-model/solutionfactory';
 import { SolutionHolder } from '../../../../shared/models/solution-holder';
-import { } from '../../../../shared/services/solution-factory.service';
 import { ISolution } from '../../../../shared/models/solution';
 
 
@@ -25,32 +24,47 @@ export class SolutionsWidgetComponent implements OnInit {
         this._solutionModelSubject.next(model);
     };
 
+    @Input() showTitle: boolean = true;
+    @Input() smallMenu: boolean = false;
+
+    @Input() defaultSolutions: ISolution[];
+
     solutions: SolutionHolder[] = [];
+    loadingSolutions: boolean = true;
 
     ngOnInit(): void {
 
         this._solutionModelSubject.subscribe((solutions: ISolution[]) => {
+            this.loadingSolutions = true;
             solutions = this.updateSolutions(solutions);
+
+            let solutionHolders: SolutionHolder[] = [];
 
             //this._injectSampleData();
 
             solutions.forEach(solution => {
-                if (!this.solutions.find(holder => holder.data.solution.id === solution.id)) {
+                if (!solutionHolders.find(holder => holder.data.solution.id === solution.id)) {
                     let solutionHolder = this._solutionFactoryService.getSolution(solution);
                     if (solutionHolder) {
                         //Hack for handling different CPU solutions
-                        if (!(solutionHolder.data.solution.id === 2 && this.solutions.find(solution => solution.data.solution.id === 1))) {
-                            this.solutions.push(solutionHolder);
+                        if (!(solutionHolder.data.solution.id === 2 && solutionHolders.find(solution => solution.data.solution.id === 1))) {
+                            solutionHolders.push(solutionHolder);
                         }
                     }
                 }
             });
 
-            // TEMP: Add a scale out solution if there are none other available
-            if (this.solutions.length <= 0) {
-                let t = this._solutionFactoryService.getSolution(<ISolution>{ id: 4 });
-                this.solutions.push(t);
-            }            
+            // Allow default solutions to be passed
+            if (solutionHolders.length <= 0 && this.defaultSolutions) {
+                this.defaultSolutions.forEach(solution => {
+                    let t = this._solutionFactoryService.getSolution(solution);
+                    solutionHolders.push(t);
+                });
+            }
+
+            this.solutions = solutionHolders;
+            
+            this.loadingSolutions = false;
         })
     }
 

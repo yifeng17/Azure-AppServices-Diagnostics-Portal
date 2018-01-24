@@ -64,45 +64,49 @@ export class ProfilingComponent implements SolutionBaseComponent, OnInit, OnDest
         this._logger.LogSolutionDisplayed('CLR Profiling', this.data.solution.order.toString(), 'bot-sitecpuanalysis');
 
         let siteInfo = MetaDataHelper.getSiteDaasData(this.data.solution.data);
+
         this.SessionCompleted = false;
 
         this._serverFarmService.sitesInServerFarm.subscribe(sites => {
-            let targetedSite = sites.find(site => site.name.toLowerCase() === siteInfo.siteName.toLowerCase());
+            if (sites) {
+                let targetedSite = sites.find(site => site.name.toLowerCase() === siteInfo.siteName.toLowerCase());
 
-            if (targetedSite) {
-                let siteName = targetedSite.name;
-                let slotName = '';
-                if (targetedSite.name.indexOf('(') >= 0) {
-                    let parts = targetedSite.name.split('(');
-                    siteName = parts[0];
-                    slotName = parts[1].replace(')', '');
+                if (targetedSite) {
+                    let siteName = targetedSite.name;
+                    let slotName = '';
+                    if (targetedSite.name.indexOf('(') >= 0) {
+                        let parts = targetedSite.name.split('(');
+                        siteName = parts[0];
+                        slotName = parts[1].replace(')', '');
+                    }
+
+                    this.siteToBeProfiled = <SiteDaasInfo>{
+                        subscriptionId: siteInfo.subscriptionId,
+                        resourceGroupName: targetedSite.resourceGroup,
+                        siteName: siteName,
+                        slot: slotName
+                    }
+
+                    this.scmPath = targetedSite.enabledHostNames.find(hostname => hostname.indexOf('.scm.') > 0);
+
+                    this.retrievingInstances = true;
+                    this._daasService.getInstances(this.siteToBeProfiled).retry(2)
+                        .subscribe(result => {
+                            this.retrievingInstances = false;
+                            this.instances = result;
+                            this.checkRunningSessions();
+                        },
+                        error => {
+                            this.error = error;
+                            this.retrievingInstances = false;
+                            this.retrievingInstancesFailed = true;
+                        });
                 }
-
-                this.siteToBeProfiled = <SiteDaasInfo>{
-                    subscriptionId: siteInfo.subscriptionId,
-                    resourceGroupName: targetedSite.resourceGroup,
-                    siteName: siteName,
-                    slot: slotName
+                else {
+                    this.couldNotFindSite = true;
                 }
+            }
 
-                this.scmPath = targetedSite.enabledHostNames.find(hostname => hostname.indexOf('.scm.') > 0);
-                
-                this.retrievingInstances = true;
-                this._daasService.getInstances(this.siteToBeProfiled).retry(2)
-                    .subscribe(result => {
-                        this.retrievingInstances = false;
-                        this.instances = result;
-                        this.checkRunningSessions();
-                    },
-                    error => {
-                        this.error = error;
-                        this.retrievingInstances = false;
-                        this.retrievingInstancesFailed = true;
-                    });
-            }
-            else {
-                this.couldNotFindSite = true;
-            }
         });
 
         this.initWizard();
@@ -192,7 +196,7 @@ export class ProfilingComponent implements SolutionBaseComponent, OnInit, OnDest
                 }
                 else {
                     this.sessionInProgress = false;
-                    
+
                     // stop our timer at this point
                     if (this.subscription) {
                         this.subscription.unsubscribe();
@@ -260,10 +264,10 @@ export class ProfilingComponent implements SolutionBaseComponent, OnInit, OnDest
                     this.pollRunningSession(this.SessionId);
                 });
             },
-        error => {
-            this.error = error;
-            this.sessionInProgress = false;
-        });
+            error => {
+                this.error = error;
+                this.sessionInProgress = false;
+            });
     }
 
     onInstanceChange(instanceSelected: string): void {
@@ -275,7 +279,10 @@ export class ProfilingComponent implements SolutionBaseComponent, OnInit, OnDest
     }
 
     ngOnDestroy(): void {
-        this.subscription.unsubscribe();
+        if (this.subscription) {
+            this.subscription.unsubscribe();
+        }
+
     }
 
 }

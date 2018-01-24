@@ -95,7 +95,7 @@ import { DaasSessionsComponent } from './components/daas-sessions/daas-sessions.
         VerticalDisplayListItemComponent,
         SolutionTypeTagComponent,
         StepWizardComponent,
-        DaasSessionsComponent                
+        DaasSessionsComponent            
     ]
 })
 export class SharedModule {

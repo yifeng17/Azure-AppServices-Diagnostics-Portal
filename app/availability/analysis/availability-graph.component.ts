@@ -28,6 +28,7 @@ export class AvailabilityGraphComponent implements OnInit, OnChanges {
     metSLA: boolean;
 
     @Input() displayGraph: boolean;
+    @Input() displayTimeLine: boolean = false;
     @Output() displayGraphChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
     @Input() topLevelGraphRefreshIndex: number;

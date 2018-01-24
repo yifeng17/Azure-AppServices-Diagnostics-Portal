@@ -5,8 +5,10 @@ import { IDetectorResponse, IMetricSet } from '../../shared/models/detectorrespo
 import { AppAnalysisService } from '../../shared/services';
 import { Observable } from 'rxjs/Observable';
 import { IAbnormalTimePeriod } from '../../shared/models/appanalysisresponse';
-import { PortalActionService, ServerFarmDataService, AvailabilityLoggingService, AuthService } from '../../shared/services';
+import { PortalActionService, ServerFarmDataService, AvailabilityLoggingService, AuthService, SiteService } from '../../shared/services';
 import { StartupInfo } from '../../shared/models/portal';
+import { ISolution } from '../../shared/models/solution';
+import { SiteInfoMetaData } from '../../shared/models/site';
 
 
 @Component({
@@ -63,11 +65,20 @@ export class PerfAnalysisComponent implements OnInit {
     loadingMessageIndex: number;
     loadingMessageTimer: any;
 
+    problemDescription: string = 'high latency';
+
+    defaultSolutions: ISolution[];
+
     bladeOpenedFromSupportTicketFlow: boolean;
 
-    constructor(private _route: ActivatedRoute, private _appAnalysisService: AppAnalysisService, private _serverFarmService: ServerFarmDataService, private _logger: AvailabilityLoggingService, private _authService: AuthService) {
+    constructor(private _route: ActivatedRoute, private _appAnalysisService: AppAnalysisService, private _serverFarmService: ServerFarmDataService, 
+        private _logger: AvailabilityLoggingService, private _authService: AuthService, private _siteService: SiteService) {
         this._logger.LogAnalysisInitialized('Perf Analysis');
         this.startLoadingMessage();
+
+        this._siteService.currentSiteMetaData.subscribe(site => {
+            this.defaultSolutions = this.getDefaultSolutions(site);
+        });
 
         this._authService.getStartupInfo().subscribe((startupInfo: StartupInfo) => {
             this.bladeOpenedFromSupportTicketFlow = startupInfo.source !== undefined && startupInfo.source.toLowerCase() === 'casesubmission';
@@ -160,5 +171,30 @@ export class PerfAnalysisComponent implements OnInit {
 
                 }, 500);
             });
+    }
+
+    private getDefaultSolutions(site: SiteInfoMetaData) {
+        return [ 
+            <ISolution>{ 
+                id: 104,
+                data: [
+                    [
+                        {
+                            name: 'subscriptionid',
+                            value: site.subscriptionId
+                        },
+                        {
+                            name: 'resourcegroupname',
+                            value: site.resourceGroupName
+                        },
+                        {
+                            name: 'sitename',
+                            value: site.siteName
+                        }
+                    ]
+                ],
+                order: 0
+            } 
+        ];
     }
 }

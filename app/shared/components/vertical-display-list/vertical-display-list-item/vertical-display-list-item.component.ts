@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, ViewChildren } from '@angular/core';
 import { VerticalDisplayListMetaData } from '../vertical-display-list.component';
 import { SolutionTypeTag } from '../../../models/solution-type-tag';
+import { BehaviorSubject } from 'rxjs';
 
 
 @Component({
@@ -11,6 +12,7 @@ import { SolutionTypeTag } from '../../../models/solution-type-tag';
 export class VerticalDisplayListItemComponent {
     @Input() name: string;
     @Input() tags: SolutionTypeTag[];
+    @Input() index: number;
 
     public metaData: VerticalDisplayListMetaData;
 
@@ -18,7 +20,7 @@ export class VerticalDisplayListItemComponent {
         this.metaData = <VerticalDisplayListMetaData>{
             title: this.name,
             tags: this.tags,
-            isSelected: false
+            isSelected: this.index === 0
         };
     }
 
