@@ -554,3 +554,104 @@ a:hover{
 .hyperlink.disabled:hover{
     text-decoration: none;
 }
+
+.no-border {
+    border:none;
+}
+
+/* Problem and Solution Stepper */
+.stepper-container {
+    padding-left: 20px;
+}
+
+.stepper-container-nopadding {
+    padding:0px;
+}
+
+.stepper-step {
+    position: relative;
+    border-left: 4px #d2d2d2 solid;
+    padding: 35px 15px 30px 25px;
+}
+
+@media screen and (max-width: 600px) {
+    .stepper-step {
+        padding: 35px 15px 30px 15px;
+    }
+}
+
+.stepper-step:last-child {
+    border: 4px white solid;
+}
+
+.stepper-circle {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 26px;
+    height: 26px;
+    background-color: #9bbaff;
+    border-radius: 50%;
+    margin: -15px 0px 0px -15px;
+    text-align: center;
+    font-size: 16px;
+    padding:1px;
+}
+
+.stepper-circle-purple {
+    background-color: #e6c8fd;
+}
+
+.stepper-circle-green {
+    background-color: #87d286;
+}
+
+.stepper-title {
+    position: absolute;
+    font-size: 16px;
+    margin-top: -14px;
+    top: 0px;
+    left: 25px;
+    font-weight: 500;
+    
+}
+
+.stepper-description {
+    position: absolute;
+    top:8px;
+    left:25px;
+    font-size:14px;
+}
+
+.stepper-content {
+    background-color: #f9f9f9;
+    border: 1px solid #ebebeb;
+    padding:3px;
+}
+
+.substep-container {
+    margin-left:-30px;
+}
+
+.stepper-substep {
+    position: relative;
+    border-left: 2px #d2d2d2 solid;
+    padding: 15px 15px 30px 30px;
+}
+
+.stepper-substep:last-child {
+   /* border: 4px white solid; */
+   padding-bottom: 0px;
+   margin-bottom:15px;
+}
+
+.stepper-substep-circle {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 14px;
+    height: 14px;
+    background-color: #117c11;
+    border-radius: 50%;
+    margin: -8px 0px 0px -8px;
+}

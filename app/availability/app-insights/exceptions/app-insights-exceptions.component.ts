@@ -17,6 +17,7 @@ export class AppInsightsExceptionsComponent implements OnInit, OnChanges {
 
     @Input() startTime: string;
     @Input() endTime: string;
+    @Input() includeMessage: boolean = true;
 
     loading: boolean;
     exceptions: any = [];

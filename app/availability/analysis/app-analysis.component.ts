@@ -60,6 +60,8 @@ export class AppAnalysisComponent implements OnInit {
     loadingMessageIndex: number;
     loadingMessageTimer: any;
 
+    problemDescription: string = 'availability loss';
+
     bladeOpenedFromSupportTicketFlow: boolean;
 
     constructor(private _route: ActivatedRoute, private _appAnalysisService: AppAnalysisService, private _serverFarmService: ServerFarmDataService, private _logger: AvailabilityLoggingService, private _authService: AuthService) {

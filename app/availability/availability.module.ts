@@ -38,6 +38,7 @@ import { AppInsightsDependenciesComponent } from './app-insights/dependencies/ap
 
 import { UriElementsService } from '../shared/services'
 import { TcpConnectionsAnalysisComponent } from './analysis/tcpconnectionsanalysis/tcp-connections-analysis.component';
+import { ProblemSolutionComponent } from './problem-solution/problem-solution.component';
 
 @NgModule({
     declarations: [
@@ -70,7 +71,8 @@ import { TcpConnectionsAnalysisComponent } from './analysis/tcpconnectionsanalys
         AppInsightsTileComponent,
         AppInsightsSettingsComponent,
         AppInsightsExceptionsComponent,
-        AppInsightsDependenciesComponent
+        AppInsightsDependenciesComponent,
+        ProblemSolutionComponent
     ],
     imports: [
         RouterModule.forChild(AvailabilityAndPerformanceCategoryRouteConfig),
@@ -84,7 +86,8 @@ import { TcpConnectionsAnalysisComponent } from './analysis/tcpconnectionsanalys
         ObservationsPerformanceComponent,
         DetectorViewProblemComponent,
         AppInsightsTileComponent,
-        AppInsightsSettingsComponent
+        AppInsightsSettingsComponent,
+        ProblemSolutionComponent
     ]
 })
 export class AvailabilityModule {

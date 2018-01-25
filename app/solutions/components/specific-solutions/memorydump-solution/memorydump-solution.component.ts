@@ -67,35 +67,37 @@ export class MemoryDumpComponent implements SolutionBaseComponent, OnInit, OnDes
         this.SessionCompleted = false;
 
         this._serverFarmService.sitesInServerFarm.subscribe(sites => {
-            let targetedSite = sites.find(site => site.name.toLowerCase() === siteInfo.siteName.toLowerCase());
+            if (sites) {
+                let targetedSite = sites.find(site => site.name.toLowerCase() === siteInfo.siteName.toLowerCase());
 
-            if (targetedSite) {
-                let siteName = targetedSite.name;
-                let slotName = '';
-                if (targetedSite.name.indexOf('(') >= 0) {
-                    let parts = targetedSite.name.split('(');
-                    siteName = parts[0];
-                    slotName = parts[1].replace(')', '');
+                if (targetedSite) {
+                    let siteName = targetedSite.name;
+                    let slotName = '';
+                    if (targetedSite.name.indexOf('(') >= 0) {
+                        let parts = targetedSite.name.split('(');
+                        siteName = parts[0];
+                        slotName = parts[1].replace(')', '');
+                    }
+
+                    this.siteToBeDumped = <SiteDaasInfo>{
+                        subscriptionId: siteInfo.subscriptionId,
+                        resourceGroupName: targetedSite.resourceGroup,
+                        siteName: siteName,
+                        slot: slotName
+                    }
+
+                    this.scmPath = targetedSite.enabledHostNames.find(hostname => hostname.indexOf('.scm.') > 0);
+
+                    this._daasService.getInstances(this.siteToBeDumped)
+                        .subscribe(result => {
+                            this.instances = result;
+                            this.checkRunningSessions();
+                            this.populateInstancesToDump();
+                        });
                 }
-
-                this.siteToBeDumped = <SiteDaasInfo>{
-                    subscriptionId: siteInfo.subscriptionId,
-                    resourceGroupName: targetedSite.resourceGroup,
-                    siteName: siteName,
-                    slot: slotName
+                else {
+                    this.couldNotFindSite = true;
                 }
-
-                this.scmPath = targetedSite.enabledHostNames.find(hostname => hostname.indexOf('.scm.') > 0);
-
-                this._daasService.getInstances(this.siteToBeDumped)
-                    .subscribe(result => {
-                        this.instances = result;
-                        this.checkRunningSessions();
-                        this.populateInstancesToDump();
-                    });
-            }
-            else {
-                this.couldNotFindSite = true;
             }
         });
 
@@ -281,7 +283,10 @@ export class MemoryDumpComponent implements SolutionBaseComponent, OnInit, OnDes
     }
 
     ngOnDestroy(): void {
-        this.subscription.unsubscribe();
+        if (this.subscription) {
+            this.subscription.unsubscribe();
+        }
+
     }
 
 }

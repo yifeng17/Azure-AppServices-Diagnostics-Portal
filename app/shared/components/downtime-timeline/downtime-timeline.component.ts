@@ -12,7 +12,10 @@ import 'rxjs/add/operator/map';
 export class DowntimeTimelineComponent implements OnChanges {
     downtimeDisplayInfo: any[];
 
-    constructor(){
+    startTimeString: string;
+    endTimeString: string;
+
+    constructor() {
         this.downtimeDisplayInfo = [];
     }
 
@@ -20,11 +23,13 @@ export class DowntimeTimelineComponent implements OnChanges {
 
     @Input() selectedDowntimeIndex: number;
 
+    @Input() problemDescription: string;
+
     @Output() selectedDowntimeIndexChange: EventEmitter<number> = new EventEmitter<number>();
 
     ngOnChanges(changes: any): void {
         let self = this;
-        if(changes['appAnalysisResponse']){
+        if (changes['appAnalysisResponse']) {
             this.downtimeDisplayInfo = [];
             let response = this.appAnalysisResponse;
             if (response && response.abnormalTimePeriods) {
@@ -38,7 +43,7 @@ export class DowntimeTimelineComponent implements OnChanges {
                 let totalPercent = 0;
                 response.abnormalTimePeriods.forEach((downtime: IAbnormalTimePeriod) => {
                     let width = (new Date(downtime.startTime).getTime() - 300000 - currentStart.getTime()) / fullDuration * 100;
-                    if(width > 0){
+                    if (width > 0) {
                         totalPercent += width;
                         this.downtimeDisplayInfo.push({
                             percent: width,
@@ -50,7 +55,7 @@ export class DowntimeTimelineComponent implements OnChanges {
                     width = (new Date(downtime.endTime).getTime() - (new Date(downtime.startTime).getTime() - 300000)) / fullDuration * 100;
                     width = totalPercent + width > 100 ? 100 - totalPercent : width;
                     totalPercent += width;
-                
+
                     this.downtimeDisplayInfo.push({
                         percent: width,
                         isDowntime: true,
@@ -59,7 +64,7 @@ export class DowntimeTimelineComponent implements OnChanges {
                     currentStart = new Date(new Date(downtime.endTime).getTime());
                 });
 
-                if(currentStart < endTime){
+                if (currentStart < endTime) {
                     let width = (endTime.getTime() - currentStart.getTime()) / fullDuration * 100;
                     width = totalPercent + width > 100 ? 100 - totalPercent : width;
                     totalPercent += width;
@@ -69,18 +74,38 @@ export class DowntimeTimelineComponent implements OnChanges {
                         index: -1
                     });
                 }
+
+                if (response.abnormalTimePeriods.length > 0) {
+                    this.setStartAndEndTimeStrings();
+                }
+
             }
         }
     }
 
+    protected setStartAndEndTimeStrings() {
+        this.startTimeString = this.formatDateTime(new Date(this.appAnalysisResponse.abnormalTimePeriods[this.selectedDowntimeIndex].startTime));
+        this.endTimeString = this.formatDateTime(new Date(this.appAnalysisResponse.abnormalTimePeriods[this.selectedDowntimeIndex].endTime));
+    }
+
+    protected formatDateTime(datetime: Date): string {
+        // TODO: this is a hack and there has to be a better way
+        let hours = datetime.getUTCHours();
+        let hoursString = hours < 10 ? '0' + hours : hours;
+        let minutes = datetime.getUTCMinutes();
+        let minutesString = minutes < 10 ? '0' + minutes : minutes;
+        return (datetime.getUTCMonth() + 1) + '/' + datetime.getUTCDate() + ' ' + hoursString + ':' + minutesString + ' UTC';
+    }
+
     selectDowntime(identifier: number): void {
-        if(identifier >= 0){
+        if (identifier >= 0) {
+            this.setStartAndEndTimeStrings();
             this.selectedDowntimeIndex = identifier;
             this.selectedDowntimeIndexChange.emit(identifier);
         }
     }
 
-    private inIFrame() : boolean{
+    private inIFrame(): boolean {
         return window.parent !== window;
     }
 }

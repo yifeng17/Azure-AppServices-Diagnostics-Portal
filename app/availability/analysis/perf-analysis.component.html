@@ -1,33 +1,24 @@
 <div style="min-height: 100%">
-    <app-current-health *ngIf="!bladeOpenedFromSupportTicketFlow" [runtimeAvailabilityResponse]="runtimeAvailabilityResponse" [serviceHealthResponse]="serviceHealthResponse"
-    [bladeOpenedFromSupportTicketFlow]="bladeOpenedFromSupportTicketFlow" (refreshClicked)="onRefreshClicked($event)">
+    <app-current-health *ngIf="!bladeOpenedFromSupportTicketFlow" [runtimeAvailabilityResponse]="runtimeAvailabilityResponse"
+        [serviceHealthResponse]="serviceHealthResponse" [bladeOpenedFromSupportTicketFlow]="bladeOpenedFromSupportTicketFlow"
+        (refreshClicked)="onRefreshClicked($event)">
     </app-current-health>
     <div class="row">
-        <availability-graph [(displayGraph)]="showLast24Hours" [topLevelGraphRefreshIndex]="topLevelGraphRefreshIndex">
-            <downtime-timeline [appAnalysisResponse]='analysisResponse' [(selectedDowntimeIndex)]='selectedTimePeriodIndex'></downtime-timeline>
+        <availability-graph [(displayGraph)]="showLast24Hours" [topLevelGraphRefreshIndex]="topLevelGraphRefreshIndex" [displayTimeLine]="true">
+            <downtime-timeline [appAnalysisResponse]='analysisResponse' [(selectedDowntimeIndex)]='selectedTimePeriodIndex'  [problemDescription]="problemDescription"></downtime-timeline>
         </availability-graph>
-        
+
         <br/>
 
-        <div class="row" >
-            <div class="col-md-9">
+        <div class="row">
+            <div class="col-md-12">
                 <div *ngIf="loadingAnalysis">
                     <i class="fa fa-circle-o-notch fa-2x fa-spin spin-icon" aria-hidden="true"></i>
                     <span [@loadingAnimation]="showLoadingMessage ? 'shown' : 'hidden'" class="loading-message">{{loadingMessages[loadingMessageIndex]}}</span>
                 </div>
-                <observations-performance *ngIf="analysisResponse" 
-                    [analysisResponse]='analysisResponse' 
-                    [selectedDowntimeIndex]="selectedTimePeriodIndex"
-                    [openedFromTicketFlow]="bladeOpenedFromSupportTicketFlow">
-                </observations-performance>
-                <br/>
-                <solution-list *ngIf="abnormalTimePeriods && selectedTimePeriodIndex >= 0" 
-                    [abnormalTimePeriod]="abnormalTimePeriods[selectedTimePeriodIndex]"
-                    [openedFromTicketFlow]="bladeOpenedFromSupportTicketFlow">
-                </solution-list>
-            </div>
-            <div class="col-md-3" style="padding-top:15px">
-                <tools-menu [displayTools]="!bladeOpenedFromSupportTicketFlow"></tools-menu>
+                <problem-solution *ngIf="analysisResponse && runtimeAvailabilityResponse" [showAppInsights]="false" [defaultSolutions]="defaultSolutions" [problemDescription]='problemDescription'
+                    [analysisResponseInput]="analysisResponse" [selectedTimePeriodIndexInput]="selectedTimePeriodIndex" [openedFromTicketOpeningFlow]="bladeOpenedFromSupportTicketFlow">
+                </problem-solution>
             </div>
         </div>
     </div>
@@ -35,5 +26,3 @@
 
 <feedback-form [source]="'perfanalysis'"></feedback-form>
 <default-solutions style="margin-top:40px" *ngIf="runtimeAvailabilityResponse && !bladeOpenedFromSupportTicketFlow"></default-solutions>
-
-<!--<open-ticket *ngIf="analysisResponse"></open-ticket>-->

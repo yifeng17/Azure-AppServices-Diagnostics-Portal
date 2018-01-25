@@ -18,6 +18,7 @@ export class SolutionsMessageComponent implements AfterViewInit, IChatMessageCom
     @Output() onComplete = new EventEmitter<{ status: boolean, data?: any }>();
 
     solutions: ISolution[];
+    defaultSolutions: ISolution[] = [ <ISolution>{ id: 4 } ];
 
     constructor(private injector: Injector, private _route: ActivatedRoute, private _appAnalysisService: AppAnalysisService) {
     }
