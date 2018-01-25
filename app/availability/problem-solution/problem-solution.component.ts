@@ -48,8 +48,6 @@ export class ProblemSolutionComponent implements OnInit {
     ngOnInit(): void {
         this.analysisResponseSubject.subscribe((analysisResponse: IAppAnalysisResponse) => {
             if (analysisResponse) {
-                analysisResponse.abnormalTimePeriods[0].events = [];
-                analysisResponse.abnormalTimePeriods[0].solutions = [];
                 this.analysisResponse = analysisResponse;
             }
         });
