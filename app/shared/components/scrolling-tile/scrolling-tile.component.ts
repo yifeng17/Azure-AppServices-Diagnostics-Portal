@@ -7,7 +7,6 @@ import { NguCarousel, NguCarouselStore, NguCarouselService } from '@ngu/carousel
     selector: 'scrolling-tile',
     templateUrl: 'scrolling-tile.component.html',
     styleUrls: ['scrolling-tile.component.css']
-    //encapsulation: ViewEncapsulation.None
 })
 
 export class ScrollingTileComponent implements OnInit {
@@ -25,10 +24,12 @@ export class ScrollingTileComponent implements OnInit {
 
     public carouselTile: NguCarousel;
 
+    //grid: { xs: 1, sm: 3, md: 4, lg: 6, all: 0 },
+            
     ngOnInit() {
 
         this.carouselTile = {
-            grid: { xs: 1, sm: 3, md: 4, lg: 6, all: 0 },
+            grid: {xs: 1, sm: 3, md: 4, lg: 6, all: 0},
             speed: 600,
             interval: 3000,
             point: {
