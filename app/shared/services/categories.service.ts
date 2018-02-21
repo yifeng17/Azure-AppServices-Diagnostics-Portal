@@ -10,10 +10,10 @@ export class CategoriesService {
     private Categories: Category[] = [];
 
     constructor() {
-        this.initProblems();
+        this.intCategoriesAndSubcategories();
     }
 
-    initProblems(): void {
+    intCategoriesAndSubcategories(): void {
 
         let perf = new Category();
         perf.Name = "Availability & Performance";
