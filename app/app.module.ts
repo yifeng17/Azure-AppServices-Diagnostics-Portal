@@ -8,7 +8,6 @@ import { AvailabilityModule } from './availability/availability.module';
 import { AppComponent } from './app.component';
 import { CustomReuseStrategy } from './app-route-reusestrategy.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NguCarouselModule } from '@ngu/carousel';
 
 @NgModule({
   imports: [
@@ -17,7 +16,6 @@ import { NguCarouselModule } from '@ngu/carousel';
     SupportBotModule,
     AvailabilityModule,
     BrowserAnimationsModule,
-    NguCarouselModule,
     RouterModule.forRoot([
       { path: '', component: AppComponent }
     ])
