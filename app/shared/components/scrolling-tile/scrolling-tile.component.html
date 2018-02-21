@@ -1,10 +1,9 @@
-<ngu-carousel [inputs]="carouselTile" (initData)="initDataFn($event)" (carouselLoad)="carouselTileLoad($event)">
-    <ngu-tile NguCarouselItem *ngFor="let problemType of ProblemTypes" style="padding:5px;width:135px">
-        <div class="tile" [style.background-color]="problemType.BgColor" style="text-align:center">
-            <div class="col animated zoomIn category-box" 
-            [style.background-color]="problemType.BgColor" [style.color]="problemType.TextColor"
-                [routerLink]="[problemType.Href]" (click)="logCategorySelected(problemType.Name)">
-                <div class="category-content">{{problemType.Name}}</div>
+<ngu-carousel [inputs]="carouselTile">
+    <ngu-tile NguCarouselItem *ngFor="let Subcategory of Subcategories" style="width:135px">
+        <div class="tile" [style.background-color]="Subcategory.BgColor">
+            <div class="col animated zoomIn category-box" [style.background-color]="Subcategory.BgColor" [style.color]="Subcategory.TextColor"
+                [routerLink]="[Subcategory.Href]" (click)="logCategorySelected(Subcategory.Name)">
+                <div class="category-content">{{Subcategory.Name}}</div>
             </div>
         </div>
     </ngu-tile>

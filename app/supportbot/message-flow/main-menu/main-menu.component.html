@@ -1,11 +1,9 @@
 <div class="row">
     <div class="category-container-header">Select Problem Category</div>
     <div *ngFor="let category of problemCategories;let i = index">
-        <collapsible-list [title]="category.Name" [collapsed]="collapsed[i]">
+        <collapsible-list [title]="category.Name" [collapsed]="category.Collapsed">
             <collapsible-list-item>
-                <div>
-                    <scrolling-tile [ProblemTypes]="category.ProblemTypes"></scrolling-tile>
-                </div>
+                <scrolling-tile [Subcategories]="category.Subcategories" ></scrolling-tile>
             </collapsible-list-item>
         </collapsible-list>
     </div>

@@ -5,12 +5,12 @@ import { CommonModule } from '@angular/common';
 import { IChatMessageComponent } from '../../interfaces/ichatmessagecomponent';
 import { LoggingService, SiteService } from '../../../shared/services';
 import { OperatingSystem, SiteExtensions, Site } from '../../../shared/models/site';
-import { ProblemCategoriesService } from '../../../shared/services/problem-categories.service';
-import { Category, ProblemType } from '../../../shared/models/problem-category';
+import { CategoriesService } from '../../../shared/services/categories.service';
+import { Category, Subcategory } from '../../../shared/models/problem-category';
 
 @Component({
     templateUrl: 'main-menu.component.html',
-    providers: [ProblemCategoriesService]
+    providers: [CategoriesService]
 })
 export class MainMenuComponent implements OnInit, AfterViewInit, IChatMessageComponent {
 
@@ -18,9 +18,8 @@ export class MainMenuComponent implements OnInit, AfterViewInit, IChatMessageCom
     
     @Output() onViewUpdate = new EventEmitter();
     @Output() onComplete = new EventEmitter<{ status: boolean, data?: any }>();
-    @Input() collapsed: boolean[] = [];
-
-    constructor(private _injector: Injector, private _router: Router, private _logger: LoggingService, private _siteService: SiteService, private _categoryService: ProblemCategoriesService) {
+    
+    constructor(private _injector: Injector, private _router: Router, private _logger: LoggingService, private _siteService: SiteService, private _categoryService: CategoriesService) {
     }
 
     ngOnInit(): void {
@@ -28,9 +27,6 @@ export class MainMenuComponent implements OnInit, AfterViewInit, IChatMessageCom
         this._siteService.currentSite.subscribe(site => {
             if (site) {
                 this.problemCategories = this._categoryService.getCategories(site);
-                this.problemCategories.forEach((x)=> {
-                    this.collapsed.push(x.Collapsed);
-                });
 
                 setTimeout(() => {
                     this.onComplete.emit({ status: true });

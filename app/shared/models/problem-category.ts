@@ -3,11 +3,11 @@ import { OperatingSystem } from "./site";
 export class Category
 {
     Name:string;
-    ProblemTypes: ProblemType[]
+    Subcategories: Subcategory[]
     Collapsed: boolean = true;
 }
 
-export class ProblemType
+export class Subcategory
 {
     Name:string;    
     BgColor: string;
