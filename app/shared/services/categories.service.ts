@@ -64,6 +64,7 @@ export class CategoriesService {
         let monitor = new Category();
         monitor.Name = "Monitor";
         monitor.Subcategories = [];
+        monitor.Collapsed = false;
 
         monitor.Subcategories.push({
             Name: 'Web App Restarted',
@@ -84,6 +85,7 @@ export class CategoriesService {
         let tools = new Category();
         tools.Name = "Diagnostic Tools";
         tools.Subcategories = [];
+        tools.Collapsed = false;
 
         tools.Subcategories.push({
             Name: 'CLR Profiling Tool',

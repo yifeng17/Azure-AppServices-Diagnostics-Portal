@@ -12,6 +12,7 @@ import { NguCarousel, NguCarouselStore, NguCarouselService } from '@ngu/carousel
 export class ScrollingTileComponent implements OnInit {
 
     @Input() public Subcategories: Subcategory[];
+    @Input() public Collapsed: boolean;
 
     constructor(private _logger: LoggingService, private carousel: NguCarouselService) {
     }
@@ -20,21 +21,22 @@ export class ScrollingTileComponent implements OnInit {
         this._logger.LogClickEvent(name, 'Home Page');
     }
 
-    private carouselToken: string;
     public carouselTile: NguCarousel;
 
     ngOnInit() {
 
-        this.carouselTile = {
-            grid: { xs: 1, sm: 3, md: 4, lg: 6, all: 0 },
-            slide: 1,
-            speed: 600,
-            interval: 3000,
-            point: {
-                visible: false
-            },
-            load: 1,
-            touch: true
-        };
+        if (this.Subcategories.length > 0) {
+            this.carouselTile = {
+                grid: { xs: 0, sm: 0, md: 0, lg: 0, all: 135 },
+                slide: 1,
+                speed: 600,
+                interval: 3000,
+                point: {
+                    visible: false
+                },
+                load: 1,
+                touch: false
+            };
+        }
     }
 }
