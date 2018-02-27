@@ -42,3 +42,7 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# localhost self signed cert
+/ssl/*.crt
+/ssl/*.key

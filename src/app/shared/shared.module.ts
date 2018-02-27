@@ -48,6 +48,13 @@ import { AppInsightsQueryService } from './services/appinsights/appinsights-quer
 import { CacheService } from './services/cache.service';
 import { SolutionFactoryService } from './services/solution-factory.service';
 import { DaasService } from './services/daas.service';
+import { ProfilerComponent } from './components/daas/profiler.component';
+import { ProfilerToolComponent } from './components/tools/profiler-tool/profiler-tool.component';
+import { DaasComponent } from './components/daas/daas.component';
+import { MemoryDumpToolComponent } from './components/tools/memorydump-tool/memorydump-tool.component';
+import { JavaMemoryDumpToolComponent } from './components/tools/java-memorydump-tool/java-memorydump-tool.component';
+import { JavaThreadDumpToolComponent } from './components/tools/java-threaddump-tool/java-threaddump-tool.component';
+import { IncidentNotificationComponent } from './components/incident-notification/incident-notification.component';
 
 @NgModule({
     declarations: [
@@ -74,7 +81,14 @@ import { DaasService } from './services/daas.service';
         VerticalDisplayListItemComponent,
         SolutionTypeTagComponent,
         StepWizardComponent,
-        DaasSessionsComponent
+        DaasSessionsComponent,        
+        ProfilerComponent,
+        ProfilerToolComponent,
+        MemoryDumpToolComponent,
+        DaasComponent,
+        JavaMemoryDumpToolComponent,
+        JavaThreadDumpToolComponent,
+        IncidentNotificationComponent
     ],
     imports: [
         HttpModule,
@@ -110,7 +124,14 @@ import { DaasService } from './services/daas.service';
         VerticalDisplayListItemComponent,
         SolutionTypeTagComponent,
         StepWizardComponent,
-        DaasSessionsComponent            
+        DaasSessionsComponent,        
+        ProfilerComponent,
+        ProfilerToolComponent,        
+        DaasComponent,
+        MemoryDumpToolComponent,
+        JavaMemoryDumpToolComponent,
+        JavaThreadDumpToolComponent,
+        IncidentNotificationComponent
     ]
 })
 export class SharedModule {
