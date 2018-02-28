@@ -3,8 +3,9 @@ import { SiteDaasInfo } from '../../models/solution-metadata';
 import { Session, Diagnoser, Report, DiagnoserDefinition } from '../../models/daas';
 import { Subscription } from 'rxjs';
 import { StepWizardSingleStep } from '../../models/step-wizard-single-step';
-import { SiteService, DaasService, WindowService, AvailabilityLoggingService } from '../../services';
+import { SiteService, DaasService, WindowService, AvailabilityLoggingService, ServerFarmDataService } from '../../services';
 import { Observable } from 'rxjs/Observable';
+import { ServerFarm } from '../../models/server-farm';
 
 
 class InstanceSelection {
@@ -51,14 +52,30 @@ export class DaasComponent implements OnInit, OnDestroy {
     retrievingInstancesFailed: boolean = false;
     foundDiagnoserWarnings:boolean = false;
     retrievingDiagnosers: boolean = false;
-
+    
+    supportedTier:boolean = false;
     diagnoserWarning: string = "";
 
-    constructor(private _siteService: SiteService, private _daasService: DaasService, private _windowService: WindowService, private _logger: AvailabilityLoggingService) {
+    constructor(private _serverFarmService: ServerFarmDataService, private _siteService: SiteService, private _daasService: DaasService, private _windowService: WindowService, private _logger: AvailabilityLoggingService) {
+        this._serverFarmService.siteServerFarm.subscribe(serverFarm => {
+            if (serverFarm) {
+                if (serverFarm.sku.tier === "Standard" || serverFarm.sku.tier === "Basic"  || serverFarm.sku.tier === "Premium")
+                {
+                    this.supportedTier = true;
+                }               
+            }
+        }, error => {
+            //TODO: handle error
+        })
     }
 
     ngOnInit(): void {
 
+        if (!this.supportedTier)
+        {
+            return;
+        }
+        
         this.SessionCompleted = false;
 
         this.retrievingInstances = true;

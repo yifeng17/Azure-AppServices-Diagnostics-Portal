@@ -1,4 +1,4 @@
-<div class="header2">Last 5 {{DiagnoserHeading}}</div>
+<div *ngIf="supportedTier" class="header2">Last 5 {{DiagnoserHeading}}</div>
     <div>
         <div class="col" *ngIf="checkingExistingSessions">
             <i class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true"></i>
@@ -21,7 +21,7 @@
                         <td>{{ session.StartTime }} (UTC)</td>
                         <td>
                             <div *ngFor="let diagnoser of session.DiagnoserSessions">
-                                <div *ngIf="diagnoser.Name === SessionType">
+                                <div *ngIf="diagnoser.Name.startsWith(SessionType)">
                                     <ul *ngIf="diagnoser.Reports.length > 0" style="list-style: none;">
                                         <li *ngFor="let report of diagnoser.Reports">
                                             {{ getInstanceNameFromReport(report.FileName) }}
