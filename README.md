@@ -17,7 +17,6 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 - You need to update `app/shared/services/auth.service.ts` with the Authorization Token. (only for local development)
 - Replace `<token>` with the authorization token (note:- Do not put Bearer)
 - To get the token, you can use <a href="https://github.com/projectkudu/ARMClient">ArmClient</a> `ARMClient.exe token [tenant|subscription]`. This will copy token to clipboard.
-- If you would like to run with ssl disabled, you will need to go to `angular-cli.json` and disable it under defaults -> server -> ssl
 - Run `ng serve` for a dev server, or alternatively `npm start`. Navigate to `http://localhost:3000/`. The app will automatically reload if you change any of the source files.
 
 ## SSL Development Server
