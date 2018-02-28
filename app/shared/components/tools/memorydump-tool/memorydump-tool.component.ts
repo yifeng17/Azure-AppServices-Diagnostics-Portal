@@ -18,7 +18,7 @@ export class MemoryDumpToolComponent extends DaasBaseComponent implements OnInit
         "Collecting a memory dump freezes process until dump generation finishes so process cannot serve any requests during this time.",
         "Dumps are collected for the worker process (w3wp.exe) and child processes of the worker process.",
         "Size of the memory dump is directly proportional to the process size, so processes consuming more memory will take longer to be dumped.",
-        "Your WebApp will not be restarted as a result of collecting the memory dump."
+        "Your App will not be restarted as a result of collecting the memory dump."
     ]
     
     constructor(private _siteServiceLocal: SiteService, private _daasServiceLocal: DaasService, private _windowServiceLocal: WindowService, private _loggerLocal: AvailabilityLoggingService)

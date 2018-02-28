@@ -39,6 +39,9 @@ import { DaasComponent } from './components/daas/daas.component';
 import { MemoryDumpToolComponent } from './components/tools/memorydump-tool/memorydump-tool.component';
 import { JavaMemoryDumpToolComponent } from './components/tools/java-memorydump-tool/java-memorydump-tool.component';
 import { JavaThreadDumpToolComponent } from './components/tools/java-threaddump-tool/java-threaddump-tool.component';
+import { HttpLogAnalysisToolComponent } from './components/tools/http-loganalysis-tool/http-loganalysis-tool.component';
+import { PhpProcessAnalyzerToolComponent } from './components/tools/php-processanalyzer-tool/php-processanalyzer-tool.component';
+import { PhpLogsAnalyzerToolComponent } from './components/tools/php-logsanalyzer-tool/php-logsanalyzer-tool.component';
 
 @NgModule({
     declarations: [
@@ -71,7 +74,10 @@ import { JavaThreadDumpToolComponent } from './components/tools/java-threaddump-
         MemoryDumpToolComponent,
         DaasComponent,
         JavaMemoryDumpToolComponent,
-        JavaThreadDumpToolComponent
+        JavaThreadDumpToolComponent,
+        HttpLogAnalysisToolComponent,
+        PhpProcessAnalyzerToolComponent,
+        PhpLogsAnalyzerToolComponent
     ],
     imports: [
         HttpModule,
@@ -113,7 +119,10 @@ import { JavaThreadDumpToolComponent } from './components/tools/java-threaddump-
         DaasComponent,
         MemoryDumpToolComponent,
         JavaMemoryDumpToolComponent,
-        JavaThreadDumpToolComponent
+        JavaThreadDumpToolComponent,
+        HttpLogAnalysisToolComponent,
+        PhpProcessAnalyzerToolComponent,
+        PhpLogsAnalyzerToolComponent
     ]
 })
 export class SharedModule {

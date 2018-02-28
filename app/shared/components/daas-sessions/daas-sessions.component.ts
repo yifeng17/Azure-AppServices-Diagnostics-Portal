@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Session } from '../../models/daas';
-import { WindowService } from '../../services/index';
+import { WindowService, ServerFarmDataService } from '../../services/index';
 
 @Component({
     selector: 'daas-sessions',
@@ -17,14 +17,25 @@ export class DaasSessionsComponent {
     @Input() public scmPath: string;
 
     DiagnoserHeading:string;
+    supportedTier:boolean = false;
 
-    constructor(private _windowService: WindowService) {
+    constructor(private _windowService: WindowService, private _serverFarmService: ServerFarmDataService) {
+        this._serverFarmService.siteServerFarm.subscribe(serverFarm => {
+            if (serverFarm) {
+                if (serverFarm.sku.tier === "Standard" || serverFarm.sku.tier === "Basic"  || serverFarm.sku.tier === "Premium")
+                {
+                    this.supportedTier = true;
+                }
+            }
+        }, error => {
+        //TODO: handle error
+        })
         
     }
 
     ngOnInit(): void {
 
-        if (this.SessionType === "CLR Profiler")
+        if (this.SessionType.startsWith("CLR Profiler"))
         {
             this.DiagnoserHeading = "profiling sessions";
         }
@@ -40,7 +51,7 @@ export class DaasSessionsComponent {
 
     getInstanceNameFromReport(reportName: string): string {
 
-        if (this.SessionType !="CLR Profiler")
+        if (!this.SessionType.startsWith("CLR Profiler"))
         {
             return reportName;
         }
