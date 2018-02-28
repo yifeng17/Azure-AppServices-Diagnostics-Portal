@@ -1,5 +1,6 @@
-
 # Azure Web Apps Support Center
+
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.6.5.
 
 ## Prerequisites
 - [Node 6.*](https://nodejs.org/en/download/)
@@ -11,17 +12,37 @@
 - Clone repo `git clone https://github.com/Azure/Azure-WebApps-Support-Center.git`
 - Navigate to project root folder and run `npm install` (This will install all the required packages.)
 
-## Local Development
-- **For local development** (i.e: https://localhost:3000) authentication is handled by the app itself.
-- You need to update `app/shared/services/auth.service.ts` with the Authorization Token. (only for local development)
-  - Replace `<token>` with the authorization token (note:- Do not put Bearer)
-  - To get the token, you can use <a href="https://github.com/projectkudu/ARMClient">ArmClient</a> `ARMClient.exe token [tenant|subscription]`. This will copy token to clipboard.
-  - Replace `<resourceId>` with /subscriptions/{subscriptionId}/resourcegroups/{resourcegroup}/providers/Microsoft.Web/sites/{site}
-- **Build** using `npm run build`. Output directory: `/dist`
-- **Run** using `npm start`. 
+## Development server
 
-## Production Build
-- **Build** using `npm run aot`. Output directory: `/aot`
+- You need to update `app/shared/services/auth.service.ts` with the Authorization Token. (only for local development)
+- Replace `<token>` with the authorization token (note:- Do not put Bearer)
+- To get the token, you can use <a href="https://github.com/projectkudu/ARMClient">ArmClient</a> `ARMClient.exe token [tenant|subscription]`. This will copy token to clipboard.
+- Run `ng serve` for a dev server, or alternatively `npm start`. Navigate to `http://localhost:3000/`. The app will automatically reload if you change any of the source files.
+
+## SSL Development Server
+
+- To run with ssl, you will need to create a self signed certificate and install it in Trusted Root. Go to the `ssl` folder for directions on how to create this certificate. 
+- Once you have completed this, you can run an ssl server with the command `npm run ssl`. You can navigate to `https://localhost:3000/`. The app will automatically reload if you change any of the source files.
+
+## Code scaffolding
+
+Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+
+## Build
+
+Run `ng build` to build the project. The build artifacts will be stored in the `wwwroot/` directory. Use the `-prod` flag for a production build.
+
+## Running unit tests
+
+Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+
+## Running end-to-end tests
+
+Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+
+## Further help
+
+To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
 
 # Contributing
 
