@@ -28,7 +28,7 @@ export class JavaThreadDumpSolutionComponent implements SolutionBaseComponent, O
         "Collecting a jStack log will freeze the process until the jStack log is collected so process cannot serve any requests during the time jStack is running.",
         "jStack logs are collected for all the Java process (java.exe) running on the instance.",
         "jStack takes a few seconds to run but if there are many threads, it can take slightly longer to collect this data.",
-        "Your WebApp will not be restarted as a result of collecting the jStack logs."
+        "Your App will not be restarted as a result of collecting the jStack logs."
     ]
 
     siteToBeDiagnosed: SiteDaasInfo;

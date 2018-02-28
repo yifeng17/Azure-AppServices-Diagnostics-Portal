@@ -13,6 +13,9 @@ import { ProfilerToolComponent } from '../shared/components/tools/profiler-tool/
 import { MemoryDumpToolComponent } from '../shared/components/tools/memorydump-tool/memorydump-tool.component';
 import { JavaMemoryDumpToolComponent } from '../shared/components/tools/java-memorydump-tool/java-memorydump-tool.component';
 import { JavaThreadDumpToolComponent } from '../shared/components/tools/java-threaddump-tool/java-threaddump-tool.component';
+import { HttpLogAnalysisToolComponent } from '../shared/components/tools/http-loganalysis-tool/http-loganalysis-tool.component';
+import { PhpProcessAnalyzerToolComponent } from '../shared/components/tools/php-processanalyzer-tool/php-processanalyzer-tool.component';
+import { PhpLogsAnalyzerToolComponent } from '../shared/components/tools/php-logsanalyzer-tool/php-logsanalyzer-tool.component';
 
 const _siteResourceUrl: string = 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/sites/:sitename';
 const _slotResourceUrl: string = 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/sites/:sitename/slots/:slot';
@@ -174,16 +177,14 @@ export const AvailabilityAndPerformanceCategoryRouteConfig: Route[] = [
         path: _siteResourceUrl + '/diagnostics/tools/profiler',
         component: ProfilerToolComponent,
         data: {
-            navigationTitle: 'CLR Profiler',
-            cacheComponent: true
+            navigationTitle: 'CLR Profiler'            
         }
     },
     {
         path: _slotResourceUrl + '/diagnostics/tools/profiler',
         component: ProfilerToolComponent,
         data: {
-            navigationTitle: 'CLR Profiler',
-            cacheComponent: true
+            navigationTitle: 'CLR Profiler'
         }
     },
 
@@ -192,16 +193,14 @@ export const AvailabilityAndPerformanceCategoryRouteConfig: Route[] = [
         path: _siteResourceUrl + '/diagnostics/tools/memorydump',
         component: MemoryDumpToolComponent,
         data: {
-            navigationTitle: 'Memory Dump',
-            cacheComponent: true
+            navigationTitle: 'Memory Dump'
         }
     },
     {
         path: _slotResourceUrl + '/diagnostics/tools/memorydump',
         component: MemoryDumpToolComponent,
         data: {
-            navigationTitle: 'Memory Dump',
-            cacheComponent: true
+            navigationTitle: 'Memory Dump'
         }
     },    
     // Java Thread Dump
@@ -209,16 +208,14 @@ export const AvailabilityAndPerformanceCategoryRouteConfig: Route[] = [
         path: _siteResourceUrl + '/diagnostics/tools/javathreaddump',
         component: JavaThreadDumpToolComponent,
         data: {
-            navigationTitle: 'Java Thread Dump',
-            cacheComponent: true
+            navigationTitle: 'Java Thread Dump'
         }
     },
     {
         path: _slotResourceUrl + '/diagnostics/tools/javathreaddump',
         component: JavaThreadDumpToolComponent,
         data: {
-            navigationTitle: 'Java Thread Dump',
-            cacheComponent: true
+            navigationTitle: 'Java Thread Dump'
         }
     },
     // Java Memory Dump
@@ -226,16 +223,61 @@ export const AvailabilityAndPerformanceCategoryRouteConfig: Route[] = [
         path: _siteResourceUrl + '/diagnostics/tools/javamemorydump',
         component: JavaMemoryDumpToolComponent,
         data: {
-            navigationTitle: 'Java Memory Dump',
-            cacheComponent: true
+            navigationTitle: 'Java Memory Dump'
         }
     },
     {
         path: _slotResourceUrl + '/diagnostics/tools/javamemorydump',
         component: JavaMemoryDumpToolComponent,
         data: {
-            navigationTitle: 'Java Memory Dump',
-            cacheComponent: true
+            navigationTitle: 'Java Memory Dump'
+        }
+    },
+    
+    // HTTP Log Analyzer 
+    {
+        path: _siteResourceUrl + '/diagnostics/tools/httploganalyzer',
+        component: HttpLogAnalysisToolComponent,
+        data: {
+            navigationTitle: 'HTTP Log Analyzer'
+        }
+    },
+    {
+        path: _slotResourceUrl + '/diagnostics/tools/httploganalyzer',
+        component: HttpLogAnalysisToolComponent,
+        data: {
+            navigationTitle: 'HTTP Log Analyzer'
+        }
+    },
+    // PHP Log Analyzer 
+    {
+        path: _siteResourceUrl + '/diagnostics/tools/phploganalyzer',
+        component: PhpLogsAnalyzerToolComponent,
+        data: {
+            navigationTitle: 'PHP Log Analyzer'
+        }
+    },
+    {
+        path: _slotResourceUrl + '/diagnostics/tools/phploganalyzer',
+        component: PhpLogsAnalyzerToolComponent,
+        data: {
+            navigationTitle: 'PHP Log Analyzer'
+        }
+    }
+    ,
+    // PHP Process Analyzer 
+    {
+        path: _siteResourceUrl + '/diagnostics/tools/phpprocessanalyzer',
+        component: PhpProcessAnalyzerToolComponent,
+        data: {
+            navigationTitle: 'PHP Process Analyzer'
+        }
+    },
+    {
+        path: _slotResourceUrl + '/diagnostics/tools/phpprocessanalyzer',
+        component: PhpProcessAnalyzerToolComponent,
+        data: {
+            navigationTitle: 'PHP Process Analyzer'
         }
     }
 

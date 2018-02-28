@@ -10,15 +10,15 @@ export class DaasService {
 
     public currentSite: SiteDaasInfo;
 
-    constructor(private _armClient: ArmService, private _authService: AuthService, private _http: Http, private _uriElementsService: UriElementsService) {       
+    constructor(private _armClient: ArmService, private _authService: AuthService, private _http: Http, private _uriElementsService: UriElementsService) {
     }
 
     getDaasSessions(site: SiteDaasInfo): Observable<Session[]> {
         let resourceUri: string = this._uriElementsService.getAllDiagnosticsSessionsUrl(site);
-        return <Observable<Session[]>>(this._armClient.getResourceWithoutEnvelope<Session[]>(resourceUri));
+        return <Observable<Session[]>>(this._armClient.getResourceWithoutEnvelope<Session[]>(resourceUri, null, true));
     }
 
-    submitDaasSession(site:SiteDaasInfo, diagnoser:string, Instances:string[]): Observable<string> {
+    submitDaasSession(site: SiteDaasInfo, diagnoser: string, Instances: string[]): Observable<string> {
 
         let session = new Session();
         session.CollectLogsOnly = false;
@@ -30,25 +30,20 @@ export class DaasService {
         session.TimeSpan = "00:02:00";
 
         let resourceUri: string = this._uriElementsService.getDiagnosticsSessionsUrl(site);
-        return <Observable<string>>(this._armClient.postResource(resourceUri, session));
+        return <Observable<string>>(this._armClient.postResource(resourceUri, session, null, true));
     }
-    getDaasSessionsWithDetails(site:SiteDaasInfo): Observable<Session[]> {
+    getDaasSessionsWithDetails(site: SiteDaasInfo): Observable<Session[]> {
         let resourceUri: string = this._uriElementsService.getDiagnosticsSessionsDetailsUrl(site, "all", true);
-        return <Observable<Session[]>>this._armClient.getResourceWithoutEnvelope<Session[]>(resourceUri,null,true);
+        return <Observable<Session[]>>this._armClient.getResourceWithoutEnvelope<Session[]>(resourceUri, null, true);
     }
 
-    getDaasSessionWithDetails(site:SiteDaasInfo, sessionId: string): Observable<Session> {
-        let resourceUri: string = this._uriElementsService.getDiagnosticsSingleSessionUrl(site, sessionId, true);        
-        return <Observable<Session>>this._armClient.getResourceWithoutEnvelope<Session>(resourceUri,null, true);
+    getDaasSessionWithDetails(site: SiteDaasInfo, sessionId: string): Observable<Session> {
+        let resourceUri: string = this._uriElementsService.getDiagnosticsSingleSessionUrl(site, sessionId, true);
+        return <Observable<Session>>this._armClient.getResourceWithoutEnvelope<Session>(resourceUri, null, true);
     }
 
-    getInstances(site:SiteDaasInfo): Observable<string[]> {
+    getInstances(site: SiteDaasInfo): Observable<string[]> {
         let resourceUri: string = this._uriElementsService.getDiagnosticsInstancesUrl(site);
-        return <Observable<string[]>>this._armClient.getResourceWithoutEnvelope<string[]>(resourceUri,null, true);
-    }
-
-    startWebJob(site:SiteDaasInfo,) {
-        let resourceUri: string = this._uriElementsService.getDiagnosticsWebJobStartUrl(site);
-        return this._armClient.postResource(resourceUri, null);
+        return <Observable<string[]>>this._armClient.getResourceWithoutEnvelope<string[]>(resourceUri, null, true);
     }
 }
