@@ -3,7 +3,7 @@ import { Http } from '@angular/http';
 import { ArmService, AuthService, UriElementsService } from '../services';
 import { Observable } from 'rxjs/Observable';
 import { SiteDaasInfo } from '../models/solution-metadata';
-import { Session } from '../models/daas';
+import { Session, DiagnoserDefinition } from '../models/daas';
 
 @Injectable()
 export class DaasService {
@@ -45,5 +45,10 @@ export class DaasService {
     getInstances(site: SiteDaasInfo): Observable<string[]> {
         let resourceUri: string = this._uriElementsService.getDiagnosticsInstancesUrl(site);
         return <Observable<string[]>>this._armClient.getResourceWithoutEnvelope<string[]>(resourceUri, null, true);
+    }
+
+    getDiagnosers(site: SiteDaasInfo): Observable<DiagnoserDefinition[]> {
+        let resourceUri: string = this._uriElementsService.getDiagnosticsDiagnosersUrl(site);
+        return <Observable<DiagnoserDefinition[]>>this._armClient.getResourceWithoutEnvelope<DiagnoserDefinition[]>(resourceUri, null, true);
     }
 }

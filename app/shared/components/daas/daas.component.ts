@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
 import { SiteDaasInfo } from '../../models/solution-metadata';
-import { Session, Diagnoser, Report } from '../../models/daas';
+import { Session, Diagnoser, Report, DiagnoserDefinition } from '../../models/daas';
 import { Subscription } from 'rxjs';
 import { StepWizardSingleStep } from '../../models/step-wizard-single-step';
 import { SiteService, DaasService, WindowService, AvailabilityLoggingService } from '../../services';
@@ -49,6 +49,10 @@ export class DaasComponent implements OnInit, OnDestroy {
     error: any;
     retrievingInstances: boolean = false;
     retrievingInstancesFailed: boolean = false;
+    foundDiagnoserWarnings:boolean = false;
+    retrievingDiagnosers: boolean = false;
+
+    diagnoserWarning: string = "";
 
     constructor(private _siteService: SiteService, private _daasService: DaasService, private _windowService: WindowService, private _logger: AvailabilityLoggingService) {
     }
@@ -64,6 +68,26 @@ export class DaasComponent implements OnInit, OnDestroy {
                 this.instances = result;
                 this.checkRunningSessions();
                 this.populateinstancesToDiagnose();
+
+                this.retrievingDiagnosers = true;
+                this._daasService.getDiagnosers(this.siteToBeDiagnosed).retry(2)
+                    .subscribe(result => {
+                        this.retrievingDiagnosers = false;
+                        let diagnosers: DiagnoserDefinition[] = result;
+                        let thisDiagnoser = diagnosers.filter(x => x.Name === this.DiagnoserName);
+                        if (thisDiagnoser.length > 0) {
+                            if (thisDiagnoser[0].Warnings.length > 0) {
+                                this.diagnoserWarning = thisDiagnoser[0].Warnings.join(',');
+                                this.foundDiagnoserWarnings = true;
+                            }
+                        }
+                        if (!this.foundDiagnoserWarnings) {
+                            this.initWizard();
+                        }
+                    },
+                        error => {
+                            this.error = error;
+                        });
             },
                 error => {
                     this.error = error;
@@ -71,8 +95,6 @@ export class DaasComponent implements OnInit, OnDestroy {
                     this.retrievingInstancesFailed = true;
                 });
 
-
-        this.initWizard();
     }
 
     initWizard(): void {

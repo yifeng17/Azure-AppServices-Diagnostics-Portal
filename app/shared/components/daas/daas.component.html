@@ -7,7 +7,7 @@
                     <b>{{siteToBeDiagnosed.siteName}}</b>
                 </td>
             </tr>
-            <tr *ngIf="!error">
+            <tr *ngIf="!error && !foundDiagnoserWarnings">
                 <td>
                     Instance(s):
                 </td>
@@ -29,8 +29,12 @@
                 <i class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true"></i>
                 Retrieving instances...
             </div>
+            <div class="col" *ngIf="retrievingDiagnosers && !retrievingInstances && !checkingExistingSessions">
+                <i class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true"></i>
+                Retrieving Diagnoser settings...
+            </div>
 
-            <button [disabled]="sessionInProgress || checkingExistingSessions || retrievingInstances || retrievingInstancesFailed" [hidden]="SessionCompleted"
+            <button [disabled]="sessionInProgress || checkingExistingSessions || retrievingInstances || retrievingInstancesFailed || retrievingDiagnosers || foundDiagnoserWarnings" [hidden]="SessionCompleted"
                 class="btn btn-primary" (click)="collectDiagnoserData()">Collect {{ DiagnoserName }}</button>
         </div>
 
@@ -52,6 +56,12 @@
         </div>
         <div *ngIf="error.code != 'GatewayTimeout'">
             <strong>Error</strong> - {{ error.message }}
+        </div>
+    </div>
+
+    <div class="focus-box focus-box-warning" style="margin-top:20px" *ngIf="foundDiagnoserWarnings">
+        <div>
+            <strong>Warning</strong> - {{ diagnoserWarning }}
         </div>
     </div>
 </div>

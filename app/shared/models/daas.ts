@@ -68,3 +68,9 @@ export class Session
     DiagnoserSessions: Diagnoser[];
     Status: SessionStatus;
 }
+
+export interface DiagnoserDefinition {
+    Name: string;
+    Warnings: string[];
+    Description: string;
+}
