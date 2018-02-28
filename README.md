@@ -18,8 +18,12 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 - Replace `<token>` with the authorization token (note:- Do not put Bearer)
 - To get the token, you can use <a href="https://github.com/projectkudu/ARMClient">ArmClient</a> `ARMClient.exe token [tenant|subscription]`. This will copy token to clipboard.
 - If you would like to run with ssl disabled, you will need to go to `angular-cli.json` and disable it under defaults -> server -> ssl
-- To run with ssl, you will need to create a self signed cert. Go to the `ssl` folder for directions on how to create. 
-- Run `ng serve` for a dev server. Navigate to `https://localhost:3000/`. The app will automatically reload if you change any of the source files.
+- Run `ng serve` for a dev server, or alternatively `npm start`. Navigate to `http://localhost:3000/`. The app will automatically reload if you change any of the source files.
+
+## SSL Development Server
+
+- To run with ssl, you will need to create a self signed certificate and install it in Trusted Root. Go to the `ssl` folder for directions on how to create this certificate. 
+- Once you have completed this, you can run an ssl server with the command `npm run ssl`. You can navigate to `https://localhost:3000/`. The app will automatically reload if you change any of the source files.
 
 ## Code scaffolding
 

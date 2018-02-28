@@ -60,10 +60,7 @@
     "styleExt": "css",
     "component": {},
     "serve": {
-      "port": 3000,
-      "ssl": true,
-      "sslCert": "ssl/server.crt",
-      "sslKey": "ssl/server.key"
+      "port": 3000
     }
   }
 }
