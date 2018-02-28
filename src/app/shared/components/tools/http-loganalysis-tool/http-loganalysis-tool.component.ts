@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { SiteDaasInfo } from '../../../models/solution-metadata';
 import { Session } from '../../../models/daas';
 import { SiteInfoMetaData } from '../../../models/site';
@@ -9,19 +9,20 @@ import { WindowService } from '../../../services/window.service';
 import { AvailabilityLoggingService } from '../../../services/logging/availability.logging.service';
 
 @Component({
-    templateUrl: 'java-threaddump-tool.component.html',
+    templateUrl: 'http-loganalysis-tool.component.html',
     styleUrls: ['../styles/daasstyles.css']
 })
-export class JavaThreadDumpToolComponent extends DaasBaseComponent implements OnInit {
+export class HttpLogAnalysisToolComponent extends DaasBaseComponent implements OnInit {
 
-    title: string = "Collect a Java Thread dump";
-    description: string = "If your Java app is performing slow or not responding at all, you can collect a jStack log to identify the state of threads running the java.exe";
+    title: string = "Collect and Analyzes HTTP logs";
+    description: string = "If your Web App is experiencing heavy traffic, you can run this tool to identify slowest requests, client IP addresses and HTTP status codes returned by the App.";
     
     thingsToKnowBefore: string[] = [
-        "Collecting a jStack log will freeze the process until the jStack log is collected so process cannot serve any requests during the time jStack is running.",
-        "jStack logs are collected for all the Java process (java.exe) running on the instance.",
-        "jStack takes a few seconds to run but if there are many threads, it can take slightly longer to collect this data.",
-        "Your App will not be restarted as a result of collecting the jStack logs."
+        "This tool parses HTTP logs persisted to File-System and HTTP Logging must be enabled for this tool to work.",
+        "Analyzing IIS logs is a CPU-intensive operation, so you should run it only if the App has enough CPU resources.",    
+        "Your App will not be restarted as a result of collecting and analyzing IIS logs.",
+        "HTTP Log Analysis uses the LogParser tool to analyze IIS logs."
+
     ]
     
     constructor(private _siteServiceLocal: SiteService, private _daasServiceLocal: DaasService, private _windowServiceLocal: WindowService, private _loggerLocal: AvailabilityLoggingService)
@@ -30,7 +31,7 @@ export class JavaThreadDumpToolComponent extends DaasBaseComponent implements On
     }
     ngOnInit(): void {
 
-        this.DiagnoserName = "JAVA Thread Dump";
+        this.DiagnoserName = "Http Logs";
         this.scmPath = this._siteServiceLocal.currentSiteStatic.enabledHostNames.find(hostname => hostname.indexOf('.scm.') > 0);
 
     }

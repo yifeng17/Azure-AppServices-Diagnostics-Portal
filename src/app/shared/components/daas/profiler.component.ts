@@ -8,6 +8,7 @@ import { StepWizardSingleStep } from '../../models/step-wizard-single-step';
 import { DaasService } from '../../services/daas.service';
 import { WindowService } from '../../services/window.service';
 import { AvailabilityLoggingService } from '../../services/logging/availability.logging.service';
+import { ServerFarmDataService } from '../../services/server-farm-data.service';
 
 
 @Component({
@@ -44,12 +45,28 @@ export class ProfilerComponent implements OnInit, OnDestroy {
     error: any;
     retrievingInstances: boolean = false;
     retrievingInstancesFailed: boolean = false;
+    supportedTier:boolean = false;
+    collectStackTraces:boolean = false;
 
-    constructor(private _daasService: DaasService, private _windowService: WindowService, private _logger: AvailabilityLoggingService) {
-
+    constructor(private _serverFarmService: ServerFarmDataService, private _daasService: DaasService, private _windowService: WindowService, private _logger: AvailabilityLoggingService) {
+        this._serverFarmService.siteServerFarm.subscribe(serverFarm => {
+            if (serverFarm) {
+                if (serverFarm.sku.tier === "Standard" || serverFarm.sku.tier === "Basic"  || serverFarm.sku.tier === "Premium")
+                {
+                    this.supportedTier = true;
+                }               
+            }
+        }, error => {
+            //TODO: handle error
+        })
     }
 
     ngOnInit(): void {
+        
+        if (!this.supportedTier)
+        {
+            return;
+        }
 
         this.SessionCompleted = false;
         this.retrievingInstances = true;
@@ -100,7 +117,7 @@ export class ProfilerComponent implements OnInit, OnDestroy {
         var arrayToReturn = new Array<Session>();
         sessions.forEach(session => {
             session.DiagnoserSessions.forEach(diagnoser => {
-                if (diagnoser.Name === "CLR Profiler") {
+                if (diagnoser.Name.startsWith("CLR Profiler")) {
                     arrayToReturn.push(session);
                 }
             });
@@ -128,7 +145,7 @@ export class ProfilerComponent implements OnInit, OnDestroy {
                 for (var index = 0; index < sessions.length; index++) {
                     if (sessions[index].Status === 0)  // Check Active Sessions only
                     {
-                        var clrDiagnoser = sessions[index].DiagnoserSessions.find(x => x.Name === "CLR Profiler");
+                        var clrDiagnoser = sessions[index].DiagnoserSessions.find(x => x.Name.startsWith("CLR Profiler"));
                         if (clrDiagnoser) {
                             runningSession = sessions[index];
                             break;
@@ -163,8 +180,8 @@ export class ProfilerComponent implements OnInit, OnDestroy {
                         this.subscription.unsubscribe();
                     }
 
-                    var clrDiagnoser = runningSession.DiagnoserSessions.find(x => x.Name === "CLR Profiler");
-                    if (clrDiagnoser) {
+                    var clrDiagnoser = runningSession.DiagnoserSessions.find(x => x.Name.startsWith("CLR Profiler"));
+                    if (clrDiagnoser) {                        
                         this.Reports = clrDiagnoser.Reports;
                         this.SessionCompleted = true;
                     }
@@ -174,7 +191,7 @@ export class ProfilerComponent implements OnInit, OnDestroy {
     }
 
     getProfilingStateFromSession(session: Session) {
-        var clrDiagnoser = session.DiagnoserSessions.find(x => x.Name === "CLR Profiler");
+        var clrDiagnoser = session.DiagnoserSessions.find(x => x.Name.startsWith("CLR Profiler"));
         if (clrDiagnoser) {
             this.diagnoserSession = clrDiagnoser;
             if (clrDiagnoser.CollectorStatus === 2) {
@@ -217,7 +234,13 @@ export class ProfilerComponent implements OnInit, OnDestroy {
         this.sessionInProgress = true;
         this.updateInstanceInformation();
 
-        var submitNewSession = this._daasService.submitDaasSession(this.siteToBeProfiled, "CLR Profiler", [])
+        let diagnoserName = "CLR Profiler";
+        if (this.collectStackTraces)
+        {
+            diagnoserName = "CLR Profiler with Thread Stacks"
+        }
+
+        var submitNewSession = this._daasService.submitDaasSession(this.siteToBeProfiled, diagnoserName, [])
             .subscribe(result => {
                 this.sessionStatus = 1;
                 this.SessionId = result;

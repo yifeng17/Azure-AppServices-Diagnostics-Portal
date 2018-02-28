@@ -38,8 +38,6 @@ export class UriElementsService {
     private _diagnosticsDiagnosersPath = this._diagnosticsPath + "diagnosers";
     private _diagnosticsInstancesPath = this._diagnosticsPath + "instances";
     private _diagnosticsSingleSessionPath = this._diagnosticsPath + "session/{sessionId}/{details}";
-    private _diagnosticsWebJobStatePath = this._diagnosticsPath + "daaswebjobstate";
-    private _diagnosticsWebJobStartPath = this._diagnosticsPath + "daaswebjobstart";
     
     getDiagnosticsDiagnosersUrl(site: SiteDaasInfo) {
         return this._getSiteResourceUrl(site.subscriptionId, site.resourceGroupName, site.siteName, site.slot) + this._diagnosticsDiagnosersPath;
@@ -66,14 +64,6 @@ export class UriElementsService {
         return this._getSiteResourceUrl(site.subscriptionId, site.resourceGroupName, site.siteName, site.slot) + this._diagnosticsSingleSessionPath
         .replace("{sessionId}", sessionId)
         .replace("{details}", detailed.toString());
-    };
-
-    getDiagnosticsWebJobStateUrl(site: SiteDaasInfo) {
-        return this._getSiteResourceUrl(site.subscriptionId, site.resourceGroupName, site.siteName, site.slot) + this._diagnosticsWebJobStatePath;
-    };
-
-    getDiagnosticsWebJobStartUrl(site: SiteDaasInfo) {
-        return this._getSiteResourceUrl(site.subscriptionId, site.resourceGroupName, site.siteName, site.slot) + this._diagnosticsWebJobStartPath;
     };
 
     getSiteRestartUrl(subscriptionId: string, resourceGroup: string, siteName: string, slot: string = ''): string {

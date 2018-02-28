@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { SiteDaasInfo } from '../../../models/solution-metadata';
 import { Session } from '../../../models/daas';
 import { SiteInfoMetaData } from '../../../models/site';
@@ -9,19 +9,21 @@ import { WindowService } from '../../../services/window.service';
 import { AvailabilityLoggingService } from '../../../services/logging/availability.logging.service';
 
 @Component({
-    templateUrl: 'java-threaddump-tool.component.html',
+    templateUrl: 'php-processanalyzer-tool.component.html',
     styleUrls: ['../styles/daasstyles.css']
 })
-export class JavaThreadDumpToolComponent extends DaasBaseComponent implements OnInit {
+export class PhpProcessAnalyzerToolComponent extends DaasBaseComponent implements OnInit {
 
-    title: string = "Collect a Java Thread dump";
-    description: string = "If your Java app is performing slow or not responding at all, you can collect a jStack log to identify the state of threads running the java.exe";
+    title: string = "Collect a PHP Process and Thread report";
+    description: string = "If your PHP Application is performing slow, you can run this tool to take a memory dump of the PHP processes and analyze PHP thread callstacks.";
     
     thingsToKnowBefore: string[] = [
-        "Collecting a jStack log will freeze the process until the jStack log is collected so process cannot serve any requests during the time jStack is running.",
-        "jStack logs are collected for all the Java process (java.exe) running on the instance.",
-        "jStack takes a few seconds to run but if there are many threads, it can take slightly longer to collect this data.",
-        "Your App will not be restarted as a result of collecting the jStack logs."
+        "A memory dump of all the PHP processes will be collected and this will pause the process for the duration the memory dump is being collected.",
+        "If the PHP application is consuming a lot of memory, it will take longer time to take a dump and during this time the process cannot serve any active requests.",
+        "After the analysis is component a report with all the PHP processes and their threads will be displayed.",    
+        "This information is helpful only if your PHP application is performing slowly."
+        
+
     ]
     
     constructor(private _siteServiceLocal: SiteService, private _daasServiceLocal: DaasService, private _windowServiceLocal: WindowService, private _loggerLocal: AvailabilityLoggingService)
@@ -30,7 +32,7 @@ export class JavaThreadDumpToolComponent extends DaasBaseComponent implements On
     }
     ngOnInit(): void {
 
-        this.DiagnoserName = "JAVA Thread Dump";
+        this.DiagnoserName = "PHP Process Report";
         this.scmPath = this._siteServiceLocal.currentSiteStatic.enabledHostNames.find(hostname => hostname.indexOf('.scm.') > 0);
 
     }

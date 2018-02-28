@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { SiteDaasInfo } from '../../../models/solution-metadata';
 import { Session } from '../../../models/daas';
 import { SiteInfoMetaData } from '../../../models/site';
@@ -9,19 +9,18 @@ import { WindowService } from '../../../services/window.service';
 import { AvailabilityLoggingService } from '../../../services/logging/availability.logging.service';
 
 @Component({
-    templateUrl: 'java-threaddump-tool.component.html',
+    templateUrl: 'php-logsanalyzer-tool.component.html',
     styleUrls: ['../styles/daasstyles.css']
 })
-export class JavaThreadDumpToolComponent extends DaasBaseComponent implements OnInit {
+export class PhpLogsAnalyzerToolComponent extends DaasBaseComponent implements OnInit {
 
-    title: string = "Collect a Java Thread dump";
-    description: string = "If your Java app is performing slow or not responding at all, you can collect a jStack log to identify the state of threads running the java.exe";
+    title: string = "Collect and Analyze PHP error logs";
+    description: string = "This tool analyzes PHP logs for your App and generates a report filtering out errors and warnings.";
     
-    thingsToKnowBefore: string[] = [
-        "Collecting a jStack log will freeze the process until the jStack log is collected so process cannot serve any requests during the time jStack is running.",
-        "jStack logs are collected for all the Java process (java.exe) running on the instance.",
-        "jStack takes a few seconds to run but if there are many threads, it can take slightly longer to collect this data.",
-        "Your App will not be restarted as a result of collecting the jStack logs."
+    thingsToKnowBefore: string[] = [        
+        "It will only work if PHP Logging is enabled for your Web App.",
+        "Your Web App will not be restarted while running this tool."
+
     ]
     
     constructor(private _siteServiceLocal: SiteService, private _daasServiceLocal: DaasService, private _windowServiceLocal: WindowService, private _loggerLocal: AvailabilityLoggingService)
@@ -30,7 +29,7 @@ export class JavaThreadDumpToolComponent extends DaasBaseComponent implements On
     }
     ngOnInit(): void {
 
-        this.DiagnoserName = "JAVA Thread Dump";
+        this.DiagnoserName = "PHP Error Logs";
         this.scmPath = this._siteServiceLocal.currentSiteStatic.enabledHostNames.find(hostname => hostname.indexOf('.scm.') > 0);
 
     }

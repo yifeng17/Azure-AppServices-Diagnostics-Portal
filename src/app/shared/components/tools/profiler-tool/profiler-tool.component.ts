@@ -17,10 +17,12 @@ export class ProfilerToolComponent implements OnInit {
     description: string = "If your app is down or performing slow, you can collect a profiling trace to identify the root cause of the issue. Profiling is light weight and is designed for production scenarios.";
 
     thingsToKnowBefore: string[] = [
-        "Once the profiler trace is started, reproduce the issue by browsing to the web app",
+        "Once the profiler trace is started, reproduce the issue by browsing to the web app.",
         "The profiler trace will automatically stop after 60 seconds.",
+        "If thread report option is enabled, then raw stack traces of threads inside the process will be collected as well.",
+        "With thread report option, your App may be paused for a few seconds till all the threads are dumped.", 
         "Your web app will not be restarted as a result of running the profiler.",
-        "A profiler trace will help to identify issues in an ASP.NET application only and ASP.NET core is not yet supported",
+        "A profiler trace will help to identify issues in an ASP.NET application only and ASP.NET core is not yet supported.",
     ]
 
     siteToBeProfiled: SiteDaasInfo    

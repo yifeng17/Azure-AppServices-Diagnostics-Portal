@@ -55,6 +55,9 @@ import { MemoryDumpToolComponent } from './components/tools/memorydump-tool/memo
 import { JavaMemoryDumpToolComponent } from './components/tools/java-memorydump-tool/java-memorydump-tool.component';
 import { JavaThreadDumpToolComponent } from './components/tools/java-threaddump-tool/java-threaddump-tool.component';
 import { IncidentNotificationComponent } from './components/incident-notification/incident-notification.component';
+import { HttpLogAnalysisToolComponent } from './components/tools/http-loganalysis-tool/http-loganalysis-tool.component';
+import { PhpProcessAnalyzerToolComponent } from './components/tools/php-processanalyzer-tool/php-processanalyzer-tool.component';
+import { PhpLogsAnalyzerToolComponent } from './components/tools/php-logsanalyzer-tool/php-logsanalyzer-tool.component';
 
 @NgModule({
     declarations: [
@@ -88,7 +91,10 @@ import { IncidentNotificationComponent } from './components/incident-notificatio
         DaasComponent,
         JavaMemoryDumpToolComponent,
         JavaThreadDumpToolComponent,
-        IncidentNotificationComponent
+        IncidentNotificationComponent,
+        HttpLogAnalysisToolComponent,
+        PhpProcessAnalyzerToolComponent,
+        PhpLogsAnalyzerToolComponent
     ],
     imports: [
         HttpModule,
@@ -131,7 +137,10 @@ import { IncidentNotificationComponent } from './components/incident-notificatio
         MemoryDumpToolComponent,
         JavaMemoryDumpToolComponent,
         JavaThreadDumpToolComponent,
-        IncidentNotificationComponent
+        IncidentNotificationComponent,
+        HttpLogAnalysisToolComponent,
+        PhpProcessAnalyzerToolComponent,
+        PhpLogsAnalyzerToolComponent
     ]
 })
 export class SharedModule {
