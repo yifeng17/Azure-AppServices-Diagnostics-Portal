@@ -58,6 +58,8 @@ import { IncidentNotificationComponent } from './components/incident-notificatio
 import { HttpLogAnalysisToolComponent } from './components/tools/http-loganalysis-tool/http-loganalysis-tool.component';
 import { PhpProcessAnalyzerToolComponent } from './components/tools/php-processanalyzer-tool/php-processanalyzer-tool.component';
 import { PhpLogsAnalyzerToolComponent } from './components/tools/php-logsanalyzer-tool/php-logsanalyzer-tool.component';
+import { ScrollingTileComponent } from './components/scrolling-tile/scrolling-tile.component';
+import { NguCarouselModule } from '@ngu/carousel';
 
 @NgModule({
     declarations: [
@@ -94,13 +96,15 @@ import { PhpLogsAnalyzerToolComponent } from './components/tools/php-logsanalyze
         IncidentNotificationComponent,
         HttpLogAnalysisToolComponent,
         PhpProcessAnalyzerToolComponent,
-        PhpLogsAnalyzerToolComponent
+        PhpLogsAnalyzerToolComponent,
+        ScrollingTileComponent
     ],
     imports: [
         HttpModule,
         CommonModule,
         FormsModule,
-        RouterModule
+        RouterModule,
+        NguCarouselModule
     ],
     exports: [
         CommonModule,
@@ -140,7 +144,8 @@ import { PhpLogsAnalyzerToolComponent } from './components/tools/php-logsanalyze
         IncidentNotificationComponent,
         HttpLogAnalysisToolComponent,
         PhpProcessAnalyzerToolComponent,
-        PhpLogsAnalyzerToolComponent
+        PhpLogsAnalyzerToolComponent,
+        ScrollingTileComponent
     ]
 })
 export class SharedModule {
