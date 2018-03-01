@@ -14,25 +14,7 @@ export class ScrollingTileComponent implements OnInit {
     @Input() public Subcategories: Subcategory[];
     @Input() public Collapsed: boolean;
 
-    @ViewChild('.carousel-inner', { read: ElementRef })
-    private carouselInnerRef: ElementRef;
-
-    private carouselInner: any;
-
     public carouselTile: NguCarousel;
-
-    public width: number;
-
-    public tileWidth: number = 120;
-
-    public tileCount: number;
-
-    public visibleTileCount: number;
-
-    public leftArrowEnabled: boolean = false;
-    public rightArrowEnabled: boolean = false;
-
-    private carouselItems: any;
 
     constructor(private _logger: LoggingService, private carousel: NguCarouselService, private el: ElementRef, private renderer: Renderer) {
     }
@@ -41,16 +23,8 @@ export class ScrollingTileComponent implements OnInit {
         this._logger.LogClickEvent(name, 'Home Page');
     }
 
-    registerContainerWidth(boundingRect: any) {
-        this.width = boundingRect.width;
-
-        this.visibleTileCount = (boundingRect.width - (boundingRect.width % this.tileWidth)) / this.tileWidth;
-    }
-
 
     ngOnInit() {
-
-        this.registerContainerWidth(this.el.nativeElement.firstElementChild.getBoundingClientRect());
 
         if (this.Subcategories.length > 0) {
             this.carouselTile = {
@@ -65,24 +39,4 @@ export class ScrollingTileComponent implements OnInit {
             };
         }
     }
-
-    // scrollLeft() {
-    //     let start = 0, end = 6, val = 3; 
-    //     let speed = 3000;
-    //     for (let i = start - 1; i < end; i++) {
-    //         val = val * 2;
-    //         // tslint:disable-next-line:no-unused-expression
-    //         this.carouselItems[i] && this.setStyle(this.carouselItems[i], 'transform', `translate3d(${val}px, 0, 0)`);
-    //     }
-
-    //     setTimeout(() => {
-    //         for (let i = 0; i < this.carouselItems.length; i++) {
-    //             this.setStyle(this.carouselItems[i], 'transform', 'translate3d(0, 0, 0)');
-    //         }
-    //     }, speed * .7);
-    // }
-
-    // private setStyle(el: any, prop: any, val: any): void {
-    //     this.renderer.setElementStyle(el, prop, val);
-    // }
 }
