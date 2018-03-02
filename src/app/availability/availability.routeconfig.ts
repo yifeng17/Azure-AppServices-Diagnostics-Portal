@@ -16,6 +16,7 @@ import { JavaThreadDumpToolComponent } from '../shared/components/tools/java-thr
 import { HttpLogAnalysisToolComponent } from '../shared/components/tools/http-loganalysis-tool/http-loganalysis-tool.component';
 import { PhpProcessAnalyzerToolComponent } from '../shared/components/tools/php-processanalyzer-tool/php-processanalyzer-tool.component';
 import { PhpLogsAnalyzerToolComponent } from '../shared/components/tools/php-logsanalyzer-tool/php-logsanalyzer-tool.component';
+import { ConnectionDiagnoserToolComponent } from '../shared/components/tools/connection-diagnoser-tool/connection-diagnoser-tool.component';
 
 const _siteResourceUrl: string = 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/sites/:sitename';
 const _slotResourceUrl: string = 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/sites/:sitename/slots/:slot';
@@ -278,6 +279,24 @@ export const AvailabilityAndPerformanceCategoryRouteConfig: Route[] = [
         component: PhpProcessAnalyzerToolComponent,
         data: {
             navigationTitle: 'PHP Process Analyzer'
+        }
+    }
+    ,
+    // Database Test Tool
+    {
+        path: _siteResourceUrl + '/diagnostics/tools/databasetester',
+        component: ConnectionDiagnoserToolComponent,
+        data: {
+            navigationTitle: 'Connection Diagnoser',
+            cacheComponent: true
+        }
+    },
+    {
+        path: _slotResourceUrl + '/diagnostics/tools/databasetester',
+        component: ConnectionDiagnoserToolComponent,
+        data: {
+            navigationTitle: 'Connection Diagnoser',
+            cacheComponent: true
         }
     }
 
