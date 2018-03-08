@@ -3,7 +3,7 @@
   <table>
     <tr *ngFor="let incident of incidentService.incidents">
       <td class="date-holder">
-          {{incident.startTime | date:'MM/dd'}}
+          {{incident.startTime | date:'MMM dd'}}
       </td>
       <td>
           <div class="incident-title">
