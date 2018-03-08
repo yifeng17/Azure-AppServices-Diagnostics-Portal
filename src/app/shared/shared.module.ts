@@ -60,6 +60,8 @@ import { PhpProcessAnalyzerToolComponent } from './components/tools/php-processa
 import { PhpLogsAnalyzerToolComponent } from './components/tools/php-logsanalyzer-tool/php-logsanalyzer-tool.component';
 import { ConnectionDiagnoserToolComponent } from './components/tools/connection-diagnoser-tool/connection-diagnoser-tool.component';
 import { NetworkTraceToolComponent } from './components/tools/network-trace-tool/network-trace-tool.component';
+import { ServiceIncidentService } from './services/service-incident.service';
+import { IncidentSummaryComponent } from './components/incident-summary/incident-summary.component';
 
 @NgModule({
     declarations: [
@@ -98,7 +100,8 @@ import { NetworkTraceToolComponent } from './components/tools/network-trace-tool
         PhpProcessAnalyzerToolComponent,
         PhpLogsAnalyzerToolComponent,
         ConnectionDiagnoserToolComponent,
-        NetworkTraceToolComponent
+        NetworkTraceToolComponent,
+        IncidentSummaryComponent
     ],
     imports: [
         HttpModule,
@@ -146,7 +149,8 @@ import { NetworkTraceToolComponent } from './components/tools/network-trace-tool
         PhpProcessAnalyzerToolComponent,
         PhpLogsAnalyzerToolComponent,
         ConnectionDiagnoserToolComponent,
-        NetworkTraceToolComponent
+        NetworkTraceToolComponent,
+        IncidentSummaryComponent
     ]
 })
 export class SharedModule {
@@ -173,7 +177,8 @@ export class SharedModule {
                 AppInsightsQueryService,
                 CacheService,
                 SolutionFactoryService,
-                DaasService               
+                DaasService,
+                ServiceIncidentService
             ]
         }
     }

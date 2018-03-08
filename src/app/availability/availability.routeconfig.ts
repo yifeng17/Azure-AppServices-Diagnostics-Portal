@@ -18,6 +18,7 @@ import { PhpProcessAnalyzerToolComponent } from '../shared/components/tools/php-
 import { PhpLogsAnalyzerToolComponent } from '../shared/components/tools/php-logsanalyzer-tool/php-logsanalyzer-tool.component';
 import { ConnectionDiagnoserToolComponent } from '../shared/components/tools/connection-diagnoser-tool/connection-diagnoser-tool.component';
 import { NetworkTraceToolComponent } from '../shared/components/tools/network-trace-tool/network-trace-tool.component';
+import { IncidentSummaryComponent } from '../shared/components/incident-summary/incident-summary.component';
 
 const _siteResourceUrl: string = 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/sites/:sitename';
 const _slotResourceUrl: string = 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/sites/:sitename/slots/:slot';
@@ -172,6 +173,24 @@ export const AvailabilityAndPerformanceCategoryRouteConfig: Route[] = [
     {
         path: _slotResourceUrl + '/diagnostics/performance',
         children: PerformanceCommonRouteConfig
+    },
+
+    // Service Incident Summary
+    {
+        path: _siteResourceUrl + '/diagnostics/incidents',
+        component: IncidentSummaryComponent,
+        data: {
+            navigationTitle: 'Service Incidents',
+            cacheComponent: true
+        }
+    },
+    {
+        path: _slotResourceUrl + '/diagnostics/incidents',
+        component: IncidentSummaryComponent,
+        data: {
+            navigationTitle: 'Service Incidents',
+            cacheComponent: true
+        }
     },
 
     // CLR Profiling Tool

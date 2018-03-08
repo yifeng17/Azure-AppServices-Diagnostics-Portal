@@ -1,0 +1,24 @@
+.container {
+    padding: 30px 40px;
+}
+
+.incident-container {
+    background-color: #dddddd;
+    padding: 10px;
+}
+
+.date-holder {
+    vertical-align: top;
+    width: 30px;
+    padding: 10px 45px 10px 0px;
+    font-size: 20px;
+}
+
+.incident-title {
+    font-size: 20px;
+    padding-bottom: 10px;
+}
+
+td {
+    padding: 10px;
+}
