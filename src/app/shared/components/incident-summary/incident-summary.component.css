@@ -22,3 +22,9 @@
 td {
     padding: 10px;
 }
+
+@media screen and (max-width: 800px) {
+    .date-holder {
+        display: none;
+    }
+}

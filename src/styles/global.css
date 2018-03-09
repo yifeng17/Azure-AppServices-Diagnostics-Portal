@@ -97,6 +97,16 @@ body{
 	background-color:rgba(172, 172, 172, 0.28);
 }
 
+@media screen and (max-width: 800px) {
+    #tools-content {
+        display: none;
+    }
+
+    .bot-container {
+        width: 100%;
+    }
+}
+
 .nvd3 text{
     font-size: 12px !important;
     font-weight: 400 !important;

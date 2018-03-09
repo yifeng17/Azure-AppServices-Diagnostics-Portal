@@ -2,6 +2,6 @@
     <div class="incident-notification" [routerLink]="['availability/apprestartanalysis']" (click)="openIncidentView()">
         <i class="fa fa-warning"></i> 
         {{incidentService.notificationMessage}}
-        <i class="fa fa-close pull-right" (click)="closed = true"></i>
+        <i class="fa fa-close pull-right" (click)="close()"></i>
     </div>
 </ng-container>
