@@ -11,7 +11,10 @@ import { Category, Subcategory } from '../../../shared/models/problem-category';
 
 @Component({
     templateUrl: 'main-menu.component.html',
-    providers: [CategoriesService]
+    providers: [CategoriesService],
+    styleUrls: [
+        'main-menu.component.css'
+    ]
 })
 export class MainMenuComponent implements OnInit, AfterViewInit, IChatMessageComponent {
 
@@ -20,7 +23,8 @@ export class MainMenuComponent implements OnInit, AfterViewInit, IChatMessageCom
     @Output() onViewUpdate = new EventEmitter();
     @Output() onComplete = new EventEmitter<{ status: boolean, data?: any }>();
     
-    constructor(private _injector: Injector, private _router: Router, private _logger: LoggingService, private _siteService: SiteService, private _categoryService: CategoriesService) {
+    constructor(private _injector: Injector, private _router: Router, private _logger: LoggingService, 
+        private _siteService: SiteService, private _categoryService: CategoriesService) {
     }
 
     ngOnInit(): void {

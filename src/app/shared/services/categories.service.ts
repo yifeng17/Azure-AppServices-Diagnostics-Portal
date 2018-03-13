@@ -60,12 +60,7 @@ export class CategoriesService {
             OperatingSystem: OperatingSystem.linux
         });
 
-        let monitor = new Category();
-        monitor.Name = "Monitor";
-        monitor.Subcategories = [];
-        monitor.Collapsed = false;
-
-        monitor.Subcategories.push({
+        perf.Subcategories.push({
             Name: 'Web App Restarted',
             BgColor: 'rgb(234, 131, 0)',
             TextColor: 'White',
@@ -73,7 +68,7 @@ export class CategoriesService {
             OperatingSystem: OperatingSystem.windows
         });
 
-        monitor.Subcategories.push({
+        perf.Subcategories.push({
             Name: 'TCP Connections',
             BgColor: 'rgb(59, 99, 123)',
             TextColor: 'White',
@@ -111,7 +106,6 @@ export class CategoriesService {
         });
         
         this.Categories.push(perf);
-        this.Categories.push(monitor);
 
         // will comment this before merge
         // this.Categories.push(tools);
