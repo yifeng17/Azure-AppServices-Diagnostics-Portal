@@ -7,7 +7,10 @@ export enum CommonLogEventType {
     Feedback,
     FeedbackMessage,
     TabOpened,
-    TabClosed
+    TabClosed,
+    IncidentNotification,
+    IncidentDetails,
+    IncidentDismissed
 }
 
 export enum AvailabilityEventType {

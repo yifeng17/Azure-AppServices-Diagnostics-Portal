@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { RouterModule, RouteReuseStrategy } from '@angular/router';
+import { RouterModule, RouteReuseStrategy, ExtraOptions } from '@angular/router';
 
 import { SharedModule } from './shared/shared.module';
 import { SupportBotModule } from './supportbot/supportbot.module';

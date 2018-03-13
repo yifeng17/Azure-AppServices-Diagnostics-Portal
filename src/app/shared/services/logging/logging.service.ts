@@ -7,6 +7,7 @@ import { ResponseMessageEnvelope } from '../../models/responsemessageenvelope';
 import { PortalService } from '../portal.service';
 import { AuthService } from '../auth.service';
 import { ArmService } from '../arm.service';
+import { IncidentNotification, IncidentType, IncidentStatus } from '../../models/icm-incident';
 
 @Injectable()
 export class LoggingService {
@@ -90,7 +91,7 @@ export class LoggingService {
         }
 
         if (isDevMode()) {
-            console.log({ id: id, category: category, args: args });
+            console.log({ id: id, category: category, args: combinedArgs });
         }
 
         this._portalServiceInstance.logAction(id, category, combinedArgs);
@@ -149,6 +150,27 @@ export class LoggingService {
         this._log(CommonLogEventType[CommonLogEventType.FeedbackMessage], category, {
             source: source,
             message: message
+        });
+    }
+
+    LogIncidentNotification(hasActiveIncident: boolean) {
+        this._log(CommonLogEventType[CommonLogEventType.IncidentNotification], 'Incidents', {
+            active: hasActiveIncident
+        });
+    }
+
+    LogIncidentIncidentDetails(incident: IncidentNotification) {
+        this._log(CommonLogEventType[CommonLogEventType.IncidentDetails], 'Incidents', {
+            type: IncidentType[incident.type],
+            startTime: incident.startTime,
+            status: IncidentStatus[incident.status],
+            message: incident.message
+        });
+    }
+
+    LogIncidentDismissed(hasActiveIncident: boolean) {
+        this._log(CommonLogEventType[CommonLogEventType.IncidentDismissed], 'Incidents', {
+            active: hasActiveIncident
         });
     }
 }

@@ -2,6 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { AppAnalysisService } from '../../services/appanalysis.service';
 import { SiteService } from '../../services/site.service';
+import { IncidentNotification } from '../../models/icm-incident';
+import { ServiceIncidentService } from '../../services/service-incident.service';
+import { Router, ActivatedRoute } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+import { LoggingService } from '../../services/logging/logging.service';
 
 
 @Component({
@@ -11,22 +16,23 @@ import { SiteService } from '../../services/site.service';
 })
 export class IncidentNotificationComponent {
 
-    lsiIncidents: IncidentNotification[];
+    closed: boolean = false;
 
-    constructor(private _appAnalysisService: AppAnalysisService, private _siteService: SiteService) {
-        this._siteService.currentSiteMetaData.subscribe(site => {
-            if (site) {
-                 this._appAnalysisService.getDetectorResource(site.subscriptionId, site.resourceGroupName, site.siteName, site.slot, 'availability', 'servicehealth').subscribe(response => {
-                    this.lsiIncidents = response.abnormalTimePeriods.map(period => {
-                        return <IncidentNotification>{ message: period.message };
-                    });
-                });
-            }
-        })
+    resourceId: string;
+
+    constructor(public incidentService: ServiceIncidentService, private _router: Router, private _authService: AuthService, private _logger: LoggingService) {
+        this._authService.getStartupInfo().subscribe(info => { this.resourceId = info.resourceId.toLowerCase().replace('/providers/microsoft.web', '') });
     }
 
-}
+    openIncidentView() {
+        this.closed = true;
 
-class IncidentNotification {
-    message: string;
+        this._router.navigate([ `${this.resourceId}/diagnostics/incidents`]);
+    }
+
+    close() {
+        this._logger.LogIncidentDismissed(this.incidentService.hasActiveIncidents);
+        this.closed = true;
+    }
+
 }

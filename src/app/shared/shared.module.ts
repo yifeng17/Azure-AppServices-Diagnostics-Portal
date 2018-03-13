@@ -60,6 +60,10 @@ import { PhpProcessAnalyzerToolComponent } from './components/tools/php-processa
 import { PhpLogsAnalyzerToolComponent } from './components/tools/php-logsanalyzer-tool/php-logsanalyzer-tool.component';
 import { ScrollingTileComponent } from './components/scrolling-tile/scrolling-tile.component';
 import { NguCarouselModule } from '@ngu/carousel';
+import { ConnectionDiagnoserToolComponent } from './components/tools/connection-diagnoser-tool/connection-diagnoser-tool.component';
+import { NetworkTraceToolComponent } from './components/tools/network-trace-tool/network-trace-tool.component';
+import { ServiceIncidentService } from './services/service-incident.service';
+import { IncidentSummaryComponent } from './components/incident-summary/incident-summary.component';
 
 @NgModule({
     declarations: [
@@ -97,7 +101,10 @@ import { NguCarouselModule } from '@ngu/carousel';
         HttpLogAnalysisToolComponent,
         PhpProcessAnalyzerToolComponent,
         PhpLogsAnalyzerToolComponent,
-        ScrollingTileComponent
+        ScrollingTileComponent,
+        ConnectionDiagnoserToolComponent,
+        NetworkTraceToolComponent,
+        IncidentSummaryComponent
     ],
     imports: [
         HttpModule,
@@ -145,7 +152,10 @@ import { NguCarouselModule } from '@ngu/carousel';
         HttpLogAnalysisToolComponent,
         PhpProcessAnalyzerToolComponent,
         PhpLogsAnalyzerToolComponent,
-        ScrollingTileComponent
+        ScrollingTileComponent,
+        ConnectionDiagnoserToolComponent,
+        NetworkTraceToolComponent,
+        IncidentSummaryComponent
     ]
 })
 export class SharedModule {
@@ -172,7 +182,8 @@ export class SharedModule {
                 AppInsightsQueryService,
                 CacheService,
                 SolutionFactoryService,
-                DaasService               
+                DaasService,
+                ServiceIncidentService
             ]
         }
     }
