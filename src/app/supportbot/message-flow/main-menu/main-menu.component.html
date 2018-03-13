@@ -3,7 +3,11 @@
     <div *ngFor="let category of problemCategories;let i = index">
         <collapsible-list [title]="category.Name" [collapsed]="category.Collapsed" >
             <collapsible-list-item>
-                <scrolling-tile [Collapsed]="category.Collapsed" [Subcategories]="category.Subcategories" ></scrolling-tile>
+                <div class="col animated zoomIn category-box" *ngFor="let subcategory of category.Subcategories" [style.background-color]="subcategory.BgColor" 
+                    [style.color]="subcategory.TextColor" [routerLink]="[subcategory.Href]" (click)="logCategorySelected(subcategory.Name)">
+                    <div class="category-content">{{subcategory.Name}}</div>
+                </div>
+                <!-- <scrolling-tile [Collapsed]="category.Collapsed" [Subcategories]="category.Subcategories" ></scrolling-tile> -->
             </collapsible-list-item>
         </collapsible-list>
     </div>
