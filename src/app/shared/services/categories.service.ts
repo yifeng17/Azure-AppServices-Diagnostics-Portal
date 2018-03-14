@@ -3,6 +3,7 @@ import { Subcategory, Category } from '../models/problem-category';
 import * as _ from 'underscore';
 import { OperatingSystem, Site, SiteExtensions } from '../models/site';
 import { operators } from 'rxjs';
+import { ToolNames } from '../models/tools-constants';
 
 @Injectable()
 export class CategoriesService {
@@ -82,33 +83,31 @@ export class CategoriesService {
         tools.Collapsed = false;
 
         tools.Subcategories.push({
-            Name: 'CLR Profiling Tool',
+            Name: ToolNames.Profiler,
             BgColor: 'rgb(153, 51, 0)',
             TextColor: 'White',
-            Href: '',
+            Href: 'tools/profiler',
             OperatingSystem: OperatingSystem.windows
         });
 
         tools.Subcategories.push({
-            Name: 'Database Tester',
+            Name: ToolNames.MemoryDump,
             BgColor: 'rgb(102, 153, 0)',
             TextColor: 'White',
-            Href: '',
+            Href: 'tools/memorydump',
             OperatingSystem: OperatingSystem.windows
         });
 
         tools.Subcategories.push({
-            Name: 'Client Cert Checker',
+            Name: ToolNames.DatabaseTester,
             BgColor: 'rgb(0, 102, 153)',
             TextColor: 'White',
-            Href: '',
+            Href: 'tools/databasetester',
             OperatingSystem: OperatingSystem.windows
         });
         
         this.Categories.push(perf);
-
-        // will comment this before merge
-        // this.Categories.push(tools);
+        this.Categories.push(tools);
     }
 
     getCategories(site: Site): Category[] {

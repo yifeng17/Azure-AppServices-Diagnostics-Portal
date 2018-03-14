@@ -40,6 +40,10 @@ export class MainMenuComponent implements OnInit, AfterViewInit, IChatMessageCom
         })
     }
 
+    logCategorySelected(name: string) {
+        this._logger.LogClickEvent(name, 'Home Page');
+    }
+
     ngAfterViewInit(): void {
         this.onViewUpdate.emit();
     }    
