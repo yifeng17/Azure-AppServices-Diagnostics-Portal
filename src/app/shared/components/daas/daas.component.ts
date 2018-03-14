@@ -10,7 +10,6 @@ import { WindowService } from '../../services/window.service';
 import { AvailabilityLoggingService } from '../../services/logging/availability.logging.service';
 import { ServerFarmDataService } from '../../services/server-farm-data.service';
 
-
 class InstanceSelection {
     InstanceName: string;
     Selected: boolean;
@@ -27,6 +26,7 @@ export class DaasComponent implements OnInit, OnDestroy {
     @Input() siteToBeDiagnosed: SiteDaasInfo;
     @Input() scmPath: string;
     @Input() DiagnoserName: string;
+    @Input() DiagnoserNameLookup: string = "";
 
     @Output() checkingExistingSessionsEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Output() SessionsEvent: EventEmitter<Session[]> = new EventEmitter<Session[]>();
@@ -42,78 +42,51 @@ export class DaasComponent implements OnInit, OnDestroy {
     Sessions: Session[];
     InstancesStatus: Map<string, number>;
     selectedInstance: string;
-    checkingExistingSessions: boolean;
+    operationInProgress: boolean;
+    operationStatus: string;
     Reports: Report[];
     SessionCompleted: boolean;
     WizardSteps: StepWizardSingleStep[] = [];
-    couldNotFindSite: boolean = false;
 
     WizardStepStatus: string;
 
     error: any;
-    retrievingInstances: boolean = false;
     retrievingInstancesFailed: boolean = false;
-    foundDiagnoserWarnings:boolean = false;
-    retrievingDiagnosers: boolean = false;
-    
-    supportedTier:boolean = false;
-    diagnoserWarning: string = "";
+
+    daasValidated: boolean = false;
 
     constructor(private _serverFarmService: ServerFarmDataService, private _siteService: SiteService, private _daasService: DaasService, private _windowService: WindowService, private _logger: AvailabilityLoggingService) {
-        this._serverFarmService.siteServerFarm.subscribe(serverFarm => {
-            if (serverFarm) {
-                if (serverFarm.sku.tier === "Standard" || serverFarm.sku.tier === "Basic"  || serverFarm.sku.tier === "Premium")
-                {
-                    this.supportedTier = true;
-                }               
-            }
-        }, error => {
-            //TODO: handle error
-        })
     }
 
-    ngOnInit(): void {
+    onDaasValidated(validated: boolean) {
 
-        if (!this.supportedTier)
-        {
-            return;
+        if (this.DiagnoserNameLookup === "") {
+            this.DiagnoserNameLookup = this.DiagnoserName;
         }
-        
-        this.SessionCompleted = false;
 
-        this.retrievingInstances = true;
+        this.daasValidated = true;
+        this.SessionCompleted = false;
+        this.operationInProgress = true;
+        this.operationStatus = "Retrieving instances..."
+
         this._daasService.getInstances(this.siteToBeDiagnosed).retry(2)
             .subscribe(result => {
-                this.retrievingInstances = false;
+                this.operationInProgress = false;
+                this.operationStatus = "";
+
                 this.instances = result;
                 this.checkRunningSessions();
                 this.populateinstancesToDiagnose();
-
-                this.retrievingDiagnosers = true;
-                this._daasService.getDiagnosers(this.siteToBeDiagnosed).retry(2)
-                    .subscribe(result => {
-                        this.retrievingDiagnosers = false;
-                        let diagnosers: DiagnoserDefinition[] = result;
-                        let thisDiagnoser = diagnosers.filter(x => x.Name === this.DiagnoserName);
-                        if (thisDiagnoser.length > 0) {
-                            if (thisDiagnoser[0].Warnings.length > 0) {
-                                this.diagnoserWarning = thisDiagnoser[0].Warnings.join(',');
-                                this.foundDiagnoserWarnings = true;
-                            }
-                        }
-                        if (!this.foundDiagnoserWarnings) {
-                            this.initWizard();
-                        }
-                    },
-                        error => {
-                            this.error = error;
-                        });
+                this.initWizard();
             },
                 error => {
                     this.error = error;
-                    this.retrievingInstances = false;
+                    this.operationInProgress = false;
                     this.retrievingInstancesFailed = true;
                 });
+    }
+
+    ngOnInit(): void {
 
     }
 
@@ -143,7 +116,7 @@ export class DaasComponent implements OnInit, OnDestroy {
         var arrayToReturn = new Array<Session>();
         sessions.forEach(session => {
             session.DiagnoserSessions.forEach(diagnoser => {
-                if (diagnoser.Name === this.DiagnoserName) {
+                if (diagnoser.Name.startsWith(this.DiagnoserNameLookup)) {
                     arrayToReturn.push(session);
                 }
             });
@@ -155,12 +128,14 @@ export class DaasComponent implements OnInit, OnDestroy {
         return arrayToReturn;
     }
     checkRunningSessions() {
-        this.checkingExistingSessions = true;
+        this.operationInProgress = true;
+        this.operationStatus = "Checking existing sessions...";
         this.checkingExistingSessionsEvent.emit(true);
 
         this._daasService.getDaasSessionsWithDetails(this.siteToBeDiagnosed).retry(2)
             .subscribe(sessions => {
-                this.checkingExistingSessions = false;
+                this.operationInProgress = false;
+                this.operationStatus = "";
                 this.checkingExistingSessionsEvent.emit(false);
 
                 this.Sessions = this.takeTopFiveDiagnoserSessions(sessions);
@@ -170,7 +145,7 @@ export class DaasComponent implements OnInit, OnDestroy {
                 for (var index = 0; index < sessions.length; index++) {
                     if (sessions[index].Status === 0)  // Check Active Sessions only
                     {
-                        var daasDiagnoser = sessions[index].DiagnoserSessions.find(x => x.Name === this.DiagnoserName);
+                        var daasDiagnoser = sessions[index].DiagnoserSessions.find(x => x.Name.startsWith(this.DiagnoserNameLookup));
                         if (daasDiagnoser) {
                             runningSession = sessions[index];
                             break;
@@ -179,7 +154,7 @@ export class DaasComponent implements OnInit, OnDestroy {
                 }
                 if (runningSession) {
                     this.sessionInProgress = true;
-                    this.updateInstanceInformation();
+                    this.updateInstanceInformationOnLoad();
                     this.getDiagnoserStateFromSession(runningSession);
                     this.SessionId = runningSession.SessionId;
                     this.subscription = Observable.interval(10000).subscribe(res => {
@@ -205,7 +180,7 @@ export class DaasComponent implements OnInit, OnDestroy {
                         this.subscription.unsubscribe();
                     }
 
-                    var daasDiagnoser = runningSession.DiagnoserSessions.find(x => x.Name === this.DiagnoserName);
+                    var daasDiagnoser = runningSession.DiagnoserSessions.find(x => x.Name.startsWith(this.DiagnoserNameLookup));
                     if (daasDiagnoser) {
                         this.Reports = daasDiagnoser.Reports;
                         this.SessionCompleted = true;
@@ -216,7 +191,7 @@ export class DaasComponent implements OnInit, OnDestroy {
     }
 
     getDiagnoserStateFromSession(session: Session) {
-        var daasDiagnoser = session.DiagnoserSessions.find(x => x.Name === this.DiagnoserName);
+        var daasDiagnoser = session.DiagnoserSessions.find(x => x.Name.startsWith(this.DiagnoserNameLookup));
         if (daasDiagnoser) {
             this.diagnoserSession = daasDiagnoser;
             if (daasDiagnoser.CollectorStatus === 2) {
@@ -234,6 +209,16 @@ export class DaasComponent implements OnInit, OnDestroy {
                 this.WizardStepStatus = "";
                 this.sessionStatus = 3;
             }
+        }
+    }
+
+    updateInstanceInformationOnLoad() {
+        this.InstancesStatus = new Map<string, number>();
+        this.instances.forEach(x => {
+            this.InstancesStatus.set(x, 1);
+        });
+        if (this.instances.length > 0) {
+            this.selectedInstance = this.instances[0];
         }
     }
 
@@ -263,6 +248,9 @@ export class DaasComponent implements OnInit, OnDestroy {
     }
 
     collectDiagnoserData() {
+
+        this._logger.LogClickEvent(this.DiagnoserName, "DiagnosticTools");
+        
         this.instancesToDiagnose = new Array<string>();
 
         if (this.InstancesSelected && this.InstancesSelected !== null) {
@@ -279,7 +267,6 @@ export class DaasComponent implements OnInit, OnDestroy {
         }
 
         this.sessionInProgress = true;
-
         this.updateInstanceInformation();
 
         var submitNewSession = this._daasService.submitDaasSession(this.siteToBeDiagnosed, this.DiagnoserName, this.instancesToDiagnose)

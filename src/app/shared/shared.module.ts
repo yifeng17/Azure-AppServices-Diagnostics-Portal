@@ -64,6 +64,7 @@ import { ConnectionDiagnoserToolComponent } from './components/tools/connection-
 import { NetworkTraceToolComponent } from './components/tools/network-trace-tool/network-trace-tool.component';
 import { ServiceIncidentService } from './services/service-incident.service';
 import { IncidentSummaryComponent } from './components/incident-summary/incident-summary.component';
+import { DaasValidatorComponent } from './components/daas/daas-validator.component';
 
 @NgModule({
     declarations: [
@@ -104,7 +105,8 @@ import { IncidentSummaryComponent } from './components/incident-summary/incident
         ScrollingTileComponent,
         ConnectionDiagnoserToolComponent,
         NetworkTraceToolComponent,
-        IncidentSummaryComponent
+        IncidentSummaryComponent,
+        DaasValidatorComponent
     ],
     imports: [
         HttpModule,
@@ -145,6 +147,7 @@ import { IncidentSummaryComponent } from './components/incident-summary/incident
         ProfilerComponent,
         ProfilerToolComponent,        
         DaasComponent,
+        DaasValidatorComponent,
         MemoryDumpToolComponent,
         JavaMemoryDumpToolComponent,
         JavaThreadDumpToolComponent,
