@@ -1,4 +1,4 @@
-import { Component, Injector, Output, EventEmitter, OnInit, AfterViewInit, Input } from '@angular/core';
+import { Component, Injector, Output, EventEmitter, OnInit, AfterViewInit, Input, PipeTransform, Pipe } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
@@ -21,10 +21,8 @@ import { StartupInfo } from '../../../shared/models/portal';
 })
 export class MainMenuComponent implements OnInit, AfterViewInit, IChatMessageComponent {
 
-    problemCategories: Category[] = [];
     allProblemCategories: Category[] = [];
     AppStack: string = "";    
-    animateToolsOnly: boolean = false;
     showToolsDropdown:boolean = false;
 
     @Output() onViewUpdate = new EventEmitter();
@@ -40,12 +38,12 @@ export class MainMenuComponent implements OnInit, AfterViewInit, IChatMessageCom
 
         this._siteService.currentSite.subscribe(site => {
             if (site) {
-                this.allProblemCategories = this._categoryService.getCategories(site);
+                
                 this._authService.getStartupInfo().subscribe((startupInfo: StartupInfo) => {
                     let resourceUriParts = this._siteService.parseResourceUri(startupInfo.resourceId);
                     this._appAnalysisService.getDiagnosticProperties(resourceUriParts.subscriptionId, resourceUriParts.resourceGroup, resourceUriParts.siteName, resourceUriParts.slotName).subscribe(data => {
                         this.AppStack = (data.appStack === "" ? "ASP.Net" : data.appStack);
-                        this.problemCategories = this.filterCategoriesForStack(this.allProblemCategories);
+                        this.allProblemCategories = this._categoryService.getCategories(site);
                         setTimeout(() => {
                             this.onComplete.emit({ status: true });
                         }, 300);
@@ -53,22 +51,6 @@ export class MainMenuComponent implements OnInit, AfterViewInit, IChatMessageCom
                 });
             }
         });
-    }
-
-    filterCategoriesForStack(problemCategories: Category[]): Category[] {
-        let categories: Category[] = [];
-        problemCategories.forEach(c => {
-            let subcategories = c.Subcategories.filter(x => (x.AppStack === "" || x.AppStack.toLowerCase().indexOf(this.AppStack.toLowerCase()) > -1));
-            if (subcategories.length > 0) {
-                let category = new Category();
-                category.Name = c.Name;
-                category.Collapsed = c.Collapsed;
-                category.Subcategories = subcategories;
-                categories.push(category);
-            }
-        });
-
-        return categories;
     }
 
     logCategorySelected(name: string) {
@@ -82,7 +64,12 @@ export class MainMenuComponent implements OnInit, AfterViewInit, IChatMessageCom
     onStackChanged(stack: string) {       
         this.AppStack = stack;
         this.showToolsDropdown = false;
-        this.problemCategories = this.filterCategoriesForStack(this.allProblemCategories);
-        this.animateToolsOnly = true;
+    }
+}
+
+@Pipe({name: 'toolstack'})
+export class ToolStackPipe implements PipeTransform {
+    transform(subcategories: Subcategory[], stack: string): Subcategory[] {
+        return subcategories.filter(x => (x.AppStack === "" || x.AppStack.toLowerCase().indexOf(stack.toLowerCase()) > -1))
     }
 }
