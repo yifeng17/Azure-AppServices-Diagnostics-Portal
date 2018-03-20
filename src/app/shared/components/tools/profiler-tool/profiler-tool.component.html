@@ -4,8 +4,7 @@
 
     <div class="wizardcontainer">
 
-        <profiler [scmPath]="scmPath" [siteToBeDiagnosed]="siteToBeProfiled" (checkingExistingSessionsEvent)="updateCheckingExistingSessions($event)"
-            (SessionsEvent)="updateSessions($event)">
+        <profiler [scmPath]="scmPath" [siteToBeDiagnosed]="siteToBeDiagnosed" (SessionsEvent)="updateSessions($event)">
         </profiler>
 
     </div>
@@ -16,7 +15,7 @@
     </ul>
 
     <div class="sessions">
-        <daas-sessions SessionType="CLR Profiler" [scmPath]="scmPath" [checkingExistingSessions]="checkingExistingSessions" [Sessions]="Sessions"></daas-sessions>
+        <daas-sessions [refreshSessions]="refreshSessions" DiagnoserNameLookup="CLR Profiler" [scmPath]="scmPath" [siteToBeDiagnosed]="siteToBeDiagnosed"></daas-sessions>
     </div>
 
 </div>
