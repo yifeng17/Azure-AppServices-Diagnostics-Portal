@@ -42,7 +42,7 @@ export class MainMenuComponent implements OnInit, AfterViewInit, IChatMessageCom
                 this._authService.getStartupInfo().subscribe((startupInfo: StartupInfo) => {
                     let resourceUriParts = this._siteService.parseResourceUri(startupInfo.resourceId);
                     this._appAnalysisService.getDiagnosticProperties(resourceUriParts.subscriptionId, resourceUriParts.resourceGroup, resourceUriParts.siteName, resourceUriParts.slotName).subscribe(data => {
-                        this.AppStack = (data.appStack === "" ? "ASP.Net" : data.appStack);
+                        this.AppStack = (data.appStack && data.appStack === "" ? "ASP.Net" : data.appStack);
                         this.allProblemCategories = this._categoryService.getCategories(site);
                         setTimeout(() => {
                             this.onComplete.emit({ status: true });
