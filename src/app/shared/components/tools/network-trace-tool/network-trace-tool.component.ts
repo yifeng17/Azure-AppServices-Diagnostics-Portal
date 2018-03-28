@@ -33,14 +33,7 @@ export class NetworkTraceToolComponent implements OnInit {
 
         this._siteService.currentSiteMetaData.subscribe(siteInfo => {
             if (siteInfo) {
-
-                let siteInfoMetaData = siteInfo;
-                this.siteToBeDiagnosed = new SiteInfoMetaData();
-
-                this.siteToBeDiagnosed.subscriptionId = siteInfo.subscriptionId;
-                this.siteToBeDiagnosed.resourceGroupName = siteInfo.resourceGroupName;
-                this.siteToBeDiagnosed.siteName = siteInfo.siteName;
-                this.siteToBeDiagnosed.slot = siteInfo.slot;
+                this.siteToBeDiagnosed = siteInfo;
             }
         });
     }
@@ -50,7 +43,8 @@ export class NetworkTraceToolComponent implements OnInit {
 
         this._serverFarmService.siteServerFarm.subscribe(serverFarm => {
             if (serverFarm) {
-                if (serverFarm.sku.tier === "Standard" || serverFarm.sku.tier === "Basic" || serverFarm.sku.tier === "Premium") {
+                // Specifically not checking for Isolated as Network Trace tool is not working on ASE currently
+                if (serverFarm.sku.tier === "Standard" || serverFarm.sku.tier === "Basic" || serverFarm.sku.tier.indexOf("Premium") > -1) {
                     this.supportedTier = true;
                     this.checkingValidity = false;
                 }

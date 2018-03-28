@@ -27,7 +27,7 @@ import { SolutionTypeTagComponent } from './components/solution-type-tag/solutio
 import { GroupByPipe } from './pipes/groupBy.pipe';
 import { MapValuesPipe } from './pipes/mapValues.pipe';
 import { StepWizardComponent } from './components/step-wizard/step-wizard.component';
-import { DaasSessionsComponent } from './components/daas-sessions/daas-sessions.component';
+import { DaasSessionsComponent, DateTimeDiffPipe } from './components/daas-sessions/daas-sessions.component';
 import { WindowService } from './services/window.service';
 import { PortalService } from './services/portal.service';
 import { BroadcastService } from './services/broadcast.service';
@@ -65,14 +65,16 @@ import { NetworkTraceToolComponent } from './components/tools/network-trace-tool
 import { ServiceIncidentService } from './services/service-incident.service';
 import { IncidentSummaryComponent } from './components/incident-summary/incident-summary.component';
 import { DaasValidatorComponent } from './components/daas/daas-validator.component';
+import { DaasSessionsDetailedComponent } from './components/daas-sessions-detailed/daas-sessions-detailed.component';
 
 @NgModule({
     declarations: [
         LimitToFilter,
         nvD3,
-        MarkupPipe,       
+        MarkupPipe,
         GroupByPipe,
         MapValuesPipe,
+        DateTimeDiffPipe,
         BlogComponent,
         OpenTicketComponent,
         DowntimeTimelineComponent,
@@ -106,7 +108,8 @@ import { DaasValidatorComponent } from './components/daas/daas-validator.compone
         ConnectionDiagnoserToolComponent,
         NetworkTraceToolComponent,
         IncidentSummaryComponent,
-        DaasValidatorComponent
+        DaasValidatorComponent,
+        DaasSessionsDetailedComponent
     ],
     imports: [
         HttpModule,
@@ -122,9 +125,10 @@ import { DaasValidatorComponent } from './components/daas/daas-validator.compone
         LimitToFilter,
         RouterModule,
         nvD3,
-        MarkupPipe,      
+        MarkupPipe,
         GroupByPipe,
         MapValuesPipe,
+        DateTimeDiffPipe,
         BlogComponent,
         OpenTicketComponent,
         DowntimeTimelineComponent,
