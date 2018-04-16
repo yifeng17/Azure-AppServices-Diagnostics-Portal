@@ -40,6 +40,7 @@ export class ProblemSolutionComponent implements OnInit {
     @Input() openedFromTicketOpeningFlow: boolean = false;
     @Input() showAppInsights: boolean = false;
     @Input() problemDescription: string;
+    @Input() parentContainer: string;
 
     constructor(private _route: ActivatedRoute, private _router: Router, private _logger: AvailabilityLoggingService, 
         private _detectorViewService: DetectorViewStateService, private _appInightsService: AppInsightsService) {
