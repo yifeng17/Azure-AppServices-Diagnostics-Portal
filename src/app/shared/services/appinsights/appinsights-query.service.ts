@@ -20,19 +20,20 @@ export class AppInsightsQueryService {
 
         let requests = this.appinsightsService.ExecuteQuery(query);
 
-        return this.cache.get(`${startTimeUTC}--${endTimeUTC}`, requests, invalidateCache)
+        return this.cache.get(`AppInsightExceptions-${startTimeUTC}--${endTimeUTC}`, requests, invalidateCache);
     }
 
-    GetTopSlowestDependencies(startTimeUTC: Date, endTimeUTC: Date, dependencyCallCountLowerBound?: number) {
+    GetTopSlowestDependencies(startTimeUTC: string, endTimeUTC: string, recordsLimit: number = 5, invalidateCache: boolean = false) {
 
         let query: string = `
         dependencies
+        | where timestamp >= datetime(${startTimeUTC}) and timestamp <= datetime(${endTimeUTC})  
         | where type != "Ajax"
-        | summarize percentiles(duration, 50), count()  by name 
-        | where count_ > 10
-        | top 5 by percentile_duration_50  desc`;
+        | summarize percentiles(duration, 50), count()  by name, type
+        | top ${recordsLimit} by percentile_duration_50  desc`;
 
-        return this.appinsightsService.ExecuteQuery(query);
+        let requests = this.appinsightsService.ExecuteQuery(query);
+        return this.cache.get(`AppInsightDependencies-${startTimeUTC}--${endTimeUTC}`, requests, invalidateCache);
     }
 
     private isNotNullOrEmpty(item: any): boolean {

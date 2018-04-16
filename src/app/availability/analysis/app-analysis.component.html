@@ -17,7 +17,8 @@
                     <span [@loadingAnimation]="showLoadingMessage ? 'shown' : 'hidden'" class="loading-message">{{loadingMessages[loadingMessageIndex]}}</span>
                 </div>
                 <problem-solution *ngIf="analysisResponse && runtimeAvailabilityResponse" [showAppInsights]="true" [analysisResponseInput]="analysisResponse"
-                    [selectedTimePeriodIndexInput]="selectedTimePeriodIndex" [openedFromTicketOpeningFlow]="bladeOpenedFromSupportTicketFlow" [problemDescription]='problemDescription'>
+                    [selectedTimePeriodIndexInput]="selectedTimePeriodIndex" [openedFromTicketOpeningFlow]="bladeOpenedFromSupportTicketFlow" [problemDescription]='problemDescription'
+                    [parentContainer]="'appanalysis'">
                 </problem-solution>
             </div>
         </div>

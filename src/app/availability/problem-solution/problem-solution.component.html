@@ -46,12 +46,16 @@
             Application Insights
         </div>
         <div class="stepper-description">
-            Application Exceptions that occured during this time period
+            <!-- TODO : This code needs to be refactored in a proper way. -->
+            <div *ngIf="parentContainer === 'appanalysis'">Application Exceptions that occured during this time period</div> 
+            <div *ngIf="parentContainer === 'perfanalysis'">Top Slowest Dependencies during this time period</div> 
         </div>
         <div>
             <div class="stepper-content">
-                <app-insights-exceptions [includeMessage]="!openedFromTicketOpeningFlow" [startTime]="analysisResponse.abnormalTimePeriods[selectedTimePeriodIndex].startTime"
+                <app-insights-exceptions *ngIf="parentContainer === 'appanalysis'" [includeMessage]="!openedFromTicketOpeningFlow" [startTime]="analysisResponse.abnormalTimePeriods[selectedTimePeriodIndex].startTime"
                     [endTime]="analysisResponse.abnormalTimePeriods[selectedTimePeriodIndex].endTime"></app-insights-exceptions>
+                <app-insights-dependencies *ngIf="parentContainer === 'perfanalysis'" [startTime]="analysisResponse.abnormalTimePeriods[selectedTimePeriodIndex].startTime"
+                [endTime]="analysisResponse.abnormalTimePeriods[selectedTimePeriodIndex].endTime"></app-insights-dependencies>
             </div>
         </div>
     </div>

@@ -18,7 +18,6 @@ export class PortalService {
 
         this.startupInfoObservable = new ReplaySubject<StartupInfo>(1);
         this.appInsightsResourceObservable = new ReplaySubject<any>(1);
-
         if (this.inIFrame()) {
             this.initializeIframe();
         }
