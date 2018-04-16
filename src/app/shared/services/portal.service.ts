@@ -18,7 +18,7 @@ export class PortalService {
 
         this.startupInfoObservable = new ReplaySubject<StartupInfo>(1);
         this.appInsightsResourceObservable = new ReplaySubject<any>(1);
-
+        this.appInsightsResourceObservable.next("/subscriptions/ef90e930-9d7f-4a60-8a99-748e0eea69de/resourceGroups/Build2015DemoRG/providers/microsoft.insights/components/BuggyBakery");
         if (this.inIFrame()) {
             this.initializeIframe();
         }

@@ -46,8 +46,10 @@ export class AppInsightsDependenciesComponent implements OnInit, OnChanges {
                 this.loading = true;
                 this.appInsightsService.loadAppInsightsResourceObservable.subscribe(loadStatus => {
                     this.appInsightsQueryService.GetTopSlowestDependencies(this.startTime, this.endTime).subscribe((data: any) => {
-                        let rows = data["Tables"][0]["Rows"];
-                        this.parseRowsIntoDependencies(rows);
+                        if (data && data["Tables"]) {
+                            let rows = data["Tables"][0]["Rows"];
+                            this.parseRowsIntoDependencies(rows);
+                        }
                         this.loading = false;
                     });
                 });
