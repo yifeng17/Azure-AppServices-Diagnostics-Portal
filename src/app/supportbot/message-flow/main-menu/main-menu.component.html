@@ -1,10 +1,10 @@
 <div class="row" style="margin-bottom: 10px;">
     <div class="category-container-header">Select Problem Category</div>
     <div *ngFor="let category of allProblemCategories;let i = index">
-        <collapsible-list [title]="category.Name" [collapsed]="category.Collapsed" *ngIf="(category.Subcategories | toolstack:AppStack | platformfilter:platform).length > 0">
+        <collapsible-list [title]="category.Name" [collapsed]="category.Collapsed" *ngIf="(category.Subcategories | toolstack:AppStack | platformfilter:platform  | apptype:appType).length > 0">
             <collapsible-list-item>
                 <div class="col zoomIn animated category-box" 
-                    *ngFor="let subcategory of category.Subcategories | toolstack:AppStack | platformfilter:platform" [style.background-color]="category.BgColor" [style.color]="category.TextColor"
+                    *ngFor="let subcategory of category.Subcategories | toolstack:AppStack | platformfilter:platform | apptype:appType" [style.background-color]="category.BgColor" [style.color]="category.TextColor"
                     [routerLink]="[subcategory.Href]" (click)="logCategorySelected(subcategory.Name)">
                     <div class="category-content">{{subcategory.Name}}</div>
                 </div>

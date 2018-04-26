@@ -17,6 +17,12 @@ export enum ResourceType {
     HostingEnvironment = 1
 }
 
+export enum AppType
+{
+    WebApp = 1 << 0,
+    FunctionApp = 1 << 1
+}
+
 export interface Event {
     data: Data;
 }
