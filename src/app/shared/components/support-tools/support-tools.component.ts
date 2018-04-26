@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { SupportBladeDefinitions } from '../../models/portal';
+import { SupportBladeDefinitions, ResourceType } from '../../models/portal';
 import { Site, SiteExtensions, OperatingSystem } from '../../models/site';
 import { StartupInfo } from '../../models/portal';
 import { ResponseMessageEnvelope } from '../../models/responsemessageenvelope';
@@ -32,21 +32,23 @@ export class SupportToolsComponent {
         this.premiumTools = [];
 
         this._authService.getStartupInfo()
-            .flatMap((startUpInfo: StartupInfo) => {
-                return this._armService.getResource<Site>(startUpInfo.resourceId);
-            })
-            .flatMap((site: ResponseMessageEnvelope<Site>) => {
-                this.currentSite = site.properties;
-                return this._rbacService.hasPermission(this.currentSite.serverFarmId, [this._rbacService.readScope]);
-            })
-            .subscribe((hasPermission: boolean) => {
-                this.hasReadAccessToServerFarm = hasPermission;
-                //disable for Linux
+            .subscribe((startUpInfo: StartupInfo) => {
+                if (startUpInfo.resourceType === ResourceType.Site) {
+                    this._armService.getResource<Site>(startUpInfo.resourceId)
+                        .flatMap((site: ResponseMessageEnvelope<Site>) => {
+                            this.currentSite = site.properties;
+                            return this._rbacService.hasPermission(this.currentSite.serverFarmId, [this._rbacService.readScope]);
+                        })
+                        .subscribe((hasPermission: boolean) => {
+                            this.hasReadAccessToServerFarm = hasPermission;
+                            //disable for Linux
 
-                if (SiteExtensions.operatingSystem(this.currentSite) === OperatingSystem.windows) {
-                    this.initialize();
+                            if (SiteExtensions.operatingSystem(this.currentSite) === OperatingSystem.windows) {
+                                this.initialize();
+                            }
+                        })
                 }
-            })
+            });
     }
 
     initialize() {

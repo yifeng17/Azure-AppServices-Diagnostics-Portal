@@ -1,13 +1,15 @@
-import {Http, Headers} from '@angular/http';
-import {Injectable} from '@angular/core';
-import {Observable, ReplaySubject} from 'rxjs/Rx';
-import {StartupInfo} from '../models/portal';
+import { Http, Headers } from '@angular/http';
+import { Injectable } from '@angular/core';
+import { Observable, ReplaySubject } from 'rxjs/Rx';
+import { StartupInfo, ResourceType } from '../models/portal';
 import { PortalService } from './portal.service';
 
 @Injectable()
 export class AuthService {
     public inIFrame: boolean;
     private currentToken: string;
+
+    public resourceType: ResourceType;
 
     constructor(private _http: Http, private _portalService: PortalService) {
         this.inIFrame = window.parent !== window;
@@ -22,18 +24,28 @@ export class AuthService {
         this.currentToken = value;
     }
 
-    getStartupInfo(){
+    getStartupInfo(): Observable<StartupInfo> {
+        let startupInfo: Observable<StartupInfo>;
         if (this.inIFrame) {
-            return this._portalService.getStartupInfo();
+            startupInfo = this._portalService.getStartupInfo();
         } else {
-            return Observable.of<StartupInfo>(
+            startupInfo = Observable.of<StartupInfo>(
                 <StartupInfo>{
-                    sessionId : null,
-                    token : "<TOKEN>",
-                    subscriptions : null,
+                    sessionId: null,
+                    token: "<TOKEN>",
+                    subscriptions: null,
                     resourceId: ""
                 }
             )
         }
+
+        return startupInfo.map(info => {
+            if (!this.resourceType) {
+                this.resourceType = info.resourceId.toLowerCase().indexOf('hostingenvironments') > 0 ? ResourceType.HostingEnvironment : ResourceType.Site;
+            }
+
+            info.resourceType = this.resourceType;
+            return info;
+        });
     }
 }

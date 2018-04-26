@@ -52,6 +52,7 @@ export class MetaDataHelper {
             }
 
             let siteDaasInfo: SiteDaasInfo = {
+                resourceUri: '',
                 subscriptionId: MetaDataHelper.getValueForName(metaData[0], 'subscriptionid'),
                 resourceGroupName: MetaDataHelper.getValueForName(metaData[0], 'resourcegroup'), 
                 siteName: siteName,
@@ -66,6 +67,7 @@ export class MetaDataHelper {
     static getRestartData(metaData: INameValuePair[][]): ApplicationRestartInfo {
         if(metaData.length > 0) {
             let restartInfo: ApplicationRestartInfo = {
+                resourceUri: '',
                 subscriptionId: MetaDataHelper.getValueForName(metaData[0], 'subscriptionid'),
                 resourceGroupName: MetaDataHelper.getValueForName(metaData[0], 'resourcegroup'), 
                 siteName: MetaDataHelper.getValueForName(metaData[0], 'sitename'),

@@ -4,6 +4,8 @@ import { OperatingSystem, SiteExtensions } from '../../shared/models/site';
 import { WindowService } from '../../shared/services/window.service';
 import { SiteService } from '../../shared/services/site.service';
 import { LoggingService } from '../../shared/services/logging/logging.service';
+import { AuthService } from '../../shared/services/auth.service';
+import { ResourceType } from '../../shared/models/portal';
 
 @Component({
     selector: 'home-page',
@@ -13,28 +15,40 @@ export class HomepageComponent implements OnInit {
 
     public listCollection: any;
     public toolsContainerHeight: number;
+    public isSite: boolean;
 
-    constructor(private _windowService: WindowService, private _siteService: SiteService, private _logger: LoggingService) {
+    constructor(private _windowService: WindowService, private _siteService: SiteService, private _logger: LoggingService, private _authService: AuthService) {
         this.listCollection = [];
         this.toolsContainerHeight = 0;
     }
 
     ngOnInit(): void {
-        this._siteService.currentSite.subscribe(site => {
-            if (site) {
-                if (SiteExtensions.operatingSystem(site) == OperatingSystem.linux) {
-                    this.listCollection.push(this._getLinuxFAQItems());
-                    this.listCollection.push(this._getLinuxResourceCenterItems());
-                } else {
-                    this.listCollection.push(this._getFAQItems());
-                    this.listCollection.push(this._getResourceCenterItems());
+        this.isSite = this._authService.resourceType === ResourceType.Site;
+        if (this.isSite) {
+            this.isSite = true;
+            this._siteService.currentSite.subscribe(site => {
+                if (site) {
+                    if (SiteExtensions.operatingSystem(site) == OperatingSystem.linux) {
+                        this.listCollection.push(this._getLinuxFAQItems());
+                        this.listCollection.push(this._getLinuxResourceCenterItems());
+                    } else {
+                        this.listCollection.push(this._getFAQItems());
+                        this.listCollection.push(this._getResourceCenterItems());
+                    }
+
+                    this.listCollection.push(this._getCommunityItems());
+                    this.listCollection.push(this._getRecentUpdateItems());
+                    this.listCollection.push(this._getContributeItems());
                 }
-    
-                this.listCollection.push(this._getCommunityItems());
-                this.listCollection.push(this._getRecentUpdateItems());
-                this.listCollection.push(this._getContributeItems());
-            }
-        });
+            });
+        }
+        else {
+            this.listCollection.push(this._getAseFAQItems());
+            this.listCollection.push(this._getAseResourceCenterItems());
+            this.listCollection.push(this._getCommunityItems());
+            this.listCollection.push(this._getRecentUpdateItems());
+            this.listCollection.push(this._getContributeItems());
+        }
 
         this.toolsContainerHeight = this._windowService.window.innerHeight - 60;
     }
@@ -93,6 +107,26 @@ export class HomepageComponent implements OnInit {
         }
     }
 
+    private _getAseResourceCenterItems() {
+        return {
+            title: 'Resource Center',
+            collapsed: false,
+            items: [{
+                title: 'About App Service Environment',
+                href: 'https://goo.gl/US7t2c'
+            }, {
+                title: 'About Network Architecture',
+                href: 'https://goo.gl/JZtp7r'
+            }, {
+                title: 'High Scale Scenarios with ASE',
+                href: 'https://goo.gl/Yzg665'
+            }, {
+                title: 'Integrate with Application Gateway',
+                href: 'https://goo.gl/QeMoa4'
+            }]
+        }
+    }
+
     private _getFAQItems() {
         return {
             title: 'FAQs',
@@ -120,6 +154,26 @@ export class HomepageComponent implements OnInit {
             items: [{
                 title: 'Azure App Service on Linux FAQ',
                 href: 'https://goo.gl/Mu1LCE'
+            }]
+        }
+    }
+
+    private _getAseFAQItems() {
+        return {
+            title: 'FAQs',
+            collapsed: false,
+            items: [{
+                title: 'How scaling works',
+                href: 'https://goo.gl/47k12h'
+            }, {
+                title: 'Integrate with a WAF',
+                href: 'https://goo.gl/GcDu9C'
+            }, {
+                title: 'Azure Virtual Network FAQ',
+                href: 'https://goo.gl/5ut2JM'
+            }, {
+                title: 'More info about Network Security Groups',
+                href: 'https://goo.gl/5jw7tc'
             }]
         }
     }

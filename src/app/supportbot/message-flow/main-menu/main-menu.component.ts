@@ -10,7 +10,7 @@ import { CategoriesService } from '../../../shared/services/categories.service';
 import { Category, Subcategory } from '../../../shared/models/problem-category';
 import { AppAnalysisService } from '../../../shared/services/appanalysis.service';
 import { AuthService } from '../../../shared/services/auth.service';
-import { StartupInfo } from '../../../shared/models/portal';
+import { StartupInfo, ResourceType } from '../../../shared/models/portal';
 import { IDiagnosticProperties } from '../../../shared/models/diagnosticproperties';
 
 @Component({
@@ -23,9 +23,9 @@ import { IDiagnosticProperties } from '../../../shared/models/diagnosticproperti
 export class MainMenuComponent implements OnInit, AfterViewInit, IChatMessageComponent {
 
     allProblemCategories: Category[] = [];
-    AppStack: string = "";    
-    platform: OperatingSystem;
-    showToolsDropdown:boolean = false;
+    AppStack: string = "";
+    platform: OperatingSystem = OperatingSystem.any;
+    showToolsDropdown: boolean = false;
 
     @Output() onViewUpdate = new EventEmitter();
     @Output() onComplete = new EventEmitter<{ status: boolean, data?: any }>();
@@ -38,22 +38,34 @@ export class MainMenuComponent implements OnInit, AfterViewInit, IChatMessageCom
 
     ngOnInit(): void {
 
-        this._siteService.currentSite.subscribe(site => {
-            if (site) {
-                
-                this._authService.getStartupInfo().subscribe((startupInfo: StartupInfo) => {
-                    let resourceUriParts = this._siteService.parseResourceUri(startupInfo.resourceId);
-                    this._appAnalysisService.getDiagnosticProperties(resourceUriParts.subscriptionId, resourceUriParts.resourceGroup, resourceUriParts.siteName, resourceUriParts.slotName).subscribe((data: IDiagnosticProperties) => {
-                        this.AppStack = data && data.appStack && data.appStack != "" ? data.appStack : "ASP.Net";
-                        this.platform = data && data.isLinux ? OperatingSystem.linux: OperatingSystem.windows; 
-                        this.allProblemCategories = this._categoryService.getCategories();
-                        setTimeout(() => {
-                            this.onComplete.emit({ status: true });
-                        }, 300);
+        if (this._authService.resourceType == ResourceType.Site) {
+            this._siteService.currentSite.subscribe(site => {
+                if (site) {
+
+                    this._authService.getStartupInfo().subscribe((startupInfo: StartupInfo) => {
+                        let resourceUriParts = this._siteService.parseResourceUri(startupInfo.resourceId);
+                        this._appAnalysisService.getDiagnosticProperties(resourceUriParts.subscriptionId, resourceUriParts.resourceGroup, resourceUriParts.siteName, resourceUriParts.slotName).subscribe((data: IDiagnosticProperties) => {
+                            this.AppStack = data && data.appStack && data.appStack != "" ? data.appStack : "ASP.Net";
+                            this.platform = data && data.isLinux ? OperatingSystem.linux : OperatingSystem.windows;
+                            this._categoryService.Categories.subscribe(categories => {
+                                this.allProblemCategories = categories;
+                            })
+                            setTimeout(() => {
+                                this.onComplete.emit({ status: true });
+                            }, 2000);
+                        });
                     });
-                });
-            }
-        });
+                }
+            });
+        }
+        else {
+            this._categoryService.Categories.subscribe(categories => {
+                this.allProblemCategories = categories;
+                setTimeout(() => {
+                    this.onComplete.emit({ status: true });
+                }, 300);
+            });
+        }
     }
 
     logCategorySelected(name: string) {
@@ -64,20 +76,20 @@ export class MainMenuComponent implements OnInit, AfterViewInit, IChatMessageCom
         this.onViewUpdate.emit();
     }
 
-    onStackChanged(stack: string) {       
+    onStackChanged(stack: string) {
         this.AppStack = stack;
         this.showToolsDropdown = false;
     }
 }
 
-@Pipe({name: 'toolstack'})
+@Pipe({ name: 'toolstack' })
 export class ToolStackPipe implements PipeTransform {
     transform(subcategories: Subcategory[], stack: string): Subcategory[] {
         return subcategories.filter(x => (x.AppStack === "" || x.AppStack.toLowerCase().indexOf(stack.toLowerCase()) > -1))
     }
 }
 
-@Pipe({name: 'platformfilter'})
+@Pipe({ name: 'platformfilter' })
 export class PlatformPipe implements PipeTransform {
     transform(subcategories: Subcategory[], platform: OperatingSystem): Subcategory[] {
         return subcategories.filter(x => x.OperatingSystem & platform)

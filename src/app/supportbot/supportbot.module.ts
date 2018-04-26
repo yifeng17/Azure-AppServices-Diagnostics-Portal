@@ -28,6 +28,8 @@ import { AppInsightsSettingsComponent } from '../availability/app-insights/app-i
 
 const _siteResourceUrl: string = 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/sites/:sitename';
 const _slotResourceUrl: string = 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/sites/:sitename/slots/:slot';
+const _hostingEnvironmentResourceUrl: string = 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/hostingenvironments/:name';
+
 
 @NgModule({
     declarations: [
@@ -58,6 +60,14 @@ const _slotResourceUrl: string = 'subscriptions/:subscriptionid/resourcegroups/:
             },
             {
                 path: _slotResourceUrl + '/diagnostics',
+                component: HomepageComponent,
+                data: {
+                    navigationTitle: 'Home',
+                    cacheComponent: true
+                }
+            },
+            {
+                path: _hostingEnvironmentResourceUrl + '/diagnostics',
                 component: HomepageComponent,
                 data: {
                     navigationTitle: 'Home',

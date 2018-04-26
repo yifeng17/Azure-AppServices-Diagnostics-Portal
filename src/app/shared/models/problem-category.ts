@@ -5,6 +5,8 @@ export class Category
     Name:string;
     Subcategories: Subcategory[]
     Collapsed: boolean = true;
+    BgColor: string;
+    TextColor: string;
 }
 
 export class Subcategory

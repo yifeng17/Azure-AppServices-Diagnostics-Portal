@@ -1,4 +1,4 @@
-import { Route } from '@angular/router';
+import { Route, Resolve, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
 import { AvailabilityComponent } from './availability.component';
 import { AppAnalysisComponent } from './analysis/app-analysis.component';
@@ -21,9 +21,14 @@ import { NetworkTraceToolComponent } from '../shared/components/tools/network-tr
 import { IncidentSummaryComponent } from '../shared/components/incident-summary/incident-summary.component';
 import { ToolNames } from '../shared/models/tools-constants';
 import { DaasSessionsDetailedComponent } from '../shared/components/daas-sessions-detailed/daas-sessions-detailed.component';
+import { GenericDetectorComponent } from './generic-detector/generic-detector.component';
+import { Injectable } from '@angular/core';
+import { GenericApiService } from '../shared/services/generic-api.service';
+import { TabTitleResolver } from '../shared/resolvers/tab-name.resolver';
 
 const _siteResourceUrl: string = 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/sites/:sitename';
 const _slotResourceUrl: string = 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/sites/:sitename/slots/:slot';
+const _hostingEnvironmentResourceUrl: string = 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/hostingenvironments/:name';
 
 const AvailabilityCommonRouteConfig: Route[] = [
     {
@@ -70,6 +75,30 @@ export const AvailabilityAndPerformanceCategoryRouteConfig: Route[] = [
     See issue : https://github.com/angular/angular/issues/13869 
     */
 
+   {
+        path: _siteResourceUrl + '/detectors/:detectorName',
+        component: GenericDetectorComponent,
+        resolve: {
+            navigationTitle: TabTitleResolver
+        },
+        data: {
+            cacheComponent: true
+        }
+    },
+    {
+        path: _slotResourceUrl + '/detectors/:detectorName',
+        component: GenericDetectorComponent,
+        data: {
+            cacheComponent: true
+        }
+    },
+    {
+        path: _hostingEnvironmentResourceUrl + '/detectors/:detectorName',
+        component: GenericDetectorComponent,
+        data: {
+            cacheComponent: true
+        }
+    },
     // Web App Error Analysis
     {
         path: _siteResourceUrl + '/diagnostics/availability/analysis',

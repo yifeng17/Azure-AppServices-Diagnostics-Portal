@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
-import { StartupInfo } from '../models/portal';
+import { StartupInfo, ResourceType } from '../models/portal';
 import { Site, SiteInfoMetaData } from '../models/site'
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { ResponseMessageEnvelope } from '../models/responsemessageenvelope';
@@ -25,12 +25,14 @@ export class SiteService {
     public currentSiteStatic: Site;
 
     constructor(private _armClient: ArmService, private _authService: AuthService, private _http: Http, private _uriElementsService: UriElementsService, private _serverFarmService: ServerFarmDataService) {
-        this._authService.getStartupInfo().flatMap((startUpInfo: StartupInfo) => {
+        this._authService.getStartupInfo().subscribe((startUpInfo: StartupInfo) => {
             this._populateSiteInfo(startUpInfo.resourceId);
-            return this._armClient.getResource<Site>(startUpInfo.resourceId);
-        }).subscribe((site: ResponseMessageEnvelope<Site>) => {
-            this.currentSiteStatic = site.properties;
-            this.currentSite.next(site.properties);
+            if (startUpInfo.resourceType === ResourceType.Site) {
+                this._armClient.getResource<Site>(startUpInfo.resourceId).subscribe((site: ResponseMessageEnvelope<Site>) => {
+                    this.currentSiteStatic = site.properties;
+                    this.currentSite.next(site.properties);
+                });
+            }
         });
     }
 
@@ -166,6 +168,7 @@ export class SiteService {
     private _populateSiteInfo(resourceId: string): void {
         let pieces = resourceId.toLowerCase().split('/');
         this.currentSiteMetaData.next(<SiteInfoMetaData>{
+            resourceUri: resourceId,
             subscriptionId: pieces[pieces.indexOf('subscriptions') + 1],
             resourceGroupName: pieces[pieces.indexOf('resourcegroups') + 1],
             siteName: pieces[pieces.indexOf('sites') + 1],

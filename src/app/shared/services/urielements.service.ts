@@ -6,6 +6,7 @@ import { SiteInfoMetaData } from '../models/site';
 export class UriElementsService {
     private _resourceProviderPrefix: string = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Web/";
     private _siteResource = this._resourceProviderPrefix + "sites/{siteName}";
+    private _hostingEnvironmentResource = this._resourceProviderPrefix + "hostingEnvironments/{name}";
     private _slotResource = "/slots/{slot}";
 
     private _siteRestartUrlFormat: string = "/restart";
@@ -146,6 +147,23 @@ export class UriElementsService {
             this._getQueryParams(startTime, endTime);
     }
 
+    getHostingEnvironmentAnalysisResourceUrl(subscriptionId: string, resourceGroup: string, name: string, diagnosticCategory: string, analysisName: string, startTime: string = '', endTime: string = ''): string {
+        return this._getHostingEnvironmentResourceUrl(subscriptionId, resourceGroup, name) +
+            this._analysisResourceFormat.replace("{diagnosticCategory}", diagnosticCategory).replace("{analysisName}", analysisName) +
+            this._getQueryParams(startTime, endTime);
+    }
+
+    getHostingEnvironmentDetectorsUrl(subscriptionId: string, resourceGroup: string, name: string, diagnosticCategory: string): string {
+        return this._getHostingEnvironmentResourceUrl(subscriptionId, resourceGroup, name) + 
+               this._detectorsUrlFormat.replace("{diagnosticCategory}", diagnosticCategory);
+    }
+
+    getHostingEnvironmentDetectorResourceUrl(subscriptionId: string, resourceGroup: string, name: string, diagnosticCategory: string, detectorName: string, startTime: string = '', endTime: string = ''): string {
+        return this._getHostingEnvironmentResourceUrl(subscriptionId, resourceGroup, name) +
+            this._detectorResourceFormat.replace("{diagnosticCategory}", diagnosticCategory).replace("{detectorName}", detectorName) +
+            this._getQueryParams(startTime, endTime);
+    }
+
     getDiagnosticPropertiesUrl(subscriptionId: string, resourceGroup: string, siteName: string, slot: string = ''): string {
         return this._getSiteResourceUrl(subscriptionId, resourceGroup, siteName, slot) + this._diagnosticProperties;
     }
@@ -168,6 +186,12 @@ export class UriElementsService {
         }
 
         return url;
+    };
+
+    private _getHostingEnvironmentResourceUrl(subscriptionId: string, resourceGroup: string, name: string) {
+        return this._hostingEnvironmentResource.replace("{subscriptionId}", subscriptionId)
+            .replace("{resourceGroup}", resourceGroup)
+            .replace("{name}", name);
     };
 
     private _getQueryParams(startTime: string, endTime: string): string {

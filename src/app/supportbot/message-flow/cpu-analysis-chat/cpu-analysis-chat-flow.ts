@@ -14,6 +14,8 @@ import { SiteInfoMetaData } from '../../../shared/models/site';
 import { AppAnalysisService } from '../../../shared/services/appanalysis.service';
 import { SiteService } from '../../../shared/services/site.service';
 import { MessageSender, ButtonActionType } from '../../models/message-enums';
+import { AuthService } from '../../../shared/services/auth.service';
+import { ResourceType } from '../../../shared/models/portal';
 
 
 @Injectable()
@@ -30,7 +32,7 @@ export class CpuAnalysisChatFlow implements IMessageFlowProvider {
     private graphData: GraphMessageData = {
         detectorMetricsTitle: "Overall CPU Usage per Instance",
         detectorMetricsDescription: "This graphs shows the total CPU usage on each of the instances where your application is running. " +
-        "Below you can look at a specific instance and see how much CPU each app is consuming.",
+            "Below you can look at a specific instance and see how much CPU each app is consuming.",
         instanceDetailTitle: "App CPU Usage Breakdown",
         instanceDetailDescription: "This shows the average CPU usage, in percent out of 100, for each application in the given time window.",
         detectorMetrics: new BehaviorSubject(null),
@@ -38,13 +40,15 @@ export class CpuAnalysisChatFlow implements IMessageFlowProvider {
     }
 
 
-    constructor(private _appAnalysisService: AppAnalysisService, private _siteService: SiteService) {
-        this._siteService.currentSiteMetaData.subscribe(siteInfo => {
-            if (siteInfo) {
-                this.siteInfoMetaData = siteInfo;
-                this._getCpuDetectorResponse();
-            }
-        });
+    constructor(private _appAnalysisService: AppAnalysisService, private _siteService: SiteService, private _authService: AuthService) {
+        if (this._authService.resourceType === ResourceType.Site) {
+            this._siteService.currentSiteMetaData.subscribe(siteInfo => {
+                if (siteInfo) {
+                    this.siteInfoMetaData = siteInfo;
+                    this._getCpuDetectorResponse();
+                }
+            });
+        }
     }
 
     GetMessageFlowList(): MessageGroup[] {

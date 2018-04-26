@@ -24,6 +24,7 @@ export class SupportBotComponent implements OnInit {
     resourceGroup: string;
     siteName: string;
     slotName: string;
+    hostingEnvironmentName: string;
 
     constructor(private _messageProcessor: MessageProcessor, private _route: ActivatedRoute, private _analysisService: AppAnalysisService, private _windowService: WindowService) {
         this.messages = [];
@@ -37,6 +38,7 @@ export class SupportBotComponent implements OnInit {
         this.resourceGroup = this._route.snapshot.params['resourcegroup'];
         this.siteName = this._route.snapshot.params['sitename'];
         this.slotName = this._route.snapshot.params['slot'] ? this._route.snapshot.params['slot'] : '';
+        this.hostingEnvironmentName = this._route.snapshot.params['name'];
         this.chatContainerHeight = this._windowService.window.innerHeight - 60;
 
         this.getMessage();
@@ -79,9 +81,11 @@ export class SupportBotComponent implements OnInit {
 
         var analysisList = ["appanalysis", "perfanalysis"]
         var result: Observable<IAppAnalysisResponse>[] = [];
-        analysisList.forEach((item) => {
-            result.push(this._analysisService.getAnalysisResource(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, 'availability', item));
-        });
+        if(this.siteName && this.siteName != '') {
+            analysisList.forEach((item) => {
+                result.push(this._analysisService.getAnalysisResource(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, 'availability', item));
+            });
+        }
 
         return result;
     }

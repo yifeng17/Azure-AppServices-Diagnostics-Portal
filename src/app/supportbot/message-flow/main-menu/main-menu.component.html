@@ -4,7 +4,7 @@
         <collapsible-list [title]="category.Name" [collapsed]="category.Collapsed" *ngIf="(category.Subcategories | toolstack:AppStack | platformfilter:platform).length > 0">
             <collapsible-list-item>
                 <div class="col zoomIn animated category-box" 
-                    *ngFor="let subcategory of category.Subcategories | toolstack:AppStack | platformfilter:platform" [style.background-color]="subcategory.BgColor" [style.color]="subcategory.TextColor"
+                    *ngFor="let subcategory of category.Subcategories | toolstack:AppStack | platformfilter:platform" [style.background-color]="category.BgColor" [style.color]="category.TextColor"
                     [routerLink]="[subcategory.Href]" (click)="logCategorySelected(subcategory.Name)">
                     <div class="category-content">{{subcategory.Name}}</div>
                 </div>

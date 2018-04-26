@@ -3,6 +3,7 @@ import { RouterModule } from '@angular/router';
 import { SharedModule } from '../shared/shared.module';
 import { SolutionsModule } from '../solutions/solutions.module';
 import { MyDatePickerModule } from 'mydatepicker';
+import { DiagnosticDataModule } from 'applens-diagnostics';
 
 import { AvailabilityComponent } from './availability.component';
 import { AppCurrentHealthComponent } from './currenthealth/app-current-health.component';
@@ -38,6 +39,7 @@ import { AppInsightsDependenciesComponent } from './app-insights/dependencies/ap
 
 import { TcpConnectionsAnalysisComponent } from './analysis/tcpconnectionsanalysis/tcp-connections-analysis.component';
 import { ProblemSolutionComponent } from './problem-solution/problem-solution.component';
+import { GenericDetectorComponent } from './generic-detector/generic-detector.component';
 
 @NgModule({
     declarations: [
@@ -71,10 +73,12 @@ import { ProblemSolutionComponent } from './problem-solution/problem-solution.co
         AppInsightsSettingsComponent,
         AppInsightsExceptionsComponent,
         AppInsightsDependenciesComponent,
-        ProblemSolutionComponent
+        ProblemSolutionComponent,
+        GenericDetectorComponent
     ],
     imports: [
         RouterModule.forChild(AvailabilityAndPerformanceCategoryRouteConfig),
+        DiagnosticDataModule,
         SharedModule,
         MyDatePickerModule,
         SolutionsModule

@@ -9,6 +9,12 @@ export interface StartupInfo {
     source?: string;
     supportTopicId?: string;
     workflowId?: string; 
+    resourceType:ResourceType;
+}
+
+export enum ResourceType {
+    Site = 0,
+    HostingEnvironment = 1
 }
 
 export interface Event {

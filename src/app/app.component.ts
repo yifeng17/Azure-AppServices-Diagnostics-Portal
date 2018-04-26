@@ -15,15 +15,6 @@ export class AppComponent implements OnInit {
     public navigationItems: INavigationItem[];
     public contentMaxHeight: number;
 
-    // Allowed List of subscriptions for home page.
-    private allowedSubscriptions: string[] = [
-        "85de1cc4-8496-4138-8108-ca05d5822468", // antps01
-        "1402be24-4f35-4ab7-a212-2cd496ebdf14", // antps05
-        "079ae74b-9689-40ac-8ec1-64ec0ef64562",  // antps20
-        "0542bd5e-4c49-4e12-8976-8a3c92b0e05f", // antps28,
-        "ef90e930-9d7f-4a60-8a99-748e0eea69de" // AntaresDemo
-    ];
-
     constructor(private _authService: AuthService, private _router: Router, private _activatedRoute: ActivatedRoute, private _windowService: WindowService, private _logger: LoggingService) {
         this.navigationItems = [];
         this.contentMaxHeight = 0;

@@ -22,7 +22,7 @@
 .list-items-container{
     margin-left:10px;
 }
-.list-item{
+.list-item > a {
     cursor:pointer;
     color:#3999c6;
 }

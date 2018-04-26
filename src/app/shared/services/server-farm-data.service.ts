@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Site } from '../../shared/models/site';
 import { ServerFarm } from '../../shared/models/server-farm';
-import { StartupInfo } from '../../shared/models/portal';
+import { StartupInfo, ResourceType } from '../../shared/models/portal';
 
 import { ResponseMessageEnvelope } from '../models/responsemessageenvelope';
 import { Observable } from 'rxjs/Observable';
@@ -29,27 +29,30 @@ export class ServerFarmDataService {
 
     constructor(private _armService: ArmService, private _uriElementsService: UriElementsService, private _authService: AuthService,
         private _rbacService: RBACService) {
-        this._authService.getStartupInfo()
-            .flatMap((startUpInfo: StartupInfo) => {
-                this.siteResourceId = startUpInfo.resourceId;
-                return this._armService.getResource<Site>(this.siteResourceId);
-            })
-            .flatMap((site: ResponseMessageEnvelope<Site>) => {
-                this.currentSite = site.properties;
-                return this._rbacService.hasPermission(this.currentSite.serverFarmId, [this._rbacService.readScope]);
-            })
-            .flatMap((hasPermission: boolean) => {
-                this.hasServerFarmAccess.next(hasPermission);
-                return this._armService.getResourceWithoutEnvelope<ServerFarm>(this.currentSite.serverFarmId);
-            })
-            .flatMap((serverFarm: ServerFarm) => {
-                serverFarm = this.addAdditionalProperties(serverFarm);
-                this.siteServerFarm.next(serverFarm);
-                return this._armService.getResourceCollection<Site>(serverFarm.id + "/sites");
-            })
-            .subscribe((sites: ResponseMessageEnvelope<Site>[]) => {
-                this.sitesInServerFarm.next(sites.map(env => env.properties));
-            });
+        if (this._authService.resourceType === ResourceType.Site) {
+            this._authService.getStartupInfo()
+                .flatMap((startUpInfo: StartupInfo) => {
+                    this.siteResourceId = startUpInfo.resourceId;
+                    return this._armService.getResource<Site>(this.siteResourceId);
+                })
+                .flatMap((site: ResponseMessageEnvelope<Site>) => {
+                    this.currentSite = site.properties;
+                    return this._rbacService.hasPermission(this.currentSite.serverFarmId, [this._rbacService.readScope]);
+                })
+                .flatMap((hasPermission: boolean) => {
+                    this.hasServerFarmAccess.next(hasPermission);
+                    return this._armService.getResourceWithoutEnvelope<ServerFarm>(this.currentSite.serverFarmId);
+                })
+                .flatMap((serverFarm: ServerFarm) => {
+                    serverFarm = this.addAdditionalProperties(serverFarm);
+                    this.siteServerFarm.next(serverFarm);
+                    return this._armService.getResourceCollection<Site>(serverFarm.id + "/sites");
+                })
+                .subscribe((sites: ResponseMessageEnvelope<Site>[]) => {
+                    this.sitesInServerFarm.next(sites.map(env => env.properties));
+                });
+        }
+
     }
 
     public getSiteServerFarm() {

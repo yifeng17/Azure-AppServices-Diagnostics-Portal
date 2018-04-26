@@ -6,6 +6,7 @@
     display: inline-block;
     margin: 10px;
     vertical-align: top;
+    cursor: pointer;
 }
 
 .area {

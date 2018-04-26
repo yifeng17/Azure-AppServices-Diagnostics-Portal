@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, Response, Request } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
-import { StartupInfo } from '../../../shared/models/portal';
+import { StartupInfo, ResourceType } from '../../../shared/models/portal';
 import { ArmObj } from '../../../shared/models/armObj';
 import { Verbs } from '../../../shared/models/portal';
 import { Site } from '../../../shared/models/site';
@@ -44,11 +44,12 @@ export class AppInsightsService {
         this.applicationInsightsValidForApp = new BehaviorSubject<boolean>(null);
 
         this.authService.getStartupInfo().subscribe((startupInfo: StartupInfo) => {
-            this.postCommandToGetAIResource(startupInfo.resourceId);
+            if (startupInfo.resourceType === ResourceType.Site) {
+                this.postCommandToGetAIResource(startupInfo.resourceId);
 
-            let resourceUriParts = siteService.parseResourceUri(startupInfo.resourceId);
-            this.loadAppInsightsSettings(resourceUriParts.subscriptionId, resourceUriParts.resourceGroup, resourceUriParts.siteName, resourceUriParts.slotName);
-
+                let resourceUriParts = siteService.parseResourceUri(startupInfo.resourceId);
+                this.loadAppInsightsSettings(resourceUriParts.subscriptionId, resourceUriParts.resourceGroup, resourceUriParts.siteName, resourceUriParts.slotName);
+            }
         });
     }
 

@@ -38,22 +38,25 @@ export class LoggingService {
                 this._resourceGroup = resourceGroupIndex !== -1 ? parts[resourceGroupIndex + 1] : '';
 
                 let siteIndex = parts.indexOf('sites');
-                this._resourceName = siteIndex !== -1 ? parts[siteIndex + 1] : '';
+                let hostingEnvironmentIndex = parts.indexOf('hostingenvironments');
+                this._resourceName = siteIndex !== -1 ? parts[siteIndex + 1] : hostingEnvironmentIndex !== -1 ? parts[hostingEnvironmentIndex + 1] : '';
 
                 let providerIndex = parts.indexOf('providers');
                 this._resourceType = providerIndex !== -1 ? parts[providerIndex + 1] + '/' + parts[providerIndex + 2] : '';
 
-                this._armServiceInstance.getResource<IDiagnosticProperties>(this._startUpInfo.resourceId + '/diagnostics/properties').subscribe((envelope: ResponseMessageEnvelope<IDiagnosticProperties>) => {
-                    if (envelope && envelope.properties) {
-                        this.appStackInfo = envelope.properties.appStack;
-                    }
-                });
+                if (siteIndex !== -1) {
+                    this._armServiceInstance.getResource<IDiagnosticProperties>(this._startUpInfo.resourceId + '/diagnostics/properties').subscribe((envelope: ResponseMessageEnvelope<IDiagnosticProperties>) => {
+                        if (envelope && envelope.properties) {
+                            this.appStackInfo = envelope.properties.appStack;
+                        }
+                    });
 
-                this._armServiceInstance.getResource<Site>(this._startUpInfo.resourceId).subscribe((site: ResponseMessageEnvelope<Site>) => {
-                    if (site && site.properties) {
-                        this.platform = SiteExtensions.operatingSystem(site.properties) === OperatingSystem.windows ? 'windows' : 'linux';
-                    }
-                });
+                    this._armServiceInstance.getResource<Site>(this._startUpInfo.resourceId).subscribe((site: ResponseMessageEnvelope<Site>) => {
+                        if (site && site.properties) {
+                            this.platform = SiteExtensions.operatingSystem(site.properties) === OperatingSystem.windows ? 'windows' : 'linux';
+                        }
+                    });
+                }
             }
 
             if (this._startUpInfo) {

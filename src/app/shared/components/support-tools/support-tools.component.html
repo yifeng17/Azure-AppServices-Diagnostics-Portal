@@ -3,12 +3,12 @@
         Performance Monitor Metrics have moved to Azure Monitor. Find them under the <i>Performance Counters</i> link below.
     </div>
     <collapsible-list-item *ngFor="let item of supportTools" [disabled]="!item.enabled" (onSelect)="item.action()" [marginTop]="10">
-        {{item.title}}
+        <a>{{item.title}}</a>
     </collapsible-list-item>
 </collapsible-list>
 
 <collapsible-list *ngIf="initialized" [title]="'Premium Tools'" [collapsed]="true">
     <collapsible-list-item *ngFor="let item of premiumTools" [disabled]="!item.enabled" (onSelect)="item.action()" [marginTop]="10">
-        {{item.title}}
+        <a>{{item.title}}</a>
     </collapsible-list-item>
 </collapsible-list>
