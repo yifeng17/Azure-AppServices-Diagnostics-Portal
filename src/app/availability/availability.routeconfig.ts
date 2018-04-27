@@ -88,6 +88,9 @@ export const AvailabilityAndPerformanceCategoryRouteConfig: Route[] = [
     {
         path: _slotResourceUrl + '/detectors/:detectorName',
         component: GenericDetectorComponent,
+        resolve: {
+            navigationTitle: TabTitleResolver
+        },
         data: {
             cacheComponent: true
         }
@@ -95,6 +98,9 @@ export const AvailabilityAndPerformanceCategoryRouteConfig: Route[] = [
     {
         path: _hostingEnvironmentResourceUrl + '/detectors/:detectorName',
         component: GenericDetectorComponent,
+        resolve: {
+            navigationTitle: TabTitleResolver
+        },
         data: {
             cacheComponent: true
         }

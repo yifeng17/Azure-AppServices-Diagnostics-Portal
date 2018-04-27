@@ -38,11 +38,7 @@ export class CategoriesService {
             let resourceId = info.resourceId.toLowerCase().split('/');
             let sub = resourceId[resourceId.indexOf('subscriptions') + 1];
 
-            if (DemoSubscriptions.betaSubscriptions.indexOf(sub) >= 0) {
-                if (info.resourceType === ResourceType.Site) {
-
-                }
-                
+            if (DemoSubscriptions.betaSubscriptions.indexOf(sub) >= 0) {                
                 this._genericApiService.getDetectors().subscribe(resp => {
                     this.addGenericDetectors(resp);
                     this.Categories.next(this._categories);
@@ -65,7 +61,9 @@ export class CategoriesService {
                 TextColor: 'White',
                 Href: `../detectors/${detector.id}`,
                 OperatingSystem: OperatingSystem.any,
-                AppStack: ""
+                AppStack: "",
+                AppType: AppType.WebApp | AppType.FunctionApp,
+                Sku: Sku.All
             })
         }
 
