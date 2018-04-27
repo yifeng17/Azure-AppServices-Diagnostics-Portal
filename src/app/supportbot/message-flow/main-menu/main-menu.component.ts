@@ -40,7 +40,6 @@ export class MainMenuComponent implements OnInit, AfterViewInit, IChatMessageCom
     }
 
     ngOnInit(): void {
-
         if (this._authService.resourceType == ResourceType.Site) {
             this._siteService.currentSite.subscribe(site => {
                 if (site) {
@@ -103,7 +102,7 @@ export class PlatformPipe implements PipeTransform {
 @Pipe({ name: 'apptype' })
 export class AppTypePipe implements PipeTransform {
     transform(subcategories: Subcategory[], appType: AppType): Subcategory[] {
-        return subcategories.filter(x => x.AppType & appType);
+        return subcategories.filter(x => !appType || x.AppType & appType);
     }
 }
 

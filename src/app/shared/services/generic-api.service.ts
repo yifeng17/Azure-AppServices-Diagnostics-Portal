@@ -35,10 +35,6 @@ export class GenericApiService {
     constructor(private _http: Http, private _armService: ArmService, private _authService: AuthService) {
         this._authService.getStartupInfo().subscribe(info => {
             this.resourceId = info.resourceId;
-            ///TEMP BELOW SO ASE WILL CALL SITE
-            if(info.resourceType === ResourceType.HostingEnvironment) {
-                this.resourceId = "/subscriptions/1402be24-4f35-4ab7-a212-2cd496ebdf14/resourceGroups/netpractice/providers/Microsoft.Web/sites/netpractice"
-            }
         })
     }
 
