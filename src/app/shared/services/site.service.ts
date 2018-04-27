@@ -31,7 +31,7 @@ export class SiteService {
                 this._armClient.getResource<Site>(startUpInfo.resourceId).subscribe((site: ResponseMessageEnvelope<Site>) => {
                     
                     this.currentSiteStatic = site.properties;
-                    this.currentSiteStatic.appType = site.kind.toLowerCase().indexOf('functionapp') >= 0 ? AppType.FunctionApp : AppType.FunctionApp;
+                    this.currentSiteStatic.appType = site.kind.toLowerCase().indexOf('functionapp') >= 0 ? AppType.FunctionApp : AppType.WebApp;
                     this.currentSite.next(this.currentSiteStatic);
                 });
             }
