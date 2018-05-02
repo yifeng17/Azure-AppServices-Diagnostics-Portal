@@ -124,17 +124,6 @@ export class CategoriesService {
         });
 
         perf.Subcategories.push({
-            Name: 'Container Initialization',
-            BgColor: '#540d6e',
-            TextColor: 'White',
-            Href: 'availability/detectors/dockercontainerstartstop',
-            OperatingSystem: OperatingSystem.linux,
-            AppType: AppType.WebApp,
-            Sku: Sku.NotDynamic,
-            AppStack : ""
-        });
-
-        perf.Subcategories.push({
             Name: 'Web App Restarted',
             BgColor: 'rgb(234, 131, 0)',
             TextColor: 'White',
