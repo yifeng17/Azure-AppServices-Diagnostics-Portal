@@ -6,10 +6,12 @@ import { operators, BehaviorSubject } from 'rxjs';
 import { ToolNames } from '../models/tools-constants';
 import { GenericApiService } from './generic-api.service';
 import { AuthService } from './auth.service';
-import { ResourceType } from '../models/portal';
+import { ResourceType, AppType } from '../models/portal';
 import { DetectorResponse, DetectorMetaData } from 'applens-diagnostics/src/app/diagnostic-data/models/detector';
 import { Observable } from 'rxjs/Observable';
 import { DemoSubscriptions } from '../../betaSubscriptions';
+import { SiteService } from './site.service';
+import { Sku } from '../models/server-farm';
 
 @Injectable()
 export class CategoriesService {
@@ -18,17 +20,25 @@ export class CategoriesService {
 
     public Categories: BehaviorSubject<Category[]> = new BehaviorSubject<Category[]>([]);
 
-    constructor(private _genericApiService: GenericApiService, private _authService: AuthService) {
+    appType: AppType = AppType.WebApp;
+
+    constructor(private _genericApiService: GenericApiService, private _authService: AuthService, private _siteService: SiteService) {
         this._authService.getStartupInfo().subscribe(info => {
             if (info.resourceType == ResourceType.Site) {
                 //TODO: filter for functions
                 this.initCategoriesAndSubcategories();
+
+                this._siteService.currentSite.subscribe(site => {
+                    if (site) {
+                        this.appType = site.appType;
+                    }
+                });
             }
 
             let resourceId = info.resourceId.toLowerCase().split('/');
             let sub = resourceId[resourceId.indexOf('subscriptions') + 1];
 
-            if (DemoSubscriptions.betaSubscriptions.indexOf(sub) >= 0) {
+            if (DemoSubscriptions.betaSubscriptions.indexOf(sub) >= 0) {                
                 this._genericApiService.getDetectors().subscribe(resp => {
                     this.addGenericDetectors(resp);
                     this.Categories.next(this._categories);
@@ -41,7 +51,7 @@ export class CategoriesService {
 
     addGenericDetectors(detectors: DetectorMetaData[]): void {
         let generic = <Category>{
-            Name: this._authService.resourceType === ResourceType.Site ? 'Management and Configuration' : 'App Service Environment',
+            Name: this._authService.resourceType === ResourceType.Site ? (this.appType === AppType.WebApp ? 'Management and Configuration' : "Function App") : 'App Service Environment',
             Collapsed: false,
             BgColor: 'rgb(1, 185, 137)',
             TextColor: 'white',
@@ -51,7 +61,9 @@ export class CategoriesService {
                 TextColor: 'White',
                 Href: `../detectors/${detector.id}`,
                 OperatingSystem: OperatingSystem.any,
-                AppStack: ""
+                AppStack: "",
+                AppType: AppType.WebApp | AppType.FunctionApp,
+                Sku: Sku.All
             })
         }
 
@@ -73,6 +85,8 @@ export class CategoriesService {
             TextColor: 'White',
             Href: 'availability/analysis',
             OperatingSystem: OperatingSystem.windows | OperatingSystem.linux,
+            AppType: AppType.WebApp,
+            Sku: Sku.NotDynamic,
             AppStack : ""
         });
 
@@ -82,6 +96,8 @@ export class CategoriesService {
             TextColor: 'White',
             Href: 'performance/analysis',
             OperatingSystem: OperatingSystem.windows | OperatingSystem.linux,
+            AppType: AppType.WebApp,
+            Sku: Sku.NotDynamic,
             AppStack : ""
         });
 
@@ -91,6 +107,8 @@ export class CategoriesService {
             TextColor: 'White',
             Href: 'availability/detectors/sitecpuanalysis',
             OperatingSystem: OperatingSystem.windows,
+            AppType: AppType.WebApp,
+            Sku: Sku.NotDynamic,
             AppStack : ""
         });
 
@@ -100,15 +118,8 @@ export class CategoriesService {
             TextColor: 'White',
             Href: 'availability/memoryanalysis',
             OperatingSystem: OperatingSystem.windows,
-            AppStack : ""
-        });
-
-        perf.Subcategories.push({
-            Name: 'Container Initialization',
-            BgColor: '#540d6e',
-            TextColor: 'White',
-            Href: 'availability/detectors/dockercontainerstartstop',
-            OperatingSystem: OperatingSystem.linux,
+            AppType: AppType.WebApp,
+            Sku: Sku.NotDynamic,
             AppStack : ""
         });
 
@@ -118,6 +129,8 @@ export class CategoriesService {
             TextColor: 'White',
             Href: 'availability/apprestartanalysis',
             OperatingSystem: OperatingSystem.windows,
+            AppType: AppType.WebApp,
+            Sku: Sku.NotDynamic,
             AppStack : ""
         });
 
@@ -127,6 +140,8 @@ export class CategoriesService {
             TextColor: 'White',
             Href: 'availability/tcpconnectionsanalysis',
             OperatingSystem: OperatingSystem.windows,
+            AppType: AppType.WebApp | AppType.FunctionApp,
+            Sku: Sku.NotDynamic,
             AppStack : ""
         });
 
@@ -143,6 +158,8 @@ export class CategoriesService {
             TextColor: 'White',
             Href: 'tools/profiler',
             OperatingSystem: OperatingSystem.windows,
+            AppType: AppType.WebApp | AppType.FunctionApp,
+            Sku: Sku.NotDynamic,
             AppStack : "ASP.Net"
         });
 
@@ -152,6 +169,8 @@ export class CategoriesService {
             TextColor: 'White',
             Href: 'tools/memorydump',
             OperatingSystem: OperatingSystem.windows,
+            AppType: AppType.WebApp | AppType.FunctionApp,
+            Sku: Sku.NotDynamic,
             AppStack : ""
         });
 
@@ -161,6 +180,8 @@ export class CategoriesService {
             TextColor: 'White',
             Href: 'tools/databasetester',
             OperatingSystem: OperatingSystem.windows,
+            AppType: AppType.WebApp | AppType.FunctionApp,
+            Sku: Sku.NotDynamic,
             AppStack : ""
         });
 
@@ -170,6 +191,8 @@ export class CategoriesService {
             TextColor: 'White',
             Href: 'tools/networktrace',
             OperatingSystem: OperatingSystem.windows,
+            AppType: AppType.WebApp | AppType.FunctionApp,
+            Sku: Sku.NotDynamic,
             AppStack : ""
         });
 
@@ -179,6 +202,8 @@ export class CategoriesService {
             TextColor: 'White',
             Href: 'tools/phploganalyzer',
             OperatingSystem: OperatingSystem.windows,
+            AppType: AppType.WebApp | AppType.FunctionApp,
+            Sku: Sku.NotDynamic,
             AppStack : "PHP"
         });
         
@@ -188,6 +213,8 @@ export class CategoriesService {
             TextColor: 'White',
             Href: 'tools/phpprocessanalyzer',
             OperatingSystem: OperatingSystem.windows,
+            AppType: AppType.WebApp | AppType.FunctionApp,
+            Sku: Sku.NotDynamic,
             AppStack : "PHP"
         });
 
@@ -197,6 +224,8 @@ export class CategoriesService {
             TextColor: 'White',
             Href: 'tools/javamemorydump',
             OperatingSystem: OperatingSystem.windows,
+            AppType: AppType.WebApp | AppType.FunctionApp,
+            Sku: Sku.NotDynamic,
             AppStack : "Java"
         });
 
@@ -206,6 +235,8 @@ export class CategoriesService {
             TextColor: 'White',
             Href: 'tools/javathreaddump',
             OperatingSystem: OperatingSystem.windows,
+            AppType: AppType.WebApp | AppType.FunctionApp,
+            Sku: Sku.NotDynamic,
             AppStack : "Java"
         });
         

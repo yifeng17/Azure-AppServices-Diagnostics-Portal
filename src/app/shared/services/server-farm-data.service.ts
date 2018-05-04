@@ -29,30 +29,32 @@ export class ServerFarmDataService {
 
     constructor(private _armService: ArmService, private _uriElementsService: UriElementsService, private _authService: AuthService,
         private _rbacService: RBACService) {
-        if (this._authService.resourceType === ResourceType.Site) {
-            this._authService.getStartupInfo()
-                .flatMap((startUpInfo: StartupInfo) => {
-                    this.siteResourceId = startUpInfo.resourceId;
-                    return this._armService.getResource<Site>(this.siteResourceId);
-                })
-                .flatMap((site: ResponseMessageEnvelope<Site>) => {
-                    this.currentSite = site.properties;
-                    return this._rbacService.hasPermission(this.currentSite.serverFarmId, [this._rbacService.readScope]);
-                })
-                .flatMap((hasPermission: boolean) => {
-                    this.hasServerFarmAccess.next(hasPermission);
-                    return this._armService.getResourceWithoutEnvelope<ServerFarm>(this.currentSite.serverFarmId);
-                })
-                .flatMap((serverFarm: ServerFarm) => {
-                    serverFarm = this.addAdditionalProperties(serverFarm);
-                    this.siteServerFarm.next(serverFarm);
-                    return this._armService.getResourceCollection<Site>(serverFarm.id + "/sites");
-                })
-                .subscribe((sites: ResponseMessageEnvelope<Site>[]) => {
-                    this.sitesInServerFarm.next(sites.map(env => env.properties));
-                });
-        }
 
+        this._authService.getStartupInfo()
+            .subscribe((startUpInfo: StartupInfo) => {
+                if (!startUpInfo) return;
+                console.log(startUpInfo);
+                this.siteResourceId = startUpInfo.resourceId;
+                if (startUpInfo.resourceType === ResourceType.Site) {
+                    return this._armService.getResource<Site>(this.siteResourceId)
+                        .flatMap((site: ResponseMessageEnvelope<Site>) => {
+                            this.currentSite = site.properties;
+                            return this._rbacService.hasPermission(this.currentSite.serverFarmId, [this._rbacService.readScope]);
+                        })
+                        .flatMap((hasPermission: boolean) => {
+                            this.hasServerFarmAccess.next(hasPermission);
+                            return this._armService.getResourceWithoutEnvelope<ServerFarm>(this.currentSite.serverFarmId);
+                        })
+                        .flatMap((serverFarm: ServerFarm) => {
+                            serverFarm = this.addAdditionalProperties(serverFarm);
+                            this.siteServerFarm.next(serverFarm);
+                            return this._armService.getResourceCollection<Site>(serverFarm.id + "/sites");
+                        })
+                        .subscribe((sites: ResponseMessageEnvelope<Site>[]) => {
+                            this.sitesInServerFarm.next(sites.map(env => env.properties));
+                        });
+                }
+            });
     }
 
     public getSiteServerFarm() {

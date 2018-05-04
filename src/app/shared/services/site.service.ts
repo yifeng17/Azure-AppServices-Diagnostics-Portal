@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
-import { StartupInfo, ResourceType } from '../models/portal';
+import { StartupInfo, ResourceType, AppType } from '../models/portal';
 import { Site, SiteInfoMetaData } from '../models/site'
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { ResponseMessageEnvelope } from '../models/responsemessageenvelope';
@@ -29,8 +29,10 @@ export class SiteService {
             this._populateSiteInfo(startUpInfo.resourceId);
             if (startUpInfo.resourceType === ResourceType.Site) {
                 this._armClient.getResource<Site>(startUpInfo.resourceId).subscribe((site: ResponseMessageEnvelope<Site>) => {
+                    
                     this.currentSiteStatic = site.properties;
-                    this.currentSite.next(site.properties);
+                    this.currentSiteStatic.appType = site.kind.toLowerCase().indexOf('functionapp') >= 0 ? AppType.FunctionApp : AppType.WebApp;
+                    this.currentSite.next(this.currentSiteStatic);
                 });
             }
         });
