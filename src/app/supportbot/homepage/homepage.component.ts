@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { OperatingSystem, SiteExtensions, AppType } from '../../shared/models/site';
+import { OperatingSystem, SiteExtensions } from '../../shared/models/site';
 import { WindowService } from '../../shared/services/window.service';
 import { SiteService } from '../../shared/services/site.service';
 import { LoggingService } from '../../shared/services/logging/logging.service';
 import { AuthService } from '../../shared/services/auth.service';
-import { ResourceType } from '../../shared/models/portal';
+import { ResourceType, AppType } from '../../shared/models/portal';
 
 @Component({
     selector: 'home-page',
@@ -30,6 +30,11 @@ export class HomepageComponent implements OnInit {
             this.isSite = true;
             this._siteService.currentSite.subscribe(site => {
                 if (site) {
+
+                    if(site.appType != AppType.FunctionApp){
+                        this.showSupportTools = true;
+                    }
+
                     if (SiteExtensions.operatingSystem(site) == OperatingSystem.linux) {
                         this.listCollection.push(this._getLinuxFAQItems());
                         this.listCollection.push(this._getLinuxResourceCenterItems());
@@ -41,13 +46,6 @@ export class HomepageComponent implements OnInit {
                     this.listCollection.push(this._getCommunityItems());
                     this.listCollection.push(this._getRecentUpdateItems());
                     this.listCollection.push(this._getContributeItems());
-
-                    if(SiteExtensions.appType(site) == AppType.functionapp){
-                        this.showSupportTools = false;
-                    }
-                    else{
-                        this.showSupportTools = true;
-                    }
                 }
             });
         }
@@ -57,8 +55,6 @@ export class HomepageComponent implements OnInit {
             this.listCollection.push(this._getCommunityItems());
             this.listCollection.push(this._getRecentUpdateItems());
             this.listCollection.push(this._getContributeItems());
-
-            this.showSupportTools = true;
         }
 
         this.toolsContainerHeight = this._windowService.window.innerHeight - 60;

@@ -158,7 +158,7 @@ export class CategoriesService {
             TextColor: 'White',
             Href: 'tools/profiler',
             OperatingSystem: OperatingSystem.windows,
-            AppType: AppType.WebApp | AppType.FunctionApp,
+            AppType: AppType.WebApp,
             Sku: Sku.NotDynamic,
             AppStack : "ASP.Net"
         });
@@ -169,7 +169,7 @@ export class CategoriesService {
             TextColor: 'White',
             Href: 'tools/memorydump',
             OperatingSystem: OperatingSystem.windows,
-            AppType: AppType.WebApp | AppType.FunctionApp,
+            AppType: AppType.WebApp,
             Sku: Sku.NotDynamic,
             AppStack : ""
         });
@@ -180,7 +180,7 @@ export class CategoriesService {
             TextColor: 'White',
             Href: 'tools/databasetester',
             OperatingSystem: OperatingSystem.windows,
-            AppType: AppType.WebApp | AppType.FunctionApp,
+            AppType: AppType.WebApp,
             Sku: Sku.NotDynamic,
             AppStack : ""
         });
@@ -191,7 +191,7 @@ export class CategoriesService {
             TextColor: 'White',
             Href: 'tools/networktrace',
             OperatingSystem: OperatingSystem.windows,
-            AppType: AppType.WebApp | AppType.FunctionApp,
+            AppType: AppType.WebApp,
             Sku: Sku.NotDynamic,
             AppStack : ""
         });
@@ -202,7 +202,7 @@ export class CategoriesService {
             TextColor: 'White',
             Href: 'tools/phploganalyzer',
             OperatingSystem: OperatingSystem.windows,
-            AppType: AppType.WebApp | AppType.FunctionApp,
+            AppType: AppType.WebApp,
             Sku: Sku.NotDynamic,
             AppStack : "PHP"
         });
@@ -213,7 +213,7 @@ export class CategoriesService {
             TextColor: 'White',
             Href: 'tools/phpprocessanalyzer',
             OperatingSystem: OperatingSystem.windows,
-            AppType: AppType.WebApp | AppType.FunctionApp,
+            AppType: AppType.WebApp,
             Sku: Sku.NotDynamic,
             AppStack : "PHP"
         });
@@ -224,7 +224,7 @@ export class CategoriesService {
             TextColor: 'White',
             Href: 'tools/javamemorydump',
             OperatingSystem: OperatingSystem.windows,
-            AppType: AppType.WebApp | AppType.FunctionApp,
+            AppType: AppType.WebApp,
             Sku: Sku.NotDynamic,
             AppStack : "Java"
         });
@@ -235,7 +235,7 @@ export class CategoriesService {
             TextColor: 'White',
             Href: 'tools/javathreaddump',
             OperatingSystem: OperatingSystem.windows,
-            AppType: AppType.WebApp | AppType.FunctionApp,
+            AppType: AppType.WebApp,
             Sku: Sku.NotDynamic,
             AppStack : "Java"
         });
