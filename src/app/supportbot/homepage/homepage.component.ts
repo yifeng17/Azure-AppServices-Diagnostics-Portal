@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { OperatingSystem, SiteExtensions } from '../../shared/models/site';
+import { OperatingSystem, SiteExtensions, AppType } from '../../shared/models/site';
 import { WindowService } from '../../shared/services/window.service';
 import { SiteService } from '../../shared/services/site.service';
 import { LoggingService } from '../../shared/services/logging/logging.service';
@@ -16,10 +16,12 @@ export class HomepageComponent implements OnInit {
     public listCollection: any;
     public toolsContainerHeight: number;
     public isSite: boolean;
+    public showSupportTools: boolean;
 
     constructor(private _windowService: WindowService, private _siteService: SiteService, private _logger: LoggingService, private _authService: AuthService) {
         this.listCollection = [];
         this.toolsContainerHeight = 0;
+        this.showSupportTools = false;
     }
 
     ngOnInit(): void {
@@ -39,6 +41,13 @@ export class HomepageComponent implements OnInit {
                     this.listCollection.push(this._getCommunityItems());
                     this.listCollection.push(this._getRecentUpdateItems());
                     this.listCollection.push(this._getContributeItems());
+
+                    if(SiteExtensions.appType(site) == AppType.functionapp){
+                        this.showSupportTools = false;
+                    }
+                    else{
+                        this.showSupportTools = true;
+                    }
                 }
             });
         }
@@ -48,6 +57,8 @@ export class HomepageComponent implements OnInit {
             this.listCollection.push(this._getCommunityItems());
             this.listCollection.push(this._getRecentUpdateItems());
             this.listCollection.push(this._getContributeItems());
+
+            this.showSupportTools = true;
         }
 
         this.toolsContainerHeight = this._windowService.window.innerHeight - 60;
