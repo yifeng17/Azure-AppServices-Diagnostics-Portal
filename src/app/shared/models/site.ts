@@ -1,4 +1,5 @@
 ﻿import { ArmObj } from './armObj';
+import { AppType } from './portal';
 
 export interface Site {
     name: string;
@@ -16,6 +17,7 @@ export interface Site {
     serverFarmId: string;
     hostingEnvironmentId: string;
     resourceGroup: string;
+    appType: AppType;
 }
 
 export class SiteInfoMetaData {

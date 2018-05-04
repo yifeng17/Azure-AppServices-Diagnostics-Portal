@@ -1,4 +1,6 @@
 import { OperatingSystem } from "./site";
+import { AppType } from "./portal";
+import { Sku } from "./server-farm";
 
 export class Category
 {
@@ -16,5 +18,7 @@ export class Subcategory
     TextColor:string;
     Href: string;
     OperatingSystem: OperatingSystem;
+    AppType: AppType;
     AppStack: string;
+    Sku: Sku
 }
