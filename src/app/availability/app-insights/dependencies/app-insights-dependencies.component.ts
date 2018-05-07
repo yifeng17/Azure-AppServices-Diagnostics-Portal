@@ -73,7 +73,7 @@ export class AppInsightsDependenciesComponent implements OnInit, OnChanges {
     }
 
     OpenAppInsights() {
-        this.portalActionService.openAppInsightsBlade();
+        this.portalActionService.openAppInsightsPerformanceBlade(this.appInsightsService.appInsightsSettings.resourceUri);
         this.logger.LogClickEvent('Application Insights Blade', 'App Performance Analysis');
     }
 }

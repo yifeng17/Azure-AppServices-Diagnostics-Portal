@@ -77,7 +77,7 @@ export class AppInsightsExceptionsComponent implements OnInit, OnChanges {
     }
 
     OpenAppInsights() {
-        this.portalActionService.openAppInsightsBlade();
+        this.portalActionService.openAppInsightsFailuresBlade(this.appInsightsService.appInsightsSettings.resourceUri);
         this.logger.LogClickEvent('Application Insights Blade', 'App Error Analysis');
     }
 }
