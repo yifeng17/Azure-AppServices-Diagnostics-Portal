@@ -5,7 +5,7 @@ import { WindowService } from '../../shared/services/window.service';
 import { SiteService } from '../../shared/services/site.service';
 import { LoggingService } from '../../shared/services/logging/logging.service';
 import { AuthService } from '../../shared/services/auth.service';
-import { ResourceType } from '../../shared/models/portal';
+import { ResourceType, AppType } from '../../shared/models/portal';
 
 @Component({
     selector: 'home-page',
@@ -16,10 +16,12 @@ export class HomepageComponent implements OnInit {
     public listCollection: any;
     public toolsContainerHeight: number;
     public isSite: boolean;
+    public showSupportTools: boolean;
 
     constructor(private _windowService: WindowService, private _siteService: SiteService, private _logger: LoggingService, private _authService: AuthService) {
         this.listCollection = [];
         this.toolsContainerHeight = 0;
+        this.showSupportTools = false;
     }
 
     ngOnInit(): void {
@@ -28,6 +30,11 @@ export class HomepageComponent implements OnInit {
             this.isSite = true;
             this._siteService.currentSite.subscribe(site => {
                 if (site) {
+
+                    if(site.appType != AppType.FunctionApp){
+                        this.showSupportTools = true;
+                    }
+
                     if (SiteExtensions.operatingSystem(site) == OperatingSystem.linux) {
                         this.listCollection.push(this._getLinuxFAQItems());
                         this.listCollection.push(this._getLinuxResourceCenterItems());
