@@ -15,38 +15,40 @@ export class ServiceIncidentService {
   public notificationMessage: string;
 
   constructor(private _appAnalysisService: AppAnalysisService, private _siteService: SiteService, private _logger: LoggingService, private _authService: AuthService) {
-    if (this._authService.resourceType === ResourceType.Site) {
-      this._siteService.currentSiteMetaData.subscribe(site => {
-        if (site) {
-          let serviceHealth = this._appAnalysisService.getDetectorResource(site.subscriptionId, site.resourceGroupName, site.siteName, site.slot, 'availability', 'servicehealth');
-          let customerIncident = this._appAnalysisService.getDetectorResource(site.subscriptionId, site.resourceGroupName, site.siteName, site.slot, 'availability', 'customerincident');
-
-          Observable.forkJoin(serviceHealth, customerIncident).subscribe(responses => {
-            responses.forEach(response => {
-              response.abnormalTimePeriods.forEach(period => {
-                let incident = IncidentNotification.fromAbnormalTimePeriod(period)
-                this.incidents.push(incident);
+    this._authService.getStartupInfo().subscribe(startupInfo => {
+      if (startupInfo.resourceType === ResourceType.Site) {
+        this._siteService.currentSiteMetaData.subscribe(site => {
+          if (site) {
+            let serviceHealth = this._appAnalysisService.getDetectorResource(site.subscriptionId, site.resourceGroupName, site.siteName, site.slot, 'availability', 'servicehealth');
+            let customerIncident = this._appAnalysisService.getDetectorResource(site.subscriptionId, site.resourceGroupName, site.siteName, site.slot, 'availability', 'customerincident');
+  
+            Observable.forkJoin(serviceHealth, customerIncident).subscribe(responses => {
+              responses.forEach(response => {
+                response.abnormalTimePeriods.forEach(period => {
+                  let incident = IncidentNotification.fromAbnormalTimePeriod(period)
+                  this.incidents.push(incident);
+                });
               });
+  
+              if (this.incidents.length > 0) {
+                this.hasActiveIncidents = this.incidents.filter(i => i.status === IncidentStatus.Active).length > 0;
+  
+                this.notificationMessage = this.hasActiveIncidents ?
+                  'There is an active service incident that may be affecting your app. Click here to learn more' :
+                  'There is a service incident that may have affected your app. Click here to learn more';
+  
+                // Log Incident Details and Notification
+                this.incidents.forEach(incident => {
+                  this._logger.LogIncidentIncidentDetails(incident);
+                });
+  
+                this._logger.LogIncidentNotification(this.hasActiveIncidents);
+              }
             });
-
-            if (this.incidents.length > 0) {
-              this.hasActiveIncidents = this.incidents.filter(i => i.status === IncidentStatus.Active).length > 0;
-
-              this.notificationMessage = this.hasActiveIncidents ?
-                'There is an active service incident that may be affecting your app. Click here to learn more' :
-                'There is a service incident that may have affected your app. Click here to learn more';
-
-              // Log Incident Details and Notification
-              this.incidents.forEach(incident => {
-                this._logger.LogIncidentIncidentDetails(incident);
-              });
-
-              this._logger.LogIncidentNotification(this.hasActiveIncidents);
-            }
-          });
-        }
-      });
-    }
+          }
+        });
+      }
+    });
   }
 }
 
