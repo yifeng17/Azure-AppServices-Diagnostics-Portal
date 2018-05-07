@@ -35,15 +35,10 @@ export class CategoriesService {
                 });
             }
 
-            let resourceId = info.resourceId.toLowerCase().split('/');
-            let sub = resourceId[resourceId.indexOf('subscriptions') + 1];
-
-            if (DemoSubscriptions.betaSubscriptions.indexOf(sub) >= 0) {                
-                this._genericApiService.getDetectors().subscribe(resp => {
-                    this.addGenericDetectors(resp);
-                    this.Categories.next(this._categories);
-                });
-            }
+            this._genericApiService.getDetectors().subscribe(resp => {
+                this.addGenericDetectors(resp);
+                this.Categories.next(this._categories);
+            });
         })
 
         this.Categories.next(this._categories);
