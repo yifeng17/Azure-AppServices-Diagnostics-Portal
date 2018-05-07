@@ -40,6 +40,9 @@ import { AppInsightsDependenciesComponent } from './app-insights/dependencies/ap
 import { TcpConnectionsAnalysisComponent } from './analysis/tcpconnectionsanalysis/tcp-connections-analysis.component';
 import { ProblemSolutionComponent } from './problem-solution/problem-solution.component';
 import { GenericDetectorComponent } from './generic-detector/generic-detector.component';
+import { GenericApiService } from '../shared/services/generic-api.service';
+import { DiagnosticService } from 'applens-diagnostics';
+//import { ɵp as DiagnosticService } from 'applens-diagnostics';
 
 @NgModule({
     declarations: [
@@ -78,7 +81,7 @@ import { GenericDetectorComponent } from './generic-detector/generic-detector.co
     ],
     imports: [
         RouterModule.forChild(AvailabilityAndPerformanceCategoryRouteConfig),
-        DiagnosticDataModule,
+        DiagnosticDataModule.forRoot(),
         SharedModule,
         MyDatePickerModule,
         SolutionsModule
@@ -91,6 +94,9 @@ import { GenericDetectorComponent } from './generic-detector/generic-detector.co
         AppInsightsTileComponent,
         AppInsightsSettingsComponent,
         ProblemSolutionComponent
+    ],
+    providers : [
+        { provide: DiagnosticService, useExisting: GenericApiService }
     ]
 })
 export class AvailabilityModule {
