@@ -42,7 +42,6 @@ import { ProblemSolutionComponent } from './problem-solution/problem-solution.co
 import { GenericDetectorComponent } from './generic-detector/generic-detector.component';
 import { GenericApiService } from '../shared/services/generic-api.service';
 import { DiagnosticService } from 'applens-diagnostics';
-//import { ɵp as DiagnosticService } from 'applens-diagnostics';
 
 @NgModule({
     declarations: [
