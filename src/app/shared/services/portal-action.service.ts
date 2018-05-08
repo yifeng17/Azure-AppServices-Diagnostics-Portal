@@ -76,6 +76,32 @@ export class PortalActionService {
         this._portalService.openBlade(bladeInfo, "troubleshoot");
     }
 
+    public openAppInsightsFailuresBlade(appInsightsResourceUri: string) {
+        let bladeInfo = {
+            detailBlade: "FailuresCuratedFrameBlade",
+            extension: "AppInsightsExtension",
+            detailBladeInputs: {
+                ResourceId: appInsightsResourceUri,
+                ConfigurationId: ""
+            }
+        };
+
+        this._portalService.openBlade(bladeInfo, "troubleshoot");
+    }
+
+    public openAppInsightsPerformanceBlade(appInsightsResourceUri: string) {
+        let bladeInfo = {
+            detailBlade: "PerformanceCuratedFrameBlade",
+            extension: "AppInsightsExtension",
+            detailBladeInputs: {
+                ResourceId: appInsightsResourceUri,
+                ConfigurationId: ""
+            }
+        };
+
+        this._portalService.openBlade(bladeInfo, "troubleshoot");
+    }
+
     public openSupportIFrame(supportBlade: SupportBladeDefinition) {
         
         let bladeInfo = {
