@@ -7,16 +7,22 @@
         <thead>
             <tr>
                 <th>Endpoint</th>
-                <th>Type</th>
-                <th>Duration(ms)</th>
+                <th *ngIf="!bladeOpenedFromSupportTicketFlow">Type</th>
+                <th *ngIf="!bladeOpenedFromSupportTicketFlow">Average Duration(ms)</th>
+                <th>Percentile-50 (ms)</th>
+                <th *ngIf="!bladeOpenedFromSupportTicketFlow">Percentile-90 (ms)</th>
+                <th>Percentile-95 (ms)</th>
                 <th>Total Requests</th>
             </tr>
         </thead>
         <tbody>
             <tr *ngFor="let item of dependencies" style="font-size:13px">
                 <td>{{item.endpoint}}</td>
-                <td>{{item.type}}</td>
-                <td>{{item.duration_50}}</td>
+                <td *ngIf="!bladeOpenedFromSupportTicketFlow">{{item.type}}</td>
+                <td *ngIf="!bladeOpenedFromSupportTicketFlow">{{item.avg}}</td>
+                <td>{{item.p_50}}</td>
+                <td *ngIf="!bladeOpenedFromSupportTicketFlow">{{item.p_90}}</td>
+                <td>{{item.p_95}}</td>
                 <td>{{item.requests}}</td>
             </tr>
         </tbody>

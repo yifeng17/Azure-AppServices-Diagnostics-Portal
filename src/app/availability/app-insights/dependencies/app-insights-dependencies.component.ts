@@ -7,6 +7,7 @@ import { AppInsightsService } from '../../../shared/services/appinsights/appinsi
 import { AppInsightsQueryService } from '../../../shared/services/appinsights/appinsights-query.service';
 import { PortalActionService } from '../../../shared/services/portal-action.service';
 import { AvailabilityLoggingService } from '../../../shared/services/logging/availability.logging.service';
+import { StartupInfo } from '../../../shared/models/portal';
 
 @Component({
     selector: 'app-insights-dependencies',
@@ -24,6 +25,7 @@ export class AppInsightsDependenciesComponent implements OnInit, OnChanges {
 
     loading: boolean;
     dependencies: any = [];
+    bladeOpenedFromSupportTicketFlow: boolean;
 
     constructor(private _route: ActivatedRoute, private authService: AuthService, public appInsightsService: AppInsightsService, private appInsightsQueryService: AppInsightsQueryService, private portalActionService: PortalActionService, private logger: AvailabilityLoggingService) {
         this.dependencies = [];
@@ -35,6 +37,13 @@ export class AppInsightsDependenciesComponent implements OnInit, OnChanges {
         this.resourceGroup = this._route.snapshot.params['resourcegroup'];
         this.siteName = this._route.snapshot.params['sitename'];
         this.slotName = this._route.snapshot.params['slot'] ? this._route.snapshot.params['slot'] : '';
+        
+        // By default, set to true so that UI can fit in any window size if following subscribe fails
+        this.bladeOpenedFromSupportTicketFlow = true;
+
+        this.authService.getStartupInfo().subscribe((startupInfo: StartupInfo) => {
+            this.bladeOpenedFromSupportTicketFlow = startupInfo.source !== undefined && startupInfo.source.toLowerCase() === 'casesubmission';
+        });
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -66,8 +75,11 @@ export class AppInsightsDependenciesComponent implements OnInit, OnChanges {
             this.dependencies.push({
                 endpoint: element[0],
                 type: element[1],
-                duration_50: element[2],
-                requests: element[3]
+                avg: element[2],
+                p_50: element[3],
+                p_90: element[4],
+                p_95: element[5],
+                requests: element[6]
             });
         });
     }
