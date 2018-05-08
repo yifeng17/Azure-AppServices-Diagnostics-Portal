@@ -29,8 +29,9 @@ export class AppInsightsQueryService {
         dependencies
         | where timestamp >= datetime(${startTimeUTC}) and timestamp <= datetime(${endTimeUTC})  
         | where type != "Ajax"
-        | summarize percentiles(duration, 50), count()  by name, type
-        | top ${recordsLimit} by percentile_duration_50  desc`;
+        | summarize round(avg(duration), 2), round(percentile(duration, 50), 2), round(percentile(duration, 90), 2), round(percentile(duration, 95), 2), count()  by name, type
+        | where percentile_duration_95 > 100
+        | top ${recordsLimit} by avg_duration desc`;
 
         let requests = this.appinsightsService.ExecuteQuery(query);
         return this.cache.get(`AppInsightDependencies-${startTimeUTC}--${endTimeUTC}`, requests, invalidateCache);
