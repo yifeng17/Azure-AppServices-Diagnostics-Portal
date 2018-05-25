@@ -23,7 +23,7 @@ export class HealthCheckMessageFlow implements IMessageFlowProvider {
         var messageGroupList: MessageGroup[] = [];
 
         var healthCheckGroup: MessageGroup = new MessageGroup('health-check', [], this._getHealthCheckNextGroupId.bind(this));
-        healthCheckGroup.messages.push(new TextMessage('First, would you like me to perform a health checkup on your Web App?', MessageSender.System, 2000));
+        healthCheckGroup.messages.push(new TextMessage('If you don’t know where to start, would you like me to perform a health checkup on your app first?', MessageSender.System, 2000));
         healthCheckGroup.messages.push(new TextMessage('A health checkup analyzes your Web App and gives you a quick and in-depth overview of your app health according to requests and errors, app performance, CPU usage, and memory usage.', MessageSender.System, 500));
         healthCheckGroup.messages.push(new ButtonListMessage(this._getButtonListForHealthCheck(), 'Run health checkup'));
         healthCheckGroup.messages.push(new TextMessage('Yes, please perform a health checkup on my Web App.', MessageSender.User, 100));

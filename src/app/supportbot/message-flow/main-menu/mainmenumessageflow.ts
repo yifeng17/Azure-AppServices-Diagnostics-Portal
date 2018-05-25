@@ -23,7 +23,7 @@ export class MainMenuMessageFlow implements IMessageFlowProvider {
         var mainMenuGroup: MessageGroup = new MessageGroup('main-menu', [], () => {
             return this._authService.resourceType === ResourceType.Site ? 'health-check' : 'feedbackprompt';
         });
-        mainMenuGroup.messages.push(new TextMessage('Here are some of the things that I can help you with:', MessageSender.System, 2000));
+        mainMenuGroup.messages.push(new TextMessage('If you know what’s wrong with your app, please select a problem category', MessageSender.System, 2000));
         mainMenuGroup.messages.push(new MainMenuMessage());
 
         messageGroupList.push(mainMenuGroup);
