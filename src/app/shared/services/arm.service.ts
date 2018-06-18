@@ -107,6 +107,26 @@ export class ArmService {
         return this._cache.get(url, request, invalidateCache);
     }
 
+    patchResource<T, S>(resourceUri: string, body?: S, apiVersion?: string): Observable<boolean | {} | ResponseMessageEnvelope<T>> {
+        var url: string = `${this.armUrl}${resourceUri}${resourceUri.indexOf('?') >= 0 ? '&' : '?'}api-version=${!!apiVersion ? apiVersion : this.websiteApiVersion}`
+        let bodyString: string = '';
+        if (body) {
+            bodyString = JSON.stringify(body);
+        }
+
+        let request = this._http.patch(url, bodyString, { headers: this.getHeaders() })
+            .map((response: Response) => {
+                let body = response.text();
+
+                return body && body.length > 0 ? <ResponseMessageEnvelope<T>>(response.json()) : response.ok;
+            })
+            .catch(this.handleError);
+
+        // Always invalidate cache for write calls as we dont want to just hit cache.
+        // Setting InvalidateCache = true will make sure that there is an outbound call everytime this method is called.  
+        return this._cache.get(url, request, true);
+    }
+
     putResourceWithoutEnvelope<T, S>(resourceUri: string, body?: S, apiVersion?: string, invalidateCache: boolean = false): Observable<boolean | {} | T> {
         var url: string = `${this.armUrl}${resourceUri}${resourceUri.indexOf('?') >= 0 ? '&' : '?'}api-version=${!!apiVersion ? apiVersion : this.websiteApiVersion}`
         let bodyString: string = '';

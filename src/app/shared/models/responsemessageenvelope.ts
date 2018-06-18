@@ -4,6 +4,7 @@ export interface ResponseMessageEnvelope<T> {
     type: string;
     kind: string;
     location: string;
+    tags: any;
     properties: T;
 }
 

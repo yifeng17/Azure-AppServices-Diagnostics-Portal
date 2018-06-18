@@ -2,8 +2,10 @@
 import { AppType } from './portal';
 
 export interface Site {
+    id: string;
     name: string;
     kind: string;
+    tags: any;
     state: string;
     hostNames: string[];
     enabledHostNames: string[];
