@@ -28,4 +28,12 @@ export class BotLoggingService extends LoggingService {
             results: healthCheckResults ? healthCheckResults.toString().replace(new RegExp(',', 'g'), '|') : ''
         });
     }
+
+    LogLiveChatWidgetOpened(source: string): void {
+        this._log(BotEventType[BotEventType.LiveChatWidgetOpened], source, {});
+    }
+
+    LogLiveChatWidgetClosed(source: string): void {
+        this._log(BotEventType[BotEventType.LiveChatWidgetClosed], source, {});
+    }
 }

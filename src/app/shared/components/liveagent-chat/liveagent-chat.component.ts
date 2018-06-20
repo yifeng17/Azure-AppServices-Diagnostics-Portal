@@ -1,9 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { WindowService } from '../../../shared/services/window.service';
 import { SiteService } from '../../services/site.service';
-import { Site } from '../../models/site';
+import { BotLoggingService } from '../../services/logging/bot.logging.service';
+import { Site, SiteInfoMetaData } from '../../models/site';
 import { ArmService } from '../../services/arm.service';
-import { Observable } from 'rxjs/Observable';
 
 @Component({
     selector: 'liveagent-chat',
@@ -19,7 +19,7 @@ export class LiveAgentChatComponent implements OnInit {
     // After refactoring, this has to come from a generic Resource service.
     private currentResource: Site;
 
-    constructor(private windowService: WindowService, private siteService: SiteService, private armService: ArmService) {
+    constructor(private windowService: WindowService, private siteService: SiteService, private armService: ArmService, private logger: BotLoggingService) {
     }
 
     ngOnInit(): void {
@@ -39,16 +39,33 @@ export class LiveAgentChatComponent implements OnInit {
             if (window && window.fcWidget) {
 
                 window.fcWidget.init({
-                    token: "a1d90d4d-900d-4282-9270-d4a6c2eb94af",
+                    token: "ac017aa7-7c07-42bc-8fdc-1114fc962803",
                     host: "https://wchat.freshchat.com",
                     open: this.autoOpen,
                     externalId: externalId,
                     restoreId: restoreId,
-                    firstName: this.currentResource.name
+                    firstName: this.currentResource.name,
+                    config: {
+                        content: {
+                            placeholders: {
+                                reply_field: 'Describe your problem or reply here',
+                            },
+                            headers: {
+                            }
+                        }
+                    }
                 });
 
                 window.fcWidget.on("widget:loaded", ((resp) => {
                     this.getOrCreateUser();
+                }));
+
+                window.fcWidget.on("widget:opened", (() => {
+                    this.logger.LogLiveChatWidgetOpened(this.source);
+                }));
+
+                window.fcWidget.on("widget:closed", (() => {
+                    this.logger.LogLiveChatWidgetClosed(this.source);
                 }));
             }
         });
@@ -58,25 +75,25 @@ export class LiveAgentChatComponent implements OnInit {
 
         let window = this.windowService.window;
 
-        window.fcWidget.user.get().then((result: any) => {
-            this.updateChatRestoreId(result.data.restoreId);
-        }, (err: any) => {
-            // User doesnt exist. Create the user and update the RestoreId.
-            window.fcWidget.user.create().then((createResponse: any) => {
-                this.updateChatRestoreId(createResponse.data.restoreId);
-            }, (err1: any) => {
+        if (window.fcWidget) {
+
+            window.fcWidget.user.get().then((result: any) => {
+                this.updateChatRestoreId(result.data.restoreId);
+            }, (err: any) => {
+                // User doesnt exist. Create the user and update the RestoreId.
+                window.fcWidget.user.create().then((createResponse: any) => {
+                    this.updateChatRestoreId(createResponse.data.restoreId);
+                }, (err1: any) => {
+                });
             });
-        });
+        }
     }
 
     private updateChatRestoreId(restoreId: string) {
 
-        if (this.currentResource && this.currentResource.tags && this.currentResource.tags[this.restoreIdTagName]) {
-
-            // if restoreId is already present, dont update it again
-            if (this.currentResource.tags[this.restoreIdTagName] === restoreId) {
-                return;
-            }
+        // if restoreId is already present, dont update it again
+        if (this.getChatRestoreId() === restoreId) {
+            return;
         }
 
         this.currentResource.tags[this.restoreIdTagName] = restoreId;

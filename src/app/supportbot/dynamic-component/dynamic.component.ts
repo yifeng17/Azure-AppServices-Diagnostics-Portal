@@ -8,12 +8,13 @@ import { FeedbackComponent } from '../message-flow/feedback/feedback.component';
 import { SolutionsMessageComponent } from '../common/solutions-message/solutions-message.component';
 import { GraphMessageComponent } from '../common/graph-message/graph-message.component';
 import { ProblemStatementMessageComponent } from '../common/problem-statement-message/problem-statement-message.component';
+import { TalkToAgentMessageComponent } from '../message-flow/talk-to-agent/talk-to-agent-message.component';
 import { Message } from '../models/message';
 
 @Component({
     selector: 'dynamic-component',
     entryComponents: [TextMessageComponent, MainMenuComponent, ButtonMessageComponent, HealthCheckComponent, FeedbackComponent, 
-        SolutionsMessageComponent, GraphMessageComponent, ProblemStatementMessageComponent],
+        SolutionsMessageComponent, GraphMessageComponent, ProblemStatementMessageComponent, TalkToAgentMessageComponent],
     template: `
     <div #dynamicComponentContainer></div>
   `,

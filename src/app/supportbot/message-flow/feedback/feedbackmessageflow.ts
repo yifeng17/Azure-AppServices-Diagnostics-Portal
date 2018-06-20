@@ -5,10 +5,14 @@ import { MessageGroup } from '../../models/message-group';
 import { RegisterMessageFlowWithFactory } from '../message-flow.factory';
 import { FeedbackComponent } from './feedback.component';
 import { MessageSender, ButtonActionType } from '../../models/message-enums';
+import { TalkToAgentMessageFlow } from '../talk-to-agent/talktoagentmessageflow';
 
 @Injectable()
 @RegisterMessageFlowWithFactory()
 export class FeedbackMessageFlow implements IMessageFlowProvider {
+
+    constructor(private talkToAgentMessageFlow: TalkToAgentMessageFlow) {
+    }
 
     GetMessageFlowList(): MessageGroup[] {
         var messageGroupList: MessageGroup[] = [];
@@ -28,6 +32,22 @@ export class FeedbackMessageFlow implements IMessageFlowProvider {
         feedbackGroup.messages.push(new TextMessage('Thank you!'));
         // TODO : Add Button Message - 1) To Refresh, 2) Return to top
         messageGroupList.push(feedbackGroup);
+
+        var furtherAssistanceGroup: MessageGroup = new MessageGroup('further-assistance', [], () => {
+            if (this.talkToAgentMessageFlow.isApplicable) {
+                return 'talk-to-agent';
+            }
+            else {
+                return 'no-help';
+            }
+        });
+
+        furtherAssistanceGroup.messages.push(new TextMessage('I need further assistance.', MessageSender.User, 100));
+        messageGroupList.push(furtherAssistanceGroup);
+
+        var noHelpMessageGroup: MessageGroup = new MessageGroup('no-help', [], () => 'feedback');
+        noHelpMessageGroup.messages.push(new TextMessage('Sorry to hear that I could not be of more help. Please explore our additional resources in the right hand column, especially our popular Support Tools, FAQs, and Community forums.', MessageSender.System));
+        messageGroupList.push(noHelpMessageGroup);
 
         return messageGroupList;
     }

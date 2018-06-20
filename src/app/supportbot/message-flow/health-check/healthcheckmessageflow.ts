@@ -8,12 +8,13 @@ import { CpuAnalysisChatFlow } from '../cpu-analysis-chat/cpu-analysis-chat-flow
 import { AppAnalysisService } from '../../../shared/services/appanalysis.service';
 import { BotLoggingService } from '../../../shared/services/logging/bot.logging.service';
 import { MessageSender, ButtonActionType } from '../../models/message-enums';
+import { TalkToAgentMessageFlow } from '../talk-to-agent/talktoagentmessageflow';
 
 @Injectable()
 @RegisterMessageFlowWithFactory()
 export class HealthCheckMessageFlow implements IMessageFlowProvider {
 
-    constructor(private _appAnalysisService: AppAnalysisService, private _cpuAnalysisChatFlow: CpuAnalysisChatFlow, private _logger: BotLoggingService) { }
+    constructor(private _appAnalysisService: AppAnalysisService, private _cpuAnalysisChatFlow: CpuAnalysisChatFlow, private _logger: BotLoggingService, private talkToAgentMessageFlow: TalkToAgentMessageFlow) { }
 
     private _self: HealthCheckMessageFlow = this;
 
@@ -41,15 +42,16 @@ export class HealthCheckMessageFlow implements IMessageFlowProvider {
 
         messageGroupList.push(healthCheckLaterGroup);
 
-        var noHealthCheckGroup: MessageGroup = new MessageGroup('no-health-check', [], () => 'feedback');
+        var noHealthCheckGroup: MessageGroup = new MessageGroup('no-health-check', [], () => {
+            if (this.talkToAgentMessageFlow.isApplicable) {
+                return 'talk-to-agent';
+            }
+            else {
+                return this._getHealthCheckNextGroupId();
+            }
+        });
         noHealthCheckGroup.messages.push(new TextMessage('No. Maybe another time.', MessageSender.User, 100));
-        noHealthCheckGroup.messages.push(new TextMessage('Sorry to hear that I could not be of more help. Please explore our additional resources in the right hand column, especially our popular Support Tools, FAQs, and Community forums.', MessageSender.System));
         messageGroupList.push(noHealthCheckGroup);
-
-        var furtherAssistanceGroup: MessageGroup = new MessageGroup('further-assistance', [], () => 'feedback');
-        furtherAssistanceGroup.messages.push(new TextMessage('I need further assistance.', MessageSender.User, 100));
-        furtherAssistanceGroup.messages.push(new TextMessage('Sorry to hear that I could not be of more help. Please explore our additional resources in the right hand column, especially our popular Support Tools, FAQs, and Community forums.', MessageSender.System));
-        messageGroupList.push(furtherAssistanceGroup);
 
         return messageGroupList;
     }
@@ -81,18 +83,6 @@ export class HealthCheckMessageFlow implements IMessageFlowProvider {
             title: 'No. Maybe another time.',
             type: ButtonActionType.SwitchToOtherMessageGroup,
             next_key: 'no-health-check'
-        }];
-    }
-
-    private _getButtonListForHealthCheckFeedback(): any {
-        return [{
-            title: 'Yes, thank you!',
-            type: ButtonActionType.Continue,
-            next_key: ''
-        }, {
-            title: 'I need further assistance.',
-            type: ButtonActionType.SwitchToOtherMessageGroup,
-            next_key: 'further-assistance'
         }];
     }
 
