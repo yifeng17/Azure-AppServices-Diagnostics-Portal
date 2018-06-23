@@ -1,0 +1,7 @@
+<div *ngIf="showLoadingMessage" style="color:#acacac">
+    <i class="fa fa-spin fa-circle-o-notch" aria-hidden="true"></i> Connecting to Live Agent ...
+</div>
+
+<div *ngIf="!showLoadingMessage">
+    <liveagent-chat autoOpen="true" source="Support Home"></liveagent-chat>
+</div>

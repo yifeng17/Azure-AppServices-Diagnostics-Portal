@@ -37,5 +37,7 @@ export enum BotEventType{
     HealthCheckInvoked,
     HealthCheckResults,
     HealthCheckReportStats,
-    DetectorViewChatDisplayed
+    DetectorViewChatDisplayed,
+    LiveChatWidgetOpened,
+    LiveChatWidgetClosed
 }

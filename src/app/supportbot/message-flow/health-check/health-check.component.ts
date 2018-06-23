@@ -267,7 +267,7 @@ export class HealthCheckComponent implements OnInit, AfterViewInit, IChatMessage
                         }
 
                         healthCheckResultForLogging.push(`Performance-${this._getLevelIndicator(category.healthStatus)}`);
-                        
+
                         break;
                     case 'sitecpuanalysis':
                         let metrics = item.metrics.filter(p => (p.name.toLowerCase().indexOf('percent') > -1));
@@ -321,7 +321,7 @@ export class HealthCheckComponent implements OnInit, AfterViewInit, IChatMessage
                         }
 
                         healthCheckResultForLogging.push(`Memory Usage-${this._getLevelIndicator(category.healthStatus)}`);
-                        
+
                         break;
                     default:
                         category.graphData = GraphHelper.parseMetricsToChartData(item.metrics);
@@ -330,8 +330,8 @@ export class HealthCheckComponent implements OnInit, AfterViewInit, IChatMessage
             }
         });
 
-        if(healthCheckResultForLogging && healthCheckResultForLogging.length > 0){
-            this._logger.LogHealthCheckResults(healthCheckResultForLogging);            
+        if (healthCheckResultForLogging && healthCheckResultForLogging.length > 0) {
+            this._logger.LogHealthCheckResults(healthCheckResultForLogging);
         }
     }
 

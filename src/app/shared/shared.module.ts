@@ -24,6 +24,7 @@ import { ExpandableSummaryComponent } from './components/expandable-summary/expa
 import { VerticalDisplayListComponent } from './components/vertical-display-list/vertical-display-list.component';
 import { VerticalDisplayListItemComponent } from './components/vertical-display-list/vertical-display-list-item/vertical-display-list-item.component';
 import { SolutionTypeTagComponent } from './components/solution-type-tag/solution-type-tag.component';
+import { LiveAgentChatComponent } from './components/liveagent-chat/liveagent-chat.component';
 import { GroupByPipe } from './pipes/groupBy.pipe';
 import { MapValuesPipe } from './pipes/mapValues.pipe';
 import { StepWizardComponent } from './components/step-wizard/step-wizard.component';
@@ -112,7 +113,8 @@ import { AseService } from './services/ase.service';
         NetworkTraceToolComponent,
         IncidentSummaryComponent,
         DaasValidatorComponent,
-        DaasSessionsDetailedComponent
+        DaasSessionsDetailedComponent,
+        LiveAgentChatComponent
     ],
     imports: [
         HttpModule,
@@ -165,7 +167,8 @@ import { AseService } from './services/ase.service';
         ScrollingTileComponent,
         ConnectionDiagnoserToolComponent,
         NetworkTraceToolComponent,
-        IncidentSummaryComponent
+        IncidentSummaryComponent,
+        LiveAgentChatComponent
     ]
 })
 export class SharedModule {

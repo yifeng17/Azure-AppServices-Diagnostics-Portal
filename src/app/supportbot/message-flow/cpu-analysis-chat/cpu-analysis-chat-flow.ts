@@ -110,7 +110,7 @@ export class CpuAnalysisChatFlow implements IMessageFlowProvider {
         }, {
             title: 'No Thanks',
             type: ButtonActionType.SwitchToOtherMessageGroup,
-            next_key: ''
+            next_key: 'nocpuanalysis'
         }];
     }
 }

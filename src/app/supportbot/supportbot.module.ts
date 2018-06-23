@@ -8,6 +8,7 @@ import { StartupMessages } from './message-flow/startup/startupmessages';
 import { MainMenuMessageFlow } from './message-flow/main-menu/mainmenumessageflow';
 import { HealthCheckMessageFlow } from './message-flow/health-check/healthcheckmessageflow';
 import { FeedbackMessageFlow } from './message-flow/feedback/feedbackmessageflow';
+import { TalkToAgentMessageFlow } from './message-flow/talk-to-agent/talktoagentmessageflow';
 import { MessageProcessor } from './message-processor.service';
 
 import { HomepageComponent } from './homepage/homepage.component';
@@ -18,6 +19,7 @@ import { ButtonMessageComponent } from './common/button-message/button-message.c
 import { LoadingMessageComponent } from './common/loading-message/loading-message.component';
 import { MainMenuComponent, ToolStackPipe, PlatformPipe, AppTypePipe, SkuPipe } from './message-flow/main-menu/main-menu.component';
 import { HealthCheckComponent } from './message-flow/health-check/health-check.component';
+import { TalkToAgentMessageComponent } from './message-flow/talk-to-agent/talk-to-agent-message.component';
 import { FeedbackComponent } from './message-flow/feedback/feedback.component';
 import { SolutionsMessageComponent } from './common/solutions-message/solutions-message.component';
 import { GraphMessageComponent } from './common/graph-message/graph-message.component';
@@ -41,6 +43,7 @@ const _hostingEnvironmentResourceUrl: string = 'subscriptions/:subscriptionid/re
         MainMenuComponent,
         ButtonMessageComponent,
         HealthCheckComponent,
+        TalkToAgentMessageComponent,
         FeedbackComponent,
         SolutionsMessageComponent,
         GraphMessageComponent,
@@ -104,6 +107,7 @@ const _hostingEnvironmentResourceUrl: string = 'subscriptions/:subscriptionid/re
         HealthCheckMessageFlow,
         FeedbackMessageFlow,
         CpuAnalysisChatFlow,
+        TalkToAgentMessageFlow,
         MessageProcessor
     ]
 })
