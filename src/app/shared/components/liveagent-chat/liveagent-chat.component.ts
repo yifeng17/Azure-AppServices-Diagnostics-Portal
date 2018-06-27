@@ -51,6 +51,20 @@ export class LiveAgentChatComponent implements OnInit {
                                 reply_field: 'Describe your problem or reply here',
                             },
                             headers: {
+                                channel_response: {
+                                    offline: 'We are currently away. Please leave us a message',
+                                    online: 
+                                    {
+                                            minutes: {
+                                              one: "Online",
+                                              more: "Online"
+                                            },
+                                            hours: {
+                                              one: "Online",
+                                              more: "Online",
+                                            }
+                                    }
+                                  }
                             }
                         }
                     }
