@@ -8,8 +8,9 @@ import { TalkToAgentMessageComponent } from './talk-to-agent-message.component';
 import { SiteService } from '../../../shared/services/site.service';
 import { AuthService } from '../../../shared/services/auth.service';
 import { ResourceType } from '../../../shared/models/portal';
-import { Site, SiteInfoMetaData } from '../../../shared/models/site';
+import { Site, SiteInfoMetaData, SiteExtensions, OperatingSystem } from '../../../shared/models/site';
 import { DemoSubscriptions } from '../../../betaSubscriptions';
+import { AppType } from '../../../shared/models/portal';
 
 @Injectable()
 @RegisterMessageFlowWithFactory()
@@ -23,7 +24,9 @@ export class TalkToAgentMessageFlow implements IMessageFlowProvider {
         if (this.authService.resourceType === ResourceType.Site) {
             this.siteService.currentSite.subscribe((site: Site) => {
 
-                this.isApplicable = !(site.sku.toLowerCase() === 'free' || site.sku.toLowerCase() === 'shared');
+                this.isApplicable = !(site.sku.toLowerCase() === 'free' || site.sku.toLowerCase() === 'shared')
+                    && (site.appType == AppType.WebApp)
+                    && (SiteExtensions.operatingSystem(site) == OperatingSystem.windows);
 
                 this.siteService.currentSiteMetaData.subscribe((siteMetaData: SiteInfoMetaData) => {
                     this.isApplicable = this.isApplicable && (DemoSubscriptions.betaSubscriptions.indexOf(siteMetaData.subscriptionId) >= 0);
