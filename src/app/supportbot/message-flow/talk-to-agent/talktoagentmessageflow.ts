@@ -25,14 +25,18 @@ export class TalkToAgentMessageFlow implements IMessageFlowProvider {
         if (this.authService.resourceType === ResourceType.Site) {
             this.siteService.currentSite.subscribe((site: Site) => {
 
-                this.isApplicable = !(site.sku.toLowerCase() === 'free' || site.sku.toLowerCase() === 'shared')
-                    && (site.appType == AppType.WebApp)
-                    && (SiteExtensions.operatingSystem(site) == OperatingSystem.windows);
+                if (site) {
+                    this.isApplicable = !(site.sku.toLowerCase() === 'free' || site.sku.toLowerCase() === 'shared')
+                        && (site.appType == AppType.WebApp)
+                        && (SiteExtensions.operatingSystem(site) == OperatingSystem.windows);
 
-                if (this.isDemoMode) {
-                    this.siteService.currentSiteMetaData.subscribe((siteMetaData: SiteInfoMetaData) => {
-                        this.isApplicable = this.isApplicable && (DemoSubscriptions.betaSubscriptions.indexOf(siteMetaData.subscriptionId) >= 0);
-                    });
+                    if (this.isDemoMode) {
+                        this.siteService.currentSiteMetaData.subscribe((siteMetaData: SiteInfoMetaData) => {
+                            if (siteMetaData) {
+                                this.isApplicable = this.isApplicable && (DemoSubscriptions.betaSubscriptions.indexOf(siteMetaData.subscriptionId) >= 0);
+                            }
+                        });
+                    }
                 }
             });
         }
