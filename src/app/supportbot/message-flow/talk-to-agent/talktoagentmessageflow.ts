@@ -17,6 +17,7 @@ import { AppType } from '../../../shared/models/portal';
 export class TalkToAgentMessageFlow implements IMessageFlowProvider {
 
     public isApplicable: boolean;
+    private isDemoMode: boolean = false;
 
     constructor(private siteService: SiteService, private authService: AuthService) {
         this.isApplicable = false;
@@ -28,9 +29,11 @@ export class TalkToAgentMessageFlow implements IMessageFlowProvider {
                     && (site.appType == AppType.WebApp)
                     && (SiteExtensions.operatingSystem(site) == OperatingSystem.windows);
 
-                this.siteService.currentSiteMetaData.subscribe((siteMetaData: SiteInfoMetaData) => {
-                    this.isApplicable = this.isApplicable && (DemoSubscriptions.betaSubscriptions.indexOf(siteMetaData.subscriptionId) >= 0);
-                });
+                if (this.isDemoMode) {
+                    this.siteService.currentSiteMetaData.subscribe((siteMetaData: SiteInfoMetaData) => {
+                        this.isApplicable = this.isApplicable && (DemoSubscriptions.betaSubscriptions.indexOf(siteMetaData.subscriptionId) >= 0);
+                    });
+                }
             });
         }
     }
