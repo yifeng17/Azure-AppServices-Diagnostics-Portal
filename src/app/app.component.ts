@@ -5,6 +5,7 @@ import * as _ from 'underscore';
 import { AuthService } from './shared/services/auth.service';
 import { WindowService } from './shared/services/window.service';
 import { LoggingService } from './shared/services/logging/logging.service';
+import { LiveChatService } from './shared/services/livechat.service';
 import { StartupInfo } from './shared/models/portal';
 import { Observable } from 'rxjs';
 import { GenericApiService } from './shared/services/generic-api.service';
@@ -46,7 +47,7 @@ export class AppComponent implements OnInit {
         }
     ]
 
-    constructor(private _authService: AuthService, private _router: Router, private _activatedRoute: ActivatedRoute, private _windowService: WindowService, private _logger: LoggingService, private _genericApi: GenericApiService) {
+    constructor(private _authService: AuthService, private _router: Router, private _activatedRoute: ActivatedRoute, private _windowService: WindowService, private _logger: LoggingService, private _genericApi: GenericApiService, private _liveChatService: LiveChatService) {
         this.navigationItems = [];
         this.contentMaxHeight = 0;
     }

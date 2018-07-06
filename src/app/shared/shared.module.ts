@@ -49,6 +49,7 @@ import { AppInsightsQueryService } from './services/appinsights/appinsights-quer
 import { CacheService } from './services/cache.service';
 import { SolutionFactoryService } from './services/solution-factory.service';
 import { DaasService } from './services/daas.service';
+import { LiveChatService } from './services/livechat.service';
 import { ProfilerComponent } from './components/daas/profiler.component';
 import { ProfilerToolComponent } from './components/tools/profiler-tool/profiler-tool.component';
 import { DaasComponent } from './components/daas/daas.component';
@@ -199,7 +200,8 @@ export class SharedModule {
                 ServiceIncidentService,
                 GenericApiService,
                 TabTitleResolver,
-                AseService
+                AseService,
+                LiveChatService
             ]
         }
     }
