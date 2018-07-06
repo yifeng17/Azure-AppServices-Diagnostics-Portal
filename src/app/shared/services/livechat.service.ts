@@ -47,7 +47,7 @@ export class LiveChatService {
                                 supportTopicId: startupInfo.supportTopicId
                             });
 
-                        }, 400);
+                        }, 1000);
                     }
 
                 }));
