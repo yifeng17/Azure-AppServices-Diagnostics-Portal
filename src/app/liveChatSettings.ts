@@ -11,7 +11,9 @@ export class LiveChatSettings {
 
     // List of Support Topics for which Live chat is Enabled
     public static enabledSupportTopics: string[] = [
-        "32581615"
+        "32440123",     //Configuration and Management/Configuring SSL
+        "32440122",     //Configuration and Management/Configuring custom domain names,
+        "32589277"      //How Do I/Configure domains and certificates
     ];
 
     // This indicates the time after which Live Chat will pop up. 
@@ -20,6 +22,6 @@ export class LiveChatSettings {
     // Live Chat Business Hours
     public static BuisnessStartDay: Number = 1; // Monday
     public static BuisnessEndDay: Number = 5;   // Friday
-    public static BusinessStartHourPST: Number = 0;   // 9 AM PST
-    public static BusinessEndHourPST: Number = 23;     // 4 PM PST
+    public static BusinessStartHourPST: Number = 9;   // 9 AM PST
+    public static BusinessEndHourPST: Number = 16;     // 4 PM PST
 }
