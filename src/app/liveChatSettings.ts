@@ -7,7 +7,7 @@ export class LiveChatSettings {
 
     // If set to true, Live chat will show in case submission for enabled Topics for demo subs
     // If set to false, it will show for all prod subs.
-    public static DemoModeForCaseSubmission: boolean = true;
+    public static DemoModeForCaseSubmission: boolean = false;
 
     // List of Support Topics for which Live chat is Enabled
     public static enabledSupportTopics: string[] = [
