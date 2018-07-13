@@ -22,6 +22,6 @@ export class LiveChatSettings {
     // Live Chat Business Hours
     public static BuisnessStartDay: Number = 1; // Monday
     public static BuisnessEndDay: Number = 5;   // Friday
-    public static BusinessStartHourPST: Number = 9;   // 9 AM PST
-    public static BusinessEndHourPST: Number = 16;     // 4 PM PST
+    public static BusinessStartHourPST: Number = 7;   // 7 AM PST
+    public static BusinessEndHourPST: Number = 17;     // 5 PM PST
 }
