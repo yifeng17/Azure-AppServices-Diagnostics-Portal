@@ -198,7 +198,7 @@ export class LiveChatService {
 
         isApplicable = isApplicable
             && (currentDateTime.day() >= LiveChatSettings.BuisnessStartDay && currentDateTime.day() <= LiveChatSettings.BuisnessEndDay)
-            && (currentDateTime.hour() >= LiveChatSettings.BusinessStartHourPST && currentDateTime.hour() <= LiveChatSettings.BusinessEndHourPST);
+            && (currentDateTime.hour() >= LiveChatSettings.BusinessStartHourPST && currentDateTime.hour() < LiveChatSettings.BusinessEndHourPST);
 
         return isApplicable;
     }
