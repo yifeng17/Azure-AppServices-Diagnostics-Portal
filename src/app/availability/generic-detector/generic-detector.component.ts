@@ -26,7 +26,7 @@ export class GenericDetectorComponent implements OnInit {
 
   response: DetectorResponse;
 
-  constructor(private _genericDetectorApi: GenericApiService, private _activatedRoute: ActivatedRoute, private _authServiceInstance: AuthService, private telemetryService: TelemetryService) {
+  constructor(private _genericDetectorApi: GenericApiService, private _activatedRoute: ActivatedRoute, private _authServiceInstance: AuthService, private _telemetryService: TelemetryService) {
     this.endTime = moment.tz('Etc/UTC');
     this.endTime.startOf('minute').minute(this.endTime.minute() - this.endTime.minute() % 5);
     this.startTime = this.endTime.clone().add(-1, 'days');
@@ -46,7 +46,7 @@ export class GenericDetectorComponent implements OnInit {
           "SupportTopicId": this._supportTopicId,
           "SessionId": this._sessionId
         }
-        telemetryService.eventPropertiesSubject.next(eventProperties);
+        _telemetryService.eventPropertiesSubject.next(eventProperties);
       }
     });
   }
