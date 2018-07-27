@@ -10,7 +10,7 @@ export class LiveChatSettings {
     public static DemoModeForCaseSubmission: boolean = false;
 
     // If set to true, chat will be hidden for internal subscriptions
-    public static HideForInternalSubscriptions: boolean = false;
+    public static HideForInternalSubscriptions: boolean = true;
 
     // List of Support Topics for which Live chat is Enabled
     public static enabledSupportTopics: string[] = [
