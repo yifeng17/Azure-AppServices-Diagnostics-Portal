@@ -44,7 +44,7 @@ export class GenericDetectorComponent implements OnInit {
           "ResourceId": this._resourceId,
           "TicketBladeWorkflowId": this._ticketBladeWorkflowId,
           "SupportTopicId": this._supportTopicId,
-          "SessionId": this._sessionId
+          "PortalSessionId": this._sessionId
         }
         _telemetryService.eventPropertiesSubject.next(eventProperties);
       }
