@@ -38,6 +38,10 @@ export enum BotEventType{
     HealthCheckResults,
     HealthCheckReportStats,
     DetectorViewChatDisplayed,
+    LiveChatWidgetInit,
+    LiveChatWidgetLoaded,
     LiveChatWidgetOpened,
-    LiveChatWidgetClosed
+    LiveChatWidgetClosed,
+    LiveChatWidgetCustomerEngaged,
+    LiveChatWidgetHelpPopupShown
 }
