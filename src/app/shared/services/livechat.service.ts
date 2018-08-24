@@ -78,6 +78,8 @@ export class LiveChatService {
 
                             if (window && window.fcWidget) {
 
+                                this.logger.LogLiveChatWidgetBeginInit(source);
+
                                 window.fcWidget.init({
                                     token: "ac017aa7-7c07-42bc-8fdc-1114fc962803",
                                     host: "https://wchat.freshchat.com",
@@ -114,6 +116,7 @@ export class LiveChatService {
                                 });
 
                                 window.fcWidget.on("widget:loaded", ((resp) => {
+                                    this.logger.LogLiveChatWidgetLoaded(source);
                                     this.getOrCreateUser();
                                 }));
 
@@ -129,8 +132,6 @@ export class LiveChatService {
                     }
                 });
             }
-
-
         });
     }
 
