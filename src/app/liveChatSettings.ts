@@ -19,6 +19,8 @@ export class LiveChatSettings {
         "32440122",     //Configuration and Management/Configuring custom domain names
         "32542210",     //Configuration and Management/IP Configuration
         "32581615",     //Configuration and Management/Deployment Slots
+        "32542208",     //Configuration and Management/Backup and Restore
+        "32589276",     //How Do I/Backup and Restore
         "32589277"      //How Do I/Configure domains and certificates
     ];
 
