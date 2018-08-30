@@ -21,7 +21,8 @@ export class LiveChatSettings {
         "32581615",     //Configuration and Management/Deployment Slots
         "32542208",     //Configuration and Management/Backup and Restore
         "32589276",     //How Do I/Backup and Restore
-        "32589277"      //How Do I/Configure domains and certificates
+        "32589277",     //How Do I/Configure domains and certificates,
+        "32589281"      //How Do I/IP Configuration
     ];
 
     // This indicates the time after which Live Chat will pop up. 
