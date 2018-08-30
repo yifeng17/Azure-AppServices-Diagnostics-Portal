@@ -32,4 +32,37 @@ export class LiveChatSettings {
     public static BuisnessEndDay: Number = 5;   // Friday
     public static BusinessStartHourPST: Number = 7;   // 7 AM PST
     public static BusinessEndHourPST: Number = 17;     // 5 PM PST
+
+    public static PublicHolidays: any = [
+        {
+            // Labor Day
+            date: 3,
+            month: 9,
+            year: 2018
+        },
+        {
+            // Thanksgiving Day
+            date: 22,
+            month: 11,
+            year: 2018
+        },
+        {
+            // Xmas
+            date: 25,
+            month: 12,
+            year: 2018
+        },
+        {
+            // New Yr Eve
+            date: 31,
+            month: 12,
+            year: 2018
+        },
+        {
+            // New Yr
+            date: 1,
+            month: 1,
+            year: 2019
+        }
+    ];
 }
