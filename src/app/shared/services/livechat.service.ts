@@ -206,8 +206,23 @@ export class LiveChatService {
 
         isApplicable = isApplicable
             && (currentDateTime.day() >= LiveChatSettings.BuisnessStartDay && currentDateTime.day() <= LiveChatSettings.BuisnessEndDay)
-            && (currentDateTime.hour() >= LiveChatSettings.BusinessStartHourPST && currentDateTime.hour() < LiveChatSettings.BusinessEndHourPST);
+            && (currentDateTime.hour() >= LiveChatSettings.BusinessStartHourPST && currentDateTime.hour() < LiveChatSettings.BusinessEndHourPST)
+            && !this.isPublicHoliday(currentDateTime);
 
         return isApplicable;
+    }
+
+    private isPublicHoliday(currentDate): boolean {
+
+        for (var iter = 0; iter < LiveChatSettings.PublicHolidays.length; iter++) {
+
+            var element = LiveChatSettings.PublicHolidays[iter];
+
+            if (element.date == currentDate.date() && ((element.month - 1) == currentDate.month()) && element.year == currentDate.year()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
