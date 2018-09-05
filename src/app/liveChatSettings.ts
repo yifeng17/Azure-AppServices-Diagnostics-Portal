@@ -3,7 +3,7 @@ export class LiveChatSettings {
 
     // Global Switch that controls whether chat is shown or not. 
     // If False, it will override, every other setting
-    public static GLOBAL_ON_SWITCH: boolean = true;
+    public static GLOBAL_ON_SWITCH: boolean = false;
 
     // If set to true, Live chat in home page will only show for demo subs
     // If set to false, it will show for all prod subs 
