@@ -182,13 +182,14 @@ export class LiveChatService {
     }
 
     // This method indicate whether chat is applicable for current site
-    private isChatApplicableForSite(site: Site, siteMetaData: SiteInfoMetaData, demoMode: boolean): boolean {
+    public isChatApplicableForSite(site: Site, siteMetaData: SiteInfoMetaData, demoMode: boolean): boolean {
 
         if (LiveChatSettings.HideForInternalSubscriptions == true && (DemoSubscriptions.betaSubscriptions.indexOf(siteMetaData.subscriptionId) >= 0)) {
             return false;
         }
 
-        return site && siteMetaData
+        return LiveChatSettings.GLOBAL_ON_SWITCH
+            && site && siteMetaData
             && !(site.sku.toLowerCase() === 'free' || site.sku.toLowerCase() === 'shared')
             && (site.appType == AppType.WebApp)
             && (SiteExtensions.operatingSystem(site) == OperatingSystem.windows)
@@ -209,7 +210,7 @@ export class LiveChatService {
             && (currentDateTime.hour() >= LiveChatSettings.BusinessStartHourPST && currentDateTime.hour() < LiveChatSettings.BusinessEndHourPST)
             && !this.isPublicHoliday(currentDateTime);
 
-        return isApplicable;
+        return LiveChatSettings.GLOBAL_ON_SWITCH && isApplicable;
     }
 
     private isPublicHoliday(currentDate): boolean {
