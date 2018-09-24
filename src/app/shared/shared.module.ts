@@ -29,10 +29,7 @@ import { GroupByPipe } from './pipes/groupBy.pipe';
 import { MapValuesPipe } from './pipes/mapValues.pipe';
 import { StepWizardComponent } from './components/step-wizard/step-wizard.component';
 import { DaasSessionsComponent, DateTimeDiffPipe } from './components/daas-sessions/daas-sessions.component';
-import { WindowService } from './services/window.service';
-import { PortalService } from './services/portal.service';
-import { BroadcastService } from './services/broadcast.service';
-import { AuthService } from './services/auth.service';
+import { WindowService } from '../startup/services/window.service';
 import { ArmService } from './services/arm.service';
 import { UriElementsService } from './services/urielements.service';
 import { PortalActionService } from './services/portal-action.service';
@@ -40,16 +37,13 @@ import { SiteService } from './services/site.service';
 import { AppAnalysisService } from './services/appanalysis.service';
 import { ServerFarmDataService } from './services/server-farm-data.service';
 import { RBACService } from './services/rbac.service';
-import { LoggingService } from './services/logging/logging.service';
-import { AvailabilityLoggingService } from './services/logging/availability.logging.service';
-import { BotLoggingService } from './services/logging/bot.logging.service';
 import { DetectorViewStateService } from './services/detector-view-state.service';
 import { AppInsightsService } from './services/appinsights/appinsights.service';
 import { AppInsightsQueryService } from './services/appinsights/appinsights-query.service';
 import { CacheService } from './services/cache.service';
 import { SolutionFactoryService } from './services/solution-factory.service';
 import { DaasService } from './services/daas.service';
-import { LiveChatService } from './services/livechat.service';
+import { LiveChatService } from '../shared-v2/services/livechat.service';
 import { ProfilerComponent } from './components/daas/profiler.component';
 import { ProfilerToolComponent } from './components/tools/profiler-tool/profiler-tool.component';
 import { DaasComponent } from './components/daas/daas.component';
@@ -60,8 +54,6 @@ import { IncidentNotificationComponent } from './components/incident-notificatio
 import { HttpLogAnalysisToolComponent } from './components/tools/http-loganalysis-tool/http-loganalysis-tool.component';
 import { PhpProcessAnalyzerToolComponent } from './components/tools/php-processanalyzer-tool/php-processanalyzer-tool.component';
 import { PhpLogsAnalyzerToolComponent } from './components/tools/php-logsanalyzer-tool/php-logsanalyzer-tool.component';
-import { ScrollingTileComponent } from './components/scrolling-tile/scrolling-tile.component';
-import { NguCarouselModule } from '@ngu/carousel';
 import { ConnectionDiagnoserToolComponent } from './components/tools/connection-diagnoser-tool/connection-diagnoser-tool.component';
 import { NetworkTraceToolComponent } from './components/tools/network-trace-tool/network-trace-tool.component';
 import { ServiceIncidentService } from './services/service-incident.service';
@@ -70,12 +62,24 @@ import { DaasValidatorComponent } from './components/daas/daas-validator.compone
 import { GenericApiService } from './services/generic-api.service';
 import { TabTitleResolver } from './resolvers/tab-name.resolver';
 import { AseService } from './services/ase.service';
+import { LoggingService } from './services/logging/logging.service';
+import { AvailabilityLoggingService } from './services/logging/availability.logging.service';
+import { BotLoggingService } from './services/logging/bot.logging.service';
+import { StartupModule } from '../startup/startup.module';
+import { TabsComponent } from './components/tabs/tabs.component';
+import { GenericDetectorComponent } from './components/generic-detector/generic-detector.component';
+import { DiagnosticDataModule } from 'applens-diagnostics';
 import { AutohealingService } from './services/autohealing.service';
 import { TimespanComponent } from './components/timespan/timespan.component';
 import { ToggleButtonComponent } from './components/toggle-button/toggle-button.component';
 import { ToolStackPipe, AppTypePipe, SkuPipe, PlatformPipe } from './pipes/categoryfilters.pipe';
 import { DaasMainComponent } from './components/daas-main/daas-main.component';
 import { DaasScaleupComponent } from './components/daas/daas-scaleup/daas-scaleup.component';
+import { NotificationComponent } from './components/notification/notification.component';
+import { NotificationService } from '../shared-v2/services/notification.service';
+import { TestInputComponent } from './components/test-input/test-input.component';
+import { ResourceRedirectComponent } from './components/resource-redirect/resource-redirect.component';
+import { TileListComponent } from './components/tile-list/tile-list.component';
 
 @NgModule({
     declarations: [
@@ -118,23 +122,29 @@ import { DaasScaleupComponent } from './components/daas/daas-scaleup/daas-scaleu
         HttpLogAnalysisToolComponent,
         PhpProcessAnalyzerToolComponent,
         PhpLogsAnalyzerToolComponent,
-        ScrollingTileComponent,
         ConnectionDiagnoserToolComponent,
         NetworkTraceToolComponent,
         IncidentSummaryComponent,
         DaasValidatorComponent,
         DaasMainComponent,
         LiveAgentChatComponent,
+        TabsComponent,
+        GenericDetectorComponent,
         TimespanComponent,
         ToggleButtonComponent,
-        DaasScaleupComponent
+        DaasScaleupComponent,
+        NotificationComponent,
+        TestInputComponent,
+        ResourceRedirectComponent,
+        TileListComponent
     ],
     imports: [
         HttpModule,
         CommonModule,
+        StartupModule,
         FormsModule,
         RouterModule,
-        NguCarouselModule
+        DiagnosticDataModule
     ],
     exports: [
         CommonModule,
@@ -181,14 +191,16 @@ import { DaasScaleupComponent } from './components/daas/daas-scaleup/daas-scaleu
         HttpLogAnalysisToolComponent,
         PhpProcessAnalyzerToolComponent,
         PhpLogsAnalyzerToolComponent,
-        ScrollingTileComponent,
         ConnectionDiagnoserToolComponent,
         NetworkTraceToolComponent,
         IncidentSummaryComponent,
         LiveAgentChatComponent,
+        TabsComponent,
+        GenericDetectorComponent,
         TimespanComponent,
         ToggleButtonComponent,
-        DaasScaleupComponent
+        DaasScaleupComponent,
+        TileListComponent
     ]
 })
 export class SharedModule {
@@ -197,9 +209,6 @@ export class SharedModule {
             ngModule: SharedModule,
             providers: [
                 WindowService,
-                PortalService,
-                BroadcastService,
-                AuthService,
                 ArmService,
                 UriElementsService,
                 PortalActionService,
@@ -221,7 +230,8 @@ export class SharedModule {
                 TabTitleResolver,
                 AseService,
                 LiveChatService,
-                AutohealingService
+                AutohealingService,
+                NotificationService
             ]
         }
     }

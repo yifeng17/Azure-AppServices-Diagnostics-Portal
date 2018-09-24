@@ -1,17 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Site } from '../../shared/models/site';
-import { ServerFarm } from '../../shared/models/server-farm';
-import { StartupInfo, ResourceType } from '../../shared/models/portal';
+import { Site } from '../models/site';
+import { ServerFarm } from '../models/server-farm';
+import { StartupInfo, ResourceType } from '../models/portal';
 
 import { ResponseMessageEnvelope } from '../models/responsemessageenvelope';
-import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/observable/throw';
+import { BehaviorSubject } from 'rxjs'
 import { ArmService } from './arm.service';
 import { UriElementsService } from './urielements.service';
-import { AuthService } from './auth.service';
+import { AuthService } from '../../startup/services/auth.service';
 import { RBACService } from './rbac.service';
 
 @Injectable()
@@ -29,11 +25,9 @@ export class ServerFarmDataService {
 
     constructor(private _armService: ArmService, private _uriElementsService: UriElementsService, private _authService: AuthService,
         private _rbacService: RBACService) {
-
         this._authService.getStartupInfo()
             .subscribe((startUpInfo: StartupInfo) => {
                 if (!startUpInfo) return;
-                console.log(startUpInfo);
                 this.siteResourceId = startUpInfo.resourceId;
                 if (startUpInfo.resourceType === ResourceType.Site) {
                     return this._armService.getResource<Site>(this.siteResourceId)

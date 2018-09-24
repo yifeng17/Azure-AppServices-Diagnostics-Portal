@@ -2,13 +2,13 @@ import { Component, OnInit, trigger, state, animate, transition, style } from '@
 import { ActivatedRoute } from '@angular/router';
 import { IAppAnalysisResponse } from '../../shared/models/appanalysisresponse';
 import { IDetectorResponse, IMetricSet } from '../../shared/models/detectorresponse';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs'
 import { IAbnormalTimePeriod } from '../../shared/models/appanalysisresponse';
 import { StartupInfo } from '../../shared/models/portal';
 import { AppAnalysisService } from '../../shared/services/appanalysis.service';
 import { ServerFarmDataService } from '../../shared/services/server-farm-data.service';
 import { AvailabilityLoggingService } from '../../shared/services/logging/availability.logging.service';
-import { AuthService } from '../../shared/services/auth.service';
+import { AuthService } from '../../startup/services/auth.service';
 
 
 @Component({

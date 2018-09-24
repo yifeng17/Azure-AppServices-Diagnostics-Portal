@@ -1,16 +1,21 @@
 import { Injectable } from '@angular/core';
 import { AvailabilityEventType } from './events.enumerations';
-import { SummaryHealthStatus } from '../../../shared/models/summary-view-model';
+import { SummaryHealthStatus } from '../../models/summary-view-model';
 import { LoggingService } from './logging.service';
-import { PortalService } from '../portal.service';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../../../startup/services/auth.service';
 import { ArmService } from '../arm.service';
+import { PortalService } from '../../../startup/services/portal.service';
+import { StartupInfo } from '../../models/portal';
 
 @Injectable()
 export class AvailabilityLoggingService extends LoggingService {
 
     constructor(private _portalService: PortalService, private _authService: AuthService, private _armService: ArmService) {
         super(_portalService, _authService, _armService);
+    }
+
+    LogStartUpInfo(startupInfo: StartupInfo, category: string = "Availability") {
+        //This is a No-Op so that it only gets logged in base
     }
 
     LogAnalysisInitialized(analysisName, category: string = 'Availability') {

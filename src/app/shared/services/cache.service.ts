@@ -1,8 +1,6 @@
-import { Http, Headers, Response, Request } from '@angular/http';
 import { Injectable } from '@angular/core';
-import { Observable, Subscription as RxSubscription, Subject, ReplaySubject } from 'rxjs/Rx';
-
-import 'rxjs/add/operator/map';
+import { Observable } from 'rxjs'
+import { Subject } from 'rxjs'
 
 interface CacheContent {
     value: any;
@@ -35,7 +33,7 @@ export class CacheService {
             if (!invalidateCache) {
                 this.inFlightObservables.set(key, new Subject());
                 this.log(`%c Calling api for ${key}`, 'color: purple');
-                return fallback.do((value) => { this.set(key, value); });
+                return fallback.do((value) => { this.set(key, value); }, error => console.log(error));
             }
             else {
                 return fallback;
@@ -46,6 +44,7 @@ export class CacheService {
     }
 
     set(key: string, value: any): void {
+        this.log(`%cAdding Key: ${key}`, 'color:darkblue');
         this.cache.set(key, { value: value });
         this.notifyInFlightObservers(key, value);
     }

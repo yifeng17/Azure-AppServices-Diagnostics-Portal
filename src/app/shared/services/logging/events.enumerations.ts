@@ -45,3 +45,17 @@ export enum BotEventType{
     LiveChatWidgetCustomerEngaged,
     LiveChatWidgetHelpPopupShown
 }
+
+export enum V2EventType {
+    CategorySelected,
+    Search,
+    SearchResultSelected,
+    TopLevelDetectorSelected,
+    DetectorSummarySelected,
+    DetectorSummaryFullReportSelected,
+    DetectorSummaryChildDetectorSelected,
+    DetectorSummaryInsightSelected,
+    ChatSearch,
+    ChatSearchSelected,
+    NotificationClicked
+}

@@ -6,22 +6,23 @@ import { RegisterMessageFlowWithFactory } from '../message-flow.factory';
 import { MessageSender, ButtonActionType } from '../../models/message-enums';
 import { TalkToAgentMessageComponent } from './talk-to-agent-message.component';
 import { SiteService } from '../../../shared/services/site.service';
-import { AuthService } from '../../../shared/services/auth.service';
-import { LiveChatService } from '../../../shared/services/livechat.service';
+import { AuthService } from '../../../startup/services/auth.service';
 import { ResourceType } from '../../../shared/models/portal';
-import { Site, SiteInfoMetaData, SiteExtensions, OperatingSystem } from '../../../shared/models/site';
-import { DemoSubscriptions } from '../../../betaSubscriptions';
-import { AppType } from '../../../shared/models/portal';
+import { Site, SiteInfoMetaData } from '../../../shared/models/site';
 import { LiveChatSettings } from '../../../liveChatSettings';
+import { LiveChatService } from '../../../shared-v2/services/livechat.service';
 
+//TODO: THIS IS NO LONGER REGISTERED ANYWHERE
+// Need to migrate this
 @Injectable()
 @RegisterMessageFlowWithFactory()
-export class TalkToAgentMessageFlow implements IMessageFlowProvider {
+export class TalkToAgentMessageFlow extends IMessageFlowProvider {
 
     public isApplicable: boolean;
     private isDemoMode: boolean = LiveChatSettings.DemoModeForHomePage;
 
     constructor(private siteService: SiteService, private authService: AuthService, private liveChatService: LiveChatService) {
+        super();
         this.isApplicable = false;
 
         if (this.authService.resourceType === ResourceType.Site) {
@@ -31,7 +32,7 @@ export class TalkToAgentMessageFlow implements IMessageFlowProvider {
 
                     this.siteService.currentSiteMetaData.subscribe((siteMetaData: SiteInfoMetaData) => {
                         if (siteMetaData) {
-                            this.isApplicable = this.liveChatService.isChatApplicableForSite(site, siteMetaData, this.isDemoMode);
+                            this.isApplicable = false//this.liveChatService.isChatApplicableForSite(site, siteMetaData, this.isDemoMode);
                         }
                     });
                 }

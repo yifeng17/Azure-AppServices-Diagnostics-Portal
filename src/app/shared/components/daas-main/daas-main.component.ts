@@ -5,10 +5,11 @@ import { SiteDaasInfo } from '../../models/solution-metadata';
 import { Category, Subcategory } from '../../models/problem-category';
 import { OperatingSystem } from '../../models/site';
 import { AppType, StartupInfo } from '../../models/portal';
-import { AuthService } from '../../services/auth.service';
+import { Sku } from '../../models/server-farm';
 import { CategoriesService } from '../../services/categories.service';
 import { IDiagnosticProperties } from '../../models/diagnosticproperties';
 import { AppAnalysisService } from '../../services/appanalysis.service';
+import { AuthService } from '../../../startup/services/auth.service';
 
 @Component({
   selector: 'daas-main',

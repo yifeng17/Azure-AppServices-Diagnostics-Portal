@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Http, RequestOptions, Headers, Response } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs'
 import { SiteDaasInfo } from '../models/solution-metadata';
 import { ArmService } from './arm.service';
-import { AuthService } from './auth.service';
+import { AuthService } from '../../startup/services/auth.service';
 import { UriElementsService } from './urielements.service';
 import { Session, DiagnoserDefinition, DatabaseTestConnectionResult } from '../models/daas';
 import { SiteInfoMetaData } from '../models/site';

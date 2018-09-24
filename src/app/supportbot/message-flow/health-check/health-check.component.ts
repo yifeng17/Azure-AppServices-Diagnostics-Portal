@@ -1,15 +1,12 @@
-import { Component, Injector, Output, EventEmitter, OnInit, AfterViewInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { Component, Output, EventEmitter, OnInit, AfterViewInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { IChatMessageComponent } from '../../interfaces/ichatmessagecomponent';
 import { Cache } from '../../../shared/models/icache';
 import { IDetectorResponse } from '../../../shared/models/detectorresponse';
 import { IAppAnalysisResponse } from '../../../shared/models/appanalysisresponse';
 import { GraphHelper } from '../../../shared/utilities/graphHelper';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/forkJoin';
-import * as _ from 'underscore';
+import { Observable } from 'rxjs';
 import { OperatingSystem, Site, SiteExtensions } from '../../../shared/models/site';
 import { BehaviorSubject } from 'rxjs';
 import { AppAnalysisService } from '../../../shared/services/appanalysis.service';
@@ -43,7 +40,8 @@ export class HealthCheckComponent implements OnInit, AfterViewInit, IChatMessage
     private _requestsColors: string[] = ["rgb(0, 188, 242)", "rgb(127, 186, 0)", "rgb(155, 79, 150)", "rgb(255, 140, 0)", "rgb(232, 17, 35)"];
     private _analysisData: Cache<IAppAnalysisResponse>;
 
-    constructor(private _route: ActivatedRoute, private _analysisService: AppAnalysisService, private _logger: BotLoggingService, private _siteService: SiteService) {
+    constructor(private _route: ActivatedRoute, private _analysisService: AppAnalysisService, private _logger: BotLoggingService, private _siteService: SiteService,
+            private _router: Router) {
         this.showLoadingMessage = true;
         this._analysisData = {};
 
@@ -136,6 +134,10 @@ export class HealthCheckComponent implements OnInit, AfterViewInit, IChatMessage
         this.siteName = this._route.snapshot.params['sitename'];
         this.slotName = this._route.snapshot.params['slot'] ? this._route.snapshot.params['slot'] : '';
 
+        if (!this.siteName) {
+            this.siteName = this._route.snapshot.params['resourcename'];
+        }
+
         this._loadData();
     }
 
@@ -151,6 +153,12 @@ export class HealthCheckComponent implements OnInit, AfterViewInit, IChatMessage
 
     logFullReportClick(title: string) {
         this._logger.LogClickEvent('Full Report', `${title} : Health Check Report Category`, 'Support Home');
+    }
+
+    onFullReportClick(href: string, title: string) {
+        let slot = this.slotName && this.slotName != '' ? `/slots/${this.slotName}`: '';
+        this._router.navigateByUrl(`legacy/subscriptions/${this.subscriptionId}/resourcegroups/${this.resourceGroup}/providers/microsoft.web/sites/${this.siteName}${slot}/diagnostics/${href}`)
+        this.logFullReportClick(title);
     }
 
     private _loadData() {
@@ -213,9 +221,7 @@ export class HealthCheckComponent implements OnInit, AfterViewInit, IChatMessage
 
         detectorResponses.forEach((item: IDetectorResponse) => {
             let name = item.detectorDefinition.name;
-            let category = _.find(this.healthCheckpoints, (entry) => {
-                return entry.detector.toLowerCase() === name.toLowerCase();
-            });
+            let category = this.healthCheckpoints.find(entry => entry.detector.toLowerCase() === name.toLowerCase());
 
             if (category) {
                 switch (category.detector.toLowerCase()) {

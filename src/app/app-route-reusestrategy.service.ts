@@ -1,13 +1,22 @@
 import { RouteReuseStrategy, ActivatedRouteSnapshot, DetachedRouteHandle } from "@angular/router";
+import { getParentRenderElement } from "@angular/core/src/view/util";
+import { Injectable } from "@angular/core";
 
+@Injectable()
 export class CustomReuseStrategy implements RouteReuseStrategy {
 
     handlers: { [key: string]: DetachedRouteHandle } = {};
+
+    closedTab: string;
 
      /**
      * Determines if this route (and its subtree) should be detached to be reused later.
      */
     shouldDetach(route: ActivatedRouteSnapshot): boolean {
+        let url = this._getUrl(route);
+
+        if (!route.routeConfig) return false;
+        if (route.routeConfig.loadChildren) return false;
         return !!route.data && !!(route.data as any).cacheComponent; 
     }
 
@@ -16,6 +25,12 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
      */
     store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle): void {
         let url = this._getUrl(route);
+
+        if(this.closedTab === url) {
+            this.closedTab = null;
+            return;
+        }
+
         this.handlers[url] = handle;
     }
 
@@ -31,7 +46,9 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
      * Retrieves the previously stored route.
      */
     retrieve(route: ActivatedRouteSnapshot): DetachedRouteHandle {
+        
         if (!route.routeConfig) return null;
+        if (route.routeConfig.loadChildren) return null;
 
         let url = this._getUrl(route);
         return this.handlers[url];
@@ -55,12 +72,34 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
         
     }
 
-    private _getUrl(route: ActivatedRouteSnapshot): string {
-        var url = '';
-        route.url.forEach((item) => {
-            url += `${item.path}/`;
-        });
+    removeCachedRoute(url: string) {
+        this.closedTab = url;
+        this.handlers[url] = null;
+    }
 
-        return url;
+    private _getUrl(route: ActivatedRouteSnapshot): string {
+        let topLevelParent = this._getParent(route);
+        let fullUrl = '/' + this._getFullUrl(topLevelParent);
+
+        return fullUrl;
+    }
+
+    private _getParent(route: ActivatedRouteSnapshot): ActivatedRouteSnapshot {
+        return route.parent ? this._getParent(route.parent) : route;
+    }
+
+    private _getFullUrl(route: ActivatedRouteSnapshot): string {
+        if(!route) {
+            return null;
+        }
+
+        let childRoute = this._getFullUrl(route.firstChild);
+        if(!route.url || route.url.length === 0) {
+            return childRoute;
+        }
+        
+        let currentRoute = route.url.join('/');
+        let returnValue = childRoute && childRoute !== '' ? [currentRoute, childRoute].join('/') : currentRoute;
+        return returnValue;
     }
 }

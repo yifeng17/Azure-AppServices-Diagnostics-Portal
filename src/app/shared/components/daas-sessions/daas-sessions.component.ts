@@ -1,12 +1,11 @@
 import { Component, Input, OnInit, SimpleChanges, OnChanges, Pipe, PipeTransform, OnDestroy } from '@angular/core';
 import { Session, SessionStatus } from '../../models/daas';
-import { WindowService } from '../../services/window.service';
+import { WindowService } from '../../../startup/services/window.service';
 import { ServerFarmDataService } from '../../services/server-farm-data.service';
 import { DaasService } from '../../services/daas.service';
 import { SiteDaasInfo } from '../../models/solution-metadata';
 import { Subscription } from 'rxjs';
-import { Observable } from 'rxjs/Observable';
-import * as _ from 'underscore';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'daas-sessions',
@@ -76,7 +75,7 @@ export class DaasSessionsComponent implements OnChanges, OnDestroy {
                 var newSessions = sessions.map(this.reducedSession);
                 var existingSessions = this.sessions.map(this.reducedSession);
 
-                if (!_.isEqual(newSessions, existingSessions)) {
+                if (newSessions.length === existingSessions.length && newSessions.filter(newSession => existingSessions.findIndex(session => session === newSession) === -1).length > 0) {
                     this.sessions = this.setExpanded(sessions);
                 }
             });

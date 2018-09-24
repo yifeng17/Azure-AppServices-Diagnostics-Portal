@@ -1,20 +1,13 @@
-import { Http, Headers, Response, Request } from '@angular/http';
-import { Injectable, EventEmitter } from '@angular/core';
+import { Http, Headers, Response } from '@angular/http';
+import { Injectable } from '@angular/core';
 import { Subscription } from '../models/subscription';
-import { Site } from '../models/site';
-import { ArmObj } from '../models/armObj';
-import { SiteConfig } from '../models/site-config';
 import { ResponseMessageEnvelope, ResponseMessageCollectionEnvelope } from '../models/responsemessageenvelope'
-import { Observable, Subscription as RxSubscription, Subject, ReplaySubject } from 'rxjs/Rx';
-import { ResourceGroup } from '../models/resource-group';
-import { PublishingCredentials } from '../models/publishing-credentials';
-import { DeploymentLocations } from '../models/arm/locations';
-import { AuthService } from './auth.service';
+import { Observable } from 'rxjs'
+import { ReplaySubject } from 'rxjs'
+import { AuthService } from '../../startup/services/auth.service';
 import { CacheService } from './cache.service';
 
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/observable/throw';
+import 'rxjs/add/operator/retry';
 
 @Injectable()
 export class ArmService {
@@ -29,12 +22,28 @@ export class ArmService {
     }
 
     getResource<T>(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Observable<{} | ResponseMessageEnvelope<T>> {
+        if(!resourceUri.startsWith('/')) { resourceUri = '/' + resourceUri }
         var url: string = `${this.armUrl}${resourceUri}${resourceUri.indexOf('?') >= 0 ? '&' : '?'}api-version=${!!apiVersion ? apiVersion : this.websiteApiVersion}`
 
         let request = this._http.get(url, {
             headers: this.getHeaders()
         })
+            .retry(2)
             .map((response: Response) => (<ResponseMessageEnvelope<T>>response.json()))
+            .catch(this.handleError);
+
+        return this._cache.get(url, request, invalidateCache);
+    }
+
+    getArmResource<T>(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Observable<T> {
+        if(!resourceUri.startsWith('/')) { resourceUri = '/' + resourceUri }
+        var url: string = `${this.armUrl}${resourceUri}${resourceUri.indexOf('?') >= 0 ? '&' : '?'}api-version=${!!apiVersion ? apiVersion : this.websiteApiVersion}`
+
+        let request = this._http.get(url, {
+            headers: this.getHeaders()
+        })
+            .retry(2)
+            .map((response: Response) => (<T>response.json()))
             .catch(this.handleError);
 
         return this._cache.get(url, request, invalidateCache);
@@ -60,6 +69,7 @@ export class ArmService {
         }
 
         let request = this._http.post(url, bodyString, { headers: this.getHeaders() })
+            .retry(2)
             .map((response: Response) => {
                 let body = response.text();
 

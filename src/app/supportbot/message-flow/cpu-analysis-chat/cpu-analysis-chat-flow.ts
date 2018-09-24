@@ -7,20 +7,20 @@ import { SolutionsMessage } from '../../common/solutions-message/solutions-messa
 import { GraphMessage, GraphMessageData } from '../../common/graph-message/graph-message.component';
 import { ProblemStatementMessage } from '../../common/problem-statement-message/problem-statement-message.component';
 import { IDetectorResponse } from '../../../shared/models/detectorresponse';
-import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Observable } from 'rxjs'
+import { BehaviorSubject } from 'rxjs'
 import { ISolution } from '../../../shared/models/solution';
 import { SiteInfoMetaData } from '../../../shared/models/site';
 import { AppAnalysisService } from '../../../shared/services/appanalysis.service';
 import { SiteService } from '../../../shared/services/site.service';
 import { MessageSender, ButtonActionType } from '../../models/message-enums';
-import { AuthService } from '../../../shared/services/auth.service';
+import { AuthService } from '../../../startup/services/auth.service';
 import { ResourceType } from '../../../shared/models/portal';
 
 
 @Injectable()
 @RegisterMessageFlowWithFactory()
-export class CpuAnalysisChatFlow implements IMessageFlowProvider {
+export class CpuAnalysisChatFlow extends IMessageFlowProvider {
 
     private cpuDetectorResponseSubject: BehaviorSubject<IDetectorResponse> = new BehaviorSubject(null);
     private solutionListSubject: BehaviorSubject<ISolution[]> = new BehaviorSubject(null);
@@ -41,6 +41,7 @@ export class CpuAnalysisChatFlow implements IMessageFlowProvider {
 
 
     constructor(private _appAnalysisService: AppAnalysisService, private _siteService: SiteService, private _authService: AuthService) {
+        super();
         if (this._authService.resourceType === ResourceType.Site) {
             this._siteService.currentSiteMetaData.subscribe(siteInfo => {
                 if (siteInfo) {
@@ -78,16 +79,20 @@ export class CpuAnalysisChatFlow implements IMessageFlowProvider {
     }
 
     private _getCpuDetectorResponse() {
-        this._appAnalysisService.getDetectorResource(this.siteInfoMetaData.subscriptionId, this.siteInfoMetaData.resourceGroupName, this.siteInfoMetaData.siteName, this.siteInfoMetaData.slot, 'availability', 'sitecpuanalysis').subscribe(response => {
-            this.cpuDetectorResponse = response;
-            this.cpuDetectorResponseSubject.next(this.cpuDetectorResponse);
-            this.graphData.detectorMetrics.next(response.metrics.filter(x => x.name === "Overall CPU Percent"));
-            this.graphData.instanceDetailMetrics.next(response.metrics.filter(x => x.name !== "Overall CPU Percent"));
-
-            if (response.abnormalTimePeriods.length > 0) {
-                this.solutionListSubject.next(response.abnormalTimePeriods[response.abnormalTimePeriods.length - 1].solutions);
+        this._siteService.currentSite.subscribe(site => {
+            if(site && site.kind && site.kind.toLowerCase().indexOf('linux') === -1 && site.kind.toLowerCase().indexOf('functionapp') === -1) {
+                this._appAnalysisService.getDetectorResource(this.siteInfoMetaData.subscriptionId, this.siteInfoMetaData.resourceGroupName, this.siteInfoMetaData.siteName, this.siteInfoMetaData.slot, 'availability', 'sitecpuanalysis').subscribe(response => {
+                    this.cpuDetectorResponse = response;
+                    this.cpuDetectorResponseSubject.next(this.cpuDetectorResponse);
+                    this.graphData.detectorMetrics.next(response.metrics.filter(x => x.name === "Overall CPU Percent"));
+                    this.graphData.instanceDetailMetrics.next(response.metrics.filter(x => x.name !== "Overall CPU Percent"));
+        
+                    if (response.abnormalTimePeriods.length > 0) {
+                        this.solutionListSubject.next(response.abnormalTimePeriods[response.abnormalTimePeriods.length - 1].solutions);
+                    }
+                });
             }
-        })
+        });
     }
 
     private _getButtonListForHealthCheck(): any {

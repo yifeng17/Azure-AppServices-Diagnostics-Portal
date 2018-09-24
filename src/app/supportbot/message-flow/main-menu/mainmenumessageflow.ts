@@ -5,15 +5,15 @@ import { MessageGroup } from '../../models/message-group';
 import { RegisterMessageFlowWithFactory } from '../message-flow.factory';
 import { MainMenuComponent } from './main-menu.component';
 import { MessageSender } from '../../models/message-enums';
-import { AuthService } from '../../../shared/services/auth.service';
+import { AuthService } from '../../../startup/services/auth.service';
 import { ResourceType } from '../../../shared/models/portal';
 
 @Injectable()
 @RegisterMessageFlowWithFactory()
-export class MainMenuMessageFlow implements IMessageFlowProvider {
+export class MainMenuMessageFlow extends IMessageFlowProvider {
 
     constructor(private _authService: AuthService) {
-
+        super();
     }
 
     GetMessageFlowList(): MessageGroup[] {

@@ -1,16 +1,14 @@
 import { Injectable } from '@angular/core';
-import { Http, Headers, Response, Request } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
-import { StartupInfo, ResourceType } from '../../../shared/models/portal';
-import { ArmObj } from '../../../shared/models/armObj';
-import { Verbs } from '../../../shared/models/portal';
-import { Site } from '../../../shared/models/site';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { AuthService } from '../auth.service';
+import { Http } from '@angular/http';
+import { Observable } from 'rxjs'
+import { StartupInfo, ResourceType } from '../../models/portal';
+import { Verbs } from '../../models/portal';
+import { BehaviorSubject } from 'rxjs'
+import { AuthService } from '../../../startup/services/auth.service';
 import { ArmService } from '../arm.service';
 import { SiteService } from '../site.service';
 import { AppAnalysisService } from '../appanalysis.service';
-import { PortalService } from '../portal.service';
+import { PortalService } from '../../../startup/services/portal.service';
 import { AvailabilityLoggingService } from '../logging/availability.logging.service';
 
 @Injectable()
@@ -154,7 +152,7 @@ export class AppInsightsService {
 
     ExecuteQuery(query: string): Observable<any> {
         if (!this.isNotNullOrEmpty(query)) {
-            return Observable.from([]);
+            return Observable.of([]);
         }
 
         let resourceUri: string = `${this.appInsightsSettings.resourceUri}/api/query?query=${encodeURIComponent(query)}`;

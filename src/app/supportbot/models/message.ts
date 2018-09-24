@@ -9,7 +9,7 @@ export abstract class Message {
 }
 
 export class TextMessage extends Message {
-    constructor(message: string, sender: MessageSender = MessageSender.System, messageDelayInMs: number = 1000) {
+    constructor(message: string, sender: MessageSender = MessageSender.System, messageDelayInMs: number = MessageSender.User ? 0 : 1000) {
         super(TextMessageComponent, {
             message: message,
             sender: sender
@@ -18,11 +18,12 @@ export class TextMessage extends Message {
 }
 
 export class ButtonListMessage extends Message {
-    constructor(buttonList: { title: string, type: ButtonActionType, next_key: string }[], context: string, sender: MessageSender = MessageSender.System) {
+    constructor(buttonList: { title: string, type: ButtonActionType, next_key: string }[], context: string, category: string = 'Support Home', sender: MessageSender = MessageSender.System) {
         super(ButtonMessageComponent, {
             buttonList: buttonList,
             sender: sender,
-            context: context
+            context: context,
+            category: category
         });
     }
 }

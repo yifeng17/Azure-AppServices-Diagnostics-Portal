@@ -5,14 +5,10 @@ import { MessageGroup } from '../../models/message-group';
 import { RegisterMessageFlowWithFactory } from '../message-flow.factory';
 import { FeedbackComponent } from './feedback.component';
 import { MessageSender, ButtonActionType } from '../../models/message-enums';
-import { TalkToAgentMessageFlow } from '../talk-to-agent/talktoagentmessageflow';
 
 @Injectable()
 @RegisterMessageFlowWithFactory()
-export class FeedbackMessageFlow implements IMessageFlowProvider {
-
-    constructor(private talkToAgentMessageFlow: TalkToAgentMessageFlow) {
-    }
+export class FeedbackMessageFlow extends IMessageFlowProvider {
 
     GetMessageFlowList(): MessageGroup[] {
         var messageGroupList: MessageGroup[] = [];
@@ -28,19 +24,12 @@ export class FeedbackMessageFlow implements IMessageFlowProvider {
 
         var feedbackGroup: MessageGroup = new MessageGroup('feedback', [], () => '');
         feedbackGroup.messages.push(new TextMessage('Please help me improve by providing some feedback. What was my most/least helpful feature? What features would you like to see?'));
-        feedbackGroup.messages.push(new FeedbackMessage());
+        feedbackGroup.messages.push(new FeedbackMessage([], 'Submit', 'Feedback', 'Support Home'));
         feedbackGroup.messages.push(new TextMessage('Thank you!'));
         // TODO : Add Button Message - 1) To Refresh, 2) Return to top
         messageGroupList.push(feedbackGroup);
 
-        var furtherAssistanceGroup: MessageGroup = new MessageGroup('further-assistance', [], () => {
-            if (this.talkToAgentMessageFlow.isApplicable) {
-                return 'talk-to-agent';
-            }
-            else {
-                return 'no-help';
-            }
-        });
+        var furtherAssistanceGroup: MessageGroup = new MessageGroup('further-assistance', [], () => 'no-help')
 
         furtherAssistanceGroup.messages.push(new TextMessage('I need further assistance.', MessageSender.User, 100));
         messageGroupList.push(furtherAssistanceGroup);
@@ -66,8 +55,13 @@ export class FeedbackMessageFlow implements IMessageFlowProvider {
 }
 
 export class FeedbackMessage extends Message {
-    constructor(messageDelayInMs: number = 1000) {
+    constructor(buttonList: { title: string, type: ButtonActionType, next_key: string }[], submitButtonName: string, context: string, category: string = 'Support Home', messageDelayInMs: number = 1000) {
 
-        super(FeedbackComponent, {}, messageDelayInMs);
+        super(FeedbackComponent, {
+            buttonList: buttonList,
+            context: context,
+            category: category,
+            submitButtonName: submitButtonName
+        }, messageDelayInMs);
     }
 }
