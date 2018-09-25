@@ -231,7 +231,8 @@ export class SharedModule {
                 AseService,
                 LiveChatService,
                 AutohealingService,
-                NotificationService
+                NotificationService,
+                GroupByPipe
             ]
         }
     }
