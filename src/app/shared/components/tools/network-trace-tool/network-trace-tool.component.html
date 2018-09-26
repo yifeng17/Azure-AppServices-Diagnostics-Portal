@@ -3,7 +3,8 @@
     <p>{{ description }}</p>
 
     <div class="focus-box focus-box-warning">
-        Analyzing network traces is complex and time consuming task. Before collecting a network trace, please make sure you understand
+        Analyzing network traces is complex and time consuming task. Before collecting a network trace, please make
+        sure you understand
         that you really need to collect a network trace to troubleshoot the problem.
     </div>
 
@@ -11,37 +12,41 @@
     <ul>
         <li>This tool
             <strong>cannot</strong> capture Network Traffic between Azure Virtual Networks.</li>
-        <li>Network traces are helpful to troubleshoot TCP packet loss and to check HTTP communication that your App is making
+        <li>Network traces are helpful to troubleshoot TCP packet loss and to check HTTP communication that your App is
+            making
             with the remote endpoints.</li>
-        <li>After the network trace is started, you should reproduce the problem so that outbound traffic from your App gets
+        <li>After the network trace is started, you should reproduce the problem so that outbound traffic from your App
+            gets
             captured in the trace.</li>
-        <li>If the remote endpoints are called over TLS or SSL (i.e. HTTPS), then the traffic in the trace will be encrypted.</li>
+        <li>If the remote endpoints are called over TLS or SSL (i.e. HTTPS), then the traffic in the trace will be
+            encrypted.</li>
         <li>Network traces are collected on all the instance(s) serving your App.</li>
         <li>To analyze the Network Trace, you need tools like
             <a href='https://www.microsoft.com/en-in/download/details.aspx?id=4865'>Network Monitor </a> or
             <a href='https://www.wireshark.org/'>Wireshark</a> that can open the network captures. </li>
     </ul>
 
-    <div *ngIf="!supportedTier">
+    <div *ngIf="!supportedTier && !checkingValidity">
         <div class="focus-box focus-box-warning" style="margin-top:20px">
             <div>
-                <strong>Error</strong> - This tool is supported only on Web App running on Dedicated SKU's and not connected to Azure Virtual networks
+                <strong>Error</strong> - This tool is supported only on Web App running on Dedicated SKU's and not
+                connected to Azure Virtual networks
             </div>
         </div>
     </div>
 
-    <div *ngIf="error">
+    <div *ngIf="errorMessage">
         <div class="focus-box focus-box-warning" style="margin-top:20px">
             <div>
-                <strong>Error</strong> - {{ error.code }} : {{ error.message }}
+                <strong>Error</strong> - {{ errorMessage }}
             </div>
         </div>
     </div>
 
-    <div *ngIf="!networkTraceStarted && supportedTier && !error">
+    <div *ngIf="supportedTier && !errorMessage && status < NetworkTraceStatus.Started">
         <div style="margin-top:20px;">
             Choose duration to collect the Network Trace
-            <select [(ngModel)]="duration" [disabled]="inProgress || checkingValidity">
+            <select [(ngModel)]="duration" [disabled]="status >= NetworkTraceStatus.Starting">
                 <option value="60">60 seconds</option>
                 <option value="120">2 minutes</option>
                 <option value="180">3 minutes</option>
@@ -51,35 +56,50 @@
             </select>
         </div>
 
-        <div style="margin-top:10px">            
+        <div style="margin-top:10px">
             <div class="col" *ngIf="checkingValidity">
                 <i class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true"></i>
-                Checking App configuration... 
+                Checking App configuration...
             </div>
-            <button [disabled]="inProgress || checkingValidity" class="btn btn-primary" (click)="collectNetworkTrace()">Collect Network Trace</button>
+            <button [disabled]="status >= NetworkTraceStatus.Starting" class="btn btn-primary" (click)="collectNetworkTrace()">Collect
+                Network Trace</button>
         </div>
     </div>
-    <div style="margin-top:20px; display: table;" *ngIf="networkTraceStarted && !alreadyRunning">
-        <div style="display: table-row">
+    <div style="margin-top:20px; display: table;">
+        <div *ngIf="status === NetworkTraceStatus.Started">
+            <div style="display: table-row">
+                <div style="display: table-cell;">
+                    <i class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true"></i>
+                </div>
+                <div *ngIf="durationRemaining > 0" style="display: table-cell;">
+                    Network trace started and will automatically stop after
+                    <strong>{{ durationRemaining }}</strong> seconds.
+                </div>
+                <div *ngIf="durationRemaining <= 0" style="display: table-cell;">
+                    Stopping trace and collecting files (Note:This step can take a few minutes to complete)
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="status === NetworkTraceStatus.Completed" style="display: table-row">
             <div style="display: table-cell;">
                 <i class="fa health-icon fa-check-circle healthy-icon-color" aria-hidden="true"></i>
             </div>
             <div style="display: table-cell;">
-                Network Trace is started for the Web App and will automatically stop after
-                <strong>{{ duration }}</strong> seconds. Please check for these file(s) in
-                <a href='https://{{this.scmPath}}/debugconsole' target="blank">Kudu console</a> in
-                <strong>{{ traceLocation }}</strong> folder after some time.
+                Network trace collection completed.
                 <ul>
-                    <li *ngFor="let file of files"> {{ file }}</li>
+                    <li *ngFor="let file of files">
+                        <a href="{{ file.url}}"> {{ file.name }}</a>
+                    </li>
                 </ul>
             </div>
         </div>
     </div>
 
-    <div *ngIf="alreadyRunning" style="margin-top:20px">
+    <div *ngIf="status === NetworkTraceStatus.AlreadyRunning">
         <span style="padding: 0px 10px 0px 0px">
             <i class="fa health-icon fa-exclamation-circle unhealthy-icon-color" aria-hidden="true"></i>
-            It appears there is already a network trace running for this Web App. Check the
+            It appears there is already a network trace running for this app. Check the
             <a href='https://{{this.scmPath}}/debugconsole' target="blank">Kudu console</a> in
             <strong>{{ traceLocation }}</strong> folder after some time to see the trace files.
         </span>

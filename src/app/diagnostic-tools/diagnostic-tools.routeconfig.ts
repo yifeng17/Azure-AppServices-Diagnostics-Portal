@@ -99,6 +99,7 @@ export const DiagnosticToolsRoutes: Route[] = [
         component: NetworkTraceToolComponent,
         data: {
             navigationTitle: ToolNames.NetworkTrace,
+            cacheComponent: true
         }
     },
     // Diagnostics

@@ -1,4 +1,5 @@
-export interface NetworkTraceResult
-{
-    properties:string;
+export interface NetworkTraceResult{
+    path:string;
+    status:string;
+    message:string;
 }
