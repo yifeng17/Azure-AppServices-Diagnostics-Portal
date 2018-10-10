@@ -18,12 +18,14 @@ export class LiveChatSettings {
 
     // List of Support Topics for which Live chat is Enabled
     public static enabledSupportTopics: string[] = [
+        "32542218",     //Availability and Performance/Web App Down
         "32570954",     //Availability and Performance/Web App Restarted
         "32440123",     //Configuration and Management/Configuring SSL
         "32440122",     //Configuration and Management/Configuring custom domain names
         "32542210",     //Configuration and Management/IP Configuration
         "32581615",     //Configuration and Management/Deployment Slots
         "32542208",     //Configuration and Management/Backup and Restore
+        "32588774",     // Deployment/Visual Studio
         "32589276",     //How Do I/Backup and Restore
         "32589277",     //How Do I/Configure domains and certificates,
         "32589281"      //How Do I/IP Configuration
