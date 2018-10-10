@@ -8,6 +8,7 @@ import { AppAnalysisService } from '../../../../shared/services/appanalysis.serv
 import { AvailabilityLoggingService } from '../../../../shared/services/logging/availability.logging.service';
 import { AuthService } from '../../../../startup/services/auth.service';
 import { DetectorViewStateService } from '../../../../shared/services/detector-view-state.service';
+import { DetectorControlService } from 'applens-diagnostics';
 declare let d3: any;
 
 @Component({
@@ -24,8 +25,8 @@ export class SiteCpuAnalysisDetectorComponent extends DetectorViewInstanceDetail
     instanceSelectedDescription: string;
 
     constructor(protected _route: ActivatedRoute, protected _appAnalysisService: AppAnalysisService, protected _logger: AvailabilityLoggingService,
-        private _authService: AuthService, private _detectorViewService: DetectorViewStateService) {
-        super(_route, _appAnalysisService, _logger);
+        private _authService: AuthService, private _detectorViewService: DetectorViewStateService, protected _detectorControlService: DetectorControlService) {
+        super(_route, _appAnalysisService, _logger, _detectorControlService);
         this.detectorMetricsTitle = "Overall CPU Usage per Instance";
         this.detectorMetricsDescription = "This graphs shows the total CPU usage on each of the instances where your application is running. " +
             "Below you can look at a specific instance and see how much CPU each app is consuming."
@@ -56,9 +57,13 @@ export class SiteCpuAnalysisDetectorComponent extends DetectorViewInstanceDetail
     }
 
     processDetectorResponse(response: IDetectorResponse) {
-        this.detectorResponse = response;
+        super.processDetectorResponse(response);
         this.detectorMetrics = response.metrics.filter(x => x.name === "Overall CPU Percent");
         this.instanceDetailMetrics = response.metrics.filter(x => x.name !== "Overall CPU Percent");
+    }
+
+    static getDetectorName(): string {
+        return 'sitecpuanalysis';
     }
 
     getDetectorName(): string {

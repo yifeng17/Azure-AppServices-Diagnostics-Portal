@@ -1,4 +1,4 @@
-import { Route, Resolve, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { Route } from '@angular/router';
 
 import { AvailabilityComponent } from './availability.component';
 import { AppAnalysisComponent } from './analysis/app-analysis.component';
@@ -12,17 +12,6 @@ import { TcpConnectionsAnalysisComponent } from './analysis/tcpconnectionsanalys
 import { IncidentSummaryComponent } from '../shared/components/incident-summary/incident-summary.component';
 import { GenericDetectorComponent } from '../shared/components/generic-detector/generic-detector.component';
 import { TabTitleResolver } from '../shared/resolvers/tab-name.resolver';
-import { SupportTopicRedirectComponent } from '../home/components/support-topic-redirect/support-topic-redirect.component';
-
-
-
-// const _siteResourceUrl: string = 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/sites/:sitename/';
-// const _slotResourceUrl: string = 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/sites/:sitename/slots/:slot/';
-// const _hostingEnvironmentResourceUrl: string = 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/hostingenvironments/:name/';
-
-const _siteResourceUrl: string = '';
-const _slotResourceUrl: string = '';
-const _hostingEnvironmentResourceUrl: string = '';
 
 const AvailabilityCommonRouteConfig: Route[] = [
     {
@@ -69,7 +58,7 @@ export const AvailabilityAndPerformanceCategoryRouteConfig: Route[] = [
     See issue : https://github.com/angular/angular/issues/13869 
     */
     {
-        path: _siteResourceUrl + 'detectors/:detectorName',
+        path: 'detectors/:detectorName',
         component: GenericDetectorComponent,
         resolve: {
             navigationTitle: TabTitleResolver
@@ -79,7 +68,7 @@ export const AvailabilityAndPerformanceCategoryRouteConfig: Route[] = [
         }
     },
     {
-        path: _hostingEnvironmentResourceUrl + 'detectors/:detectorName',
+        path: 'detectors/:detectorName',
         component: GenericDetectorComponent,
         resolve: {
             navigationTitle: TabTitleResolver
@@ -90,7 +79,7 @@ export const AvailabilityAndPerformanceCategoryRouteConfig: Route[] = [
     },
     // Web App Error Analysis
     {
-        path: _siteResourceUrl + 'diagnostics/availability/analysis',
+        path: 'diagnostics/availability/analysis',
         component: AppAnalysisComponent,
         data: {
             navigationTitle: 'App Error Analysis',
@@ -100,7 +89,7 @@ export const AvailabilityAndPerformanceCategoryRouteConfig: Route[] = [
 
     // Web App Performance Analysis
     {
-        path: _siteResourceUrl + 'diagnostics/performance/analysis',
+        path: 'diagnostics/performance/analysis',
         component: PerfAnalysisComponent,
         data: {
             navigationTitle: 'App Performance Analysis',
@@ -110,7 +99,7 @@ export const AvailabilityAndPerformanceCategoryRouteConfig: Route[] = [
 
     // Web App Restart Analysis
     {
-        path: _siteResourceUrl + 'diagnostics/availability/apprestartanalysis',
+        path: 'diagnostics/availability/apprestartanalysis',
         component: WebAppRestartComponent,
         data: {
             navigationTitle: 'App Restart Analysis',
@@ -120,7 +109,7 @@ export const AvailabilityAndPerformanceCategoryRouteConfig: Route[] = [
 
     // Memory Analysis
     {
-        path: _siteResourceUrl + 'diagnostics/availability/memoryanalysis',
+        path: 'diagnostics/availability/memoryanalysis',
         component: MemoryAnalysisComponent,
         data: {
             navigationTitle: 'Memory Analysis',
@@ -130,7 +119,7 @@ export const AvailabilityAndPerformanceCategoryRouteConfig: Route[] = [
 
     // TCP Connections Analysis
     {
-        path: _siteResourceUrl + 'diagnostics/availability/tcpconnectionsanalysis',
+        path: 'diagnostics/availability/tcpconnectionsanalysis',
         component: TcpConnectionsAnalysisComponent,
         data: {
             navigationTitle: 'TCP Connections Analysis',
@@ -139,19 +128,19 @@ export const AvailabilityAndPerformanceCategoryRouteConfig: Route[] = [
     },
 
     {
-        path: _siteResourceUrl + 'diagnostics/availability',
+        path: 'diagnostics/availability',
         children: AvailabilityCommonRouteConfig
     },
 
     // Web App Slow
     {
-        path: _siteResourceUrl + 'diagnostics/performance',
+        path: 'diagnostics/performance',
         children: PerformanceCommonRouteConfig
     },
 
     // Service Incident Summary
     {
-        path: _siteResourceUrl + 'diagnostics/incidents',
+        path: 'diagnostics/incidents',
         component: IncidentSummaryComponent,
         data: {
             navigationTitle: 'Service Incidents',

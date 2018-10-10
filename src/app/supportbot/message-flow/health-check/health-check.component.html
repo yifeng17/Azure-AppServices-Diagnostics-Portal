@@ -1,28 +1,33 @@
-<div *ngIf="showLoadingMessage" style="color:#acacac">
+<!-- <div *ngIf="showLoadingMessage" style="color:#acacac">
     <i class="fa fa-spin fa-circle-o-notch" aria-hidden="true"></i> Generating Report ...
-</div>
+</div> -->
 
-<div *ngIf="!showLoadingMessage" class="animated fadeIn panel with-nav-tabs panel-info width-90">
+<div class="animated fadeIn panel with-nav-tabs panel-info width-90">
     <div class="panel-heading" style="padding:0">
         <ul class="nav nav-tabs">
             <li role="presentation" class="report-tab" *ngFor="let item of healthCheckpoints; let i = index" [ngClass]="{'active': i === selectedCategoryIndex}">
                 <a (click)="setCategory(i)">
-                    <i *ngIf="item.healthStatus" style="margin-right:10px" class="fa health-icon"
-                    [ngClass]="{'fa-exclamation-circle unhealthy-icon-color': item.healthStatus === 'error', 'fa-exclamation-triangle warning-icon-color': item.healthStatus === 'warning', 'fa-check-circle healthy-icon-color': item.healthStatus === 'success'}" 
-                    aria-hidden="true"></i>
-                    {{item.title}} 
+                    <div style="display: flex">
+                        <status-icon [status]="item.healthStatus" [loading]="item.loadingStatus"></status-icon>
+                        <div style="padding-left: 10px">{{item.title}} </div>
+                    </div>
                 </a>
             </li>
         </ul>
     </div>
     <div class="panel-body" style="background-color:rgba(226, 245, 255, 0.15)">
-        <div class="tab-content">
+        <div *ngIf="!chartOptions || !chartData || chartData.length === 0" class="loading-container">
+            <status-icon [size]="30" [loading]="LoadingStatus.Loading"></status-icon>
+        </div>
+        <div class="tab-content" *ngIf="chartOptions && chartData && chartData.length && chartData.length > 0">
             <div class="row">
                 <app-nvD3-chart [options]="chartOptions" [data]="chartData"></app-nvD3-chart>
             </div>
             <div class="row">
                 <div class="panel message-container"
-                [ngClass]="{'error-message': healthCheckpoints[selectedCategoryIndex].healthStatus === 'error', 'warning-message': healthCheckpoints[selectedCategoryIndex].healthStatus === 'warning', 'success-message': healthCheckpoints[selectedCategoryIndex].healthStatus === 'success'}">
+                [class.error-message]="healthCheckpoints[selectedCategoryIndex].healthStatus === HealthStatus.Critical"
+                [class.warning-message]="healthCheckpoints[selectedCategoryIndex].healthStatus === HealthStatus.Warning"
+                [class.success-message]="healthCheckpoints[selectedCategoryIndex].healthStatus === HealthStatus.Success">
                     <div class="panel-body">
                         {{healthCheckpoints[selectedCategoryIndex].healthStatusMessage}}
 

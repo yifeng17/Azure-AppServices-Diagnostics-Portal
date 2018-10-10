@@ -4,6 +4,7 @@ import { IDetectorResponse } from '../../../../shared/models/detectorresponse';
 import { DetectorViewBaseComponent } from '../../detector-view-base/detector-view-base.component';
 import { GraphHelper } from '../../../../shared/utilities/graphHelper';
 import { AppAnalysisService } from '../../../../shared/services/appanalysis.service';
+import { DetectorControlService } from 'applens-diagnostics';
 
 declare let d3: any;
 
@@ -16,8 +17,8 @@ export class DockerContainerIntializationComponent extends DetectorViewBaseCompo
 
     showMetadata: boolean;
 
-    constructor(protected _route: ActivatedRoute, protected _appAnalysisService: AppAnalysisService) {
-        super(_route, _appAnalysisService);
+    constructor(protected _route: ActivatedRoute, protected _appAnalysisService: AppAnalysisService, protected _detectorControlService: DetectorControlService) {
+        super(_route, _appAnalysisService, _detectorControlService);
         this.detectorMetricsTitle = "Docker Container Intialization";
         this.detectorMetricsDescription = "The above graph displays when container started, stopped or failed to start";
         this.showMetadata = false;
@@ -31,6 +32,11 @@ export class DockerContainerIntializationComponent extends DetectorViewBaseCompo
         this.detectorMetrics = response.metrics;
         this.showMetadata = this.detectorResponse && this.detectorResponse.data.length > 0;
     }
+    
+    static getDetectorName(): string {
+        return 'dockercontainerstartstop';
+    }
+
     getDetectorName(): string {
         return 'dockercontainerstartstop';
     }

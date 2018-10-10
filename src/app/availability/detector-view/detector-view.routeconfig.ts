@@ -11,76 +11,87 @@ import { DockerContainerIntializationComponent } from './detectors/docker-contai
 import { CommittedMemoryUsageComponent } from './detectors/committed-memory-detector/committed-memory-detector.component';
 import { PageFileOperationsComponent } from './detectors/page-operations-detector/page-operations-detector.component';
 import { AspNetCoreComponent } from "./detectors/aspnetcore-detector/aspnetcore-detector.component";
+import { DetectorLoaderComponent } from './detector-loader/detector-loader.component';
 
 export const DetectorViewRouteConfig: Route[] = [
     {
         path: 'sitecpuanalysis',
-        component: SiteCpuAnalysisDetectorComponent,
+        component: DetectorLoaderComponent,
         data: {
-            navigationTitle: 'CPU Analysis'
+            navigationTitle: 'CPU Analysis',
+            detectorComponent: SiteCpuAnalysisDetectorComponent
         }
     },
     {
         path: 'sitememoryanalysis',
-        component: SiteMemoryAnalysisDetectorComponent,
+        component: DetectorLoaderComponent,
         data: {
-            navigationTitle: 'Memory Analysis'
+            navigationTitle: 'Memory Analysis',
+            detectorComponent: SiteMemoryAnalysisDetectorComponent
         }
     },
     { 
         path: 'threadcount', 
-        component: ThreadDetectorComponent, 
+        component: DetectorLoaderComponent, 
         data:{
-            navigationTitle: 'Threads Usage'
+            navigationTitle: 'Threads Usage',
+            detectorComponent: ThreadDetectorComponent
         } 
     },
     { 
         path: 'frebanalysis', 
-        component: FrebAnalysisDetectorComponent,
+        component: DetectorLoaderComponent,
         data: {
-            navigationTitle: 'Failed Request Traces'
+            navigationTitle: 'Failed Request Traces',
+            detectorComponent: FrebAnalysisDetectorComponent
         } 
     },
     { 
         path: 'loganalyzer', 
-        component: PhpLogAnalyzerComponent,
+        component: DetectorLoaderComponent,
         data: {
-            navigationTitle: 'Php Logs'
+            navigationTitle: 'Php Logs',
+            detectorComponent: PhpLogAnalyzerComponent
         } 
     },
     { 
         path: 'dockercontainerstartstop', 
-        component: DockerContainerIntializationComponent,
+        component: DetectorLoaderComponent,
         data: {
-            navigationTitle: 'Docker Container Intialization'
+            navigationTitle: 'Docker Container Intialization',
+            detectorComponent: DockerContainerIntializationComponent
         } 
     },
     { 
         path: 'committedmemoryusage', 
-        component: CommittedMemoryUsageComponent,
+        component: DetectorLoaderComponent,
         data: {
-            navigationTitle: 'Committed Memory Usage'
+            navigationTitle: 'Committed Memory Usage',
+            detectorComponent: CommittedMemoryUsageComponent
         } 
     },
     { 
         path: 'pagefileoperations', 
-        component: PageFileOperationsComponent,
+        component: DetectorLoaderComponent,
         data: {
-            navigationTitle: 'Page File Operations'
+            navigationTitle: 'Page File Operations',
+            detectorComponent: PageFileOperationsComponent
         } 
     },
     { 
         path: 'aspnetcore', 
-        component: AspNetCoreComponent,
+        component: DetectorLoaderComponent,
         data: {
-            navigationTitle: 'AspNetCore Logs'
+            navigationTitle: 'AspNetCore Logs',
+            detectorComponent: AspNetCoreComponent
         } 
     },
     { 
         path: ':detectorName', 
-        component: DetectorViewBaseComponent,
+        component: DetectorLoaderComponent,
         data:{
-            navigationTitle: ':detectorName'
+            navigationTitle: ':detectorName',
+            detectorComponent: DetectorViewBaseComponent
         }
     }
 ];

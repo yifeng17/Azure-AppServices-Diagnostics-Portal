@@ -1,21 +1,21 @@
-import { Component, Input, Output, OnInit, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IAppAnalysisResponse, IAbnormalTimePeriod, IAnalysisData } from '../../../shared/models/appanalysisresponse';
-import { IDetectorAbnormalTimePeriod, IDetectorResponse } from '../../../shared/models/detectorresponse';
 import { SummaryViewModel, SummaryHealthStatus } from '../../../shared/models/summary-view-model';
 import { AppAnalysisService } from '../../../shared/services/appanalysis.service';
 import { AvailabilityLoggingService } from '../../../shared/services/logging/availability.logging.service';
+import { Subscription } from 'rxjs';
+import { DetectorControlService } from 'applens-diagnostics';
 
 @Component({
     selector: 'memory-analysis',
     templateUrl: 'memory-analysis.component.html'
 })
-export class MemoryAnalysisComponent implements OnInit {
+export class MemoryAnalysisComponent implements OnInit, OnDestroy {
     displayGraph: boolean = true;
 
-    runtimeAvailabilityResponse: IDetectorResponse;
-    siteLatencyResponse: IDetectorResponse;
-    serviceHealthResponse: IDetectorResponse;
+    analysisResponseSubscription: Subscription;
+
     memoryAnalysisResponse: IAppAnalysisResponse;
 
     pageReadsViewModel: SummaryViewModel;
@@ -32,7 +32,9 @@ export class MemoryAnalysisComponent implements OnInit {
     siteName: string;
     slotName: string;
 
-    constructor(private _route: ActivatedRoute, private _appAnalysisService: AppAnalysisService, private _logger: AvailabilityLoggingService) {
+    refreshSubscription: Subscription;
+
+    constructor(private _route: ActivatedRoute, private _appAnalysisService: AppAnalysisService, private _logger: AvailabilityLoggingService, private _detectorControlService: DetectorControlService) {
 
     }
 
@@ -44,7 +46,29 @@ export class MemoryAnalysisComponent implements OnInit {
         this.siteName = this._route.snapshot.params['sitename'];
         this.slotName = this._route.snapshot.params['slot'] ? this._route.snapshot.params['slot'] : '';
 
-        this._appAnalysisService.getAnalysisResource(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, 'availability', 'memoryanalysis')
+        this.refreshSubscription = this._detectorControlService.update.subscribe(isValidUpdate => {
+            console.log(isValidUpdate);
+            if (isValidUpdate) {
+                this._refresh();
+            }
+        });
+    }
+
+    ngOnDestroy() {
+        if (this.refreshSubscription) {
+            this.refreshSubscription.unsubscribe();
+        }
+
+        this._clearRequestSubscriptions();
+    }
+
+    private _refresh() {
+        this._clearRequestSubscriptions();
+        this._loadData(true);
+    }
+
+    private _loadData(invalidateCache: boolean = false) {
+        this.analysisResponseSubscription = this._appAnalysisService.getAnalysisResource(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, 'availability', 'memoryanalysis', invalidateCache)
             .subscribe(data => {
                 if (data) {
                     this.memoryAnalysisResponse = data;
@@ -57,6 +81,12 @@ export class MemoryAnalysisComponent implements OnInit {
                 }
 
             });
+    }
+
+    private _clearRequestSubscriptions() {        
+        if (this.analysisResponseSubscription) {
+            this.analysisResponseSubscription.unsubscribe();
+        }
     }
 
     getSummaryViewModel(summaryDowntime: IAbnormalTimePeriod, detectorName: string, topLevelSeries: string = '', excludeTopLevelInDetail: boolean = true): SummaryViewModel {

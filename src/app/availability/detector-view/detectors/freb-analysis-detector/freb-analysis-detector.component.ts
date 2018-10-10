@@ -7,6 +7,7 @@ import { AppAnalysisService } from '../../../../shared/services/appanalysis.serv
 import { PortalActionService } from '../../../../shared/services/portal-action.service';
 import { WindowService } from '../../../../startup/services/window.service';
 import { AvailabilityLoggingService } from '../../../../shared/services/logging/availability.logging.service';
+import { DetectorControlService } from 'applens-diagnostics';
 
 declare let d3: any;
 
@@ -20,8 +21,8 @@ export class FrebAnalysisDetectorComponent extends DetectorViewBaseComponent {
     eventLog: SupportBladeDefinition = SupportBladeDefinitions.EventViewer;
 
     constructor(protected _route: ActivatedRoute, protected _appAnalysisService: AppAnalysisService, private _portalActionService :PortalActionService,
-            private _windowService: WindowService, private _logger: AvailabilityLoggingService) {
-        super(_route, _appAnalysisService);
+            private _windowService: WindowService, private _logger: AvailabilityLoggingService, protected _detectorControlService: DetectorControlService) {
+        super(_route, _appAnalysisService, _detectorControlService);
         this.detectorMetricsTitle = "Failed Request Traces by Status Code";
         this.detectorMetricsDescription = "The above graph displays the distribution of failed requests by HTTP status code."
     }
@@ -44,6 +45,10 @@ export class FrebAnalysisDetectorComponent extends DetectorViewBaseComponent {
     processDetectorResponse(response: IDetectorResponse){
         this.detectorResponse = response;
         this.detectorMetrics = response.metrics;
+    }
+
+    static getDetectorName(): string {
+        return 'frebanalysis';
     }
 
     getDetectorName(): string {

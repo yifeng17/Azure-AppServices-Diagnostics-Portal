@@ -1,10 +1,7 @@
-<div style="min-height: 100%">
-    <app-current-health *ngIf="!bladeOpenedFromSupportTicketFlow" [runtimeAvailabilityResponse]="runtimeAvailabilityResponse"
-        [serviceHealthResponse]="serviceHealthResponse" [bladeOpenedFromSupportTicketFlow]="bladeOpenedFromSupportTicketFlow"
-        (refreshClicked)="onRefreshClicked($event)">
-    </app-current-health>
-    <div class="row">
-        <availability-graph [(displayGraph)]="showLast24Hours" [displayTimeLine]="true" [topLevelGraphRefreshIndex]="topLevelGraphRefreshIndex">
+<div style="min-height: 100%;">
+    <detector-control></detector-control>
+    <div style="padding:0px 20px;">
+        <availability-graph [(displayGraph)]="showLast24Hours" [displayTimeLine]="true">
             <downtime-timeline [appAnalysisResponse]='analysisResponse' [(selectedDowntimeIndex)]='selectedTimePeriodIndex' [problemDescription]='problemDescription'></downtime-timeline>
         </availability-graph>
 

@@ -5,6 +5,7 @@ import { DetectorViewBaseComponent } from '../detector-view-base/detector-view-b
 import { ChartType } from '../../../shared/models/chartdata';
 import { AppAnalysisService } from '../../../shared/services/appanalysis.service';
 import { AvailabilityLoggingService } from '../../../shared/services/logging/availability.logging.service';
+import { DetectorControlService } from 'applens-diagnostics';
 declare let d3: any;
 
 @Component({
@@ -15,8 +16,8 @@ export class DetectorViewInstanceDetailComponent extends DetectorViewBaseCompone
 
     // The purpose of this class is not really ever to be used by itself but just for all instance detail detectors to extend
     // It also provides a consistent template for components that extend this class to use
-    constructor(protected _route: ActivatedRoute, protected _appAnalysisService: AppAnalysisService, protected _logger: AvailabilityLoggingService) {
-        super(_route, _appAnalysisService);
+    constructor(protected _route: ActivatedRoute, protected _appAnalysisService: AppAnalysisService, protected _logger: AvailabilityLoggingService, protected _detectorControlService: DetectorControlService) {
+        super(_route, _appAnalysisService, _detectorControlService);
         // Right now this is the same for CPU and Memory, the only detectors to extend this class
         this.metricsChartType = ChartType.lineChart;
         this.instanceDetailChartType = ChartType.lineChart;

@@ -9,6 +9,7 @@ import { FormatHelper } from '../shared/utilities/formattingHelper';
 import { AppAnalysisService } from '../shared/services/appanalysis.service';
 import { AutoHealSettings, AutoHealCustomAction, AutoHealRules, AutoHealActions, AutoHealTriggers, AutoHealActionType } from '../shared/models/autohealing';
 import { AvailabilityLoggingService } from '../shared/services/logging/availability.logging.service';
+import { DetectorControlService } from '../../../node_modules/applens-diagnostics';
 
 @Component({
   selector: 'autohealing',
@@ -43,8 +44,8 @@ export class AutohealingComponent extends DetectorViewBaseComponent implements O
   validationWarning: string[];
   selectedTab:string = "autoHealing";
 
-  constructor(private _siteService: SiteService, private _autohealingService: AutohealingService, private _logger: AvailabilityLoggingService, protected _route: ActivatedRoute, protected _appAnalysisService: AppAnalysisService) {
-    super(_route, _appAnalysisService);
+  constructor(private _siteService: SiteService, private _autohealingService: AutohealingService, private _logger: AvailabilityLoggingService, protected _route: ActivatedRoute, protected _appAnalysisService: AppAnalysisService, protected _detectorControlService: DetectorControlService) {
+    super(_route, _appAnalysisService, _detectorControlService);
   }
 
   getDetectorName(): string {

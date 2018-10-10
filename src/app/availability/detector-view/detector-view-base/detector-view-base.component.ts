@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IDetectorResponse, IMetricSet } from '../../../shared/models/detectorresponse';
-import { GraphHelper } from '../../../shared/utilities/graphHelper';
 import { ChartType } from '../../../shared/models/chartdata';
 import { AppAnalysisService } from '../../../shared/services/appanalysis.service';
+import { DetectorControlService } from '../../../../../node_modules/applens-diagnostics';
+import { BehaviorSubject } from 'rxjs';
 declare let d3: any;
 
 @Component({
@@ -32,7 +33,15 @@ export class DetectorViewBaseComponent implements OnInit {
 
     metricsChartType: ChartType = ChartType.multiBarChart;
 
-    constructor(protected _route: ActivatedRoute, protected _appAnalysisService: AppAnalysisService) {
+    private detectorResponseSubject: BehaviorSubject<IDetectorResponse> = new BehaviorSubject<IDetectorResponse>(null);
+
+    @Input() set detectorResponseObject(value: IDetectorResponse) {
+        this.detectorResponseSubject.next(value);
+    }
+
+    @Input() loading: boolean;
+
+    constructor(protected _route: ActivatedRoute, protected _appAnalysisService: AppAnalysisService, protected _detectorControlService: DetectorControlService) {
         this.detectorMetricsYAxisLabel = 'Count';
      }
 
@@ -53,15 +62,12 @@ export class DetectorViewBaseComponent implements OnInit {
             this.slotName = this._route.snapshot.params['slot'] ? this._route.snapshot.params['slot'] : '';
         }
         
-        this._appAnalysisService.getDetectorResource(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, this.category, this.topLevelDetector)
-            .subscribe(response => {
-                this.processTopLevelDetectorResponse(response);
-            });
 
-        this._appAnalysisService.getDetectorResource(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, this.category, this.detectorName)
-            .subscribe(response => {
+        this.detectorResponseSubject.subscribe(response => {
+            if(response) {
                 this.processDetectorResponse(response);
-            });
+            }
+        });
     }
 
     processTopLevelDetectorResponse(response: IDetectorResponse){
@@ -76,6 +82,10 @@ export class DetectorViewBaseComponent implements OnInit {
         this.detectorMetrics = response.metrics;
         this.detectorMetricsTitle = this.detectorMetricsTitle != undefined && this.detectorMetricsTitle != '' ? 
             this.detectorMetricsTitle : response.detectorDefinition.displayName;
+    }
+
+    static getDetectorName(): string {
+        return '';
     }
 
     getDetectorName(): string {

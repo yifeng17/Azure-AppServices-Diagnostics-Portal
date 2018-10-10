@@ -4,6 +4,7 @@ import { SummaryViewModel, SummaryHealthStatus } from '../../models/summary-view
 import { ChartType } from '../../models/chartdata';
 import { BehaviorSubject } from 'rxjs'
 import { AvailabilityLoggingService } from '../../services/logging/availability.logging.service';
+import { LoadingStatus } from '../../../../../node_modules/applens-diagnostics';
 
 @Component({
     selector: 'expandable-summary',
@@ -11,6 +12,8 @@ import { AvailabilityLoggingService } from '../../services/logging/availability.
     styleUrls: ['expandable-summary.component.css']
 })
 export class ExpandableSummaryComponent implements OnInit, OnChanges {
+
+    LoadingStatus = LoadingStatus;
 
     healthStatus: any = SummaryHealthStatus;
     lineChart: ChartType = ChartType.lineChart;
@@ -74,7 +77,10 @@ export class ExpandableSummaryComponent implements OnInit, OnChanges {
     }
 
     toggleExpanded(): void {
-        this._logger.LogSummaryViewExpanded(this.summaryModel.detectorName, this.summaryModel.health);
-        this.expanded = !this.expanded
+        if (this.summaryModel) {
+            this._logger.LogSummaryViewExpanded(this.summaryModel.detectorName, this.summaryModel.health);
+        }
+
+        this.expanded = !this.expanded;
     }
 }

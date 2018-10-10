@@ -1,14 +1,15 @@
-import { Component, OnInit, trigger, state, animate, transition, style } from '@angular/core';
+import { Component, OnInit, trigger, state, animate, transition, style, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IAppAnalysisResponse } from '../../shared/models/appanalysisresponse';
 import { IDetectorResponse, IMetricSet } from '../../shared/models/detectorresponse';
-import { Observable } from 'rxjs'
+import { Observable, Subscription } from 'rxjs'
 import { IAbnormalTimePeriod } from '../../shared/models/appanalysisresponse';
 import { StartupInfo } from '../../shared/models/portal';
 import { AppAnalysisService } from '../../shared/services/appanalysis.service';
 import { ServerFarmDataService } from '../../shared/services/server-farm-data.service';
 import { AvailabilityLoggingService } from '../../shared/services/logging/availability.logging.service';
 import { AuthService } from '../../startup/services/auth.service';
+import { DetectorControlService } from '../../../../node_modules/applens-diagnostics';
 
 
 @Component({
@@ -29,7 +30,7 @@ import { AuthService } from '../../startup/services/auth.service';
         )
     ]
 })
-export class AppAnalysisComponent implements OnInit {
+export class AppAnalysisComponent implements OnInit, OnDestroy {
 
     showLast24Hours: boolean = true;
     isHealthyNow: boolean = false;
@@ -40,11 +41,11 @@ export class AppAnalysisComponent implements OnInit {
     siteName: string;
     slotName: string;
 
-    runtimeAvailabilityResponse: IDetectorResponse;
-    serviceHealthResponse: IDetectorResponse;
-    analysisResponse: IAppAnalysisResponse;
+    runtimeAvailabilitySubscription: Subscription;
+    analysisResponseSubscription: Subscription;
 
-    topLevelGraphRefreshIndex: number = 0;
+    runtimeAvailabilityResponse: IDetectorResponse;
+    analysisResponse: IAppAnalysisResponse;
 
     showToolsDropdown: boolean = false;
     abnormalTimePeriods: IAbnormalTimePeriod[];
@@ -67,7 +68,10 @@ export class AppAnalysisComponent implements OnInit {
 
     bladeOpenedFromSupportTicketFlow: boolean;
 
-    constructor(private _route: ActivatedRoute, private _appAnalysisService: AppAnalysisService, private _serverFarmService: ServerFarmDataService, private _logger: AvailabilityLoggingService, private _authService: AuthService) {
+    refreshSubscription: Subscription;
+
+    constructor(private _route: ActivatedRoute, private _appAnalysisService: AppAnalysisService, private _serverFarmService: ServerFarmDataService, private _logger: AvailabilityLoggingService, 
+        private _authService: AuthService, private _detectorControlService: DetectorControlService) {
         this._logger.LogAnalysisInitialized('App Analysis');
         this.startLoadingMessage();
 
@@ -106,21 +110,44 @@ export class AppAnalysisComponent implements OnInit {
         this.siteName = this._route.snapshot.params['sitename'];
         this.slotName = this._route.snapshot.params['slot'] ? this._route.snapshot.params['slot'] : '';
 
+        this.refreshSubscription = this._detectorControlService.update.subscribe(isValidUpdate => {
+            if (isValidUpdate) {
+                this.refresh();
+            }
+        });
+
         this._loadData();
     }
 
-    onRefreshClicked(): void {
+    ngOnDestroy() {
+        if (this.refreshSubscription) {
+            this.refreshSubscription.unsubscribe();
+        }
+        
+        this._clearRequestSubscriptions();
+    }
+
+    refresh(): void {
         this.loadingAnalysis = true;
         this.runtimeAvailabilityResponse = null;
-        this.serviceHealthResponse = null;
         this.abnormalTimePeriods = null;
         this.analysisResponse = null;
 
-        this.topLevelGraphRefreshIndex++;
+        this._clearRequestSubscriptions();
 
         this.startLoadingMessage();
 
         this._loadData(true);
+    }
+
+    private _clearRequestSubscriptions() {
+        if (this.runtimeAvailabilitySubscription) {
+            this.runtimeAvailabilitySubscription.unsubscribe();
+        }
+        
+        if (this.analysisResponseSubscription) {
+            this.analysisResponseSubscription.unsubscribe();
+        }
     }
 
     selectDowntime(index: number): void {
@@ -129,44 +156,40 @@ export class AppAnalysisComponent implements OnInit {
 
     private _loadData(invalidateCache: boolean = false): void {
 
-        let self = this;
-
-        this._appAnalysisService.getDetectorResource(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, 'availability', 'runtimeavailability', invalidateCache).subscribe(data => {
-            self.runtimeAvailabilityResponse = data;
-            if (self.runtimeAvailabilityResponse && self.runtimeAvailabilityResponse.data && self.runtimeAvailabilityResponse.data.length > 0) {
-                let currentAppHealth = self.runtimeAvailabilityResponse.data[0].find(p => p.name.toLowerCase() === "currentapphealth");
+        this.runtimeAvailabilitySubscription = this._appAnalysisService.getDetectorResource(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, 'availability', 'runtimeavailability', invalidateCache)
+        .subscribe(data => {
+            this.runtimeAvailabilityResponse = data;
+            if (this.runtimeAvailabilityResponse && this.runtimeAvailabilityResponse.data && this.runtimeAvailabilityResponse.data.length > 0) {
+                let currentAppHealth = this.runtimeAvailabilityResponse.data[0].find(p => p.name.toLowerCase() === "currentapphealth");
                 if (currentAppHealth && currentAppHealth.value.toLowerCase() === 'unhealthy') {
-                    self.showLast24Hours = !this.bladeOpenedFromSupportTicketFlow;
-                    self.isHealthyNow = true;
+                    this.showLast24Hours = !this.bladeOpenedFromSupportTicketFlow;
+                    this.isHealthyNow = true;
                 }
                 else {
-                    self.showLast24Hours = true;
-                    self.isHealthyNow = false;
+                    this.showLast24Hours = true;
+                    this.isHealthyNow = false;
                 }
             }
         });
 
-        this._appAnalysisService.getDetectorResource(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, 'availability', 'servicehealth', invalidateCache).subscribe(data => {
-            self.serviceHealthResponse = data;
-        });
-
-        this._appAnalysisService.getAnalysisResource(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, 'availability', 'appanalysis', invalidateCache)
-            .subscribe(data => {
-                this.loadingAnalysis = false;
-                clearInterval(self.loadingMessageTimer);
-                setTimeout(() => {
-                    self.analysisResponse = data;
-                    if (self.analysisResponse && self.analysisResponse.abnormalTimePeriods) {
-                        if (self.analysisResponse.abnormalTimePeriods.length > 0) {
-                            self.abnormalTimePeriods = self.analysisResponse.abnormalTimePeriods;
-                            self.selectedTimePeriodIndex = self.abnormalTimePeriods.length - 1;
-                        }
-                        else {
-                            self.selectedTimePeriodIndex = -1;
-                        }
+        this.analysisResponseSubscription = this._appAnalysisService.getAnalysisResource(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, 'availability', 'appanalysis', invalidateCache,
+            this._detectorControlService.startTimeString, this._detectorControlService.endTimeString)
+        .subscribe(data => {
+            this.loadingAnalysis = false;
+            clearInterval(this.loadingMessageTimer);
+            setTimeout(() => {
+                this.analysisResponse = data;
+                if (this.analysisResponse && this.analysisResponse.abnormalTimePeriods) {
+                    if (this.analysisResponse.abnormalTimePeriods.length > 0) {
+                        this.abnormalTimePeriods = this.analysisResponse.abnormalTimePeriods;
+                        this.selectedTimePeriodIndex = this.abnormalTimePeriods.length - 1;
                     }
+                    else {
+                        this.selectedTimePeriodIndex = -1;
+                    }
+                }
 
-                }, 500);
-            });
+            }, 500);
+        });
     }
 }

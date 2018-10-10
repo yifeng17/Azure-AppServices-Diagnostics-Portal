@@ -15,10 +15,10 @@
       </span>
   </div>
   <div class="panel-body" *ngIf="expanded">
-    <div *ngIf="summaryModel">
+    <div *ngIf="summaryModel && !refreshing">
 
       <div class="content-container">
-        <h5>Summary of last 24 hours</h5>
+        <h5>Summary</h5>
         <div class="message" *ngIf="summaryModel.detectorAbnormalTimePeriod">
           <span *ngIf="markupString" [innerHtml]="markupString | markup">
           </span>
@@ -42,8 +42,10 @@
           [title]="summaryModel.perInstanceGraphTitle" [chartType]="lineChart" [description]="summaryModel.perInstanceGraphDescription"></instance-view-graph>
       </div>
     </div>
-    <div *ngIf="!summaryModel">
-      <!-- TODO: add loading icon -->
+    <div *ngIf="!summaryModel || refreshing" >
+      <div class="loading-container">
+          <status-icon [size]="30" [loading]="LoadingStatus.Loading"></status-icon>
+      </div>
     </div>
   </div>
 </div>

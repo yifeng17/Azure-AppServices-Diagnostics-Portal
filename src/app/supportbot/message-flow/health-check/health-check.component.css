@@ -13,3 +13,11 @@
 .error-message{
     border-color: #e81325;
 }
+
+.loading-container {
+    height:406px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #cccccc;
+}

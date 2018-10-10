@@ -8,13 +8,16 @@ import { IDetectorDefinition } from '../models/detectordefinition';
 import { Observable } from 'rxjs'
 import { UriElementsService } from './urielements.service';
 import { AvailabilityLoggingService } from './logging/availability.logging.service';
+import { DetectorControlService } from '../../../../node_modules/applens-diagnostics';
 
 @Injectable()
 export class AppAnalysisService {
 
-    constructor(private _armService: ArmService, private _uriElementsService: UriElementsService, private _logger: AvailabilityLoggingService) { }
+    constructor(private _armService: ArmService, private _uriElementsService: UriElementsService, private _logger: AvailabilityLoggingService, private _detectorControlService: DetectorControlService) { }
 
-    getAnalysisResource(subscriptionId: string, resourceGroup: string, siteName: string, slot: string, diagnosticCategory:string, analysisName: string, invalidateCache: boolean = false, startTime: string = '', endTime: string = ''): Observable<IAppAnalysisResponse> {
+    getAnalysisResource(subscriptionId: string, resourceGroup: string, siteName: string, slot: string, diagnosticCategory:string, analysisName: string, invalidateCache: boolean = false, startTime: string = null, endTime: string = null): Observable<IAppAnalysisResponse> {
+        startTime = startTime ? startTime : this._detectorControlService.startTimeString;
+        endTime = endTime ? endTime : this._detectorControlService.endTimeString;
         let resourceUrl: string = this._uriElementsService.getAnalysisResourceUrl(subscriptionId, resourceGroup, siteName, diagnosticCategory, analysisName, slot, startTime, endTime);
         return this._armService.postResource<ResponseMessageEnvelope<IAppAnalysisResponse>, any>(resourceUrl, null, null, invalidateCache)
             .map((response: ResponseMessageEnvelope<IAppAnalysisResponse>) => <IAppAnalysisResponse>response.properties)
@@ -29,7 +32,9 @@ export class AppAnalysisService {
             .catch(this.handleError);
     }
 
-    getDetectorResource(subscriptionId: string, resourceGroup: string, siteName: string, slot: string, diagnosticCategory:string, detectorName: string, invalidateCache: boolean = false, startTime: string = '', endTime: string = ''): Observable<IDetectorResponse> {
+    getDetectorResource(subscriptionId: string, resourceGroup: string, siteName: string, slot: string, diagnosticCategory:string, detectorName: string, invalidateCache: boolean = false, startTime: string = null, endTime: string = null): Observable<IDetectorResponse> {
+        startTime = startTime ? startTime : this._detectorControlService.startTimeString;
+        endTime = endTime ? endTime : this._detectorControlService.endTimeString;
         let resourceUrl: string = this._uriElementsService.getDetectorResourceUrl(subscriptionId, resourceGroup, siteName, slot, diagnosticCategory, detectorName, startTime, endTime);
 
         return this._armService.postResource<ResponseMessageEnvelope<IDetectorResponse>, any>(resourceUrl, null, null, invalidateCache)

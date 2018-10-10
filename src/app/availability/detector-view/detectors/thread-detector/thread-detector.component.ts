@@ -4,6 +4,7 @@ import { IDetectorResponse } from '../../../../shared/models/detectorresponse';
 import { DetectorViewBaseComponent } from '../../detector-view-base/detector-view-base.component';
 import { ChartType } from '../../../../shared/models/chartdata';
 import { AppAnalysisService } from '../../../../shared/services/appanalysis.service';
+import { DetectorControlService } from '../../../../../../node_modules/applens-diagnostics';
 declare let d3: any;
 
 @Component({
@@ -12,8 +13,8 @@ declare let d3: any;
 })
 export class ThreadDetectorComponent extends DetectorViewBaseComponent {
 
-    constructor(protected _route: ActivatedRoute, protected _appAnalysisService: AppAnalysisService) {
-        super(_route, _appAnalysisService);
+    constructor(protected _route: ActivatedRoute, protected _appAnalysisService: AppAnalysisService, protected _detectorControlService: DetectorControlService) {
+        super(_route, _appAnalysisService, _detectorControlService);
         this.detectorMetricsTitle = "App Process Thread Count per Instance";
         this.metricsChartType = ChartType.lineChart;
     }
@@ -21,6 +22,10 @@ export class ThreadDetectorComponent extends DetectorViewBaseComponent {
     processDetectorResponse(response: IDetectorResponse){
         this.detectorResponse = response;
         this.detectorMetrics = response.metrics;
+    }
+
+    static getDetectorName(): string {
+        return 'threadcount';
     }
 
     getDetectorName(): string {

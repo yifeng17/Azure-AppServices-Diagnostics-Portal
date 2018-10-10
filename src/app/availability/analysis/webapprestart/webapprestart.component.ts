@@ -1,4 +1,4 @@
-import { Component, OnInit, trigger, state, animate, transition, style } from '@angular/core';
+import { Component, OnInit, trigger, state, animate, transition, style, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IAppAnalysisResponse } from '../../../shared/models/appanalysisresponse';
 import { IDetectorAbnormalTimePeriod, IMetricSet, IMetricSample } from '../../../shared/models/detectorresponse';
@@ -6,14 +6,15 @@ import { StartupInfo } from '../../../shared/models/portal';
 import { INameValuePair } from '../../../shared/models/namevaluepair';
 import { Cache } from '../../../shared/models/icache';
 import { GraphHelper } from '../../../shared/utilities/graphHelper';
-import { SupportBladeDefinitions, BladeOptions } from '../../../shared/models/portal';
-import { IMyDpOptions, IMyDate, IMyDateModel } from 'mydatepicker';
+import { SupportBladeDefinitions } from '../../../shared/models/portal';
 import { AppAnalysisService } from '../../../shared/services/appanalysis.service';
 import { AvailabilityLoggingService } from '../../../shared/services/logging/availability.logging.service';
 import { AuthService } from '../../../startup/services/auth.service';
 import { WindowService } from '../../../startup/services/window.service';
 import { PortalActionService } from '../../../shared/services/portal-action.service';
 import { GroupByPipe } from '../../../shared/pipes/groupBy.pipe';
+import { DetectorControlService } from 'applens-diagnostics';
+import { Subscription } from 'rxjs';
 
 declare let d3: any;
 
@@ -34,7 +35,7 @@ declare let d3: any;
         )
     ]
 })
-export class WebAppRestartComponent implements OnInit {
+export class WebAppRestartComponent implements OnInit, OnDestroy {
 
     bladeOpenedFromSupportTicketFlow: boolean;
     subscriptionId: string;
@@ -60,24 +61,14 @@ export class WebAppRestartComponent implements OnInit {
     loadingMessageIndex: number;
     loadingMessageTimer: any;
 
+    analysisResponseSubscription: Subscription;
+    refreshSubscription: Subscription;
+
     chartOptions: any;
     private _seriesColors: string[] = ["#D4E157", "rgb(0, 188, 242)", "rgb(127, 186, 0)", "rgb(155, 79, 150)", "rgb(255, 140, 0)", "rgb(232, 17, 35)", "#4286f4", "#c741f4"];
 
-    myDatePickerOptions: IMyDpOptions = {
-        dateFormat: 'yyyy-mm-dd',
-        showTodayBtn: false,
-        satHighlight: false,
-        sunHighlight: false,
-        showClearDateBtn: false,
-        monthSelector: false,
-        yearSelector: false,
-        editableDateField: false,
-    };
-
-    dateModel: any;
-
     constructor(private _route: ActivatedRoute, private _analysisService: AppAnalysisService, private _logger: AvailabilityLoggingService, private _authService: AuthService, 
-        private _windowService: WindowService, private _portalActionService: PortalActionService, private groupBy: GroupByPipe) {
+        private _windowService: WindowService, private _portalActionService: PortalActionService, private groupBy: GroupByPipe, private _detectorControlService: DetectorControlService) {
         this._logger.LogAnalysisInitialized('App Restart Analysis');
         this.loadingAnalysis = true;
 
@@ -87,19 +78,6 @@ export class WebAppRestartComponent implements OnInit {
         this.slotName = this._route.snapshot.params['slot'] ? this._route.snapshot.params['slot'] : '';
 
         this.startLoadingMessage();
-
-        let currentDate: Date = GraphHelper.convertToUTCTime(new Date());
-        let disableSince = GraphHelper.convertToUTCTime(new Date());
-        let disableUntil = GraphHelper.convertToUTCTime(new Date());
-        disableSince.setDate(disableSince.getDate() + 1);
-        disableUntil.setDate(disableUntil.getDate() - 30);
-
-        this.dateModel = {
-            date: { year: currentDate.getFullYear(), month: currentDate.getMonth() + 1, day: currentDate.getDate() },
-            formatted: `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`
-        };
-        this.myDatePickerOptions.disableSince = { year: disableSince.getFullYear(), month: disableSince.getMonth() + 1, day: disableSince.getDate() };
-        this.myDatePickerOptions.disableUntil = { year: disableUntil.getFullYear(), month: disableUntil.getMonth() + 1, day: disableUntil.getDate() };
 
         this.chartOptions = GraphHelper.getDefaultChartOptions('multiBarChart', this._seriesColors);
         this.chartOptions.chart.useInteractiveGuideline = false;
@@ -112,10 +90,22 @@ export class WebAppRestartComponent implements OnInit {
             this.bladeOpenedFromSupportTicketFlow = startupInfo.source !== undefined && startupInfo.source.toLowerCase() === 'casesubmission';
         });
 
-        this._loadData();
+        this.refreshSubscription = this._detectorControlService.update.subscribe(isValidUpdate => {
+            if (isValidUpdate) {
+                this.RefreshData();
+            }
+        });
     }
 
-    private _loadData(startDate: string = '', invalidateCache: boolean = false): void {
+    ngOnDestroy() {
+        if (this.refreshSubscription) {
+            this.refreshSubscription.unsubscribe();
+        }
+
+        this._clearRequestSubscriptions();
+    }
+
+    private _loadData(invalidateCache: boolean = false): void {
 
         this.analysisResult = [];
         this.metricsPerInstance = {};
@@ -136,7 +126,7 @@ export class WebAppRestartComponent implements OnInit {
         var allMetrics: IMetricSet[] = [];
         this.loadingAnalysis = true;
 
-        this._analysisService.getAnalysisResource(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, 'availability', 'apprestartanalysis', invalidateCache, startDate)
+        this.analysisResponseSubscription = this._analysisService.getAnalysisResource(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, 'availability', 'apprestartanalysis', invalidateCache, this._detectorControlService.startTimeString, this._detectorControlService.endTimeString)
             .subscribe((response: IAppAnalysisResponse) => {
 
                 self.loadingAnalysis = false;
@@ -146,10 +136,10 @@ export class WebAppRestartComponent implements OnInit {
 
                 if (response.abnormalTimePeriods && response.abnormalTimePeriods.length > 0) {
                     self.analysisResult = response.abnormalTimePeriods[0].events;
-                    self._logger.LogAppRestartAnalysisSummary(startDate === ''? 'Current' : startDate, self.analysisResult.length.toString());
+                    self._logger.LogAppRestartAnalysisSummary(this._detectorControlService.startTimeString, self.analysisResult.length.toString());
                 }
                 else {
-                    self._logger.LogAppRestartAnalysisSummary(startDate === ''? 'Current' : startDate, "0");
+                    self._logger.LogAppRestartAnalysisSummary(this._detectorControlService.startTimeString, '0');
                     
                     self.chartOptions.chart.callback = function (chart) {
                         chart.dispatch.changeState({ disabled: { 0: false } })
@@ -181,8 +171,6 @@ export class WebAppRestartComponent implements OnInit {
         let self = this;
 
         metrics.forEach((item) => {
-            //let groupByRoleInstances = _.groupBy(item.values, function (sample: IMetricSample) { return sample.roleInstance ? sample.roleInstance.replace('(', '[').replace(')', ']') : 'Overall' });
-
             let groupByRoleInstances = this.groupBy.transform(item.values, 'roleInstance');
 
             Object.keys(groupByRoleInstances).forEach(function (item: any) {
@@ -330,21 +318,21 @@ export class WebAppRestartComponent implements OnInit {
         }, 4000);
     }
 
-    RefreshData(event: IMyDateModel): void {
+    private _clearRequestSubscriptions() {        
+        if (this.analysisResponseSubscription) {
+            this.analysisResponseSubscription.unsubscribe();
+        }
+    }
+
+    RefreshData(): void {
 
         this._logger.LogClickEvent('Date Filter', 'Web App Restart Analysis');
-        this._logger.LogMessage(`New Date Selected :${event.formatted}`);
+        this._logger.LogMessage(`New Date Selected :${this._detectorControlService.startTimeString} - ${this._detectorControlService.endTimeString}`);
 
-        let currentDate: Date = GraphHelper.convertToUTCTime(new Date());
+        this._clearRequestSubscriptions();
         this.startLoadingMessage();
         this.showToolsDropdown = false;
 
-        var dateFilter = event.formatted;
-
-        if (`${event.date.year}-${event.date.month}-${event.date.day}` === `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`) {
-            dateFilter = '';
-        }
-
-        this._loadData(dateFilter, true);
+        this._loadData(true);
     }
 }

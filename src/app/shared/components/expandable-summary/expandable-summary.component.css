@@ -21,3 +21,11 @@ h5 {
 .message {
     padding-left:10px;
 }
+
+.loading-container {
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #cccccc;
+}

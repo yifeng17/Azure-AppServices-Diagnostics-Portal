@@ -1,26 +1,28 @@
-import { Component, OnInit } from '@angular/core';
-import { IAppAnalysisResponse, IAbnormalTimePeriod, IAnalysisData } from '../../../shared/models/appanalysisresponse';
-import { IDetectorAbnormalTimePeriod, IDetectorResponse } from '../../../shared/models/detectorresponse';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { IDetectorResponse } from '../../../shared/models/detectorresponse';
 import { SummaryViewModel, SummaryHealthStatus } from '../../../shared/models/summary-view-model';
 import { AppAnalysisService } from '../../../shared/services/appanalysis.service';
 
-import { Observable } from 'rxjs'
+import { Observable, Subscription } from 'rxjs'
 import { ActivatedRoute } from '@angular/router';
 import { MetaDataHelper } from '../../../shared/utilities/metaDataHelper';
 import '../../../shared/polyfills/string'
-import { IMyDpOptions, IMyDate, IMyDateModel } from 'mydatepicker';
-import { GraphHelper } from '../../../shared/utilities/graphHelper';
 import { AvailabilityLoggingService } from '../../../shared/services/logging/availability.logging.service';
+import { DetectorControlService } from '../../../../../node_modules/applens-diagnostics';
 
 @Component({
     selector: 'tcpconnections-analysis',
     templateUrl: 'tcp-connections-analysis.component.html'
 })
-export class TcpConnectionsAnalysisComponent implements OnInit {
+export class TcpConnectionsAnalysisComponent implements OnInit, OnDestroy {
     displayGraph: boolean = true;
     refreshingConnnectionsRejections:boolean = false;
     refreshingConnectionsUsage:boolean = false;
     refreshingOpenSocketCount:boolean = false;
+
+    portRejectionSubscription: Subscription;
+    tcpConnectionSubscription: Subscription;
+    openSocketCountSubscription: Subscription;
 
     connnectionsRejectionsViewModel: SummaryViewModel;
     connectionsUsageViewModel: SummaryViewModel;
@@ -34,58 +36,32 @@ export class TcpConnectionsAnalysisComponent implements OnInit {
     resourceGroup: string;
     siteName: string;
     slotName: string;
-    
-    myDatePickerOptions: IMyDpOptions = {
-        dateFormat: 'yyyy-mm-dd',
-        showTodayBtn: false,
-        satHighlight: false,
-        sunHighlight: false,
-        showClearDateBtn: false,
-        monthSelector: false,
-        yearSelector: false,
-        editableDateField: false,
-    };
 
-    dateModel: any;
+    refreshSubscription: Subscription;
 
-    constructor(private _route: ActivatedRoute, private _appAnalysisService: AppAnalysisService, private _logger: AvailabilityLoggingService) {
-
-        let currentDate: Date = GraphHelper.convertToUTCTime(new Date());
-        let disableSince = GraphHelper.convertToUTCTime(new Date());
-        let disableUntil = GraphHelper.convertToUTCTime(new Date());
-        disableSince.setDate(disableSince.getDate() + 1);
-        disableUntil.setDate(disableUntil.getDate() - 30);
-
-        this.dateModel = {
-            date: { year: currentDate.getFullYear(), month: currentDate.getMonth() + 1, day: currentDate.getDate() },
-            formatted: `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`
-        };
-        this.myDatePickerOptions.disableSince = { year: disableSince.getFullYear(), month: disableSince.getMonth() + 1, day: disableSince.getDate() };
-        this.myDatePickerOptions.disableUntil = { year: disableUntil.getFullYear(), month: disableUntil.getMonth() + 1, day: disableUntil.getDate() };
-
-    }
-
-    private _loadData(startDate: string = '', invalidateCache: boolean = false): void {
-
-
+    constructor(private _route: ActivatedRoute, private _appAnalysisService: AppAnalysisService, private _logger: AvailabilityLoggingService, private _detectorControlService: DetectorControlService) {
         this.subscriptionId = this._route.snapshot.params['subscriptionid'];
         this.resourceGroup = this._route.snapshot.params['resourcegroup'];
         this.siteName = this._route.snapshot.params['sitename'];
         this.slotName = this._route.snapshot.params['slot'] ? this._route.snapshot.params['slot'] : '';
 
-        this.getSummaryViewModel(this.ConnectionRejections, 'Port Rejection', false, startDate, invalidateCache)
+    }
+
+    private _loadData(invalidateCache: boolean = false): void {
+
+        this.portRejectionSubscription = this.getSummaryViewModel(this.ConnectionRejections, 'Port Rejection', false, invalidateCache)
             .subscribe(data => {
                 this.connnectionsRejectionsViewModel = data;
                 this.refreshingConnnectionsRejections = false;
             });
 
-        this.getSummaryViewModel(this.TcpConnections, 'Outbound', false, startDate, invalidateCache)
+        this.tcpConnectionSubscription = this.getSummaryViewModel(this.TcpConnections, 'Outbound', false, invalidateCache)
             .subscribe(data => {
                 this.connectionsUsageViewModel = data;
                 this.refreshingConnectionsUsage = false;
             });
 
-        this.getSummaryViewModel(this.OpenSocketCount, 'TotalOpenSocketCount', false, startDate, invalidateCache)
+        this.openSocketCountSubscription = this.getSummaryViewModel(this.OpenSocketCount, 'TotalOpenSocketCount', false, invalidateCache)
             .subscribe(data => {
                 this.openSocketCountViewModel = data;
                 this.refreshingOpenSocketCount = false;
@@ -94,14 +70,27 @@ export class TcpConnectionsAnalysisComponent implements OnInit {
 
     ngOnInit(): void {
         this._logger.LogAnalysisInitialized('TCP Connections Analysis');
-        this._loadData();
+
+        this.refreshSubscription = this._detectorControlService.update.subscribe(isValidUpdate => {
+            if (isValidUpdate) {
+                this.RefreshData();
+            }
+        });
     }
 
-    getSummaryViewModel(detectorName: string, topLevelSeries: string = '', excludeTopLevelInDetail: boolean = true, startDate: string = '', invalidateCache: boolean = false): Observable<SummaryViewModel> {
+    ngOnDestroy() {
+        if (this.refreshSubscription) {
+            this.refreshSubscription.unsubscribe();
+        }
+
+        this._clearRequestSubscriptions();
+    }
+
+    getSummaryViewModel(detectorName: string, topLevelSeries: string = '', excludeTopLevelInDetail: boolean = true, invalidateCache: boolean = false): Observable<SummaryViewModel> {
 
         let graphMetaData = this.graphMetaData[detectorName];
 
-        return this._appAnalysisService.getDetectorResource(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, "availability", detectorName, invalidateCache, startDate)
+        return this._appAnalysisService.getDetectorResource(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, "availability", detectorName, invalidateCache)
             .map(detectorResponse => {
                 let downtime = detectorResponse.abnormalTimePeriods[0] ? detectorResponse.abnormalTimePeriods[0] : null;
                 let health = downtime ? SummaryHealthStatus.Warning : SummaryHealthStatus.Healthy;
@@ -191,19 +180,25 @@ export class TcpConnectionsAnalysisComponent implements OnInit {
         }
     }
 
-    RefreshData(event: IMyDateModel): void {
+    private _clearRequestSubscriptions() {
+        if (this.openSocketCountSubscription) {
+            this.openSocketCountSubscription.unsubscribe();
+        }
+        
+        if (this.portRejectionSubscription) {
+            this.portRejectionSubscription.unsubscribe();
+        }
 
-        this._logger.LogClickEvent('Date Filter', 'TCP Connections Analysis');
-        this._logger.LogMessage(`New Date Selected :${event.formatted}`);
-        let currentDate: Date = GraphHelper.convertToUTCTime(new Date());       
+        if (this.tcpConnectionSubscription) {
+            this.tcpConnectionSubscription.unsubscribe();
+        }
+    }
 
-        var dateFilter = event.formatted;
-        if (`${event.date.year}-${event.date.month}-${event.date.day}` === `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}`) {
-            dateFilter = '';
-        }        
+    RefreshData(): void {     
         this.refreshingConnectionsUsage = true;
         this.refreshingConnnectionsRejections = true;
         this.refreshingOpenSocketCount = true;
-        this._loadData(dateFilter, true);
+        this._clearRequestSubscriptions();
+        this._loadData(true);
     }
 }

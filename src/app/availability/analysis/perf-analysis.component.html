@@ -1,10 +1,7 @@
 <div style="min-height: 100%">
-    <app-current-health *ngIf="!bladeOpenedFromSupportTicketFlow" [runtimeAvailabilityResponse]="runtimeAvailabilityResponse"
-        [serviceHealthResponse]="serviceHealthResponse" [bladeOpenedFromSupportTicketFlow]="bladeOpenedFromSupportTicketFlow"
-        (refreshClicked)="onRefreshClicked($event)">
-    </app-current-health>
+    <detector-control></detector-control>
     <div class="row">
-        <availability-graph [(displayGraph)]="showLast24Hours" [topLevelGraphRefreshIndex]="topLevelGraphRefreshIndex" [displayTimeLine]="true">
+        <availability-graph [(displayGraph)]="showLast24Hours" [displayTimeLine]="true" [showPerformanceFirst]="true">
             <downtime-timeline [appAnalysisResponse]='analysisResponse' [(selectedDowntimeIndex)]='selectedTimePeriodIndex'  [problemDescription]="problemDescription"></downtime-timeline>
         </availability-graph>
 
@@ -16,7 +13,7 @@
                     <i class="fa fa-circle-o-notch fa-2x fa-spin spin-icon" aria-hidden="true"></i>
                     <span [@loadingAnimation]="showLoadingMessage ? 'shown' : 'hidden'" class="loading-message">{{loadingMessages[loadingMessageIndex]}}</span>
                 </div>
-                <problem-solution *ngIf="analysisResponse && runtimeAvailabilityResponse" [showAppInsights]="true" [defaultSolutions]="defaultSolutions" [problemDescription]='problemDescription'
+                <problem-solution *ngIf="analysisResponse" [showAppInsights]="true" [defaultSolutions]="defaultSolutions" [problemDescription]='problemDescription'
                     [analysisResponseInput]="analysisResponse" [selectedTimePeriodIndexInput]="selectedTimePeriodIndex" [openedFromTicketOpeningFlow]="bladeOpenedFromSupportTicketFlow"
                     [parentContainer]="'perfanalysis'">
                 </problem-solution>

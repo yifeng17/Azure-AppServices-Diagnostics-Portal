@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { SharedModule } from '../shared/shared.module';
 import { SolutionsModule } from '../solutions/solutions.module';
-import { MyDatePickerModule } from 'mydatepicker';
 import { DiagnosticDataModule, PUBLIC_CONFIGURATION } from 'applens-diagnostics';
 import { AutoHealingModule } from '../auto-healing/auto-healing.module';
 
@@ -38,6 +37,7 @@ import { AppInsightsExceptionsComponent } from './app-insights/exceptions/app-in
 import { AppInsightsDependenciesComponent } from './app-insights/dependencies/app-insights-dependencies.component';
 import { TcpConnectionsAnalysisComponent } from './analysis/tcpconnectionsanalysis/tcp-connections-analysis.component';
 import { ProblemSolutionComponent } from './problem-solution/problem-solution.component';
+import { DetectorLoaderComponent } from './detector-view/detector-loader/detector-loader.component';
 
 @NgModule({
     declarations: [
@@ -72,11 +72,11 @@ import { ProblemSolutionComponent } from './problem-solution/problem-solution.co
         AppInsightsExceptionsComponent,
         AppInsightsDependenciesComponent,
         ProblemSolutionComponent,
+        DetectorLoaderComponent,
     ],
     imports: [
         RouterModule.forChild(AvailabilityAndPerformanceCategoryRouteConfig),
         SharedModule,
-        MyDatePickerModule,
         SolutionsModule,
         DiagnosticDataModule,
         AutoHealingModule

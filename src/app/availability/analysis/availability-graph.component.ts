@@ -1,12 +1,10 @@
-import { Component, OnInit, OnChanges, Input, Output, SimpleChanges, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IMetricSet, IDetectorResponse } from '../../shared/models/detectorresponse';
 import { GraphHelper } from '../../shared/utilities/graphHelper';
-import { IAppAnalysisResponse, IAbnormalTimePeriod } from '../../shared/models/appanalysisresponse';
 import { AppAnalysisService } from '../../shared/services/appanalysis.service';
-import { ServerFarmDataService } from '../../shared/services/server-farm-data.service';
-import { AvailabilityLoggingService } from '../../shared/services/logging/availability.logging.service';
-import { AuthService } from '../../startup/services/auth.service';
+import { DetectorControlService } from '../../../../node_modules/applens-diagnostics';
+import { Subscription } from 'rxjs';
 
 declare let d3: any;
 
@@ -15,7 +13,10 @@ declare let d3: any;
     templateUrl: 'availability-graph.component.html',
     styleUrls: ["availability-graph.component.css"]
 })
-export class AvailabilityGraphComponent implements OnInit, OnChanges {
+export class AvailabilityGraphComponent implements OnInit, OnDestroy {
+
+    runtimeAvailabilitySubscription: Subscription;
+    siteLatencySubscription: Subscription;
 
     runtimeAvailabilityResponse: IDetectorResponse;
     siteLatencyResponse: IDetectorResponse;
@@ -34,7 +35,7 @@ export class AvailabilityGraphComponent implements OnInit, OnChanges {
     @Input() displayTimeLine: boolean = false;
     @Output() displayGraphChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    @Input() topLevelGraphRefreshIndex: number;
+    @Input() showPerformanceFirst: boolean = false;
 
     public availabilityGraphData: any;
     public requestsGraphData: any;
@@ -43,52 +44,58 @@ export class AvailabilityGraphComponent implements OnInit, OnChanges {
     public requestsGraphOptions: any;
     public latencyGraphOptions: any;
 
-    public showPerformanceFirst: boolean;
-
     public dataOption: number = 0;
+
+    refreshSubscription: Subscription;
 
     private _requestsColors: string[] = ["rgb(0, 188, 242)", "rgb(127, 186, 0)", "rgb(155, 79, 150)", "rgb(255, 140, 0)", "rgb(232, 17, 35)"];
     private _availabilityColors: string[] = ["rgb(127, 186, 0)", "rgb(0, 188, 242)"];
 
-    constructor(private _activatedRoute: ActivatedRoute, private _appAnalysisService: AppAnalysisService, private _serverFarmService: ServerFarmDataService, private _logger: AvailabilityLoggingService, private _authService: AuthService) {
+    constructor(private _activatedRoute: ActivatedRoute, private _appAnalysisService: AppAnalysisService, private _detectorControlService: DetectorControlService) {
         this.setupGraphOptions();
-
-        // TODO: check if this works for slots
-        if (this._activatedRoute.snapshot.parent.url.length > 7 && this._activatedRoute.snapshot.parent.url[7].toString() === 'performance') {
-            this.showPerformanceFirst = true;
-            this.dataOption = 2;
-        }
-        else if (this._activatedRoute.snapshot.url.length > 7 && this._activatedRoute.snapshot.url[7].toString() === 'performance') {
-            this.showPerformanceFirst = true;
-            this.dataOption = 2;
-        }
     }
 
     ngOnInit(): void {
+
+        if(this.showPerformanceFirst) {
+            this.dataOption = 2;
+        }
+
         this.subscriptionId = this._activatedRoute.snapshot.params['subscriptionid'];
         this.resourceGroup = this._activatedRoute.snapshot.params['resourcegroup'];
         this.siteName = this._activatedRoute.snapshot.params['sitename'];
         this.slotName = this._activatedRoute.snapshot.params['slot'] ? this._activatedRoute.snapshot.params['slot'] : '';
 
-        this._loadData();
+        this.refreshSubscription = this._detectorControlService.update.subscribe(isValidUpdate => {
+            if (isValidUpdate) {
+                this.refresh();
+            }
+        });
     }
 
-    ngOnChanges(changes: SimpleChanges): void {
-        if (changes['topLevelGraphRefreshIndex'] && !changes['topLevelGraphRefreshIndex'].isFirstChange()) {
-            this.requestsGraphData = null;
-            this.availabilityGraphData = null;
-            this.latencyGraphData = null;
-            this.runtimeAvailabilityResponse = null;
-            this.runtimeAvailabilityMetrics = null;
-            this.siteLatencyResponse = null;
-            this.siteLatencyMetrics = null;
-
-            this._loadData();
+    ngOnDestroy() {
+        if (this.refreshSubscription) {
+            this.refreshSubscription.unsubscribe();
         }
+        
+        this._clearRequestSubscriptions();
     }
 
-    private _loadData(): void {
-        this._appAnalysisService.getDetectorResource(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, 'availability', 'runtimeavailability').subscribe(data => {
+    private refresh() {
+        this.requestsGraphData = null;
+        this.availabilityGraphData = null;
+        this.latencyGraphData = null;
+        this.runtimeAvailabilityResponse = null;
+        this.runtimeAvailabilityMetrics = null;
+        this.siteLatencyResponse = null;
+        this.siteLatencyMetrics = null;
+        this._clearRequestSubscriptions();
+
+        this._loadData(true);
+    }
+
+    private _loadData(invalidateCache: boolean = false): void {
+        this.runtimeAvailabilitySubscription = this._appAnalysisService.getDetectorResource(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, 'availability', 'runtimeavailability', invalidateCache).subscribe(data => {
             this.runtimeAvailabilityResponse = data;
             this.runtimeAvailabilityMetrics = this.runtimeAvailabilityResponse.metrics;
             if (this.runtimeAvailabilityResponse && this.runtimeAvailabilityResponse.data && this.runtimeAvailabilityResponse.data.length > 0) {
@@ -115,7 +122,7 @@ export class AvailabilityGraphComponent implements OnInit, OnChanges {
             }
         });
 
-        this._appAnalysisService.getDetectorResource(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, 'availability', 'sitelatency').subscribe(data => {
+        this.siteLatencySubscription = this._appAnalysisService.getDetectorResource(this.subscriptionId, this.resourceGroup, this.siteName, this.slotName, 'availability', 'sitelatency', invalidateCache, this._detectorControlService.startTimeString, this._detectorControlService.endTimeString).subscribe(data => {
             this.siteLatencyResponse = data;
             this.siteLatencyMetrics = this.siteLatencyResponse.metrics;
 
@@ -164,5 +171,15 @@ export class AvailabilityGraphComponent implements OnInit, OnChanges {
         this.latencyGraphOptions.chart.yAxis.tickFormat = d3.format('d');
         this.latencyGraphOptions.chart.yAxis.axisLabel = 'Response Time (ms)';
         this.latencyGraphOptions.chart.forceY = [0, 10];
+    }
+
+    private _clearRequestSubscriptions() {
+        if (this.runtimeAvailabilitySubscription) {
+            this.runtimeAvailabilitySubscription.unsubscribe();
+        }
+        
+        if (this.siteLatencySubscription) {
+            this.siteLatencySubscription.unsubscribe();
+        }
     }
 }
