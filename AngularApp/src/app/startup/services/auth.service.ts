@@ -13,9 +13,9 @@ export class AuthService {
 
     private localStartUpInfo: StartupInfo = <StartupInfo>{
         sessionId: null,
-        token: null,
+        token: '',
         subscriptions: null,
-        resourceId: null,
+        resourceId: '',
     }
 
     public get hasLocalStartupInfo() {
