@@ -16,6 +16,8 @@ export class AuthService {
         token: '',
         subscriptions: null,
         resourceId: '',
+        workflowId: '',
+        supportTopicId: ''
     }
 
     public get hasLocalStartupInfo() {

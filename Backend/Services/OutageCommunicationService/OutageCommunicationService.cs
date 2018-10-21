@@ -1,6 +1,6 @@
 ﻿using Backend.Helpers;
 using Backend.Models;
-using Backend.Services.KustoService;
+using Backend.Services;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
