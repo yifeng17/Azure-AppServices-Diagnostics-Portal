@@ -11,6 +11,7 @@ export interface StartupInfo {
     supportTopicId?: string;
     workflowId?: string; 
     resourceType:ResourceType;
+    additionalParameters: any;
 }
 
 export enum ResourceType {
