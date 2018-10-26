@@ -30,8 +30,10 @@ export class NotificationService {
 
   currentNotificationAction() {
     this._logger.LogClickEvent(this.activeNotification.title, 'Notifications', 'Notifications');
-    this.activeNotification.action();
-    this.dismiss();
+    if (this.activeNotification.action) {
+      this.activeNotification.action();
+      this.dismiss();
+    }
   }
 }
 
@@ -44,7 +46,7 @@ export class Notification {
   constructor(title: string, action: Function, icon?: string, color?: string) {
     this.title = title;
     this.action = action;
-    this.icon = icon ? icon : 'fa-info';
+    this.icon = icon ? icon : 'fa-info-circle';
     this.color = color ? color : '#dddddd';
   }
 }

@@ -1,10 +1,14 @@
 .notification {
-    background-color: #436992;
-    color: #ffffff;
-    padding: 5px 25px;
+    background-color: #015bda27;
+    color: #223f69;
+    padding: 8px 25px;
     /* border: 1px solid #ffae35; */
     width: 100%;
     cursor: pointer;
+}
+
+.notification-noaction {
+    cursor: default;
 }
 
 .fa {
@@ -13,4 +17,5 @@
 
 .fa-close {
     font-size: 19px;
+    cursor: pointer;
 }

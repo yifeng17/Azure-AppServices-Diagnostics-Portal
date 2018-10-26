@@ -20,6 +20,7 @@ export class SiteFeatureService extends FeatureService {
 
   public diagnosticTools: SiteFilteredItem<Feature>[];
   public supportTools: SiteFilteredItem<Feature>[];
+  public premiumTools: SiteFilteredItem<Feature>[];
 
   constructor(protected _diagnosticApiService: DiagnosticService, protected _resourceService: WebSitesService, protected _contentService: ContentService, protected _router: Router, 
     protected _authService: AuthService, private _portalActionService: PortalActionService, private _websiteFilter: WebSiteFilter, protected _logger: LoggingV2Service) {
@@ -30,6 +31,7 @@ export class SiteFeatureService extends FeatureService {
         this.getLegacyAvailabilityAndPerformanceFeatures(startupInfo.resourceId).forEach(feature => this._features.push(feature));
       }
       this.addDiagnosticTools(startupInfo.resourceId);
+      this.addPremiumTools();
     });
     
   }
@@ -96,6 +98,43 @@ export class SiteFeatureService extends FeatureService {
         clickAction: this._createFeatureAction('tcpconnectionsanalysis', 'Availability and Performance', () => {
           this._router.navigateByUrl(`legacy/${resourceId}/diagnostics/availability/tcpconnectionsanalysis`);
         })
+      }
+    ]
+  }
+
+  addPremiumTools() {
+    this.premiumTools = <SiteFilteredItem<Feature>[]>[
+      {
+        appType: AppType.WebApp,
+        platform: OperatingSystem.windows,
+        sku: Sku.NotDynamic,
+        stack: '',
+        item: {
+          id: 'zray',
+          name: 'PHP Debugging',
+          category: 'Premium Tools',
+          description: '',
+          featureType: FeatureTypes.Tool,
+          clickAction: this._createFeatureAction('zray', 'Premium Tools', () => {
+            this._portalActionService.openPHPDebuggingBlade();
+          })
+        }
+      },
+      {
+        appType: AppType.WebApp,
+        platform: OperatingSystem.windows,
+        sku: Sku.NotDynamic,
+        stack: '',
+        item: {
+          id: 'tinfoil',
+          name: 'Security Scanning',
+          category: 'Premium Tools',
+          description: '',
+          featureType: FeatureTypes.Tool,
+          clickAction: this._createFeatureAction('tinfoil', 'Premium Tools', () => {
+            this._portalActionService.openTifoilSecurityBlade();
+          })
+        }
       }
     ]
   }
