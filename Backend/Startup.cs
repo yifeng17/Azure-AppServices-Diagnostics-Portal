@@ -37,6 +37,7 @@ namespace Backend
             services.AddSingleton<IKustoQueryService, KustoQueryService>();
             services.AddSingleton<IKustoTokenRefreshService, KustoTokenRefreshService>();
             services.AddSingleton<IOutageCommunicationService, OutageCommunicationService>();
+            services.AddSingleton<IArmService, ArmService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -16,10 +16,12 @@ namespace Backend.Controllers
     public class CommsController : Controller
     {
         private readonly IOutageCommunicationService _outageService;
+        private readonly IArmService _armService;
 
-        public CommsController(IOutageCommunicationService outageService)
+        public CommsController(IOutageCommunicationService outageService, IArmService armService)
         {
             this._outageService = outageService;
+            this._armService = armService;
         }
 
         [HttpGet]
@@ -31,6 +33,11 @@ namespace Backend.Controllers
                 return BadRequest("Missing x-ms-resource");
             }
 
+            if(!Request.Headers.ContainsKey("Authorization") || !Request.Headers.TryGetValue("Authorization", out StringValues authHeader))
+            {
+                return BadRequest("Missing Authorization Header");
+            }
+
             string resource = val.First();
             Regex resourceRegEx = new Regex("/subscriptions/(.*)/resourcegroups/(.*)/providers/(.*)/(.*)/(.*)");
             Match match = resourceRegEx.Match(resource);
@@ -40,6 +47,12 @@ namespace Backend.Controllers
             }
 
             string subscriptionId = match.Groups[1].Value;
+            string authToken = authHeader.First();
+
+            if(!(await this._armService.CheckSubscriptionAccessAsync(subscriptionId, authToken)))
+            {
+                return Unauthorized();
+            }
 
             if (!DateTimeHelper.PrepareStartEndTimeWithTimeGrain(startTime, endTime, string.Empty, 30, out DateTime startTimeUtc, out DateTime endTimeUtc, out TimeSpan timeGrainTimeSpan, out string errorMessage))
             {
