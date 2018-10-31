@@ -31,6 +31,11 @@
       <tile-list [tiles]="supportToolTiles | website"></tile-list>
     </collapsible-list-item>
   </collapsible-list>
+  <collapsible-list [title]="'Premium Tools'" [collapsed]="false">
+    <collapsible-list-item>
+      <tile-list [tiles]="premiumToolTiles | website"></tile-list>
+    </collapsible-list-item>
+  </collapsible-list>
   <div style="margin-top:40px">
       <p>
           Below is the list of all the diagnostic sessions collected in the past for this web app.

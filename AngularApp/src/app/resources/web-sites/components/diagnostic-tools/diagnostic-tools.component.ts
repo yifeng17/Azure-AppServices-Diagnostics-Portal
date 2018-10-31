@@ -16,6 +16,7 @@ export class DiagnosticToolsComponent {
 
   diagnosticToolTiles: SiteFilteredItem<Tile>[];
   supportToolTiles: SiteFilteredItem<Tile>[];
+  premiumToolTiles: SiteFilteredItem<Tile>[];
 
   stackFound: boolean = false;
   stack: string;
@@ -61,6 +62,20 @@ export class DiagnosticToolsComponent {
         item: {
           title: tool.item.name,
           backgroundColor: 'rgb(127, 186, 0)',
+          action: tool.item.clickAction
+        }
+      }
+    });
+
+    this.premiumToolTiles =  this._sitesFeatureService.premiumTools.map(tool => {
+      return <SiteFilteredItem<Tile>>{
+        appType: tool.appType,
+        platform: tool.platform,
+        sku: tool.sku,
+        stack: tool.stack,
+        item: {
+          title: tool.item.name,
+          backgroundColor: 'rgb(232, 103, 28)',
           action: tool.item.clickAction
         }
       }

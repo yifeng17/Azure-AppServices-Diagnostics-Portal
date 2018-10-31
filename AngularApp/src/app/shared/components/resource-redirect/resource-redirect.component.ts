@@ -44,7 +44,10 @@ export class ResourceRedirectComponent implements OnInit {
                 pesId: info.pesId
               };
             }
-            this._router.navigate([path], navigationExtras);
+
+            this._router.navigateByUrl( 
+              this._router.createUrlTree([path], navigationExtras)
+            );
           }
           else {
             // For now there will be a hard coded destination.
@@ -59,6 +62,15 @@ export class ResourceRedirectComponent implements OnInit {
           }
         }
       });
+  }
+
+  updateRouteBasedOnAdditionalParameters(route: string, additionalParameters: any): string {
+    if (additionalParameters.featurePath) {
+      let featurePath: string = additionalParameters.featurePath;
+      featurePath = featurePath.startsWith('/') ? featurePath.replace('/', '') : featurePath;
+
+      return `${route}/${featurePath}`
+    }
   }
 
   getRouteBasedOnSupportTopicId(info: StartupInfo): string {

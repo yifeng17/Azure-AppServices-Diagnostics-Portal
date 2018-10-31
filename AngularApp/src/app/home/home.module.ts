@@ -57,7 +57,6 @@ export const HomeRoutes = RouterModule.forChild([
   imports: [
     CommonModule,
     SharedModule,
-    //SharedV2Module,
     HomeRoutes,
     SupportBotModule,
     FormsModule
