@@ -42,15 +42,21 @@ export class LiveChatSettings {
 
     public static PublicHolidays: any = [
         {
-            // Labor Day
-            date: 3,
-            month: 9,
+            // Thanksgiving Day - 1
+            date: 22,
+            month: 11,
             year: 2018
         },
         {
-            // Thanksgiving Day
-            date: 22,
+            // Thanksgiving Day - 2
+            date: 23,
             month: 11,
+            year: 2018
+        },
+        {
+            // Xmas eve
+            date: 24,
+            month: 12,
             year: 2018
         },
         {
@@ -72,4 +78,12 @@ export class LiveChatSettings {
             year: 2019
         }
     ];
+
+    public static WeeklyChatOffHours = {
+        Day: 4,  //Thursday, 11 AM - 12:30 PM
+        StartHourPST: 11,
+        StartMinutesPST: 0,
+        EndHourPST: 12,
+        EndMinutePST: 30
+    };
 }

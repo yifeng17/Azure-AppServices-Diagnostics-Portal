@@ -190,8 +190,7 @@ export class LiveChatService {
         var currentDateTime: moment.Moment = moment.tz('America/Los_Angeles');
 
         isApplicable = isApplicable
-            && (currentDateTime.day() >= LiveChatSettings.BuisnessStartDay && currentDateTime.day() <= LiveChatSettings.BuisnessEndDay)
-            && (currentDateTime.hour() >= LiveChatSettings.BusinessStartHourPST && currentDateTime.hour() < LiveChatSettings.BusinessEndHourPST)
+            && this.isChatHoursOn(currentDateTime)
             && !this.isPublicHoliday(currentDateTime);
 
         return LiveChatSettings.GLOBAL_ON_SWITCH && isApplicable;
@@ -209,5 +208,16 @@ export class LiveChatService {
         }
 
         return false;
+    }
+
+    private isChatHoursOn(currentDateTime): boolean {
+        var isBusinessHour = (currentDateTime.day() >= LiveChatSettings.BuisnessStartDay && currentDateTime.day() <= LiveChatSettings.BuisnessEndDay) 
+        && (currentDateTime.hour() >= LiveChatSettings.BusinessStartHourPST && currentDateTime.hour() < LiveChatSettings.BusinessEndHourPST);
+
+        var isWeeklyChatOffHour = (currentDateTime.day() === LiveChatSettings.WeeklyChatOffHours.Day) && 
+                                (currentDateTime.hour() > LiveChatSettings.WeeklyChatOffHours.StartHourPST || (currentDateTime.hour() === LiveChatSettings.WeeklyChatOffHours.StartHourPST && currentDateTime.minutes() >= LiveChatSettings.WeeklyChatOffHours.StartMinutesPST)) &&
+                                (currentDateTime.hour() < LiveChatSettings.WeeklyChatOffHours.EndHourPST || (currentDateTime.hour() === LiveChatSettings.WeeklyChatOffHours.EndHourPST && currentDateTime.minutes() <= LiveChatSettings.WeeklyChatOffHours.EndMinutePST));
+
+        return isBusinessHour && !isWeeklyChatOffHour;
     }
 }
