@@ -54,6 +54,12 @@ export class LiveChatSettings {
             year: 2018
         },
         {
+            // Xmas eve
+            date: 24,
+            month: 12,
+            year: 2018
+        },
+        {
             // Xmas
             date: 25,
             month: 12,
