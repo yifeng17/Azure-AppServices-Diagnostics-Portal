@@ -56,7 +56,7 @@ export class ToolsMenuComponent  {
             enabled: true,
             action: () => { 
                 this.logToolUse(SupportBladeDefinitions.MetricPerInstance.Identifier);
-                this._portalActionService.openSupportIFrame(SupportBladeDefinitions.MetricPerInstance)
+                this._portalActionService.openMdmMetricsV3Blade();
             }
         });
 
@@ -67,7 +67,7 @@ export class ToolsMenuComponent  {
             enabled: this.hasReadAccessToServerFarm,
             action: () => { 
                 this.logToolUse(SupportBladeDefinitions.AppServicePlanMetrics.Identifier);
-                this._portalActionService.openSupportIFrame(SupportBladeDefinitions.AppServicePlanMetrics)
+                this._portalActionService.openMdmMetricsV3Blade(this._portalActionService.currentSite.properties.serverFarmId);
             }
         });
 

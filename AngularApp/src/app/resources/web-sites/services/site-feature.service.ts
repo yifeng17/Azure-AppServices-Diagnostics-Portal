@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../startup/services/auth.service';
 import { Feature, FeatureTypes } from '../../../shared-v2/models/features';
 import { AppType, SupportBladeDefinitions } from '../../../shared/models/portal';
-import { OperatingSystem } from '../../../shared/models/site';
+import { OperatingSystem, Site } from '../../../shared/models/site';
 import { SiteFilteredItem } from '../models/site-filter';
 import { Sku } from '../../../shared/models/server-farm';
 import { ToolNames } from '../../../shared/models/tools-constants';
@@ -316,7 +316,7 @@ export class SiteFeatureService extends FeatureService {
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(SupportBladeDefinitions.MetricPerInstance.Identifier, 'Support Tools', () => {
-            this._portalActionService.openSupportIFrame(SupportBladeDefinitions.MetricPerInstance)
+            this._portalActionService.openMdmMetricsV3Blade();
           })
         }
       },
@@ -332,7 +332,7 @@ export class SiteFeatureService extends FeatureService {
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(SupportBladeDefinitions.AppServicePlanMetrics.Identifier, 'Support Tools', () => {
-            this._portalActionService.openSupportIFrame(SupportBladeDefinitions.AppServicePlanMetrics)
+            this._portalActionService.openMdmMetricsV3Blade(this._portalActionService.currentSite.properties.serverFarmId);
           })
         }
       },

@@ -15,15 +15,15 @@ export class PortalActionService {
     public currentSite: ResponseMessageEnvelope<Site>;
 
     constructor(private _windowService: WindowService, private _portalService: PortalService, private _armService: ArmService,
-         private _authService: AuthService) {
-            this._authService.getStartupInfo().flatMap((startUpInfo: StartupInfo) => {
+        private _authService: AuthService) {
+        this._authService.getStartupInfo().flatMap((startUpInfo: StartupInfo) => {
             return this._armService.getResource<Site>(startUpInfo.resourceId);
         }).subscribe((site: ResponseMessageEnvelope<Site>) => {
-            this.currentSite = site; 
+            this.currentSite = site;
         });
     }
 
-    public openBladeScaleUpBlade() {       
+    public openBladeScaleUpBlade() {
         let bladeInfo = {
             detailBlade: "scaleup",
             detailBladeInputs: {}
@@ -57,7 +57,19 @@ export class PortalActionService {
         this._portalService.openBlade(bladeInfo, "troubleshoot");
     }
 
-    public openAppInsightsBlade() {      
+    public openMdmMetricsV3Blade(resourceUri?: string) {
+        let bladeInfo = {
+            detailBlade: "MetricsBladeV3",
+            extension: "Microsoft_Azure_Monitoring",
+            detailBladeInputs: {
+                ResourceId: !!resourceUri ? resourceUri : this.currentSite.id
+            }
+        };
+
+        this._portalService.openBlade(bladeInfo, "troubleshoot");
+    }
+
+    public openAppInsightsBlade() {
         let bladeInfo = {
             detailBlade: "AppServicesEnablementBlade",
             extension: "AppInsightsExtension",
@@ -97,7 +109,7 @@ export class PortalActionService {
     }
 
     public openSupportIFrame(supportBlade: SupportBladeDefinition) {
-        
+
         let bladeInfo = {
             detailBlade: "SupportIFrame",
             detailBladeInputs: this._getSupportSiteInput(this.currentSite, supportBlade.Identifier, supportBlade.Title)
@@ -108,7 +120,7 @@ export class PortalActionService {
 
     public openPHPDebuggingBlade() {
         let resourceUriSplit = this.currentSite.id.split("/");
-        
+
         let bladeInfo = {
             detailBlade: "ZendZRayBlade",
             detailBladeInputs: {
@@ -121,7 +133,7 @@ export class PortalActionService {
 
     public openTifoilSecurityBlade() {
         let resourceUriSplit = this.currentSite.id.split("/");
-        
+
         let bladeInfo = {
             detailBlade: "TinfoilSecurityBlade",
             detailBladeInputs: {
@@ -136,7 +148,7 @@ export class PortalActionService {
         this.openBladeAdvancedAppRestartBlade([{ resourceUri: this.currentSite.id, siteName: this.currentSite.name }], []);
     }
 
-    public openBladeAdvancedAppRestartBlade(sitesToGet: SiteRestartData[], instancesToRestart: string[], site?: Site) {       
+    public openBladeAdvancedAppRestartBlade(sitesToGet: SiteRestartData[], instancesToRestart: string[], site?: Site) {
         let resourceUris = [];
         for (var i = 0; i < sitesToGet.length; i++) {
             resourceUris.push(sitesToGet[i].resourceUri);;
@@ -154,11 +166,11 @@ export class PortalActionService {
         this._portalService.openBlade(bladeInfo, "troubleshoot");
     }
 
-    private getWebsiteId(subscriptionId: string, resourceGroup: string, siteName: string): any{
+    private getWebsiteId(subscriptionId: string, resourceGroup: string, siteName: string): any {
         return {
-            Name : siteName,
-            SubscriptionId : subscriptionId,
-            ResourceGroup : resourceGroup
+            Name: siteName,
+            SubscriptionId: subscriptionId,
+            ResourceGroup: resourceGroup
         }
     }
 
