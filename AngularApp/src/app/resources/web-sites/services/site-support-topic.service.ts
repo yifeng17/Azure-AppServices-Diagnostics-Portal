@@ -1,8 +1,10 @@
+import { WebSitesService } from './web-sites.service';
 import { Injectable } from '@angular/core';
 import { SupportTopicService } from '../../../shared-v2/services/support-topic.service';
 import { DiagnosticService } from 'applens-diagnostics';
 import { ResourceService } from '../../../shared-v2/services/resource.service';
 import { Observable } from 'rxjs'
+import { OperatingSystem } from '../../../shared/models/site';
 
 @Injectable()
 export class SiteSupportTopicService extends SupportTopicService {
@@ -35,8 +37,8 @@ export class SiteSupportTopicService extends SupportTopicService {
     }
   ]
 
-  constructor(protected _diagnosticService: DiagnosticService, protected _resourceService: ResourceService) {
-    super(_diagnosticService, _resourceService);
+  constructor(protected _diagnosticService: DiagnosticService, protected _webSiteService: WebSitesService) {
+    super(_diagnosticService, _webSiteService);
   }
 
   getPathForSupportTopic(supportTopicId: string, pesId: string): Observable<string> {
@@ -45,8 +47,8 @@ export class SiteSupportTopicService extends SupportTopicService {
         (!pesId || pesId === '' || supportTopic.pesId === pesId)
     );
 
-    if (matchingMapping) {
-      return Observable.of(`/legacy${this._resourceService.resourceIdForRouting}${matchingMapping.path}`);
+    if (matchingMapping && this._webSiteService.platform == OperatingSystem.windows) {
+      return Observable.of(`/legacy${this._webSiteService.resourceIdForRouting}${matchingMapping.path}`);
     }
     else {
       return super.getPathForSupportTopic(supportTopicId, pesId);

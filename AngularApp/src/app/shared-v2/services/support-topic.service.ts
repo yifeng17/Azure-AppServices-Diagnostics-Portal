@@ -8,7 +8,7 @@ export class SupportTopicService {
 
   protected detectorTask: Observable<DetectorMetaData[]>;
 
-  constructor(protected _diagnosticService: DiagnosticService, protected _resourceService: ResourceService) {
+  constructor(protected _diagnosticService: DiagnosticService, protected _webSiteService: ResourceService) {
     this.detectorTask = this._diagnosticService.getDetectors();
   }
 
@@ -26,7 +26,7 @@ export class SupportTopicService {
         }
       }
 
-      return `${this._resourceService.resourceIdForRouting}${detectorPath}`;
+      return `${this._webSiteService.resourceIdForRouting}${detectorPath}`;
     });
   }
 }
