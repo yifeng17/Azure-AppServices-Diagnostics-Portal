@@ -12,7 +12,6 @@ import { CategoryChatStateService } from '../../../shared-v2/services/category-c
 export class ButtonMessageComponent implements OnInit, AfterViewInit, IChatMessageComponent {
 
     buttonList: { title: string, type: ButtonActionType, next_key: string }[] = [];
-    buttonCssClasses = ['btn-info', 'btn-warning', 'btn-danger', 'btn-primary'];
     showComponent: boolean = true;
     context: string;
     category: string;

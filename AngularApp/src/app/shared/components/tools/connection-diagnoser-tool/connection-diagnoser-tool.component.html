@@ -15,9 +15,7 @@
         </div>
 
         <div *ngIf="!retrievingInfo">
-            <span class="hotspot-clickable pull-right" (click)="checkConnectionStrings()">
-                <i class="fa fa-refresh refresh-icon"></i> Refresh
-            </span>
+            <button class="btn btn-link pull-right" (click)="checkConnectionStrings()"><i class="fa fa-refresh refresh-icon"></i> Refresh</button>  
         </div>
 
         <div style="margin-bottom:10px;margin-left:5px" *ngIf="!retrievingInfo && total > 0">

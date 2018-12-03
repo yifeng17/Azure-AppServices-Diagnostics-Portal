@@ -23,7 +23,7 @@
                     </td>
                     <td class="highlight-blue">
                         <div *ngFor="let instance of instancesSelected;let i = index">
-                            <input type="checkbox" [disabled]="sessionInProgress" value="{{ instance.InstanceName }}"
+                            <input [attr.aria-label]="instance.InstanceName" type="checkbox" [disabled]="sessionInProgress" value="{{ instance.InstanceName }}"
                                 name="{{ instance.InstanceName }}" [(ngModel)]="instancesSelected[i].Selected" /> {{
                             instance.InstanceName}}
                         </div>
@@ -41,7 +41,7 @@
                     class="btn btn-primary" (click)="collectProfilerTrace()">Collect Profiler Trace</button>
 
                 <div style="margin-top:5px">
-                    <input type="checkbox" [(ngModel)]="collectStackTraces" [disabled]="sessionInProgress" /> Add
+                    <input type="checkbox" [attr.aria-label]="'Add thread report'" [(ngModel)]="collectStackTraces" [disabled]="sessionInProgress" /> Add
                     thread report
                     <div class="tool-tip" style="z-index:2">
                         <i class="fa fa-info-circle" style="color:rgb(84, 143, 255)"></i>

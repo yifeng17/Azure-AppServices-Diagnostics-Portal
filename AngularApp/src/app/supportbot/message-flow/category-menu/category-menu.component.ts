@@ -37,7 +37,7 @@ export class CategoryMenuComponent implements OnInit, AfterViewInit, IChatMessag
     this.features = this._featureService.getFeaturesForCategory(this._chatState.category);
 
     this.tiles = this.features.map(feature => <Tile>{
-      backgroundColor: '#59b4d9',
+      backgroundColor: 'rgb(50, 103, 123)',
       title: feature.name,
       action: () => this.select(feature)
     });

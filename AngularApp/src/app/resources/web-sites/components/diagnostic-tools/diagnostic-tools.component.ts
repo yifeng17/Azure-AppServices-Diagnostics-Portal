@@ -47,7 +47,7 @@ export class DiagnosticToolsComponent {
         stack: tool.stack,
         item: {
           title: tool.item.name,
-          backgroundColor: 'rgb(89, 180, 217)',
+          backgroundColor: '#337ab7',
           action: tool.item.clickAction
         }
       }
@@ -61,7 +61,7 @@ export class DiagnosticToolsComponent {
         stack: tool.stack,
         item: {
           title: tool.item.name,
-          backgroundColor: 'rgb(127, 186, 0)',
+          backgroundColor: '#337ab7',
           action: tool.item.clickAction
         }
       }
@@ -75,7 +75,7 @@ export class DiagnosticToolsComponent {
         stack: tool.stack,
         item: {
           title: tool.item.name,
-          backgroundColor: 'rgb(232, 103, 28)',
+          backgroundColor: '#337ab7',
           action: tool.item.clickAction
         }
       }

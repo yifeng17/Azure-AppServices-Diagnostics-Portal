@@ -19,6 +19,8 @@ export class TimespanComponent implements OnInit {
   @Input() timeSpan: string;
   @Input() placeholder:string;
   @Input() allowZeroValue:boolean;
+
+  @Input() label: string;
   
   @Output() timeSpanChange = new EventEmitter<string>();
 

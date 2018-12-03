@@ -186,17 +186,18 @@ li + li{
 
 .focus-box {
     padding:10px 0px 10px 15px;
+    border: 1px solid rgb(219, 219, 219);
     border-left: 10px solid rgb(100, 100, 100);
 }
 
 .focus-box-warning {
+    border: 1px solid rgb(251, 201, 151);
     border-left: 10px solid rgb(255, 128, 0);
-    background-color: #fff7ee;
 }
 
 .focus-box-info {
-    border-left: 10px solid rgb(91, 192, 222);
-    background-color: #f4fcff;
+    border: 1px solid #c4dff7;
+    border-left: 10px solid #337ab7;
 }
 
 .focus-box-healthy {
@@ -286,21 +287,21 @@ a:hover{
 .with-nav-tabs.panel-default .nav-tabs > li > a,
 .with-nav-tabs.panel-default .nav-tabs > li > a:hover,
 .with-nav-tabs.panel-default .nav-tabs > li > a:focus {
-    color: #777;
+    color: rgb(49, 49, 49);
 }
 .with-nav-tabs.panel-default .nav-tabs > .open > a,
 .with-nav-tabs.panel-default .nav-tabs > .open > a:hover,
 .with-nav-tabs.panel-default .nav-tabs > .open > a:focus,
 .with-nav-tabs.panel-default .nav-tabs > li > a:hover,
 .with-nav-tabs.panel-default .nav-tabs > li > a:focus {
-    color: #777;
-	background-color: #ddd;
+    color: rgb(37, 37, 37);
+	background-color: rgb(233, 233, 233);
 	border-color: transparent;
 }
 .with-nav-tabs.panel-default .nav-tabs > li.active > a,
 .with-nav-tabs.panel-default .nav-tabs > li.active > a:hover,
 .with-nav-tabs.panel-default .nav-tabs > li.active > a:focus {
-	color: #555;
+	color: rgb(26, 26, 26);
 	background-color: #fff;
 	border-color: #ddd;
 	border-bottom-color: transparent;
@@ -679,4 +680,8 @@ ngu-tile > .tile {
 
 .comm-action-button:hover {
     text-decoration: none;
+}
+
+.btn-link {
+    color: #2f70a8;
 }

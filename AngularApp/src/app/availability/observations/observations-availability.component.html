@@ -14,7 +14,7 @@
         {{downtimesViewModel[selectedDowntimeIndex].mainMessage}}
     </h4>
     <p style="max-width: 800px">{{downtimesViewModel[selectedDowntimeIndex].secondaryMessage}} 
-        <a *ngIf="showMoreDetailsLink" (click)="downtimesViewModel[selectedDowntimeIndex].showDetails = !downtimesViewModel[selectedDowntimeIndex].showDetails; logShowDetails()">
+        <a class="btn btn-link" *ngIf="showMoreDetailsLink" (click)="downtimesViewModel[selectedDowntimeIndex].showDetails = !downtimesViewModel[selectedDowntimeIndex].showDetails; logShowDetails()">
             <span *ngIf="analysisResponse.abnormalTimePeriods[selectedDowntimeIndex].events.length > 0 && !downtimesViewModel[selectedDowntimeIndex].showDetails && downtimesViewModel[selectedDowntimeIndex].currentlyDown">More Details</span>
             <span *ngIf="analysisResponse.abnormalTimePeriods[selectedDowntimeIndex].events.length > 0 && downtimesViewModel[selectedDowntimeIndex].showDetails && downtimesViewModel[selectedDowntimeIndex].currentlyDown">Less Details</span>
         </a>

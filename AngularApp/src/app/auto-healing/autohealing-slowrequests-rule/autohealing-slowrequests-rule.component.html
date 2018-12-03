@@ -46,7 +46,7 @@
 <div *ngIf="editMode" class="form-group">
   <div class="row">
     <div class="col-sm-6">
-      <label for="requestsCountSlow">After how many slow requests you want this condition to kick in ?</label>
+      <label for="requestsCountSlow">After how many slow requests you want this condition to kick in?</label>
     </div>
     <div class="col-sm-4">
       <input type="number" min="1" id="requestsCountSlow" aria-describedby="requestsCountSlowHelp" placeholder="Enter count" [(ngModel)]="ruleCopy.count"
@@ -60,19 +60,19 @@
 
   <div class="row">
     <div class="col-sm-6">
-      <label for="timeTakenSlow">What should be minimum duration (in seconds) for these slow requests ?</label>
+      <label for="timeTakenSlow">What should be minimum duration (in seconds) for these slow requests?</label>
     </div>
     <div class="col-sm-4">
-      <timespan [(timeSpan)]="ruleCopy.timeTaken" placeholder="e.g. 60"></timespan>
+      <timespan [(timeSpan)]="ruleCopy.timeTaken" placeholder="e.g. 60" label="Minimum Duration"></timespan>
     </div>
   </div>
 
   <div class="row">
     <div class="col-sm-6">
-      <label for="durationSlow">How frequently (in seconds) you want to check?</label>
+      <label for="durationSlow">How frequently (in seconds) do you want to check?</label>
     </div>
     <div class="col-sm-4">
-      <timespan [(timeSpan)]="ruleCopy.timeInterval" placeholder="e.g. 300"></timespan>
+      <timespan [(timeSpan)]="ruleCopy.timeInterval" placeholder="e.g. 300" label="Check Duration"></timespan>
     </div>
   </div>
 

@@ -47,13 +47,6 @@ export class HomeComponent implements OnInit {
     if (!this._detectorControlService.startTime) {
       this._detectorControlService.setDefault();
     }
-
-    setTimeout(() => {
-      let notification = new Notification('This is the new App Service Diagnostics Experience. Click here to return to the old experience', () => {
-        this._router.navigateByUrl(`legacy${this._resourceService.resourceIdForRouting}/diagnostics`);
-      });
-      this._notificationService.pushNotification(notification)
-    }, 100)
   }
 
   onSearchBoxFocus(event: any): void {

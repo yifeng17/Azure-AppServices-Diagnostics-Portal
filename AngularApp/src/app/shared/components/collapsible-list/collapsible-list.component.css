@@ -14,7 +14,7 @@
     -o-user-select: none;
     user-select: none;
 }
-#collapse-icon{
+.collapse-icon{
     /*float:right;*/
     font-size: 10px;
     padding-right: 10px;

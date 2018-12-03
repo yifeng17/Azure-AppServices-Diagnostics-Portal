@@ -20,7 +20,7 @@ textarea{
     float: left;
 }
 .message-sent-by-user{
-    background-color:#0078d7;
+    background-color:#337ab7;
     border-bottom-right-radius: 0;
     border:none;
     float: right;

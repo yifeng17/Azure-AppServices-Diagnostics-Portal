@@ -88,7 +88,7 @@
 
       <div *ngIf="customActionType == 'Custom'">
         <div *ngIf="customActionType == 'Custom'" class="form-group">
-          <label for="executable">Specify the executable to be launched :-</label>
+          <label for="executable">Specify the executable to be launched :</label>
           <div>
             <input style="width:400px" type="text" id="executable" aria-describedby="executableHelp" (input)="updateCustomActionExe($event.target.value)"
               [ngModel]="customActionExe" placeholder="for e.g. d:\home\data\anycustomexe.exe">
@@ -99,7 +99,7 @@
           </div>
         </div>
         <div class="form-group">
-          <label for="exeParams">Additional Parameters :-</label>
+          <label for="exeParams">Additional Parameters :</label>
           <div>
             <input style="width:400px" type="text" id="exeParams" placeholder="e.g. -customparamer" (input)="updateCustomActionParams($event.target.value)"
               [ngModel]="customActionParams">

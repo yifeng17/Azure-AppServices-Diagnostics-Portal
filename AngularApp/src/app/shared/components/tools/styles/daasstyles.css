@@ -41,3 +41,7 @@ td {
     padding: 7px;
     background-color: #efefef;
 }
+
+.pastNetworkTracesMessage > a {
+    color:  #2a608f
+}

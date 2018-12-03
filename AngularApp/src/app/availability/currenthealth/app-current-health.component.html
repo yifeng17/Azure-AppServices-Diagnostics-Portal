@@ -32,9 +32,7 @@
         <div class="row" *ngIf="!bladeOpenedFromSupportTicketFlow">
             <span *ngIf="lastUpdatedTime" class="pull-right sub-text">Last updated:  {{lastUpdatedTime}}</span>
         </div>
-        <span class="row hotspot-clickable pull-right" tabindex="2" (click)="refresh()">
-            <i class="fa fa-refresh refresh-icon"></i> Refresh
-        </span>
+        <button class="btn btn-link pull-right" (click)="refresh()"><i class="fa fa-refresh refresh-icon"></i> Refresh</button> 
     </div>
 
 </div>

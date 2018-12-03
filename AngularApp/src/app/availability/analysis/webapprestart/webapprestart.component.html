@@ -31,9 +31,9 @@
 
     </div>
 
-    <div *ngIf="analysisResult.length !== 0" class="panel panel-info" style="border-left-width:10px;background-color:#f6fdff">
+    <div *ngIf="analysisResult.length !== 0" class="panel panel-primary">
 
-        <div class="panel-heading" style="background-color:#bce8f1;color:#1a5d7d;font-size:14px;margin-top:-1px">
+        <div class="panel-heading">
             Reasons for your web app restart
             <!--<span class="row pull-right download-report" (click)="download()">
                 <i class="fa fa-download"></i> Download Copy
@@ -44,7 +44,7 @@
             <ul>
                 <li *ngFor="let item of analysisResult" style="list-style-type: square;margin-bottom:20px;padding-bottom:10px;font-size:13px">
                     <div>{{item.message}}</div>
-                    <div *ngFor="let evidence of item.metaData" class="btn btn-info btn-sm" style="margin-top:10px;display:inline-block" (click)=OpenHelpulTip(evidence)>{{getHelpfulTipName(evidence)}}</div>
+                    <div *ngFor="let evidence of item.metaData" class="btn btn-primary btn-sm" style="margin-top:10px;display:inline-block" (click)=OpenHelpulTip(evidence)>{{getHelpfulTipName(evidence)}}</div>
                 </li>
             </ul>
         </div>
@@ -53,9 +53,9 @@
 
     </div>
 
-    <div *ngIf="analysisResult.length === 0" class="panel panel-warning" style="border-left-width:10px;background-color:#fdfaf5">
+    <div *ngIf="analysisResult.length === 0" class="panel panel-warning">
 
-        <div class="panel-heading" style="font-size:14px;margin-top:-1px;background-color:#faebcc">
+        <div class="panel-heading" style="font-size:14px;">
             No Reasons Found
         </div>
 

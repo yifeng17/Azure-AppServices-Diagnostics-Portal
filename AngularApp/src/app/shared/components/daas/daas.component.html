@@ -23,7 +23,7 @@
                     </td>
                     <td class="highlight-blue">
                         <div *ngFor="let instance of instancesSelected;let i = index">
-                            <input type="checkbox" [disabled]="sessionInProgress" value="{{ instance.InstanceName }}"
+                            <input type="checkbox" [attr.aria-label]="instance.InstanceName" [disabled]="sessionInProgress" value="{{ instance.InstanceName }}"
                                 name="{{ instance.InstanceName }}" [(ngModel)]="instancesSelected[i].Selected" /> {{
                             instance.InstanceName}}
                         </div>

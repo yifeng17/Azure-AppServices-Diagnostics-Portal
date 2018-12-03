@@ -1,7 +1,7 @@
 <div class="search-container">
     <div class="form-container">
         <form style="width: 100%" class="form-inline" #form="ngForm" (ngSubmit)="onSubmit(form.value)">
-            <input type="text" class="form-control" name="documentSearchInput" id="documentSearchInput" ngModel required autocomplete="off" placeholder="Please enter topic or problem of interest...">
+            <input type="text" aria-label="Search Documentation" class="form-control" name="documentSearchInput" id="documentSearchInput" ngModel required autocomplete="off" placeholder="Please enter topic or problem of interest...">
 
             <button class="btn btn-default" type="submit">Search Documentation</button>
           </form>
