@@ -26,7 +26,7 @@ export class ObservationsPerformanceComponent extends ObservationsComponent impl
     ngOnInit(): void {
         this.subscriptionId = this._route.snapshot.params['subscriptionid'];
         this.resourceGroup = this._route.snapshot.params['resourcegroup'];
-        this.siteName = this._route.snapshot.params['sitename'];
+        this.siteName = this._route.snapshot.params['resourcename'];
 
         this.analysisResponse.abnormalTimePeriods.forEach((abnormalTimePeriod: IAbnormalTimePeriod) => {
             let mainMessage = "";

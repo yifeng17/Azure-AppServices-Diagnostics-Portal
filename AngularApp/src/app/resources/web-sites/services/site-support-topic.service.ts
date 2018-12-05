@@ -48,7 +48,7 @@ export class SiteSupportTopicService extends SupportTopicService {
     );
 
     if (matchingMapping && this._webSiteService.platform == OperatingSystem.windows) {
-      return Observable.of(`/legacy${this._webSiteService.resourceIdForRouting}${matchingMapping.path}`);
+      return Observable.of(`legacy${matchingMapping.path}`);
     }
     else {
       return super.getPathForSupportTopic(supportTopicId, pesId);

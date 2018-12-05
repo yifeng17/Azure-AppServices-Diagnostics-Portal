@@ -36,7 +36,7 @@ export class ResourceRedirectComponent implements OnInit {
               queryParamsHandling: 'merge',
             };
 
-            let path = info.resourceId.toLowerCase();
+            let path = 'resource/' + info.resourceId.toLowerCase();
             if (info.supportTopicId) {
               path += `/supportTopicId`;
               navigationExtras.queryParams = {

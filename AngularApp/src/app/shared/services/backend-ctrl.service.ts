@@ -9,12 +9,10 @@ import { StartupInfo } from '../../shared/models/portal';
 @Injectable()
 export class BackendCtrlService {
 
-  public readonly localApiEndpoint: string = "http://localhost:62302/";
-
   constructor(private _http: Http, private _cacheService: CacheService, private _authService: AuthService) { }
 
   public get apiEndpoint(): string {
-    return environment.production ? '' : this.localApiEndpoint;
+    return environment.backendHost;
   }
 
   public get<T>(path: string, headers: Headers = null, invalidateCache: boolean = false): Observable<T> {

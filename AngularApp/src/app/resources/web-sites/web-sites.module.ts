@@ -3,7 +3,7 @@ import { SharedV2Module } from '../../shared-v2/shared-v2.module';
 import { SharedModule } from '../../shared/shared.module';
 import { ResourceService } from '../../shared-v2/services/resource.service';
 import { ResourceResolver } from '../../home/resolvers/resource.resolver';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CategoryService } from '../../shared-v2/services/category.service';
 import { SitesCategoryService } from './services/sites-category.service';
@@ -31,6 +31,10 @@ const ResourceRoutes = RouterModule.forChild([
       navigationTitle: 'Diagnostic Tools',
       cacheComponent: true
     }
+  },
+  {
+    path: 'legacy',
+    loadChildren: 'app/availability/availability.module#AvailabilityModule'
   },
   {
     path: 'tools',

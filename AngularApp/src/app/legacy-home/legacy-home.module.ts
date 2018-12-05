@@ -14,30 +14,30 @@ const _hostingEnvironmentResourceUrl: string = 'legacy/subscriptions/:subscripti
     CommonModule,
     RouterModule.forChild(
       [
-        {
-          path: _siteResourceUrl + '/diagnostics',
-          component: HomepageComponent,
-          data: {
-            navigationTitle: 'Legacy Home',
-            cacheComponent: true
-          }
-        },
-        {
-          path: _slotResourceUrl + '/diagnostics',
-          component: HomepageComponent,
-          data: {
-            navigationTitle: 'Legacy Home',
-            cacheComponent: true
-          }
-        },
-        {
-          path: _hostingEnvironmentResourceUrl + '/diagnostics',
-          component: HomepageComponent,
-          data: {
-            navigationTitle: 'Legacy Home',
-            cacheComponent: true
-          }
-        },
+        // {
+        //   path: _siteResourceUrl + '/diagnostics',
+        //   component: HomepageComponent,
+        //   data: {
+        //     navigationTitle: 'Legacy Home',
+        //     cacheComponent: true
+        //   }
+        // },
+        // {
+        //   path: _slotResourceUrl + '/diagnostics',
+        //   component: HomepageComponent,
+        //   data: {
+        //     navigationTitle: 'Legacy Home',
+        //     cacheComponent: true
+        //   }
+        // },
+        // {
+        //   path: _hostingEnvironmentResourceUrl + '/diagnostics',
+        //   component: HomepageComponent,
+        //   data: {
+        //     navigationTitle: 'Legacy Home',
+        //     cacheComponent: true
+        //   }
+        // },
         {
           path: _siteResourceUrl + '/diagnostics/settings/appinsights',
           component: AppInsightsSettingsComponent,

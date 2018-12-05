@@ -15,6 +15,7 @@ import { TabTitleResolver } from '../shared/resolvers/tab-name.resolver';
 import { SupportTopicRedirectComponent } from './components/support-topic-redirect/support-topic-redirect.component';
 import { TimeControlResolver } from './resolvers/time-control.resolver';
 import { ContentService } from '../shared-v2/services/content.service';
+import { DiagnosticDataModule } from 'applens-diagnostics';
 
 export const HomeRoutes = RouterModule.forChild([
   {
@@ -57,6 +58,7 @@ export const HomeRoutes = RouterModule.forChild([
   imports: [
     CommonModule,
     SharedModule,
+    DiagnosticDataModule,
     HomeRoutes,
     SupportBotModule,
     FormsModule

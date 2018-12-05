@@ -42,7 +42,7 @@ export class TcpConnectionsAnalysisComponent implements OnInit, OnDestroy {
     constructor(private _route: ActivatedRoute, private _appAnalysisService: AppAnalysisService, private _logger: AvailabilityLoggingService, private _detectorControlService: DetectorControlService) {
         this.subscriptionId = this._route.snapshot.params['subscriptionid'];
         this.resourceGroup = this._route.snapshot.params['resourcegroup'];
-        this.siteName = this._route.snapshot.params['sitename'];
+        this.siteName = this._route.snapshot.params['resourcename']
         this.slotName = this._route.snapshot.params['slot'] ? this._route.snapshot.params['slot'] : '';
 
     }

@@ -8,21 +8,21 @@ import { AppComponent } from './app.component';
 import { CustomReuseStrategy } from './app-route-reusestrategy.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { StartupModule } from './startup/startup.module';
-import { DiagnosticDataModule, PUBLIC_CONFIGURATION, DiagnosticService, CommsService } from 'applens-diagnostics';
-import { GenericApiService } from './shared/services/generic-api.service';
 import { TestInputComponent } from './shared/components/test-input/test-input.component';
 import { ResourceRedirectComponent } from './shared/components/resource-redirect/resource-redirect.component';
-import { LegacyHomeModule } from './legacy-home/legacy-home.module';
+import { PUBLIC_CONFIGURATION, DiagnosticDataModule, DiagnosticService, CommsService } from 'applens-diagnostics';
+import { GenericApiService } from './shared/services/generic-api.service';
 import { GenericCommsService } from './shared/services/generic-comms.service';
 
 @NgModule({
   imports: [
     BrowserModule,
     StartupModule.forRoot(),
-    LegacyHomeModule,
-    AvailabilityModule,
-    SharedModule.forRoot(),
+    // LegacyHomeModule,
+    // AvailabilityModule,
     DiagnosticDataModule.forRoot(PUBLIC_CONFIGURATION),
+    SharedModule.forRoot(),
+    
     BrowserAnimationsModule,
     RouterModule.forRoot([
       {
@@ -34,25 +34,29 @@ import { GenericCommsService } from './shared/services/generic-comms.service';
         component: ResourceRedirectComponent
       },
       {
-        path: 'legacy/subscriptions/:subscriptionid/resourcegroups/:resourcegroup/providers/microsoft.web/sites/:sitename',
-        loadChildren: 'app/availability/availability.module#AvailabilityModule'
-      },
-      {
-        path: 'legacy/subscriptions/:subscriptionid/resourcegroups/:resourcegroup/providers/microsoft.web/sites/:sitename/slots/:slot',
-        loadChildren: 'app/availability/availability.module#AvailabilityModule'
-      },
-      {
-        path: 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/providers/microsoft.web/sites/:resourcename',
-        loadChildren: 'app/resources/web-sites/web-sites.module#WebSitesModule'
-      },
-      {
-        path: 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/providers/microsoft.web/sites/:resourcename/slots/:slot',
-        loadChildren: 'app/resources/web-sites/web-sites.module#WebSitesModule'
-      },
-      {
-        path: 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/providers/microsoft.web/hostingenvironments/:resourcename',
-        loadChildren: 'app/resources/web-hosting-environments/web-hosting-environments.module#WebHostingEnvironmentsModule'
+        path: 'resource',
+        loadChildren: 'app/resources/resources.module#ResourcesModule'
       }
+      // {
+      //   path: 'legacy/subscriptions/:subscriptionid/resourcegroups/:resourcegroup/providers/microsoft.web/sites/:sitename',
+      //   loadChildren: 'app/availability/availability.module#AvailabilityModule'
+      // },
+      // {
+      //   path: 'legacy/subscriptions/:subscriptionid/resourcegroups/:resourcegroup/providers/microsoft.web/sites/:sitename/slots/:slot',
+      //   loadChildren: 'app/availability/availability.module#AvailabilityModule'
+      // },
+      // {
+      //   path: 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/providers/microsoft.web/sites/:resourcename',
+      //   loadChildren: 'app/resources/web-sites/web-sites.module#WebSitesModule'
+      // },
+      // {
+      //   path: 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/providers/microsoft.web/sites/:resourcename/slots/:slot',
+      //   loadChildren: 'app/resources/web-sites/web-sites.module#WebSitesModule'
+      // },
+      // {
+      //   path: 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/providers/microsoft.web/hostingenvironments/:resourcename',
+      //   loadChildren: 'app/resources/web-hosting-environments/web-hosting-environments.module#WebHostingEnvironmentsModule'
+      // }
 
     ])
   ],

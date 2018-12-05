@@ -63,7 +63,7 @@ export class AvailabilityGraphComponent implements OnInit, OnDestroy {
 
         this.subscriptionId = this._activatedRoute.snapshot.params['subscriptionid'];
         this.resourceGroup = this._activatedRoute.snapshot.params['resourcegroup'];
-        this.siteName = this._activatedRoute.snapshot.params['sitename'];
+        this.siteName = this._activatedRoute.snapshot.params['resourcename']
         this.slotName = this._activatedRoute.snapshot.params['slot'] ? this._activatedRoute.snapshot.params['slot'] : '';
 
         this.refreshSubscription = this._detectorControlService.update.subscribe(isValidUpdate => {

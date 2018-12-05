@@ -87,3 +87,8 @@ export class LiveChatSettings {
         EndMinutePST: 30
     };
 }
+
+export class ChatStatus {
+    public isEnabled: boolean;
+    public isValidTime: boolean;
+}

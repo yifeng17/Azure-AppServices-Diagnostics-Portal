@@ -54,15 +54,13 @@ export class DetectorLoaderComponent implements OnInit, OnDestroy {
     if (this._activatedRoute.parent.snapshot.params['subscriptionid'] != null) {
       this.subscriptionId = this._activatedRoute.parent.snapshot.params['subscriptionid'];
       this.resourceGroup = this._activatedRoute.parent.snapshot.params['resourcegroup'];
-      this.siteName = this._activatedRoute.parent.snapshot.params['sitename'];
-      this.siteName = this.siteName ? this.siteName : this._activatedRoute.parent.snapshot.params['resourcename'];
-      this.slotName = this._activatedRoute.snapshot.params['slot'] ? this._activatedRoute.snapshot.params['slot'] : '';
+      this.siteName = this._activatedRoute.parent.snapshot.params['resourcename'];
+      this.slotName = this._activatedRoute.parent.snapshot.params['slot'] ? this._activatedRoute.parent.snapshot.params['slot'] : '';
     }
     else if (this._activatedRoute.snapshot.params['subscriptionid'] != null) {
       this.subscriptionId = this._activatedRoute.snapshot.params['subscriptionid'];
       this.resourceGroup = this._activatedRoute.snapshot.params['resourcegroup'];
-      this.siteName = this._activatedRoute.snapshot.params['sitename'];
-      this.siteName = this.siteName ? this.siteName : this._activatedRoute.snapshot.params['resourcename'];
+      this.siteName = this._activatedRoute.snapshot.params['resourcename'];
       this.slotName = this._activatedRoute.snapshot.params['slot'] ? this._activatedRoute.snapshot.params['slot'] : '';
     }
 

@@ -131,7 +131,7 @@ export class SitesCategoryService extends CategoryService {
         keywords: ['Profiler', 'Memory Dump', 'DaaS', 'AutoHeal', 'Metrics', 'Security'],
         color: 'rgb(170, 192, 208)',
         createFlowForCategory: false,
-        overridePath: `${siteId}/diagnosticTools`
+        overridePath: `resource${siteId}/diagnosticTools`
       }
     }
   }
