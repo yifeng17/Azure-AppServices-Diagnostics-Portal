@@ -56,46 +56,52 @@ export class NetworkTraceToolComponent implements OnInit {
             return;
         }
 
-        this._serverFarmService.siteServerFarm.subscribe(serverFarm => {
-            if (serverFarm) {
-                // Specifically not checking for Isolated as Network Trace tool is not working on ASE currently
-                if (serverFarm.sku.tier === "Standard" || serverFarm.sku.tier === "Basic" || serverFarm.sku.tier.indexOf("Premium") > -1) {
-                    this._siteService.getSiteAppSettings(this.siteToBeDiagnosed.subscriptionId, this.siteToBeDiagnosed.resourceGroupName, this.siteToBeDiagnosed.siteName, this.siteToBeDiagnosed.slot).subscribe(settingsResponse => {
-                        if (settingsResponse && settingsResponse.properties) {
-                            if (settingsResponse.properties["WEBSITE_LOCAL_CACHE_OPTION"]) {
-                                let localCacheEnabled = settingsResponse.properties["WEBSITE_LOCAL_CACHE_OPTION"] == "Always";
-                                if (localCacheEnabled) {
-                                    this.traceLocation = "d:\\home\\logfiles\\{InstanceId}\\networktrace"
-                                }
-                            }
-                        }
-
-                        this._siteService.getVirtualNetworkConnectionsInformation(this.siteToBeDiagnosed.subscriptionId, this.siteToBeDiagnosed.resourceGroupName, this.siteToBeDiagnosed.siteName, this.siteToBeDiagnosed.slot).subscribe(virtualNetworkConnectionsResponse => {
-                            this.checkingValidity = false;
-                            if (virtualNetworkConnectionsResponse && virtualNetworkConnectionsResponse.length > 0) {
-                                this.networkTraceDisabled = true;
-                                this.traceDisabledReason = NetworkTraceDisabledReason.AppConnectedToVNet;
-                            }
-                        });
-                    });
-                }
-                else {
+        this._serverFarmService.hasServerFarmAccess.subscribe(hasAccess => {
+            if (hasAccess != null) {
+                if (!hasAccess) {
                     this.checkingValidity = false;
                     this.networkTraceDisabled = true;
-                    this.traceDisabledReason = NetworkTraceDisabledReason.AppNotOnDedicatedTier;
+                    this.traceDisabledReason = NetworkTraceDisabledReason.NoPermsOnAppServicePlan;
                     return;
                 }
+                else {
+                    this._serverFarmService.siteServerFarm.subscribe(serverFarm => {
+                        if (serverFarm) {
+                            // Specifically not checking for Isolated as Network Trace tool is not working on ASE currently
+                            if (serverFarm.sku.tier === "Standard" || serverFarm.sku.tier === "Basic" || serverFarm.sku.tier.indexOf("Premium") > -1) {
+                                this._siteService.getSiteAppSettings(this.siteToBeDiagnosed.subscriptionId, this.siteToBeDiagnosed.resourceGroupName, this.siteToBeDiagnosed.siteName, this.siteToBeDiagnosed.slot).subscribe(settingsResponse => {
+                                    if (settingsResponse && settingsResponse.properties) {
+                                        if (settingsResponse.properties["WEBSITE_LOCAL_CACHE_OPTION"]) {
+                                            let localCacheEnabled = settingsResponse.properties["WEBSITE_LOCAL_CACHE_OPTION"] == "Always";
+                                            if (localCacheEnabled) {
+                                                this.traceLocation = "d:\\home\\logfiles\\{InstanceId}\\networktrace"
+                                            }
+                                        }
+                                    }
+
+                                    this._siteService.getVirtualNetworkConnectionsInformation(this.siteToBeDiagnosed.subscriptionId, this.siteToBeDiagnosed.resourceGroupName, this.siteToBeDiagnosed.siteName, this.siteToBeDiagnosed.slot).subscribe(virtualNetworkConnectionsResponse => {
+                                        this.checkingValidity = false;
+                                        if (virtualNetworkConnectionsResponse && virtualNetworkConnectionsResponse.length > 0) {
+                                            this.networkTraceDisabled = true;
+                                            this.traceDisabledReason = NetworkTraceDisabledReason.AppConnectedToVNet;
+                                        }
+                                    });
+                                });
+                            }
+                            else {
+                                this.checkingValidity = false;
+                                this.networkTraceDisabled = true;
+                                this.traceDisabledReason = NetworkTraceDisabledReason.AppNotOnDedicatedTier;
+                                return;
+                            }
+                        }
+                    }, error => {
+                        this.checkingValidity = false;
+                        this.networkTraceDisabled = true;
+                        this.errorMessage = error.code + ":" + error.message;
+                    });
+                }
             }
-            else {
-                this.checkingValidity = false;
-                this.networkTraceDisabled = true;
-                this.traceDisabledReason = NetworkTraceDisabledReason.NoPermsOnAppServicePlan;
-                return;
-            }
-        }, error => {
-            this.checkingValidity = false;
-            this.networkTraceDisabled = true;
-            this.errorMessage = error.code + ":" + error.message;
         });
     }
 

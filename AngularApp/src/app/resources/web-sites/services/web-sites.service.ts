@@ -37,7 +37,6 @@ export class WebSitesService extends ResourceService {
     protected makeWarmUpCalls() {
         super.makeWarmUpCalls();
         this._populateSiteInfo();
-        this._appAnalysisService.makeWarmUpCallsForSite(this._subscription, this._resourceGroup, this._siteName, this._slotName);
     }
 
     private _populateSiteInfo(): void {
