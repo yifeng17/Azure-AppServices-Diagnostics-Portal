@@ -9,7 +9,7 @@ import { LoggingService } from '../../shared/services/logging/logging.service';
 @Component({
     selector: 'app-insights-tile',
     templateUrl: 'app-insights-tile.component.html',
-    styleUrls: ['app-insights-tile.component.css']
+    styleUrls: ['app-insights-tile.component.scss']
 })
 export class AppInsightsTileComponent {
 

@@ -6,7 +6,7 @@ import { SolutionTypeTag } from '../../models/solution-type-tag';
 @Component({
     selector: 'vertical-display-list',
     templateUrl: 'vertical-display-list.component.html',
-    styleUrls: ['vertical-display-list.component.css']
+    styleUrls: ['vertical-display-list.component.scss']
 })
 export class VerticalDisplayListComponent {
     @ContentChildren(VerticalDisplayListItemComponent) listItems: QueryList<VerticalDisplayListItemComponent>;

@@ -11,7 +11,7 @@ import { AppInsightsService } from '../../shared/services/appinsights/appinsight
 @Component({
     selector: 'problem-solution',
     templateUrl: 'problem-solution.component.html',
-    styleUrls: ['problem-solution.component.css']
+    styleUrls: ['problem-solution.component.scss']
 })
 export class ProblemSolutionComponent implements OnInit {
 

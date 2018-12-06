@@ -6,7 +6,7 @@ import { AuthService } from '../../../startup/services/auth.service';
 @Component({
   selector: 'generic-detector',
   templateUrl: './generic-detector.component.html',
-  styleUrls: ['./generic-detector.component.css']
+  styleUrls: ['./generic-detector.component.scss']
 })
 export class GenericDetectorComponent {
   detector: string;

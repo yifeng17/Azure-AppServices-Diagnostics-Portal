@@ -4,10 +4,10 @@
     </label>
     <div class="setting-control-container">
       <div role="radiogroup" class="medium" aria-disabled="false">
-        <div role="radio" (click)="update(false)" [attr.aria-checked]="!selected">
+        <div role="radio" (click)="update(false)" attr.aria-checked="{{!selected ? 'true': 'false'}}">
           Off
         </div>
-        <div role="radio" (click)="update(true)" [attr.aria-checked]="selected">
+        <div role="radio" (click)="update(true)" attr.aria-checked="{{selected ? 'true': 'false'}}">
           On
         </div>
       </div>

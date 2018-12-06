@@ -6,7 +6,7 @@ import { SiteInfoMetaData } from '../../shared/models/site';
 @Component({
   selector: 'proactive-autohealing',
   templateUrl: './proactive-autohealing.component.html',
-  styleUrls: ['./proactive-autohealing.component.css']
+  styleUrls: ['./proactive-autohealing.component.scss']
 })
 export class ProactiveAutohealingComponent implements OnInit {
 

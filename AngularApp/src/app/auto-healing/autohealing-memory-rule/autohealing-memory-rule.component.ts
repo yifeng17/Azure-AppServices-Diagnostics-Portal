@@ -5,7 +5,7 @@ import { FormatHelper } from '../../shared/utilities/formattingHelper';
 @Component({
   selector: 'autohealing-memory-rule',
   templateUrl: './autohealing-memory-rule.component.html',
-  styleUrls: ['../autohealing.component.css']
+  styleUrls: ['../autohealing.component.scss']
 })
 export class AutohealingMemoryRuleComponent extends AutohealingRuleComponent {
 

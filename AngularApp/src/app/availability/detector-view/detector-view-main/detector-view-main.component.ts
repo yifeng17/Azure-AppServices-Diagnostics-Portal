@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IDetectorResponse, IMetricSet } from '../../../shared/models/detectorresponse';
 import { StartupInfo } from '../../../shared/models/portal';
-import { GraphHelper } from '../../../shared/utilities/graphHelper';
 import { AppAnalysisService } from '../../../shared/services/appanalysis.service';
 import { AvailabilityLoggingService } from '../../../shared/services/logging/availability.logging.service';
 import { AuthService } from '../../../startup/services/auth.service';
@@ -39,7 +38,7 @@ export class DetectorViewMainComponent implements OnInit {
         this.detectorName = this._route.snapshot.params['detectorName'];
         this.subscriptionId = this._route.snapshot.params['subscriptionid'];
         this.resourceGroup = this._route.snapshot.params['resourcegroup'];
-        this.siteName = this._route.snapshot.params['sitename'];
+        this.siteName = this._route.snapshot.params['resourcename'];
         this.slotName = this._route.snapshot.params['slot'] ? this._route.snapshot.params['slot'] : '';
 
         this.displayTopLevelGraph = this._route.firstChild.snapshot.routeConfig.path.indexOf('sitecpuanalysis') < 0;

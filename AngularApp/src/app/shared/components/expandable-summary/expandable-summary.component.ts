@@ -9,7 +9,7 @@ import { LoadingStatus } from '../../../../../node_modules/applens-diagnostics';
 @Component({
     selector: 'expandable-summary',
     templateUrl: 'expandable-summary.component.html',
-    styleUrls: ['expandable-summary.component.css']
+    styleUrls: ['expandable-summary.component.scss']
 })
 export class ExpandableSummaryComponent implements OnInit, OnChanges {
 

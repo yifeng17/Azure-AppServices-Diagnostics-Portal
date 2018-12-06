@@ -9,7 +9,7 @@ import { AvailabilityLoggingService } from '../../../services/logging/availabili
 
 @Component({
     templateUrl: 'connection-diagnoser-tool.component.html',
-    styleUrls: ['../styles/daasstyles.css', 'connection-diagnoser-tool.component.css']
+    styleUrls: ['../styles/daasstyles.scss', 'connection-diagnoser-tool.component.scss']
 })
 export class ConnectionDiagnoserToolComponent implements OnInit {
 

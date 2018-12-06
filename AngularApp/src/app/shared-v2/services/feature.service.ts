@@ -27,7 +27,7 @@ export class FeatureService {
             featureType: FeatureTypes.Detector,
             name: detector.name,
             clickAction: this._createFeatureAction(detector.name, detector.category, () => {
-              this._router.navigateByUrl(`${startupInfo.resourceId}/detectors/${detector.id}`);
+              this._router.navigateByUrl(`resource${startupInfo.resourceId}/detectors/${detector.id}`);
             })
           });
         });

@@ -9,7 +9,7 @@ import { AvailabilityLoggingService } from '../../../services/logging/availabili
 
 @Component({
     templateUrl: 'profiler-tool.component.html',
-    styleUrls: ['../styles/daasstyles.css']
+    styleUrls: ['../styles/daasstyles.scss']
 })
 export class ProfilerToolComponent implements OnInit {
 

@@ -1,10 +1,12 @@
+@import '../../../../styles/common/variables';
+
 .detector-summary-container {
     margin: 10px 0px;
     display: table;
 }
 
 .with-full-report {
-    border: 1px solid #dddddd;
+    border: $chat-message-system-border;
     padding: 10px;
 }
 
@@ -13,8 +15,8 @@
     padding: 10px;
     font-size: 16px;
     border-radius: 8px;
-    background-color: #eeeeee;
-    border: 1px solid #dddddd;
+    background-color: $chat-message-system-color;
+    border: $chat-message-system-border;
     display: flex;
     margin: 10px 0px;
     cursor: pointer;

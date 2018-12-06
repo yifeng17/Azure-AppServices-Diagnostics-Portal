@@ -43,7 +43,7 @@ export class MemoryAnalysisComponent implements OnInit, OnDestroy {
 
         this.subscriptionId = this._route.snapshot.params['subscriptionid'];
         this.resourceGroup = this._route.snapshot.params['resourcegroup'];
-        this.siteName = this._route.snapshot.params['sitename'];
+        this.siteName = this._route.snapshot.params['resourcename']
         this.slotName = this._route.snapshot.params['slot'] ? this._route.snapshot.params['slot'] : '';
 
         this.refreshSubscription = this._detectorControlService.update.subscribe(isValidUpdate => {

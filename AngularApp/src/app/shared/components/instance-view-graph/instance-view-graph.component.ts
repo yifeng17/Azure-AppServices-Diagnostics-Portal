@@ -7,7 +7,7 @@ import { ChartSeries, ChartType } from '../../models/chartdata';
 @Component({
     selector: 'instance-view-graph',
     templateUrl: 'instance-view-graph.component.html',
-    styleUrls: ['instance-view-graph.component.css']
+    styleUrls: ['instance-view-graph.component.scss']
 })
 export class InstanceViewGraphComponent implements OnInit {
     constructor() {

@@ -11,8 +11,8 @@ import { AvailabilityLoggingService } from '../../../../shared/services/logging/
 
 @Component({
     templateUrl: 'site-restart-solution.component.html',
-    styleUrls: ['../../../styles/solutions.css',
-        'site-restart-solution.component.css'
+    styleUrls: ['../../../styles/solutions.scss',
+        'site-restart-solution.component.scss'
     ]
 })
 export class SiteRestartComponent implements SolutionBaseComponent, OnInit {

@@ -51,7 +51,5 @@
 </div>
 
 <div style="margin-top:15px" *ngIf="(!supportedTier || !daasRunnerJobRunning || foundDiagnoserWarnings) && (!checkingDaasWebJobStatus && !checkingSupportedTier)">
-    <span class="hotspot-clickable" (click)="validateDaasSettings()">
-        <i class="fa fa-refresh refresh-icon"></i> Refresh
-    </span>
+  <button class="btn btn-link pull-right" (click)="validateDaasSettings()"><i class="fa fa-refresh refresh-icon"></i> Refresh</button>  
 </div>

@@ -6,7 +6,7 @@ import { PortalActionService } from '../../services/portal-action.service';
 @Component({
     selector: 'default-solutions',
     templateUrl: 'default-solutions.component.html',
-    styleUrls: ['default-solutions.component.css']
+    styleUrls: ['default-solutions.component.scss']
 })
 export class DefaultSolutionsComponent  {
     showSolutions: boolean = false;

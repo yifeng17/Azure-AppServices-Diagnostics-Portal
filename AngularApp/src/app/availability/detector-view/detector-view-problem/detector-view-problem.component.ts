@@ -13,7 +13,7 @@ declare let d3: any;
 @Component({
     selector: 'detector-view-problem',
     templateUrl: 'detector-view-problem.component.html',
-    styleUrls: ['../detector-view.css']
+    styleUrls: ['../detector-view.scss']
 })
 export class DetectorViewProblemComponent implements OnInit {
 

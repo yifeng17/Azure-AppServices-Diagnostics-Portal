@@ -17,7 +17,7 @@ declare let d3: any;
 
 @Component({
     templateUrl: 'health-check.component.html',
-    styleUrls: ['health-check.component.css'],
+    styleUrls: ['health-check.component.scss'],
 })
 export class HealthCheckComponent implements OnInit, AfterViewInit, IChatMessageComponent {
 
@@ -141,12 +141,8 @@ export class HealthCheckComponent implements OnInit, AfterViewInit, IChatMessage
 
         this.subscriptionId = this._route.snapshot.params['subscriptionid'];
         this.resourceGroup = this._route.snapshot.params['resourcegroup'];
-        this.siteName = this._route.snapshot.params['sitename'];
+        this.siteName = this._route.snapshot.params['resourcename'];
         this.slotName = this._route.snapshot.params['slot'] ? this._route.snapshot.params['slot'] : '';
-
-        if (!this.siteName) {
-            this.siteName = this._route.snapshot.params['resourcename'];
-        }
 
         this._loadData();
     }
@@ -167,7 +163,7 @@ export class HealthCheckComponent implements OnInit, AfterViewInit, IChatMessage
 
     onFullReportClick(href: string, title: string) {
         let slot = this.slotName && this.slotName != '' ? `/slots/${this.slotName}` : '';
-        this._router.navigateByUrl(`legacy/subscriptions/${this.subscriptionId}/resourcegroups/${this.resourceGroup}/providers/microsoft.web/sites/${this.siteName}${slot}/diagnostics/${href}`)
+        this._router.navigateByUrl(`resource/subscriptions/${this.subscriptionId}/resourcegroups/${this.resourceGroup}/providers/microsoft.web/sites/${this.siteName}${slot}/legacy/diagnostics/${href}`)
         this.logFullReportClick(title);
     }
 

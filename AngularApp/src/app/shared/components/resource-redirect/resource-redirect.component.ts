@@ -9,11 +9,9 @@ import { DemoSubscriptions } from '../../../betaSubscriptions';
 @Component({
   selector: 'resource-redirect',
   templateUrl: './resource-redirect.component.html',
-  styleUrls: ['./resource-redirect.component.css']
+  styleUrls: ['./resource-redirect.component.scss']
 })
 export class ResourceRedirectComponent implements OnInit {
-
-  private _newVersionEnabled = true;
 
   constructor(private _authService: AuthService, private _router: Router, private _windowService: WindowService) { }
 
@@ -25,36 +23,28 @@ export class ResourceRedirectComponent implements OnInit {
     this._authService.getStartupInfo()
       .subscribe(info => {
         if (info && info.resourceId && info.token) {
-          let split = info.resourceId.split('/');
-          let subscriptionId = split[split.indexOf('subscriptions') + 1];
-
+          
           // Uncomment to enable only for internal subs
+          //let split = info.resourceId.split('/');
+          //let subscriptionId = split[split.indexOf('subscriptions') + 1];
           //this._newVersionEnabled = DemoSubscriptions.betaSubscriptions.indexOf(subscriptionId) >= 0;
 
-          if (this._newVersionEnabled || (info.supportTopicId)) {
-            let navigationExtras: NavigationExtras = {
-              queryParamsHandling: 'merge',
+          let navigationExtras: NavigationExtras = {
+            queryParamsHandling: 'merge',
+          };
+
+          let path = 'resource/' + info.resourceId.toLowerCase();
+          if (info.supportTopicId) {
+            path += `/supportTopicId`;
+            navigationExtras.queryParams = {
+              supportTopicId: info.supportTopicId,
+              pesId: info.pesId
             };
-
-            let path = info.resourceId.toLowerCase();
-            if (info.supportTopicId) {
-              path += `/supportTopicId`;
-              navigationExtras.queryParams = {
-                supportTopicId: info.supportTopicId,
-                pesId: info.pesId
-              };
-            }
-
-            this._router.navigateByUrl( 
-              this._router.createUrlTree([path], navigationExtras)
-            );
           }
-          else {
-            // For now there will be a hard coded destination.
-            // In the future we will pass the tool path in with the startup info
-            var adjustedResourceId = info.resourceId;
-            this._router.navigate(['legacy/' + adjustedResourceId + this.getRouteBasedOnSupportTopicId(info)]);
-          }
+
+          this._router.navigateByUrl(
+            this._router.createUrlTree([path], navigationExtras)
+          );
         }
         else {
           if (!environment.production) {

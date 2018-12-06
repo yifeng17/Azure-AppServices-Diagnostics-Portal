@@ -8,7 +8,7 @@ import { DaasService } from '../../shared/services/daas.service';
 @Component({
   selector: 'autohealing-custom-action',
   templateUrl: './autohealing-custom-action.component.html',
-  styleUrls: ['./autohealing-custom-action.component.css', '../autohealing.component.css']
+  styleUrls: ['./autohealing-custom-action.component.scss', '../autohealing.component.scss']
 })
 export class AutohealingCustomActionComponent implements OnInit, OnChanges {
 

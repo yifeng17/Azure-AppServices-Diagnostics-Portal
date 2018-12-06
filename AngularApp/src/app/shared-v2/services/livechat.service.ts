@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { DemoSubscriptions } from '../../betaSubscriptions';
-import { LiveChatSettings } from '../../liveChatSettings';
+import { LiveChatSettings, ChatStatus } from '../../liveChatSettings';
 import { AuthService } from '../../startup/services/auth.service';
 import { WindowService } from '../../startup/services/window.service';
 import { BotLoggingService } from '../../shared/services/logging/bot.logging.service';
 import { ArmService } from '../../shared/services/arm.service';
-import * as moment from 'moment-timezone';
 import { ResourceService } from './resource.service';
 import { ArmResource } from '../models/arm';
 import { StartupInfo } from '../../shared/models/portal';
+import { BackendCtrlService } from '../../shared/services/backend-ctrl.service';
 
 @Injectable()
 export class LiveChatService {
@@ -19,35 +19,40 @@ export class LiveChatService {
 
     private restoreIdTagName: string;
 
-    constructor(private windowService: WindowService, private authService: AuthService, private _resourceService: ResourceService, private armService: ArmService, private logger: BotLoggingService) {
+    private chatStatus: ChatStatus;
+
+    constructor(private windowService: WindowService, private authService: AuthService, private _resourceService: ResourceService, private armService: ArmService, 
+        private logger: BotLoggingService, private _backendApi: BackendCtrlService) {
 
         let window = this.windowService.window;
 
         this.authService.getStartupInfo().subscribe((startupInfo: StartupInfo) => {
+            this._backendApi.get<ChatStatus>('api/chat/status').subscribe((status: ChatStatus) => {
+                this.chatStatus = status;
+                if (this.isChatApplicableForSupportTopic(startupInfo)) {
 
-            if (this.isChatApplicableForSupportTopic(startupInfo)) {
-
-                setTimeout(() => {
-
-                    this.startChat(false, '', LiveChatSettings.DemoModeForCaseSubmission, 'ltr');
-
-                }, LiveChatSettings.InactivityTimeoutInMs);
-
-
-                window.fcWidget.on("widget:loaded", ((resp) => {
-
-                    if (window.fcWidget.isOpen() != true) {
-                        setTimeout(() => {
-                            // Raise an event for trigger message campaign
-                            window.fcWidget.track('supportCaseSubmission', {
-                                supportTopicId: startupInfo.supportTopicId
-                            });
-
-                        }, 1000);
-                    }
-
-                }));
-            }
+                    setTimeout(() => {
+    
+                        this.startChat(false, '', LiveChatSettings.DemoModeForCaseSubmission, 'ltr');
+    
+                    }, LiveChatSettings.InactivityTimeoutInMs);
+    
+    
+                    window.fcWidget.on("widget:loaded", ((resp) => {
+    
+                        if (window.fcWidget.isOpen() != true) {
+                            setTimeout(() => {
+                                // Raise an event for trigger message campaign
+                                window.fcWidget.track('supportCaseSubmission', {
+                                    supportTopicId: startupInfo.supportTopicId
+                                });
+    
+                            }, 1000);
+                        }
+    
+                    }));
+                }
+            })
         });
     }
 
@@ -187,37 +192,33 @@ export class LiveChatService {
             && startupInfo.workflowId && startupInfo.workflowId !== ''
             && startupInfo.supportTopicId && startupInfo.supportTopicId !== '' && (LiveChatSettings.enabledSupportTopics.indexOf(startupInfo.supportTopicId) >= 0);
 
-        var currentDateTime: moment.Moment = moment.tz('America/Los_Angeles');
-
-        isApplicable = isApplicable
-            && this.isChatHoursOn(currentDateTime)
-            && !this.isPublicHoliday(currentDateTime);
+        isApplicable = isApplicable && this.chatStatus.isEnabled && this.chatStatus.isValidTime;
 
         return LiveChatSettings.GLOBAL_ON_SWITCH && isApplicable;
     }
 
-    private isPublicHoliday(currentDate): boolean {
+    // private isPublicHoliday(currentDate): boolean {
 
-        for (var iter = 0; iter < LiveChatSettings.PublicHolidays.length; iter++) {
+    //     for (var iter = 0; iter < LiveChatSettings.PublicHolidays.length; iter++) {
 
-            var element = LiveChatSettings.PublicHolidays[iter];
+    //         var element = LiveChatSettings.PublicHolidays[iter];
 
-            if (element.date == currentDate.date() && ((element.month - 1) == currentDate.month()) && element.year == currentDate.year()) {
-                return true;
-            }
-        }
+    //         if (element.date == currentDate.date() && ((element.month - 1) == currentDate.month()) && element.year == currentDate.year()) {
+    //             return true;
+    //         }
+    //     }
 
-        return false;
-    }
+    //     return false;
+    // }
 
-    private isChatHoursOn(currentDateTime): boolean {
-        var isBusinessHour = (currentDateTime.day() >= LiveChatSettings.BuisnessStartDay && currentDateTime.day() <= LiveChatSettings.BuisnessEndDay) 
-        && (currentDateTime.hour() >= LiveChatSettings.BusinessStartHourPST && currentDateTime.hour() < LiveChatSettings.BusinessEndHourPST);
+    // private isChatHoursOn(currentDateTime): boolean {
+    //     var isBusinessHour = (currentDateTime.day() >= LiveChatSettings.BuisnessStartDay && currentDateTime.day() <= LiveChatSettings.BuisnessEndDay) 
+    //     && (currentDateTime.hour() >= LiveChatSettings.BusinessStartHourPST && currentDateTime.hour() < LiveChatSettings.BusinessEndHourPST);
 
-        var isWeeklyChatOffHour = (currentDateTime.day() === LiveChatSettings.WeeklyChatOffHours.Day) && 
-                                (currentDateTime.hour() > LiveChatSettings.WeeklyChatOffHours.StartHourPST || (currentDateTime.hour() === LiveChatSettings.WeeklyChatOffHours.StartHourPST && currentDateTime.minutes() >= LiveChatSettings.WeeklyChatOffHours.StartMinutesPST)) &&
-                                (currentDateTime.hour() < LiveChatSettings.WeeklyChatOffHours.EndHourPST || (currentDateTime.hour() === LiveChatSettings.WeeklyChatOffHours.EndHourPST && currentDateTime.minutes() <= LiveChatSettings.WeeklyChatOffHours.EndMinutePST));
+    //     var isWeeklyChatOffHour = (currentDateTime.day() === LiveChatSettings.WeeklyChatOffHours.Day) && 
+    //                             (currentDateTime.hour() > LiveChatSettings.WeeklyChatOffHours.StartHourPST || (currentDateTime.hour() === LiveChatSettings.WeeklyChatOffHours.StartHourPST && currentDateTime.minutes() >= LiveChatSettings.WeeklyChatOffHours.StartMinutesPST)) &&
+    //                             (currentDateTime.hour() < LiveChatSettings.WeeklyChatOffHours.EndHourPST || (currentDateTime.hour() === LiveChatSettings.WeeklyChatOffHours.EndHourPST && currentDateTime.minutes() <= LiveChatSettings.WeeklyChatOffHours.EndMinutePST));
 
-        return isBusinessHour && !isWeeklyChatOffHour;
-    }
+    //     return isBusinessHour && !isWeeklyChatOffHour;
+    // }
 }

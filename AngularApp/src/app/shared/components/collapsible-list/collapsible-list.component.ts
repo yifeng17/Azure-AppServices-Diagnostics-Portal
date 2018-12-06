@@ -5,7 +5,7 @@ import { CollapsibleListItemComponent } from './collapsible-list-item.component'
 @Component({
     selector: 'collapsible-list',
     templateUrl: 'collapsible-list.component.html',
-    styleUrls: ['collapsible-list.component.css']
+    styleUrls: ['collapsible-list.component.scss']
 })
 export class CollapsibleListComponent {
 

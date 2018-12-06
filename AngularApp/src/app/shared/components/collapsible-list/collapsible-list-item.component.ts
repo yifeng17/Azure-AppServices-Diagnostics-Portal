@@ -4,7 +4,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 @Component({
     selector: 'collapsible-list-item',
     templateUrl: 'collapsible-list-item.component.html',
-    styleUrls: ['collapsible-list.component.css']
+    styleUrls: ['collapsible-list.component.scss']
 })
 export class CollapsibleListItemComponent {
 

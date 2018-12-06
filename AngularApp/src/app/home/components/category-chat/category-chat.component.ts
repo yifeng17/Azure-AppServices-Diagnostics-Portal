@@ -8,7 +8,7 @@ import { CategoryChatStateService } from '../../../shared-v2/services/category-c
 @Component({
   selector: 'category-chat',
   templateUrl: './category-chat.component.html',
-  styleUrls: ['./category-chat.component.css'],
+  styleUrls: ['./category-chat.component.scss'],
   providers: [CategoryChatStateService]
 })
 export class CategoryChatComponent implements OnInit {

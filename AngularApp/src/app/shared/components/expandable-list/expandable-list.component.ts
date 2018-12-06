@@ -4,7 +4,7 @@ import { ExpandableListItemComponent } from './expandable-list-item.component'
 @Component({
     selector: 'expandable-list',
     templateUrl: 'expandable-list.component.html',
-    styleUrls: ['expandable-list.component.css']
+    styleUrls: ['expandable-list.component.scss']
 })
 export class ExpandableListComponent implements AfterViewInit {
 

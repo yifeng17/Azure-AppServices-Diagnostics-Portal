@@ -10,7 +10,7 @@ import { AvailabilityLoggingService } from '../shared/services/logging/availabil
 @Component({
   selector: 'autohealing',
   templateUrl: './autohealing.component.html',
-  styleUrls: ['./autohealing.component.css']
+  styleUrls: ['./autohealing.component.scss']
 })
 export class AutohealingComponent implements OnInit {
   @Input()

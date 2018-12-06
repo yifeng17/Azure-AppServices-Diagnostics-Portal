@@ -9,7 +9,7 @@ import { PortalActionService } from '../../../../shared/services/portal-action.s
 
 @Component({
     templateUrl: 'split-sites-serverfarms-solution.component.html',
-    styleUrls: ['../../../styles/solutions.css']
+    styleUrls: ['../../../styles/solutions.scss']
 })
 export class SplitSitesIntoDifferentServerFarmsSolutionComponent implements SolutionBaseComponent {
 

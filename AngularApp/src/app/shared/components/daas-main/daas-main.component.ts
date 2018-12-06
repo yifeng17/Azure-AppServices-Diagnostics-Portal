@@ -15,7 +15,7 @@ import { AuthService } from '../../../startup/services/auth.service';
   selector: 'daas-main',
   providers: [CategoriesService],
   templateUrl: './daas-main.component.html',
-  styleUrls: ['./daas-main.component.css']
+  styleUrls: ['./daas-main.component.scss']
 })
 export class DaasMainComponent implements OnInit {
 

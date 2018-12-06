@@ -9,7 +9,7 @@ import { AvailabilityLoggingService } from '../../../shared/services/logging/ava
 @Component({
     selector: 'app-insights-exceptions',
     templateUrl: 'app-insights-exceptions.component.html',
-    //styleUrls: ['app-insights-dependencies.component.css']
+    //styleUrls: ['app-insights-dependencies.component.scss']
 })
 export class AppInsightsExceptionsComponent implements OnInit, OnChanges {
 
@@ -35,7 +35,7 @@ export class AppInsightsExceptionsComponent implements OnInit, OnChanges {
 
         this.subscriptionId = this._route.snapshot.params['subscriptionid'];
         this.resourceGroup = this._route.snapshot.params['resourcegroup'];
-        this.siteName = this._route.snapshot.params['sitename'];
+        this.siteName = this._route.snapshot.params['resourcename']
         this.slotName = this._route.snapshot.params['slot'] ? this._route.snapshot.params['slot'] : '';
     }
 

@@ -55,7 +55,7 @@
   <div *ngIf="editMode" style="margin-top:20px" class="form-group">
     <div class="row">
       <div class="col-sm-6">
-        <label for="requestCountStatusCodes">After how many requests you want this condition to kick in ?</label>
+        <label for="requestCountStatusCodes">After how many requests you want this condition to kick in?</label>
       </div>
       <div class="col-sm-4">
         <input type="number" id="requestCountStatusCodes" aria-describedby="requestCountStatusCodesHelp" placeholder="Enter request count"
@@ -68,7 +68,7 @@
     </div>
     <div class="row">
       <div class="col-sm-6">
-        <label for="statusCode">What should be the status code for these requests ?</label>
+        <label for="statusCode">What should be the status code for these requests?</label>
       </div>
       <div class="col-sm-4">
         <input type="number" id="statusCode" placeholder="e.g. 500" min="100" [(ngModel)]="currentRule.status">
@@ -81,7 +81,7 @@
 
     <div class="row">
       <div class="col-sm-6">
-        <label for="subStatusCode">What should be the sub-status code for these requests ?</label>
+        <label for="subStatusCode">What should be the sub-status code for these requests?</label>
       </div>
 
       <div class="col-sm-4">
@@ -91,7 +91,7 @@
 
     <div class="row">
       <div class="col-sm-6">
-        <label for="win32StatusCode">What should be the win32-status code for these requests ?</label>
+        <label for="win32StatusCode">What should be the win32-status code for these requests?</label>
       </div>
       <div class="col-sm-4">
         <input type="number" min="0" id="win32StatusCode" placeholder="e.g. 0" [(ngModel)]="currentRule.win32Status">
@@ -100,10 +100,10 @@
 
     <div class="row">
       <div class="col-sm-6">
-        <label for="durationStatusCode">How frequently (in seconds) you want to check?</label>
+        <label for="durationStatusCode">How frequently (in seconds) do you want to check?</label>
       </div>
       <div class="col-sm-4">
-        <timespan [(timeSpan)]="currentRule.timeInterval" placeholder="e.g. 60"></timespan>
+        <timespan [(timeSpan)]="currentRule.timeInterval" placeholder="e.g. 60" label="Check Duration"></timespan>
       </div>
     </div>
 

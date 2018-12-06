@@ -6,8 +6,8 @@ import { AvailabilityLoggingService } from '../../../../shared/services/logging/
 
 @Component({
     templateUrl: 'revert-deployment-solution.component.html',
-    styleUrls: ['../../../styles/solutions.css',
-        'revert-deployment-solution.component.css'
+    styleUrls: ['../../../styles/solutions.scss',
+        'revert-deployment-solution.component.scss'
     ]
 })
 export class RevertDeploymentComponent implements SolutionBaseComponent {

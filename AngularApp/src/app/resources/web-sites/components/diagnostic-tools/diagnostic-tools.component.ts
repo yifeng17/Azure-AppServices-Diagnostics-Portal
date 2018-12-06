@@ -10,7 +10,7 @@ import { SiteDaasInfo } from "../../../../shared/models/solution-metadata";
 @Component({
   selector: 'diagnostic-tools',
   templateUrl: './diagnostic-tools.component.html',
-  styleUrls: ['./diagnostic-tools.component.css']
+  styleUrls: ['./diagnostic-tools.component.scss']
 })
 export class DiagnosticToolsComponent {
 
@@ -47,7 +47,6 @@ export class DiagnosticToolsComponent {
         stack: tool.stack,
         item: {
           title: tool.item.name,
-          backgroundColor: 'rgb(89, 180, 217)',
           action: tool.item.clickAction
         }
       }
@@ -61,7 +60,6 @@ export class DiagnosticToolsComponent {
         stack: tool.stack,
         item: {
           title: tool.item.name,
-          backgroundColor: 'rgb(127, 186, 0)',
           action: tool.item.clickAction
         }
       }
@@ -75,7 +73,6 @@ export class DiagnosticToolsComponent {
         stack: tool.stack,
         item: {
           title: tool.item.name,
-          backgroundColor: 'rgb(232, 103, 28)',
           action: tool.item.clickAction
         }
       }

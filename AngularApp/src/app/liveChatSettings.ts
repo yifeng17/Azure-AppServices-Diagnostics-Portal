@@ -33,13 +33,13 @@ export class LiveChatSettings {
     ];
 
     // This indicates the time after which Live Chat will pop up. 
-    public static InactivityTimeoutInMs: Number = 5000;
+    public static InactivityTimeoutInMs: number = 5000;
 
     // Live Chat Business Hours
-    public static BuisnessStartDay: Number = 1; // Monday
-    public static BuisnessEndDay: Number = 5;   // Friday
-    public static BusinessStartHourPST: Number = 9;   // 9 AM PST
-    public static BusinessEndHourPST: Number = 18;     // 6 PM PST
+    public static BuisnessStartDay: number = 1; // Monday
+    public static BuisnessEndDay: number = 5;   // Friday
+    public static BusinessStartHourPST: number = 9;   // 9 AM PST
+    public static BusinessEndHourPST: number = 18;     // 6 PM PST
 
     public static PublicHolidays: any = [
         {
@@ -87,4 +87,9 @@ export class LiveChatSettings {
         EndHourPST: 12,
         EndMinutePST: 30
     };
+}
+
+export class ChatStatus {
+    public isEnabled: boolean;
+    public isValidTime: boolean;
 }

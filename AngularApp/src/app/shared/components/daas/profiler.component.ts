@@ -12,7 +12,7 @@ import { SiteService } from '../../services/site.service';
 @Component({
     selector: 'profiler',
     templateUrl: 'profiler.component.html',
-    styleUrls: ['profiler.component.css']
+    styleUrls: ['profiler.component.scss']
 })
 
 export class ProfilerComponent extends DaasComponent implements OnInit, OnDestroy {

@@ -9,9 +9,6 @@ import { DetectorViewRouteConfig } from './detector-view/detector-view.routeconf
 import { DetectorViewMainComponent } from './detector-view/detector-view-main/detector-view-main.component';
 import { SiteCpuAnalysisDetectorComponent } from './detector-view/detectors/site-cpu-analysis-detector/site-cpu-analysis-detector.component';
 import { TcpConnectionsAnalysisComponent } from './analysis/tcpconnectionsanalysis/tcp-connections-analysis.component';
-import { IncidentSummaryComponent } from '../shared/components/incident-summary/incident-summary.component';
-import { GenericDetectorComponent } from '../shared/components/generic-detector/generic-detector.component';
-import { TabTitleResolver } from '../shared/resolvers/tab-name.resolver';
 import { DetectorLoaderComponent } from './detector-view/detector-loader/detector-loader.component';
 
 const AvailabilityCommonRouteConfig: Route[] = [
@@ -60,26 +57,6 @@ export const AvailabilityAndPerformanceCategoryRouteConfig: Route[] = [
     Unfortunately, Component Reuse Strategy doesnt work as expected for child routes.
     See issue : https://github.com/angular/angular/issues/13869 
     */
-    {
-        path: 'detectors/:detectorName',
-        component: GenericDetectorComponent,
-        resolve: {
-            navigationTitle: TabTitleResolver
-        },
-        data: {
-            cacheComponent: true
-        }
-    },
-    {
-        path: 'detectors/:detectorName',
-        component: GenericDetectorComponent,
-        resolve: {
-            navigationTitle: TabTitleResolver
-        },
-        data: {
-            cacheComponent: true
-        }
-    },
     // Web App Error Analysis
     {
         path: 'diagnostics/availability/analysis',
@@ -140,18 +117,4 @@ export const AvailabilityAndPerformanceCategoryRouteConfig: Route[] = [
         path: 'diagnostics/performance',
         children: PerformanceCommonRouteConfig
     },
-
-    // Service Incident Summary
-    {
-        path: 'diagnostics/incidents',
-        component: IncidentSummaryComponent,
-        data: {
-            navigationTitle: 'Service Incidents',
-            cacheComponent: true
-        }
-    },
-    {
-        path: 'diagnostics/tools',
-        loadChildren: 'app/diagnostic-tools/diagnostic-tools.module#DiagnosticToolsModule'
-    }
 ];

@@ -1,7 +1,7 @@
 <div *ngIf="title" class="row collapsable-list">
 
     <div (click)="collapsed = !collapsed" class="list-header">
-        <i id="collapse-icon" class="fa" [ngClass]="{'fa-plus': collapsed, 'fa-minus': !collapsed }"></i>
+        <i class="collapse-icon fa" [class.fa-plus]="collapsed" [class.fa-minus]="!collapsed"></i>
         {{title}}
     </div>
 

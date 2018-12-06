@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Backend.Models;
 
 namespace Backend
 {
@@ -34,11 +35,18 @@ namespace Backend
         {
             services.AddMvc();
 
+            //var config = new ChatConfiguration();
+            var config = Configuration.GetSection("Chat").Get<ChatConfiguration>();
+            services.AddSingleton(config);
+
             services.AddSingleton<IKustoQueryService, KustoQueryService>();
             services.AddSingleton<IKustoTokenRefreshService, KustoTokenRefreshService>();
             services.AddSingleton<IOutageCommunicationService, OutageCommunicationService>();
             services.AddSingleton<IArmService, ArmService>();
+            services.AddSingleton<IChatService, ChatService>();
         }
+
+        
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

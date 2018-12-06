@@ -14,7 +14,7 @@ import { AvailabilityLoggingService } from '../../shared/services/logging/availa
 @Component({
     selector: 'solution-list',
     templateUrl: 'solution-list.component.html',
-    styleUrls: ['solution-list.component.css']
+    styleUrls: ['solution-list.component.scss']
 })
 export class SolutionListComponent implements OnChanges {
 

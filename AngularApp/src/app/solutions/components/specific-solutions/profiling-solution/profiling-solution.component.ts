@@ -10,8 +10,8 @@ import { Observable } from 'rxjs'
 
 @Component({
     templateUrl: 'profiling-solution.component.html',
-    styleUrls: ['../../../styles/solutions.css',
-        'profiling-solution.component.css'
+    styleUrls: ['../../../styles/solutions.scss',
+        'profiling-solution.component.scss'
     ]
 })
 export class ProfilingSolutionComponent implements SolutionBaseComponent, OnInit {

@@ -14,13 +14,16 @@
     -o-user-select: none;
     user-select: none;
 }
-#collapse-icon{
+.collapse-icon{
     /*float:right;*/
     font-size: 10px;
     padding-right: 10px;
 }
 .list-items-container{
     margin-left:10px;
+}
+.list-item {
+    padding-top: 10px;
 }
 .list-item > a {
     cursor:pointer;

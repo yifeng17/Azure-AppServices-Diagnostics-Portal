@@ -13,7 +13,7 @@ import { LoggingV2Service } from '../../../shared-v2/services/logging-v2.service
 @Component({
   selector: 'category-menu',
   templateUrl: './category-menu.component.html',
-  styleUrls: ['./category-menu.component.css']
+  styleUrls: ['./category-menu.component.scss']
 })
 export class CategoryMenuComponent implements OnInit, AfterViewInit, IChatMessageComponent {
 
@@ -37,7 +37,6 @@ export class CategoryMenuComponent implements OnInit, AfterViewInit, IChatMessag
     this.features = this._featureService.getFeaturesForCategory(this._chatState.category);
 
     this.tiles = this.features.map(feature => <Tile>{
-      backgroundColor: '#59b4d9',
       title: feature.name,
       action: () => this.select(feature)
     });

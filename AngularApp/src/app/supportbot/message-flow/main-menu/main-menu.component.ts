@@ -17,7 +17,7 @@ import { Sku } from '../../../shared/models/server-farm';
     templateUrl: 'main-menu.component.html',
     providers: [CategoriesService],
     styleUrls: [
-        'main-menu.component.css'
+        'main-menu.component.scss'
     ]
 })
 export class MainMenuComponent implements OnInit, AfterViewInit, IChatMessageComponent {

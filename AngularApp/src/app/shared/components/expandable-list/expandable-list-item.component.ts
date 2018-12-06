@@ -3,7 +3,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 @Component({
     selector: 'expandable-list-item',
     templateUrl: 'expandable-list-item.component.html',
-    styleUrls: ['expandable-list-item.component.css']
+    styleUrls: ['expandable-list-item.component.scss']
 })
 export class ExpandableListItemComponent {
 

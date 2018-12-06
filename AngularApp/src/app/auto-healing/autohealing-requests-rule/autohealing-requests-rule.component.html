@@ -41,10 +41,10 @@
 <div class="form-group" *ngIf="editMode">
   <div class="row">
     <div class="col-sm-6">
-      <label for="requests">After how many requests you want this condition to kick in ?</label>
+      <label id="requestCountHelp" for="requests">After how many requests you want this condition to kick in?</label>
     </div>
     <div class="col-sm-4">
-      <input type="number" id="requests" aria-describedby="requestCountHelp" placeholder="Enter count" [(ngModel)]="ruleCopy.count">
+      <input type="number" id="requests" aria-label="Request Count" placeholder="Enter count" [(ngModel)]="ruleCopy.count">
       <span style="color:red">*</span>
       <div *ngIf="ruleCopy.count <=0" class="alert alert-danger" style="margin-top:5px">
         Request count should be more than zero
@@ -53,10 +53,10 @@
   </div>
   <div class="row">
     <div class="col-sm-6">
-      <label for="durationCount">How frequently (in seconds) you want to check ?</label>
+      <label for="durationCount">How frequently (in seconds) do you want to check?</label>
     </div>
     <div class="col-sm-4">
-      <timespan [(timeSpan)]="ruleCopy.timeInterval" placeholder="e.g. 60"></timespan>
+      <timespan [(timeSpan)]="ruleCopy.timeInterval" placeholder="e.g. 60" label="How frequently do you want to check?"></timespan>
     </div>
   </div>
 

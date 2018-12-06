@@ -1,12 +1,3 @@
-<!-- <div class="category-container" *ngIf="!featureSelected">
-  <div *ngFor="let feature of features">
-    <div class="category" (click)="select(feature)">
-      <div>
-        {{feature.name}}
-      </div>
-    </div>
-  </div>
-</div> -->
 <tile-list *ngIf="!featureSelected" [tiles]="tiles"></tile-list>
 <div *ngIf="featureSelected">
   <dynamic-component [componentData]="message"></dynamic-component>

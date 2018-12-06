@@ -10,7 +10,7 @@ import { AvailabilityLoggingService } from '../../../services/logging/availabili
 
 @Component({
     templateUrl: 'java-threaddump-tool.component.html',
-    styleUrls: ['../styles/daasstyles.css']
+    styleUrls: ['../styles/daasstyles.scss']
 })
 export class JavaThreadDumpToolComponent extends DaasBaseComponent implements OnInit {
 

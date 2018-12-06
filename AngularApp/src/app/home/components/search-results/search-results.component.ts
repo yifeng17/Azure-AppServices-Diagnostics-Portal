@@ -8,7 +8,7 @@ import { NotificationService } from '../../../shared-v2/services/notification.se
 @Component({
   selector: 'search-results',
   templateUrl: './search-results.component.html',
-  styleUrls: ['./search-results.component.css']
+  styleUrls: ['./search-results.component.scss']
 })
 export class SearchResultsComponent implements OnChanges {
 

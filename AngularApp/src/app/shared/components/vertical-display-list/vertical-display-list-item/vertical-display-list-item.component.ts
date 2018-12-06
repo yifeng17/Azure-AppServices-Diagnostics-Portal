@@ -6,7 +6,7 @@ import { SolutionTypeTag } from '../../../models/solution-type-tag';
 @Component({
     selector: 'vertical-display-list-item',
     templateUrl: 'vertical-display-list-item.component.html',
-    styleUrls: ['../vertical-display-list.component.css']
+    styleUrls: ['../vertical-display-list.component.scss']
 })
 export class VerticalDisplayListItemComponent {
     @Input() name: string;

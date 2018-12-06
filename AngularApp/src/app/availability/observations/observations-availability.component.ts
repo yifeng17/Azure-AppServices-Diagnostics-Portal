@@ -14,7 +14,7 @@ import { AvailabilityLoggingService } from '../../shared/services/logging/availa
 @Component({
     selector: 'observations-availability',
     templateUrl: 'observations-availability.component.html',
-    styleUrls: ['observations.component.css']
+    styleUrls: ['observations.component.scss']
 })
 export class ObservationsAvailabilityComponent extends ObservationsComponent implements OnInit, OnChanges {
 
@@ -39,7 +39,7 @@ export class ObservationsAvailabilityComponent extends ObservationsComponent imp
     ngOnInit(): void {
         this.subscriptionId = this._route.snapshot.params['subscriptionid'];
         this.resourceGroup = this._route.snapshot.params['resourcegroup'];
-        this.siteName = this._route.snapshot.params['sitename'];
+        this.siteName = this._route.snapshot.params['resourcename'];
         let currentAppHealth = this.runtimeAvailabilityResponse.data[0].find(p => p.name.toLocaleLowerCase() === "currentapphealth");
         let currentlyDownString = currentAppHealth ? currentAppHealth.value.toLocaleLowerCase() : "healthy";
 

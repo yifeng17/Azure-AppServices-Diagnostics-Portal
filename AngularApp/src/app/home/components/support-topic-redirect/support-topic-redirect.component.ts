@@ -7,7 +7,7 @@ import { NotificationService, Notification } from '../../../shared-v2/services/n
 @Component({
   selector: 'support-topic-redirect',
   templateUrl: './support-topic-redirect.component.html',
-  styleUrls: ['./support-topic-redirect.component.css']
+  styleUrls: ['./support-topic-redirect.component.scss']
 })
 export class SupportTopicRedirectComponent implements OnInit {
 
@@ -16,7 +16,7 @@ export class SupportTopicRedirectComponent implements OnInit {
 
   ngOnInit() {
     this._supportTopicService.getPathForSupportTopic(this._activatedRoute.snapshot.queryParams.supportTopicId, this._activatedRoute.snapshot.queryParams.pesId).subscribe(path => {
-      this._router.navigateByUrl(path);
+      this._router.navigate([`../${path}`], { relativeTo: this._activatedRoute });
 
       this._authService.getStartupInfo().subscribe(startupInfo => {
 

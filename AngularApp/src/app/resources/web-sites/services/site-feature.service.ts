@@ -33,7 +33,6 @@ export class SiteFeatureService extends FeatureService {
       this.addDiagnosticTools(startupInfo.resourceId);
       this.addPremiumTools();
     });
-    
   }
 
   getLegacyAvailabilityAndPerformanceFeatures(resourceId: string): Feature[] {
@@ -46,7 +45,7 @@ export class SiteFeatureService extends FeatureService {
         description: 'Analyze availability of web app',
         featureType: FeatureTypes.Detector,
         clickAction: this._createFeatureAction('appanalysis', 'Availability and Performance', () => {
-          this._router.navigateByUrl(`legacy/${resourceId}/diagnostics/availability/analysis`);
+          this._router.navigateByUrl(`resource/${resourceId}/legacy/diagnostics/availability/analysis`);
         })
       },
       {
@@ -56,7 +55,7 @@ export class SiteFeatureService extends FeatureService {
         description: 'Analyze performance of web app',
         featureType: FeatureTypes.Detector,
         clickAction: this._createFeatureAction('perfanalysis', 'Availability and Performance', () => {
-          this._router.navigateByUrl(`legacy/${resourceId}/diagnostics/performance/analysis`);
+          this._router.navigateByUrl(`resource/${resourceId}/legacy/diagnostics/performance/analysis`);
         })
       },
       {
@@ -66,7 +65,7 @@ export class SiteFeatureService extends FeatureService {
         description: 'Analyze CPU Usage of your Web App on all instances and see breakdown of usage of all Web Apps on your server farm',
         featureType: FeatureTypes.Detector,
         clickAction: this._createFeatureAction('cpuanalysis', 'Availability and Performance', () => {
-          this._router.navigateByUrl(`legacy/${resourceId}/diagnostics/availability/detectors/sitecpuanalysis`);
+          this._router.navigateByUrl(`resource/${resourceId}/legacy/diagnostics/availability/detectors/sitecpuanalysis`);
         })
       },
       {
@@ -76,7 +75,7 @@ export class SiteFeatureService extends FeatureService {
         description: 'Analyze Memory Usage of your Web App including physical memory, committed memory usage, and page file operations',
         featureType: FeatureTypes.Detector,
         clickAction: this._createFeatureAction('memoryanalysis', 'Availability and Performance', () => {
-          this._router.navigateByUrl(`legacy/${resourceId}/diagnostics/availability/memoryanalysis`);
+          this._router.navigateByUrl(`resource/${resourceId}/legacy/diagnostics/availability/memoryanalysis`);
         })
       },
       {
@@ -86,7 +85,7 @@ export class SiteFeatureService extends FeatureService {
         description: 'See timeline of Web App restarts as well as the cause of the restart',
         featureType: FeatureTypes.Detector,
         clickAction: this._createFeatureAction('restartanalysis', 'Availability and Performance', () => {
-          this._router.navigateByUrl(`legacy/${resourceId}/diagnostics/availability/apprestartanalysis`);
+          this._router.navigateByUrl(`resource/${resourceId}/legacy/diagnostics/availability/apprestartanalysis`);
         })
       },
       {
@@ -96,7 +95,7 @@ export class SiteFeatureService extends FeatureService {
         description: 'See TCP connection usage and analyze any socket related issues with your Web App',
         featureType: FeatureTypes.Detector,
         clickAction: this._createFeatureAction('tcpconnectionsanalysis', 'Availability and Performance', () => {
-          this._router.navigateByUrl(`legacy/${resourceId}/diagnostics/availability/tcpconnectionsanalysis`);
+          this._router.navigateByUrl(`resource/${resourceId}/legacy/diagnostics/availability/tcpconnectionsanalysis`);
         })
       }
     ]
@@ -153,7 +152,7 @@ export class SiteFeatureService extends FeatureService {
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.AutoHealing, 'Diagnostic Tools', () => {
-            this._router.navigateByUrl(`${resourceId}/tools/mitigate`);
+            this._router.navigateByUrl(`resource${resourceId}/tools/mitigate`);
           })
         }
       },
@@ -169,7 +168,7 @@ export class SiteFeatureService extends FeatureService {
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.Profiler, 'Diagnostic Tools', () => {
-            this._router.navigateByUrl(`${resourceId}/tools/profiler`);
+            this._router.navigateByUrl(`resource${resourceId}/tools/profiler`);
           })
         }
       },
@@ -185,7 +184,7 @@ export class SiteFeatureService extends FeatureService {
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.MemoryDump, 'Diagnostic Tools', () => {
-            this._router.navigateByUrl(`${resourceId}/tools/memorydump`);
+            this._router.navigateByUrl(`resource${resourceId}/tools/memorydump`);
           })
         }
       },
@@ -201,7 +200,7 @@ export class SiteFeatureService extends FeatureService {
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.DatabaseTester, 'Diagnostic Tools', () => {
-            this._router.navigateByUrl(`${resourceId}/tools/databasetester`);
+            this._router.navigateByUrl(`resource${resourceId}/tools/databasetester`);
           })
         }
       },
@@ -217,7 +216,7 @@ export class SiteFeatureService extends FeatureService {
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.NetworkTrace, 'Diagnostic Tools', () => {
-            this._router.navigateByUrl(`${resourceId}/tools/networktrace`);
+            this._router.navigateByUrl(`resource${resourceId}/tools/networktrace`);
           })
         }
       },
@@ -233,7 +232,7 @@ export class SiteFeatureService extends FeatureService {
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.PHPLogAnalyzer, 'Diagnostic Tools', () => {
-            this._router.navigateByUrl(`${resourceId}/tools/phploganalyzer`);
+            this._router.navigateByUrl(`resource${resourceId}/tools/phploganalyzer`);
           })
         }
       },
@@ -249,7 +248,7 @@ export class SiteFeatureService extends FeatureService {
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.PHPProcessAnalyzer, 'Diagnostic Tools', () => {
-            this._router.navigateByUrl(`${resourceId}/tools/phpprocessanalyzer`);
+            this._router.navigateByUrl(`resource${resourceId}/tools/phpprocessanalyzer`);
           })
         }
       },
@@ -265,7 +264,7 @@ export class SiteFeatureService extends FeatureService {
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.JavaMemoryDump, 'Diagnostic Tools', () => {
-            this._router.navigateByUrl(`${resourceId}/tools/javamemorydump`);
+            this._router.navigateByUrl(`resource${resourceId}/tools/javamemorydump`);
           })
         }
       },
@@ -281,7 +280,7 @@ export class SiteFeatureService extends FeatureService {
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.JavaThreadDump, 'Diagnostic Tools', () => {
-            this._router.navigateByUrl(`${resourceId}/tools/javathreaddump`);
+            this._router.navigateByUrl(`resource${resourceId}/tools/javathreaddump`);
           })
         }
       },

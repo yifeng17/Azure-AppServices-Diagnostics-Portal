@@ -4,7 +4,7 @@ import { FormatHelper } from '../../utilities/formattingHelper';
 @Component({
   selector: 'timespan',
   templateUrl: './timespan.component.html',
-  styleUrls: ['./timespan.component.css']
+  styleUrls: ['./timespan.component.scss']
 })
 export class TimespanComponent implements OnInit {
 
@@ -19,6 +19,8 @@ export class TimespanComponent implements OnInit {
   @Input() timeSpan: string;
   @Input() placeholder:string;
   @Input() allowZeroValue:boolean;
+
+  @Input() label: string;
   
   @Output() timeSpanChange = new EventEmitter<string>();
 
