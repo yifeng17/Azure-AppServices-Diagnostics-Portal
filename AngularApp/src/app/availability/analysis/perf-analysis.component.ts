@@ -17,7 +17,7 @@ import { DetectorControlService } from 'applens-diagnostics';
 
 @Component({
     templateUrl: 'perf-analysis.component.html',
-    styleUrls: ['custom.css'],
+    styleUrls: ['custom.scss'],
     animations: [
         trigger(
             'loadingAnimation',

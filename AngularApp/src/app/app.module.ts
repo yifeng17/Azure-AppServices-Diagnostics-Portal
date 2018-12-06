@@ -3,7 +3,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule, RouteReuseStrategy } from '@angular/router';
 
 import { SharedModule } from './shared/shared.module';
-import { AvailabilityModule } from './availability/availability.module';
 import { AppComponent } from './app.component';
 import { CustomReuseStrategy } from './app-route-reusestrategy.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -18,8 +17,6 @@ import { GenericCommsService } from './shared/services/generic-comms.service';
   imports: [
     BrowserModule,
     StartupModule.forRoot(),
-    // LegacyHomeModule,
-    // AvailabilityModule,
     DiagnosticDataModule.forRoot(PUBLIC_CONFIGURATION),
     SharedModule.forRoot(),
     
@@ -37,27 +34,6 @@ import { GenericCommsService } from './shared/services/generic-comms.service';
         path: 'resource',
         loadChildren: 'app/resources/resources.module#ResourcesModule'
       }
-      // {
-      //   path: 'legacy/subscriptions/:subscriptionid/resourcegroups/:resourcegroup/providers/microsoft.web/sites/:sitename',
-      //   loadChildren: 'app/availability/availability.module#AvailabilityModule'
-      // },
-      // {
-      //   path: 'legacy/subscriptions/:subscriptionid/resourcegroups/:resourcegroup/providers/microsoft.web/sites/:sitename/slots/:slot',
-      //   loadChildren: 'app/availability/availability.module#AvailabilityModule'
-      // },
-      // {
-      //   path: 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/providers/microsoft.web/sites/:resourcename',
-      //   loadChildren: 'app/resources/web-sites/web-sites.module#WebSitesModule'
-      // },
-      // {
-      //   path: 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/providers/microsoft.web/sites/:resourcename/slots/:slot',
-      //   loadChildren: 'app/resources/web-sites/web-sites.module#WebSitesModule'
-      // },
-      // {
-      //   path: 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/providers/microsoft.web/hostingenvironments/:resourcename',
-      //   loadChildren: 'app/resources/web-hosting-environments/web-hosting-environments.module#WebHostingEnvironmentsModule'
-      // }
-
     ])
   ],
   declarations: [

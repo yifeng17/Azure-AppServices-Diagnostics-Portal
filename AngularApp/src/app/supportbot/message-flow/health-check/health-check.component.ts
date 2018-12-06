@@ -17,7 +17,7 @@ declare let d3: any;
 
 @Component({
     templateUrl: 'health-check.component.html',
-    styleUrls: ['health-check.component.css'],
+    styleUrls: ['health-check.component.scss'],
 })
 export class HealthCheckComponent implements OnInit, AfterViewInit, IChatMessageComponent {
 

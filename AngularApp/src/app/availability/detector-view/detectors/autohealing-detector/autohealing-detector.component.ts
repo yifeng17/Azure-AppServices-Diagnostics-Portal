@@ -8,7 +8,7 @@ import { DetectorControlService } from 'applens-diagnostics';
 @Component({
   selector: 'autohealing-detector',
   templateUrl: './autohealing-detector.component.html',
-  styleUrls: ['./autohealing-detector.component.css']
+  styleUrls: ['./autohealing-detector.component.scss']
 })
 
 export class AutohealingDetectorComponent extends DetectorViewBaseComponent implements OnInit {

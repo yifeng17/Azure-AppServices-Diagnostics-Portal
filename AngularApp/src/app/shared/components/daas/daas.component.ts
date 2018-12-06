@@ -18,7 +18,7 @@ class InstanceSelection {
 @Component({
     selector: 'daas',
     templateUrl: 'daas.component.html',
-    styleUrls: ['daas.component.css'
+    styleUrls: ['daas.component.scss'
     ]
 })
 export class DaasComponent implements OnInit, OnDestroy {

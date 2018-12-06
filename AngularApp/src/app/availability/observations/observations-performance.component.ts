@@ -14,7 +14,7 @@ import { PortalActionService } from '../../shared/services/portal-action.service
 @Component({
     selector: 'observations-performance',
     templateUrl: 'observations-performance.component.html',
-    styleUrls: ['observations.component.css']
+    styleUrls: ['observations.component.scss']
 })
 export class ObservationsPerformanceComponent extends ObservationsComponent implements OnInit, OnChanges {
 

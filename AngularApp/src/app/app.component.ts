@@ -26,12 +26,5 @@ export class AppComponent implements OnInit {
         }
 
         this._router.navigate(['/resourceRedirect']);
-
-        // if (window.parent !== window) {
-        //     this._router.navigate(['/resourceRedirect']);
-        // }
-        // else {
-        //     this._router.navigate(['/test']);
-        // }
     }
 }

@@ -9,8 +9,8 @@ import { AvailabilityLoggingService } from '../../../../shared/services/logging/
 
 @Component({
     templateUrl: 'scale-up-solution.component.html',
-    styleUrls: ['../../../styles/solutions.css',
-        'scale-up-solution.component.css'
+    styleUrls: ['../../../styles/solutions.scss',
+        'scale-up-solution.component.scss'
     ]
 })
 export class ScaleUpSolutionComponent implements SolutionBaseComponent {

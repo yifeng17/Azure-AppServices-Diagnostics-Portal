@@ -12,7 +12,7 @@ import { LoggingV2Service } from '../../../shared-v2/services/logging-v2.service
 @Component({
   selector: 'detector-summary',
   templateUrl: './detector-summary.component.html',
-  styleUrls: ['./detector-summary.component.css']
+  styleUrls: ['./detector-summary.component.scss']
 })
 export class DetectorSummaryComponent implements OnInit, AfterViewInit, IChatMessageComponent {
 
@@ -34,7 +34,7 @@ export class DetectorSummaryComponent implements OnInit, AfterViewInit, IChatMes
   ngOnInit() {
     this._diagnosticService.getDetector(this._chatState.selectedFeature.id, this._detectorControlService.startTimeString, this._detectorControlService.endTimeString).subscribe(response => {
       this.detector = response.metadata;
-      this.fullReportPath = `${this._resourceService.resourceIdForRouting}/detectors/${this.detector.id}`;
+      this.fullReportPath = `detectors/${this.detector.id}`;
       this.processDetectorResponse(response).subscribe(() => {
         this.onComplete.emit({ status: true });
       });

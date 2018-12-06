@@ -14,8 +14,8 @@ class InstanceSelection {
 
 @Component({
     templateUrl: 'memorydump-solution.component.html',
-    styleUrls: ['../../../styles/solutions.css',
-        'memorydump-solution.component.css'
+    styleUrls: ['../../../styles/solutions.scss',
+        'memorydump-solution.component.scss'
     ]
 })
 export class MemoryDumpSolutionComponent implements SolutionBaseComponent, OnInit {

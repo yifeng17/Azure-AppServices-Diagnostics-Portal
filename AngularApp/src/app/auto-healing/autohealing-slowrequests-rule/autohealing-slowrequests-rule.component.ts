@@ -6,7 +6,7 @@ import { FormatHelper } from '../../shared/utilities/formattingHelper';
 @Component({
   selector: 'autohealing-slowrequests-rule',
   templateUrl: './autohealing-slowrequests-rule.component.html',
-  styleUrls: ['../autohealing.component.css']
+  styleUrls: ['../autohealing.component.scss']
 })
 export class AutohealingSlowrequestsRuleComponent extends AutohealingRuleComponent {
 

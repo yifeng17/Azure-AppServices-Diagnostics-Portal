@@ -12,7 +12,7 @@ import { AppInsightsQueryService } from '../../shared/services/appinsights/appin
 @Component({
     selector: 'app-insights-settings',
     templateUrl: 'app-insights-settings.component.html',
-    styleUrls: ['app-insights-tile.component.css']
+    styleUrls: ['app-insights-tile.component.scss']
 })
 export class AppInsightsSettingsComponent implements OnInit {
 

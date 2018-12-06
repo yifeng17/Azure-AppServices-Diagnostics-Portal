@@ -10,7 +10,7 @@ import { Observable } from 'rxjs';
 @Component({
     selector: 'daas-sessions',
     templateUrl: 'daas-sessions.component.html',
-    styleUrls: ['daas-sessions.component.css']
+    styleUrls: ['daas-sessions.component.scss']
 })
 
 export class DaasSessionsComponent implements OnChanges, OnDestroy {

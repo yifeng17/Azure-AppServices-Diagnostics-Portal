@@ -4,7 +4,7 @@ import { StepWizardSingleStep } from '../../models/step-wizard-single-step';
 @Component({
     selector: 'step-wizard',
     templateUrl: 'step-wizard.component.html',
-    styleUrls: ['step-wizard.component.css']
+    styleUrls: ['step-wizard.component.scss']
 })
 
 export class StepWizardComponent {

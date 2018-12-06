@@ -24,9 +24,8 @@
               "node_modules/font-awesome/css/font-awesome.css",
               "node_modules/@swimlane/ngx-datatable/release/index.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "src/styles.css",
-              "src/styles/global.css",
-              "src/styles/bot.css"
+              "src/styles.scss",
+              "src/styles/main.scss"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
@@ -82,9 +81,9 @@
             "styles": [
               "node_modules/font-awesome/css/font-awesome.css",
               "node_modules/@swimlane/ngx-datatable/release/index.css",
-              "src/styles.css",
-              "src/styles/global.css",
-              "src/styles/bot.css"
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "src/styles.scss",
+              "src/styles/main.scss"
             ],
             "assets": [
               "src/assets",
@@ -135,7 +134,7 @@
   "defaultProject": "azure-web-apps-support-center",
   "schematics": {
     "@schematics/angular:component": {
-      "styleext": "css"
+      "styleext": "scss"
     },
     "@schematics/angular:directive": {}
   }

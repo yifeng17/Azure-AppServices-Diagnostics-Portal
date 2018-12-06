@@ -10,7 +10,7 @@ import { AvailabilityLoggingService } from '../../../services/logging/availabili
 
 @Component({
     templateUrl: 'java-memorydump-tool.component.html',
-    styleUrls: ['../styles/daasstyles.css']
+    styleUrls: ['../styles/daasstyles.scss']
 })
 export class JavaMemoryDumpToolComponent extends DaasBaseComponent implements OnInit {
 

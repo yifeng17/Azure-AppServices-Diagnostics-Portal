@@ -5,8 +5,8 @@
             <button class="btn btn-default" type="button" aria-label="Clear" title="Clear" tabindex="101" (click)="clearSearch()"><i class="fa fa-close"></i></button>
         </div>
     </div>
-    <div *ngIf="!searchBoxFocus else searchResults">
-        <h3>App Service Diagnostics</h3>
+    <div *ngIf="!searchBoxFocus else searchResults" class="main-area">
+        <h2>App Service Diagnostics</h2>
         <p id="page-description">
             Use App Service Diagnostics to investigate how your app is performing, diagnose issues, and discover how to improve your application. Select the problem category that best matches the information or tool that you're interested in: 
         </p>

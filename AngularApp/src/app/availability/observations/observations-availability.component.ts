@@ -14,7 +14,7 @@ import { AvailabilityLoggingService } from '../../shared/services/logging/availa
 @Component({
     selector: 'observations-availability',
     templateUrl: 'observations-availability.component.html',
-    styleUrls: ['observations.component.css']
+    styleUrls: ['observations.component.scss']
 })
 export class ObservationsAvailabilityComponent extends ObservationsComponent implements OnInit, OnChanges {
 

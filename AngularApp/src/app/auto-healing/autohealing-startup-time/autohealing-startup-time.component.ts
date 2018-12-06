@@ -3,7 +3,7 @@ import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 @Component({
   selector: 'autohealing-startup-time',
   templateUrl: './autohealing-startup-time.component.html',
-  styleUrls: ['../autohealing.component.css']
+  styleUrls: ['../autohealing.component.scss']
 })
 export class AutohealingStartupTimeComponent implements OnInit {
 

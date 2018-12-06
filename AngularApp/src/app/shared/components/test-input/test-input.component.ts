@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'test-input',
   templateUrl: './test-input.component.html',
-  styleUrls: ['./test-input.component.css']
+  styleUrls: ['./test-input.component.scss']
 })
 export class TestInputComponent implements OnInit {
 

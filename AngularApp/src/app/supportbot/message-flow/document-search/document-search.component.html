@@ -11,9 +11,9 @@
     <div *ngIf="content">
       <div class="article-container">
         <div class="article" *ngFor="let article of content" (click)="openArticle(article)">
-          <h5>{{article.title}}
+          <a>{{article.title}}
             <i class="fa fa-external-link"></i>
-          </h5>
+          </a>
           <div class="article-link">{{getLink(article.link)}}</div>
           {{article.description}}
         </div>

@@ -8,7 +8,7 @@ import { AvailabilityLoggingService } from '../../../services/logging/availabili
 @Component({
   selector: 'daas-scaleup',
   templateUrl: './daas-scaleup.component.html',
-  styleUrls: ['./daas-scaleup.component.css']
+  styleUrls: ['./daas-scaleup.component.scss']
 })
 export class DaasScaleupComponent  {
 

@@ -6,7 +6,7 @@ import { ContentService } from '../../../shared-v2/services/content.service';
 @Component({
   selector: 'document-search-results',
   templateUrl: './document-search-results.component.html',
-  styleUrls: ['./document-search-results.component.css']
+  styleUrls: ['./document-search-results.component.scss']
 })
 export class DocumentSearchResultsComponent implements OnInit, AfterViewInit, IChatMessageComponent {
 

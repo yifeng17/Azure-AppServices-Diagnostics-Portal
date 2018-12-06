@@ -4,7 +4,7 @@ import { IAppAnalysisResponse, IAbnormalTimePeriod } from '../../models/appanaly
 @Component({
     selector: 'downtime-timeline',
     templateUrl: 'downtime-timeline.component.html',
-    styleUrls: ['downtime-timeline.component.css']
+    styleUrls: ['downtime-timeline.component.scss']
 })
 export class DowntimeTimelineComponent implements OnChanges {
     downtimeDisplayInfo: any[];

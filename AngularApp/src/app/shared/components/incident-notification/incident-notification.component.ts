@@ -12,7 +12,7 @@ import { LoggingService } from '../../services/logging/logging.service';
 @Component({
     selector: 'incident-notification',
     templateUrl: 'incident-notification.component.html',
-    styleUrls: ['incident-notification.component.css']
+    styleUrls: ['incident-notification.component.scss']
 })
 export class IncidentNotificationComponent {
 

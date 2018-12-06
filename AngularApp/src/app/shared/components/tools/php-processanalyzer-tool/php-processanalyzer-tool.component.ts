@@ -10,7 +10,7 @@ import { AvailabilityLoggingService } from '../../../services/logging/availabili
 
 @Component({
     templateUrl: 'php-processanalyzer-tool.component.html',
-    styleUrls: ['../styles/daasstyles.css']
+    styleUrls: ['../styles/daasstyles.scss']
 })
 export class PhpProcessAnalyzerToolComponent extends DaasBaseComponent implements OnInit {
 

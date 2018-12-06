@@ -7,7 +7,7 @@ import { LoggingV2Service } from '../../../shared-v2/services/logging-v2.service
 @Component({
   selector: 'category-tile',
   templateUrl: './category-tile.component.html',
-  styleUrls: ['./category-tile.component.css']
+  styleUrls: ['./category-tile.component.scss']
 })
 export class CategoryTileComponent implements OnInit {
 

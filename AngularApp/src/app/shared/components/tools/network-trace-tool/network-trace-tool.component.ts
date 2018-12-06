@@ -12,7 +12,7 @@ import { ResponseMessageEnvelope } from '../../../models/responsemessageenvelope
 
 @Component({
     templateUrl: 'network-trace-tool.component.html',
-    styleUrls: ['../styles/daasstyles.css']
+    styleUrls: ['../styles/daasstyles.scss']
 })
 
 export class NetworkTraceToolComponent implements OnInit {

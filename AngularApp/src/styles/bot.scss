@@ -1,11 +1,15 @@
+@import '../styles/common/variables';
+
 textarea{
     resize: none;
 }
+
 .chat-message-container{
     margin-top:10px !important;
     margin-right:10px !important;
 }
-.chat-message-box{
+
+%chat-message {
     font-size:13px;
     display: inline-block; 
     max-width:50%; 
@@ -13,18 +17,28 @@ textarea{
     padding-right: 30px;
     border-radius: 10px;
 }
-.message-sent-by-system{
-    background-color: #efefef;
+
+.message-sent-by-system {
+    @extend %chat-message;
+
+    background-color: $chat-message-system-color;
     border-bottom-left-radius: 0;
-    border:1px solid #e6e6e6;
+    border: $chat-message-system-border;
     float: left;
 }
 .message-sent-by-user{
-    background-color:#337ab7;
+    @extend %chat-message;
+
+    background-color: $chat-message-user-color;
     border-bottom-right-radius: 0;
     border:none;
     float: right;
-    color:white;
+    color: $chat-message-user-text-color;
+}
+
+.bot-button {
+    font-size: 13px;
+    margin-left: 0px;
 }
 
 .category-container-header{

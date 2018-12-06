@@ -7,7 +7,7 @@ import { NotificationService, Notification } from '../../../shared-v2/services/n
 @Component({
   selector: 'support-topic-redirect',
   templateUrl: './support-topic-redirect.component.html',
-  styleUrls: ['./support-topic-redirect.component.css']
+  styleUrls: ['./support-topic-redirect.component.scss']
 })
 export class SupportTopicRedirectComponent implements OnInit {
 

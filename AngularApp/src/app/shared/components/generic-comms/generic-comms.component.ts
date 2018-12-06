@@ -5,7 +5,7 @@ import { StartupInfo } from '../../models/portal';
 @Component({
   selector: 'generic-comms',
   templateUrl: './generic-comms.component.html',
-  styleUrls: ['./generic-comms.component.css']
+  styleUrls: ['./generic-comms.component.scss']
 })
 export class GenericCommsComponent implements OnInit {
 

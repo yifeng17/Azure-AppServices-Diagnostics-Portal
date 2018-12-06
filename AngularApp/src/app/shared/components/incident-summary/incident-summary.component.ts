@@ -5,7 +5,7 @@ import { IncidentStatus } from '../../models/icm-incident';
 @Component({
   selector: 'incident-summary',
   templateUrl: './incident-summary.component.html',
-  styleUrls: ['./incident-summary.component.css']
+  styleUrls: ['./incident-summary.component.scss']
 })
 export class IncidentSummaryComponent implements OnInit {
 

@@ -19,7 +19,7 @@ import { AutohealingDetectorComponent } from '../detectors/autohealing-detector/
 @Component({
   selector: 'detector-loader',
   templateUrl: './detector-loader.component.html',
-  styleUrls: ['./detector-loader.component.css'],
+  styleUrls: ['./detector-loader.component.scss'],
   entryComponents: [SiteCpuAnalysisDetectorComponent, SiteMemoryAnalysisDetectorComponent, ThreadDetectorComponent, FrebAnalysisDetectorComponent, PhpLogAnalyzerComponent, DockerContainerIntializationComponent, CommittedMemoryUsageComponent, PageFileOperationsComponent, AspNetCoreComponent, AutohealingDetectorComponent, DetectorViewBaseComponent],
 })
 export class DetectorLoaderComponent implements OnInit, OnDestroy {

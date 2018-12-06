@@ -11,7 +11,7 @@ declare let d3: any;
 @Component({
     selector: 'availability-graph',
     templateUrl: 'availability-graph.component.html',
-    styleUrls: ["availability-graph.component.css"]
+    styleUrls: ["availability-graph.component.scss"]
 })
 export class AvailabilityGraphComponent implements OnInit, OnDestroy {
 

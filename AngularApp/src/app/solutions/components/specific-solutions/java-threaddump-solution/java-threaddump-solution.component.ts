@@ -14,7 +14,7 @@ class InstanceSelection {
 
 @Component({
     templateUrl: 'java-threaddump-solution.component.html',
-    styleUrls: ['../../../styles/solutions.css'        
+    styleUrls: ['../../../styles/solutions.scss'        
     ]
 })
 export class JavaThreadDumpSolutionComponent implements SolutionBaseComponent, OnInit {

@@ -14,7 +14,7 @@ import { LoggingService } from '../../shared/services/logging/logging.service';
 @Component({
     selector: 'tools-menu',
     templateUrl: 'tools-menu.component.html',
-    styleUrls: ['tools-menu.component.css']
+    styleUrls: ['tools-menu.component.scss']
 })
 export class ToolsMenuComponent  {
 

@@ -9,7 +9,7 @@ import { CategoryChatStateService } from '../../../shared-v2/services/category-c
 @Component({
   selector: 'document-search',
   templateUrl: './document-search.component.html',
-  styleUrls: ['./document-search.component.css']
+  styleUrls: ['./document-search.component.scss']
 })
 export class DocumentSearchComponent implements AfterViewInit, IChatMessageComponent {
 

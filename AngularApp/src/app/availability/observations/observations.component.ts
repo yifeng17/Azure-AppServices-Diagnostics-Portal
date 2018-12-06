@@ -13,7 +13,7 @@ import { PortalActionService } from '../../shared/services/portal-action.service
 @Component({
     selector: 'app-observations',
     template: '',
-    styleUrls: ['observations.component.css']
+    styleUrls: ['observations.component.scss']
 })
 export class ObservationsComponent {
 

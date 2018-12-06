@@ -4,7 +4,7 @@ import { AvailabilityLoggingService } from '../../../../shared/services/logging/
 @Component({
     selector: 'solution-feedback',
     templateUrl: 'solution-feedback.component.html',
-    styleUrls: ['../../../styles/solutions.css']
+    styleUrls: ['../../../styles/solutions.scss']
 })
 export class SolutionFeedbackComponent {
 

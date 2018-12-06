@@ -14,7 +14,7 @@ import { DetectorControlService } from '../../../../node_modules/applens-diagnos
 
 @Component({
     templateUrl: 'app-analysis.component.html',
-    styleUrls: ['custom.css'],
+    styleUrls: ['custom.scss'],
     animations: [
         trigger(
             'loadingAnimation',

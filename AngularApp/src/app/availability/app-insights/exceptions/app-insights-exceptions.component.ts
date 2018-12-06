@@ -9,7 +9,7 @@ import { AvailabilityLoggingService } from '../../../shared/services/logging/ava
 @Component({
     selector: 'app-insights-exceptions',
     templateUrl: 'app-insights-exceptions.component.html',
-    //styleUrls: ['app-insights-dependencies.component.css']
+    //styleUrls: ['app-insights-dependencies.component.scss']
 })
 export class AppInsightsExceptionsComponent implements OnInit, OnChanges {
 

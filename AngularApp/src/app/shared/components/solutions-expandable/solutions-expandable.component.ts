@@ -12,7 +12,7 @@ import { AvailabilityLoggingService } from '../../services/logging/availability.
 @Component({
     selector: 'solutions-expandable',
     templateUrl: 'solutions-expandable.component.html',
-    styleUrls: ['solutions-expandable.component.css']
+    styleUrls: ['solutions-expandable.component.scss']
 })
 export class SolutionsExpandableComponent implements OnInit {
 

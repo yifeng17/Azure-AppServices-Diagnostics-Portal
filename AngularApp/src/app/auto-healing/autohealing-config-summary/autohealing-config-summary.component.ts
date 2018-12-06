@@ -5,7 +5,7 @@ import { FormatHelper } from '../../shared/utilities/formattingHelper';
 @Component({
   selector: 'autohealing-config-summary',
   templateUrl: './autohealing-config-summary.component.html',
-  styleUrls: ['./autohealing-config-summary.component.css']
+  styleUrls: ['./autohealing-config-summary.component.scss']
 })
 export class AutohealingConfigSummaryComponent implements OnInit, OnChanges {
 

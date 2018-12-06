@@ -6,7 +6,7 @@ import { FormatHelper } from '../../shared/utilities/formattingHelper';
 @Component({
   selector: 'autohealing-statuscodes-rule',
   templateUrl: './autohealing-statuscodes-rule.component.html',
-  styleUrls: ['../autohealing.component.css']
+  styleUrls: ['../autohealing.component.scss']
 })
 export class AutohealingStatuscodesRuleComponent extends AutohealingRuleComponent {
 

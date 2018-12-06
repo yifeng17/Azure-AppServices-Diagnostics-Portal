@@ -10,7 +10,7 @@ import { AvailabilityLoggingService } from '../../../services/logging/availabili
 
 @Component({
     templateUrl: 'php-logsanalyzer-tool.component.html',
-    styleUrls: ['../styles/daasstyles.css']
+    styleUrls: ['../styles/daasstyles.scss']
 })
 export class PhpLogsAnalyzerToolComponent extends DaasBaseComponent implements OnInit {
 

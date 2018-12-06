@@ -4,7 +4,7 @@ import { FormatHelper } from '../../utilities/formattingHelper';
 @Component({
   selector: 'timespan',
   templateUrl: './timespan.component.html',
-  styleUrls: ['./timespan.component.css']
+  styleUrls: ['./timespan.component.scss']
 })
 export class TimespanComponent implements OnInit {
 
