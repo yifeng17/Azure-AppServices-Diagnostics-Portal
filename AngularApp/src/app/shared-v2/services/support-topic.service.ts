@@ -26,7 +26,7 @@ export class SupportTopicService {
         }
       }
 
-      return detectorPath;
+      return `${this._webSiteService.resourceIdForRouting}${detectorPath}`;
     });
   }
 }

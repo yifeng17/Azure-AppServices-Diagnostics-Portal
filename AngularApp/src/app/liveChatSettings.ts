@@ -20,6 +20,7 @@ export class LiveChatSettings {
     public static enabledSupportTopics: string[] = [
         "32542218",     //Availability and Performance/Web App Down
         "32570954",     //Availability and Performance/Web App Restarted
+        "32583701",     //Availability and Performance/Web App experiencing High CPU
         "32440123",     //Configuration and Management/Configuring SSL
         "32440122",     //Configuration and Management/Configuring custom domain names
         "32542210",     //Configuration and Management/IP Configuration
