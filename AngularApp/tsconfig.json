@@ -1,6 +1,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
@@ -11,6 +12,16 @@
     "typeRoots": [
       "node_modules/@types"
     ],
+    "paths": {
+      "moment": [
+        "../../node_modules/moment/min/moment.min.js",
+        "../node_modules/moment/min/moment.min.js"
+      ],
+      "diagnostic-data": [
+        "projects/diagnostic-data/src/public_api",
+        "../projects/diagnostic-data/src/public_api",
+      ]
+    },
     "lib": [
       "es2017",
       "dom"
