@@ -1,0 +1,65 @@
+@import "../../../../../app-service-diagnostics/src/styles/main.scss";
+
+.card-container {
+    width: 400px;
+    // padding: 10px;
+    margin: 0px 15px 15px 0px;
+    border-radius: $card-border-radius;
+    border-width: $card-border-width;
+    border-color: $card-border-color;
+    border-style: $card-border-style;
+    box-shadow: $card-box-shadow;
+    float: $card-float;
+    transition: $card-transition;
+    position: $card-position;
+    &.selected {
+        border-color: $card-border-color-selected;
+        transition: $card-transition-selected;
+    }
+    &:hover {
+        cursor: $card-cursor-hover;
+        box-shadow: $card-box-shadow-hover;
+    }
+    &:focus {
+        outline-color: $card-outline-color;
+        outline-offset: $card-outline-offset;
+        outline-style: $card-outline-style;
+        outline-width: $card-outline-width;
+    }
+
+    .card-header{
+        display: $card-header-display;
+        width: $card-header-width;
+        line-height: $card-header-title-line-height;
+        font-size: $card-header-title-font-size;
+        font-weight: $card-header-title-font-weight;
+        // color: $card-header-title-color;
+        height: $card-header-title-height;
+        span {
+            height: $card-header-icon-height;
+            width: $card-header-icon-width;
+            padding: $card-header-icon-padding;
+            margin-right: $card-header-icon-margin-right;
+        }
+        span.fa {
+            font-size: 30px;
+            background-color: rgb(85, 113, 138);
+        }
+    }
+    
+    .card-description {
+        border-top-style: $card-description-border-top-style;
+        border-top-width: $card-description-border-top-width;
+        border-color: $card-description-border-color;
+        margin-top: $card-description-margin-top;
+        padding: $card-description-padding;
+
+        ul {
+            padding-left: 20px;
+        }
+    }
+}
+
+.card-flex {
+    display: flex;
+}

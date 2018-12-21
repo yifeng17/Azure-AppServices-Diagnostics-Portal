@@ -144,11 +144,11 @@ export class DetectorSummaryComponent implements OnInit, AfterViewInit, IChatMes
       const insightName = row[insightColumnIndex];
       if ((insight = insights.find(insight => insight.name === insightName)) == null) {
         insights.push(<DetectorSummaryViewModel>{
-          id: insightName,
+          id: <string>insightName,
           loading: LoadingStatus.Success,
-          name: insightName,
+          name: <string>insightName,
           path: `detectors/${detectorId}`,
-          status: HealthStatus[row[statusColumnIndex]]
+          status: HealthStatus[<string>row[statusColumnIndex]]
         });
       }
     }

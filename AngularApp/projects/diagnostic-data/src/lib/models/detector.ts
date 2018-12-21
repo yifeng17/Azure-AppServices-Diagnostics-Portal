@@ -33,7 +33,7 @@ export interface DiagnosticData {
 export interface DataTableResponseObject {
     // tableName: string;
     columns: DataTableResponseColumn[];
-    rows: string[][];
+    rows: any[][];
 }
 
 export interface DataTableResponseColumn {
@@ -84,7 +84,8 @@ export enum RenderingType {
     DynamicInsight,
     Markdown,
     DetectorList,
-    DropDown
+    DropDown,
+    Cards
 }
 
 export enum TimeSeriesType {
