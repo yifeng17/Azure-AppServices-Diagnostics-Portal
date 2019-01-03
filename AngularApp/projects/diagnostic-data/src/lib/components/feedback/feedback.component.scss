@@ -3,11 +3,30 @@ body{ margin: 20px; }
 h1 { font-size: 1.2em; margin: 10px; }
 
 /****** Style Star Rating Widget *****/
+
+a:visited {
+    color: rgb(196, 62, 0);
+}
+
+a:hover {
+    text-decoration: underline;
+    color: rgb(196, 62, 0);
+} 
+
+.visited {
+    color: rgb(113, 34, 153);
+}
+
 .review-container {
   max-width: 630px;
     border: 1px solid rgb(223, 223, 223);
     border-top: none;
     border-bottom: 2px solid rgb(223, 223, 223);
+}
+
+.feedback-button {
+    color: white;
+    background:#416dea;
 }
 
 textarea {
@@ -30,6 +49,7 @@ textarea:focus {
 }
 
 .review-header {
+  margin-top:20px;
   background-color: #3c8dbc;
   border: 1px solid #3c8dbc;
   color:white;

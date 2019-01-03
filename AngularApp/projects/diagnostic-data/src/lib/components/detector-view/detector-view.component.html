@@ -1,5 +1,6 @@
 <div *ngIf="detectorDataLocalCopy">
-  <div style="margin-bottom: 15px; padding-bottom: 15px">
+  <!-- <div style="margin-bottom: 15px; padding-bottom: 15px"> -->
+    <div>
     <section class="content-header">
       <h1 *ngIf="!isSystemInvoker">
         <span *ngIf="!insideDetectorList">{{detectorDataLocalCopy.metadata.name}}</span>
@@ -31,6 +32,7 @@
         </div>
       </section>
       <!-- <star-rating-feedback *ngIf="!insideDetectorList"[ratingEventProperties] = "ratingEventProperties"></star-rating-feedback> -->
+      <feedback [source]="'appanalysis'" [ratingEventProperties] = "ratingEventProperties"></feedback>
     </section>
   </div>
   <hr>
