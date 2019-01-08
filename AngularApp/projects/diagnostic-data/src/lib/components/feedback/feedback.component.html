@@ -1,50 +1,30 @@
-<div *ngIf="!hideWholeForm">
-  <div *ngIf="!showFeedbackForm && !showThanksMessage">
+<div>
+  <!-- <div *ngIf="!showFeedbackForm && !showThanksMessage" style="margin-top:25px"> -->
+    <div style="margin-top:25px">
     <!-- <button type="button" class="feedback-button" (click)="expandFeedbackForm()">Provide feedbacks</button> -->
-    <a (click)="expandFeedbackForm()" [class.visited]="isRated">
-      Provide Feedbacks
-    </a>
+    <!-- <a (click)="expandFeedbackForm()" [class.visited]="isRated" class="action-button shadow animate blue">
+        <span style="color:#008012;font-weight: bold">  Send Feedback</span>
+    </a> -->
+    <button (click)="expandFeedbackForm()" class="custom-button-primary custom-button-align-left">
+        <span>  Send Feedback</span>
+    </button>
+    <button (click)="expandFeedbackForm()" class="custom-button-green">
+            <span>  Contact Author</span>
+        </button>
   </div>
-  <!-- <star-rating *ngIf="showFeedbackForm"></star-rating> -->
 
-  <!-- <div *ngIf="!showThanksMessage && !showMessageBox">
-      <div>Was this helpful?</div>
-      <button type="button" class="btn btn-default btn-xs" [ngClass]="{'btn-primary':yesSelected}" (click)="feedbackButtonClicked(true)">
-          Yes
-      </button>
-      <button type="button" class="btn btn-default btn-xs" [ngClass]="{'btn-primary':noSelected}" (click)="feedbackButtonClicked(false)">
-          No
-      </button>
-  </div>
-  <div *ngIf="showMessageBox">
-      <div>
-          What can we improve?
-      </div>
-      <div style="padding:5px 0px 5px 0px">
-           <textarea ref-textarea [(ngModel)]="feedbackText" rows="2" style="width: 100%;max-width: 400px"></textarea>
-      </div>
-      <div>
-          <button type="button" class="btn btn-primary btn-xs" (click)="feedbackMessageSubmitted()">
-              Submit
-          </button>
-      </div>
-  </div>
-  <div *ngIf="showThanksMessage">
-      Thanks for the feedback!
-  </div> -->
-
-  <div *ngIf="showFeedbackForm && !showThanksMessage">
+  <div *ngIf="showFeedbackForm && !showThanksMessage" style="padding-top:5px;">
     <div class="review-header" *ngIf="!isModal">
         <h1>
             How helpful was this?</h1>
     </div>
     <div class="review-container">
-        <div class="row" style="padding: 15px, 0px, 15px, 15px;max-width: 630px; border-right: rgb(169, 169, 169); margin-left:0px">
-            <div class="col-md-4">
-                <fieldset class="rating">
+        <div class="row" style="padding: 15px, 0px, 15px, 15px;max-width: 350px; border-right: rgb(169, 169, 169); margin-left:0px">
+            <div>
+                <fieldset class="rating" style="width:150px; margin-top: 0px">
                     <input type="radio" id="star5" name="rating" value="5" />
-                    <label class="full" for="star5" title="It is very helpful!- 5 stars" (click)="setStar(5, 'It is very helpful!')"></label>
-                    <input type="radio" id="star4half" name="rating" value="4 and a half" (click)="setStar(4.5, 'It is very helpful!')">
+                    <label class="full" for="star5" (click)="setStar(5, 'It is very helpful!')"></label>
+                    <input type="radio" id="star4half" name="rating" (click)="setStar(4.5, 'It is very helpful!')">
                     <label class="half" for="star4half" title="It is very helpful! - 4.5 stars"></label>
                     <input type="radio" id="star4" name="rating" value="4" (click)="setStar(4, 'It is helpful!')" />
                     <label class="full" for="star4" title="It is helpful! - 4 stars"></label>
@@ -64,21 +44,26 @@
                     <label class="half" for="starhalf" title="Not so helpful - 0.5 stars"></label>
                 </fieldset>
             </div>
-            <div class="col-md-8" *ngIf="rating>0" style="font-size: 16px; font-weight:600; padding-top:8px">
-                {{comments}}
+            <div style="font-size: 12px; font-weight:500; padding-top:12px; margin-left:2px">
+                <span> {{comments}}  </span>
             </div>
         </div>
-        <textarea ref-textarea [(ngModel)]="feedbackText" style="width: 100%;max-width: 630px; min-height: 150px; border:white; margin-bottom:-5px; padding:5px 15px 0px 15px"
-            placeholder="Write your review here to help us improve.">
+        <textarea ref-textarea [(ngModel)]="feedbackText" style="width: 100%; border:white; margin-bottom:-5px; padding:5px 15px 0px 15px; height:60px; font-size:12px"
+            placeholder="Click here to write your review">
     </textarea>
     </div>
-    <div>
-        <button type="button" class="btn btn-primary" (click)="feedbackMessageSubmitted()" style="margin-top: 15px">
+    <div style="margin-top:5px">
+        <!-- //style="margin-top: 5px; padding-top:2px; padding-bottom: 2px; background-color: #016afe" -->
+        <button type="button" class="custom-button-primary custom-button-align-left" (click)="feedbackMessageSubmitted()" >
             Submit
+        </button>
+        <!-- style="margin-top: 5px; padding-top:2px; padding-bottom: 2px; margin-left:10px; background-color:white; border-color: #016afe;" -->
+        <button type="button" class="custom-button-invert" (click)="cancelButtonClicked()">
+            Cancel
         </button>
     </div>
 </div>
-<div *ngIf="showThanksMessage">
-    Thanks for your feedback!
+<div *ngIf="showThanksMessage && !showFeedbackForm" style="margin-top:6px">
+    <span>Thanks for your feedback!</span>
 </div>
 </div>

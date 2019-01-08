@@ -14,7 +14,7 @@ export class FeedbackComponent implements OnInit {
   @Output() submit: EventEmitter<boolean> = new EventEmitter<boolean>();
   showThanksMessage: boolean = false;
   rating: number = 0;
-  comments: string = 'Start your rating.';
+  comments: string = 'Start Rating';
   feedbackText: string;
 
   hideWholeForm: boolean;
@@ -23,7 +23,7 @@ export class FeedbackComponent implements OnInit {
   noSelected: boolean;
   showMessageBox: boolean = false;
   showFeedbackForm: boolean = false;
-
+  cancelClicked: boolean = false;
 
   constructor(protected telemetryService: TelemetryService) {
   }
@@ -35,7 +35,8 @@ export class FeedbackComponent implements OnInit {
     @Input() source: string;
 
     expandFeedbackForm() {
-      this.showFeedbackForm = !this.showFeedbackForm;
+      this.showFeedbackForm = true;
+      this.showThanksMessage = false;
     }
 
     feedbackButtonClicked(helpful: boolean) {
@@ -49,17 +50,12 @@ export class FeedbackComponent implements OnInit {
         }
     }
 
-    // feedbackMessageSubmitted() {
-    //   //  this._logger.LogFeedbackMessage(this.source, this.feedbackText);
-    //     this.showMessageBox = false;
-    //     this.showThanksMessage = true;
-
-        // setTimeout(() => {
-        //     this.hideWholeForm = true;
-        // }, 2000);
-    // }
-
-
+    cancelButtonClicked() {
+      //this.cancelClicked = true;
+      this.showFeedbackForm = false;
+      this.comments = "Start Rating";
+      this.feedbackText = "";
+    }
   
     setStar(data: any, comments?: any) {
       this.rating = data;
@@ -73,11 +69,14 @@ export class FeedbackComponent implements OnInit {
       };
 
       this.showThanksMessage = true;
+      this.showFeedbackForm = false;
       this.logEvent(TelemetryEventNames.StarRatingSubmitted, eventProps);
       this.submit.emit(this.showThanksMessage);
-
+      this.comments = "Start Rating";
+      this.feedbackText = "";
     //   setTimeout(() => {
-    //     this.hideWholeForm = true;
+    //     this.showThanksMessage = false;
+    //     this.showFeedbackForm = false;
     // }, 2000);
     }
   

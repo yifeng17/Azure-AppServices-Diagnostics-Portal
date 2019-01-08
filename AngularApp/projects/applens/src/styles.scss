@@ -12,6 +12,8 @@
 
 /* Must import diagnostic-data css */
 // @import 'app/diagnostic-data/diagnostic-data.scss';n
+@import 'styles/common/variables';
+@import 'styles/controls/buttons';
 
 .ngx-datatable.bootstrap {
     border: 1px solid #dddddd;
