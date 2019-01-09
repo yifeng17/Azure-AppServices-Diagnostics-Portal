@@ -19,6 +19,7 @@ export class DetectorViewComponent implements OnInit {
   detectorDataLocalCopy: DetectorResponse;
   errorState: any;
   isPublic: boolean;
+  showFeedbackForm: boolean;
 
   private detectorResponseSubject: BehaviorSubject<DetectorResponse> = new BehaviorSubject<DetectorResponse>(null);
   private errorSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
@@ -28,6 +29,8 @@ export class DetectorViewComponent implements OnInit {
   public authorEmails: string;
   public insightsListEventProperties = {};
   public currentSiteString = `Current Site: ${window.location.href} `;
+  public detectorName: string = '';
+  public detectorDescription: string = '';
 
   @Input()
   set detectorResponse(value: DetectorResponse) {
@@ -49,9 +52,12 @@ export class DetectorViewComponent implements OnInit {
   @Input() authorInfo: string = '';
   @Input() feedbackDetector: string = '';
 
+  feedbackButtonLable: string = 'Send Feedback';
+
   constructor(@Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig, private telemetryService: TelemetryService,
     private detectorControlService: DetectorControlService) {
     this.isPublic = config && config.isPublic;
+    this.feedbackButtonLable = this.isPublic ? 'Send Feedback' : 'Rate Detector';
   }
 
   ngOnInit() {
@@ -86,8 +92,9 @@ export class DetectorViewComponent implements OnInit {
         };
 
         this.ratingEventProperties = {
-          'DetectorId': data.metadata.id
-        };
+          'DetectorId': data.metadata.id,
+          'Url': window.location.href
+        }
 
         this.feedbackDetector = this.isSystemInvoker ? this.feedbackDetector : data.metadata.id;
 
@@ -193,5 +200,8 @@ export class DetectorViewComponent implements OnInit {
     }
     this.telemetryService.logEvent(eventMessage, eventProperties, measurements);
   }
-}
 
+  expandFeedbackForm() {
+    this.showFeedbackForm = true;
+  }
+}

@@ -28,3 +28,19 @@
     position: relative;
     padding: 0px;
 }
+
+.custom-button-align-left {
+    margin-left: 0px;
+}
+
+.detector-button-list {
+    padding: 5px 10px;
+}
+
+.detector-button-list > span{
+    color: white;
+}
+
+.detector-button-list:hover {
+    text-decoration: none;
+}

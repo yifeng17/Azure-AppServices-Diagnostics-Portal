@@ -11,19 +11,21 @@ import { TelemetryEventNames } from '../../services/telemetry/telemetry.common';
 export class FeedbackComponent implements OnInit {
 
   @Input() ratingEventProperties: any;
+  @Input() showThanksMessage: boolean = false;
+  @Input() showFeedbackForm: boolean = false;
+  @Output() showFeedbackFormChange: EventEmitter<boolean> = new EventEmitter<boolean>();
+
   @Output() submit: EventEmitter<boolean> = new EventEmitter<boolean>();
-  showThanksMessage: boolean = false;
+
   rating: number = 0;
-  comments: string = 'Start Rating';
+  defaultComments: string = 'Start Rating Here'
+  comments: string = this.defaultComments;
   feedbackText: string;
 
   hideWholeForm: boolean;
   showTextBox: boolean;
   yesSelected: boolean;
   noSelected: boolean;
-  showMessageBox: boolean = false;
-  showFeedbackForm: boolean = false;
-  cancelClicked: boolean = false;
 
   constructor(protected telemetryService: TelemetryService) {
   }
@@ -34,27 +36,10 @@ export class FeedbackComponent implements OnInit {
 
     @Input() source: string;
 
-    expandFeedbackForm() {
-      this.showFeedbackForm = true;
-      this.showThanksMessage = false;
-    }
-
-    feedbackButtonClicked(helpful: boolean) {
-        this.yesSelected = helpful;
-        this.noSelected = !helpful;
-     //   this._logger.LogFeedback(this.source, helpful);
-        if (this.yesSelected) {
-            this.showThanksMessage = true;
-        } else {
-            this.showMessageBox = true;
-        }
-    }
-
     cancelButtonClicked() {
-      //this.cancelClicked = true;
       this.showFeedbackForm = false;
-      this.comments = "Start Rating";
-      this.feedbackText = "";
+      this.showFeedbackFormChange.emit(this.showFeedbackForm);
+      this.showThanksMessage = false;
     }
   
     setStar(data: any, comments?: any) {
@@ -72,12 +57,10 @@ export class FeedbackComponent implements OnInit {
       this.showFeedbackForm = false;
       this.logEvent(TelemetryEventNames.StarRatingSubmitted, eventProps);
       this.submit.emit(this.showThanksMessage);
-      this.comments = "Start Rating";
+      this.rating = 0;
+      this.comments = this.defaultComments;
       this.feedbackText = "";
-    //   setTimeout(() => {
-    //     this.showThanksMessage = false;
-    //     this.showFeedbackForm = false;
-    // }, 2000);
+      this.showFeedbackFormChange.emit(this.showFeedbackForm);
     }
   
     protected logEvent(eventMessage: string, eventProperties?: any, measurements?: any) {
