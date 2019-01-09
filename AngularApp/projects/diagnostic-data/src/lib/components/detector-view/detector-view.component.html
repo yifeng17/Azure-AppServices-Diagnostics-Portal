@@ -19,9 +19,9 @@
       </section>
       <div>
         <div style="margin-top:10px">
-          <a (click)="expandFeedbackForm()" class="custom-button custom-button-align-left detector-button-list">
+          <button (click)="expandFeedbackForm()" class="custom-button custom-button-align-left detector-button-list">
             <span> {{feedbackButtonLable}}</span>
-          </a>
+          </button>
           <a *ngIf="!isPublic && authorInfo !== ''; else onlyToApplensTeam" class="custom-button-green detector-button-list" href="mailto:{{authorEmails}}?cc=applensdisc@microsoft.com&subject=Detector%20Feedback%20for%20{{feedbackDetector}}&body=Please%20provide%20your%20feedback%20here:%0D%0A%0D%0A%0D%0A%0D%0A{{currentSiteString}}">
             <span> Email Author</span>
           </a>
@@ -39,7 +39,6 @@
   <div *ngFor="let data of detectorDataLocalCopy.dataset" class="dynamic-data-container">
     <dynamic-data [diagnosticData]="data" [startTime]="startTime" [endTime]="endTime" [detectorEventProperties]="detectorEventProperties"></dynamic-data>
   </div>
-  <!-- <star-rating *ngIf="!insideDetectorList"></star-rating> -->
 </div>
 
 <loader-view style="margin-top:300px" *ngIf="!detectorDataLocalCopy && !errorState" message="Loading Detector..."></loader-view>
