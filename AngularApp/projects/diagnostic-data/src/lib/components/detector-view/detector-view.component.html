@@ -20,9 +20,10 @@
       <div>
         <div style="margin-top:10px">
           <button (click)="expandFeedbackForm()" class="custom-button custom-button-align-left detector-button-list">
-            <span> {{feedbackButtonLable}}</span>
+            <span> {{feedbackButtonLabel}}</span>
           </button>
-          <a *ngIf="!isPublic && authorInfo !== ''; else onlyToApplensTeam" class="custom-button-green detector-button-list" href="mailto:{{authorEmails}}?cc=applensdisc@microsoft.com&subject=Detector%20Feedback%20for%20{{feedbackDetector}}&body=Please%20provide%20your%20feedback%20here:%0D%0A%0D%0A%0D%0A%0D%0A{{currentSiteString}}">
+          <a *ngIf="!isPublic && authorInfo !== ''; else onlyToApplensTeam" class="custom-button-green detector-button-list"
+            href="mailto:{{authorEmails}}?cc=applensdisc@microsoft.com&subject=Detector%20Feedback%20for%20{{feedbackDetector}}&body=Please%20provide%20your%20feedback%20here:%0D%0A%0D%0A%0D%0A%0D%0A{{currentSiteString}}">
             <span> Email Author</span>
           </a>
           <ng-template #onlyToApplensTeam>

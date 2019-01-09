@@ -14,14 +14,14 @@
             [class.fa-angle-up]="insight.isExpanded"></span>
         </h5>
         <div class="pull-right" style="margin-top:-18px">
-          <div class="col-md-6" [ngClass]="{'con-tooltip bottom':!insight.isRated}">
+          <div class="col-md-6" [ngClass]="{'con-tooltip bottom':!insight.isRated}" class="insight-rating">
             <a (click)="setInsightComment(insight, true)"> <i class="fa fa-thumbs-o-up fa-lg" [ngStyle]="{'color':insight.isRated && insight.isHelpful ? 'green': 'gray'}"></i>
             </a>
             <div class="tooltip ">
               <p>Helpful</p>
             </div>
           </div>
-          <div class="col-md-6" [ngClass]="{'con-tooltip bottom':!insight.isRated}">
+          <div class="col-md-6" [ngClass]="{'con-tooltip bottom':!insight.isRated}" class="insight-rating">
             <a (click)="setInsightComment(insight, false)"> <i class="fa fa-thumbs-o-down fa-lg" [ngStyle]="{'color':insight.isRated && !insight.isHelpful ? 'red': 'gray'}"></i>
             </a>
             <div class="tooltip ">

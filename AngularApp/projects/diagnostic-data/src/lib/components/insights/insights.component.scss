@@ -59,8 +59,6 @@ td {
 
 /*tooltip Box*/
 .con-tooltip {
-  padding-left: 10px;
-  padding-right: 10px;
   border-radius: 9px;
   transition: all 0.3s ease-in-out;
   cursor: default;
@@ -138,4 +136,10 @@ td {
 
 .con-tooltip > a:visited{
     color: #015cda
+}
+
+.insight-rating {
+    padding-left: 10px;
+    padding-right: 10px;
+    display: inline-block;
 }

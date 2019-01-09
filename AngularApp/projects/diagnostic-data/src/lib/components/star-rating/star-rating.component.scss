@@ -7,7 +7,6 @@ h1 { font-size: 1.2em; margin: 10px; }
   max-width: 630px;
     border: 1px solid rgb(223, 223, 223);
     border-top: none;
-    border-bottom: 2px solid rgb(223, 223, 223);
 }
 
 textarea {
@@ -35,11 +34,6 @@ textarea:focus {
   color:white;
   min-height: 42px;
   max-width: 630px;
-}
-
-.review-header > h1 {
-  color:white;
-  font-weight: 500;
 }
 
 .review-container > h1 {

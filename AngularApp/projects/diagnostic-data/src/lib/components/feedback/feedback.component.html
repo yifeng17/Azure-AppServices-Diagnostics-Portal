@@ -10,7 +10,7 @@
                     <input type="radio" id="star5" name="rating" value="5" />
                     <label class="full" [ngStyle]="{'color':rating<5 ? '#ddd': '#FFD700'}" for="star5" (click)="setStar(5, 'It is very helpful!')"></label>
                     <input type="radio" id="star4half" name="rating" (click)="setStar(4.5, 'It is very helpful!')">
-                    <label class="half" [ngStyle]="{'color':rating<4.5 ? '#ddd': '#FFD700'}"  for="star4half" title="It is very helpful! - 4.5 stars"></label>
+                    <label class="half" [ngStyle]="{'color':rating<4.5 ? '#ddd': '#FFD700'}" for="star4half" title="It is very helpful! - 4.5 stars"></label>
                     <input type="radio" id="star4" name="rating" value="4" (click)="setStar(4, 'It is helpful!')" />
                     <label class="full" [ngStyle]="{'color':rating<4 ? '#ddd': '#FFD700'}" for="star4" title="It is helpful! - 4 stars"></label>
                     <input type="radio" id="star3half" name="rating" value="3 and a half" (click)="setStar(3.5, 'It is helpful!')" />
@@ -38,11 +38,9 @@
     </textarea>
     </div>
     <div style="margin-top:5px">
-        <!-- //style="margin-top: 5px; padding-top:2px; padding-bottom: 2px; background-color: #016afe" -->
         <button type="button" class="custom-button custom-button-align-left" (click)="feedbackMessageSubmitted()" style="margin-left:0px">
             Submit
         </button>
-        <!-- style="margin-top: 5px; padding-top:2px; padding-bottom: 2px; margin-left:10px; background-color:white; border-color: #016afe;" -->
         <button type="button" class="custom-button-invert" (click)="cancelButtonClicked()">
             Cancel
         </button>

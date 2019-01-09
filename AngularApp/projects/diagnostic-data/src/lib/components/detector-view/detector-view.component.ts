@@ -29,8 +29,6 @@ export class DetectorViewComponent implements OnInit {
   public authorEmails: string;
   public insightsListEventProperties = {};
   public currentSiteString = `Current Site: ${window.location.href} `;
-  public detectorName: string = '';
-  public detectorDescription: string = '';
 
   @Input()
   set detectorResponse(value: DetectorResponse) {
@@ -52,12 +50,12 @@ export class DetectorViewComponent implements OnInit {
   @Input() authorInfo: string = '';
   @Input() feedbackDetector: string = '';
 
-  feedbackButtonLable: string = 'Send Feedback';
+  feedbackButtonLabel: string = 'Send Feedback';
 
   constructor(@Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig, private telemetryService: TelemetryService,
     private detectorControlService: DetectorControlService) {
     this.isPublic = config && config.isPublic;
-    this.feedbackButtonLable = this.isPublic ? 'Send Feedback' : 'Rate Detector';
+    this.feedbackButtonLabel = this.isPublic ? 'Send Feedback' : 'Rate Detector';
   }
 
   ngOnInit() {
