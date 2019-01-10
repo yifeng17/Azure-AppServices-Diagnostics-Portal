@@ -18,7 +18,7 @@ export class FeedbackComponent implements OnInit {
   @Output() submit: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   rating: number = 0;
-  defaultComments: string = 'Start Rating Here'
+  defaultComments: string = '';
   comments: string = this.defaultComments;
   feedbackText: string;
 
@@ -34,43 +34,46 @@ export class FeedbackComponent implements OnInit {
   }
 
 
-    @Input() source: string;
+  @Input() source: string;
 
-    cancelButtonClicked() {
-      this.showFeedbackForm = false;
-      this.showFeedbackFormChange.emit(this.showFeedbackForm);
+  cancelButtonClicked() {
+    this.showFeedbackForm = false;
+    this.showFeedbackFormChange.emit(this.showFeedbackForm);
+    this.showThanksMessage = false;
+  }
+
+  setStar(data: any, comments?: any) {
+    this.rating = data;
+    this.comments = comments;
+  }
+
+  public feedbackMessageSubmitted() {
+    const eventProps = {
+      Rating: String(this.rating),
+      Feedback: this.feedbackText
+    };
+
+    this.showThanksMessage = true;
+    this.showFeedbackForm = false;
+    this.logEvent(TelemetryEventNames.StarRatingSubmitted, eventProps);
+    this.submit.emit(this.showThanksMessage);
+    this.rating = 0;
+    this.comments = this.defaultComments;
+    this.feedbackText = "";
+    this.showFeedbackFormChange.emit(this.showFeedbackForm);
+
+    setTimeout(() => {
       this.showThanksMessage = false;
-    }
-  
-    setStar(data: any, comments?: any) {
-      this.rating = data;
-      this.comments = comments;
-    }
-  
-    public feedbackMessageSubmitted() {
-      const eventProps = {
-        Rating: String(this.rating),
-        Feedback: this.feedbackText
-      };
+    }, 2000);
+  }
 
-      this.showThanksMessage = true;
-      this.showFeedbackForm = false;
-      this.logEvent(TelemetryEventNames.StarRatingSubmitted, eventProps);
-      this.submit.emit(this.showThanksMessage);
-      this.rating = 0;
-      this.comments = this.defaultComments;
-      this.feedbackText = "";
-      this.showFeedbackFormChange.emit(this.showFeedbackForm);
-    }
-  
-    protected logEvent(eventMessage: string, eventProperties?: any, measurements?: any) {
-      for (const id of Object.keys(this.ratingEventProperties)) {
-        if (this.ratingEventProperties.hasOwnProperty(id)) {
-          eventProperties[id] = String(this.ratingEventProperties[id]);
-        }
+  protected logEvent(eventMessage: string, eventProperties?: any, measurements?: any) {
+    for (const id of Object.keys(this.ratingEventProperties)) {
+      if (this.ratingEventProperties.hasOwnProperty(id)) {
+        eventProperties[id] = String(this.ratingEventProperties[id]);
       }
-      this.telemetryService.logEvent(eventMessage, eventProperties, measurements);
     }
+    this.telemetryService.logEvent(eventMessage, eventProperties, measurements);
+  }
 
 }
-

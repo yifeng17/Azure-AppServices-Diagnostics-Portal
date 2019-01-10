@@ -6,7 +6,7 @@
       </h1>
       <div class="description">{{detectorDataLocalCopy.metadata.description}}</div>
       <section *ngIf="!isPublic">
-        <div class="description" style="padding-left:0">By
+        <div class="description">By
           <span style="padding:2px; color: #0066c0;">
             <a *ngIf="authorInfo !== ''; else unknownAuthor" href="mailto:{{authorEmails}}?cc=applensdisc@microsoft.com&subject=Detector%20Feedback%20for%20{{feedbackDetector}}&body=Please%20provide%20your%20feedback%20here:%0D%0A%0D%0A%0D%0A%0D%0A{{currentSiteString}}">
               {{authorInfo}}

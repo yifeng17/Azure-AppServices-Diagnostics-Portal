@@ -22,15 +22,12 @@
 
 .description {
     color: #666;
+    padding-left:0;
 }
 
 .content-header {
     position: relative;
     padding: 0px;
-}
-
-.custom-button-align-left {
-    margin-left: 0px;
 }
 
 .detector-button-list {
@@ -44,4 +41,8 @@
 
 .detector-button-list:hover {
     text-decoration: none;
+}
+
+.custom-button-align-left {
+    margin-left: 0px;
 }
