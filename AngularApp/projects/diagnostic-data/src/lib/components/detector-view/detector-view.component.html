@@ -45,5 +45,5 @@
 <loader-view style="margin-top:300px" *ngIf="!detectorDataLocalCopy && !errorState" message="Loading Detector..."></loader-view>
 
 <ng-container *ngIf="!detectorDataLocalCopy && errorState">
-  Error loading detector: <span class="critical-color" *ngIf="errorState.error">{{errorState.error}}</span>
+  Error: <span class="critical-color" *ngIf="errorState.error">{{errorState.error}}</span><span class="critical-color" *ngIf="!errorState.error">Unknown error occurred.</span>
 </ng-container>
