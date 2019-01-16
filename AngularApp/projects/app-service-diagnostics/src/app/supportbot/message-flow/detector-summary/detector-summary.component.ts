@@ -141,14 +141,15 @@ export class DetectorSummaryComponent implements OnInit, AfterViewInit, IChatMes
     for (let i: number = 0; i < data.rows.length; i++) {
       const row = data.rows[i];
       let insight: DetectorSummaryViewModel;
-      const insightName = row[insightColumnIndex];
+      const insightName: string = row[insightColumnIndex];
       if ((insight = insights.find(insight => insight.name === insightName)) == null) {
         insights.push(<DetectorSummaryViewModel>{
           id: <string>insightName,
           loading: LoadingStatus.Success,
           name: <string>insightName,
           path: `detectors/${detectorId}`,
-          status: HealthStatus[<string>row[statusColumnIndex]]
+          status: HealthStatus[(<string>row[statusColumnIndex])],
+          type: DetectorSummaryType.ChildDetector
         });
       }
     }
