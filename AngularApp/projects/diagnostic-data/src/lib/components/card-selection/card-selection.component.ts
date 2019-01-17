@@ -4,13 +4,20 @@ import { Component } from '@angular/core';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
 import { DiagnosticService } from '../../services/diagnostic.service';
 import { DiagnosticData } from '../../models/detector';
+import { FeatureNavigationService } from '../../services/feature-navigation.service';
 
 export class CardSelection {
   title: string;
   descriptions: string[];
   icon: string;
-  linkType: string;
+  linkType: CardActionType;
   linkValue: string;
+}
+
+export enum CardActionType
+{
+    Detector,
+    Tool
 }
 
 @Component({
@@ -23,7 +30,7 @@ export class CardSelectionComponent extends DataRenderBaseComponent {
   cardSelections: CardSelection[] = [];
 
   constructor(private _diagnosticService: DiagnosticService, private _router: Router, 
-    private _activatedRoute: ActivatedRoute, protected telemetryService: TelemetryService) {
+    private _activatedRoute: ActivatedRoute, protected telemetryService: TelemetryService, private _navigator: FeatureNavigationService) {
     super(telemetryService);
   }
 
@@ -33,19 +40,18 @@ export class CardSelectionComponent extends DataRenderBaseComponent {
     data.table.rows.map(row => {
       this.cardSelections.push(<CardSelection>{
         title: row[0],
-        descriptions: JSON.parse(row[3]),
-        icon: row[1] != "" ? row[1]: 'fa-bar-chart',
-        linkType: row[4],
-        linkValue: row[5]
+        descriptions: JSON.parse(row[2]),
+        icon: row[1] != "fa-bar-report" ? row[1]: 'fa-bar-chart',
+        linkType: parseInt(row[3]),
+        linkValue: row[4]
       });
     })
     console.log(this.cardSelections);
   }
 
   public selectCard(card: CardSelection) {
-    if (card && card.linkType.toLowerCase() == 'detector') {
-      this._router.navigate([`../${card.linkValue}`, <NavigationExtras>{ relativeTo: this._activatedRoute }])
+    if (card && card.linkType === CardActionType.Detector) {
+      this._navigator.NavigateToDetector(this._router, card.linkValue);
     }
   }
-
 }

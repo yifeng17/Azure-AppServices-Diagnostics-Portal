@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ResourceService } from '../../../shared/services/resource.service';
 import * as momentNs from 'moment';
 import { Router, ActivatedRoute } from '@angular/router';
-import { DetectorControlService } from 'diagnostic-data';
+import { DetectorControlService, FeatureNavigationService } from 'diagnostic-data';
 
 @Component({
   selector: 'dashboard',
@@ -17,8 +17,10 @@ export class DashboardComponent {
   contentHeight: string;
 
   constructor(public resourceService: ResourceService, private _detectorControlService: DetectorControlService,
-    private _router: Router, private _activatedRoute: ActivatedRoute) {
+    private _router: Router, private _activatedRoute: ActivatedRoute, private _navigator: FeatureNavigationService) {
     this.contentHeight = (window.innerHeight - 50) + 'px';
+
+    this._navigator.DetectorParent = this._activatedRoute;
 
     // Add time params to route if not already present
     if (!this._activatedRoute.queryParams['startTime'] || !this._activatedRoute.queryParams['endTime']) {

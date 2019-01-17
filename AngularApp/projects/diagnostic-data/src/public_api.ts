@@ -7,6 +7,7 @@ export * from './lib/services/comms.service';
 export * from './lib/services/telemetry/telemetry.service';
 export * from './lib/services/detector-control.service';
 export * from './lib/services/telemetry/telemetry.common';
+export * from './lib/services/feature-navigation.service';
 export * from './lib/config/diagnostic-data-config';
 export * from './lib/diagnostic-data.module';
 

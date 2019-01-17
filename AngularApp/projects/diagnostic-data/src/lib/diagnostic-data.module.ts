@@ -43,6 +43,7 @@ import { CardSelectionComponent } from './components/card-selection/card-selecti
 import { FeedbackComponent } from './components/feedback/feedback.component';
 import { CopyInsightDetailsComponent } from './components/copy-insight-details/copy-insight-details.component';
 import { MarkdownEditorComponent } from './components/markdown-editor/markdown-editor.component';
+import { FeatureNavigationService } from './services/feature-navigation.service';
 
 @NgModule({
   imports: [
@@ -75,7 +76,8 @@ export class DiagnosticDataModule {
         AppInsightsTelemetryService,
         TelemetryService,
         DetectorControlService,
-        CommsService
+        CommsService,
+        FeatureNavigationService
       ]
     };
   }
