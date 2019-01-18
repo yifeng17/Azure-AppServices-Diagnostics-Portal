@@ -22,6 +22,7 @@ export class LiveChatSettings {
         '32457411',     //Availability and Performance/Web App Slow
         '32570954',     //Availability and Performance/Web App Restarted
         '32583701',     //Availability and Performance/Web App experiencing High CPU
+        '32581616',     //Availability and Performance/Web App experiencing High Memory Usage
         '32440123',     //Configuration and Management/Configuring SSL
         '32440122',     //Configuration and Management/Configuring custom domain names
         '32542210',     //Configuration and Management/IP Configuration
