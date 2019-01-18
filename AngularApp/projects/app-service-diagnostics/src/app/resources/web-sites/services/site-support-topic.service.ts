@@ -10,11 +10,11 @@ import { OperatingSystem } from '../../../shared/models/site';
 export class SiteSupportTopicService extends SupportTopicService {
 
   private _hardCodedSupportTopicIdMapping = [
-    {
-      pesId: '14748',
-      supportTopicId: '32583701',
-      path: '/diagnostics/availability/detectors/sitecpuanalysis/focus',
-    },
+    // {
+    //   pesId: '14748',
+    //   supportTopicId: '32583701',
+    //   path: '/diagnostics/availability/detectors/sitecpuanalysis/focus',
+    // },
     {
       pesId: '14748',
       supportTopicId: '32457411',

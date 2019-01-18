@@ -1,18 +1,23 @@
-import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 Injectable()
 export class FeatureNavigationService {
 
-  detectorParent: ActivatedRoute;
+  public lastDetector: string = null;
+
+  private _navigateToDetector :BehaviorSubject<string> = new BehaviorSubject<string>(null);
 
   constructor() { }
 
-  public set DetectorParent(route: ActivatedRoute) {
-    this.detectorParent = route;
+  public get OnDetectorNavigate(): BehaviorSubject<string> {
+    return this._navigateToDetector;
   }
 
-  public NavigateToDetector(router: Router, detector: string) {
-    router.navigate([`./detectors/${detector}`], <NavigationExtras>{ relativeTo: this.detectorParent });
+
+  public NavigateToDetector(sourceDetector: string, detector: string) {
+    this.lastDetector = sourceDetector;
+    this._navigateToDetector.next(detector);
+    this._navigateToDetector.next(null);
   }
 }

@@ -38,7 +38,7 @@ import { PortalKustoTelemetryService } from './shared/services/portal-kusto-tele
         path: 'resource',
         loadChildren: './resources/resources.module#ResourcesModule'
       }
-    ])
+    ], {enableTracing:true })
   ],
   declarations: [
     AppComponent

@@ -34,7 +34,7 @@
         font-size: $card-header-title-font-size;
         font-weight: $card-header-title-font-weight;
         // color: $card-header-title-color;
-        height: $card-header-title-height;
+        // height: $card-header-title-height;
         span {
             height: $card-header-icon-height;
             width: $card-header-icon-width;
@@ -42,8 +42,10 @@
             margin-right: $card-header-icon-margin-right;
         }
         span.fa {
-            font-size: 30px;
-            background-color: rgb(85, 113, 138);
+            font-size: 27px;
+            background-color: #55718a;
+            color: white;
+            height: 36px;
         }
     }
     
@@ -62,4 +64,5 @@
 
 .card-flex {
     display: flex;
+    margin: 10px;
 }

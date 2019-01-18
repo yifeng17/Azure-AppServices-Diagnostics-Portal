@@ -46,12 +46,11 @@ export class CardSelectionComponent extends DataRenderBaseComponent {
         linkValue: row[4]
       });
     })
-    console.log(this.cardSelections);
   }
 
   public selectCard(card: CardSelection) {
     if (card && card.linkType === CardActionType.Detector) {
-      this._navigator.NavigateToDetector(this._router, card.linkValue);
+      this._navigator.NavigateToDetector(this._activatedRoute.snapshot.params['detector'], card.linkValue);
     }
   }
 }

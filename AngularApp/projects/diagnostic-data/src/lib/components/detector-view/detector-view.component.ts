@@ -1,7 +1,7 @@
 import { ResourceService } from './../../../../../applens/src/app/shared/services/resource.service';
 import { Component, OnInit, Input, Output, EventEmitter, Inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { DetectorResponse, RenderingType } from '../../models/detector';
+import { DetectorResponse, RenderingType, Rendering } from '../../models/detector';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
 import * as momentNs from 'moment';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
@@ -29,6 +29,8 @@ export class DetectorViewComponent implements OnInit {
   detectorDataLocalCopy: DetectorResponse;
   errorState: any;
   isPublic: boolean;
+
+  hideDetectorHeader: boolean = false;
 
   buttonViewVisible: boolean = false;
   buttonViewActiveComponent: string;
@@ -75,12 +77,6 @@ export class DetectorViewComponent implements OnInit {
 
   ngOnInit() {
     this.loadDetector();
-
-    this.detectorControlService.update.subscribe(validUpdate => {
-      if (validUpdate) {
-
-      }
-    });
 
     this.errorSubject.subscribe((data: any) => {
       this.errorState = data;
@@ -131,6 +127,8 @@ export class DetectorViewComponent implements OnInit {
         this.buttonViewVisible = false;
 
         this.logInsights(data);
+
+        this.hideDetectorHeader = data.dataset.findIndex(set => (<Rendering>set.renderingProperties).type === RenderingType.Cards) >= 0;
 
       }
     });

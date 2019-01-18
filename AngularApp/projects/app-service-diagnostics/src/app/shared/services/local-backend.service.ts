@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { map, retry } from 'rxjs/operators';
 import { Http, Headers, Response } from '@angular/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { AuthService } from '../../startup/services/auth.service';
 import { ArmService } from './arm.service';
 import { DetectorResponse, DetectorMetaData } from 'diagnostic-data';
@@ -29,7 +29,14 @@ export class LocalBackendService {
 
   public getDetectors(): Observable<DetectorMetaData[]> {
     const path = `v4${this.resourceId}/detectors`;
-    return this.invoke<DetectorResponse[]>(path, 'POST').pipe(map(response => response.map(detector => detector.metadata)));
+    if (this.detectorList) {
+      return of(this.detectorList);
+    }
+    
+    return this.invoke<DetectorResponse[]>(path, 'POST').pipe(map(response => {
+      this.detectorList = response.map(detector => detector.metadata);
+      return this.detectorList;
+    }));
   }
 
   public getDetector(detectorName: string, startTime: string, endTime: string, refresh?: boolean, internalView?: boolean) {

@@ -4,11 +4,15 @@ import { DetectorControlService } from '../../services/detector-control.service'
 import { ActivatedRoute } from '@angular/router';
 import { DetectorResponse } from '../../models/detector';
 import { BehaviorSubject } from 'rxjs';
+import { FeatureNavigationService } from 'diagnostic-data';
 
 @Component({
   selector: 'detector-container',
   templateUrl: './detector-container.component.html',
-  styleUrls: ['./detector-container.component.scss']
+  styleUrls: ['./detector-container.component.scss'],
+  // providers: [
+  //   FeatureNavigationService
+  // ]
 })
 export class DetectorContainerComponent implements OnInit {
 
@@ -24,7 +28,7 @@ export class DetectorContainerComponent implements OnInit {
   }
 
   constructor(private _route: ActivatedRoute, private _diagnosticService: DiagnosticService,
-    public detectorControlService: DetectorControlService) { }
+    public detectorControlService: DetectorControlService, public navigator: FeatureNavigationService) { }
 
   ngOnInit() {
     this.detectorControlService.update.subscribe(isValidUpdate => {
