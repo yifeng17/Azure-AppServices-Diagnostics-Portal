@@ -14,7 +14,6 @@ export class FeatureNavigationService {
     return this._navigateToDetector;
   }
 
-
   public NavigateToDetector(sourceDetector: string, detector: string) {
     this.lastDetector = sourceDetector;
     this._navigateToDetector.next(detector);

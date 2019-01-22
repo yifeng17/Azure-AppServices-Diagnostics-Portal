@@ -8,7 +8,10 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'generic-detector',
   templateUrl: './generic-detector.component.html',
-  styleUrls: ['./generic-detector.component.scss']
+  styleUrls: ['./generic-detector.component.scss'],
+  providers: [
+    FeatureNavigationService
+  ]
 })
 export class GenericDetectorComponent implements OnDestroy {
   detector: string;

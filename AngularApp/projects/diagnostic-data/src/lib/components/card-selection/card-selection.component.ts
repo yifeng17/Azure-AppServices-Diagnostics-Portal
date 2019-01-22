@@ -41,7 +41,7 @@ export class CardSelectionComponent extends DataRenderBaseComponent {
       this.cardSelections.push(<CardSelection>{
         title: row[0],
         descriptions: JSON.parse(row[2]),
-        icon: row[1] != "fa-bar-report" ? row[1]: 'fa-bar-chart',
+        icon: 'fa-bar-chart',
         linkType: parseInt(row[3]),
         linkValue: row[4]
       });

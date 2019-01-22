@@ -1,8 +1,7 @@
 @import "../../../../../app-service-diagnostics/src/styles/main.scss";
 
 .card-container {
-    width: 400px;
-    // padding: 10px;
+    width: 300px;
     margin: 0px 15px 15px 0px;
     border-radius: $card-border-radius;
     border-width: $card-border-width;
@@ -65,4 +64,5 @@
 .card-flex {
     display: flex;
     margin: 10px;
+    flex-wrap: wrap;
 }
