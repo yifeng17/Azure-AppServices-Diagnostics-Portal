@@ -5,11 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Properties\PublishProfiles\appservices-diagnostics-bay - FTP.pubxml" />
-    <None Remove="Properties\PublishProfiles\appservices-diagnostics-bay - Web Deploy.pubxml" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
