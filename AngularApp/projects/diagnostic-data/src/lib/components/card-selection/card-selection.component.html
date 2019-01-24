@@ -12,12 +12,6 @@
           <li *ngFor="let desc of card.descriptions">{{desc}}</li>
         </ul>
       </div>
-      <!-- <div class="cardFooter">
-        <div *ngIf="card.authorizedStatus==='authorized'">{{card.authenticatedId}}</div>
-        <div *ngIf="card.authorizedStatus==='loadingAuth'">
-          <i class="fa fa-refresh fa-spin fa-fw"></i> {{ 'loading' | translate }}</div>
-        <div *ngIf="card.authorizedStatus==='notAuthorized'">{{ 'notAuthorized' | translate}}</div>
-      </div> -->
     </div>
   </div>
 </div>
