@@ -1,3 +1,4 @@
+import { CardSelectionComponent } from './../card-selection/card-selection.component';
 import { Component, OnInit, AfterViewInit, ComponentFactoryResolver, ViewChild,
   ViewContainerRef, ComponentRef, Input } from '@angular/core';
 import { TimeSeriesGraphComponent } from '../time-series-graph/time-series-graph.component';
@@ -21,7 +22,7 @@ import { DropdownComponent } from '../dropdown/dropdown.component';
   styleUrls: ['./dynamic-data.component.scss'],
   entryComponents: [TimeSeriesGraphComponent, DataTableComponent, DataSummaryComponent, EmailComponent,
     InsightsComponent, TimeSeriesInstanceGraphComponent, DynamicInsightComponent, MarkdownComponent,
-    DetectorListComponent, DropdownComponent]
+    DetectorListComponent, DropdownComponent, CardSelectionComponent]
 })
 export class DynamicDataComponent implements OnInit {
 
@@ -78,6 +79,8 @@ export class DynamicDataComponent implements OnInit {
         return DetectorListComponent;
       case RenderingType.DropDown:
         return DropdownComponent;
+      case RenderingType.Cards:
+        return CardSelectionComponent;
       default:
         return null;
     }

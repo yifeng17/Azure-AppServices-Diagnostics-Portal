@@ -1,19 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-// import { DiagnosticDataModule, PUBLIC_CONFIGURATION, DiagnosticService, CommsService } from 'diagnostic-data';
-import { GenericApiService } from '../shared/services/generic-api.service';
-import { GenericCommsService } from '../shared/services/generic-comms.service';
 
 const ResourceRoutes = RouterModule.forChild([
-  // {
-  //   path: 'legacy/subscriptions/:subscriptionid/resourcegroups/:resourcegroup/providers/microsoft.web/sites/:sitename',
-  //   loadChildren: 'app/availability/availability.module#AvailabilityModule'
-  // },
-  // {
-  //   path: 'legacy/subscriptions/:subscriptionid/resourcegroups/:resourcegroup/providers/microsoft.web/sites/:sitename/slots/:slot',
-  //   loadChildren: 'app/availability/availability.module#AvailabilityModule'
-  // },
 
   // Web Apps
   {
@@ -39,9 +28,6 @@ const ResourceRoutes = RouterModule.forChild([
     ResourceRoutes
   ],
   declarations: [],
-  providers: [
-    // { provide: DiagnosticService, useExisting: GenericApiService },
-    // { provide: CommsService, useExisting: GenericCommsService }
-  ]
+  providers: []
 })
 export class ResourcesModule { }
