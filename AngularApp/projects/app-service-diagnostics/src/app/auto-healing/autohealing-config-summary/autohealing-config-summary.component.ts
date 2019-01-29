@@ -1,5 +1,5 @@
-import { Component, OnInit, OnChanges, Input } from '@angular/core';
-import { AutoHealSettings, AutoHealActionType } from '../../shared/models/autohealing';
+import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { AutoHealActionType, AutoHealSettings } from '../../shared/models/autohealing';
 import { FormatHelper } from '../../shared/utilities/formattingHelper';
 
 @Component({

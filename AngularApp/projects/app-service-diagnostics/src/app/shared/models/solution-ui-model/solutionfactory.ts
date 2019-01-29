@@ -9,7 +9,6 @@ import { AvailabilityLoggingService } from '../../services/logging/availability.
 
 export class SolutionFactory {
 
-
     static getSolutionById(rank: number, id: number, parameters: INameValuePair[][], siteService: SiteService, portalActionService: PortalActionService, _logger: AvailabilityLoggingService): SolutionUIModelBase {
 
         switch (id) {

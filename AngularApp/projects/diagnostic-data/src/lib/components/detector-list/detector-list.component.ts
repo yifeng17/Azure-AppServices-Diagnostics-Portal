@@ -1,17 +1,17 @@
-
-import { forkJoin as observableForkJoin, Observable, empty, throwError } from 'rxjs';
-import { Component, OnInit, Pipe, PipeTransform } from '@angular/core';
+import { Component, Pipe, PipeTransform } from '@angular/core';
+import { trigger, state, style, transition, animate } from '@angular/animations';
+import { forkJoin as observableForkJoin, Observable, throwError } from 'rxjs';
+import { map } from 'rxjs/internal/operators/map';
+import { catchError } from 'rxjs/operators';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
 import { DetectorListRendering, DiagnosticData, DetectorResponse, HealthStatus, DetectorMetaData } from '../../models/detector';
 import { DiagnosticService } from '../../services/diagnostic.service';
 import { StatusStyles } from '../../models/styles';
-import { trigger, state, style, transition, animate } from '@angular/animations';
 import { LoadingStatus } from '../../models/loading';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { TelemetryEventNames } from '../../services/telemetry/telemetry.common';
 import { DetectorControlService } from '../../services/detector-control.service';
-import { map } from 'rxjs/internal/operators/map';
-import { catchError } from 'rxjs/operators';
+
 
 @Component({
   selector: 'detector-list',

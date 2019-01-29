@@ -1,19 +1,22 @@
-import { Component, OnInit, AfterViewInit, ComponentFactoryResolver, ViewChild,
-  ViewContainerRef, ComponentRef, Input } from '@angular/core';
-import { TimeSeriesGraphComponent } from '../time-series-graph/time-series-graph.component';
-import { DataTableComponent } from '../data-table/data-table.component';
-import { RenderingType, DiagnosticData, Rendering } from '../../models/detector';
-import { DataRenderBaseComponent, DataRenderer } from '../data-render-base/data-render-base.component';
+import { Moment } from 'moment';
 import { BehaviorSubject } from 'rxjs';
+import {
+    Component, ComponentFactoryResolver, Input, OnInit, ViewChild, ViewContainerRef
+} from '@angular/core';
+import { DiagnosticData, Rendering, RenderingType } from '../../models/detector';
+import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
 import { DataSummaryComponent } from '../data-summary/data-summary.component';
-import { EmailComponent } from '../email/email.component';
-import { InsightsComponent } from '../insights/insights.component';
-import * as momentNs from 'moment';
-import { TimeSeriesInstanceGraphComponent } from '../time-series-instance-graph/time-series-instance-graph.component';
-import { DynamicInsightComponent } from '../dynamic-insight/dynamic-insight.component';
-import { MarkdownComponent } from '../markdown/markdown.component';
+import { DataTableComponent } from '../data-table/data-table.component';
 import { DetectorListComponent } from '../detector-list/detector-list.component';
 import { DropdownComponent } from '../dropdown/dropdown.component';
+import { DynamicInsightComponent } from '../dynamic-insight/dynamic-insight.component';
+import { EmailComponent } from '../email/email.component';
+import { InsightsComponent } from '../insights/insights.component';
+import { MarkdownComponent } from '../markdown/markdown.component';
+import { TimeSeriesGraphComponent } from '../time-series-graph/time-series-graph.component';
+import {
+    TimeSeriesInstanceGraphComponent
+} from '../time-series-instance-graph/time-series-instance-graph.component';
 
 @Component({
   selector: 'dynamic-data',
@@ -31,8 +34,8 @@ export class DynamicDataComponent implements OnInit {
     this.dataBehaviorSubject.next(data);
   }
 
-  @Input() startTime: momentNs.Moment;
-  @Input() endTime: momentNs.Moment;
+  @Input() startTime: Moment;
+  @Input() endTime: Moment;
   @Input() detectorEventProperties: any;
 
   @ViewChild('dynamicDataContainer', { read: ViewContainerRef }) dynamicDataContainer: ViewContainerRef;
