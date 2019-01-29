@@ -47,4 +47,4 @@ Thumbs.db
 /ssl/*.crt
 /ssl/*.key
 
-package-lock.json
+.angulardoc.json
