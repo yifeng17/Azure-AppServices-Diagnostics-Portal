@@ -29,7 +29,7 @@ namespace AppLensV3.Controllers
         {
             if (!Request.Headers.ContainsKey("x-ms-path-query"))
             {
-                return BadRequest("Missing x-ms-path-query header");
+                return BadRequest("Missing x-ms-path-query header"); 
             }
 
             string path = Request.Headers["x-ms-path-query"];
