@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Data.SqlClient;
 using Dapper;
-using Dapper.Contrib.Extensions;
 using Kusto.Data.Net.Client;
 using System.Dynamic;
-using Kusto.Data;
 using Microsoft.Extensions.Configuration;
 
 namespace AppLensV3.Controllers

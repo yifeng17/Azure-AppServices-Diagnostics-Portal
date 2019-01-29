@@ -1,19 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
-using System.Web;
 using Newtonsoft.Json;
 using System.Net;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Mvc;
 
 namespace AppLensV3
 {
@@ -288,11 +282,11 @@ namespace AppLensV3
             }
             else if(response.StatusCode == HttpStatusCode.NotFound)
             {
-                observerResponse.Content = (string)"Resource Not Found. API : " + apiName;
+                observerResponse.Content = "Resource Not Found. API : " + apiName;
             }
             else
             {
-                observerResponse.Content = (string)"Unable to fetch data from Observer API : " + apiName;
+                observerResponse.Content = "Unable to fetch data from Observer API : " + apiName;
             }
 
             return observerResponse;

@@ -54,7 +54,7 @@ namespace AppLensV3.Services
                 .Replace("{END_TIME}", endTimeStr)
                 .Replace("{SUBSCRIPTION}", subscription);
 
-            DataTable dt = await this._kustoQueryService.ExecuteQueryAsync("Icmcluster", "ACM.Backend", kustoQuery);
+            DataTable dt = await _kustoQueryService.ExecuteQueryAsync("Icmcluster", "ACM.Backend", kustoQuery);
 
             List<Communication> commsList = new List<Communication>();
 
@@ -117,32 +117,13 @@ namespace AppLensV3.Services
                     }
                 }
             }
-
-            /* 
-             * Purposefully commenting out below code section to not show too many comms to customer
-             * In future, if there is a scenario that requires us to show other services Comms too, then we can uncomment the following section
-             */
-
-            //if(impactedServiceComm != null)
-            //{
-            //    // Found an Comm for the desired impacted service
-            //    return commsList;
-            //}
-
-            //Communication otherComm = commsList.FirstOrDefault(p => !p.ImpactedServices.Any(q => q.Name.ToLower().Contains(impactedService.ToLower())));
-
-            //if (otherComm != null && (otherComm.Status == CommunicationStatus.Active || (otherComm.Status == CommunicationStatus.Resolved && ((currentTimeUTC - otherComm.PublishedTime) < _commAlertWindow))))
-            //{
-            //    otherComm.IsAlert = true;
-            //    otherComm.IsExpanded = false;
-            //}
-
+            
             return commsList;
         }
 
         private List<ImpactedService> GetImpactedRegions(string jsonStr)
         {
-            List<ImpactedService> impactedServices = new List<ImpactedService>();
+            var impactedServices = new List<ImpactedService>();
             if (string.IsNullOrWhiteSpace(jsonStr))
             {
                 return impactedServices;

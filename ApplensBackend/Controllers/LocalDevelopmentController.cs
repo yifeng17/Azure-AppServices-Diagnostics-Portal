@@ -1,19 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Cors;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
-using System.Reflection;
-using System.IO;
-using System.IO.Compression;
-using System.Text;
-using System.Web;
 
 namespace AppLensV3.Controllers
 {

@@ -1,17 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
-using System.Web;
 using Microsoft.Extensions.Configuration;
 using System.Security.Authentication;
-using Newtonsoft.Json;
 using System.Text;
-using Microsoft.AspNetCore.Mvc;
-using System.Net;
 using System.Text.RegularExpressions;
 
 namespace AppLensV3
@@ -77,7 +72,7 @@ namespace AppLensV3
             try
             {
                 HttpResponseMessage response;
-                if (!hitPassThroughAPI(path))
+                if (!HitPassThroughAPI(path))
                 {
                     HttpRequestMessage requestMessage = new HttpRequestMessage(method == "POST" ? HttpMethod.Post: HttpMethod.Get, path);
                     requestMessage.Headers.Add("x-ms-internal-view", internalView.ToString());
@@ -108,9 +103,9 @@ namespace AppLensV3
             }
         }
 
-        private bool hitPassThroughAPI(string path)
+        private bool HitPassThroughAPI(string path)
         {
-            return !this._nonPassThroughResourceProviderList.Exists(p => path.ToLower().Contains(p))
+            return !_nonPassThroughResourceProviderList.Exists(p => path.ToLower().Contains(p))
                 || (new Regex("/detectors/[^/]*/statistics").IsMatch(path.ToLower()))
                 || path.ToLower().Contains("/diagnostics/publish");
         }
@@ -125,9 +120,9 @@ namespace AppLensV3
             try
             {
                 X509Certificate2Collection certCollection = certStore.Certificates.Find(
-                                       X509FindType.FindByThumbprint,
-                                       AuthCertThumbprint,
-                                       false);
+                    X509FindType.FindByThumbprint,
+                    AuthCertThumbprint,
+                    false);
                 // Get the first cert with the thumbprint
                 if (certCollection.Count > 0)
                 {
