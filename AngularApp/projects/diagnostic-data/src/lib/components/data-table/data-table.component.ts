@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { DiagnosticData, DataTableRendering, RenderingType } from '../../models/detector';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
 
@@ -10,17 +10,13 @@ import { DataRenderBaseComponent } from '../data-render-base/data-render-base.co
 export class DataTableComponent extends DataRenderBaseComponent {
 
   DataRenderingType = RenderingType.Table;
-
-  @ViewChild('myTable') table: any;
-
   columns: any[];
   rows: any[];
-
   grouped: boolean = true;
-
   rowLimit: 25;
-
   renderingProperties: DataTableRendering;
+
+  @ViewChild('myTable') table: any;
 
   protected processData(data: DiagnosticData) {
     super.processData(data);
@@ -47,10 +43,6 @@ export class DataTableComponent extends DataRenderBaseComponent {
 
       this.rows.push(rowObject);
     });
-  }
-
-  private getKeyName(column: string) {
-    return column.replace(' ', '').toLowerCase();
   }
 
   toggleExpandGroup(group) {
