@@ -1,9 +1,8 @@
-import { Component, OnInit, Inject, Input } from '@angular/core';
-import { CommsService } from '../../services/comms.service';
-import { Communication, CommunicationStatus } from '../../models/communication';
-import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
 import * as momentNs from 'moment';
-
+import { Component, Inject, Input, OnInit } from '@angular/core';
+import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
+import { Communication, CommunicationStatus } from '../../models/communication';
+import { CommsService } from '../../services/comms.service';
 const moment = momentNs;
 
 @Component({
@@ -19,13 +18,13 @@ export class CommAlertComponent implements OnInit {
   private azureServiceCommList: Communication[];
 
   @Input() autoExpand: boolean = false;
-  public commAlertTitle: string;
-  public commAlertToShow: Communication = null;
-  public isAlertExpanded: boolean = false;
-  public commPublishedTime: string;
-  public impactedServices: string;
-  public impactedRegions: string;
-  public isPublic: boolean;
+  commAlertTitle: string;
+  commAlertToShow: Communication = null;
+  isAlertExpanded: boolean = false;
+  commPublishedTime: string;
+  impactedServices: string;
+  impactedRegions: string;
+  isPublic: boolean;
 
   constructor(private commsService: CommsService, @Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig) {
     this.commAlertToShow = null;
@@ -39,10 +38,12 @@ export class CommAlertComponent implements OnInit {
     this.commsService.getServiceHealthCommunications().subscribe((commsList: Communication[]) => {
       this.azureServiceCommList = commsList;
       const commAlert = commsList.find((comm: Communication) => comm.isAlert === true);
+
       if (commAlert) {
         this.commAlertToShow = commAlert;
         this.isAlertExpanded = this.autoExpand && this.commAlertToShow.isExpanded;
         this.commPublishedTime = moment.utc(this.commAlertToShow.publishedTime).format('YYYY-MM-DD HH:mm A');
+
         if (commAlert.status === CommunicationStatus.Active) {
           this.commAlertTitle = this.activeAlertTitle;
         } else {

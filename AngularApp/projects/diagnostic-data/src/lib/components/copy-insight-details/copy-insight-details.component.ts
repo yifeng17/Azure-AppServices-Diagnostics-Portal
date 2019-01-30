@@ -1,7 +1,6 @@
-import { Insight } from './../../models/insight';
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { DetectorResponse } from '../../models/detector';
-import { InsightUtils } from '../../models/insight';
+import { Insight, InsightUtils } from '../../models/insight';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 
 @Component({
@@ -11,7 +10,7 @@ import { TelemetryService } from '../../services/telemetry/telemetry.service';
 })
 export class CopyInsightDetailsComponent implements OnInit {
 
-  insightCopyText: string = '';
+  insightCopyText = '';
 
   @Input() detectorResponse: DetectorResponse;
 
@@ -29,12 +28,14 @@ export class CopyInsightDetailsComponent implements OnInit {
     else {
       insights.forEach(insight => {
         this.insightCopyText += '## ' + insight.title + '\n\n';
+
         for (let key in insight.data) {
           this.insightCopyText += `### ${key}\n\n`;
           let data = insight.data[key].replace('<markdown>','').replace('</markdown>', '');
           let lines = data.split(/\r?\n/);
-          for(let i in lines) {
-            this.insightCopyText += lines[i].trim() + '\n';
+
+          for(let line in lines) {
+            this.insightCopyText += lines[line].trim() + '\n';
           }
 
           this.insightCopyText += '\n'

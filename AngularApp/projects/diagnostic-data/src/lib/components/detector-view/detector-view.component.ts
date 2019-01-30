@@ -1,13 +1,10 @@
-import { Component, OnInit, Input, Inject } from '@angular/core';
-import { trigger, state, style, transition, animate } from '@angular/animations';
 import { Moment } from 'moment';
 import { BehaviorSubject } from 'rxjs';
-import { DetectorResponse, RenderingType } from '../../models/detector';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
-import { TelemetryService } from '../../services/telemetry/telemetry.service';
-import { TelemetryEventNames } from '../../services/telemetry/telemetry.common';
+import { DetectorResponse, Rendering, RenderingType } from '../../models/detector';
 import { DetectorControlService } from '../../services/detector-control.service';
-
+import { TelemetryEventNames } from '../../services/telemetry/telemetry.common';
+import { TelemetryService } from '../../services/telemetry/telemetry.service';
 
 @Component({
   selector: 'detector-view',
@@ -28,6 +25,8 @@ export class DetectorViewComponent implements OnInit {
   errorState: any;
   isPublic: boolean;
 
+  hideDetectorHeader: boolean = false;
+
   buttonViewVisible: boolean = false;
   buttonViewActiveComponent: string;
 
@@ -37,11 +36,11 @@ export class DetectorViewComponent implements OnInit {
   private detectorResponseSubject: BehaviorSubject<DetectorResponse> = new BehaviorSubject<DetectorResponse>(null);
   private errorSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
-  public detectorEventProperties: { [name: string]: string };
-  public ratingEventProperties: { [name: string]: string };
-  public authorEmails: string;
-  public insightsListEventProperties = {};
-  public currentSiteString = `Current Site: ${window.location.href} `;
+  detectorEventProperties: { [name: string]: string };
+  ratingEventProperties: { [name: string]: string };
+  authorEmails: string;
+  insightsListEventProperties = {};
+  currentSiteString = `Current Site: ${window.location.href} `;
 
   @Input()
   set detectorResponse(value: DetectorResponse) {
@@ -72,12 +71,6 @@ export class DetectorViewComponent implements OnInit {
 
   ngOnInit() {
     this.loadDetector();
-
-    this.detectorControlService.update.subscribe(validUpdate => {
-      if (validUpdate) {
-
-      }
-    });
 
     this.errorSubject.subscribe((data: any) => {
       this.errorState = data;
@@ -128,6 +121,8 @@ export class DetectorViewComponent implements OnInit {
         this.buttonViewVisible = false;
 
         this.logInsights(data);
+
+        this.hideDetectorHeader = data.dataset.findIndex(set => (<Rendering>set.renderingProperties).type === RenderingType.Cards) >= 0;
 
       }
     });

@@ -1,8 +1,8 @@
 
 import {map, retry} from 'rxjs/operators';
-import { Http, Headers, Response, Request } from '@angular/http';
-import { Injectable, EventEmitter } from '@angular/core';
-import { ResponseMessageEnvelope, ResponseMessageCollectionEnvelope } from '../models/responsemessageenvelope';
+import { Http, Headers, Response } from '@angular/http';
+import { Injectable } from '@angular/core';
+import { ResponseMessageEnvelope } from '../models/responsemessageenvelope';
 import { Observable } from 'rxjs';
 import { AuthService } from '../../startup/services/auth.service';
 import { ArmService } from './arm.service';

@@ -1,10 +1,7 @@
-import { Component, OnInit, Inject, Pipe, PipeTransform } from '@angular/core';
+import { Component, Inject, OnInit, Pipe, PipeTransform } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import * as momentNs from 'moment';
-import { DetectorControlService, DurationSelector } from '../../services/detector-control.service';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
-
-const moment = momentNs;
+import { DetectorControlService, DurationSelector } from '../../services/detector-control.service';
 
 @Component({
   selector: 'detector-control',
