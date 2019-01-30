@@ -1,5 +1,7 @@
 import { Moment } from 'moment';
 import { BehaviorSubject } from 'rxjs';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { Component, Inject, Input, OnInit } from '@angular/core';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
 import { DetectorResponse, Rendering, RenderingType } from '../../models/detector';
 import { DetectorControlService } from '../../services/detector-control.service';

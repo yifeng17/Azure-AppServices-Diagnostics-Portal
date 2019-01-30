@@ -17,6 +17,7 @@ import { TimeSeriesGraphComponent } from '../time-series-graph/time-series-graph
 import {
     TimeSeriesInstanceGraphComponent
 } from '../time-series-instance-graph/time-series-instance-graph.component';
+import { Moment } from 'moment';
 
 @Component({
   selector: 'dynamic-data',

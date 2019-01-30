@@ -1,5 +1,6 @@
 import 'd3';
 import 'nvd3';
+import { DetectorControlService, DiagnosticService, TelemetryService } from 'diagnostic-data';
 import { NvD3Module } from 'ng2-nvd3';
 import { MarkdownModule } from 'ngx-markdown';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
@@ -53,6 +54,8 @@ import {
 import { ClipboardService } from './services/clipboard.service';
 import { CommsService } from './services/comms.service';
 import { FeatureNavigationService } from './services/feature-navigation.service';
+import { AppInsightsTelemetryService } from './services/telemetry/appinsights-telemetry.service';
+import { KustoTelemetryService } from './services/telemetry/kusto-telemetry.service';
 
 @NgModule({
   imports: [
