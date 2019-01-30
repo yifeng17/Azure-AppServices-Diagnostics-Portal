@@ -1,9 +1,7 @@
 import { Moment } from 'moment';
 import { BehaviorSubject } from 'rxjs';
-import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, Inject, Input, OnInit } from '@angular/core';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
-import { DetectorResponse, RenderingType } from '../../models/detector';
+import { DetectorResponse, Rendering, RenderingType } from '../../models/detector';
 import { DetectorControlService } from '../../services/detector-control.service';
 import { TelemetryEventNames } from '../../services/telemetry/telemetry.common';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
@@ -26,6 +24,8 @@ export class DetectorViewComponent implements OnInit {
   detectorDataLocalCopy: DetectorResponse;
   errorState: any;
   isPublic: boolean;
+
+  hideDetectorHeader: boolean = false;
 
   buttonViewVisible: boolean = false;
   buttonViewActiveComponent: string;
@@ -71,12 +71,6 @@ export class DetectorViewComponent implements OnInit {
 
   ngOnInit() {
     this.loadDetector();
-
-    this.detectorControlService.update.subscribe(validUpdate => {
-      if (validUpdate) {
-
-      }
-    });
 
     this.errorSubject.subscribe((data: any) => {
       this.errorState = data;
@@ -127,6 +121,8 @@ export class DetectorViewComponent implements OnInit {
         this.buttonViewVisible = false;
 
         this.logInsights(data);
+
+        this.hideDetectorHeader = data.dataset.findIndex(set => (<Rendering>set.renderingProperties).type === RenderingType.Cards) >= 0;
 
       }
     });

@@ -84,6 +84,7 @@ import { TileListComponent } from './components/tile-list/tile-list.component';
 import { BackendCtrlService } from './services/backend-ctrl.service';
 import { GenericCommsService } from './services/generic-comms.service';
 import { GenericCommsComponent } from './components/generic-comms/generic-comms.component';
+import { LocalBackendService } from './services/local-backend.service';
 
 @NgModule({
     declarations: [
@@ -241,7 +242,8 @@ export class SharedModule {
                 NotificationService,
                 BackendCtrlService,
                 GenericCommsService,
-                GroupByPipe
+                GroupByPipe,
+                LocalBackendService
             ]
         };
     }

@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { CardSelectionComponent } from './components/card-selection/card-selection.component';
 import { CommAlertComponent } from './components/comm-alert/comm-alert.component';
 import {
     CopyInsightDetailsComponent
@@ -24,9 +25,6 @@ import {
 import {
     DetectorListComponent, DetectorOrderPipe
 } from './components/detector-list/detector-list.component';
-import {
-    DetectorSolutionComponent
-} from './components/detector-solution/detector-solution.component';
 import { DetectorViewComponent } from './components/detector-view/detector-view.component';
 import { DropdownComponent } from './components/dropdown/dropdown.component';
 import { DynamicDataComponent } from './components/dynamic-data/dynamic-data.component';
@@ -54,11 +52,7 @@ import {
 } from './config/diagnostic-data-config';
 import { ClipboardService } from './services/clipboard.service';
 import { CommsService } from './services/comms.service';
-import { DetectorControlService } from './services/detector-control.service';
-import { DiagnosticService } from './services/diagnostic.service';
-import { AppInsightsTelemetryService } from './services/telemetry/appinsights-telemetry.service';
-import { KustoTelemetryService } from './services/telemetry/kusto-telemetry.service';
-import { TelemetryService } from './services/telemetry/telemetry.service';
+import { FeatureNavigationService } from './services/feature-navigation.service';
 
 @NgModule({
   imports: [
@@ -76,7 +70,7 @@ import { TelemetryService } from './services/telemetry/telemetry.service';
     DataContainerComponent, TimeSeriesInstanceGraphComponent, DetectorViewComponent, DataSummaryComponent, EmailComponent, InsightsComponent,
     LoaderViewComponent, DynamicInsightComponent, MarkdownComponent, DetectorListComponent, DetectorOrderPipe, StarRatingComponent, StarRatingFeedbackComponent,
     DropdownComponent, StatusIconComponent, DetectorControlComponent, DetectorContainerComponent, InternalPipe, CommAlertComponent, FeedbackComponent,
-    CopyInsightDetailsComponent, MarkdownEditorComponent, DetectorSolutionComponent],
+    CopyInsightDetailsComponent, MarkdownEditorComponent, CardSelectionComponent],
   exports: [FormsModule, TimeSeriesGraphComponent, DataTableComponent, DynamicDataComponent, DetectorViewComponent, DataSummaryComponent,
     LoaderViewComponent, StatusIconComponent, DetectorControlComponent, DetectorContainerComponent, InternalPipe, CommAlertComponent],
 })
@@ -91,7 +85,8 @@ export class DiagnosticDataModule {
         AppInsightsTelemetryService,
         TelemetryService,
         DetectorControlService,
-        CommsService
+        CommsService,
+        FeatureNavigationService
       ]
     };
   }

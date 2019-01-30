@@ -1,3 +1,4 @@
+import { LocalBackendService } from './shared/services/local-backend.service';
 import { KustoTelemetryService } from './../../../diagnostic-data/src/lib/services/telemetry/kusto-telemetry.service';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
@@ -46,7 +47,9 @@ import { PortalKustoTelemetryService } from './shared/services/portal-kusto-tele
     CustomReuseStrategy,
     { provide: KustoTelemetryService, useExisting: PortalKustoTelemetryService },
     { provide: RouteReuseStrategy, useExisting: CustomReuseStrategy },
-    { provide: DiagnosticService, useExisting: GenericApiService },
+    { provide: DiagnosticService, 
+      useFactory: (_localBackendService: LocalBackendService, _genericApiService: GenericApiService) => environment.useApplensBackend ? _localBackendService : _genericApiService,
+      deps: [LocalBackendService, GenericApiService] },
     { provide: CommsService, useExisting: GenericCommsService }
   ],
   bootstrap: [AppComponent]

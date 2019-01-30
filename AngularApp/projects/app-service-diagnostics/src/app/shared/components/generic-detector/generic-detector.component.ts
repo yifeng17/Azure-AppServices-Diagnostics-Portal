@@ -1,18 +1,31 @@
-import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { TelemetryService } from 'diagnostic-data';
+import { TelemetryService, FeatureNavigationService } from 'diagnostic-data';
 import { AuthService } from '../../../startup/services/auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'generic-detector',
   templateUrl: './generic-detector.component.html',
-  styleUrls: ['./generic-detector.component.scss']
+  styleUrls: ['./generic-detector.component.scss'],
+  providers: [
+    FeatureNavigationService
+  ]
 })
-export class GenericDetectorComponent {
+export class GenericDetectorComponent implements OnDestroy {
   detector: string;
+  navigateSub: Subscription;
 
-  constructor(private _activatedRoute: ActivatedRoute, private _authServiceInstance: AuthService, private _telemetryService: TelemetryService) {
+  constructor(private _activatedRoute: ActivatedRoute, private _authServiceInstance: AuthService, private _telemetryService: TelemetryService,
+    private _navigator: FeatureNavigationService, private _router: Router) {
     this.detector = this._activatedRoute.snapshot.params['detectorName'];
+
+    this.navigateSub = this._navigator.OnDetectorNavigate.subscribe((detector: string) => {
+      if (detector) {
+        this._router.navigate([`../../detectors/${detector}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge'});
+      }
+    });
 
     this._authServiceInstance.getStartupInfo().subscribe(startUpInfo => {
       if (startUpInfo) {
@@ -30,5 +43,9 @@ export class GenericDetectorComponent {
        this._telemetryService.eventPropertiesSubject.next(eventProperties);
       }
     });
+  }
+
+  ngOnDestroy() {
+    this.navigateSub.unsubscribe();
   }
 }

@@ -10,6 +10,10 @@ export class DiagnosticService {
     // In applens we provide this withValue: applens-diagnostics.service
     // In Support Center we provide this withValue: generic-api.service
 
+    public getDetectorById(detectorId: string) {
+        return null;
+    }
+
     public getDetector(detector: string, startTime: string, endTime: string, refresh?: boolean, internalView?: boolean): Observable<DetectorResponse> {
         return null;
     }

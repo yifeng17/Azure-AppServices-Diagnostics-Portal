@@ -1,9 +1,9 @@
-import { Moment } from 'moment';
 import { BehaviorSubject } from 'rxjs';
 import {
     Component, ComponentFactoryResolver, Input, OnInit, ViewChild, ViewContainerRef
 } from '@angular/core';
 import { DiagnosticData, Rendering, RenderingType } from '../../models/detector';
+import { CardSelectionComponent } from '../card-selection/card-selection.component';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
 import { DataSummaryComponent } from '../data-summary/data-summary.component';
 import { DataTableComponent } from '../data-table/data-table.component';
@@ -24,7 +24,7 @@ import {
   styleUrls: ['./dynamic-data.component.scss'],
   entryComponents: [TimeSeriesGraphComponent, DataTableComponent, DataSummaryComponent, EmailComponent,
     InsightsComponent, TimeSeriesInstanceGraphComponent, DynamicInsightComponent, MarkdownComponent,
-    DetectorListComponent, DropdownComponent]
+    DetectorListComponent, DropdownComponent, CardSelectionComponent]
 })
 export class DynamicDataComponent implements OnInit {
 
@@ -81,6 +81,8 @@ export class DynamicDataComponent implements OnInit {
         return DetectorListComponent;
       case RenderingType.DropDown:
         return DropdownComponent;
+      case RenderingType.Cards:
+        return CardSelectionComponent;
       default:
         return null;
     }

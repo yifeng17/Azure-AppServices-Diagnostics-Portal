@@ -147,9 +147,9 @@ export class DetectorSummaryComponent implements OnInit, AfterViewInit, IChatMes
 
       if (insight == null) {
         insights.push(<DetectorSummaryViewModel>{
-          id: insightName,
+          id: <string>insightName,
           loading: LoadingStatus.Success,
-          name: insightName,
+          name: <string>insightName,
           path: `detectors/${detectorId}`,
           status: HealthStatus[(<string>row[statusColumnIndex])],
           type: DetectorSummaryType.ChildDetector
