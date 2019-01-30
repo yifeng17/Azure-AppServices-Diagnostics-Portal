@@ -142,8 +142,8 @@ export class DetectorSummaryComponent implements OnInit, AfterViewInit, IChatMes
 
     for (let i: number = 0; i < data.rows.length; i++) {
       const row = data.rows[i];
-      let insight: DetectorSummaryViewModel = insights.find(insight => insight.name === insightName);
       const insightName: string = row[insightColumnIndex];
+      let insight: DetectorSummaryViewModel = insights.find(insight => insight.name === insightName);
 
       if (insight == null) {
         insights.push(<DetectorSummaryViewModel>{
