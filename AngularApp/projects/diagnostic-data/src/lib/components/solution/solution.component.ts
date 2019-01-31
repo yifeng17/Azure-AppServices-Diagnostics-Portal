@@ -39,7 +39,7 @@ export class SolutionComponent extends DataRenderBaseComponent {
     data.table.rows.map(row => {
       this.solution = <Solution>{
         title: row[0],
-        descriptions: row[1],
+        descriptions: JSON.parse(row[1]),
         requiresConfirmation: row[2],
         resourceGroup: row[3],
         resourceName: row[4],
