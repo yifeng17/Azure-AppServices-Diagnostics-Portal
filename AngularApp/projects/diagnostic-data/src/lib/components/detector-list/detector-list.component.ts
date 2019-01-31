@@ -1,17 +1,18 @@
-
-import { forkJoin as observableForkJoin, Observable, empty, throwError } from 'rxjs';
-import { Component, OnInit, Pipe, PipeTransform } from '@angular/core';
-import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
-import { DetectorListRendering, DiagnosticData, DetectorResponse, HealthStatus, DetectorMetaData } from '../../models/detector';
-import { DiagnosticService } from '../../services/diagnostic.service';
-import { StatusStyles } from '../../models/styles';
-import { trigger, state, style, transition, animate } from '@angular/animations';
-import { LoadingStatus } from '../../models/loading';
-import { TelemetryService } from '../../services/telemetry/telemetry.service';
-import { TelemetryEventNames } from '../../services/telemetry/telemetry.common';
-import { DetectorControlService } from '../../services/detector-control.service';
+import { forkJoin as observableForkJoin, Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/internal/operators/map';
 import { catchError } from 'rxjs/operators';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { Component, Pipe, PipeTransform } from '@angular/core';
+import {
+    DetectorListRendering, DetectorMetaData, DetectorResponse, DiagnosticData, HealthStatus
+} from '../../models/detector';
+import { LoadingStatus } from '../../models/loading';
+import { StatusStyles } from '../../models/styles';
+import { DetectorControlService } from '../../services/detector-control.service';
+import { DiagnosticService } from '../../services/diagnostic.service';
+import { TelemetryEventNames } from '../../services/telemetry/telemetry.common';
+import { TelemetryService } from '../../services/telemetry/telemetry.service';
+import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
 
 @Component({
   selector: 'detector-list',
@@ -28,16 +29,11 @@ import { catchError } from 'rxjs/operators';
 export class DetectorListComponent extends DataRenderBaseComponent {
 
   LoadingStatus = LoadingStatus;
-
   renderingProperties: DetectorListRendering;
-
   detectorMetaData: DetectorMetaData[];
   detectorViewModels: any[];
-
   DetectorStatus = HealthStatus;
-
   errorDetectors: any[] = [];
-
   private childDetectorsEventProperties = {};
 
   constructor(private _diagnosticService: DiagnosticService, protected telemetryService: TelemetryService,

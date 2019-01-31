@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace AppLensV3.Models
+﻿namespace AppLensV3.Models
 {
     public class Package
     {
@@ -20,7 +15,7 @@ namespace AppLensV3.Models
         public string DateTime;
         public string PreviousSha;
 
-        public DetectorCommit(string sha, string author, string dateTime, String previousSha)
+        public DetectorCommit(string sha, string author, string dateTime, string previousSha)
         {
             Sha = sha;
             Author = author;

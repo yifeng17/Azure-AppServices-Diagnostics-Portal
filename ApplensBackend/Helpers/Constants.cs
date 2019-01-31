@@ -1,14 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AppLensV3.Helpers
 {
-    internal class Constants
-    {
-    }
-
     internal class GithubConstants
     {
         internal const string RawFileHeaderMediaType = "application/vnd.github.VERSION.raw";

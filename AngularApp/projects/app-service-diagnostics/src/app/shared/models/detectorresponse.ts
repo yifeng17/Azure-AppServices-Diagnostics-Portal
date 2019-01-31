@@ -1,6 +1,6 @@
 import { IDetectorDefinition } from './detectordefinition';
-import { INameValuePair } from './namevaluepair';
 import { IssueType } from './enumerations';
+import { INameValuePair } from './namevaluepair';
 import { ISolution } from './solution';
 
 export interface IDetectorResponse {

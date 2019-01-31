@@ -1,18 +1,16 @@
-
-import {map, mergeMap} from 'rxjs/operators';
-import { Injectable, Inject } from '@angular/core';
-import { Observable ,  BehaviorSubject } from 'rxjs';
-import { ObserverSiteResponse, ObserverSiteInfo } from '../models/observer';
-import { ResourceService } from './resource.service';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map, mergeMap } from 'rxjs/operators';
+import { Inject, Injectable } from '@angular/core';
+import { RESOURCE_SERVICE_INPUTS, ResourceServiceInputs } from '../models/resources';
 import { ObserverService } from './observer.service';
-import { ArmResource, RESOURCE_SERVICE_INPUTS, ResourceServiceInputs } from '../models/resources';
+import { ResourceService } from './resource.service';
 
 @Injectable()
 export class SiteService extends ResourceService {
 
-  private _currentResource: BehaviorSubject<ObserverSiteInfo> = new BehaviorSubject(null);
+  private _currentResource: BehaviorSubject<Observer.ObserverSiteInfo> = new BehaviorSubject(null);
 
-  private _siteObject: ObserverSiteInfo;
+  private _siteObject: Observer.ObserverSiteInfo;
 
   constructor(@Inject(RESOURCE_SERVICE_INPUTS) inputs: ResourceServiceInputs, protected _observerApiService: ObserverService) {
     super(inputs);
@@ -20,7 +18,7 @@ export class SiteService extends ResourceService {
 
   public startInitializationObservable() {
     this._initialized = this._observerApiService.getSite(this._armResource.resourceName).pipe(
-      mergeMap((observerResponse: ObserverSiteResponse) => {
+      mergeMap((observerResponse: Observer.ObserverSiteResponse) => {
         this._siteObject = this.getSiteFromObserverResponse(observerResponse);
         this._currentResource.next(this._siteObject);
         return this._observerApiService.getSiteRequestBody(this._siteObject.SiteName, this._siteObject.InternalStampName);
@@ -40,12 +38,10 @@ export class SiteService extends ResourceService {
     return this._currentResource;
   }
 
-  private getSiteFromObserverResponse(observerResponse: ObserverSiteResponse): ObserverSiteInfo {
+  private getSiteFromObserverResponse(observerResponse: Observer.ObserverSiteResponse): Observer.ObserverSiteInfo {
     return observerResponse.details.find(site =>
       site.Subscription.toLowerCase() === this._armResource.subscriptionId.toLowerCase() &&
       site.ResourceGroupName.toLowerCase() === this._armResource.resourceGroup.toLowerCase())
   }
-
-
 
 }

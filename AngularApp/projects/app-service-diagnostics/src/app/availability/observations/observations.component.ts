@@ -33,7 +33,7 @@ export class ObservationsComponent {
 
     downtimesViewModel: any[];
 
-    constructor(protected _route: ActivatedRoute, protected _router: Router, protected _portalActionService: PortalActionService, 
+    constructor(protected _route: ActivatedRoute, protected _router: Router, protected _portalActionService: PortalActionService,
         protected _logger: AvailabilityLoggingService, protected _siteService: SiteService, protected _detectorViewService: DetectorViewStateService) {
         this.downtimesViewModel = [];
     }
@@ -74,22 +74,22 @@ export class ObservationsComponent {
     }
 
     protected logShowDetails(): void {
-        this._logger.LogClickEvent("Show/Hide Details", "Observations");
+        this._logger.LogClickEvent('Show/Hide Details', 'Observations');
     }
 
-    protected detectorViewClick(downtime: IDetectorAbnormalTimePeriod){
+    protected detectorViewClick(downtime: IDetectorAbnormalTimePeriod) {
         let isDownNow = this.currentlyDown && this.selectedDowntimeIndex === this.analysisResponse.abnormalTimePeriods.length - 1 ? "true" : "false";
-        this._logger.LogClickEvent("Open Detector View", "Observations");
+        this._logger.LogClickEvent('Open Detector View', 'Observations');
         this._logger.LogDetectorViewOpened(downtime.source, downtime.priority, downtime.startTime, downtime.endTime, isDownNow);
 
         this._detectorViewService.setDetectorViewState(downtime);
-        
+
         this._router.navigate(['../detectors/' + downtime.source], { relativeTo: this._route });
     }
 
     protected getIssueTypeTag(source: string): any {
 
-        var tag = {
+        let tag = {
             icon: '',
             title: ''
         };
@@ -126,13 +126,13 @@ export class ObservationsComponent {
                 tag.title = 'ASP.NET Core startup issue';
                 break;
             case 'threadcount':
-                tag.title = 'High thread count'
+                tag.title = 'High thread count';
                 break;
             case 'sitecrashes':
                 tag.title = 'An app crash';
                 break;
             default:
-                tag.title = 'An App Issue'
+                tag.title = 'An App Issue';
                 break;
         }
 

@@ -1,5 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
 import * as momentNs from 'moment';
+import { Component, Input, OnInit } from '@angular/core';
 import { TimeSeriesType } from '../../models/detector';
 import { Nvd3Utilities } from '../../utilities/nvd3-utilities';
 

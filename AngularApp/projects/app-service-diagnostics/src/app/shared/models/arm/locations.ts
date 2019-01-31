@@ -10,8 +10,3 @@ export interface Location {
     displayName?: string;
     location?: string;
 }
-
-// export interface HostingEnvironmentInfo{
-//     name : string;
-//     location : string;
-// }

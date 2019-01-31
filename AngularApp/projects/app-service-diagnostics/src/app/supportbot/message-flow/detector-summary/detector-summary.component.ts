@@ -1,14 +1,16 @@
-import { map, mergeMap } from 'rxjs/operators';
-import { Component, OnInit, Injector, EventEmitter, Output, AfterViewInit } from '@angular/core';
-import { DiagnosticService, DetectorControlService, DetectorMetaData } from 'diagnostic-data';
-import { Message } from '../../models/message';
-import { IChatMessageComponent } from '../../interfaces/ichatmessagecomponent';
-import { NavigationExtras, Router, ActivatedRoute } from '@angular/router';
-import { LoadingStatus, DetectorResponse, Rendering, DetectorListRendering, DiagnosticData, HealthStatus } from 'diagnostic-data';
-import { CategoryChatStateService } from '../../../shared-v2/services/category-chat-state.service';
-import { ResourceService } from '../../../shared-v2/services/resource.service';
-import { LoggingV2Service } from '../../../shared-v2/services/logging-v2.service';
+import {
+    DetectorControlService, DetectorListRendering, DetectorMetaData, DetectorResponse,
+    DiagnosticData, DiagnosticService, HealthStatus, LoadingStatus, Rendering
+} from 'diagnostic-data';
 import { forkJoin, Observable, of } from 'rxjs';
+import { map, mergeMap } from 'rxjs/operators';
+import { AfterViewInit, Component, EventEmitter, Injector, OnInit, Output } from '@angular/core';
+import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
+import { CategoryChatStateService } from '../../../shared-v2/services/category-chat-state.service';
+import { LoggingV2Service } from '../../../shared-v2/services/logging-v2.service';
+import { ResourceService } from '../../../shared-v2/services/resource.service';
+import { IChatMessageComponent } from '../../interfaces/ichatmessagecomponent';
+import { Message } from '../../models/message';
 
 @Component({
   selector: 'detector-summary',
@@ -140,9 +142,10 @@ export class DetectorSummaryComponent implements OnInit, AfterViewInit, IChatMes
 
     for (let i: number = 0; i < data.rows.length; i++) {
       const row = data.rows[i];
-      let insight: DetectorSummaryViewModel;
       const insightName: string = row[insightColumnIndex];
-      if ((insight = insights.find(insight => insight.name === insightName)) == null) {
+      let insight: DetectorSummaryViewModel = insights.find(insight => insight.name === insightName);
+
+      if (insight == null) {
         insights.push(<DetectorSummaryViewModel>{
           id: <string>insightName,
           loading: LoadingStatus.Success,
@@ -159,8 +162,8 @@ export class DetectorSummaryComponent implements OnInit, AfterViewInit, IChatMes
 }
 
 export class DetectorSummaryMessage extends Message {
-  constructor(messageDelayInMs: number = 1000) {
 
+  constructor(messageDelayInMs: number = 1000) {
     super(DetectorSummaryComponent, {}, messageDelayInMs);
   }
 }

@@ -1,15 +1,12 @@
-import { ResourceService } from './../../../../../applens/src/app/shared/services/resource.service';
-import { Component, OnInit, Input, Output, EventEmitter, Inject } from '@angular/core';
+import { Moment } from 'moment';
 import { BehaviorSubject } from 'rxjs';
-import { DetectorResponse, RenderingType, Rendering } from '../../models/detector';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { Component, Inject, Input, OnInit } from '@angular/core';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
-import * as momentNs from 'moment';
-import { TelemetryService } from '../../services/telemetry/telemetry.service';
-import { TelemetryEventNames } from '../../services/telemetry/telemetry.common';
+import { DetectorResponse, Rendering, RenderingType } from '../../models/detector';
 import { DetectorControlService } from '../../services/detector-control.service';
-import { trigger, state, style, transition, animate } from '@angular/animations';
-
-const moment = momentNs;
+import { TelemetryEventNames } from '../../services/telemetry/telemetry.common';
+import { TelemetryService } from '../../services/telemetry/telemetry.service';
 
 @Component({
   selector: 'detector-view',
@@ -35,17 +32,17 @@ export class DetectorViewComponent implements OnInit {
   buttonViewVisible: boolean = false;
   buttonViewActiveComponent: string;
 
-  readonly Feedback: string = 'Feedback'
-  readonly Report: string = 'Report'
+  readonly Feedback: string = 'Feedback';
+  readonly Report: string = 'Report';
 
   private detectorResponseSubject: BehaviorSubject<DetectorResponse> = new BehaviorSubject<DetectorResponse>(null);
   private errorSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
-  public detectorEventProperties: { [name: string]: string };
-  public ratingEventProperties: { [name: string]: string };
-  public authorEmails: string;
-  public insightsListEventProperties = {};
-  public currentSiteString = `Current Site: ${window.location.href} `;
+  detectorEventProperties: { [name: string]: string };
+  ratingEventProperties: { [name: string]: string };
+  authorEmails: string;
+  insightsListEventProperties = {};
+  currentSiteString = `Current Site: ${window.location.href} `;
 
   @Input()
   set detectorResponse(value: DetectorResponse) {
@@ -57,9 +54,8 @@ export class DetectorViewComponent implements OnInit {
     this.errorSubject.next(value);
   }
 
-  @Input() startTime: momentNs.Moment;
-  @Input() endTime: momentNs.Moment;
-
+  @Input() startTime: Moment;
+  @Input() endTime: Moment;
   @Input() showEdit: boolean = true;
   @Input() insideDetectorList: boolean = false;
   @Input() parentDetectorId: string = '';
@@ -103,7 +99,7 @@ export class DetectorViewComponent implements OnInit {
         this.ratingEventProperties = {
           'DetectorId': data.metadata.id,
           'Url': window.location.href
-        }
+        };
 
         this.feedbackDetector = this.isSystemInvoker ? this.feedbackDetector : data.metadata.id;
 
@@ -141,15 +137,13 @@ export class DetectorViewComponent implements OnInit {
         setTimeout(() => {
           this.buttonViewActiveComponent = feature;
           this.buttonViewVisible = true;
-        }, 250)
-      }
-      else {
+        }, 250);
+      } else {
         setTimeout(() => {
           this.buttonViewActiveComponent = null;
-        }, 250)
+        }, 250);
       }
-    }
-    else {
+    } else {
       this.buttonViewActiveComponent = feature;
       this.buttonViewVisible = true;
     }

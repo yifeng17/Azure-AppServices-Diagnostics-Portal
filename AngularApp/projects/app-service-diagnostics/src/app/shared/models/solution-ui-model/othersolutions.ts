@@ -1,9 +1,9 @@
-import { SolutionUIModelBase } from './solution-ui-model-base';
-import { SolutionProperties, SubAction, SolutionMetadata } from './solutionproperties';
-import * as Enums from '../enumerations';
-import { INameValuePair } from '../namevaluepair';
 import { AvailabilityLoggingService } from '../../services/logging/availability.logging.service';
 import { SiteService } from '../../services/site.service';
+import { ActionType, SolutionType } from '../enumerations';
+import { INameValuePair } from '../namevaluepair';
+import { SolutionUIModelBase } from './solution-ui-model-base';
+import { SolutionMetadata, SolutionProperties } from './solutionproperties';
 
 function _window(): any {
     // return the native window obj
@@ -19,7 +19,7 @@ export class EnableLocalCache extends SolutionUIModelBase {
         this.properties.title = 'Explore Local Cache feature for your web app.';
         this.properties.description = 'The local cache is a copy of the /site and /siteextensions folders of the web app. It is created on the local VM instance on web app startup.';
 
-        this.properties.type = Enums.SolutionType.BestPractices;
+        this.properties.type = SolutionType.BestPractices;
 
         const metaDataItem = new SolutionMetadata();
         metaDataItem.type = 'blog';
@@ -45,7 +45,7 @@ export class EnableAutoHeal extends SolutionUIModelBase {
         this.properties.title = 'Explore Auto-Heal feature for web apps.';
         this.properties.description = 'Auto Healing for a Web App lets you take an action when certain unexpected events occur like requests failing or slow.';
 
-        this.properties.type = Enums.SolutionType.BestPractices;
+        this.properties.type = SolutionType.BestPractices;
 
         this.properties.additionalData = [];
 
@@ -72,7 +72,7 @@ export class SplitAppsIntoDifferentServerFarms extends SolutionUIModelBase {
         this.properties.title = 'Move Apps into Different App Service Plans';
         this.properties.description = 'When there are too many Apps in one App Service Plan, they can use all of the underlying resources. Analyze which Apps are using the most resources, i.e. CPU and Memory, and divide them among different app service plans.';
 
-        this.properties.type = Enums.SolutionType.BestPractices;
+        this.properties.type = SolutionType.BestPractices;
     }
 
     run(): void {
@@ -88,15 +88,16 @@ export class CheckWebConfig extends SolutionUIModelBase {
         this.properties.title = 'Check your Web.config';
         this.properties.description = 'You can check and modify your web.config file in kudu console. In Debug Console, navigate to site\\wwwroot folder and find your Web.config file there.';
 
-        this.properties.type = Enums.SolutionType.DeepInvestigation;
-        this.properties.actionType = Enums.ActionType.NewTab;
+        this.properties.type = SolutionType.DeepInvestigation;
+        this.properties.actionType = ActionType.NewTab;
         this.properties.actionText = 'Open Kudu Console to check Web.Config';
     }
 
     run(): void {
         if (this._parameters && this._parameters.length > 0) {
-            const siteName = this._parameters[0].find(p => p.name.toLowerCase() === 'sitename');
-            if (siteName && siteName.value === this._siteService.currentSiteStatic.name) {
+            const params = this.extractParams(this._parameters[0]);
+
+            if (params.siteName === this._siteService.currentSiteStatic.name) {
                 //Temporary. We need to get scm hostname from the API.
                 const scmHostName = this._siteService.currentSiteStatic.enabledHostNames.find(x => x.indexOf('.scm.') > 0);
 
@@ -116,7 +117,7 @@ export class CheckAppServiceQuotas extends SolutionUIModelBase {
 
         this.properties.id = 14;
         this.properties.title = 'Check App Service Quota Limits';
-        this.properties.type = Enums.SolutionType.BestPractices;
+        this.properties.type = SolutionType.BestPractices;
 
         const metaDataItem = new SolutionMetadata();
         metaDataItem.type = 'blog';
@@ -142,7 +143,7 @@ export class CheckAutoHeal extends SolutionUIModelBase {
         this.properties.title = 'Check Your App Auto-Heal Settings.';
         this.properties.description = 'Make sure your auto heal configurations are not causing undesired app restarts.';
 
-        this.properties.type = Enums.SolutionType.BestPractices;
+        this.properties.type = SolutionType.BestPractices;
 
         const metaDataItem = new SolutionMetadata();
         metaDataItem.type = 'blog';
@@ -168,7 +169,7 @@ export class GetDumpOfProcess extends SolutionUIModelBase {
         this.properties.title = 'Get Memory Dump of Process and analyze it.';
         this.properties.description = 'A memory dump of your site process reveals which threads are blocking or slow. It can also show you which parts of your application are using the most CPU and memory, and with that information you can improve your app\'s functionality.';
 
-        this.properties.type = Enums.SolutionType.DeepInvestigation;
+        this.properties.type = SolutionType.DeepInvestigation;
 
         const metaDataItem = new SolutionMetadata();
         metaDataItem.type = 'blog';
@@ -193,7 +194,7 @@ export class RunRemoteProfiler extends SolutionUIModelBase {
         this.properties.title = 'Remote profile your web app.';
         this.properties.description = 'If your process is running slower than expected, or the latency of HTTP requests are higher than normal and the CPU usage of the process is also pretty high, you can remotely profile your process and get the CPU sampling call stacks to analyze the process activity and code hot paths.';
 
-        this.properties.type = Enums.SolutionType.DeepInvestigation;
+        this.properties.type = SolutionType.DeepInvestigation;
 
         this.properties.additionalData = [];
 
@@ -219,7 +220,7 @@ export class UpgradeDatabase extends SolutionUIModelBase {
         this.properties.id = 105;
         this.properties.title = 'Scale Up Your Database Plan';
 
-        this.properties.type = Enums.SolutionType.QuickSolution;
+        this.properties.type = SolutionType.QuickSolution;
 
         this.properties.additionalData = [];
 
@@ -250,7 +251,7 @@ export class ContactDatabaseProvider extends SolutionUIModelBase {
         this.properties.id = 106;
         this.properties.title = 'Contact ClearDB or Azure Database Support for more information';
 
-        this.properties.type = Enums.SolutionType.DeepInvestigation;
+        this.properties.type = SolutionType.DeepInvestigation;
 
         this.properties.additionalData = [];
 
@@ -279,10 +280,10 @@ export class IncreasePHPTimeOUt extends SolutionUIModelBase {
 
         this.properties.id = 107;
         this.properties.title = 'Increase your PHP App Time out';
-        this.properties.type = Enums.SolutionType.QuickSolution;
+        this.properties.type = SolutionType.QuickSolution;
         this.properties.description = 'Increase execution time by adding max_execution_time (change the value to your needs) in .user.ini under D:\\home\\site\\wwwroot.';
 
-        this.properties.actionType = Enums.ActionType.NewTab;
+        this.properties.actionType = ActionType.NewTab;
         this.properties.actionText = 'Open Kudu Console to edit .user.ini';
 
         this.properties.additionalData = [];
@@ -296,8 +297,9 @@ export class IncreasePHPTimeOUt extends SolutionUIModelBase {
 
     run(): void {
         if (this._parameters && this._parameters.length > 0) {
-            const siteName = this._parameters[0].find(p => p.name.toLowerCase() === 'sitename');
-            if (siteName && siteName.value.toLowerCase() === this._siteService.currentSiteStatic.name.toLowerCase()) {
+            const params = this.extractParams(this._parameters[0]);
+
+            if (params.siteName && params.siteName.toLowerCase() === this._siteService.currentSiteStatic.name.toLowerCase()) {
                 //Temporary. We need to get scm hostname from the API.
                 const scmHostName = this._siteService.currentSiteStatic.enabledHostNames.find(x => x.indexOf('.scm.') > 0);
                 if (scmHostName) {
@@ -315,10 +317,10 @@ export class SetPHPMemoryLimit extends SolutionUIModelBase {
 
         this.properties.id = 109;
         this.properties.title = 'Increase your PHP App Memory Limit';
-        this.properties.type = Enums.SolutionType.QuickSolution;
+        this.properties.type = SolutionType.QuickSolution;
         this.properties.description = 'Increase memory_limit setting in .user.ini under D:\\home\\site\\wwwroot. Note that increasing the amount of memory each PHP process can use impact the number of concurrent processes that can run when auto-scaling.';
 
-        this.properties.actionType = Enums.ActionType.NewTab;
+        this.properties.actionType = ActionType.NewTab;
         this.properties.actionText = 'Open Kudu Console to edit .user.ini';
 
         this.properties.additionalData = [];
@@ -332,8 +334,9 @@ export class SetPHPMemoryLimit extends SolutionUIModelBase {
 
     run(): void {
         if (this._parameters && this._parameters.length > 0) {
-            const siteName = this._parameters[0].find(p => p.name.toLowerCase() === 'sitename');
-            if (siteName && siteName.value.toLowerCase() === this._siteService.currentSiteStatic.name.toLowerCase()) {
+            const params = this.extractParams(this._parameters[0]);
+
+            if (params.siteName && params.siteName.toLowerCase() === this._siteService.currentSiteStatic.name.toLowerCase()) {
                 //Temporary. We need to get scm hostname from the API.
                 const scmHostName = this._siteService.currentSiteStatic.enabledHostNames.find(x => x.indexOf('.scm.') > 0);
                 if (scmHostName) {
@@ -352,7 +355,7 @@ export class EnablePHPLogging extends SolutionUIModelBase {
         this.properties.id = 110;
         this.properties.title = 'Turn on PHP Logging';
         this.properties.description = 'PHP Logs can help identify slowness, HTTP 500 Fatal Errors,  WordPress \'white screen of death\' and other issues your Azure App Service Web App may be experiencing.';
-        this.properties.type = Enums.SolutionType.BestPractices;
+        this.properties.type = SolutionType.BestPractices;
 
         this.properties.additionalData = [];
 
@@ -368,14 +371,15 @@ export class EnablePHPLogging extends SolutionUIModelBase {
         metaDataItem.message = 'Learn how to turn on *Logging for WordPress Applications*.';
         this.properties.additionalData.push(metaDataItem);
 
-        this.properties.actionType = Enums.ActionType.NewTab;
+        this.properties.actionType = ActionType.NewTab;
         this.properties.actionText = 'Open Kudu Console to enable PHP logging';
     }
 
     run(): void {
         if (this._parameters && this._parameters.length > 0) {
-            const siteName = this._parameters[0].find(p => p.name.toLowerCase() === 'sitename');
-            if (siteName && siteName.value.toLowerCase() === this._siteService.currentSiteStatic.name.toLowerCase()) {
+            const params = this.extractParams(this._parameters[0]);
+
+            if (params.siteName && params.siteName.toLowerCase() === this._siteService.currentSiteStatic.name.toLowerCase()) {
                 //Temporary. We need to get scm hostname from the API.
                 const scmHostName = this._siteService.currentSiteStatic.enabledHostNames.find(x => x.indexOf('.scm.') > 0);
                 if (scmHostName) {
@@ -394,16 +398,17 @@ export class CheckPHPLogs extends SolutionUIModelBase {
         this.properties.id = 111;
         this.properties.title = 'Check PHP Logs';
         this.properties.description = 'It seems there are issues with the code like Syntax Error or call to an Unknown Method. Please investigate PHP logs for further debugging';
-        this.properties.type = Enums.SolutionType.DeepInvestigation;
+        this.properties.type = SolutionType.DeepInvestigation;
 
-        this.properties.actionType = Enums.ActionType.NewTab;
+        this.properties.actionType = ActionType.NewTab;
         this.properties.actionText = 'Open Kudu Console to View PHP logs';
     }
 
     run(): void {
         if (this._parameters && this._parameters.length > 0) {
-            const siteName = this._parameters[0].find(p => p.name.toLowerCase() === 'sitename');
-            if (siteName && siteName.value.toLowerCase() === this._siteService.currentSiteStatic.name.toLowerCase()) {
+            const params = this.extractParams(this._parameters[0]);
+
+            if (params.siteName && params.siteName.toLowerCase() === this._siteService.currentSiteStatic.name.toLowerCase()) {
                 //Temporary. We need to get scm hostname from the API.
                 const scmHostName = this._siteService.currentSiteStatic.enabledHostNames.find(x => x.indexOf('.scm.') > 0);
 
@@ -425,23 +430,20 @@ export class CheckStdOutLog extends SolutionUIModelBase {
         this.properties.title = 'Check your Stdout Log';
         this.properties.description = 'Please check your stdout log for indications of ASP.NET core issues.';
 
-        this.properties.type = Enums.SolutionType.DeepInvestigation;
-        this.properties.actionType = Enums.ActionType.NewTab;
+        this.properties.type = SolutionType.DeepInvestigation;
+        this.properties.actionType = ActionType.NewTab;
         this.properties.actionText = 'Open Stdout Log';
         this.properties.warning = 'It is reccomended that you disable stdout log redirection once you have troubleshooted your application start up issues.';
     }
 
     run(): void {
         if (this._parameters && this._parameters.length > 0) {
-            const stdLogFile = this._parameters[0].find(p => p.name.toLowerCase() === 'stdlogfile').value;
-            const subscriptionId = this._parameters[0].find(p => p.name.toLowerCase() === 'subscriptionid').value;
-            const resourceGroup = this._parameters[0].find(p => p.name.toLowerCase() === 'resourcegroup').value;
-            const siteName = this._parameters[0].find(p => p.name.toLowerCase() === 'sitename').value;
+            const params = this.extractParams(this._parameters[0]);
 
             this._logger.LogSolutionTried(this.properties.title, this.rank.toString(), 'other', this.properties.actionText);
 
-            if (stdLogFile) {
-                _window().open(stdLogFile);
+            if (params.stdLogFile) {
+                _window().open(params.stdLogFile);
             }
         }
     }
@@ -457,8 +459,8 @@ export class EnableStdOutRedirection extends SolutionUIModelBase {
         this.properties.description = 'You can redirect stdout and stderr logs to disk by setting attributes of the aspNetCore element in your web.config. It is recommended that these logs be used to diagnose application start up issues and not for general application logging purposes.';
 
 
-        this.properties.type = Enums.SolutionType.DeepInvestigation;
-        this.properties.actionType = Enums.ActionType.NewTab;
+        this.properties.type = SolutionType.DeepInvestigation;
+        this.properties.actionType = ActionType.NewTab;
         this.properties.actionText = 'Open Kudu Console to edit Web.Config';
 
         const metaDataItem = new SolutionMetadata();
@@ -471,11 +473,9 @@ export class EnableStdOutRedirection extends SolutionUIModelBase {
 
     run(): void {
         if (this._parameters && this._parameters.length > 0) {
-            const subscriptionId = this._parameters[0].find(p => p.name.toLowerCase() === 'subscriptionid').value;
-            const resourceGroup = this._parameters[0].find(p => p.name.toLowerCase() === 'resourcegroup').value;
-            const siteName = this._parameters[0].find(p => p.name.toLowerCase() === 'sitename').value;
+            const params = this.extractParams(this._parameters[0]);
 
-            if (siteName && siteName.toLowerCase() === this._siteService.currentSiteStatic.name.toLowerCase()) {
+            if (params.siteName && params.siteName.toLowerCase() === this._siteService.currentSiteStatic.name.toLowerCase()) {
                 const scmHostName = this._siteService.currentSiteStatic.enabledHostNames.find(x => x.indexOf('.scm.') > 0);
 
                 if (scmHostName) {
@@ -496,8 +496,8 @@ export class FixStdOutLogPath extends SolutionUIModelBase {
         this.properties.title = 'Fix Stdout Log Path';
         this.properties.description = 'ASP.NET Core stdout logging is enabled, however, the log creation is failing. Ensure that the log folder location that is specified in your web.config actually exists. You can use Kudu Console to create the designated folder.';
 
-        this.properties.type = Enums.SolutionType.DeepInvestigation;
-        this.properties.actionType = Enums.ActionType.NewTab;
+        this.properties.type = SolutionType.DeepInvestigation;
+        this.properties.actionType = ActionType.NewTab;
         this.properties.actionText = 'Open Kudu Console to edit Web.Config';
 
         const metaDataItem = new SolutionMetadata();
@@ -510,11 +510,9 @@ export class FixStdOutLogPath extends SolutionUIModelBase {
 
     run(): void {
         if (this._parameters && this._parameters.length > 0) {
-            const subscriptionId = this._parameters[0].find(p => p.name.toLowerCase() === 'subscriptionid').value;
-            const resourceGroup = this._parameters[0].find(p => p.name.toLowerCase() === 'resourcegroup').value;
-            const siteName = this._parameters[0].find(p => p.name.toLowerCase() === 'sitename').value;
+            const params = this.extractParams(this._parameters[0]);
 
-            if (siteName && siteName.toLowerCase() === this._siteService.currentSiteStatic.name.toLowerCase()) {
+            if (params.siteName && params.siteName.toLowerCase() === this._siteService.currentSiteStatic.name.toLowerCase()) {
                 const scmHostName = this._siteService.currentSiteStatic.enabledHostNames.find(x => x.indexOf('.scm.') > 0);
                 if (scmHostName) {
                     this._logger.LogSolutionTried(this.properties.title, this.rank.toString(), 'other', this.properties.actionText);
@@ -533,7 +531,7 @@ export class RevertChanges extends SolutionUIModelBase {
         this.properties.title = 'Revert Deployment';
         this.properties.description = 'Please review your latest code changes or config changes that may have contributed to these failures and take appropriate actions. If this is only a small blip in availability, please be aware that deploying new code may cause restarts and momentary availability blips otherwise consider using site swap feature for quick reversions.';
 
-        this.properties.type = Enums.SolutionType.QuickSolution;
+        this.properties.type = SolutionType.QuickSolution;
 
         this.properties.additionalData = [];
 
@@ -560,7 +558,7 @@ export class ContianerStartFailedSolutions extends SolutionUIModelBase {
         this.properties.title = 'Check app settings for port or app code';
         this.properties.description = 'Your container was either failing to start or started but failed to respond with a healthy status code. This resulted in a failure to start the web app, which keeps responding with a 404 Not Found. If you are using a built-in image please investigate your app code. If you are using a custom image please look at your docker file and your app code. Another possible cause is your specified WEBSITE_PORT appsetting is incorrect.';
 
-        this.properties.type = Enums.SolutionType.QuickSolution;
+        this.properties.type = SolutionType.QuickSolution;
     }
 
     run(): void {

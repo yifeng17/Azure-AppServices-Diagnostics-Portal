@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { DataTableResponseObject, DiagnosticData, Rendering } from '../../models/detector';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
-import { DataTableResponseObject, Rendering, DiagnosticData } from '../../models/detector';
 
 @Component({
   selector: 'diag-dropdown',

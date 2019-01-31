@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
 using AppLensV3.Helpers;
 using AppLensV3.Models;
@@ -166,7 +165,7 @@ namespace AppLensV3
         {
             _httpClient = new HttpClient
             {
-                MaxResponseContentBufferSize = Int32.MaxValue,
+                MaxResponseContentBufferSize = int.MaxValue,
                 Timeout = TimeSpan.FromSeconds(30)
             };
 
@@ -216,12 +215,12 @@ namespace AppLensV3
                 };
 
                 var allCommits = await _octokitClient.Repository.Commit.GetAll(_userName, _repoName, request);
-                List<DetectorCommit> detectorCommits = new List<DetectorCommit>();
+                var detectorCommits = new List<DetectorCommit>();
 
                 var commits = allCommits.Select(p => new Tuple<string, DateTimeOffset, string>(p.Sha, p.Commit.Committer.Date, p.Commit.Message)).OrderByDescending(o => o.Item2);
 
-                String previousSha = String.Empty;
-                String currentSha = String.Empty;
+                var previousSha = string.Empty;
+                var currentSha = string.Empty;
 
                 for (int i = commits.Count() - 1; i >= 0; i--)
                 {

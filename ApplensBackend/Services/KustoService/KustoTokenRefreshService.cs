@@ -2,8 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace AppLensV3.Services
@@ -30,6 +28,7 @@ namespace AppLensV3.Services
             _authContext = new AuthenticationContext(KustoConstants.MicrosoftTenantAuthorityUrl);
             _clientCredential = new ClientCredential(_kustoAppId, _kustoAppKey);
             _tokenAcquiredAtleastOnce = false;
+            
             StartTokenRefresh();
         }
 

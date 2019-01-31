@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ObserverService } from '../../../shared/services/observer.service';
-import { StartupService } from '../../../shared/services/startup.service';
-import { ObserverAseInfo } from '../../../shared/models/observer';
 
 @Component({
   selector: 'ase-finder',
@@ -13,11 +11,8 @@ export class AseFinderComponent implements OnInit {
 
   hostingEnvironment: string;
   loading: boolean = true;
-
-  matchingAse: ObserverAseInfo;
-
+  matchingAse: Observer.ObserverAseInfo;
   error: string;
-
   contentHeight: string;
 
   constructor(private _route: ActivatedRoute, private _router: Router, private _observerService: ObserverService) {
@@ -40,7 +35,7 @@ export class AseFinderComponent implements OnInit {
     });
   }
 
-  navigateToAse(matchingAse: ObserverAseInfo) {
+  navigateToAse(matchingAse: Observer.ObserverAseInfo) {
     let resourceArray: string[] = [
       'subscriptions', matchingAse.Subscription,
       'resourceGroups', matchingAse.ResourceGroupName,

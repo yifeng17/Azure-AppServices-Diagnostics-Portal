@@ -1,5 +1,3 @@
-import { NavigationExtras } from '@angular/router';
-
 export interface FeatureType {
     name: string;
     id: string;
@@ -46,15 +44,3 @@ export interface Feature {
     featureType: FeatureType;
     clickAction: FeatureAction;
 }
-
-// export class GenericDetectorFeature extends Feature {
-//     onClick() {
-//         let navigationExtras: NavigationExtras = {
-//             queryParamsHandling: 'preserve',
-//             preserveFragment: true,
-//             relativeTo: this._activatedRoute.parent
-//           };
-
-//           this._router.navigate(path.split('/'), navigationExtras);
-//     }
-// }

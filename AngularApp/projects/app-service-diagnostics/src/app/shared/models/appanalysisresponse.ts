@@ -1,7 +1,7 @@
-import { IDetectorAbnormalTimePeriod, IMetricSet, IDetectorMetaData } from './detectorresponse';
-import { ISolution } from './solution';
 import { IDetectorDefinition } from './detectordefinition';
-import {INameValuePair} from './namevaluepair';
+import { IDetectorAbnormalTimePeriod, IDetectorMetaData, IMetricSet } from './detectorresponse';
+import { INameValuePair } from './namevaluepair';
+import { ISolution } from './solution';
 
 export interface IAppAnalysisResponse {
     startTime: string;

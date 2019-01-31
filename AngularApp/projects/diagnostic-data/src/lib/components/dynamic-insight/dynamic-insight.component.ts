@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
-import { DynamicInsightRendering, DiagnosticData, HealthStatus } from '../../models/detector';
-import { DynamicInsight } from '../../models/insight';
-import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
 import { MarkdownService } from 'ngx-markdown';
+import { Component } from '@angular/core';
+import { DiagnosticData, DynamicInsightRendering, HealthStatus } from '../../models/detector';
+import { DynamicInsight } from '../../models/insight';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
+import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
 
 @Component({
   selector: 'dynamic-insight',

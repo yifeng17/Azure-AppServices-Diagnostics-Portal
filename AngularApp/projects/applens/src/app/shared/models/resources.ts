@@ -1,5 +1,5 @@
-import { Dictionary } from "./extensions";
-import { InjectionToken } from "@angular/core";
+import { Dictionary } from './extensions';
+import { InjectionToken } from '@angular/core';
 
 export enum ResourceType {
     Site,
@@ -16,8 +16,8 @@ export interface ResourceTypeState {
 }
 
 export interface ActivatedResource {
-    type: ResourceType,
-    resourceDefinition: Dictionary<string>
+    type: ResourceType;
+    resourceDefinition: Dictionary<string>;
 }
 
 export interface ArmResource {
@@ -48,4 +48,4 @@ export const DEFAULT_RESOURCE_SERVICE_INPUTS: ResourceServiceInputs = {
     versionPrefix: '',
     armResource: null,
     azureCommImpactedServicesList: ''
-}
+};

@@ -1,8 +1,6 @@
-
-import {map} from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ObserverSiteResponse, ObserverSiteInfo, ObserverAseResponse } from '../models/observer';
 import { DiagnosticApiService } from './diagnostic-api.service';
 import { isArray } from 'util';
 
@@ -14,35 +12,35 @@ export class ObserverService {
   // WARNING: This is broken logic because of bug in sites API
   //          Hostnames will be incorrect if there is another
   //          app with the same name. Pending fix from Hawk
-  public getSite(site: string): Observable<ObserverSiteResponse> {
-    return this._diagnosticApiService.get<ObserverSiteResponse>(`api/sites/${site}`).pipe(
-      map((site : ObserverSiteResponse) => {
-        if (site && site.details && isArray(site.details)) {
-          site.details.map(info => this.getSiteInfoWithSlotAndHostnames(info, site.hostNames))
+  public getSite(site: string): Observable<Observer.ObserverSiteResponse> {
+    return this._diagnosticApiService.get<Observer.ObserverSiteResponse>(`api/sites/${site}`).pipe(
+      map((siteRes: Observer.ObserverSiteResponse) => {
+        if (siteRes && siteRes.details && isArray(siteRes.details)) {
+          siteRes.details.map(info => this.getSiteInfoWithSlotAndHostnames(info, siteRes.hostNames));
         }
-       
-        return site;
+
+        return siteRes;
       }));
   }
 
-  public getAse(ase: string): Observable<ObserverAseResponse> {
-    return this._diagnosticApiService.get<ObserverAseResponse>(`api/hostingEnvironments/${ase}`);
+  public getAse(ase: string): Observable<Observer.ObserverAseResponse> {
+    return this._diagnosticApiService.get<Observer.ObserverAseResponse>(`api/hostingEnvironments/${ase}`);
   }
 
   public getSiteRequestBody(site: string, stamp: string) {
-    return this._diagnosticApiService.get<ObserverSiteResponse>(`api/stamps/${stamp}/sites/${site}/postBody`);
+    return this._diagnosticApiService.get<Observer.ObserverSiteResponse>(`api/stamps/${stamp}/sites/${site}/postBody`);
   }
 
   public getAseRequestBody(name: string) {
-    return this._diagnosticApiService.get<ObserverSiteResponse>(`api/hostingEnvironments/${name}/postBody`);
+    return this._diagnosticApiService.get<Observer.ObserverSiteResponse>(`api/hostingEnvironments/${name}/postBody`);
   }
 
-  private getSiteInfoWithSlotAndHostnames(site: ObserverSiteInfo, hostnames: string[]): ObserverSiteInfo {
-    let siteName = site.SiteName;
+  private getSiteInfoWithSlotAndHostnames(site: Observer.ObserverSiteInfo, hostnames: string[]): Observer.ObserverSiteInfo {
+    const siteName = site.SiteName;
     let slot = '';
 
     if (siteName.indexOf('(') > 0) {
-      let split = site.SiteName.split('(')
+      const split = site.SiteName.split('(');
       slot = split[1].replace(')', '');
     }
 
@@ -51,9 +49,5 @@ export class ObserverService {
 
     return site;
   }
-
-}
-
-class ObserverCache {
 
 }

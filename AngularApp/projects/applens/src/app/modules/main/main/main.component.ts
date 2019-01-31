@@ -1,12 +1,12 @@
-
-import {map} from 'rxjs/operators';
-import { Component, OnInit } from '@angular/core';
-import { ResourceTypeState, ResourceType, ResourceServiceInputs } from '../../../shared/models/resources';
-import { Router, NavigationExtras, ActivatedRoute } from '@angular/router';
-import * as momentNs from 'moment';
-import { Http } from '@angular/http';
 import { AdalService } from 'adal-angular4';
-
+import * as momentNs from 'moment';
+import { map } from 'rxjs/operators';
+import { Component, OnInit } from '@angular/core';
+import { Http } from '@angular/http';
+import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
+import {
+    ResourceServiceInputs, ResourceType, ResourceTypeState
+} from '../../../shared/models/resources';
 const moment = momentNs;
 
 @Component({
@@ -88,7 +88,7 @@ export class MainComponent implements OnInit {
 
   selectResourceType(type: ResourceTypeState) {
     if (type.enabled) {
-      this.selectedResourceType = type; 
+      this.selectedResourceType = type;
       this.showResourceTypeOptions = false
     }
   }
@@ -104,7 +104,7 @@ export class MainComponent implements OnInit {
     let startUtc = moment.utc(form.startTime.format('YYYY-MM-DD HH:mm'));
     let endUtc = moment.utc(form.endTime.format('YYYY-MM-DD HH:mm'));
 
-    let timeParams = { 
+    let timeParams = {
       startTime: startUtc.format('YYYY-MM-DDTHH:mm'),
       endTime: endUtc.format('YYYY-MM-DDTHH:mm')
     }

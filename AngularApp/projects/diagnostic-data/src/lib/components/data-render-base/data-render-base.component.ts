@@ -1,7 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { ReplaySubject } from 'rxjs';
-import { DiagnosticData, RenderingType } from '../../models/detector';
 import * as momentNs from 'moment';
+import { ReplaySubject } from 'rxjs';
+import { Component, Input, OnInit } from '@angular/core';
+import { DiagnosticData, RenderingType } from '../../models/detector';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 
 export interface DataRenderer {
@@ -13,22 +13,18 @@ export interface DataRenderer {
 })
 export class DataRenderBaseComponent implements OnInit, DataRenderer {
 
+  diagnosticData: DiagnosticData;
   protected DataRenderingType: RenderingType;
-
   private _diagnosticDataSubject: ReplaySubject<DiagnosticData> = new ReplaySubject<DiagnosticData>(1);
 
   @Input() set diagnosticDataInput(detector: DiagnosticData) {
     this._diagnosticDataSubject.next(detector);
   }
-
-  diagnosticData: DiagnosticData;
-
   @Input() startTime: momentNs.Moment;
   @Input() endTime: momentNs.Moment;
   @Input() detectorEventProperties: any;
 
-  constructor(protected telemetryService: TelemetryService) {
-  }
+  constructor(protected telemetryService: TelemetryService) {}
 
   ngOnInit() {
     this._diagnosticDataSubject.subscribe((data: DiagnosticData) => {

@@ -3,10 +3,8 @@ using AppLensV3.Models;
 using AppLensV3.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace AppLensV3
@@ -19,7 +17,7 @@ namespace AppLensV3
 
         public CommsController(IOutageCommunicationService outageService)
         {
-            this._outageService = outageService;
+            _outageService = outageService;
         }
 
         [HttpGet("comms/{subscriptionId}")]
@@ -36,7 +34,7 @@ namespace AppLensV3
                 return BadRequest(errorMessage);
             }
             
-            List<Communication> comms = await this._outageService.GetCommunicationsAsync(subscriptionId, startTimeUtc, endTimeUtc);
+            List<Communication> comms = await _outageService.GetCommunicationsAsync(subscriptionId, startTimeUtc, endTimeUtc);
             return Ok(comms);
         }
     }
