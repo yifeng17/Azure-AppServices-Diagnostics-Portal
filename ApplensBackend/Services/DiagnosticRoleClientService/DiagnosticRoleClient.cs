@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using System.Web;
 using Microsoft.Extensions.Configuration;
 using System.Security.Authentication;
+using Newtonsoft.Json;
 using System.Text;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using System.Text.RegularExpressions;
 
 namespace AppLensV3
@@ -35,6 +40,30 @@ namespace AppLensV3
             }
         }
 
+        public bool isLocalDevelopment
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(_configuration["DiagnosticRole:isLocalDevelopment"]))
+                {
+                    return false;
+                }
+                else
+                {
+
+                    if(bool.TryParse(_configuration["DiagnosticRole:isLocalDevelopment"], out bool retVal))
+                    {
+                        return retVal;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+
+                }
+            }
+        }
+
         public DiagnosticRoleClient(IConfiguration configuration)
         {
             _configuration = configuration;
@@ -45,14 +74,17 @@ namespace AppLensV3
         private HttpClient InitializeClient()
         {
             var handler = new HttpClientHandler();
-            X509Certificate2 certificate = GetMyX509Certificate();
-            handler.ClientCertificates.Add(certificate);
-            handler.ClientCertificateOptions = ClientCertificateOption.Manual;
-            handler.SslProtocols = SslProtocols.Tls12;
-            handler.ServerCertificateCustomValidationCallback = (request, cert, chain, errors) =>
+            if (!this.isLocalDevelopment)
             {
-                return true;
-            };
+                X509Certificate2 certificate = GetMyX509Certificate();
+                handler.ClientCertificates.Add(certificate);
+                handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+                handler.SslProtocols = SslProtocols.Tls12;
+                handler.ServerCertificateCustomValidationCallback = (request, cert, chain, errors) =>
+                {
+                    return true;
+                };
+            }
 
             var client = new HttpClient(handler)
             {
@@ -71,30 +103,43 @@ namespace AppLensV3
         {
             try
             {
+                path = path.Replace("/v4", string.Empty).Replace("v4", string.Empty);
                 HttpResponseMessage response;
-                if (!HitPassThroughAPI(path))
+                if (!this.isLocalDevelopment)
                 {
-                    HttpRequestMessage requestMessage = new HttpRequestMessage(method == "POST" ? HttpMethod.Post: HttpMethod.Get, path);
-                    requestMessage.Headers.Add("x-ms-internal-view", internalView.ToString());
 
-                    if (method.ToUpper() == "POST")
+                    if (!hitPassThroughAPI(path))
                     {
-                        requestMessage.Content = new StringContent(body ?? string.Empty, Encoding.UTF8, "application/json");
-                    }
+                        HttpRequestMessage requestMessage = new HttpRequestMessage(method == "POST" ? HttpMethod.Post : HttpMethod.Get, path);
+                        requestMessage.Headers.Add("x-ms-internal-view", internalView.ToString());
 
-                    response = await _client.SendAsync(requestMessage);
+                        if (method.ToUpper() == "POST")
+                        {
+                            requestMessage.Content = new StringContent(body ?? string.Empty, Encoding.UTF8, "application/json");
+                        }
+
+                        response = await _client.SendAsync(requestMessage);
+                    }
+                    else
+                    {
+                        HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, "api/invoke");
+                        requestMessage.Headers.Add("x-ms-path-query", path);
+                        requestMessage.Headers.Add("x-ms-verb", method);
+                        requestMessage.Content = new StringContent(body ?? string.Empty, Encoding.UTF8, "application/json");
+
+                        response = await _client.SendAsync(requestMessage);
+                    }
                 }
                 else
                 {
-                    HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, "api/invoke");
-                    requestMessage.Headers.Add("x-ms-path-query", path);
-                    requestMessage.Headers.Add("x-ms-verb", method);
-                    requestMessage.Content = new StringContent(body ?? string.Empty, Encoding.UTF8, "application/json");
+                    HttpRequestMessage requestMessage = new HttpRequestMessage(method.Trim().ToUpper() == "POST" ? HttpMethod.Post : HttpMethod.Get, path)
+                    {
+                        Content = new StringContent(body ?? string.Empty, Encoding.UTF8, "application/json")
+                    };
 
                     response = await _client.SendAsync(requestMessage);
                 }
                 
-
                 return response;
             }
             catch(Exception ex)
@@ -103,9 +148,9 @@ namespace AppLensV3
             }
         }
 
-        private bool HitPassThroughAPI(string path)
+        private bool hitPassThroughAPI(string path)
         {
-            return !_nonPassThroughResourceProviderList.Exists(p => path.ToLower().Contains(p))
+            return !this._nonPassThroughResourceProviderList.Exists(p => path.ToLower().Contains(p))
                 || (new Regex("/detectors/[^/]*/statistics").IsMatch(path.ToLower()))
                 || path.ToLower().Contains("/diagnostics/publish");
         }
@@ -120,9 +165,9 @@ namespace AppLensV3
             try
             {
                 X509Certificate2Collection certCollection = certStore.Certificates.Find(
-                    X509FindType.FindByThumbprint,
-                    AuthCertThumbprint,
-                    false);
+                                       X509FindType.FindByThumbprint,
+                                       AuthCertThumbprint,
+                                       false);
                 // Get the first cert with the thumbprint
                 if (certCollection.Count > 0)
                 {
