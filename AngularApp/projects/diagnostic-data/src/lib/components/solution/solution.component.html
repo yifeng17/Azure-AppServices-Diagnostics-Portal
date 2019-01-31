@@ -1,0 +1,10 @@
+<data-container [title]="renderingProperties.title" [description]="renderingProperties.description">
+  <div style="margin-top: 25px;">
+    <h2>Solution Prototype</h2>
+
+    <h4>{{solution.title}}</h4>
+    <ul>
+      <li *ngFor="let desc of solution.descriptions">{{desc}}</li>
+    </ul>
+  </div>
+</data-container>
