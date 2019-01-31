@@ -1,0 +1,38 @@
+.guageComponent-verticalContainer{
+	display:flex;
+	flex-direction: column ;
+	/*border: 1 px solid black;*/
+}
+
+
+.guageComponent-horizontalContainer{
+	display:flex;
+	flex-direction: row ;	
+	flex-wrap: wrap;
+	align-items:flex-end;
+	/*border: 1 px solid red;*/
+}
+
+.guageComponent-guageIterator{
+	padding:10px;
+	/*.border:1px solid black;*/
+}
+
+
+.guageComponent-guageElementContainer{
+	display:flex;
+	flex-direction:row;
+	width:100%;
+	/*.border: 1px solid black;*/
+}
+.guageComponent-guageElementGraphicContainer
+{
+	padding:10px;
+	/*.border: 1px solid black;*/
+}
+
+.guageComponent-guageElementDescription{
+	width:100%;
+	padding:10px;
+	/*.border: 1px solid black;*/
+}

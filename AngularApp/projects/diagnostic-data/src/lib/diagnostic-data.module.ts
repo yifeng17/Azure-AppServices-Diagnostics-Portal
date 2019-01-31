@@ -42,6 +42,8 @@ import { MonacoEditorModule } from 'ngx-monaco-editor';
 import { FeedbackComponent } from './components/feedback/feedback.component';
 import { CopyInsightDetailsComponent } from './components/copy-insight-details/copy-insight-details.component';
 import { MarkdownEditorComponent } from './components/markdown-editor/markdown-editor.component';
+import { GuageGraphicComponent } from './components/guage-graphic/guage-graphic.component';
+import { GuageControlComponent } from './components/guage-control/guage-control.component';
 
 @NgModule({
   imports: [
@@ -59,9 +61,9 @@ import { MarkdownEditorComponent } from './components/markdown-editor/markdown-e
     DataContainerComponent, TimeSeriesInstanceGraphComponent, DetectorViewComponent, DataSummaryComponent, EmailComponent, InsightsComponent,
     LoaderViewComponent, DynamicInsightComponent, MarkdownComponent, DetectorListComponent, DetectorOrderPipe, StarRatingComponent, StarRatingFeedbackComponent,
     DropdownComponent, StatusIconComponent, DetectorControlComponent, DetectorContainerComponent, InternalPipe, CommAlertComponent, FeedbackComponent, 
-    CopyInsightDetailsComponent, MarkdownEditorComponent],
+    CopyInsightDetailsComponent, MarkdownEditorComponent, GuageGraphicComponent, GuageControlComponent],
   exports: [FormsModule, TimeSeriesGraphComponent, DataTableComponent, DynamicDataComponent, DetectorViewComponent, DataSummaryComponent,
-    LoaderViewComponent, StatusIconComponent, DetectorControlComponent, DetectorContainerComponent, InternalPipe, CommAlertComponent],
+    LoaderViewComponent, StatusIconComponent, DetectorControlComponent, DetectorContainerComponent, InternalPipe, CommAlertComponent, GuageControlComponent],
 })
 export class DiagnosticDataModule {
   static forRoot(config: DiagnosticDataConfig = INTERNAL_PROD_CONFIGURATION): ModuleWithProviders {

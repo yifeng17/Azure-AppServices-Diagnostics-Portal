@@ -1,0 +1,20 @@
+<div *ngIf="guage">
+  <div 
+    [class.guageComponent-verticalContainer] = "isVertical(guage.renderDirection)" 
+    [class.guageComponent-horizontalContainer] = "isHorizontal(guage.renderDirection)"
+    >
+
+    <div class = "guageComponent-guageIterator"  *ngFor = "let currGuage of guage.guages">
+        <div class="guageComponent-guageElementContainer">
+          <div *ngIf = "currGuage.guageGraphicElement" class= "guageComponent-guageElementGraphicContainer">
+            <guage-graphic [guageGraphic]="currGuage.guageGraphicElement"></guage-graphic>
+          </div>
+          
+          <div *ngIf="currGuage.guageDescription.trim().length > 0" class="guageComponent-guageElementDescription">
+            <markdown [data]="currGuage.guageDescription"></markdown>
+          </div>
+        </div>
+    </div>
+
+  </div>
+</div>

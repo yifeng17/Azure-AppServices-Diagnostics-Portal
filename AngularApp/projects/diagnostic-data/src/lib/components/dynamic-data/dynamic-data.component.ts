@@ -14,6 +14,7 @@ import { DynamicInsightComponent } from '../dynamic-insight/dynamic-insight.comp
 import { MarkdownComponent } from '../markdown/markdown.component';
 import { DetectorListComponent } from '../detector-list/detector-list.component';
 import { DropdownComponent } from '../dropdown/dropdown.component';
+import { GuageControlComponent } from '../guage-control/guage-control.component';
 
 @Component({
   selector: 'dynamic-data',
@@ -21,7 +22,7 @@ import { DropdownComponent } from '../dropdown/dropdown.component';
   styleUrls: ['./dynamic-data.component.scss'],
   entryComponents: [TimeSeriesGraphComponent, DataTableComponent, DataSummaryComponent, EmailComponent,
     InsightsComponent, TimeSeriesInstanceGraphComponent, DynamicInsightComponent, MarkdownComponent,
-    DetectorListComponent, DropdownComponent]
+    DetectorListComponent, DropdownComponent, GuageControlComponent]
 })
 export class DynamicDataComponent implements OnInit {
 
@@ -78,6 +79,8 @@ export class DynamicDataComponent implements OnInit {
         return DetectorListComponent;
       case RenderingType.DropDown:
         return DropdownComponent;
+      case RenderingType.Guage:
+        return GuageControlComponent;
       default:
         return null;
     }
