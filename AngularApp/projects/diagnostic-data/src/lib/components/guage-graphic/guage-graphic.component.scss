@@ -6,7 +6,6 @@
     width: 50%;/*60% of GuageContainer width*/
     height: 4px;/*A fixed 4 px height*/
     top:100%; /*GuageContainer height (if value is 0, then top = GuageContainer height - this height)*/
-    /*border-radius: 4px 4px 4px 4px;*/
     border-radius: 50%;
     transform-origin: right top;
     transition: all 1.3s ease-in-out;
@@ -25,8 +24,6 @@
     margin-left: 20%; /*(GuageContainer width-this width)/2*/
     margin-right: auto;
     overflow:hidden;
-    /*.border: 1px solid black;*/
-    /*.border-radius:50%;*/
   }
   
   .guageGraphic-circleCenter{
@@ -37,8 +34,7 @@
     height: 60%;/*60% of GuageContainer height*/
     top: 40%;/*GuageContainer height-this height*/ /*Do not divide by 2 as this is upper half of semi circle*/
     margin-left: 20%;/*(GuageContainer width-this width)/2*/
-    margin-right: auto;
-    /*.border-radius: 120px 120px 0px 0px;*/ /*height height 0 0*/
+    margin-right: auto; 
     border-radius: 1500px 1500px 0px 0px; /*height height 0 0*/ /*For now, have a very large number. Since this height as per the current settings will never be 1500 px*/
   }
   
@@ -51,7 +47,6 @@
     top: 100%; /*same as height of GuageContainer so that div goes below the GuageContainer*/
     margin-left: auto;
     margin-right: auto;
-    /*.border-radius: 0px 0px 200px 200px;*/ /*This makes the semi circle below*/  /*0 0 height height*/
     border-radius: 0px 0px 1500px 1500px; /*This makes the semi circle below*/  /*0 0 height height*/ /*For now, have a very large number. Since this height as per the current settings will never be 1500 px*/
     
     transform-origin: center top;
@@ -67,7 +62,6 @@
     width: 100%;/*Same as GuageContainer*/
     height: 100%;/*Same as GuageContainer*/
     top: 0%;
-    /*.border-radius: 200px 200px 0px 0px;*/  /*height height 0 0*/
     border-radius: 1500px 1500px 0px 0px;  /*height height 0 0*/  /*For now, have a very large number. Since this height as per the current settings will never be 1500 px*/
   }
   
@@ -87,13 +81,6 @@
     width: 200px;
     height: 125px; /*Height is 62.5 % of the width*/
     position: relative;  
-    /*.top: 30%;
-    .left: 25%;
-    .overflow: hidden;
-    .text-align: center;
-    .transform: translate(-50%, -50%);
-    .border: 3px solid blue;
-    .transform: translate(550%, 50%);*/
   }
   
   .guageGraphic-label{
@@ -103,6 +90,4 @@
     position: absolute;
     font-size: 1.1em;
     line-height: 10px;
-  /*.border: 3px solid green;*/
   }
-  
