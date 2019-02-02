@@ -53,10 +53,6 @@ import {
 } from './config/diagnostic-data-config';
 import { ClipboardService } from './services/clipboard.service';
 import { CommsService } from './services/comms.service';
-import { MonacoEditorModule } from 'ngx-monaco-editor';
-import { FeedbackComponent } from './components/feedback/feedback.component';
-import { CopyInsightDetailsComponent } from './components/copy-insight-details/copy-insight-details.component';
-import { MarkdownEditorComponent } from './components/markdown-editor/markdown-editor.component';
 import { GuageGraphicComponent } from './components/guage-graphic/guage-graphic.component';
 import { GuageControlComponent } from './components/guage-control/guage-control.component';
 import { FeatureNavigationService } from './services/feature-navigation.service';

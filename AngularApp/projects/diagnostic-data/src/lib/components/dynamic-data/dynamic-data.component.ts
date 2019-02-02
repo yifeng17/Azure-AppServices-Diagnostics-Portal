@@ -13,8 +13,6 @@ import { DynamicInsightComponent } from '../dynamic-insight/dynamic-insight.comp
 import { EmailComponent } from '../email/email.component';
 import { InsightsComponent } from '../insights/insights.component';
 import { MarkdownComponent } from '../markdown/markdown.component';
-import { DetectorListComponent } from '../detector-list/detector-list.component';
-import { DropdownComponent } from '../dropdown/dropdown.component';
 import { GuageControlComponent } from '../guage-control/guage-control.component';
 import { TimeSeriesGraphComponent } from '../time-series-graph/time-series-graph.component';
 import {
