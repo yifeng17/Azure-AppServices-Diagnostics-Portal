@@ -1,0 +1,32 @@
+.guageComponent-verticalContainer{
+	display:flex;
+	flex-direction: column ;
+}
+
+
+.guageComponent-horizontalContainer{
+	display:flex;
+	flex-direction: row ;	
+	flex-wrap: wrap;
+	align-items:flex-end;
+}
+
+.guageComponent-guageIterator{
+	padding:10px;
+}
+
+
+.guageComponent-guageElementContainer{
+	display:flex;
+	flex-direction:row;
+	width:100%;
+}
+.guageComponent-guageElementGraphicContainer
+{
+	padding:10px;
+}
+
+.guageComponent-guageElementDescription{
+	width:100%;
+	padding:10px;
+}

@@ -1,0 +1,93 @@
+
+.guageGraphic-needle{
+    z-index: 5;
+    position: absolute;
+    background-color: darkred;
+    width: 50%;/*60% of GuageContainer width*/
+    height: 4px;/*A fixed 4 px height*/
+    top:100%; /*GuageContainer height (if value is 0, then top = GuageContainer height - this height)*/
+    border-radius: 50%;
+    transform-origin: right top;
+    transition: all 1.3s ease-in-out;
+    transform:rotate(.11turn);/*0.005 = 1 %*/
+  }
+  
+  .guageGraphic-circleData{
+    z-index: 4;
+    color:black;
+    position: absolute;
+    font-size: 1.2em;
+    line-height: 100%;/*60% of GuageContainer height*/
+    width: 60%;/*60% of GuageContainer width*/
+    height: 60%;/*60% of GuageContainer height*/
+    top: 65%; /*GuageContainer height-this height*/ /*Do not divide by 2 as this is upper half of semi circle*/
+    margin-left: 20%; /*(GuageContainer width-this width)/2*/
+    margin-right: auto;
+    overflow:hidden;
+  }
+  
+  .guageGraphic-circleCenter{
+    z-index: 3;
+    position: absolute;
+    background-color: white;
+    width: 60%;/*60% of GuageContainer width*/
+    height: 60%;/*60% of GuageContainer height*/
+    top: 40%;/*GuageContainer height-this height*/ /*Do not divide by 2 as this is upper half of semi circle*/
+    margin-left: 20%;/*(GuageContainer width-this width)/2*/
+    margin-right: auto; 
+    border-radius: 1500px 1500px 0px 0px; /*height height 0 0*/ /*For now, have a very large number. Since this height as per the current settings will never be 1500 px*/
+  }
+  
+  .guageGraphic-circleFill{
+    z-index: 2;
+    position: absolute;
+    background-color: #5664F9;
+    width: 100%;/*same as GuageContainer*/
+    height: 100%;/*same as GuageContainer*/
+    top: 100%; /*same as height of GuageContainer so that div goes below the GuageContainer*/
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 0px 0px 1500px 1500px; /*This makes the semi circle below*/  /*0 0 height height*/ /*For now, have a very large number. Since this height as per the current settings will never be 1500 px*/
+    
+    transform-origin: center top;
+    transition: all 1.3s ease-in-out;
+    transform:rotate(.11turn);/*0.005 = 1 %*/
+    
+  }
+  
+  .guageGraphic-circleBackGround{
+    z-index: 1;
+    position: absolute;
+    background-color:lightgrey;
+    width: 100%;/*Same as GuageContainer*/
+    height: 100%;/*Same as GuageContainer*/
+    top: 0%;
+    border-radius: 1500px 1500px 0px 0px;  /*height height 0 0*/  /*For now, have a very large number. Since this height as per the current settings will never be 1500 px*/
+  }
+  
+  
+  .guageGraphic-guagueContainer{	
+    width: 100%;
+    height: 80%;
+    position: absolute;
+    /*.top: 30%;*/
+    /*.left: 25%;*/
+    overflow: hidden;
+    text-align: center;  
+  }
+  
+  
+  .guageGraphic-container{  
+    width: 200px;
+    height: 125px; /*Height is 62.5 % of the width*/
+    position: relative;  
+  }
+  
+  .guageGraphic-label{
+    text-align: center;
+    width:100%;
+    top:85%;
+    position: absolute;
+    font-size: 1.1em;
+    line-height: 10px;
+  }

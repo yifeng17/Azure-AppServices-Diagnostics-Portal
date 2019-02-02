@@ -1,0 +1,10 @@
+<div class="guageGraphic-container" [style.width.px] = "guageGraphic.width" [style.height.px] = "guageGraphic.height">	
+	<div class="guageGraphic-guagueContainer">
+	  <div class="guageGraphic-circleBackGround"></div>
+	  <div class="guageGraphic-circleCenter"></div>
+	  <div class="guageGraphic-circleFill" [style.background-color] = "guageGraphic.fillColor" [style.transform] = "guageGraphic.transformString"></div>
+	  <div class="guageGraphic-circleData"><markdown [data]="guageGraphic.numberDisplay"></markdown></div>
+	  <div class = "guageGraphic-needle" [style.transform] = "guageGraphic.transformString"></div>
+  </div>
+  <div #Label class="guageGraphic-label"> <markdown [data]="guageGraphic.label"></markdown></div>
+</div>
