@@ -21,17 +21,11 @@ export class GuageControlComponent extends DataRenderBaseComponent {
   }
 
   public isVertical(renderDirection: GuageRenderDirection): boolean {
-    if (renderDirection == GuageRenderDirection.Vertical)
-      return true;
-    else
-      return false;
+    return renderDirection === GuageRenderDirection.Vertical;
   }
 
   public isHorizontal(renderDirection: GuageRenderDirection): boolean {
-    if (renderDirection == GuageRenderDirection.Horizontal)
-      return true;
-    else
-      return false;
+    return renderDirection === GuageRenderDirection.Horizontal;
   }
 
   private parseData(table: DataTableResponseObject) {

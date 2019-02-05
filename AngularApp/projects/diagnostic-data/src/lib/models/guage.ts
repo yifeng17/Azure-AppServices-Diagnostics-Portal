@@ -1,9 +1,11 @@
 export class GuageControl{
 	public guages: GuageElement[];
-	public renderDirection =  GuageRenderDirection.Vertical;
-	public guageSize = GuageSize.Medium;
+	public renderDirection: GuageRenderDirection;
+	public guageSize:GuageSize;
 	
 	constructor() {
+		this.renderDirection = GuageRenderDirection.Horizontal;
+		this.guageSize = GuageSize.Medium;
 	}
 }
 
@@ -16,8 +18,8 @@ export enum GuageSize {
 
 
 export enum GuageRenderDirection {
-    Horizontal,
-    Vertical
+    Horizontal = "0",
+    Vertical = "1"
 }
 
 
