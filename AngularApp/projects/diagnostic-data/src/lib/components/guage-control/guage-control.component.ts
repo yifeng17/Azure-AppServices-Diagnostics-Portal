@@ -44,22 +44,22 @@ export class GuageControlComponent extends DataRenderBaseComponent {
       this.guage.guageSize = table.rows[0][masterSizeColumn];
       this.guage.guages = [];
 
-      var currFillColor = "";
+      var currFillColor: HealthStatus;
       for (let i: number = 0; i < table.rows.length; i++) {
         const row = table.rows[i];
 
         switch (row[fillColorColumn]) {
           case this.InsightStatus.Critical:
-            currFillColor = "#ff0000";
+            currFillColor = HealthStatus.Critical;
             break;
           case this.InsightStatus.Warning:
-            currFillColor = "#ff9104";
+            currFillColor = HealthStatus.Warning;
             break;
           case this.InsightStatus.Success:
-            currFillColor = "#3da907";
+            currFillColor = HealthStatus.Success;
             break;
           default:
-            currFillColor = "#3a9bc7";
+            currFillColor = HealthStatus.Info;
             break;
         }
 

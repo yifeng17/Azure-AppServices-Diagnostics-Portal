@@ -1,3 +1,5 @@
+import { HealthStatus } from './detector';
+
 export class GuageControl {
 	public guages: GuageElement[];
 	public renderDirection: GuageRenderDirection;
@@ -10,10 +12,10 @@ export class GuageControl {
 }
 
 export enum GuageSize {
-	Small,
-	Medium,
-	Large,
-	Inherit
+	Small = "0",
+	Medium = "1",
+	Large = "2",
+	Inherit = "3"
 }
 
 export enum GuageRenderDirection {
@@ -32,7 +34,7 @@ export class GuageElement {
 }
 
 export class GuageGraphic {
-	public fillColor: string;
+	public fillColor: HealthStatus;
 	public percentFilled: number;
 	public numberDisplay: string;
 	public label: string;
@@ -43,9 +45,9 @@ export class GuageGraphic {
 	turnMultiplicationFactor: number;
 	transformString: string;
 
-	setGuageParameters(fillColor: string, percentFilled: number, numberDisplay: string, label: string, size: GuageSize): void {
-		if (fillColor.trim() == "")
-			this.fillColor = "#5664F9";
+	setGuageParameters(fillColor: HealthStatus, percentFilled: number, numberDisplay: string, label: string, size: GuageSize): void {
+		if (fillColor === undefined)
+			this.fillColor = HealthStatus.Info;
 		else
 			this.fillColor = fillColor;
 
@@ -70,13 +72,13 @@ export class GuageGraphic {
 		this.label = label;
 		this.size = size;
 		//if(size == "SMALL")
-		if (size == GuageSize.Small) {
+		if (size === GuageSize.Small) {
 			this.width = 120;
 			this.height = 75;
 		}
 		else {
 			//if(size == "LARGE")
-			if (size == GuageSize.Large) {
+			if (size === GuageSize.Large) {
 				this.width = 300;
 				this.height = 188;
 			}
@@ -88,7 +90,7 @@ export class GuageGraphic {
 		}
 	}
 
-	constructor(fillColor: string, percentFilled: number, numberDisplay: string, label: string, size: GuageSize) {
+	constructor(fillColor: HealthStatus, percentFilled: number, numberDisplay: string, label: string, size: GuageSize) {
 		this.turnMultiplicationFactor = 0.005;
 		this.setGuageParameters(fillColor, percentFilled, numberDisplay, label, size);
 	}
