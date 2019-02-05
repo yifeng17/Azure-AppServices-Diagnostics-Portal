@@ -1,14 +1,14 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
 import { DataTableResponseObject, Rendering, DiagnosticData, HealthStatus } from '../../models/detector';
-import {GuageGraphic, GuageSize, GuageElement, GuageRenderDirection, GuageControl } from '../../models/guage';
+import { GuageGraphic, GuageSize, GuageElement, GuageRenderDirection, GuageControl } from '../../models/guage';
 
 @Component({
   selector: 'guage-control',
   templateUrl: './guage-control.component.html',
   styleUrls: ['./guage-control.component.scss']
 })
-export class GuageControlComponent extends DataRenderBaseComponent   {
+export class GuageControlComponent extends DataRenderBaseComponent {
 
   InsightStatus = HealthStatus;
   guage: GuageControl;
@@ -20,21 +20,21 @@ export class GuageControlComponent extends DataRenderBaseComponent   {
     this.parseData(data.table);
   }
 
-  public isVertical(renderDirection : GuageRenderDirection): boolean  {
-    if(renderDirection == GuageRenderDirection.Vertical)
+  public isVertical(renderDirection: GuageRenderDirection): boolean {
+    if (renderDirection == GuageRenderDirection.Vertical)
       return true;
     else
       return false;
   }
 
-  public isHorizontal(renderDirection : GuageRenderDirection): boolean  {
-    if(renderDirection == GuageRenderDirection.Horizontal)
+  public isHorizontal(renderDirection: GuageRenderDirection): boolean {
+    if (renderDirection == GuageRenderDirection.Horizontal)
       return true;
     else
       return false;
   }
 
-  private parseData(table: DataTableResponseObject){
+  private parseData(table: DataTableResponseObject) {
     //Parse the incoming data from the detector backend to create the Guages Array and then initiaze the guage object
 
     const renderDirectionColumn = 0;
@@ -54,7 +54,7 @@ export class GuageControlComponent extends DataRenderBaseComponent   {
     var currFillColor = "";
     for (let i: number = 0; i < table.rows.length; i++) {
       const row = table.rows[i];
-      
+
 
       switch (row[fillColorColumn]) {
         case this.InsightStatus.Critical:
@@ -64,7 +64,7 @@ export class GuageControlComponent extends DataRenderBaseComponent   {
           currFillColor = "#ff9104";
           break;
         case this.InsightStatus.Success:
-          currFillColor = "#3da907";  
+          currFillColor = "#3da907";
           break;
         default:
           currFillColor = "#3a9bc7";
@@ -77,32 +77,20 @@ export class GuageControlComponent extends DataRenderBaseComponent   {
 
     }
 
-
-    //Clear out the Summary if render direction is Horizontal so that the summary is never displayed
-	  if(this.guage.renderDirection == GuageRenderDirection.Horizontal)
-	  {
-		  for(var i=0; i< this.guage.guages.length; i++)
-		  {
-			this.guage.guages[i].guageDescription = "";  
-		  }
-	  }
-	  
-	  //Make sure that the size of each individual Guage Graphic element passed to this object matches the desired size of the parent GuageControl
-	  if(this.guage.guageSize != GuageSize.Inherit)
-	  {
-		  for(var i=0; i< this.guage.guages.length; i++)
-		  {
-			  this.guage.guages[i].guageGraphicElement.setGuageParameters(
-					this.guage.guages[i].guageGraphicElement.fillColor, 
-					this.guage.guages[i].guageGraphicElement.percentFilled, 
-					this.guage.guages[i].guageGraphicElement.numberDisplay, 
-					this.guage.guages[i].guageGraphicElement.label, 
-					this.guage.guageSize 
-					);
-		  }
+    //Make sure that the size of each individual Guage Graphic element passed to this object matches the desired size of the parent GuageControl
+    if (this.guage.guageSize != GuageSize.Inherit) {
+      for (var i = 0; i < this.guage.guages.length; i++) {
+        this.guage.guages[i].guageGraphicElement.setGuageParameters(
+          this.guage.guages[i].guageGraphicElement.fillColor,
+          this.guage.guages[i].guageGraphicElement.percentFilled,
+          this.guage.guages[i].guageGraphicElement.numberDisplay,
+          this.guage.guages[i].guageGraphicElement.label,
+          this.guage.guageSize
+        );
+      }
     }
 
   }
-  
+
 
 }

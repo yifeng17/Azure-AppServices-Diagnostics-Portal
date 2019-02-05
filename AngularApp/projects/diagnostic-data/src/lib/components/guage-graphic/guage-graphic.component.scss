@@ -1,5 +1,5 @@
 
-.guageGraphic-needle{
+.needle{
     z-index: 5;
     position: absolute;
     background-color: darkred;
@@ -12,7 +12,7 @@
     transform:rotate(.11turn);/*0.005 = 1 %*/
   }
   
-  .guageGraphic-circleData{
+  .circle-data{
     z-index: 4;
     color:black;
     position: absolute;
@@ -26,19 +26,19 @@
     overflow:hidden;
   }
   
-  .guageGraphic-circleCenter{
+  .circle-center{
     z-index: 3;
     position: absolute;
     background-color: white;
     width: 60%;/*60% of GuageContainer width*/
     height: 60%;/*60% of GuageContainer height*/
-    top: 40%;/*GuageContainer height-this height*/ /*Do not divide by 2 as this is upper half of semi circle*/
+    top: 42%;/*GuageContainer height-this height + 2*/ /*Do not divide by 2 as this is upper half of semi circle*/
     margin-left: 20%;/*(GuageContainer width-this width)/2*/
     margin-right: auto; 
     border-radius: 1500px 1500px 0px 0px; /*height height 0 0*/ /*For now, have a very large number. Since this height as per the current settings will never be 1500 px*/
   }
   
-  .guageGraphic-circleFill{
+  .circle-fill{
     z-index: 2;
     position: absolute;
     background-color: #5664F9;
@@ -55,7 +55,7 @@
     
   }
   
-  .guageGraphic-circleBackGround{
+  .circle-background{
     z-index: 1;
     position: absolute;
     background-color:lightgrey;
@@ -66,7 +66,7 @@
   }
   
   
-  .guageGraphic-guagueContainer{	
+  .graphic-container{	
     width: 100%;
     height: 80%;
     position: absolute;
@@ -77,13 +77,13 @@
   }
   
   
-  .guageGraphic-container{  
+  .container{  
     width: 200px;
     height: 125px; /*Height is 62.5 % of the width*/
     position: relative;  
   }
   
-  .guageGraphic-label{
+  .label{
     text-align: center;
     width:100%;
     top:85%;
