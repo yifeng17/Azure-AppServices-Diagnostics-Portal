@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
 import { DiagnosticData, Rendering } from '../../models/detector';
@@ -20,12 +20,14 @@ export enum SolutionActionType {
 @Component({
   selector: 'solution',
   templateUrl: './solution.component.html',
-  styleUrls: ['./solution.component.scss']
+  styleUrls: ['./solution.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class SolutionComponent extends DataRenderBaseComponent {
 
   solution: Solution;
   renderingProperties: Rendering;
+  acceptRisk = false;
 
   constructor(telemetryService: TelemetryService) {
     super(telemetryService)
@@ -46,6 +48,10 @@ export class SolutionComponent extends DataRenderBaseComponent {
         bladeName: row[5]
       };
     });
+  }
+
+  checkAcceptRisk() {
+    this.acceptRisk = !this.acceptRisk;
   }
 
 }

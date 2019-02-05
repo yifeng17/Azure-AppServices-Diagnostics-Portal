@@ -1,10 +1,27 @@
-<data-container [title]="renderingProperties.title" [description]="renderingProperties.description">
-  <div style="margin-top: 25px;">
-    <h2>Solution Prototype</h2>
+<div class="prototype-container">
 
-    <h4>{{solution.title}}</h4>
-    <ul>
-      <li *ngFor="let desc of solution.descriptions">{{desc}}</li>
-    </ul>
+  <div class="explanation-header">
+    <h2>Solutions</h2>
   </div>
-</data-container>
+
+  <div class="solution-action mb-2">
+    <markdown ngPreserveWhitespaces>
+      #### Restart Application
+      Restarting the application can fix the following issues:
+      - System out of memory
+      - Reload configurations
+    </markdown>
+    <br>
+    <button class="custom-button" [disabled]="acceptRisk === false">Restart</button>
+  </div>
+
+  <div class="solution-warning">
+    <span class="message-warning bold">This action may cause downtime.</span>
+    <br>
+    <label>
+      <input type="checkbox" ng-checked="acceptRisk" (change)="checkAcceptRisk()" name="Accept">
+      <span class="text-value">I accept the risk of downtime</span>
+    </label>
+  </div>
+
+</div>

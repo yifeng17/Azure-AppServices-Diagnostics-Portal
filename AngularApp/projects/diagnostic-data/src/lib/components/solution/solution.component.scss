@@ -1,0 +1,42 @@
+@import '../../../../../app-service-diagnostics/src/styles/main.scss';
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+.prototype-container {
+  min-height: 100px;
+  border: $border;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+
+  .solution-action {
+    display: inline-block;
+    text-align: center;
+  }
+}
+
+markdown {
+  ul {
+    display: inline-block;
+  }
+}
+
+.explanation-header {
+  background-color: $back-bar-color;
+  margin: 0;
+  padding: 0;
+}
+
+.message-warning {
+  color: $warning-color;
+  font-size: 12px;
+}
+
+label {
+  .text-value {
+    padding-left: .5em;
+  }
+}
