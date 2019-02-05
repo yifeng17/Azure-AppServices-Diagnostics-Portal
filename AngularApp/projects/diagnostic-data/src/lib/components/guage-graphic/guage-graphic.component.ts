@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import {GuageGraphic, GuageSize} from '../../models/guage';
+import { GuageGraphic, GuageSize } from '../../models/guage';
 
 @Component({
   selector: 'guage-graphic',
@@ -9,12 +9,10 @@ import {GuageGraphic, GuageSize} from '../../models/guage';
 
 
 export class GuageGraphicComponent implements OnInit {
+  @Input() guageGraphic: GuageGraphic;
 
-  @Input() guageGraphic:GuageGraphic;
-  
   constructor() { }
 
   ngOnInit() {
   }
-
 }
