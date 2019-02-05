@@ -30,18 +30,16 @@ export class GuageControlComponent extends DataRenderBaseComponent {
   private parseData(table: DataTableResponseObject) {
     //Parse the incoming data from the detector backend to create the Guages Array and then initiaze the guage object
     const renderDirectionColumn = 0;
-    const masterSizeColumn = 1;
-    const sizeColumn = 2;
-    const fillColorColumn = 3;
-    const percentFilledColumn = 4;
-    const displayValueColumn = 5;
-    const labelColumn = 6;
-    const descriptionColumn = 7;
+    const sizeColumn = 1;
+    const fillColorColumn = 2;
+    const percentFilledColumn = 3;
+    const displayValueColumn = 4;
+    const labelColumn = 5;
+    const descriptionColumn = 6;
 
     if (!(table.rows === undefined || table.rows.length < 1)) {
       this.guage = new GuageControl();
-      this.guage.renderDirection = table.rows[0][renderDirectionColumn];
-      this.guage.guageSize = table.rows[0][masterSizeColumn];
+      this.guage.renderDirection = table.rows[0][renderDirectionColumn];      
       this.guage.guages = [];
 
       var currFillColor: HealthStatus;
@@ -66,19 +64,6 @@ export class GuageControlComponent extends DataRenderBaseComponent {
         this.guage.guages[i] = new GuageElement(
           new GuageGraphic(currFillColor, row[percentFilledColumn], row[displayValueColumn], row[labelColumn], row[sizeColumn])
           , row[descriptionColumn]);
-      }
-
-      //Make sure that the size of each individual Guage Graphic element passed to this object matches the desired size of the parent GuageControl
-      if (this.guage.guageSize != GuageSize.Inherit) {
-        for (var i = 0; i < this.guage.guages.length; i++) {
-          this.guage.guages[i].guageGraphicElement.setGuageParameters(
-            this.guage.guages[i].guageGraphicElement.fillColor,
-            this.guage.guages[i].guageGraphicElement.percentFilled,
-            this.guage.guages[i].guageGraphicElement.numberDisplay,
-            this.guage.guages[i].guageGraphicElement.label,
-            this.guage.guageSize
-          );
-        }
       }
     }
   }
