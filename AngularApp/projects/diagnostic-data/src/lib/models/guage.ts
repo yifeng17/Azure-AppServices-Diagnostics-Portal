@@ -3,24 +3,21 @@ import { HealthStatus } from './detector';
 export class GuageControl {
 	public guages: GuageElement[];
 	public renderDirection: GuageRenderDirection;
-	public guageSize: GuageSize;
 
 	constructor() {
 		this.renderDirection = GuageRenderDirection.Horizontal;
-		this.guageSize = GuageSize.Medium;
 	}
 }
 
 export enum GuageSize {
-	Small = "0",
-	Medium = "1",
-	Large = "2",
-	Inherit = "3"
+	Small,
+	Medium,
+	Large
 }
 
 export enum GuageRenderDirection {
-	Horizontal = "0",
-	Vertical = "1"
+	Horizontal,
+	Vertical
 }
 
 export class GuageElement {
