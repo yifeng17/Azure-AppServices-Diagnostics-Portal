@@ -4,12 +4,12 @@ import { DataRenderBaseComponent } from '../data-render-base/data-render-base.co
 import { DiagnosticData, Rendering } from '../../models/detector';
 
 export class Solution {
-  title: string;
-  descriptions: string[];
-  requiresConfirmation: boolean;
-  resourceGroup: string;
-  resourceName: string;
-  bladeName: string;
+  Title: string;
+  Descriptions: string[];
+  RequiresConfirmation: boolean;
+  ResourceGroup: string;
+  ResourceName: string;
+  BladeName: string;
 }
 
 export enum SolutionActionType {
@@ -40,12 +40,12 @@ export class SolutionComponent extends DataRenderBaseComponent {
 
     data.table.rows.map(row => {
       this.solution = <Solution>{
-        title: row[0],
-        descriptions: JSON.parse(row[1]),
-        requiresConfirmation: row[2],
-        resourceGroup: row[3],
-        resourceName: row[4],
-        bladeName: row[5]
+        Title: row[0],
+        Descriptions: JSON.parse(row[1]),
+        RequiresConfirmation: row[2],
+        ResourceGroup: row[3],
+        ResourceName: row[4],
+        BladeName: row[5]
       };
     });
   }
