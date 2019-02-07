@@ -47,4 +47,8 @@ Thumbs.db
 /ssl/*.crt
 /ssl/*.key
 
-package-lock.json
+.angulardoc.json
+
+# .Net Core configuration files to avoid all risk of committing secrets
+appsettings.json
+appsettings.*.json
