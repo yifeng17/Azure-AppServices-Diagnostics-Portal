@@ -35,7 +35,7 @@ namespace AppLensV3
             }
         }
 
-        public bool isLocalDevelopment
+        public bool IsLocalDevelopment
         {
             get
             {
@@ -58,7 +58,7 @@ namespace AppLensV3
         private HttpClient InitializeClient()
         {
             var handler = new HttpClientHandler();
-            if (!this.isLocalDevelopment)
+            if (!this.IsLocalDevelopment)
             {
                 X509Certificate2 certificate = GetMyX509Certificate();
                 handler.ClientCertificates.Add(certificate);
@@ -89,9 +89,9 @@ namespace AppLensV3
             {
                 HttpResponseMessage response;
 
-                if (!this.isLocalDevelopment)
+                if (!this.IsLocalDevelopment)
                 {
-                    if (!hitPassThroughAPI(path))
+                    if (!HitPassThroughApi(path))
                     {
                         var requestMessage = new HttpRequestMessage(method == "POST" ? HttpMethod.Post : HttpMethod.Get, path);
                         requestMessage.Headers.Add("x-ms-internal-view", internalView.ToString());
@@ -133,7 +133,7 @@ namespace AppLensV3
             }
         }
 
-        private bool hitPassThroughAPI(string path)
+        private bool HitPassThroughApi(string path)
         {
             return !this._nonPassThroughResourceProviderList.Exists(p => path.ToLower().Contains(p))
                 || (new Regex("/detectors/[^/]*/statistics").IsMatch(path.ToLower()))
