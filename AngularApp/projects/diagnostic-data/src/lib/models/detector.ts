@@ -86,7 +86,8 @@ export enum RenderingType {
     DetectorList,
     DropDown,
     Cards,
-    Solution
+    Solution,
+    Guage
 }
 
 export enum TimeSeriesType {

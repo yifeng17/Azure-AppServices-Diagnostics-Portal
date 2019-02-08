@@ -13,6 +13,7 @@ namespace Backend.Controllers
 {
     [Produces("application/json")]
     [Route("api/comms")]
+    [ResponseCache(CacheProfileName = "Default")]
     public class CommsController : Controller
     {
         private readonly IOutageCommunicationService _outageService;
