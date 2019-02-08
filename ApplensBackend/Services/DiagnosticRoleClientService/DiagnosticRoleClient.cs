@@ -16,7 +16,7 @@ using System.Text.RegularExpressions;
 
 namespace AppLensV3
 {
-    public class DiagnosticRoleClient: IDiagnosticClientService
+    public class DiagnosticRoleClient : IDiagnosticClientService
     {
         private IConfiguration _configuration;
 
@@ -44,23 +44,12 @@ namespace AppLensV3
         {
             get
             {
-                if (string.IsNullOrWhiteSpace(_configuration["DiagnosticRole:isLocalDevelopment"]))
+                if (bool.TryParse(_configuration["DiagnosticRole:isLocalDevelopment"], out bool retVal))
                 {
-                    return false;
+                    return retVal;
                 }
-                else
-                {
 
-                    if(bool.TryParse(_configuration["DiagnosticRole:isLocalDevelopment"], out bool retVal))
-                    {
-                        return retVal;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-
-                }
+                return false;
             }
         }
 
@@ -103,14 +92,13 @@ namespace AppLensV3
         {
             try
             {
-                path = path.Replace("/v4", string.Empty).Replace("v4", string.Empty);
                 HttpResponseMessage response;
+
                 if (!this.isLocalDevelopment)
                 {
-
                     if (!hitPassThroughAPI(path))
                     {
-                        HttpRequestMessage requestMessage = new HttpRequestMessage(method == "POST" ? HttpMethod.Post : HttpMethod.Get, path);
+                        var requestMessage = new HttpRequestMessage(method == "POST" ? HttpMethod.Post : HttpMethod.Get, path);
                         requestMessage.Headers.Add("x-ms-internal-view", internalView.ToString());
 
                         if (method.ToUpper() == "POST")
@@ -122,7 +110,7 @@ namespace AppLensV3
                     }
                     else
                     {
-                        HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, "api/invoke");
+                        var requestMessage = new HttpRequestMessage(HttpMethod.Post, "api/invoke");
                         requestMessage.Headers.Add("x-ms-path-query", path);
                         requestMessage.Headers.Add("x-ms-verb", method);
                         requestMessage.Content = new StringContent(body ?? string.Empty, Encoding.UTF8, "application/json");
@@ -132,17 +120,19 @@ namespace AppLensV3
                 }
                 else
                 {
-                    HttpRequestMessage requestMessage = new HttpRequestMessage(method.Trim().ToUpper() == "POST" ? HttpMethod.Post : HttpMethod.Get, path)
+                    path = path.Replace("/v4", string.Empty).Replace("v4", string.Empty);
+
+                    var requestMessage = new HttpRequestMessage(method.Trim().ToUpper() == "POST" ? HttpMethod.Post : HttpMethod.Get, path)
                     {
                         Content = new StringContent(body ?? string.Empty, Encoding.UTF8, "application/json")
                     };
 
                     response = await _client.SendAsync(requestMessage);
                 }
-                
+
                 return response;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -165,9 +155,10 @@ namespace AppLensV3
             try
             {
                 X509Certificate2Collection certCollection = certStore.Certificates.Find(
-                                       X509FindType.FindByThumbprint,
-                                       AuthCertThumbprint,
-                                       false);
+                    X509FindType.FindByThumbprint,
+                    AuthCertThumbprint,
+                    false);
+
                 // Get the first cert with the thumbprint
                 if (certCollection.Count > 0)
                 {
@@ -183,7 +174,7 @@ namespace AppLensV3
                 certStore.Close();
             }
 
-            if(cert == null)
+            if (cert == null)
             {
                 throw new Exception(string.Format("Certificate with thumbprint {0} could not be found", AuthCertThumbprint));
             }
