@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, Input } from '@angular/core';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
 import { DiagnosticData, Rendering } from '../../models/detector';
@@ -25,7 +25,7 @@ export enum SolutionActionType {
 })
 export class SolutionComponent extends DataRenderBaseComponent {
 
-  solution: Solution;
+  @Input() solution: Solution;
   renderingProperties: Rendering;
   acceptRisk = false;
 

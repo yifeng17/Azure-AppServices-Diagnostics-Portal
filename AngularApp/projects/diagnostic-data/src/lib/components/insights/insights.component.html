@@ -46,9 +46,10 @@
           </tbody>
         </table>
       </div>
-    </div>
-    <div class="insight-goes-here">
-      {{insight.solutions[0].Title}}
+
+      <div class="solutions">
+        <solution *ngFor="let solution of insight.solutions;"></solution>
+      </div>
     </div>
   </div>
 </ng-template>
