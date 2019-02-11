@@ -6,10 +6,9 @@ html, body {
 }
 
 .prototype-container {
-  min-height: 100px;
-  border: $border;
+  min-height: 10px;
   margin: 0;
-  padding: 0;
+  padding: 10px 0px;
   text-align: center;
 
   .solution-action {
@@ -30,13 +29,10 @@ markdown {
   padding: 0;
 }
 
-.message-warning {
-  color: $warning-color;
-  font-size: 12px;
-}
-
 label {
-  .text-value {
+  .message-warning {
     padding-left: .5em;
+    color: $warning-color;
+    font-size: 12px;
   }
 }
