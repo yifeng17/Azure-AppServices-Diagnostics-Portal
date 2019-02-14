@@ -29,10 +29,10 @@ namespace Backend.Controllers
         [HttpOptions]
         public async Task<IActionResult> Invoke(string startTime = null, string endTime = null)
         {
-            string resourceHeaderName = Request.Headers.Keys.FirstOrDefault(p => p.Equals("x-ms-resource", StringComparison.OrdinalIgnoreCase));
+            string resourceHeaderName = Request.Headers.Keys.FirstOrDefault(p => p.Equals("resource-uri", StringComparison.OrdinalIgnoreCase));
             if (string.IsNullOrWhiteSpace(resourceHeaderName) || !Request.Headers.TryGetValue(resourceHeaderName, out StringValues val))
             {
-                return BadRequest("Missing x-ms-resource");
+                return BadRequest("Missing resource-uri");
             }
 
             string authHeaderName = Request.Headers.Keys.FirstOrDefault(p => p.Equals("authorization", StringComparison.OrdinalIgnoreCase));
