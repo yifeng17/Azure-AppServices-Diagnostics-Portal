@@ -2,19 +2,13 @@ import { Component, ViewEncapsulation, Input } from '@angular/core';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
 import { DiagnosticData, Rendering } from '../../models/detector';
+import { SiteService } from 'projects/app-service-diagnostics/src/app/shared/services/site.service';
 
 export class Solution {
   Title: string;
   Descriptions: string[];
+  ResourceUri: string;
   RequiresConfirmation: boolean;
-  ResourceGroup: string;
-  ResourceName: string;
-  BladeName: string;
-}
-
-export enum SolutionActionType {
-  Internal,
-  External
 }
 
 @Component({
@@ -29,7 +23,8 @@ export class SolutionComponent extends DataRenderBaseComponent {
   renderingProperties: Rendering;
   acceptRisk = false;
 
-  constructor(telemetryService: TelemetryService) {
+  // TODO: No provider for SiteService - have to migrate that to this project or fix the reference
+  constructor(telemetryService: TelemetryService, public siteService: SiteService) {
     super(telemetryService)
   }
 
@@ -42,16 +37,19 @@ export class SolutionComponent extends DataRenderBaseComponent {
       this.solution = <Solution>{
         Title: row[0],
         Descriptions: JSON.parse(row[1]),
-        RequiresConfirmation: row[2],
-        ResourceGroup: row[3],
-        ResourceName: row[4],
-        BladeName: row[5]
+        ResourceUri: row[2],
+        RequiresConfirmation: row[3]
       };
     });
   }
 
   checkAcceptRisk() {
     this.acceptRisk = !this.acceptRisk;
+  }
+
+  performAction() {
+    console.log("Restarting site");
+    this.siteService.restartSiteFromResourceUri(this.solution.ResourceUri);
   }
 
 }

@@ -1,7 +1,7 @@
 <div class="prototype-container">
 
   <div class="solution-action mb-2">
-    <button class="custom-button" [disabled]="acceptRisk === false">Restart</button>
+    <button type="button" (click)="performAction()" class="custom-button" [disabled]="acceptRisk === false">Restart</button>
   </div>
 
   <div class="solution-warning">
