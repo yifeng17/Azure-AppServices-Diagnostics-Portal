@@ -15,8 +15,8 @@ export class CardSelection {
 }
 
 export enum CardActionType {
-    Detector,
-    Tool
+  Detector,
+  Tool
 }
 
 @Component({
@@ -27,6 +27,7 @@ export enum CardActionType {
 export class CardSelectionComponent extends DataRenderBaseComponent {
 
   cardSelections: CardSelection[] = [];
+  colors: string[] = ['rgb(186, 211, 245)', 'rgb(249, 213, 180)', 'rgb(208, 228, 176)', 'rgb(208, 175, 239)', 'rgb(170, 192, 208)', 'rgb(208, 170, 193)', 'rgb(166, 216, 209)', 'rgb(207, 217, 246)'];
 
   constructor(private _diagnosticService: DiagnosticService, private _router: Router,
     private _activatedRoute: ActivatedRoute, protected telemetryService: TelemetryService, private _navigator: FeatureNavigationService) {
@@ -51,5 +52,9 @@ export class CardSelectionComponent extends DataRenderBaseComponent {
     if (card && card.linkType === CardActionType.Detector) {
       this._navigator.NavigateToDetector(this._activatedRoute.snapshot.params['detector'], card.linkValue);
     }
+  }
+
+  public getColor(index: number): string {
+    return this.colors[index % this.colors.length];
   }
 }
