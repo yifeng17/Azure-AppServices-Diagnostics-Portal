@@ -48,7 +48,7 @@
       </div>
 
       <div class="solutions">
-        <solution *ngFor="let solution of insight.solutions;"></solution>
+        <solution *ngFor="let solution of insight.solutions;" [solution]="solution"></solution>
       </div>
     </div>
   </div>

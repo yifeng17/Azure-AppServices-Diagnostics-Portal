@@ -1,5 +1,6 @@
 import 'd3';
 import 'nvd3';
+// This import looks circular
 import { DetectorControlService, DiagnosticService, TelemetryService } from 'diagnostic-data';
 import { NvD3Module } from 'ng2-nvd3';
 import { MarkdownModule } from 'ngx-markdown';
@@ -58,7 +59,8 @@ import { GuageControlComponent } from './components/guage-control/guage-control.
 import { FeatureNavigationService } from './services/feature-navigation.service';
 import { AppInsightsTelemetryService } from './services/telemetry/appinsights-telemetry.service';
 import { KustoTelemetryService } from './services/telemetry/kusto-telemetry.service';
-import { SolutionComponent, Solution } from './components/solution/solution.component';
+import { SolutionComponent } from './components/solution/solution.component';
+import { SiteService } from 'projects/app-service-diagnostics/src/app/shared/services/site.service';
 
 
 @NgModule({
@@ -71,7 +73,8 @@ import { SolutionComponent, Solution } from './components/solution/solution.comp
     MonacoEditorModule.forRoot()
   ],
   providers: [
-    ClipboardService
+    ClipboardService,
+    SiteService
   ],
   declarations: [Nvd3GraphComponent, TimeSeriesGraphComponent, DataTableComponent, DynamicDataComponent, DataRenderBaseComponent,
     DataContainerComponent, TimeSeriesInstanceGraphComponent, DetectorViewComponent, DataSummaryComponent, EmailComponent, InsightsComponent,

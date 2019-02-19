@@ -21,26 +21,18 @@ export class SolutionComponent extends DataRenderBaseComponent {
 
   @Input() solution: Solution;
   renderingProperties: Rendering;
-  acceptRisk = false;
+  acceptRisk: boolean;
 
-  // TODO: No provider for SiteService - have to migrate that to this project or fix the reference
-  constructor(telemetryService: TelemetryService, public siteService: SiteService) {
-    super(telemetryService)
+  constructor(telemetryService: TelemetryService/*, private _siteService: SiteService*/) {
+    super(telemetryService);
   }
 
-  processData(data: DiagnosticData) {
-    super.processData(data);
+  ngOnInit() {
+    if (this.solution.Descriptions == null) {
+      this.solution.Descriptions = [];
+    }
 
-    this.renderingProperties = <Rendering>data.renderingProperties;
-
-    data.table.rows.map(row => {
-      this.solution = <Solution>{
-        Title: row[0],
-        Descriptions: JSON.parse(row[1]),
-        ResourceUri: row[2],
-        RequiresConfirmation: row[3]
-      };
-    });
+    this.acceptRisk = !this.solution.RequiresConfirmation;
   }
 
   checkAcceptRisk() {
@@ -48,8 +40,8 @@ export class SolutionComponent extends DataRenderBaseComponent {
   }
 
   performAction() {
-    console.log("Restarting site");
-    this.siteService.restartSiteFromResourceUri(this.solution.ResourceUri);
+    console.log("Restarting site on solution " + this.solution.Title);
+    // this._siteService.restartSiteFromUri(this.solution.ResourceUri);
   }
 
 }

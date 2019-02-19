@@ -107,6 +107,12 @@ export class SiteService {
         }));
     }
 
+    restartSiteFromUri(resourceUri: string): Observable<boolean> {
+        const restartUri = this._uriElementsService.getRestartUri(resourceUri);
+
+        return this._armClient.postResource(restartUri, null, null, true) as Observable<boolean>;
+    }
+
     killW3wpOnInstance(subscriptionId: string, resourceGroup: string, siteName: string, scmHostName: string, instanceId: string): Observable<boolean> {
         return this.findTargetedSite(siteName).pipe(mergeMap((targetedSite: Site) => {
             if (targetedSite.enabledHostNames.length > 0) {

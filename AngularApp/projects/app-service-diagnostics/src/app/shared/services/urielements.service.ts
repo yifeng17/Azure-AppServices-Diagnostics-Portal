@@ -136,6 +136,10 @@ export class UriElementsService {
         return this._getSiteResourceUrl(subscriptionId, resourceGroup, siteName, slot) + this._siteRestartUrlFormat;
     }
 
+    getRestartUri(resourceUri: string): string {
+        return resourceUri + this._siteRestartUrlFormat;
+    }
+
     getKillSiteProcessUrl(subscriptionId: string, resourceGroup: string, siteName: string, slot: string = ''): string {
 
         let resource = siteName;

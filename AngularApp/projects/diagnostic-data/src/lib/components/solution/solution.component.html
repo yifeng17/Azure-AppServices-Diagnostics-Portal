@@ -1,10 +1,16 @@
 <div class="prototype-container">
 
+  <h1>{{solution.Title}}</h1>
+
+  <div *ngFor="let description of solution.Descriptions">
+    {{description}}
+  </div>
+
   <div class="solution-action mb-2">
     <button type="button" (click)="performAction()" class="custom-button" [disabled]="acceptRisk === false">Restart</button>
   </div>
 
-  <div class="solution-warning">
+  <div class="solution-warning" *ngIf="solution.RequiresConfirmation">
     <label>
       <input type="checkbox" ng-checked="acceptRisk" (change)="checkAcceptRisk()" name="Accept">
       <span class="message-warning bold">I accept the risk of downtime</span>
