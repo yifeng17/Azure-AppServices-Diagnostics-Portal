@@ -1,10 +1,11 @@
 <div class="prototype-container">
 
-  <h1>{{solution.Title}}</h1>
+  <h3>{{solution.Title}}</h3>
 
-  <div *ngFor="let description of solution.Descriptions">
+  <markdown *ngFor="let description of solution.Descriptions">
     {{description}}
-  </div>
+  </markdown>
+  <br />
 
   <div class="solution-action mb-2">
     <button type="button" (click)="performAction()" class="custom-button" [disabled]="acceptRisk === false">Restart</button>
