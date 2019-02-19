@@ -38,6 +38,11 @@ export class SiteService extends ResourceService {
     return this._currentResource;
   }
 
+  public restartSiteFromUri(resourceUri: string): Observable<boolean> {
+    console.log("Real site restart called")
+    return null;
+  }
+
   private getSiteFromObserverResponse(observerResponse: Observer.ObserverSiteResponse): Observer.ObserverSiteInfo {
     return observerResponse.details.find(site =>
       site.Subscription.toLowerCase() === this._armResource.subscriptionId.toLowerCase() &&

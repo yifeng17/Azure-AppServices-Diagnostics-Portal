@@ -60,7 +60,6 @@ import { FeatureNavigationService } from './services/feature-navigation.service'
 import { AppInsightsTelemetryService } from './services/telemetry/appinsights-telemetry.service';
 import { KustoTelemetryService } from './services/telemetry/kusto-telemetry.service';
 import { SolutionComponent } from './components/solution/solution.component';
-import { SiteService } from 'projects/app-service-diagnostics/src/app/shared/services/site.service';
 
 
 @NgModule({
@@ -73,8 +72,7 @@ import { SiteService } from 'projects/app-service-diagnostics/src/app/shared/ser
     MonacoEditorModule.forRoot()
   ],
   providers: [
-    ClipboardService,
-    SiteService
+    ClipboardService
   ],
   declarations: [Nvd3GraphComponent, TimeSeriesGraphComponent, DataTableComponent, DynamicDataComponent, DataRenderBaseComponent,
     DataContainerComponent, TimeSeriesInstanceGraphComponent, DetectorViewComponent, DataSummaryComponent, EmailComponent, InsightsComponent,

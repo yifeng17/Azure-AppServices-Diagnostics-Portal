@@ -1,8 +1,8 @@
 import { Component, ViewEncapsulation, Input } from '@angular/core';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
-import { DiagnosticData, Rendering } from '../../models/detector';
-import { SiteService } from 'projects/app-service-diagnostics/src/app/shared/services/site.service';
+import { Rendering } from '../../models/detector';
+import { DiagnosticSiteService } from '../../services/diagnostic-site.service';
 
 export class Solution {
   Title: string;
@@ -23,7 +23,7 @@ export class SolutionComponent extends DataRenderBaseComponent {
   renderingProperties: Rendering;
   acceptRisk: boolean;
 
-  constructor(telemetryService: TelemetryService/*, private _siteService: SiteService*/) {
+  constructor(telemetryService: TelemetryService, private _siteService: DiagnosticSiteService) {
     super(telemetryService);
   }
 
@@ -41,7 +41,7 @@ export class SolutionComponent extends DataRenderBaseComponent {
 
   performAction() {
     console.log("Restarting site on solution " + this.solution.Title);
-    // this._siteService.restartSiteFromUri(this.solution.ResourceUri);
+    this._siteService.restartSiteFromUri(this.solution.ResourceUri);
   }
 
 }

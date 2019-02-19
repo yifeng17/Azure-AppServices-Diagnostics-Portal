@@ -8,12 +8,16 @@
   <br />
 
   <div class="solution-action mb-2">
-    <button type="button" (click)="performAction()" class="custom-button" [disabled]="acceptRisk === false">Restart</button>
+    <button type="button" (click)="performAction()" class="custom-button"
+        [disabled]="acceptRisk === false">
+      Restart
+    </button>
   </div>
 
   <div class="solution-warning" *ngIf="solution.RequiresConfirmation">
     <label>
-      <input type="checkbox" ng-checked="acceptRisk" (change)="checkAcceptRisk()" name="Accept">
+      <input type="checkbox" ng-checked="acceptRisk" (change)="checkAcceptRisk()"
+          name="Accept">
       <span class="message-warning bold">I accept the risk of downtime</span>
     </label>
   </div>
