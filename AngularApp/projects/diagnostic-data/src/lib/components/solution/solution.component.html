@@ -18,6 +18,13 @@
         Yes, Restart Site
       </button>
     </div>
+    {{restartStatus}}
+    <span *ngIf="restartStatus === 'Running...'">
+      <i class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true"></i>
+    </span>
+    <span *ngIf="restartStatus === 'Complete!'">
+      <i class="fa fa-check-circle" aria-hidden="true"></i>
+    </span>
   </div>
 
 </div>

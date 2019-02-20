@@ -22,6 +22,7 @@ export class SolutionComponent extends DataRenderBaseComponent {
   @Input() solution: Solution;
   renderingProperties: Rendering;
   acceptRisk: boolean;
+  restartStatus: string;
 
   constructor(telemetryService: TelemetryService, private _siteService: DiagnosticSiteService) {
     super(telemetryService);
@@ -41,7 +42,17 @@ export class SolutionComponent extends DataRenderBaseComponent {
 
   performAction() {
     console.log("Restarting site on solution " + this.solution.Title);
-    this._siteService.restartSiteFromUri(this.solution.ResourceUri);
+    this.restartStatus = "Running...";
+
+    this._siteService.restartSiteFromUri(this.solution.ResourceUri).subscribe(res => {
+      this.restartStatus = "Complete!";
+
+      if (res) {
+        console.log("Site restart succeeded");
+      } else {
+        console.log("Site restart failed");
+      }
+    });
   }
 
 }
