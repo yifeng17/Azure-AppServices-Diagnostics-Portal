@@ -59,7 +59,7 @@ namespace AppLensV3
 
             if (Configuration["ServerMode"] == "internal")
             {
-                services.AddTransient<IFilterProvider, EncFilterProvider>();
+                services.AddTransient<IFilterProvider, LocalFilterProvider>();
             }
         }
 
@@ -100,7 +100,7 @@ namespace AppLensV3
     }
 
     // Use this to skip Auth on local server
-    public class EncFilterProvider : IFilterProvider
+    public class LocalFilterProvider: IFilterProvider
     {
         public int Order
         {
@@ -118,9 +118,9 @@ namespace AppLensV3
         {
             // remove authorize filters
             var authFilters = context.Results.Where(x =>  x.Descriptor.Filter.GetType() == typeof(AuthorizeFilter)).ToList();
-            foreach (var f in authFilters)
+            foreach (var filter in authFilters)
             {
-                context.Results.Remove(f);
+                context.Results.Remove(filter);
             }
         }
     }

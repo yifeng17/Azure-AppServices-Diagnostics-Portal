@@ -52,3 +52,4 @@ Thumbs.db
 # Environment settings (contains secrets)
 .env
 environment.local.ts
+
