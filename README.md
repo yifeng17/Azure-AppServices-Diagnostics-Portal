@@ -1,6 +1,6 @@
 # Azure App Services Diagnostics Portal And Applens
 
-This is the repository for Azure App Service Diagnostics experience.
+This is the repository for Azure App Service diagnostics experience.
 
 ## Prerequisites
 - [Node 6.*](https://nodejs.org/en/download/)
@@ -43,6 +43,7 @@ root
 ```
 
 ## Getting Started
+
 - Clone repo `git clone https://github.com/Azure/Azure-WebApps-Support-Center.git`
 - Navigate to the angular root folder `AngularApp` and run `npm install` (This will install all the required packages.)
 
@@ -50,45 +51,29 @@ root
 
 ### Set Up a Local Development Environment
 
-1. Get Resource Auth Token from ARM Client:
+1. Create a Local Environment Settings file
+   - Copy `AngularApp\projects\app-service-diagnostics\src\environments\environment.ts` to create `AngularApp\projects\app-service-diagnostics\src\environments\environment.local.ts`
+   - Set key `"useApplensBackend"` to `true`
+2. Get Resource Auth Token from ARM Client:
    - Install <a href="https://github.com/projectkudu/ARMClient">ArmClient</a>: `choco install armclient`
      - Ensure source `chocolatey` is enabled: `choco source enable -n=chocolatey`
    - Log in to ArmClient: `ARMClient.exe login`
    - Run `ARMClient.exe token {SubscriptionID}` with your Subscription ID, which will copy the Auth Token to the clipboard
-2. Add Auth Token and ResourceID to Auth Service:
-   - Open `AngularApp\projects\app-service-diagnostics\src\app\startup\services\auth.service.ts`
-   - Add the following values to `localStartUpInfo:`
-    ```Typescript
-    private localStartUpInfo: StartupInfo = <StartupInfo>{
-        token: '{PASTE AUTH TOKEN FROM STEP 1 HERE}',
-        resourceId: '{RESOURCE ID HERE}'
-    };
-    ```
-   - Copy the ID of a Resource you want to test, and copy it into the `resourceId` denoted above
-3. Set environment to use local AppLens Backend:
-   - Open `AngularApp\projects\app-service-diagnostics\src\environments\environment.ts`
-   - Set `useApplensBackend: true`
-4. Remove the `[Authorize]` annotations in `ApplensBackend\Controllers\DiagnosticController.cs` and `ApplensBackend\Controllers\ResourceController.cs`
-5. (Optional) Run the server without SSL
-   - Run `ng serve` for a dev server, or alternatively `npm start`.
-   - Navigate to `http://localhost:3000/`.
-   - The app will automatically reload if you change any of the source files.
-6. Run the SSL server
+3. Add Auth Token and ResourceID to Local Environment Settings:
+   - Paste the ArmClient token from the above step into `authServiceToken` in `environment.local.ts`
+   - Copy the ID of a Resource you want to test, and paste it into `authServiceResourceId` in `environment.local.ts`
+4. Skip Authorization in ApplensBackend
+   - Open `appsettings.Development.json`
+   - Set `"ServerMode": "internal"`
+5. Create a self-signed certificate for Applens
    - Navigate to `AngularApp\ssl`
    - Follow the instructions in `AngularApp\ssl\README.md` to create a self-signed certficate and install the certificate for your local machine in Trusted Root
-   - Run the SSL server: `npm run ssl`
+6. Run the SSL server
+   - Run `npm run ssl-local`
    - Navigate to `https://localhost:3000` to confirm the server is up
-   - Access the resource using the [Local Portal Test URL](https://ms.portal.azure.com/?websitesextension_ext=asd.env%3Dlocal)
+   - Access the resource denoted by the Resource ID you copied using the [Local Portal Test URL](https://ms.portal.azure.com/?websitesextension_ext=asd.env%3Dlocal)
    - This will load the iframe from `https://localhost:3000`. Must be running in *ssl* mode.
    - Any changes made to the locally hosted project will be automatically refreshed in the Portal
-   - *BUG*: See Known Issues about Observer API
-
-#### Known Issues
-- Currently the Observer call to get the stamp name for the site is case sensitive on `resourceGroupName`, but the parameter is passed in lowercase, breaking functionality for resource groups that are not completely lowercase
-  - `SitesController.cs` line 29: `GetStampName(string subscriptionId, string resourceGroupName, string siteName);`
-  - **Workaround**: Hardcode resourceGroupName to the case-corrected resource group string
-    - Ex: `GetStampName(subscriptionId, "MyResourceGroup", siteName);`
-
 
 ### Testing Local Changes in the Portal
 
