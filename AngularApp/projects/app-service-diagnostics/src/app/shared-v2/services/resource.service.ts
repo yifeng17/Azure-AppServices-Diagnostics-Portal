@@ -28,7 +28,7 @@ export class ResourceService {
     return 'Azure';
   }
 
-  public get azueServiceName(): string {
+  public get azureServiceName(): string {
     return '';
   }
 

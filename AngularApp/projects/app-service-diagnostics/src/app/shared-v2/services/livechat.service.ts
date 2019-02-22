@@ -29,7 +29,7 @@ export class LiveChatService {
         this.authService.getStartupInfo().subscribe((startupInfo: StartupInfo) => {
             this._backendApi.get<ChatStatus>('api/chat/status').subscribe((status: ChatStatus) => {
                 this.chatStatus = status;
-                if (this.isChatApplicableForSupportTopic(startupInfo, this._resourceService.azueServiceName)) {
+                if (this.isChatApplicableForSupportTopic(startupInfo, this._resourceService.azureServiceName)) {
 
                     setTimeout(() => {
 

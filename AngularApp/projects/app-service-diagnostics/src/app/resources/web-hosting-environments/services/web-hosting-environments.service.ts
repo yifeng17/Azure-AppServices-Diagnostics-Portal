@@ -7,7 +7,7 @@ export class WebHostingEnvironmentsService extends ResourceService {
         return 'App Service Environment';
     }
 
-    public get azueServiceName(): string {
+    public get azureServiceName(): string {
         return "App Service Environment";
     }
 }

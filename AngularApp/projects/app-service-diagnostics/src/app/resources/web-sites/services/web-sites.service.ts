@@ -27,7 +27,7 @@ export class WebSitesService extends ResourceService {
         return this.appType === AppType.WebApp ? this.platform === OperatingSystem.windows ? 'Azure Web App' : 'Azure Web App(Linux)' : 'Azure Function';
     }
 
-    public get azueServiceName(): string {
+    public get azureServiceName(): string {
         return this.appType === AppType.WebApp ? this.platform === OperatingSystem.windows ? 'Azure Web App(Windows)' : 'Azure Web App(Linux)' : 'Azure Function App';
     }
 
