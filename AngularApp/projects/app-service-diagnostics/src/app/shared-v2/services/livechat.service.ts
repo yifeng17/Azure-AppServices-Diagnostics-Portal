@@ -45,7 +45,7 @@ export class LiveChatService {
                                 // Raise an event for trigger message campaign
                                 window.fcWidget.track('supportCaseSubmission', {
                                     supportTopicId: startupInfo.supportTopicId,
-                                    product: this._resourceService.azueServiceName
+                                    product: this._resourceService.azureServiceName
                                 });
 
                             }, 1000);
