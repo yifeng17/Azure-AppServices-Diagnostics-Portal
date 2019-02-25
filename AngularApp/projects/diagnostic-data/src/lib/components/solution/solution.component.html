@@ -4,7 +4,7 @@
     <h2>{{solution.Title}}</h2>
   </div>
 
-  <div class="solution-description">
+  <div *ngIf="solution.Descriptions && solution.Descriptions.length !== 0" class="solution-description">
     <markdown *ngFor="let description of solution.Descriptions">
       {{description}}
     </markdown>
