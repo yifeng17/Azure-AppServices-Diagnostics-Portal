@@ -11,20 +11,30 @@
   </div>
 
   <div class="solution-action">
-    <h2>Restart Site?</h2>
-    <div class="action-buttons">
-      <button type="button" class="custom-button deny">No, Don't Restart</button>
-      <button type="button" (click)="performAction()" class="custom-button confirm">
-        Yes, Restart Site
-      </button>
+    <div *ngIf="solution.RequiresConfirmation; else non_confirm_buttons" class="confirm-buttons">
+      <h2>{{solution.Title}}?</h2>
+      <div class="action-buttons">
+        <button type="button" class="custom-button deny">No, Don't {{solution.Title}}</button>
+        <button type="button" (click)="performAction()" class="custom-button confirm">
+          Yes, {{solution.Title}}
+        </button>
+      </div>
     </div>
-    {{restartStatus}}
-    <span *ngIf="restartStatus === 'Running...'">
+
+    {{actionStatus}}
+
+    <span *ngIf="actionStatus === 'Running...'">
       <i class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true"></i>
     </span>
-    <span *ngIf="restartStatus === 'Complete!'">
+    <span *ngIf="actionStatus === 'Complete!'">
       <i class="fa fa-check-circle" aria-hidden="true"></i>
     </span>
   </div>
 
 </div>
+
+<ng-template #non_confirm_buttons>
+  <div class="action-buttons">
+    <button (click)="performAction()" type="button" class="custom-button">{{solution.Title}}</button>
+  </div>
+</ng-template>

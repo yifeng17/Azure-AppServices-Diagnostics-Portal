@@ -41,24 +41,28 @@ markdown {
     border: 1px solid darkgray;
     padding-left: 2em;
     padding-right: 2em;
+    margin-left: 0;
   }
 
   .custom-button.confirm {
     background-color: #b71c1c;
     font-weight: bold;
     color: #fafafa;
-    margin-left: 0;
   }
 
   .custom-button.deny {
     background-color: white;
     color: gray;
     margin-right: .25em;
-    margin-left: 0;
   }
 }
 
 .action-buttons {
+  display: inline-block;
+  margin: 0;
+}
+
+.confirm-buttons {
   display: inline-block;
   margin: 0;
 }
