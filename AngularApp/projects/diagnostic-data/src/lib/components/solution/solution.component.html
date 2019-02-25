@@ -12,7 +12,7 @@
 
   <div class="solution-action">
     <div *ngIf="solution.RequiresConfirmation; else non_confirm_buttons" class="confirm-buttons">
-      <h2>{{solution.Title}}?</h2>
+      <h3>{{solution.Title}}?</h3>
       <div class="action-buttons">
         <button type="button" class="custom-button deny">No, Don't {{solution.Title}}</button>
         <button type="button" (click)="performAction()" class="custom-button confirm">
