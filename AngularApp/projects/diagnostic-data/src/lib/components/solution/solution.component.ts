@@ -3,12 +3,21 @@ import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
 import { Rendering } from '../../models/detector';
 import { DiagnosticSiteService } from '../../services/diagnostic-site.service';
+import { Dictionary } from '../../../../../applens/src/app/shared/models/extensions';
+
+export enum ActionType {
+  RestartSite,
+  UpdateSiteAppSettings,
+  KillW3wpOnInstance
+}
 
 export class Solution {
   Title: string;
   Descriptions: string[];
   ResourceUri: string;
   RequiresConfirmation: boolean;
+  Action: ActionType;
+  ActionArgs: Dictionary<any>;
 }
 
 @Component({
