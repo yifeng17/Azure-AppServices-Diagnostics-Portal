@@ -199,6 +199,10 @@ export class UriElementsService {
         return this._getSiteResourceUrl(subscriptionId, resourceGroup, siteName, slot) + this._updateAppSettingsUrlFormat;
     }
 
+    getUpdateSettingsUri(resourceUri: string): string {
+        return resourceUri + this._updateAppSettingsUrlFormat;
+    }
+
     getConfigWebUrl(site: SiteInfoMetaData): string {
         return this._getSiteResourceUrl(site.subscriptionId, site.resourceGroupName, site.siteName, site.slot) + this._configWebUrlFormat;
     }

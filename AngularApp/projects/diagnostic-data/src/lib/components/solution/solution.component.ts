@@ -4,6 +4,7 @@ import { DataRenderBaseComponent } from '../data-render-base/data-render-base.co
 import { Rendering } from '../../models/detector';
 import { DiagnosticSiteService } from '../../services/diagnostic-site.service';
 import { Dictionary } from '../../../../../applens/src/app/shared/models/extensions';
+import { Observable } from 'rxjs';
 
 export enum ActionType {
   RestartSite,
@@ -50,18 +51,29 @@ export class SolutionComponent extends DataRenderBaseComponent {
   }
 
   performAction() {
-    console.log("Restarting site on solution " + this.solution.Title);
+    console.log("Running action on solution " + this.solution.Title);
     this.actionStatus = "Running...";
 
-    this._siteService.restartSiteFromUri(this.solution.ResourceUri).subscribe(res => {
+    this.chooseAction(this.solution.Action, this.solution.ResourceUri, this.solution.ActionArgs).subscribe(res => {
       this.actionStatus = "Complete!";
 
       if (res) {
-        console.log("Site restart succeeded");
+        console.log("Solution action succeeded");
       } else {
-        console.log("Site restart failed");
+        console.log("Solution action failed");
       }
     });
+  }
+
+  chooseAction(actionType: ActionType, resourceUri: string, args?: Dictionary<string>): Observable<any> {
+    switch (actionType) {
+      case ActionType.RestartSite:
+        return this._siteService.restartSiteFromUri(resourceUri);
+      case ActionType.UpdateSiteAppSettings:
+        return this._siteService.updateSettingsFromUri(resourceUri, args);
+      case ActionType.KillW3wpOnInstance:
+        break;
+    }
   }
 
 }

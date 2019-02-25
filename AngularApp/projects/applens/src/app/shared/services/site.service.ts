@@ -39,7 +39,12 @@ export class SiteService extends ResourceService {
   }
 
   public restartSiteFromUri(resourceUri: string): Observable<boolean> {
-    console.log("Real site restart called")
+    console.log("Real site restart called");
+    return null;
+  }
+
+  public updateSettingsFromUri(resourceUri: string, body: any): Observable<any> {
+    console.log("Real update settings called");
     return null;
   }
 

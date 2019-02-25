@@ -10,8 +10,7 @@ export class DiagnosticSiteService {
         return null;
     }
 
-    restartSite(subscriptionId: string, resourceGroup: string,
-            siteName: string): Observable<boolean> {
+    restartSite(subscriptionId: string, resourceGroup: string, siteName: string): Observable<boolean> {
         return null;
     }
 
@@ -20,8 +19,8 @@ export class DiagnosticSiteService {
         return null;
     }
 
-    killW3wpOnInstance(subscriptionId: string, resourceGroup: string, siteName: string,
-            scmHostName: string, instanceId: string): Observable<boolean> {
+    killW3wpOnInstance(subscriptionId: string, resourceGroup: string, siteName: string, scmHostName: string,
+            instanceId: string): Observable<boolean> {
         return null;
     }
 
@@ -30,13 +29,17 @@ export class DiagnosticSiteService {
         return null;
     }
 
-    getVirtualNetworkConnectionsInformation(subscriptionId: string, resourceGroup: string,
-            siteName: string, slot: string = ''): Observable<any> {
+    getVirtualNetworkConnectionsInformation(subscriptionId: string, resourceGroup: string, siteName: string,
+            slot: string = ''): Observable<any> {
         return null;
     }
 
-    updateSiteAppSettings(subscriptionId: string, resourceGroup: string, siteName: string,
-            slot: string = '', body: any): Observable<any> {
+    updateSiteAppSettings(subscriptionId: string, resourceGroup: string, siteName: string, slot: string = '',
+            body: any): Observable<any> {
+        return null;
+    }
+
+    updateSettingsFromUri(resourceUri: string, body: any): Observable<any> {
         return null;
     }
 

@@ -182,6 +182,12 @@ export class SiteService {
         return this._armClient.putResource(url, body, null, true);
     }
 
+    updateSettingsFromUri(resourceUri: string, body: any): Observable<any> {
+        const restartUri = this._uriElementsService.getUpdateSettingsUri(resourceUri);
+
+        return this._armClient.putResource(restartUri, body, null, true);
+    }
+
     private _populateSiteInfo(resourceId: string): void {
         const pieces = resourceId.toLowerCase().split('/');
         this.currentSiteMetaData.next(<SiteInfoMetaData>{
