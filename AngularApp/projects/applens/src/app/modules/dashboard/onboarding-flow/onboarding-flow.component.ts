@@ -65,7 +65,7 @@ export class OnboardingFlowComponent implements OnInit, OnDestroy {
   private publishingPackage: Package;
   private userName: string;
 
-  private emailRecipients: string;
+  private emailRecipients: string ='';
 
   constructor(private cdRef: ChangeDetectorRef, private githubService: GithubApiService, private diagnosticApiService: ApplensDiagnosticService, private resourceService: ResourceService,
     private _detectorControlService: DetectorControlService, private _adalService: AdalService, public ngxSmartModalService: NgxSmartModalService) {
@@ -98,8 +98,7 @@ export class OnboardingFlowComponent implements OnInit, OnDestroy {
     this.showAlert = false;
 
     this.userName = this._adalService.userInfo.profile ? this._adalService.userInfo.profile.upn : '';
-   // this.emailAlertRecipients = this.userName;
-    this.emailRecipients = this.userName + ";xipeng;";
+    this.emailRecipients = this.userName.replace('@microsoft.com','');
   }
 
   ngOnInit() {
@@ -311,9 +310,9 @@ export class OnboardingFlowComponent implements OnInit, OnDestroy {
 
   private preparePublishingPackage(queryResponse: QueryResponse<DetectorResponse>, code: string) {
 
-    if (queryResponse.invocationOutput.metadata.author !== null && queryResponse.invocationOutput.metadata.author !== "")
+    if (queryResponse.invocationOutput.metadata.author !== null && queryResponse.invocationOutput.metadata.author !== "" && this.emailRecipients.indexOf(queryResponse.invocationOutput.metadata.author) < 0)
     {
-        this.emailRecipients +=  queryResponse.invocationOutput.metadata.author;
+        this.emailRecipients +=  ';' + queryResponse.invocationOutput.metadata.author;
     }
 
     console.log("Author");
