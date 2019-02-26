@@ -9,9 +9,6 @@ namespace AppLensV3.Services.EmailNotificationService
 {
     public interface IEmailNotificationService
     {
-
-        Task SendEmail1(string alias, string detectorId, string applensLink, List<EmailAddress> tos, string TemplateId, string from);
-
-        Task SendWeeklyMonitoringReport(HttpResponseMessage response);
+        Task SendPublishingAlert(string alias, string detectorId, string link, List<EmailAddress> tos, string from);
     }
 }

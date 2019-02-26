@@ -61,10 +61,6 @@ namespace AppLensV3.Controllers
 
             List<EmailAddress> tos = new List<EmailAddress>();
             List<String> distinctEmailRecipientsList = new List<string>();
-            if (body != null && body["committedByAlias"] != null)
-            {
-                // Also add the people who changed this detector on the cc list
-            }
 
             if (body != null && body["id"] != null)
             {
@@ -83,7 +79,13 @@ namespace AppLensV3.Controllers
                 string[] authors = detectorAuthor.Split(separators, StringSplitOptions.RemoveEmptyEntries).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
                 foreach (var author in authors)
                 {
+                    if (String.IsNullOrEmpty(alias))
+                    {
+                        alias = author;
+                    }
+
                     string baseEmailAddressString = author.ToLower().EndsWith("@microsoft.com") ? author : author + "@microsoft.com" ;
+
                     if (!distinctEmailRecipientsList.Contains(baseEmailAddressString))
                     {
                         EmailAddress emailAddress = new EmailAddress(baseEmailAddressString);
@@ -103,7 +105,7 @@ namespace AppLensV3.Controllers
                     var responseObject = JsonConvert.DeserializeObject(responseString);
                     if (path.ToLower().EndsWith("/diagnostics/publish") && tos.Count > 0)
                     {
-                        await this._emailNotificationService.SendEmail1(alias, detectorId, applensLink, tos, "d-436ddef95ff144f28d665e7faaf01a2f", "applensv2team@microsoft.com");
+                        await this._emailNotificationService.SendPublishingAlert(alias, detectorId, applensLink, tos, "applensv2team@microsoft.com");
                     }
 
                     return Ok(responseObject);
