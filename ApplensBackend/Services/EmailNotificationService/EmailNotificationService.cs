@@ -73,7 +73,7 @@ namespace AppLensV3.Services.EmailNotificationService
             {"emptyStar", @"EmailNotificationTemplate\Images\emptyStar.png"}
         };
 
-        private List<Attachment> GetImagesAttachments(List<Tuple<string, string, Image, Image, string, string>> sptrends = null)
+        private List<Attachment> GetImagesAttachments(List<Tuple<string, string, Image, Image, string, string>> supportTopicTrends = null)
         {
             string assemPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
@@ -108,11 +108,11 @@ namespace AppLensV3.Services.EmailNotificationService
             }
 
 
-            if (sptrends != null)
+            if (supportTopicTrends != null)
             {
-                for (int i = 0; i < sptrends.Count; i++)
+                for (int i = 0; i < supportTopicTrends.Count; i++)
                 {
-                    List<Image> spImages = new List<Image>() { sptrends[i].Item3, sptrends[i].Item4 };
+                    List<Image> spImages = new List<Image>() { supportTopicTrends[i].Item3, supportTopicTrends[i].Item4 };
 
                     string imageTags = string.Empty;
                     string imageTags1 = string.Empty;

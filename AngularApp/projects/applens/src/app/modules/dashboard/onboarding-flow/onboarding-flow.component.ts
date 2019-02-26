@@ -314,10 +314,7 @@ export class OnboardingFlowComponent implements OnInit, OnDestroy {
     {
         this.emailRecipients +=  ';' + queryResponse.invocationOutput.metadata.author;
     }
-
-    console.log("Author");
-    console.log(this.emailRecipients);
-
+    
     this.publishingPackage = {
       codeString: code,
       id: queryResponse.invocationOutput.metadata.id,
