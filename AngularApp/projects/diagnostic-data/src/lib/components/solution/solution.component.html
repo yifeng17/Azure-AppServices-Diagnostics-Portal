@@ -10,8 +10,8 @@
     </markdown>
   </div>
 
-  <div class="solution-action">
-    <div *ngIf="solution.RequiresConfirmation; else non_confirm_buttons" class="confirm-buttons">
+  <div *ngIf="!solution.IsInternal; else internal_solution" class="solution-action">
+    <div *ngIf="solution.RequiresConfirmation; else dont_confirm_buttons" class="confirm-buttons">
       <h3>{{solution.Title}}?</h3>
       <div class="action-buttons">
         <button type="button" class="custom-button deny">No, Don't {{solution.Title}}</button>
@@ -22,7 +22,6 @@
     </div>
 
     {{actionStatus}}
-
     <span *ngIf="actionStatus === 'Running...'">
       <i class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true"></i>
     </span>
@@ -33,7 +32,21 @@
 
 </div>
 
-<ng-template #non_confirm_buttons>
+<ng-template #internal_solution>
+  <div class="internal-instructions">
+    <div (click)="copyInstructions(solution.InternalInstructions)" class="copy-instructions">
+      <i class="fa fa-files-o" aria-hidden="true"></i>
+      {{copyText}}
+    </div>
+    <div class="markdown">
+      <markdown>
+        {{solution.InternalInstructions}}
+      </markdown>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #dont_confirm_buttons>
   <div class="action-buttons">
     <button (click)="performAction()" type="button" class="custom-button">{{solution.Title}}</button>
   </div>

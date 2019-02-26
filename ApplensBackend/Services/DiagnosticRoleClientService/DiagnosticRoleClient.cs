@@ -127,6 +127,8 @@ namespace AppLensV3
                         Content = new StringContent(body ?? string.Empty, Encoding.UTF8, "application/json")
                     };
 
+                    requestMessage.Headers.Add("x-ms-internal-view", internalView.ToString());
+
                     response = await _client.SendAsync(requestMessage);
                 }
 

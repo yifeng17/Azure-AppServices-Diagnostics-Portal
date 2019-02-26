@@ -67,3 +67,15 @@ markdown {
   display: inline-block;
   margin: 0;
 }
+
+.internal-instructions {
+  padding: 0 1em;
+
+  .markdown {
+    border: 1px dotted black;
+  }
+}
+
+.copy-instructions {
+  cursor: pointer;
+}

@@ -1,10 +1,10 @@
-import { Component, ViewEncapsulation, Input } from '@angular/core';
-import { TelemetryService } from '../../services/telemetry/telemetry.service';
-import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
+import { Observable } from 'rxjs';
+import { Component, Input, ViewEncapsulation } from '@angular/core';
+import { Dictionary } from '../../../../../applens/src/app/shared/models/extensions';
 import { Rendering } from '../../models/detector';
 import { DiagnosticSiteService } from '../../services/diagnostic-site.service';
-import { Dictionary } from '../../../../../applens/src/app/shared/models/extensions';
-import { Observable } from 'rxjs';
+import { TelemetryService } from '../../services/telemetry/telemetry.service';
+import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
 
 export enum ActionType {
   RestartSite,
@@ -16,6 +16,7 @@ export class Solution {
   Title: string;
   Descriptions: string[];
   ResourceUri: string;
+  IsInternal: boolean;
   RequiresConfirmation: boolean;
   Action: ActionType;
   ActionArgs: Dictionary<any>;
@@ -33,6 +34,8 @@ export class SolutionComponent extends DataRenderBaseComponent {
   renderingProperties: Rendering;
   acceptRisk: boolean;
   actionStatus: string;
+  defaultCopyText = 'Copy instructions';
+  copyText = this.defaultCopyText;
 
   constructor(telemetryService: TelemetryService, private _siteService: DiagnosticSiteService) {
     super(telemetryService);
@@ -44,6 +47,8 @@ export class SolutionComponent extends DataRenderBaseComponent {
     }
 
     this.acceptRisk = !this.solution.RequiresConfirmation;
+
+    console.log("Internal: " + this.solution.IsInternal);
   }
 
   checkAcceptRisk() {
@@ -74,6 +79,28 @@ export class SolutionComponent extends DataRenderBaseComponent {
       case ActionType.KillW3wpOnInstance:
         break;
     }
+  }
+
+  copyInstructions(copyValue: string) {
+    this.copyText = "Copying..";
+
+    let selBox = document.createElement('textarea');
+    selBox.style.position = 'fixed';
+    selBox.style.left = '0';
+    selBox.style.top = '0';
+    selBox.style.opacity = '0';
+    selBox.value = copyValue;
+    document.body.appendChild(selBox);
+    selBox.focus();
+    selBox.select();
+    document.execCommand('copy');
+    document.body.removeChild(selBox);
+
+    this.copyText = "Copied!";
+
+    setTimeout(() => {
+      this.copyText = this.defaultCopyText;
+    }, 2000);
   }
 
 }
