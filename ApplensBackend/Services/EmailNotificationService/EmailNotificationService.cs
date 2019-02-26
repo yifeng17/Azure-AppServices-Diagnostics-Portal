@@ -136,32 +136,25 @@ namespace AppLensV3.Services.EmailNotificationService
 
         public async Task<Response> SendEmail(EmailAddress from, List<EmailAddress> tos, string templateId, Object dynamicTemplateData, List<Attachment> attachments = null, List<EmailAddress> ccList = null)
         {
-            try
+            var emailMessage = new SendGridMessage();
+            emailMessage.SetFrom(from);
+            emailMessage.AddTos(tos);
+
+            if (ccList != null && ccList.Count > 0)
             {
-                var emailMessage = new SendGridMessage();
-                emailMessage.SetFrom(from);
-                emailMessage.AddTos(tos);
-
-                if (ccList != null && ccList.Count > 0)
-                {
-                    emailMessage.AddCcs(ccList);
-                }
-
-                emailMessage.SetTemplateId(templateId);
-                emailMessage.SetTemplateData(dynamicTemplateData);
-
-                if (attachments != null)
-                {
-                    emailMessage.AddAttachments(attachments);
-                }
-
-                var response = await _sendGridClient.SendEmailAsync(emailMessage);
-                return response;
+                emailMessage.AddCcs(ccList);
             }
-            catch(Exception e)
+
+            emailMessage.SetTemplateId(templateId);
+            emailMessage.SetTemplateData(dynamicTemplateData);
+
+            if (attachments != null)
             {
-                throw e;
+                emailMessage.AddAttachments(attachments);
             }
+
+            var response = await _sendGridClient.SendEmailAsync(emailMessage);
+            return response;
         }
 
         public async Task SendPublishingAlert(string alias, string detectorId, string link, List<EmailAddress> tos, string from = "applensv2team@microsoft.com")
