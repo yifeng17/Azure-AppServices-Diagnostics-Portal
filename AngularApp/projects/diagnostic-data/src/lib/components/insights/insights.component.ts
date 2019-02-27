@@ -40,8 +40,12 @@ export class InsightsComponent extends DataRenderBaseComponent {
   }
 
   toggleInsightStatus(insight: any) {
-    insight.isExpanded = insight.hasData() && !insight.isExpanded;
+    insight.isExpanded = this.hasContent(insight) && !insight.isExpanded;
     this.logInsightClickEvent(insight.title, insight.isExpanded, insight.status);
+  }
+
+  hasContent(insight: Insight) {
+    return insight.hasData() || insight.solutions.length > 0;
   }
 
   logInsightClickEvent(insightName: string, isExpanded: boolean, status: string) {
@@ -66,4 +70,3 @@ export class InsightsComponent extends DataRenderBaseComponent {
     }
   }
 }
-
