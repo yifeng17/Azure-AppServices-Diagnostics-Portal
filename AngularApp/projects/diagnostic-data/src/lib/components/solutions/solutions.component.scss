@@ -1,8 +1,41 @@
 @import '../../../../../app-service-diagnostics/src/styles/main.scss';
 
-ul .nav.nav-tabs {
-    li {
-        min-width: 100%;
-        min-height: 100%;
+@mixin border-radius($radius) {
+    -webkit-border-radius: $radius;
+    border-radius: $radius;
+    background-clip: padding-box;
+}
+
+.nav-tabs {
+    background-color: #f5f5f5;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+}
+
+.panel {
+    margin-bottom: 0;
+    @include border-radius(0);
+    border-bottom: none;
+    border-left: none;
+    border-right: none;
+}
+
+.panel-heading {
+    .panel-title {
+        display: inline;
+        margin-left: 2em;
     }
+
+    @include border-radius(0);
+    border-bottom: none;
+    border-left: none;
+    border-right: none;
+}
+
+.active-tab {
+    color: rgb(68, 68, 68);
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-bottom-color: transparent;
 }

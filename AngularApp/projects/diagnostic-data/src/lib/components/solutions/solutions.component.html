@@ -1,6 +1,14 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <i class="fa fa-wrench" aria-hidden="true"></i>
+    <h3 class="panel-title">Solutions to Common Problems</h3>
+  </div>
+</div>
+
 <ul class="nav nav-tabs">
-  <li *ngFor="let solution of solutions" (click)="setActiveSolution(solution.Title)">
+  <li *ngFor="let solution of solutions; let index = index" (click)="selectedSolution = index" class="nav-item"
+    [ngClass]="solution === solutions[selectedSolution] ? 'active-tab': ''">
     <a>{{solution.Title}}</a>
   </li>
 </ul>
-<solution [data]="getActiveSolution()"></solution>
+<solution [data]="solutions[selectedSolution]"></solution>
