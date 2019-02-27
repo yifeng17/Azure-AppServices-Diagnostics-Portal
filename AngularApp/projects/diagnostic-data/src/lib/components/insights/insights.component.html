@@ -47,9 +47,8 @@
         </table>
       </div>
 
-      <div class="solutions" *ngIf="insight.isExpanded">
-        <solution *ngFor="let solution of insight.solutions;" [solution]="solution"></solution>
-      </div>
+      <solutions *ngIf="insight.isExpanded" [solutions]="insight.solutions"></solutions>
+
     </div>
   </div>
 </ng-template>

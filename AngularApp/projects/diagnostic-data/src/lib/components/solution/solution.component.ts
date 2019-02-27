@@ -30,7 +30,7 @@ export class Solution {
 })
 export class SolutionComponent extends DataRenderBaseComponent {
 
-  @Input() solution: Solution;
+  @Input("data") solution: Solution;
   renderingProperties: Rendering;
   acceptRisk: boolean;
   actionStatus: string;

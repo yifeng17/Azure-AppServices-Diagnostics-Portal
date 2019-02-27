@@ -60,6 +60,7 @@ import { FeatureNavigationService } from './services/feature-navigation.service'
 import { AppInsightsTelemetryService } from './services/telemetry/appinsights-telemetry.service';
 import { KustoTelemetryService } from './services/telemetry/kusto-telemetry.service';
 import { SolutionComponent } from './components/solution/solution.component';
+import { SolutionsComponent } from './components/solutions/solutions.component';
 
 
 @NgModule({
@@ -78,7 +79,7 @@ import { SolutionComponent } from './components/solution/solution.component';
     DataContainerComponent, TimeSeriesInstanceGraphComponent, DetectorViewComponent, DataSummaryComponent, EmailComponent, InsightsComponent,
     LoaderViewComponent, DynamicInsightComponent, MarkdownComponent, DetectorListComponent, DetectorOrderPipe, StarRatingComponent, StarRatingFeedbackComponent,
     DropdownComponent, StatusIconComponent, DetectorControlComponent, DetectorContainerComponent, InternalPipe, CommAlertComponent, FeedbackComponent,
-    CopyInsightDetailsComponent, MarkdownEditorComponent, CardSelectionComponent, GuageGraphicComponent, GuageControlComponent, SolutionComponent
+    CopyInsightDetailsComponent, MarkdownEditorComponent, CardSelectionComponent, GuageGraphicComponent, GuageControlComponent, SolutionComponent, SolutionsComponent
   ],
   exports: [FormsModule, TimeSeriesGraphComponent, DataTableComponent, DynamicDataComponent, DetectorViewComponent, DataSummaryComponent,
     LoaderViewComponent, StatusIconComponent, DetectorControlComponent, DetectorContainerComponent, InternalPipe, CommAlertComponent, GuageControlComponent, SolutionComponent],

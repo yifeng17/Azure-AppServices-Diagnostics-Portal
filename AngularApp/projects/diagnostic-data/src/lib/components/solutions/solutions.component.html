@@ -1,0 +1,6 @@
+<ul class="nav nav-tabs">
+  <li *ngFor="let solution of solutions" (click)="setActiveSolution(solution.Title)">
+    <a>{{solution.Title}}</a>
+  </li>
+</ul>
+<solution [data]="getActiveSolution()"></solution>
