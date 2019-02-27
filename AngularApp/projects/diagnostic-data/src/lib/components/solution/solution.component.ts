@@ -47,8 +47,6 @@ export class SolutionComponent extends DataRenderBaseComponent {
     }
 
     this.acceptRisk = !this.solution.RequiresConfirmation;
-
-    console.log("Internal: " + this.solution.IsInternal);
   }
 
   checkAcceptRisk() {

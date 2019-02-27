@@ -5,14 +5,16 @@ html, body {
   padding: 0;
 }
 
+.solution-title {
+  padding: 0 1em;
+}
+
 .solution-container {
   margin: 1em;
+  background-color: whitesmoke;
 }
 
 .solution-description {
-  background-color: whitesmoke;
-  border-top: 1px solid darkgray;
-  border-bottom: 1px solid darkgray;
   padding: 1em 0;
   margin: 1em 0;
 }
