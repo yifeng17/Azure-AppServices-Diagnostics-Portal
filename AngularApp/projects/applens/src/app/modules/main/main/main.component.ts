@@ -7,6 +7,7 @@ import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import {
     ResourceServiceInputs, ResourceType, ResourceTypeState
 } from '../../../shared/models/resources';
+import { trimTrailingNulls } from '@angular/compiler/src/render3/view/util';
 const moment = momentNs;
 
 @Component({
@@ -93,7 +94,32 @@ export class MainComponent implements OnInit {
     }
   }
 
+  private normalizeArmUriForRoute( resourceURI: string) : string {
+    resourceURI = resourceURI.trim();
+    
+    var resourceUriPattern = /subscriptions\/(.*)\/resourceGroups\/(.*)\/providers\/(.*)/i;
+    var result = resourceURI.match(resourceUriPattern);
+    if(result && result.length === 4)
+    {
+      return "subscriptions/" + result[1] + "/resourceGroups/" + result[2] + "/providers/" + result[3];
+    }
+    else
+    {
+      console.log('Invalid ARM resource uri');
+      return resourceURI;
+    }
+    
+  }
+
   onSubmit(form: any) {
+    
+    form.resourceName = form.resourceName.trim();
+    
+    if(this.selectedResourceType.displayName === "ARM Resource ID")
+    {
+      form.resourceName = this.normalizeArmUriForRoute(form.resourceName);
+    }
+
 
     let route = this.selectedResourceType.routeName(form.resourceName);
 
