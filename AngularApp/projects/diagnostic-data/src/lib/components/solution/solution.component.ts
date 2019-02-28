@@ -25,8 +25,7 @@ export class Solution {
 @Component({
   selector: 'solution',
   templateUrl: './solution.component.html',
-  styleUrls: ['./solution.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./solution.component.scss']
 })
 export class SolutionComponent extends DataRenderBaseComponent {
 

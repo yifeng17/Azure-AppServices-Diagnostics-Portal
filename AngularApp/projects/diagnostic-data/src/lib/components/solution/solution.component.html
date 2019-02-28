@@ -1,9 +1,7 @@
 <div class="solution-container">
 
   <div *ngIf="solution.Descriptions && solution.Descriptions.length !== 0" class="solution-description">
-    <markdown *ngFor="let description of solution.Descriptions">
-      {{description}}
-    </markdown>
+    <markdown *ngFor="let description of solution.Descriptions" [data]="description"></markdown>
   </div>
 
   <div *ngIf="!solution.IsInternal; else internal_solution" class="solution-action">
@@ -29,17 +27,15 @@
 </div>
 
 <ng-template #internal_solution>
-  <div class="internal-instructions">
-    <div (click)="copyInstructions(solution.InternalInstructions)" class="copy-instructions">
-      <i class="fa fa-files-o" aria-hidden="true"></i>
-      {{copyText}}
+    <div class="internal-instructions">
+      <div (click)="copyInstructions(solution.InternalInstructions)" class="copy-instructions">
+        <i class="fa fa-files-o" aria-hidden="true"></i>
+        {{copyText}}
+      </div>
+      <div class="markdown">
+        <markdown [data]="solution.InternalInstructions"></markdown>
+      </div>
     </div>
-    <div class="markdown">
-      <markdown>
-        {{solution.InternalInstructions}}
-      </markdown>
-    </div>
-  </div>
 </ng-template>
 
 <ng-template #dont_confirm_buttons>

@@ -10,10 +10,12 @@ export class SolutionsComponent implements OnInit {
 
   @Input() solutions: Solution[];
   selectedSolution = 0;
+  selected: Solution;
 
   constructor() { }
 
   ngOnInit() {
+    this.selected = this.solutions[0];
   }
 
 }

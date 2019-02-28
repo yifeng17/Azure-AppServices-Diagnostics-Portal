@@ -6,9 +6,13 @@
 </div>
 
 <ul class="nav nav-tabs">
-  <li *ngFor="let solution of solutions; let index = index" (click)="selectedSolution = index" class="nav-item"
-    [ngClass]="solution === solutions[selectedSolution] ? 'active-tab': ''">
+  <li *ngFor="let solution of solutions; let index = index" (click)="selected = solution" class="nav-item"
+    [class.active-tab]="selected == solution">
     <a>{{solution.Title}}</a>
   </li>
 </ul>
-<solution [data]="solutions[selectedSolution]"></solution>
+
+<!-- Displays only the selected Solution and avoids reusing a single component to share the data -->
+<div *ngFor="let solution of solutions">
+  <solution [data]="solution" [hidden]="solution != selected"></solution>
+</div>
