@@ -47,7 +47,7 @@
         </table>
       </div>
 
-      <solutions *ngIf="insight.isExpanded" [solutions]="insight.solutions"></solutions>
+      <solutions *ngIf="insight.isExpanded && insight.solutions.length > 0" [solutions]="insight.solutions"></solutions>
 
     </div>
   </div>
