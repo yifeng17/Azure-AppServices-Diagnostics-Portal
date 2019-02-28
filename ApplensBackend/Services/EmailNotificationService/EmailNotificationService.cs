@@ -15,6 +15,7 @@ using System.Reflection;
 using AppLensV3.Models;
 using System.Text.RegularExpressions;
 using System.Globalization;
+using Microsoft.AspNetCore.Hosting;
 
 namespace AppLensV3.Services.EmailNotificationService
 {
@@ -49,13 +50,13 @@ namespace AppLensV3.Services.EmailNotificationService
             }
         }
 
-        public EmailNotificationService(IConfiguration configuration, IKustoQueryService kustoQueryService)
+        public EmailNotificationService(IHostingEnvironment env, IConfiguration configuration, IKustoQueryService kustoQueryService)
         {
             _configuration = configuration;
             _kustoQueryService = kustoQueryService;
+            ValidateConfigurations(env);
             _sendGridClient = InitializeClient();
         }
-
 
         private SendGridClient InitializeClient()
         {
@@ -107,7 +108,6 @@ namespace AppLensV3.Services.EmailNotificationService
                 }
             }
 
-
             if (supportTopicTrends != null)
             {
                 for (int i = 0; i < supportTopicTrends.Count; i++)
@@ -157,9 +157,9 @@ namespace AppLensV3.Services.EmailNotificationService
             return response;
         }
 
-        public async Task SendPublishingAlert(string alias, string detectorId, string link, List<EmailAddress> tos, string from = "applensv2team@microsoft.com")
+        public async Task SendPublishingAlert(string alias, string detectorId, string link, List<EmailAddress> tos)
         {
-            var fromAddress = new EmailAddress(from, "Applens Notification");
+            var fromAddress = new EmailAddress("xipeng@microsoft.com", "Detector Notification");
             var dynamicTemplateData = new PublishingTemplateData
             {
                 DetectorId = detectorId,
@@ -170,8 +170,8 @@ namespace AppLensV3.Services.EmailNotificationService
             };
 
             List<Attachment> attachments = GetImagesAttachments();
-
-            await SendEmail(fromAddress, tos, PublishingEmailTemplateId, dynamicTemplateData, attachments);
+            List<EmailAddress> ccList = new List<EmailAddress> { new EmailAddress("detectornotification@microsoft.com", "Detector Notification") };
+            await SendEmail(fromAddress, tos, PublishingEmailTemplateId, dynamicTemplateData, attachments, ccList);
         }
 
         private class PublishingTemplateData
@@ -191,7 +191,21 @@ namespace AppLensV3.Services.EmailNotificationService
             [JsonProperty("MicrosoftLogoImage")]
             public string MicrosoftLogoImage { get; set; }
         }
+
+        private void ValidateConfigurations(IHostingEnvironment env)
+        {
+            if (env.IsProduction())
+            {
+                if (string.IsNullOrWhiteSpace(SendGridApiKey))
+                {
+                    throw new ArgumentNullException("SendGridApiKey");
+                }
+
+                if (String.IsNullOrWhiteSpace(PublishingEmailTemplateId))
+                {
+                    throw new ArgumentNullException("PublishingEmailTemplateId");
+                }
+            }
+        }
     }
-
-
 }

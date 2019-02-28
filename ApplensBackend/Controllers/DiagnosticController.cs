@@ -79,7 +79,7 @@ namespace AppLensV3.Controllers
                 string[] authors = detectorAuthor.Split(separators, StringSplitOptions.RemoveEmptyEntries).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
                 foreach (var author in authors)
                 {
-                    if (String.IsNullOrEmpty(alias))
+                    if (String.IsNullOrWhiteSpace(alias))
                     {
                         alias = author;
                     }
@@ -105,7 +105,7 @@ namespace AppLensV3.Controllers
                     var responseObject = JsonConvert.DeserializeObject(responseString);
                     if (path.ToLower().EndsWith("/diagnostics/publish") && tos.Count > 0)
                     {
-                        await this._emailNotificationService.SendPublishingAlert(alias, detectorId, applensLink, tos, "applensv2team@microsoft.com");
+                        await this._emailNotificationService.SendPublishingAlert(alias, detectorId, applensLink, tos);
                     }
 
                     return Ok(responseObject);
