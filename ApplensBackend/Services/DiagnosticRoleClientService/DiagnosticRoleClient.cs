@@ -13,13 +13,14 @@ using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Text.RegularExpressions;
+using AppLensV3.Services.EmailNotificationService;
 
 namespace AppLensV3
 {
     public class DiagnosticRoleClient : IDiagnosticClientService
     {
         private IConfiguration _configuration;
-
+        private IEmailNotificationService _emailService;
         private HttpClient _client { get; set; }
 
         private List<string> _nonPassThroughResourceProviderList { get; set; }
@@ -120,7 +121,7 @@ namespace AppLensV3
                 }
                 else
                 {
-                    path = path.Replace("/v4", string.Empty).Replace("v4", string.Empty);
+                    path = path.Replace("/v4", string.Empty).Replace("v4", string.Empty).Replace("v2", string.Empty);
 
                     var requestMessage = new HttpRequestMessage(method.Trim().ToUpper() == "POST" ? HttpMethod.Post : HttpMethod.Get, path)
                     {
