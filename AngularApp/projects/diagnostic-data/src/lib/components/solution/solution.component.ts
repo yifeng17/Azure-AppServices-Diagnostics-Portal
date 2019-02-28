@@ -32,7 +32,6 @@ export class SolutionComponent extends DataRenderBaseComponent {
 
   @Input("data") solution: Solution;
   renderingProperties: Rendering;
-  acceptRisk: boolean;
   actionStatus: string;
   defaultCopyText = 'Copy instructions';
   copyText = this.defaultCopyText;
@@ -47,14 +46,8 @@ export class SolutionComponent extends DataRenderBaseComponent {
       this.solution.Descriptions = [];
     }
 
-    this.acceptRisk = !this.solution.RequiresConfirmation;
-
     let uriParts = this.solution.ResourceUri.split('/');
     this.appName = uriParts[uriParts.length - 1];
-  }
-
-  checkAcceptRisk() {
-    this.acceptRisk = !this.acceptRisk;
   }
 
   performAction() {

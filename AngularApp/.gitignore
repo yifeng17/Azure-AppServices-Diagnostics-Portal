@@ -46,5 +46,3 @@ Thumbs.db
 # localhost self signed cert
 /ssl/*.crt
 /ssl/*.key
-
-package-lock.json

@@ -1,6 +1,5 @@
 import 'd3';
 import 'nvd3';
-// This import looks circular
 import { DetectorControlService, DiagnosticService, TelemetryService } from 'diagnostic-data';
 import { NvD3Module } from 'ng2-nvd3';
 import { MarkdownModule } from 'ngx-markdown';
