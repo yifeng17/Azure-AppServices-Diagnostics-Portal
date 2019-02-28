@@ -15,6 +15,7 @@ export enum ActionType {
 export class Solution {
   Title: string;
   Descriptions: string[];
+  ActionName: string;
   ResourceUri: string;
   IsInternal: boolean;
   RequiresConfirmation: boolean;
@@ -35,6 +36,7 @@ export class SolutionComponent extends DataRenderBaseComponent {
   actionStatus: string;
   defaultCopyText = 'Copy instructions';
   copyText = this.defaultCopyText;
+  appName: string;
 
   constructor(telemetryService: TelemetryService, private _siteService: DiagnosticSiteService) {
     super(telemetryService);
@@ -46,6 +48,9 @@ export class SolutionComponent extends DataRenderBaseComponent {
     }
 
     this.acceptRisk = !this.solution.RequiresConfirmation;
+
+    let uriParts = this.solution.ResourceUri.split('/');
+    this.appName = uriParts[uriParts.length - 1];
   }
 
   checkAcceptRisk() {

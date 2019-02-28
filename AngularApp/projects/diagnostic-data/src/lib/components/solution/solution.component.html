@@ -1,16 +1,20 @@
 <div class="solution-container">
 
+  <div class="solution-title">
+    <h1>{{solution.Title}}</h1>
+  </div>
+
   <div *ngIf="solution.Descriptions && solution.Descriptions.length !== 0" class="solution-description">
     <markdown *ngFor="let description of solution.Descriptions" [data]="description"></markdown>
   </div>
 
   <div *ngIf="!solution.IsInternal; else internal_solution" class="solution-action">
     <div *ngIf="solution.RequiresConfirmation; else dont_confirm_buttons" class="confirm-buttons">
-      <h3>{{solution.Title}}?</h3>
+      <h3>{{solution.ActionName}} for App <span class="app-name">{{appName}}</span>?</h3>
       <div class="action-buttons">
-        <button type="button" class="custom-button deny">No, Don't {{solution.Title}}</button>
+        <button type="button" class="custom-button deny">No, Don't {{solution.ActionName}}</button>
         <button type="button" (click)="performAction()" class="custom-button confirm">
-          Yes, {{solution.Title}}
+          Yes, {{solution.ActionName}}
         </button>
       </div>
     </div>
