@@ -95,31 +95,25 @@ export class MainComponent implements OnInit {
   }
 
   private normalizeArmUriForRoute( resourceURI: string) : string {
-    resourceURI = resourceURI.trim();
-    
+    resourceURI = resourceURI.trim();    
     var resourceUriPattern = /subscriptions\/(.*)\/resourceGroups\/(.*)\/providers\/(.*)/i;
     var result = resourceURI.match(resourceUriPattern);
-    if(result && result.length === 4)
-    {
+    if(result && result.length === 4){
       return "subscriptions/" + result[1] + "/resourceGroups/" + result[2] + "/providers/" + result[3];
     }
-    else
-    {
+    else{
       console.log('Invalid ARM resource uri');
       return resourceURI;
-    }
-    
+    }    
   }
 
   onSubmit(form: any) {
     
-    form.resourceName = form.resourceName.trim();
+    form.resourceName = form.resourceName.trim();    
     
-    if(this.selectedResourceType.displayName === "ARM Resource ID")
-    {
+    if(this.selectedResourceType.displayName === "ARM Resource ID"){
       form.resourceName = this.normalizeArmUriForRoute(form.resourceName);
     }
-
 
     let route = this.selectedResourceType.routeName(form.resourceName);
 
