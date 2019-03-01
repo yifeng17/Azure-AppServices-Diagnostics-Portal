@@ -1,11 +1,7 @@
 <div class="solution-container">
 
-  <div class="solution-title">
-    <h1>{{solution.Title}}</h1>
-  </div>
-
-  <div *ngIf="solution.Descriptions && solution.Descriptions.length !== 0" class="solution-description">
-    <markdown *ngFor="let description of solution.Descriptions" [data]="description"></markdown>
+  <div *ngIf="solution.Description" class="solution-description">
+    <markdown [data]="solution.Description"></markdown>
   </div>
 
   <div *ngIf="!solution.IsInternal; else internal_solution" class="solution-action">

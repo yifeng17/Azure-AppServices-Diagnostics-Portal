@@ -5,22 +5,28 @@ import { Rendering } from '../../models/detector';
 import { DiagnosticSiteService } from '../../services/diagnostic-site.service';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
+import { SolutionText, getSolutionText } from './solution-text';
+import { json } from 'd3';
 
 export enum ActionType {
-  RestartSite,
-  UpdateSiteAppSettings,
-  KillW3wpOnInstance
+  RestartSite = "RestartSite",
+  UpdateSiteAppSettings = "UpdateSiteAppSettings",
+  KillW3wpOnInstance = "KillW3wpOnInstance"
 }
 
 export class Solution {
   Title: string;
-  Descriptions: string[];
+  Description: string;
   ActionName: string;
+  RequiresConfirmation: boolean;
   ResourceUri: string;
   IsInternal: boolean;
-  RequiresConfirmation: boolean;
+  InternalInstructions: string;
+  DetectorLink: string;
   Action: ActionType;
   ActionArgs: Dictionary<any>;
+  PremadeDescription: SolutionText;
+  PremadeInstructions: SolutionText;
 }
 
 @Component({
@@ -42,12 +48,10 @@ export class SolutionComponent extends DataRenderBaseComponent {
   }
 
   ngOnInit() {
-    if (this.solution.Descriptions == null) {
-      this.solution.Descriptions = [];
-    }
-
     let uriParts = this.solution.ResourceUri.split('/');
     this.appName = uriParts[uriParts.length - 1];
+
+    this.buildSolutionText();
   }
 
   performAction() {
@@ -73,6 +77,41 @@ export class SolutionComponent extends DataRenderBaseComponent {
         return this._siteService.updateSettingsFromUri(resourceUri, args);
       case ActionType.KillW3wpOnInstance:
         break;
+    }
+  }
+
+  buildSolutionText() {
+    this.applyPremadeText();
+    this.buildDynamicText();
+
+    let detectorLinkMarkdown = `[Go To Detector](${this.solution.DetectorLink})`;
+    this.solution.InternalInstructions = detectorLinkMarkdown + "\n\n" + this.solution.InternalInstructions;
+  }
+
+  applyPremadeText() {
+    if (this.solution.PremadeDescription) {
+      this.solution.Description = getSolutionText(this.solution.PremadeDescription);
+    }
+
+    if (this.solution.PremadeInstructions) {
+      this.solution.InternalInstructions = getSolutionText(this.solution.PremadeInstructions);
+    }
+  }
+
+  buildDynamicText() {
+    console.log("Building dynamic text, premade description is " + this.solution.PremadeDescription);
+    console.log("Type of enum is actually " + typeof(this.solution.PremadeDescription));
+    if (this.solution.PremadeDescription === SolutionText.UpdateSettingsDescription) {
+      console.log("Building settings description");
+      let resultText = '\n';
+
+      for (let key in this.solution.ActionArgs['properties']) {
+        let value = JSON.stringify(this.solution.ActionArgs['properties'][key]);
+        resultText = resultText + '\n' + ` - ${key}: ${value}`;
+      }
+
+      console.log("Result was " + resultText);
+      this.solution.Description = this.solution.Description + resultText;
     }
   }
 
