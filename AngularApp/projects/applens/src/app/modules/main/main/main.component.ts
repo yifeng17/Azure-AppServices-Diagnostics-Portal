@@ -61,6 +61,8 @@ export class MainComponent implements OnInit {
 
   inIFrame: boolean = false;
 
+  errorMessage:string = "";
+
   constructor(private _router: Router, private _activatedRoute: ActivatedRoute, private _http: Http, private _adalService: AdalService,) {
     this.endTime = moment.utc();
     this.startTime = this.endTime.clone().add(-1, 'days');
@@ -99,17 +101,19 @@ export class MainComponent implements OnInit {
     var resourceUriPattern = /subscriptions\/(.*)\/resourceGroups\/(.*)\/providers\/(.*)/i;
     var result = resourceURI.match(resourceUriPattern);
     if(result && result.length === 4){
-      return "subscriptions/" + result[1] + "/resourceGroups/" + result[2] + "/providers/" + result[3];
+      return `subscriptions/${result[1]}/resourceGroups/${result[2]}/providers/${result[3]}`;
     }
     else{
-      console.log('Invalid ARM resource uri');
+      this.errorMessage = `Invalid ARM resource id. Resource id must be of the following format.
+e.g..
+  /subscriptions/SUBSCRIPTION_ID/resourceGroups/MY_RG/providers/Microsoft.ContainerService/managedClusters/RESOURCE_NAME`;
       return resourceURI;
     }    
   }
 
   onSubmit(form: any) {
     
-    form.resourceName = form.resourceName.trim();    
+    form.resourceName = form.resourceName.trim();
     
     if(this.selectedResourceType.displayName === "ARM Resource ID"){
       form.resourceName = this.normalizeArmUriForRoute(form.resourceName);
@@ -132,8 +136,9 @@ export class MainComponent implements OnInit {
     let navigationExtras: NavigationExtras = {
       queryParams: timeParams
     }
-
-    this._router.navigate([route], navigationExtras);
+    
+    if(this.errorMessage !== "")
+      this._router.navigate([route], navigationExtras);
   }
 
   caseCleansingNavigate(){
