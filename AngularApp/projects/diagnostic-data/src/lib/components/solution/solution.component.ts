@@ -1,12 +1,11 @@
 import { Observable } from 'rxjs';
-import { Component, Input, ViewEncapsulation } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Dictionary } from '../../../../../applens/src/app/shared/models/extensions';
 import { Rendering } from '../../models/detector';
 import { DiagnosticSiteService } from '../../services/diagnostic-site.service';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
 import { SolutionText, getSolutionText } from './solution-text';
-import { json } from 'd3';
 
 export enum ActionType {
   RestartSite = "RestartSite",
