@@ -101,6 +101,7 @@ export class MainComponent implements OnInit {
     var resourceUriPattern = /subscriptions\/(.*)\/resourceGroups\/(.*)\/providers\/(.*)/i;
     var result = resourceURI.match(resourceUriPattern);
     if(result && result.length === 4){
+      this.errorMessage = "";
       return `subscriptions/${result[1]}/resourceGroups/${result[2]}/providers/${result[3]}`;
     }
     else{
@@ -117,6 +118,9 @@ e.g..
     
     if(this.selectedResourceType.displayName === "ARM Resource ID"){
       form.resourceName = this.normalizeArmUriForRoute(form.resourceName);
+    }
+    else{
+      this.errorMessage = "";
     }
 
     let route = this.selectedResourceType.routeName(form.resourceName);
@@ -137,7 +141,7 @@ e.g..
       queryParams: timeParams
     }
     
-    if(this.errorMessage !== "")
+    if(this.errorMessage === "")
       this._router.navigate([route], navigationExtras);
   }
 
