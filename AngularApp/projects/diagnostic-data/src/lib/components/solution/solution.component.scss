@@ -60,13 +60,15 @@ html, body {
   margin: 0;
 }
 
-.internal-instructions {
-  .markdown {
-    border: 1px dotted black;
-    padding: .5em;
-  }
+.copy-instructions {
+  float: right;
+  cursor: pointer;
 }
 
-.copy-instructions {
-  cursor: pointer;
+.internal-instructions {
+  margin-right: 5em;
+}
+
+.app-name-text {
+  margin-left: 1em;
 }

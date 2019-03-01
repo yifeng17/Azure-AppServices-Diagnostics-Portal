@@ -39,7 +39,7 @@ export class SolutionComponent extends DataRenderBaseComponent {
   @Input("data") solution: Solution;
   renderingProperties: Rendering;
   actionStatus: string;
-  defaultCopyText = 'Copy instructions';
+  defaultCopyText = 'Copy';
   copyText = this.defaultCopyText;
   appName: string;
 
@@ -99,20 +99,32 @@ export class SolutionComponent extends DataRenderBaseComponent {
   }
 
   buildDynamicText() {
-    console.log("Building dynamic text, premade description is " + this.solution.PremadeDescription);
-    console.log("Type of enum is actually " + typeof(this.solution.PremadeDescription));
-    if (this.solution.PremadeDescription === SolutionText.UpdateSettingsDescription) {
-      console.log("Building settings description");
-      let resultText = '\n';
+    let appSettingsText = '';
 
-      for (let key in this.solution.ActionArgs['properties']) {
-        let value = JSON.stringify(this.solution.ActionArgs['properties'][key]);
-        resultText = resultText + '\n' + ` - ${key}: ${value}`;
+    if (this.solution.PremadeDescription === SolutionText.UpdateSettingsDescription) {
+      appSettingsText = this.buildAppsettingsText();
+
+      this.solution.Description = this.solution.Description + '\n' + appSettingsText;
+    }
+
+    if (this.solution.PremadeInstructions === SolutionText.UpdateSettingsInstructions) {
+      if (appSettingsText === '') {
+        appSettingsText = this.buildAppsettingsText();
       }
 
-      console.log("Result was " + resultText);
-      this.solution.Description = this.solution.Description + resultText;
+      this.solution.InternalInstructions = this.solution.InternalInstructions + '\n' + appSettingsText;
     }
+  }
+
+  buildAppsettingsText() {
+    let resultText = '';
+
+    for (let key in this.solution.ActionArgs['properties']) {
+      let value = JSON.stringify(this.solution.ActionArgs['properties'][key]);
+      resultText = resultText + '\n' + ` - ${key}: ${value}`;
+    }
+
+    return resultText
   }
 
   copyInstructions(copyValue: string) {

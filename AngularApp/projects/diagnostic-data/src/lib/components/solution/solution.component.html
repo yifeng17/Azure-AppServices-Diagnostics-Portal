@@ -27,19 +27,22 @@
 </div>
 
 <ng-template #internal_solution>
+  <div class="solution-action">
+    <div (click)="copyInstructions(solution.InternalInstructions)" class="copy-instructions">
+      <i class="fa fa-files-o" aria-hidden="true"></i>
+      {{copyText}}
+    </div>
     <div class="internal-instructions">
-      <div (click)="copyInstructions(solution.InternalInstructions)" class="copy-instructions">
-        <i class="fa fa-files-o" aria-hidden="true"></i>
-        {{copyText}}
-      </div>
       <div class="markdown">
         <markdown [data]="solution.InternalInstructions"></markdown>
       </div>
     </div>
+  </div>
 </ng-template>
 
 <ng-template #dont_confirm_buttons>
   <div class="action-buttons">
     <button (click)="performAction()" type="button" class="custom-button">{{solution.Title}}</button>
+    <span class="app-name-text">For App <span class="app-name">{{appName}}</span></span>
   </div>
 </ng-template>
