@@ -15,7 +15,6 @@ export class DiagnosticSiteService {
     }
 
     restartSiteFromUri(resourceUri: string): Observable<boolean> {
-        console.log("Fake site restart called")
         return null;
     }
 

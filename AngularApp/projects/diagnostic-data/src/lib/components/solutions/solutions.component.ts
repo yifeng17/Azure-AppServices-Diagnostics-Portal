@@ -9,7 +9,6 @@ import { Solution } from '../solution/solution.component';
 export class SolutionsComponent implements OnInit {
 
   @Input() solutions: Solution[];
-  selectedSolution = 0;
   selected: Solution;
 
   constructor() { }

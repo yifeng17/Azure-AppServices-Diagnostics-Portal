@@ -54,17 +54,11 @@ export class SolutionComponent extends DataRenderBaseComponent {
   }
 
   performAction() {
-    console.log("Running action on solution " + this.solution.Title);
     this.actionStatus = "Running...";
 
     this.chooseAction(this.solution.Action, this.solution.ResourceUri, this.solution.ActionArgs).subscribe(res => {
+      // TODO: Handle error response. Currently a boolean is returned for Restart and is always false, even on success
       this.actionStatus = "Complete!";
-
-      if (res) {
-        console.log("Solution action succeeded");
-      } else {
-        console.log("Solution action failed");
-      }
     });
   }
 
