@@ -10,6 +10,7 @@ import { UriElementsService } from './urielements.service';
 import { ServerFarmDataService } from './server-farm-data.service';
 import { SiteDaasInfo } from '../models/solution-metadata';
 import { mergeMap ,  map } from 'rxjs/operators';
+import { TelemetryService } from '../../../../../diagnostic-data/src/lib/services/telemetry/telemetry.service';
 
 @Injectable()
 export class SiteService {
@@ -20,7 +21,9 @@ export class SiteService {
     //TODO: This should be deprecated, but leaving it for now while we move to new solutions
     public currentSiteStatic: Site;
 
-    constructor(private _armClient: ArmService, private _authService: AuthService, private _http: HttpClient, private _uriElementsService: UriElementsService, private _serverFarmService: ServerFarmDataService) {
+    constructor(private _armClient: ArmService, private _authService: AuthService, private _http: HttpClient,
+        private _uriElementsService: UriElementsService, private _serverFarmService: ServerFarmDataService,
+        private logService: TelemetryService) {
         this._authService.getStartupInfo().subscribe((startUpInfo: StartupInfo) => {
             this._populateSiteInfo(startUpInfo.resourceId);
             if (startUpInfo.resourceType === ResourceType.Site) {
@@ -111,9 +114,12 @@ export class SiteService {
         const restartUri = this._uriElementsService.getRestartUri(resourceUri);
 
         let result = this._armClient.postResourceFullResponse(restartUri, true);
-        result.subscribe(x => {
-            console.log(x.status);
-            console.log(x.statusText);
+        result.subscribe(response => {
+            this.logService.logEvent('Solution_RestartSite', {
+                'status': response.status.toString(),
+                'statusText': response.statusText,
+                'url': response.url
+            });
         });
 
         return result;
@@ -190,6 +196,11 @@ export class SiteService {
 
     updateSettingsFromUri(resourceUri: string, body: any): Observable<any> {
         const restartUri = this._uriElementsService.getUpdateSettingsUri(resourceUri);
+
+        // TODO: Use new API call to get HttpResponse info; convert body to {string: string} for logging
+        this.logService.logEvent('Solution_UpdateAppSettings', {
+            'url': resourceUri
+        });
 
         return this._armClient.putResource(restartUri, body, null, true);
     }
