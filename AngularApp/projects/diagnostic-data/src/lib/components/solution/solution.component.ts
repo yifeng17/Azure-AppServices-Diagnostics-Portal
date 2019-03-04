@@ -57,8 +57,11 @@ export class SolutionComponent extends DataRenderBaseComponent {
     this.actionStatus = "Running...";
 
     this.chooseAction(this.solution.Action, this.solution.ResourceUri, this.solution.ActionArgs).subscribe(res => {
-      // TODO: Handle error response. Currently a boolean is returned for Restart and is always false, even on success
-      this.actionStatus = "Complete!";
+      if (res.ok == null || res.ok) {
+        this.actionStatus = "Complete!"
+      } else {
+        this.actionStatus = `Error completing request. Status code: ${res.status}`
+      }
     });
   }
 
@@ -67,6 +70,7 @@ export class SolutionComponent extends DataRenderBaseComponent {
       case ActionType.RestartSite:
         return this._siteService.restartSiteFromUri(resourceUri);
       case ActionType.UpdateSiteAppSettings:
+        // TODO: Convert this call to return HttpResponse<any>
         return this._siteService.updateSettingsFromUri(resourceUri, args);
       case ActionType.KillW3wpOnInstance:
         break;

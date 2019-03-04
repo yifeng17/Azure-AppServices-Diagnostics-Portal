@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { HttpResponse } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class DiagnosticSiteService {
         return null;
     }
 
-    restartSiteFromUri(resourceUri: string): Observable<boolean> {
+    restartSiteFromUri(resourceUri: string): Observable<HttpResponse<any>> {
         return null;
     }
 

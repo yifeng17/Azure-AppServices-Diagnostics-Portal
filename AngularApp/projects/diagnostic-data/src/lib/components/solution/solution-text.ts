@@ -19,7 +19,7 @@ namespace SolutionConstants {
  Apply the following settings to the application:`;
 
     export const RestartInstructions = " 1. Navigate to the resource in Azure Portal\n" +
-        " 2. Press `Restart` to invoke a site restart";
+        " 2. Click `Restart` to invoke a site restart";
 
     export const UpdateSettingsInstructions = " 1. Navigate to the resource in Azure Portal\n" +
         " 2. Navigate to the `Application Settings` tab\n" +

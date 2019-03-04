@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject, of } from 'rxjs';
 import { StartupInfo, ResourceType, AppType } from '../models/portal';
@@ -107,10 +107,16 @@ export class SiteService {
         }));
     }
 
-    restartSiteFromUri(resourceUri: string): Observable<boolean> {
+    restartSiteFromUri(resourceUri: string): Observable<HttpResponse<any>> {
         const restartUri = this._uriElementsService.getRestartUri(resourceUri);
 
-        return this._armClient.postResource(restartUri, null, null, true) as Observable<boolean>;
+        let result = this._armClient.postResourceFullResponse(restartUri, true);
+        result.subscribe(x => {
+            console.log(x.status);
+            console.log(x.statusText);
+        });
+
+        return result;
     }
 
     killW3wpOnInstance(subscriptionId: string, resourceGroup: string, siteName: string, scmHostName: string, instanceId: string): Observable<boolean> {
