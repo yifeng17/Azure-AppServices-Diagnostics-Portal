@@ -92,7 +92,7 @@ export class DiagnosticApiService {
   public getDetectorChangelist(detectorId: string): Observable<any> {
     let url = `${this.diagnosticApi}api/github/detectors/${detectorId}/changelist`;
 
-     return this._httpClient.get(url, {
+    return this._httpClient.get(url, {
       headers: this._getHeaders()
     });
   }
@@ -100,7 +100,7 @@ export class DiagnosticApiService {
   public getCommitContent(detectorId: string, sha: string): Observable<any> {
     let url = `${this.diagnosticApi}api/github/detectors/${detectorId}/commit/${sha}`;
 
-     return this._httpClient.get(url, {
+    return this._httpClient.get(url, {
       headers: this._getHeaders()
     });
   }
