@@ -1,7 +1,8 @@
 import { Component, OnInit, Input, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { GithubApiService } from '../../../shared/services/github-api.service';
 import { DetectorResponse } from 'diagnostic-data';
-import { QueryResponse } from 'diagnostic-data';
+import { QueryResponse} from 'diagnostic-data';
+import { CompilationProperties } from 'diagnostic-data';
 import { ResourceService } from '../../../shared/services/resource.service';
 import { Package } from '../../../shared/models/package';
 import { ApplensDiagnosticService } from '../services/applens-diagnostic.service';
@@ -61,7 +62,8 @@ export class OnboardingFlowComponent implements OnInit, OnDestroy {
   alertClass: string;
   alertMessage: string;
   showAlert: boolean;
-
+ 
+  compilationPackage: CompilationProperties;
   private publishingPackage: Package;
   private userName: string;
 
@@ -105,6 +107,7 @@ export class OnboardingFlowComponent implements OnInit, OnDestroy {
     this.resourceId = this.resourceService.getCurrentResourceId();
     this.hideModal = localStorage.getItem("localdevmodal.hidden") === "true";
     let detectorFile: Observable<string>;
+    this.compilationPackage = new CompilationProperties();
     if (this.mode === DevelopMode.Create) {
       // CREATE FLOW
       detectorFile = this.githubService.getDetectorTemplate(this.resourceService.templateFileName);
@@ -232,18 +235,27 @@ export class OnboardingFlowComponent implements OnInit, OnDestroy {
 
     let isSystemInvoker: boolean = this.mode === DevelopMode.EditMonitoring || this.mode === DevelopMode.EditAnalytics;
 
-    this.diagnosticApiService.getCompilerResponse(body, isSystemInvoker, this.detectorId, this._detectorControlService.startTimeString,
-        this._detectorControlService.endTimeString, this.dataSource, this.timeRange)
-      .subscribe((response: QueryResponse<DetectorResponse>) => {
-
-        this.queryResponse = response;
+    this.diagnosticApiService.getCompilerResponse(body, isSystemInvoker, this.detectorId, this._detectorControlService.startTimeString, 
+        this._detectorControlService.endTimeString, this.dataSource, this.timeRange, {
+          scriptETag: this.compilationPackage.scriptETag,
+          assemblyName: this.compilationPackage.assemblyName,
+          getFullResponse: true
+        })
+      .subscribe((response: any) => {
+        this.queryResponse = response.body;
         this.runButtonDisabled = false;
         this.runButtonText = "Run";
         this.runButtonIcon = "fa fa-play";
         this.queryResponse.compilationOutput.compilationTraces.forEach(element => {
           this.buildOutput.push(element);
         });
-
+        // If the script etag returned by the server does not match the previous script-etag, update the values in memory
+        if(response.headers.get('diag-script-etag') != undefined && this.compilationPackage.scriptETag !== response.headers.get('diag-script-etag')) {                
+          this.compilationPackage.scriptETag = response.headers.get('diag-script-etag');
+          this.compilationPackage.assemblyName = this.queryResponse.compilationOutput.assemblyName;          
+          this.compilationPackage.assemblyBytes = this.queryResponse.compilationOutput.assemblyBytes;
+          this.compilationPackage.pdbBytes = this.queryResponse.compilationOutput.pdbBytes;
+        }
         if (this.queryResponse.compilationOutput.compilationSucceeded === true) {
           this.publishButtonDisabled = false;
           this.preparePublishingPackage(this.queryResponse, currentCode);
@@ -318,8 +330,8 @@ export class OnboardingFlowComponent implements OnInit, OnDestroy {
     this.publishingPackage = {
       codeString: code,
       id: queryResponse.invocationOutput.metadata.id,
-      dllBytes: queryResponse.compilationOutput.assemblyBytes,
-      pdbBytes: queryResponse.compilationOutput.pdbBytes,
+      dllBytes: this.compilationPackage.assemblyBytes,
+      pdbBytes: this.compilationPackage.pdbBytes,
       committedByAlias: this.userName
     };
   }

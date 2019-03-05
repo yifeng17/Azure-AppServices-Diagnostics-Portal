@@ -3,6 +3,8 @@ export interface CompilerResponse {
     compilationTraces: string[];
     assemblyBytes: string;
     pdbBytes: string;
+    assemblyName: string;
+    scriptETag: string;
 }
 
 export interface QueryResponse<T> {

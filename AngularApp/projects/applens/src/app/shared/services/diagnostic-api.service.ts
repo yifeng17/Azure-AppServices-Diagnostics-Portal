@@ -24,9 +24,12 @@ export class DiagnosticApiService {
     return environment.production ? '' : this.localDiagnosticApi;
   }
 
-  public getDetector(version: string, resourceId: string, detector: string, startTime?: string, endTime?: string, body?: any, refresh: boolean = false, internalView: boolean = false): Observable<DetectorResponse> {
+  public getDetector(version: string, resourceId: string, detector: string, startTime?: string, endTime?: string, body?: any, refresh: boolean = false, internalView: boolean = false, additionalQueryParams? : string): Observable<DetectorResponse> {
     let timeParameters = this._getTimeQueryParameters(startTime, endTime);
     let path = `${version}${resourceId}/detectors/${detector}?${timeParameters}`;
+    if(additionalQueryParams != undefined) {     
+      path += additionalQueryParams;
+    }
     return this.invoke<DetectorResponse>(path, HttpMethod.POST, body, true, refresh, internalView);
   }
 
@@ -41,10 +44,14 @@ export class DiagnosticApiService {
     return this.invoke<DetectorResponse[]>(path, HttpMethod.POST, body).pipe(retry(1),map(response => response.map(detector => detector.metadata)),);
   }
 
-  public getCompilerResponse(version: string, resourceId: string, body: any, startTime?: string, endTime?: string): Observable<QueryResponse<DetectorResponse>> {
+  public getCompilerResponse(version: string, resourceId: string, body: any, startTime?: string, endTime?: string, additionalParams?: any): Observable<QueryResponse<DetectorResponse>> {
     let timeParameters = this._getTimeQueryParameters(startTime, endTime);
+
     let path = `${version}${resourceId}/diagnostics/query?${timeParameters}`;
-    return this.invoke<QueryResponse<DetectorResponse>>(path, HttpMethod.POST, body, false);
+    if(additionalParams.formQueryParams != undefined) {
+      path += additionalParams.formQueryParams;
+    }
+    return this.invoke<QueryResponse<DetectorResponse>>(path, HttpMethod.POST, body, false, undefined, undefined, undefined, additionalParams);
   }
 
   public getSystemCompilerResponse(resourceId: string, body: any, detectorId: string = '', dataSource: string = '', timeRange: string = ''): Observable<QueryResponse<DetectorResponse>> {
@@ -83,12 +90,19 @@ export class DiagnosticApiService {
     });
   }
 
-  public invoke<T>(path: string, method: HttpMethod = HttpMethod.GET, body: any = {}, useCache: boolean = true, invalidateCache: boolean = false, internalView: boolean = true, emailRecipients: string=""): Observable<T> {
+  public invoke<T>(path: string, method: HttpMethod = HttpMethod.GET, body: any = {}, useCache: boolean = true, invalidateCache: boolean = false, internalView: boolean = true, emailRecipients: string="", additionalParams?: any): Observable<T> {
     let url: string = `${this.diagnosticApi}api/invoke`
-
-    let request = this._httpClient.post<T>(url, body, {
-      headers: this._getHeaders(path, method, internalView, emailRecipients)
-    });
+    let request;
+    if(additionalParams && additionalParams.getFullResponse) {
+      request = this._httpClient.post<T>(url, body, {
+        headers: this._getHeaders(path, method, internalView, emailRecipients, additionalParams),
+        observe: 'response'
+      });
+    } else {
+      request = this._httpClient.post<T>(url, body, {
+        headers: this._getHeaders(path, method, internalView, emailRecipients, additionalParams)
+      });
+    }
 
     return useCache ? this._cacheService.get(this.getCacheKey(method, path), request, invalidateCache) : request;
   }
@@ -108,7 +122,7 @@ export class DiagnosticApiService {
     return this._cacheService.get(path, request, invalidateCache);
   }
 
-  private _getHeaders(path?: string, method?: HttpMethod, internalView: boolean = true, emailRecipients: string = ""): HttpHeaders {
+  private _getHeaders(path?: string, method?: HttpMethod, internalView: boolean = true, emailRecipients: string = "", additionalParams?: any): HttpHeaders {
     let headers = new HttpHeaders();
     headers = headers.set('Content-Type', 'application/json');
     headers = headers.set('Accept', 'application/json');
@@ -127,6 +141,13 @@ export class DiagnosticApiService {
 
     if (method) {
       headers = headers.set('x-ms-method', HttpMethod[method]);
+    }
+
+    if(additionalParams && additionalParams.scriptETag) {     
+      headers = headers.set('diag-script-etag',additionalParams.scriptETag);
+    }
+    if(additionalParams && additionalParams.assemblyName) {     
+      headers = headers.set('diag-assembly-name', encodeURI(additionalParams.assemblyName));
     }
 
     return headers;

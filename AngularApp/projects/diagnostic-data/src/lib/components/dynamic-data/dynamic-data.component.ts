@@ -20,7 +20,8 @@ import { TimeSeriesGraphComponent } from '../time-series-graph/time-series-graph
 import {
     TimeSeriesInstanceGraphComponent
 } from '../time-series-instance-graph/time-series-instance-graph.component';
-
+import { FormComponent } from '../form/form.component';
+import { CompilationProperties}  from '../../models/compilation-properties';
 @Component({
   selector: 'dynamic-data',
   templateUrl: './dynamic-data.component.html',
@@ -28,7 +29,7 @@ import {
   entryComponents: [
     TimeSeriesGraphComponent, DataTableComponent, DataSummaryComponent, EmailComponent,
     InsightsComponent, TimeSeriesInstanceGraphComponent, DynamicInsightComponent, MarkdownComponent,
-    DetectorListComponent, DropdownComponent, CardSelectionComponent, SolutionComponent, GuageControlComponent
+    DetectorListComponent, DropdownComponent, CardSelectionComponent, SolutionComponent, GuageControlComponent, FormComponent
   ]
 })
 export class DynamicDataComponent implements OnInit {
@@ -42,7 +43,10 @@ export class DynamicDataComponent implements OnInit {
   @Input() startTime: Moment;
   @Input() endTime: Moment;
   @Input() detectorEventProperties: any;
-
+  @Input() developmentMode: boolean = false;
+  @Input() executionScript: string;
+  @Input() detector: string = '';
+  @Input() compilationPackage: CompilationProperties;
   @ViewChild('dynamicDataContainer', { read: ViewContainerRef }) dynamicDataContainer: ViewContainerRef;
 
   constructor(private componentFactoryResolver: ComponentFactoryResolver) { }
@@ -61,6 +65,10 @@ export class DynamicDataComponent implements OnInit {
       instance.startTime = this.startTime;
       instance.endTime = this.endTime;
       instance.detectorEventProperties = this.detectorEventProperties;
+      instance.developmentMode = this.developmentMode;
+      instance.executionScript = this.executionScript;
+      instance.detector = this.detector;
+      instance.compilationPackage = this.compilationPackage;
     });
   }
 
@@ -92,6 +100,8 @@ export class DynamicDataComponent implements OnInit {
         return SolutionComponent;
       case RenderingType.Guage:
         return GuageControlComponent;
+      case RenderingType.Form:
+        return FormComponent;
       default:
         return null;
     }
