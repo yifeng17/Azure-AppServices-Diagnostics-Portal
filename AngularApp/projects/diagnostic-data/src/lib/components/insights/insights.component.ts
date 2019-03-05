@@ -45,7 +45,11 @@ export class InsightsComponent extends DataRenderBaseComponent {
   }
 
   hasContent(insight: Insight) {
-    return insight.hasData() || insight.solutions.length > 0;
+    return insight.hasData() || this.hasSolutions(insight);
+  }
+
+  hasSolutions(insight: Insight) {
+    return insight.solutions != null && insight.solutions.length > 0;
   }
 
   logInsightClickEvent(insightName: string, isExpanded: boolean, status: string) {
