@@ -86,6 +86,7 @@ export enum RenderingType {
     DetectorList,
     DropDown,
     Cards,
+    Solution,
     Guage
 }
 
