@@ -6,6 +6,7 @@ import { AppAnalysisService } from '../../../shared/services/appanalysis.service
 import { ArmService } from '../../../shared/services/arm.service';
 import { Sku } from '../../../shared/models/server-farm';
 import { IDiagnosticProperties } from '../../../shared/models/diagnosticproperties';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class WebSitesService extends ResourceService {
@@ -36,6 +37,10 @@ export class WebSitesService extends ResourceService {
         && (this.sku & Sku.Paid) > 0
         && (this.appType & AppType.WebApp) > 0
         && (this.platform & (OperatingSystem.windows | OperatingSystem.linux)) > 0;
+    }
+
+    public getSitePremierAddOns(resourceUri: string): Observable<any> {
+        return this._armService.getArmResource(`${resourceUri}/premieraddons`, '2018-02-01');
     }
 
     protected makeWarmUpCalls() {
