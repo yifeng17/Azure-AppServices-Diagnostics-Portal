@@ -117,7 +117,7 @@ export class SiteFeatureService extends FeatureService {
       
       if (data && data.value) {
         let premierAddOns: any[] = data.value;
-        let zRayAddOn = premierAddOns.find(x => (x.plan && (x.plan.product == "z-ray")));
+        let zRayAddOn = premierAddOns.find(x => (x.plan && (x.plan.product === "z-ray")));
         if (zRayAddOn) {
           this.premiumTools.push({
             appType: AppType.WebApp,
