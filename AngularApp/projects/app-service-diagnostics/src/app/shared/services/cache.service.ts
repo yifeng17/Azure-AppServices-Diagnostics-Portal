@@ -32,6 +32,7 @@ export class CacheService {
         } else if (fallback && fallback instanceof Observable) {
             this.inFlightObservables.set(key, new Subject());
             this.log(`%c Calling api for ${key}`, 'color: purple');
+
             return fallback.pipe(
                 tap(
                     (value) => {

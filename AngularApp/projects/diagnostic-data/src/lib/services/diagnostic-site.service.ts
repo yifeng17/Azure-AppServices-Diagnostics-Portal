@@ -43,4 +43,8 @@ export class DiagnosticSiteService {
         return null;
     }
 
+    azureApiRequest(method: string, resourceUri: string, body: any = null): Observable<HttpResponse<any>> {
+        return null;
+    }
+
 }

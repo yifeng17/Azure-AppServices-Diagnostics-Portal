@@ -113,7 +113,7 @@ export class SiteService {
     restartSiteFromUri(resourceUri: string): Observable<HttpResponse<any>> {
         const restartUri = this._uriElementsService.getRestartUri(resourceUri);
 
-        let result = this._armClient.postResourceFullResponse(restartUri, true);
+        let result = this._armClient.postResourceFullResponse(restartUri, null, true);
         result.subscribe(response => {
             this.logService.logEvent('Solution_RestartSite', {
                 'status': response.status.toString(),
@@ -203,6 +203,21 @@ export class SiteService {
         });
 
         return this._armClient.putResource(restartUri, body, null, true);
+    }
+
+    azureApiRequest(method: string, resourceUri: string, body: any = null): Observable<HttpResponse<any>> {
+        if (!['get', 'put', 'post'].includes(method.toLowerCase())) {
+            throw new Error(`Method ${method} is not supported in Azure API Requests`);
+        }
+
+        switch (method.toLowerCase()) {
+            case "get":
+                return this._armClient.getFullResponse(resourceUri);
+            case "put":
+                return this._armClient.putFullResponse(resourceUri, body, true);
+            case "post":
+                return this._armClient.postResourceFullResponse(resourceUri, body, true);
+        }
     }
 
     private _populateSiteInfo(resourceId: string): void {
