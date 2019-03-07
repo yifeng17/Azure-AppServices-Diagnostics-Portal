@@ -6,12 +6,12 @@ import { DiagnosticSiteService } from '../../services/diagnostic-site.service';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
 import { SolutionText, getSolutionText } from './solution-text';
+import { HttpResponse } from '@angular/common/http';
 
 export enum ActionType {
     RestartSite = "RestartSite",
     UpdateSiteAppSettings = "UpdateSiteAppSettings",
-    KillW3wpOnInstance = "KillW3wpOnInstance",
-    AzureApiRequest = "AzureApiRequest"
+    KillW3wpOnInstance = "KillW3wpOnInstance"
 }
 
 export class Solution {
@@ -43,7 +43,8 @@ export class SolutionComponent extends DataRenderBaseComponent {
     copyText = this.defaultCopyText;
     appName: string;
 
-    constructor(telemetryService: TelemetryService, private _siteService: DiagnosticSiteService) {
+    constructor(telemetryService: TelemetryService, private _siteService: DiagnosticSiteService,
+            private logService: TelemetryService) {
         super(telemetryService);
     }
 
@@ -58,6 +59,12 @@ export class SolutionComponent extends DataRenderBaseComponent {
         this.actionStatus = "Running...";
 
         this.chooseAction(this.solution.Action, this.solution.ResourceUri, this.solution.ActionArgs).subscribe(res => {
+            this.logService.logEvent(`Solution_${this.solution.Action.toString()}`, {
+                'status': res.status.toString(),
+                'statusText': res.statusText,
+                'url': res.url
+            });
+
             if (res.ok == null || res.ok) {
                 this.actionStatus = "Complete!"
             } else {
@@ -66,17 +73,15 @@ export class SolutionComponent extends DataRenderBaseComponent {
         });
     }
 
-    chooseAction(actionType: ActionType, resourceUri: string, args?: Dictionary<string>): Observable<any> {
+    chooseAction(actionType: ActionType, resourceUri: string, args?: Dictionary<string>):
+            Observable<HttpResponse<any>> {
         switch (actionType) {
             case ActionType.RestartSite:
                 return this._siteService.restartSiteFromUri(resourceUri);
             case ActionType.UpdateSiteAppSettings:
-                // TODO: Convert this call to return HttpResponse<any>
                 return this._siteService.updateSettingsFromUri(resourceUri, args);
-            case ActionType.KillW3wpOnInstance:
-                break;
-            case ActionType.AzureApiRequest:
-                return this._siteService.azureApiRequest(args['method'], resourceUri, args['body'], args['api-version']);
+            default:
+                throw new Error(`Solution action ${actionType.toString()} not implemented`);
         }
     }
 

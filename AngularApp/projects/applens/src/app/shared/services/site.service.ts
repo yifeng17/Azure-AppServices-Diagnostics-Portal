@@ -49,11 +49,6 @@ export class SiteService extends ResourceService {
         return null;
     }
 
-    azureApiRequest(method: string, resourceUri: string, body: any = null, apiVersion?: string):
-            Observable<HttpResponse<any>> {
-        return null;
-    }
-
     private getSiteFromObserverResponse(observerResponse: Observer.ObserverSiteResponse): Observer.ObserverSiteInfo {
         return observerResponse.details.find(site =>
             site.Subscription.toLowerCase() === this._armResource.subscriptionId.toLowerCase() &&

@@ -113,16 +113,7 @@ export class SiteService {
     restartSiteFromUri(resourceUri: string): Observable<HttpResponse<any>> {
         const restartUri = this._uriElementsService.getRestartUri(resourceUri);
 
-        let result = this._armClient.postResourceFullResponse(restartUri, null, true);
-        result.subscribe(response => {
-            this.logService.logEvent('Solution_RestartSite', {
-                'status': response.status.toString(),
-                'statusText': response.statusText,
-                'url': response.url
-            });
-        });
-
-        return result;
+        return this._armClient.postResourceFullResponse(restartUri, null, true);
     }
 
     killW3wpOnInstance(subscriptionId: string, resourceGroup: string, siteName: string, scmHostName: string, instanceId: string): Observable<boolean> {
@@ -194,38 +185,10 @@ export class SiteService {
         return this._armClient.putResource(url, body, null, true);
     }
 
-    updateSettingsFromUri(resourceUri: string, body: any): Observable<any> {
-        const restartUri = this._uriElementsService.getUpdateSettingsUri(resourceUri);
+    updateSettingsFromUri(resourceUri: string, body: any): Observable<HttpResponse<any>> {
+        const updateUri = this._uriElementsService.getUpdateSettingsUri(resourceUri);
 
-        // TODO: Use new API call to get HttpResponse info; convert body to {string: string} for logging
-        this.logService.logEvent('Solution_UpdateAppSettings', {
-            'url': resourceUri
-        });
-
-        return this._armClient.putResource(restartUri, body, null, true);
-    }
-
-    azureApiRequest(method: string, resourceUri: string, body: any = null, apiVersion?: string):
-            Observable<HttpResponse<any>> {
-        if (!['get', 'put', 'post', 'patch'].includes(method.toLowerCase())) {
-            throw new Error(`Method ${method} is not supported in Azure API Request Solutions`);
-        }
-
-        this.logService.logEvent('Solution_AzureApiRequest', {
-            'url': resourceUri,
-            'method': method
-        });
-
-        switch (method.toLowerCase()) {
-            case 'get':
-                return this._armClient.getFullResponse(resourceUri, false, apiVersion);
-            case 'put':
-                return this._armClient.putFullResponse(resourceUri, body, true, apiVersion);
-            case 'post':
-                return this._armClient.postResourceFullResponse(resourceUri, body, true, apiVersion);
-            case 'patch':
-                return this._armClient.patchFullResponse(resourceUri, body, true, apiVersion);
-        }
+        return this._armClient.putFullResponse(updateUri, body, true);
     }
 
     private _populateSiteInfo(resourceId: string): void {
