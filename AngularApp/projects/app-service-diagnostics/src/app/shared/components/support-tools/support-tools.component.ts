@@ -113,7 +113,7 @@ export class SupportToolsComponent {
             enabled: true,
             action: () => {
                 this.logToolUse('TinfoilSecurity', 'Premium Tools');
-                this._portalActionService.openTifoilSecurityBlade();
+                this._portalActionService.openTinfoilSecurityBlade();
             }
         });
 

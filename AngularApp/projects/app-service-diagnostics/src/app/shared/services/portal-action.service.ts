@@ -1,13 +1,12 @@
-import { ResponseMessageEnvelope } from './../models/responsemessageenvelope';
+import { filter, mergeMap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
-import { Site, SiteRestartData } from '../models/site';
-import { Verbs } from '../models/portal';
-import { StartupInfo, SupportBladeDefinition } from '../models/portal';
-import { WindowService } from '../../startup/services/window.service';
-import { PortalService } from '../../startup/services/portal.service';
-import { ArmService } from './arm.service';
 import { AuthService } from '../../startup/services/auth.service';
-import { mergeMap, filter } from 'rxjs/operators';
+import { PortalService } from '../../startup/services/portal.service';
+import { WindowService } from '../../startup/services/window.service';
+import { StartupInfo, SupportBladeDefinition, Verbs } from '../models/portal';
+import { ResponseMessageEnvelope } from '../models/responsemessageenvelope';
+import { Site, SiteRestartData } from '../models/site';
+import { ArmService } from './arm.service';
 
 @Injectable()
 export class PortalActionService {
@@ -110,7 +109,7 @@ export class PortalActionService {
         this._portalService.openBlade(bladeInfo, 'troubleshoot');
     }
 
-    public openTifoilSecurityBlade() {
+    public openTinfoilSecurityBlade() {
         const resourceUriSplit = this.currentSite.id.split('/');
 
         const bladeInfo = {

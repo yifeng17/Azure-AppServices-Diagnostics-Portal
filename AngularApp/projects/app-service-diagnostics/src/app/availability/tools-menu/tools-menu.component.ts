@@ -21,7 +21,7 @@ export class ToolsMenuComponent  {
     public premiumTools: any[];
 
     public mitigateLink: string;
-    
+
     currentSite: Site;
     hasReadAccessToServerFarm: boolean;
     initialized: boolean = false;
@@ -53,7 +53,7 @@ export class ToolsMenuComponent  {
             title: "Metrics per Instance (Apps)",
             description: "View Performance Counters as well as Metrics for your application",
             enabled: true,
-            action: () => { 
+            action: () => {
                 this.logToolUse(SupportBladeDefinitions.MetricPerInstance.Identifier);
                 this._portalActionService.openMdmMetricsV3Blade();
             }
@@ -64,7 +64,7 @@ export class ToolsMenuComponent  {
             description: this.hasReadAccessToServerFarm ? "View Metrics for applications on your App Service Plan" :
                 "You do not have access to the the app service plan to which this site belongs",
             enabled: this.hasReadAccessToServerFarm,
-            action: () => { 
+            action: () => {
                 this.logToolUse(SupportBladeDefinitions.AppServicePlanMetrics.Identifier);
                 this._portalActionService.openMdmMetricsV3Blade(this._portalActionService.currentSite.properties.serverFarmId);
             }
@@ -74,7 +74,7 @@ export class ToolsMenuComponent  {
             title: "Live HTTP Traffic",
             description: "View Live Requests and Failures to your application",
             enabled: true,
-            action: () => { 
+            action: () => {
                 this.logToolUse(SupportBladeDefinitions.Pulse.Identifier);
                 this._portalActionService.openSupportIFrame(SupportBladeDefinitions.Pulse)
             }
@@ -84,7 +84,7 @@ export class ToolsMenuComponent  {
             title: "Application Events",
             description: "View Event Log which often holds information about failed requests",
             enabled: true,
-            action: () => { 
+            action: () => {
                 this.logToolUse(SupportBladeDefinitions.EventViewer.Identifier);
                 this._portalActionService.openSupportIFrame(SupportBladeDefinitions.EventViewer)
             }
@@ -94,7 +94,7 @@ export class ToolsMenuComponent  {
             title: "Failed Request Tracing Logs",
             description: "View detailed logs for failed requests. This requires you to enable Failed Request Tracing",
             enabled: true,
-            action: () => { 
+            action: () => {
                 this.logToolUse(SupportBladeDefinitions.FREBLogs.Identifier);
                 this._portalActionService.openSupportIFrame(SupportBladeDefinitions.FREBLogs)
             }
@@ -104,7 +104,7 @@ export class ToolsMenuComponent  {
             title: "Diagnostics as a Service",
             description: "Run a Diagnostics as a Service session for a deep analysis of your application",
             enabled: true,
-            action: () => { 
+            action: () => {
                 this.logToolUse(SupportBladeDefinitions.DaaS.Identifier);
                 this._portalActionService.openSupportIFrame(SupportBladeDefinitions.DaaS)
             }
@@ -114,7 +114,7 @@ export class ToolsMenuComponent  {
             title: "Mitigate",
             description: "Set rules for recycling or taking other actions based on memory usage or request patterns",
             enabled: true,
-            action: () => { 
+            action: () => {
                 this.logToolUse("Mitigate");
                 this._portalActionService.openAutoHealSite();
             }
@@ -124,7 +124,7 @@ export class ToolsMenuComponent  {
             title: "Advanced Application Restart",
             description: "Restart your app on a specific instance",
             enabled: true,
-            action: () => { 
+            action: () => {
                 this.logToolUse("AdvancedAppRestart");
                 this._portalActionService.openBladeAdvancedAppRestartBladeForCurrentSite();
             }
@@ -134,9 +134,9 @@ export class ToolsMenuComponent  {
             title: "Security Scanning",
             description: "",
             enabled: true,
-            action: () => { 
+            action: () => {
                 this.logToolUse("TinfoilSecurity");
-                this._portalActionService.openTifoilSecurityBlade();
+                this._portalActionService.openTinfoilSecurityBlade();
             }
         });
 
@@ -147,5 +147,5 @@ export class ToolsMenuComponent  {
         this._logger.LogClickEvent(tool, "Tools");
     }
 
-    
+
 }

@@ -107,14 +107,14 @@ export class SiteFeatureService extends FeatureService {
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction('tinfoil', 'Premium Tools', () => {
-            this._portalActionService.openTifoilSecurityBlade();
+            this._portalActionService.openTinfoilSecurityBlade();
           })
         }
       }
     ];
 
     this._resourceService.getSitePremierAddOns(resourceId).subscribe(data => {
-      
+
       if (data && data.value) {
         let premierAddOns: any[] = data.value;
         let zRayAddOn = premierAddOns.find(x => (x.plan && (x.plan.product === "z-ray")));
