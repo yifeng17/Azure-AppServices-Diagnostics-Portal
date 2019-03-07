@@ -1,0 +1,55 @@
+<daas-validator [siteToBeDiagnosed]="siteToBeDiagnosed" diagnoserName="CPU Monitoring"
+  (DaasValidated)="onDaasValidated($event)"></daas-validator>
+
+<div *ngIf="daasValidated" style="margin-top:30px">
+  <div *ngIf="checkingActiveSessionOnComponentLoad">
+    <i class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true"></i>
+    Checking Active monitoring session...
+  </div>
+  <div *ngIf="!checkingActiveSessionOnComponentLoad">
+    <div class="custom-height">
+      <collapsible-list [title]="titles[0]" [collapsed]="configCollapsed">
+        <collapsible-list-item>
+          <cpu-monitoring-configuration [siteToBeDiagnosed]="siteToBeDiagnosed"
+            [activeSession]="activeMonitoringSession == null ? null : activeMonitoringSession.Session"
+            (monitoringConfigurationChange)="updateMonitoringConfiguration($event)" (savingMonitoringConfiguration)="savingMonitoringConfiguration($event)">
+          </cpu-monitoring-configuration>
+        </collapsible-list-item>
+      </collapsible-list>
+    </div>
+    <div class="custom-height">
+      <collapsible-list [title]="titles[1]" [collapsed]="monitoringCollapsed">
+        <collapsible-list-item>
+          <div class="container" *ngIf="refreshingConfiguration">
+            <div class="row">
+              <div class="sm-6">
+                <i class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true"></i>
+                Refreshing rule status...
+              </div>
+            </div>
+          </div>
+          <cpu-monitoring-activity *ngIf="!refreshingConfiguration" [siteToBeDiagnosed]="siteToBeDiagnosed"
+            [activeMonitoringSession]="activeMonitoringSession" [scmPath]="scmPath"></cpu-monitoring-activity>
+        </collapsible-list-item>
+      </collapsible-list>
+    </div>
+
+    <div class="custom-height">
+      <collapsible-list [title]="titles[2]" [collapsed]="sessionsCollapsed">
+        <collapsible-list-item>
+          <div class="container" *ngIf="refreshingConfiguration">
+              <div class="row">
+                <div class="sm-6">
+                  <i class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true"></i>
+                  Refreshing rule status...
+                </div>
+              </div>
+            </div>
+          <cpu-monitoring-sessions *ngIf="!refreshingConfiguration" [siteToBeDiagnosed]="siteToBeDiagnosed"
+            [scmPath]="scmPath" [monitoringSessions]="monitoringSessions" [gettingSessions]="gettingSessions">
+          </cpu-monitoring-sessions>
+        </collapsible-list-item>
+      </collapsible-list>
+    </div>
+  </div>
+</div>

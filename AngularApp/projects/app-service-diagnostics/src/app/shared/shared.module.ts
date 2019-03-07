@@ -85,6 +85,12 @@ import { BackendCtrlService } from './services/backend-ctrl.service';
 import { GenericCommsService } from './services/generic-comms.service';
 import { GenericCommsComponent } from './components/generic-comms/generic-comms.component';
 import { LocalBackendService } from './services/local-backend.service';
+import { CpuMonitoringToolComponent } from './components/tools/cpu-monitoring-tool/cpu-monitoring-tool.component';
+import { CpuMonitoringComponent } from './components/daas/cpu-monitoring/cpu-monitoring.component';
+import { Ng5SliderModule } from 'ng5-slider';
+import { CpuMonitoringConfigurationComponent } from './components/daas/cpu-monitoring/cpu-monitoring-configuration/cpu-monitoring-configuration.component';
+import { CpuMonitoringActivityComponent } from './components/daas/cpu-monitoring/cpu-monitoring-activity/cpu-monitoring-activity.component';
+import { CpuMonitoringSessionsComponent } from './components/daas/cpu-monitoring/cpu-monitoring-sessions/cpu-monitoring-sessions.component';
 
 @NgModule({
     declarations: [
@@ -142,7 +148,12 @@ import { LocalBackendService } from './services/local-backend.service';
         TestInputComponent,
         ResourceRedirectComponent,
         TileListComponent,
-        GenericCommsComponent
+        GenericCommsComponent,
+        CpuMonitoringToolComponent,
+        CpuMonitoringComponent,
+        CpuMonitoringConfigurationComponent,
+        CpuMonitoringActivityComponent,
+        CpuMonitoringSessionsComponent
     ],
     imports: [
         HttpModule,
@@ -150,7 +161,8 @@ import { LocalBackendService } from './services/local-backend.service';
         StartupModule,
         FormsModule,
         RouterModule,
-        DiagnosticDataModule
+        DiagnosticDataModule,
+        Ng5SliderModule
     ],
     exports: [
         CommonModule,
