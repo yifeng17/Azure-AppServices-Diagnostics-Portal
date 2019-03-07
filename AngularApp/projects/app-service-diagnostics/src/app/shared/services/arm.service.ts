@@ -181,6 +181,17 @@ export class ArmService {
         return this._cache.get(resourceUri, request, invalidateCache);
     }
 
+    patchFullResponse<T>(resourceUri: string, body: any = null, invalidateCache = false, apiVersion?: string):
+            Observable<HttpResponse<T>> {
+        const url = this.createUrl(resourceUri, apiVersion);
+        const request = this._http.patch<T>(url, body, {
+            headers: this.getHeaders(),
+            observe: 'response'
+        });
+
+        return this._cache.get(resourceUri, request, invalidateCache);
+    }
+
     getFullResponse<T>(resourceUri: string, invalidateCache = false, apiVersion?: string): Observable<HttpResponse<T>> {
         const url = this.createUrl(resourceUri, apiVersion);
         const request = this._http.get<T>(url, {
