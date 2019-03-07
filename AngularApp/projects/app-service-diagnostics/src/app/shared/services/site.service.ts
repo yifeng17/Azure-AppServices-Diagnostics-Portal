@@ -205,9 +205,10 @@ export class SiteService {
         return this._armClient.putResource(restartUri, body, null, true);
     }
 
-    azureApiRequest(method: string, resourceUri: string, body: any = null): Observable<HttpResponse<any>> {
+    azureApiRequest(method: string, resourceUri: string, body: any = null, apiVersion?: string):
+            Observable<HttpResponse<any>> {
         if (!['get', 'put', 'post', 'patch'].includes(method.toLowerCase())) {
-            throw new Error(`Method ${method} is not supported in Azure API Requests`);
+            throw new Error(`Method ${method} is not supported in Azure API Request Solutions`);
         }
 
         this.logService.logEvent('Solution_AzureApiRequest', {
@@ -217,13 +218,13 @@ export class SiteService {
 
         switch (method.toLowerCase()) {
             case 'get':
-                return this._armClient.getFullResponse(resourceUri);
+                return this._armClient.getFullResponse(resourceUri, false, apiVersion);
             case 'put':
-                return this._armClient.putFullResponse(resourceUri, body, true);
+                return this._armClient.putFullResponse(resourceUri, body, true, apiVersion);
             case 'post':
-                return this._armClient.postResourceFullResponse(resourceUri, body, true);
+                return this._armClient.postResourceFullResponse(resourceUri, body, true, apiVersion);
             case 'patch':
-                return this._armClient.patchFullResponse(resourceUri, body, true);
+                return this._armClient.patchFullResponse(resourceUri, body, true, apiVersion);
         }
     }
 

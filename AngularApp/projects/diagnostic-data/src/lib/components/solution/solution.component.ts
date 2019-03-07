@@ -76,7 +76,7 @@ export class SolutionComponent extends DataRenderBaseComponent {
             case ActionType.KillW3wpOnInstance:
                 break;
             case ActionType.AzureApiRequest:
-                return this._siteService.azureApiRequest(args['method'], resourceUri, args['body']);
+                return this._siteService.azureApiRequest(args['method'], resourceUri, args['body'], args['api-version']);
         }
     }
 

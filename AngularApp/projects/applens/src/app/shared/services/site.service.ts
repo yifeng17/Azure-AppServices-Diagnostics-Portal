@@ -17,37 +17,40 @@ export class SiteService extends ResourceService {
         super(inputs);
     }
 
-    public startInitializationObservable() {
+    startInitializationObservable() {
         this._initialized = this._observerApiService.getSite(this._armResource.resourceName).pipe(
-        mergeMap((observerResponse: Observer.ObserverSiteResponse) => {
-            this._siteObject = this.getSiteFromObserverResponse(observerResponse);
-            this._currentResource.next(this._siteObject);
-            return this._observerApiService.getSiteRequestBody(this._siteObject.SiteName, this._siteObject.InternalStampName);
-        }),map((requestBody: any) => {
-            if (!requestBody.details.HostNames) {
-                requestBody.details.HostNames = this._siteObject.Hostnames.map(hostname => <any>{
-                    name: hostname,
-                    type: 0
-                });
-            }
-            this._requestBody = requestBody.details;
-            return true;
-        }),);
+            mergeMap((observerResponse: Observer.ObserverSiteResponse) => {
+                this._siteObject = this.getSiteFromObserverResponse(observerResponse);
+                this._currentResource.next(this._siteObject);
+                return this._observerApiService.getSiteRequestBody(this._siteObject.SiteName, this._siteObject.InternalStampName);
+            }), map((requestBody: any) => {
+                if (!requestBody.details.HostNames) {
+                    requestBody.details.HostNames = this._siteObject.Hostnames.map(hostname => <any>{
+                        name: hostname,
+                        type: 0
+                    });
+                }
+
+                this._requestBody = requestBody.details;
+                return true;
+            })
+        );
     }
 
-    public getCurrentResource(): Observable<any> {
+    getCurrentResource(): Observable<any> {
         return this._currentResource;
     }
 
-    public restartSiteFromUri(resourceUri: string): Observable<HttpResponse<any>> {
+    restartSiteFromUri(resourceUri: string): Observable<HttpResponse<any>> {
         return null;
     }
 
-    public updateSettingsFromUri(resourceUri: string, body: any): Observable<any> {
+    updateSettingsFromUri(resourceUri: string, body: any): Observable<any> {
         return null;
     }
 
-    public azureApiRequest(method: string, resourceUri: string, body: any = null): Observable<HttpResponse<any>> {
+    azureApiRequest(method: string, resourceUri: string, body: any = null, apiVersion?: string):
+            Observable<HttpResponse<any>> {
         return null;
     }
 

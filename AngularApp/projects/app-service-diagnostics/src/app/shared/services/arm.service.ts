@@ -167,7 +167,7 @@ export class ArmService {
             observe: 'response'
         });
 
-        return this._cache.get(resourceUri, request, invalidateCache);
+        return this._cache.get(url, request, invalidateCache);
     }
 
     putFullResponse<T>(resourceUri: string, body: any = null, invalidateCache = false, apiVersion?: string):
@@ -178,7 +178,7 @@ export class ArmService {
             observe: 'response'
         });
 
-        return this._cache.get(resourceUri, request, invalidateCache);
+        return this._cache.get(url, request, invalidateCache);
     }
 
     patchFullResponse<T>(resourceUri: string, body: any = null, invalidateCache = false, apiVersion?: string):
@@ -189,7 +189,7 @@ export class ArmService {
             observe: 'response'
         });
 
-        return this._cache.get(resourceUri, request, invalidateCache);
+        return this._cache.get(url, request, invalidateCache);
     }
 
     getFullResponse<T>(resourceUri: string, invalidateCache = false, apiVersion?: string): Observable<HttpResponse<T>> {
@@ -199,7 +199,7 @@ export class ArmService {
             observe: 'response'
         });
 
-        return this._cache.get(resourceUri, request, invalidateCache);
+        return this._cache.get(url, request, invalidateCache);
     }
 
     getResourceFullUrl<T>(resourceUri: string, invalidateCache: boolean = false): Observable<T> {
