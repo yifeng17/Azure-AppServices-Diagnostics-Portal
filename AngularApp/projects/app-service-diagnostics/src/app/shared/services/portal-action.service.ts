@@ -110,19 +110,6 @@ export class PortalActionService {
         this._portalService.openBlade(bladeInfo, 'troubleshoot');
     }
 
-    public openPHPDebuggingBlade() {
-        const resourceUriSplit = this.currentSite.id.split('/');
-
-        const bladeInfo = {
-            detailBlade: 'ZendZRayBlade',
-            detailBladeInputs: {
-                WebsiteId: this.getWebsiteId(resourceUriSplit[2], resourceUriSplit[4], resourceUriSplit[8]),
-            }
-        };
-
-        this._portalService.openBlade(bladeInfo, 'troubleshoot');
-    }
-
     public openTifoilSecurityBlade() {
         const resourceUriSplit = this.currentSite.id.split('/');
 

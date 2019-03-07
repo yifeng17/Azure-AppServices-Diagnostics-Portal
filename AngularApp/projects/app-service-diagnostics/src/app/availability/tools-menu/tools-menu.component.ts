@@ -131,16 +131,6 @@ export class ToolsMenuComponent  {
         });
 
         this.premiumTools.push({
-            title: "PHP Debugging",
-            description: "",
-            enabled: true,
-            action: () => { 
-                this.logToolUse("PHPDebugging");
-                this._portalActionService.openPHPDebuggingBlade();
-            }
-        });
-
-        this.premiumTools.push({
             title: "Security Scanning",
             description: "",
             enabled: true,
