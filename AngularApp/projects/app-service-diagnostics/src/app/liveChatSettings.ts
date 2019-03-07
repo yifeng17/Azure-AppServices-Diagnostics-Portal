@@ -37,6 +37,10 @@ export class LiveChatSettings {
       ],
       "Azure Web App(Linux)": [
         '32542218',     //Availability and Performance/Web App Down
+        '32570954',     //Availability and Performance/Web App Restarted
+        '32440123',     //Configuration and Management/Configuring SSL
+        '32440122',     //Configuration and Management/Configuring custom domain names
+        '32542208'      //Configuration and Management/Backup and Restore
       ]
     };
 
