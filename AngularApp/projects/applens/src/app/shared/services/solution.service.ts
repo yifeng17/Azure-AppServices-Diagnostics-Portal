@@ -13,7 +13,7 @@ export class SolutionService {
         return null;
     }
 
-    openBladeScaleUpBlade() {
+    openScaleUpBlade() {
         return null;
     }
 

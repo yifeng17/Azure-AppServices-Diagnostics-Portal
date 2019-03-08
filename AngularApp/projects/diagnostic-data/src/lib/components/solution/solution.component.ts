@@ -2,7 +2,6 @@ import { Observable } from 'rxjs';
 import { Component, Input } from '@angular/core';
 import { Dictionary } from '../../../../../applens/src/app/shared/models/extensions';
 import { Rendering } from '../../models/detector';
-import { DiagnosticSiteService } from '../../services/diagnostic-site.service';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
 import { SolutionText, getSolutionText } from './solution-text';
@@ -45,8 +44,7 @@ export class SolutionComponent extends DataRenderBaseComponent {
     copyText = this.defaultCopyText;
     appName: string;
 
-    constructor(telemetryService: TelemetryService, private _siteService: SolutionActionService,
-            private logService: TelemetryService) {
+    constructor(private _siteService: SolutionActionService, telemetryService: TelemetryService) {
         super(telemetryService);
     }
 
@@ -61,7 +59,7 @@ export class SolutionComponent extends DataRenderBaseComponent {
         this.actionStatus = 'Running...';
 
         this.chooseAction(this.solution.Action, this.solution.ResourceUri, this.solution.ActionArgs).subscribe(res => {
-            this.logService.logEvent(`Solution_${this.solution.Action.toString()}`, {
+            this.telemetryService.logEvent(`Solution_${this.solution.Action.toString()}`, {
                 'status': res.status.toString(),
                 'statusText': res.statusText,
                 'url': res.url
@@ -82,6 +80,8 @@ export class SolutionComponent extends DataRenderBaseComponent {
                 return this._siteService.restartSiteFromUri(resourceUri);
             case ActionType.UpdateSiteAppSettings:
                 return this._siteService.updateSettingsFromUri(resourceUri, args);
+            case ActionType.ScaleUpAppService:
+                return this._siteService.openScaleUpBlade();
             default:
                 throw new Error(`Solution action ${actionType.toString()} not implemented`);
         }
