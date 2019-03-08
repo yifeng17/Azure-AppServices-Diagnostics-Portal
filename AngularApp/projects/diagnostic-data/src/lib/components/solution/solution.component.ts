@@ -9,9 +9,10 @@ import { SolutionText, getSolutionText } from './solution-text';
 import { HttpResponse } from '@angular/common/http';
 
 export enum ActionType {
-    RestartSite = "RestartSite",
-    UpdateSiteAppSettings = "UpdateSiteAppSettings",
-    KillW3wpOnInstance = "KillW3wpOnInstance"
+    RestartSite = 'RestartSite',
+    UpdateSiteAppSettings = 'UpdateSiteAppSettings',
+    KillW3wpOnInstance = 'KillW3wpOnInstance',
+    ScaleUpAppService = 'ScaleUpAppService'
 }
 
 export class Solution {
@@ -36,7 +37,7 @@ export class Solution {
 })
 export class SolutionComponent extends DataRenderBaseComponent {
 
-    @Input("data") solution: Solution;
+    @Input('data') solution: Solution;
     renderingProperties: Rendering;
     actionStatus: string;
     defaultCopyText = 'Copy';
@@ -121,6 +122,7 @@ export class SolutionComponent extends DataRenderBaseComponent {
         }
     }
 
+    // TODO: Make generic for any actionArgs body
     buildAppsettingsText() {
         let resultText = '';
 

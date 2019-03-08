@@ -1,8 +1,10 @@
 export enum SolutionText {
-    AppRestartDescription = "AppRestartDescription",
-    RestartInstructions = "RestartInstructions",
-    UpdateSettingsInstructions = "UpdateSettingsInstructions",
-    UpdateSettingsDescription = "UpdateSettingsDescription"
+    AppRestartDescription = 'AppRestartDescription',
+    RestartInstructions = 'RestartInstructions',
+    UpdateSettingsInstructions = 'UpdateSettingsInstructions',
+    UpdateSettingsDescription = 'UpdateSettingsDescription',
+    ScaleUpAppServiceDescription = 'ScaleUpAppServiceDescription',
+    ScaleUpAppServiceInstructions = 'ScaleUpAppServiceInstructions'
 }
 
 namespace SolutionConstants {
@@ -18,12 +20,18 @@ namespace SolutionConstants {
 
  Apply the following settings to the application:`;
 
-    export const RestartInstructions = " 1. Navigate to the resource in Azure Portal\n" +
-        " 2. Click `Restart` to invoke a site restart";
+    export const RestartInstructions = ' 1. Navigate to the resource in Azure Portal\n' +
+        ' 2. Click `Restart` to invoke a site restart';
 
-    export const UpdateSettingsInstructions = " 1. Navigate to the resource in Azure Portal\n" +
-        " 2. Navigate to the `Application Settings` tab\n" +
-        " 3. Enter the following settings under the `Application Settings` section:";
+    export const UpdateSettingsInstructions = ' 1. Navigate to the resource in Azure Portal\n' +
+        ' 2. Navigate to the `Application Settings` tab\n' +
+        ' 3. Enter the following settings under the `Application Settings` section:';
+
+    export const ScaleUpAppServiceDescription = ' #### Scale up your App Service Plan\n\n' +
+        ' Increase the size of the instances in your app service plan. Each instance will have more ' +
+        'cores (CPU), memory, and disk space.';
+    export const ScaleUpAppServiceInstructions = ' 1. Navigate to the Scale Up (App Service plan) blade\n' +
+        ' 2. Select an App Service Plan with an increased amount of resources';
 }
 
 export function getSolutionText(flag: SolutionText) {
@@ -34,5 +42,5 @@ export function getSolutionText(flag: SolutionText) {
         // It's okay if the enum doesn't have a string defined
     }
 
-    return "";
+    return '';
 }
