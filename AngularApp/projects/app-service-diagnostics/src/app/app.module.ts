@@ -18,6 +18,8 @@ import { environment } from '../environments/environment';
 import { PortalKustoTelemetryService } from './shared/services/portal-kusto-telemetry.service';
 import { DiagnosticSiteService } from 'projects/diagnostic-data/src/lib/services/diagnostic-site.service';
 import { SiteService } from 'projects/app-service-diagnostics/src/app/shared/services/site.service';
+import { SolutionActionService } from '../../../diagnostic-data/src/lib/services/solution-action.service';
+import { SolutionService } from './shared/services/solution.service';
 
 @NgModule({
   imports: [
@@ -53,7 +55,8 @@ import { SiteService } from 'projects/app-service-diagnostics/src/app/shared/ser
       useFactory: (_localBackendService: LocalBackendService, _genericApiService: GenericApiService) => environment.useApplensBackend ? _localBackendService : _genericApiService,
       deps: [LocalBackendService, GenericApiService] },
     { provide: CommsService, useExisting: GenericCommsService },
-    { provide: DiagnosticSiteService, useExisting: SiteService }
+    { provide: DiagnosticSiteService, useExisting: SiteService },
+    { provide: SolutionActionService, useExisting: SolutionService }
   ],
   bootstrap: [AppComponent]
 })

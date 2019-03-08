@@ -31,6 +31,8 @@ import { TabAnalyticsDevelopComponent } from './tabs/tab-analytics-develop/tab-a
 import { TabAnalyticsDashboardComponent } from './tabs/tab-analytics-dashboard/tab-analytics-dashboard.component';
 import { TabDetectorChangelistComponent } from './tabs/tab-detector-changelist/tab-detector-changelist.component';
 import { DiagnosticSiteService } from 'diagnostic-data';
+import { SolutionActionService } from '../../../../../diagnostic-data/src/lib/services/solution-action.service';
+import { SolutionService } from '../../shared/services/solution.service';
 
 @Injectable()
 export class InitResolver implements Resolve<Observable<boolean>>{
@@ -130,7 +132,8 @@ export const DashboardModuleRoutes: ModuleWithProviders = RouterModule.forChild(
     },
     { provide: DiagnosticService, useExisting: ApplensDiagnosticService },
     { provide: CommsService, useExisting: ApplensCommsService },
-    { provide: DiagnosticSiteService, useExisting: ResourceService }
+    { provide: DiagnosticSiteService, useExisting: ResourceService },
+    { provide: SolutionActionService, useExisting: SolutionService }
   ],
   declarations: [DashboardComponent, SideNavComponent, ResourceMenuItemComponent, ResourceHomeComponent, OnboardingFlowComponent,
     SearchMenuPipe, TabDataComponent, TabDevelopComponent, TabCommonComponent, TabDataSourcesComponent, TabMonitoringComponent,

@@ -91,6 +91,7 @@ import { Ng5SliderModule } from 'ng5-slider';
 import { CpuMonitoringConfigurationComponent } from './components/daas/cpu-monitoring/cpu-monitoring-configuration/cpu-monitoring-configuration.component';
 import { CpuMonitoringActivityComponent } from './components/daas/cpu-monitoring/cpu-monitoring-activity/cpu-monitoring-activity.component';
 import { CpuMonitoringSessionsComponent } from './components/daas/cpu-monitoring/cpu-monitoring-sessions/cpu-monitoring-sessions.component';
+import { SolutionService } from './services/solution.service';
 
 @NgModule({
     declarations: [
@@ -255,7 +256,8 @@ export class SharedModule {
                 BackendCtrlService,
                 GenericCommsService,
                 GroupByPipe,
-                LocalBackendService
+                LocalBackendService,
+                SolutionService
             ]
         };
     }

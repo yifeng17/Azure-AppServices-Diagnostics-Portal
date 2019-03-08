@@ -7,6 +7,7 @@ import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
 import { SolutionText, getSolutionText } from './solution-text';
 import { HttpResponse } from '@angular/common/http';
+import { SolutionActionService } from '../../services/solution-action.service';
 
 export enum ActionType {
     RestartSite = 'RestartSite',
@@ -44,7 +45,7 @@ export class SolutionComponent extends DataRenderBaseComponent {
     copyText = this.defaultCopyText;
     appName: string;
 
-    constructor(telemetryService: TelemetryService, private _siteService: DiagnosticSiteService,
+    constructor(telemetryService: TelemetryService, private _siteService: SolutionActionService,
             private logService: TelemetryService) {
         super(telemetryService);
     }
@@ -57,7 +58,7 @@ export class SolutionComponent extends DataRenderBaseComponent {
     }
 
     performAction() {
-        this.actionStatus = "Running...";
+        this.actionStatus = 'Running...';
 
         this.chooseAction(this.solution.Action, this.solution.ResourceUri, this.solution.ActionArgs).subscribe(res => {
             this.logService.logEvent(`Solution_${this.solution.Action.toString()}`, {
@@ -67,9 +68,9 @@ export class SolutionComponent extends DataRenderBaseComponent {
             });
 
             if (res.ok == null || res.ok) {
-                this.actionStatus = "Complete!"
+                this.actionStatus = 'Complete!';
             } else {
-                this.actionStatus = `Error completing request. Status code: ${res.status}`
+                this.actionStatus = `Error completing request. Status code: ${res.status}`;
             }
         });
     }
