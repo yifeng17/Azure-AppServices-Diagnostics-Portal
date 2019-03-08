@@ -116,6 +116,7 @@ namespace AppLensV3
                     {
                         var requestMessage = new HttpRequestMessage(HttpMethod.Post, "api/invoke");
                         requestMessage.Headers.Add("x-ms-path-query", path);
+                        requestMessage.Headers.Add("x-ms-internal-view", internalView.ToString());
                         requestMessage.Headers.Add("x-ms-verb", method);
                         requestMessage.Content = new StringContent(body ?? string.Empty, Encoding.UTF8, "application/json");
                         if (additionalHeaders != null)
