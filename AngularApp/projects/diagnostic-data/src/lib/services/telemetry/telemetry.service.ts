@@ -9,7 +9,6 @@ import { SeverityLevel } from '../../models/telemetry';
 @Injectable()
 export class TelemetryService {
     private telemetryProviders: ITelemetryProvider[] = [];
-    private commonDetectorEventProperties: { [name: string]: string };
     eventPropertiesSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
     private eventPropertiesLocalCopy: { [name: string]: string } = {};
 
