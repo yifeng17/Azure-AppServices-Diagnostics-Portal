@@ -124,7 +124,7 @@ export class LiveChatSettings {
     ];
 
     public static WeeklyChatOffHours = {
-        Day: 6,  //Thursday, 11 AM - 12:30 PM
+        Day: 4,  //Thursday, 11 AM - 12:30 PM
         StartHourPST: 11,
         StartMinutesPST: 0,
         EndHourPST: 12,
