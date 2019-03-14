@@ -33,7 +33,7 @@ export class SiteFeatureService extends FeatureService {
       }
       this.addDiagnosticTools(startupInfo.resourceId);
       this.addProactiveTools(startupInfo.resourceId);
-      this.addPremiumTools();
+      this.addPremiumTools(startupInfo.resourceId);
     });
   }
 
@@ -93,24 +93,8 @@ export class SiteFeatureService extends FeatureService {
     ];
   }
 
-  addPremiumTools() {
+  addPremiumTools(resourceId: string) {
     this.premiumTools = <SiteFilteredItem<Feature>[]>[
-      {
-        appType: AppType.WebApp,
-        platform: OperatingSystem.windows,
-        sku: Sku.NotDynamic,
-        stack: '',
-        item: {
-          id: 'zray',
-          name: 'PHP Debugging',
-          category: 'Premium Tools',
-          description: '',
-          featureType: FeatureTypes.Tool,
-          clickAction: this._createFeatureAction('zray', 'Premium Tools', () => {
-            this._portalActionService.openPHPDebuggingBlade();
-          })
-        }
-      },
       {
         appType: AppType.WebApp,
         platform: OperatingSystem.windows,
@@ -128,6 +112,36 @@ export class SiteFeatureService extends FeatureService {
         }
       }
     ];
+
+    this._resourceService.getSitePremierAddOns(resourceId).subscribe(data => {
+      
+      if (data && data.value) {
+        let premierAddOns: any[] = data.value;
+        let zRayAddOn = premierAddOns.find(x => (x.plan && (x.plan.product === "z-ray")));
+        if (zRayAddOn) {
+          this.premiumTools.push({
+            appType: AppType.WebApp,
+            platform: OperatingSystem.windows,
+            sku: Sku.NotDynamic,
+            stack: '',
+            item: {
+              id: 'zray',
+              name: 'PHP Debugging',
+              category: 'Premium Tools',
+              description: '',
+              featureType: FeatureTypes.Tool,
+              clickAction: this._createFeatureAction('zray', 'Premium Tools', () => {
+                const site: Site = <Site>this._resourceService.resource.properties;
+                let scmHostName = site.enabledHostNames.find(h => h.indexOf('.scm.') > 0);
+                if (scmHostName) {
+                  window.open(`https://${scmHostName}/ZendServer`, '_blank');
+                }
+              })
+            }
+          });
+        }
+      }
+    });
   }
 
   addProactiveTools(resourceId: string) {
