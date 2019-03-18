@@ -1,51 +1,105 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
+﻿// <copyright file="LocalDevelopmentClientService.cs" company="Microsoft Corporation">
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+// </copyright>
+
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace AppLensV3
 {
-    public class LocalDevelopmentClientService: ILocalDevelopmentClientService
+    /// <summary>
+    /// Local development client service.
+    /// </summary>
+    public class LocalDevelopmentClientService : ILocalDevelopmentClientService
     {
-        private IConfiguration _configuration;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LocalDevelopmentClientService"/> class.
+        /// </summary>
+        /// <param name="configuration">Service configuration.</param>
+        public LocalDevelopmentClientService(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
 
+        /// <summary>
+        /// Gets storage configuration.
+        /// </summary>
         public string StorageConnectionString
         {
             get
             {
-                return _configuration["LocalDevelopment:connectionString"];
+                return Configuration["LocalDevelopment:connectionString"];
             }
         }
 
-        public LocalDevelopmentClientService(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
+        private IConfiguration Configuration { get; }
 
-        public async Task<string> PrepareLocalDevelopment(string detectorId, string scriptBody = null, string resourceId = null)
+        /// <summary>
+        /// Prepare local development.
+        /// </summary>
+        /// <param name="detectorId">Detector id.</param>
+        /// <param name="scriptBody">Script body.</param>
+        /// <param name="resourceId">Resource id.</param>
+        /// <param name="config">Package configuration.</param>
+        /// <param name="baseUrl">Base URL.</param>
+        /// <param name="gists">Gist lists.</param>
+        /// <param name="sourceReference">Source reference.</param>
+        /// <returns>Task for preparing local development.</returns>
+        public async Task<string> PrepareLocalDevelopment(string detectorId, string scriptBody = null, string resourceId = null, string config = null, Uri baseUrl = null, IDictionary<string, IEnumerable<string>> gists = null, IDictionary<string, Tuple<string, string>> sourceReference = null)
         {
             try
             {
                 var assemPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                 var csxFilePath = Path.Combine(assemPath, @"LocalDevelopmentTemplate\Detector\detector.csx");
-                var settingsPath = Path.Combine(assemPath, @"LocalDevelopmentTemplate\Detector\detectorSettings.txt");
+                var packageJson = Path.Combine(assemPath, @"LocalDevelopmentTemplate\Detector\package.txt");
+                var gistsPath = Path.Combine(assemPath, @"LocalDevelopmentTemplate\Detector\gists\");
+
+                if (!Directory.Exists(gistsPath))
+                {
+                    Directory.CreateDirectory(gistsPath);
+                }
 
                 // Write script body into template detector.csx
                 File.WriteAllText(csxFilePath, scriptBody);
 
                 // Prepare ResourceId
-                var settingsJson = File.ReadAllText(settingsPath);
+                var settingsJson = File.ReadAllText(packageJson);
                 dynamic settingsJsonObject = JsonConvert.DeserializeObject(settingsJson);
 
                 settingsJsonObject["ResourceId"] = resourceId;
 
-                var output = JsonConvert.SerializeObject(settingsJsonObject, Formatting.Indented);
-                File.WriteAllText(settingsPath, output);
+                foreach (var p in sourceReference)
+                {
+                    var tmpPath = Path.Combine(gistsPath, p.Key);
+                    if (!Directory.Exists(tmpPath))
+                    {
+                        Directory.CreateDirectory(tmpPath);
+                    }
+
+                    File.WriteAllText(Path.Combine(tmpPath, $"{p.Key}.csx"), p.Value.Item1);
+                    File.WriteAllText(Path.Combine(tmpPath, "package.json"), p.Value.Item2);
+                }
+
+                var configuration = new JObject
+                {
+                    ["detectorSettings"] = settingsJsonObject,
+                    ["packageDefinition"] = JObject.FromObject(JsonConvert.DeserializeObject(config)),
+                    ["gistDefinitions"] = JObject.FromObject(gists),
+                    ["baseUrl"] = new Uri(baseUrl, resourceId)
+                };
+
+                File.WriteAllText(packageJson, JsonConvert.SerializeObject(configuration, Formatting.Indented));
 
                 var zipSource = Path.Combine(assemPath, @"LocalDevelopmentTemplate");
                 var zipfileName = detectorId + @".zip";
@@ -56,19 +110,23 @@ namespace AppLensV3
                 ZipFile.CreateFromDirectory(zipSource, zipDest);
 
                 var zipFile = new FileInfo(zipDest);
-                // Storage accounts: detectorlocaldev
-                var blobUri = await UploadToBlobStorage(zipFile, StorageConnectionString, "detectordevelopment");
 
-                return blobUri;
+                // Overwrite the package.json.
+                File.WriteAllText(packageJson, settingsJson);
+
+                Directory.Delete(gistsPath, true);
+
+                // Storage accounts: detectorlocaldev
+                return await UploadToBlobStorage(zipFile, StorageConnectionString, "detectordevelopment");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                throw ex;
+                throw;
             }
         }
 
-        public static async Task CreateSharedAccessPolicy (CloudBlobClient blobClient, CloudBlobContainer container, string policyName)
+        private static async Task CreateSharedAccessPolicy(CloudBlobContainer container, string policyName)
         {
             var permissions = await container.GetPermissionsAsync();
 
@@ -105,7 +163,7 @@ namespace AppLensV3
 
                     // Create a shared access policy
                     var sharedAcessPolicyName = "localDevPolicy";
-                    await CreateSharedAccessPolicy(client, container, sharedAcessPolicyName);
+                    await CreateSharedAccessPolicy(container, sharedAcessPolicyName);
 
                     // Upload the zip and store it in the blob
                     var blob = container.GetBlockBlobReference(zipFile.Name);
@@ -126,7 +184,7 @@ namespace AppLensV3
             }
             else
             {
-                Console.Error.Write(("Invalid storage connection string"));
+                Console.Error.Write("Invalid storage connection string");
             }
 
             return blobUri;
