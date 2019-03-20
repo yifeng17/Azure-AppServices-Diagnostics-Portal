@@ -8,6 +8,6 @@ namespace Backend.Services
 {
     public interface IChatService
     {
-        ChatStatus GetChatStatus();
+        ChatStatus GetChatStatus(string product);
     }
 }

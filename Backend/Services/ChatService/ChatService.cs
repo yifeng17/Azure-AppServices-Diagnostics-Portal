@@ -16,13 +16,20 @@ namespace Backend.Services
             Config = config;
         }
 
-        public ChatStatus GetChatStatus()
+        public ChatStatus GetChatStatus(string product)
         {
             var currentDateTime = new ZonedDateTime(SystemClock.Instance.GetCurrentInstant(), DateTimeZoneProviders.Tzdb["America/Los_Angeles"]);
+
+            ProductSpecificSettings productSettings = null;
+            if (!string.IsNullOrWhiteSpace(product))
+            {
+                productSettings = Config.ProductSpecificSettings.FirstOrDefault(p => p.Name.Equals(product, StringComparison.OrdinalIgnoreCase));
+            }
+
             return new ChatStatus
             {
                 IsEnabled = Config.GlobalEnabled,
-                IsValidTime = IsWorkingHour(currentDateTime) && !IsBreakTime(currentDateTime) && !IsHoliday(currentDateTime)
+                IsValidTime = IsWorkingHour(currentDateTime, productSettings) && !IsBreakTime(currentDateTime) && !IsHoliday(currentDateTime)
             };
         }
 
@@ -38,12 +45,32 @@ namespace Backend.Services
             return false;
         }
 
-        private bool IsWorkingHour(ZonedDateTime currentDateTime)
+        private bool IsWorkingHour(ZonedDateTime currentDateTime, ProductSpecificSettings productSettings)
         {
-            var dayOfWeek = (int)currentDateTime.DayOfWeek;
-            var hourOfDay = currentDateTime.Hour;
-            return dayOfWeek >= Config.BusinessStartDay && dayOfWeek <= Config.BuisnessEndDay
-                && hourOfDay >= Config.BusinessStartHourPST && hourOfDay < Config.BusinessEndHourPST;
+            ChatHoursDuration[] chatDuration = Config.GlobalChatHours;
+            if(productSettings != null && productSettings.ChatHours != null && productSettings.ChatHours.Any())
+            {
+                chatDuration = productSettings.ChatHours;
+            }
+
+            bool result = false;
+            foreach(var duration in chatDuration)
+            {
+                result = result || IsTimeWithinDuration(currentDateTime, duration);
+            }
+
+            return result;
+        }
+
+        private bool IsTimeWithinDuration(ZonedDateTime currentDateTime, ChatHoursDuration timeDuration)
+        {
+            var dayOfWeek = (int)currentDateTime.DayOfWeek % 7;
+            DateTime startTime = DateTime.ParseExact(timeDuration.BusinessStartTimePST, "HH:mm", null);
+            DateTime endTime = DateTime.ParseExact(timeDuration.BusinessEndTimePST, "HH:mm", null);
+
+            return (dayOfWeek >= timeDuration.BusinessStartDay && dayOfWeek <= timeDuration.BuisnessEndDay)
+                    && (currentDateTime.Hour > startTime.Hour || (currentDateTime.Hour == startTime.Hour && currentDateTime.Minute >= startTime.Minute))
+                    && (currentDateTime.Hour < endTime.Hour || (currentDateTime.Hour == endTime.Hour && currentDateTime.Minute <= endTime.Minute));
         }
 
         private bool IsBreakTime(ZonedDateTime currentDateTime)
@@ -57,9 +84,12 @@ namespace Backend.Services
 
             foreach (var breakTime in Config.OffHours)
             {
+                DateTime startTime = DateTime.ParseExact(breakTime.StartTimePST, "HH:mm", null);
+                DateTime endTime = DateTime.ParseExact(breakTime.EndTimePST, "HH:mm", null);
+
                 if (dayOfWeek == breakTime.Day &&
-                   (currentDateTime.Hour > breakTime.StartHourPST || (currentDateTime.Hour == breakTime.StartHourPST && currentDateTime.Minute > breakTime.StartMinutePST)) &&
-                   (currentDateTime.Hour < breakTime.EndHourPST || (currentDateTime.Hour == breakTime.EndHourPST && currentDateTime.Minute < breakTime.EndHourPST)))
+                   (currentDateTime.Hour > startTime.Hour || (currentDateTime.Hour == startTime.Hour && currentDateTime.Minute > startTime.Minute)) &&
+                   (currentDateTime.Hour < endTime.Hour || (currentDateTime.Hour == endTime.Hour && currentDateTime.Minute < endTime.Hour)))
                 {
                     return true;
                 }
