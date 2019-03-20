@@ -1,7 +1,7 @@
 
 import {map} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable ,  BehaviorSubject } from 'rxjs';
 import { ArmResource } from '../models/arm';
 import { ArmService } from '../../shared/services/arm.service';
 
@@ -11,6 +11,8 @@ export class ResourceService {
   protected _subscription: string;
 
   public resource: ArmResource;
+
+  public warmUpCallFinished: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
   public error: any;
 
   constructor(protected _armService: ArmService) { }

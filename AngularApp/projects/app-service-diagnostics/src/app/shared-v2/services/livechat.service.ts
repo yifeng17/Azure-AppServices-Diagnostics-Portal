@@ -13,8 +13,6 @@ import { BackendCtrlService } from '../../shared/services/backend-ctrl.service';
 @Injectable()
 export class LiveChatService {
 
-    // As we dont have any Resource Service yet, Right now using Site as resource.
-    // After refactoring, this has to come from a generic Resource service.
     private currentResource: ArmResource;
 
     private restoreIdTagName: string;
@@ -27,32 +25,37 @@ export class LiveChatService {
         const window = this.windowService.window;
 
         this.authService.getStartupInfo().subscribe((startupInfo: StartupInfo) => {
-            this._backendApi.get<ChatStatus>('api/chat/status').subscribe((status: ChatStatus) => {
-                this.chatStatus = status;
-                if (this.isChatApplicableForSupportTopic(startupInfo, this._resourceService.azureServiceName)) {
+            this._resourceService.warmUpCallFinished.subscribe((resourceLoaded: boolean) => {
+                if (resourceLoaded) {
+                    this._backendApi.get<ChatStatus>(`api/chat/${this._resourceService.azureServiceName}/status`).subscribe((status: ChatStatus) => {
+                        this.chatStatus = status;
+                        if (this.isChatApplicableForSupportTopic(startupInfo, this._resourceService.azureServiceName)) {
 
-                    setTimeout(() => {
-
-                        this.startChat(false, '', LiveChatSettings.DemoModeForCaseSubmission, 'ltr');
-
-                    }, LiveChatSettings.InactivityTimeoutInMs);
-
-
-                    window.fcWidget.on('widget:loaded', ((resp) => {
-
-                        if (window.fcWidget.isOpen() != true) {
                             setTimeout(() => {
-                                // Raise an event for trigger message campaign
-                                window.fcWidget.track('supportCaseSubmission', {
-                                    supportTopicId: startupInfo.supportTopicId,
-                                    product: this._resourceService.azureServiceName
-                                });
 
-                            }, 1000);
+                                this.startChat(false, '', LiveChatSettings.DemoModeForCaseSubmission, 'ltr');
+
+                            }, LiveChatSettings.InactivityTimeoutInMs);
+
+
+                            window.fcWidget.on('widget:loaded', ((resp) => {
+
+                                if (window.fcWidget.isOpen() != true) {
+                                    setTimeout(() => {
+                                        // Raise an event for trigger message campaign
+                                        window.fcWidget.track('supportCaseSubmission', {
+                                            supportTopicId: startupInfo.supportTopicId,
+                                            product: this._resourceService.azureServiceName
+                                        });
+
+                                    }, 1000);
+                                }
+
+                            }));
                         }
-
-                    }));
+                    });
                 }
+
             });
         });
     }
@@ -190,8 +193,7 @@ export class LiveChatService {
     private isChatApplicableForSupportTopic(startupInfo: StartupInfo, azureServiceName: string): boolean {
 
         let enabledSupportTopicList = LiveChatSettings.enabledSupportTopicsPerAzureService[azureServiceName];
-        if(enabledSupportTopicList == null)
-        {
+        if (enabledSupportTopicList == null) {
             return false;
         }
 

@@ -6,7 +6,7 @@ import { AppAnalysisService } from '../../../shared/services/appanalysis.service
 import { ArmService } from '../../../shared/services/arm.service';
 import { Sku } from '../../../shared/models/server-farm';
 import { IDiagnosticProperties } from '../../../shared/models/diagnosticproperties';
-import { Observable } from 'rxjs';
+import { Observable ,  BehaviorSubject } from 'rxjs';
 
 @Injectable()
 export class WebSitesService extends ResourceService {
@@ -46,6 +46,7 @@ export class WebSitesService extends ResourceService {
     protected makeWarmUpCalls() {
         super.makeWarmUpCalls();
         this._populateSiteInfo();
+        this.warmUpCallFinished.next(true);
     }
 
     private _populateSiteInfo(): void {
