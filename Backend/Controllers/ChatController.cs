@@ -10,7 +10,7 @@ using Backend.Services;
 namespace Backend.Controllers
 {
     [Produces("application/json")]
-    [Route("api/chat")]
+    [Route("api/chat/{product}")]
     [ResponseCache(CacheProfileName = "Default")]
     public class ChatController : Controller
     {
@@ -21,9 +21,14 @@ namespace Backend.Controllers
         }
 
         [HttpGet("status")]
-        public ChatStatus GetChatStatus()
+        public IActionResult GetChatStatus(string product)
         {
-            return ChatService.GetChatStatus();
+            if (string.IsNullOrWhiteSpace(product))
+            {
+                return BadRequest("product cannot be empty");
+            }
+
+            return Ok(ChatService.GetChatStatus(product));
         }
     }
 }

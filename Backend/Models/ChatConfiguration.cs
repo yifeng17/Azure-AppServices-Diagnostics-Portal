@@ -9,30 +9,49 @@ namespace Backend.Models
     {
         public bool GlobalEnabled { get; set; }
 
+        public ChatHoursDuration[] GlobalChatHours { get; set; }
+
         public PublicHoliday[] PublicHolidays { get; set; }
 
         public OffHours[] OffHours { get; set; }
-
-        public int BusinessStartDay { get; set; }
-        public int BuisnessEndDay { get; set; }
-        public int BusinessStartHourPST { get; set; }
-        public int BusinessEndHourPST { get; set; }
+        
+        public ProductSpecificSettings[] ProductSpecificSettings { get; set; }
     }
-
+    
     public class PublicHoliday
     {
         public int Day { get; set; }
+
         public int Month { get; set; }
+
         public int Year { get; set; }
     }
 
     public class OffHours
     {
         public int Day { get; set; }
-        public int StartHourPST { get; set; }
-        public int StartMinutePST { get; set; }
-        public int EndHourPST { get; set; }
-        public int EndMinutePST { get; set; }
+
+        public string StartTimePST { get; set; }
+
+        public string EndTimePST { get; set; }
+    }
+
+    public class ChatHoursDuration
+    {
+        public int BusinessStartDay { get; set; }
+
+        public int BuisnessEndDay { get; set; }
+
+        public string BusinessStartTimePST { get; set; }
+
+        public string BusinessEndTimePST { get; set; }
+    }
+
+    public class ProductSpecificSettings
+    {
+        public string Name { get; set; }
+        
+        public ChatHoursDuration[] ChatHours { get; set; }
     }
 
     public class ChatStatus
