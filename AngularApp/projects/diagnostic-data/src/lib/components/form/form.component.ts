@@ -9,8 +9,9 @@ import { Location } from '@angular/common';
 import { TelemetryEventNames } from '../../services/telemetry/telemetry.common';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
+
 @Component({
-  selector: 'form',
+  selector: 'custom-form',
   templateUrl: './form.component.html',
   styleUrls: ['./form.component.scss']
 })
@@ -48,7 +49,7 @@ export class FormComponent extends DataRenderBaseComponent {
     return inputType === InputType.Button;
   }
 
-  // parses the incoming data to render a form 
+  // parses the incoming data to render a form
   private parseData(data: DataTableResponseObject) {
     let totalForms = data.rows.length;
     if (totalForms > 0) {
