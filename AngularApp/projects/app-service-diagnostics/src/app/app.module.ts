@@ -1,23 +1,32 @@
-import { LocalBackendService } from './shared/services/local-backend.service';
-import { KustoTelemetryService } from './../../../diagnostic-data/src/lib/services/telemetry/kusto-telemetry.service';
+import {
+    CommsService, DiagnosticDataModule, DiagnosticService, PUBLIC_DEV_CONFIGURATION,
+    PUBLIC_PROD_CONFIGURATION
+} from 'diagnostic-data';
+import { SiteService } from 'projects/app-service-diagnostics/src/app/shared/services/site.service';
+import {
+    DiagnosticSiteService
+} from 'projects/diagnostic-data/src/lib/services/diagnostic-site.service';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { RouterModule, RouteReuseStrategy } from '@angular/router';
-import { SharedModule } from './shared/shared.module';
-import { AppComponent } from './app.component';
-import { CustomReuseStrategy } from './app-route-reusestrategy.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { StartupModule } from './startup/startup.module';
+import { RouteReuseStrategy, RouterModule } from '@angular/router';
+import {
+    KustoTelemetryService
+} from '../../../diagnostic-data/src/lib/services/telemetry/kusto-telemetry.service';
+import { environment } from '../environments/environment';
+import { CustomReuseStrategy } from './app-route-reusestrategy.service';
+import { AppComponent } from './app.component';
+import {
+    ResourceRedirectComponent
+} from './shared/components/resource-redirect/resource-redirect.component';
 import { TestInputComponent } from './shared/components/test-input/test-input.component';
-import { ResourceRedirectComponent } from './shared/components/resource-redirect/resource-redirect.component';
-import { PUBLIC_PROD_CONFIGURATION, DiagnosticDataModule, DiagnosticService, CommsService, PUBLIC_DEV_CONFIGURATION } from 'diagnostic-data';
 import { GenericApiService } from './shared/services/generic-api.service';
 import { GenericCommsService } from './shared/services/generic-comms.service';
-import { environment } from '../environments/environment';
+import { LocalBackendService } from './shared/services/local-backend.service';
 import { PortalKustoTelemetryService } from './shared/services/portal-kusto-telemetry.service';
-import { DiagnosticSiteService } from 'projects/diagnostic-data/src/lib/services/diagnostic-site.service';
-import { SiteService } from 'projects/app-service-diagnostics/src/app/shared/services/site.service';
+import { SharedModule } from './shared/shared.module';
+import { StartupModule } from './startup/startup.module';
 
 @NgModule({
   imports: [
