@@ -98,8 +98,36 @@ export class DiagnosticApiService {
     });
   }
 
+  public getChangedFiles(sha: string): Observable<any>{
+    let url: string = `${this.diagnosticApi}api/github/package/${sha}/changedfiles`;
+    return this._httpClient.get(url, {
+      headers: this._getHeaders()
+    });
+  }
+
+  public getConfigurationChangelist(id: string): Observable<any> {
+    let url: string = `${this.diagnosticApi}api/github/package/${id}/configuration/changelist`;
+    return this._httpClient.get(url, {
+      headers: this._getHeaders()
+    });
+  }
+
+  public getCommitContentByFilePath(filePath: string, sha: string): Observable<any>{
+    let url: string = `${this.diagnosticApi}api/github/package/commit/${sha}/${filePath}`;
+    return this._httpClient.get(url, {
+      headers: this._getHeaders()
+    });
+  }
+
   public getCommitContent(id: string, sha: string): Observable<any> {
     let url: string = `${this.diagnosticApi}api/github/package/${id}/commit/${sha}`;
+    return this._httpClient.get(url, {
+      headers: this._getHeaders()
+    });
+  }
+
+  public getCommitConfiguration(id: string, sha: string): Observable<any> {
+    let url: string = `${this.diagnosticApi}api/github/package/${id}/configuration/commit/${sha}`;
     return this._httpClient.get(url, {
       headers: this._getHeaders()
     });

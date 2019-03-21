@@ -85,8 +85,29 @@ namespace AppLensV3.Controllers
         [HttpGet("package/{id}/changelist")]
         public async Task<IActionResult> GetChangelist(string id)
         {
-            var changelist = await GithubService.GetAllCommits(id);
-            return Ok(changelist);
+            return Ok(await GithubService.GetAllCommits($"{id.ToLower()}"));
+        }
+
+        /// <summary>
+        /// Get changed files.
+        /// </summary>
+        /// <param name="sha">The commit sha.</param>
+        /// <returns>Task for getting changes files.</returns>
+        [HttpGet("package/{sha}/changedfiles")]
+        public async Task<IActionResult> GetChangedFiles(string sha)
+        {
+            return Ok(await GithubService.GetChangedFiles(sha));
+        }
+
+        /// <summary>
+        /// Get configuration change list.
+        /// </summary>
+        /// <param name="id">The id.</param>
+        /// <returns>Task for getting configuration changet list.</returns>
+        [HttpGet("package/{id}/configuration/changelist")]
+        public async Task<IActionResult> GetConfigurationChangelist(string id)
+        {
+            return Ok(await GithubService.GetAllCommits($"{id.ToLower()}/package.json"));
         }
 
         /// <summary>
@@ -98,8 +119,7 @@ namespace AppLensV3.Controllers
         [HttpGet("package/{id}/commit/{sha}")]
         public async Task<IActionResult> GetCommitContent(string id, string sha)
         {
-            var changelist = await GithubService.GetCommitContent(id, sha);
-            return Ok(changelist);
+            return Ok(await GithubService.GetCommitContent($"{id.ToLower()}/{id.ToLower()}.csx", sha));
         }
 
         /// <summary>
@@ -107,11 +127,23 @@ namespace AppLensV3.Controllers
         /// </summary>
         /// <param name="id">The id.</param>
         /// <param name="sha">The commit sha.</param>
-        /// <returns>Task for getting commit configuration.</returns>
-        [HttpGet("package/{id}/configuration/{sha}")]
+        /// <returns>Task for getting commit content.</returns>
+        [HttpGet("package/{id}/configuration/commit/{sha}")]
         public async Task<IActionResult> GetCommitConfiguration(string id, string sha)
         {
-            return Ok(await GithubService.GetCommitConfiguration(id, sha));
+            return Ok(await GithubService.GetCommitContent($"{id.ToLower()}/package.json", sha));
+        }
+
+        /// <summary>
+        /// Get commit content by file path.
+        /// </summary>
+        /// <param name="sha">The sha.</param>
+        /// <param name="filePath">File path.</param>
+        /// <returns>Task for getting commit content.</returns>
+        [HttpGet("package/commit/{sha}/{*filePath}")]
+        public async Task<IActionResult> GetCommitContentByFilePath(string sha, string filePath)
+        {
+            return Ok(await GithubService.GetCommitContent(filePath, sha));
         }
     }
 }
