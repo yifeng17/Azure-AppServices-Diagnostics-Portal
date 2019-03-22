@@ -34,8 +34,24 @@ export class GithubApiService {
     return this._diagnosticApiService.getChangelist(id);
   }
 
+  public getChangedFiles(sha: string): Observable<string[]> {
+    return this._diagnosticApiService.getChangedFiles(sha);
+  }
+
+  public getCommitContentByFilePath(filePath: string, sha: string): Observable<string>{
+    return this._diagnosticApiService.getCommitContentByFilePath(filePath, sha);
+  }
+
+  public getConfigurationChangelist(id: string): Observable<Commit[]>{
+    return this._diagnosticApiService.getConfigurationChangelist(id);
+  }
+
   public getCommitContent(id: string, sha: string): Observable<string> {
     return this._diagnosticApiService.getCommitContent(id, sha);
+  }
+
+  public getCommitConfiguration(id: string, sha: string): Observable<string>{
+    return this._diagnosticApiService.getCommitConfiguration(id, sha);
   }
 
   public getConfiguration(id: string): Observable<object> {

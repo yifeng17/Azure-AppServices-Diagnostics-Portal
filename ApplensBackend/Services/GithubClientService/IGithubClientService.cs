@@ -38,24 +38,23 @@ namespace AppLensV3
         /// <summary>
         /// Get all commits.
         /// </summary>
-        /// <param name="id">The id.</param>
+        /// <param name="filePath">The file path.</param>
         /// <returns>Task for getting all commits.</returns>
-        Task<List<Commit>> GetAllCommits(string id);
+        Task<List<Commit>> GetAllCommits(string filePath);
 
         /// <summary>
         /// Get commit content.
         /// </summary>
-        /// <param name="id">The id.</param>
+        /// <param name="filePath">The file path.</param>
         /// <param name="sha">The commit sha.</param>
         /// <returns>Task for getting commit content.</returns>
-        Task<string> GetCommitContent(string id, string sha);
+        Task<string> GetCommitContent(string filePath, string sha);
 
         /// <summary>
-        /// Get commit configuration.
+        /// Get changed files.
         /// </summary>
-        /// <param name="id">The id.</param>
         /// <param name="sha">The commit sha.</param>
-        /// <returns>Task for getting commit configuration.</returns>
-        Task<string> GetCommitConfiguration(string id, string sha);
+        /// <returns>Task for getting changed files.</returns>
+        Task<IEnumerable<string>> GetChangedFiles(string sha);
     }
 }
