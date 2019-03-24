@@ -45,11 +45,11 @@ function Copy-FrameworkDependencies {
     (
         [Parameter(Mandatory = $false)]
         [string]
-        $buildPath = "\\reddog\builds\branches\rd_websites_stable_release\",
+        $buildPath = "\\reddog\Builds\branches\git_aapt_antares_websites_master\",
 
         [Parameter(Mandatory = $false)]
         [string]
-        $buildChildPath = "\bin\hosting\Azure\GeoRegionService\DiagnosticRole\bin\Diagnostics.RuntimeHost",
+        $buildChildPath = "\retail-amd64\hosting\Azure\GeoRegionService\DiagnosticRole\bin\Diagnostics.RuntimeHost",
 
         [Parameter(Mandatory = $false)]
         [string]
@@ -118,6 +118,7 @@ function Copy-FrameworkDependencies {
     }
     else {
         Write-Error "Unable to get access to build path $buildPath, please check you Internet or VPN connection"
+        exit 1
     }
 }
 
