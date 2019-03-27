@@ -13,6 +13,7 @@ export class DetectorControlComponent implements OnInit {
   endTime: string;
 
   isInternal: boolean;
+  timeDiffError: string;
 
   constructor(public _router: Router, private _activatedRoute: ActivatedRoute, public detectorControlService: DetectorControlService,
     @Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig) {
@@ -20,6 +21,10 @@ export class DetectorControlComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.timeDiffError = '';
+    if(this.detectorControlService.timeRangeDefaulted){
+      this.timeDiffError = 'Defaulting to last 24 hrs. Start and End date time must not be more than 24 hrs apart and Start date must be within the past 30 days.';
+    } 
     this.detectorControlService.update.subscribe(validUpdate => {
       if (validUpdate) {
         this.startTime = this.detectorControlService.startTimeString;
@@ -39,7 +44,10 @@ export class DetectorControlComponent implements OnInit {
   }
 
   setManualDate() {
-    this.detectorControlService.setCustomStartEnd(this.startTime, this.endTime);
+    this.timeDiffError = this.detectorControlService.getTimeDurationError(this.startTime, this.endTime);
+    if(this.timeDiffError === ''){
+      this.detectorControlService.setCustomStartEnd(this.startTime, this.endTime);     
+    }
   }
 }
 

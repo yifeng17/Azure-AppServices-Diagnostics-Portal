@@ -2,6 +2,7 @@ import { Injectable, Inject } from '@angular/core';
 import * as momentNs from 'moment';
 import { BehaviorSubject } from 'rxjs';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../config/diagnostic-data-config';
+import { stringify } from '@angular/core/src/render3/util';
 
 const moment = momentNs;
 
@@ -49,8 +50,10 @@ export class DetectorControlService {
   private _refresh: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
   private detectorQueryParams: BehaviorSubject<string> = new BehaviorSubject<string>("");
- 
+
   public DetectorQueryParams = this.detectorQueryParams.asObservable();
+
+  public timeRangeDefaulted: boolean = false;
 
   constructor(@Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig) {
     this.internalClient = !config.isPublic;
@@ -64,7 +67,77 @@ export class DetectorControlService {
     this.selectDuration(this.durationSelections.find(duration => duration.displayName === '1d'));
   }
 
+  public getTimeDurationError(startTime?: string, endTime?: string): string {
+    let start, end: momentNs.Moment;
+    let returnValue: string = '';
+    if (startTime && endTime) {
+      start = moment.utc(startTime);
+      if (!start.isValid()) {
+        returnValue = 'Invalid Start date time specified. Expected format: YYYY-MM-DD hh:mm';
+        return returnValue;
+      }
+      end = moment.utc(endTime);
+      if (!end.isValid()) {
+        returnValue = 'Invalid End date time specified. Expected format: YYYY-MM-DD hh:mm';
+        return returnValue;
+      }
+      if (moment.duration(moment.utc(moment()).diff(start)).asMinutes() < 0) {
+        returnValue = 'Start date time must be less than current date time';
+        return returnValue;
+      }
+      if (moment.duration(moment.utc(moment()).diff(end)).asMinutes() < 0) {
+        returnValue = 'End date time must be less than current date time';
+        return returnValue;
+      }
+
+      let allowedDurationInDays: number = 0;
+      if (this.isInternalView) {
+        allowedDurationInDays = 1;
+      }
+      else {
+        allowedDurationInDays = 3;
+      }
+      if (start && end) {
+        let diff: momentNs.Duration = moment.duration(end.diff(start));
+        let dayDiff: number = diff.asDays();
+        if (dayDiff > -1) {
+          if (dayDiff > allowedDurationInDays) {
+            returnValue = `Difference between start and end date times should not be more than ${allowedDurationInDays * 24} hours.`;
+          }
+          else {
+            //Duration is fine. Just make sure that the start date is not more than the past 30 days
+            if (moment.duration(moment.utc(moment()).diff(start)).asMonths() > 1) {
+              returnValue = `Start date time cannot be more than a month from now.`;
+            }
+            else {
+              if (diff.asSeconds() === 0) {
+                returnValue = 'Start and End date time cannot be equal.';
+              }
+              else {
+                returnValue = '';
+              }
+            }
+          }
+        }
+        else {
+          returnValue = 'Start date time should be greater than the End date time.';
+        }
+      }
+      return returnValue;
+    }
+    else {
+      if (startTime) {
+        returnValue = 'Empty End date time supplied.';
+      }
+      else {
+        returnValue = 'Empty Start date time supplied.';
+      }
+    }
+    return returnValue;
+  }
+
   public setCustomStartEnd(start?: string, end?: string): void {
+    this.timeRangeDefaulted = false;
     this._duration = null;
     let startTime, endTime: momentNs.Moment;
     if (start && end) {
@@ -81,10 +154,17 @@ export class DetectorControlService {
       return;
     }
 
-    this._startTime = startTime;
-    this._endTime = endTime;
-
-    this._refreshData();
+    if (this.getTimeDurationError(start, end) === '') {
+      this._startTime = startTime;
+      this._endTime = endTime;
+      this._refreshData();
+    }
+    else {
+      this.timeRangeDefaulted = true;
+      this._endTime = moment.utc(moment());
+      this._startTime = this._endTime.clone().subtract(1, 'days');
+      this._refreshData();
+    }
   }
 
   public selectDuration(duration: DurationSelector) {
