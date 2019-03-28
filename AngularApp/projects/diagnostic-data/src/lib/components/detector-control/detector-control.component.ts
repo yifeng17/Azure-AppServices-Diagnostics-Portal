@@ -23,7 +23,7 @@ export class DetectorControlComponent implements OnInit {
   ngOnInit() {
     this.timeDiffError = '';
     if(this.detectorControlService.timeRangeDefaulted){
-      this.timeDiffError = 'Defaulting to last 24 hrs. Start and End date time must not be more than 24 hrs apart and Start date must be within the past 30 days.';
+      this.timeDiffError = this.detectorControlService.timeRangeErrorString;
     } 
     this.detectorControlService.update.subscribe(validUpdate => {
       if (validUpdate) {
