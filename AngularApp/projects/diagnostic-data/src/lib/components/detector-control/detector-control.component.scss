@@ -1,3 +1,5 @@
+@import "../../../../../app-service-diagnostics/src/styles/main.scss";
+
 .control-container {
     display: flex;
 }
@@ -49,4 +51,8 @@
 
 .date-control > input:focus {
     outline: none;
+}
+
+.errorMessage {
+    color: $error-color;
 }
