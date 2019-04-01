@@ -1,6 +1,6 @@
 <div>
-  <div style="padding-top:10px;background-color: #ecf0f5;">
-    <ul class="nav nav-tabs" style="padding-left:20px;">
+  <div class="nav-container">
+    <ul class="nav nav-tabs pl-5">
       <li class="nav-item">
         <a [routerLink]="['./']" preserveFragment queryParamsHandling="preserve" [routerLinkActive]="['active', 'active-tab' ]"
           [routerLinkActiveOptions]="{exact: true}">Data</a>
@@ -25,14 +25,6 @@
         <a [routerLink]="['analytics']" queryParamsHandling="preserve" [routerLinkActive]="['active', 'active-tab']"
           [routerLinkActiveOptions]="{exact:true}">Detector Usage and Analytics</a>
       </li>
-      <!-- <li class="nav-item">
-          <a [routerLink]="['statisticsQuery/monitoring']" queryParamsHandling="preserve" [routerLinkActive]="['active', 'active-tab']"
-          [routerLinkActiveOptions]="{exact:true}">Monitoring Developing</a>
-        </li>
-        <li class="nav-item">
-          <a [routerLink]="['statisticsQuery/analytics']" queryParamsHandling="preserve" [routerLinkActive]="['active', 'active-tab']"
-          [routerLinkActiveOptions]="{exact:true}">Analytics Developing</a>
-        </li> -->
     </ul>
   </div>
   <div>
