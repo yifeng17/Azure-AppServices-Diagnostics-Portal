@@ -1,6 +1,5 @@
 #scroll-container {
     overflow-y: scroll;
-    height:100%;
 }
 
 :host-context(.dark-theme) ::-webkit-scrollbar {
@@ -11,7 +10,7 @@
 :host-context(.dark-theme) ::-webkit-scrollbar-track {
     background: #222d32;
 }
- 
+
 /* Handle */
 :host-context(.dark-theme) ::-webkit-scrollbar-thumb {
     background: #838383;
@@ -19,5 +18,5 @@
 
 /* Handle on hover */
 :host-context(.dark-theme) ::-webkit-scrollbar-thumb:hover {
-    background: #555; 
+    background: #555;
 }

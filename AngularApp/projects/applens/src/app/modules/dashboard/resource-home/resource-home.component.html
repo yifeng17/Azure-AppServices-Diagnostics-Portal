@@ -3,14 +3,14 @@
     <comm-alert></comm-alert>
   </div>
 
-  <div class="resource-info">
+  <div class="resource-info content-card">
     <h4>Resource Information</h4>
     <div *ngFor="let key of keys">
       <b>{{key}}:</b> {{resource[key]}}
     </div>
   </div>
-  
-  <div class="detector-list">
+
+  <div class="detector-list content-card">
     <h4>Detectors Enabled For Support Topics</h4>
     <table>
       <thead>

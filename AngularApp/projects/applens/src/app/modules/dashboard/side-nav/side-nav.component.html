@@ -10,18 +10,6 @@
                 <p>{{resourceService.getResourceName()}}</p>
             </div>
         </div>
-        <!--THIS IS FOR TESTING LIGHT THEME-->
-        <!-- <collapsible-menu theme="light">
-            
-            <section-divider label="Availability and Performance" [collapsible]="true">
-                <collapsible-menu-item *ngFor="let item of this.category.subItems | search:searchValue" [menuItem]="item"></collapsible-menu-item>
-            </section-divider>
-
-            <section-divider label="Configuration and Management" [collapsible]="true">
-                <collapsible-menu-item *ngFor="let item of this.category2.subItems | search:searchValue" [menuItem]="item"></collapsible-menu-item>
-            </section-divider>
-            
-        </collapsible-menu> -->
 
         <collapsible-menu theme="dark" [height]="contentHeight">
             <search-box [(searchValue)]="searchValue"></search-box>

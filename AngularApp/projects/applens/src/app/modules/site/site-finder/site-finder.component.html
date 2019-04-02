@@ -1,4 +1,4 @@
-<div class="container-fluid" [style.height]="contentHeight" style="background-color: #e4e4e4;">
+<div class="container-fluid" style="background-color: #e4e4e4;">
   <div class="big-text" *ngIf="loading">Searching for site ...</div>
   <div class="big-text" *ngIf="!loading && error">Site {{site}} not found</div>
   <div class="big-text" *ngIf="!loading && !error && matchingSites.length == 1">Redirecting to {{site}}</div>

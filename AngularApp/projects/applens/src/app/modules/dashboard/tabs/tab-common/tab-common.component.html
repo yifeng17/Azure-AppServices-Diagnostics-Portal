@@ -1,6 +1,6 @@
-<div>
+<div class="main-content">
   <div class="nav-container">
-    <ul class="nav nav-tabs pl-5">
+    <ul class="nav nav-tabs">
       <li class="nav-item">
         <a [routerLink]="['./']" preserveFragment queryParamsHandling="preserve" [routerLinkActive]="['active', 'active-tab' ]"
           [routerLinkActiveOptions]="{exact: true}">Data</a>
@@ -27,9 +27,7 @@
       </li>
     </ul>
   </div>
-  <div>
-    <div class="tab-container" [style.height]="contentHeight">
-      <router-outlet></router-outlet>
-    </div>
+  <div class="tab-container">
+    <router-outlet></router-outlet>
   </div>
 </div>

@@ -1,7 +1,22 @@
+.site-content {
+  padding-top: 50px;
+}
+
+side-nav {
+    position: fixed;
+    top: 50px;
+}
+
 .logo {
     cursor: pointer;
+    position: fixed;
+    top: 0;
 }
 
 .white-background {
     background-color: white;
+}
+
+.app-title {
+    color: #ffb353
 }

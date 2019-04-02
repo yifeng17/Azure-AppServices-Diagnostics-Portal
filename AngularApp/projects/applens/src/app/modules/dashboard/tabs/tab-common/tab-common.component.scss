@@ -1,3 +1,7 @@
+.main-content {
+  padding-top: 100px;
+}
+
 .active-tab {
   color: rgb(68, 68, 68);
   background-color: #fff !important;
@@ -6,16 +10,26 @@
 }
 
 body {
-  padding: 10px;
+  padding: 0 10px;
 }
 
 .nav-container {
+  max-height: 50px;
   padding-top: 10px;
   background-color: #ecf0f5;
+  position: fixed;
+  top: 50px;
+  width: 100%;
+  z-index: 10;
+}
+
+.nav.nav-tabs {
+  padding: 0 20px;
 }
 
 .tab-container {
   overflow-y: scroll;
+  min-height: 80vh;
 }
 
 ::-webkit-scrollbar {
@@ -34,5 +48,5 @@ body {
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: rgb(92, 97, 133); 
+  background: rgb(92, 97, 133);
 }
