@@ -8,9 +8,17 @@
         <span class="fa fa-envelope"></span>
         Open in Outlook
     </button>
-
 </ng-template>
 
-<data-container [headerTemplate]="header" [title]="renderingProperties.title">
+<data-container *ngIf="renderingProperties.isContainerNeeded else noContainerMarkdown" [headerTemplate]="header" [title]="renderingProperties.title">
     <markdown [data]="markdown"></markdown>
 </data-container>
+
+<!-- If there is no title, do not use container. Note this is called from the else statement in the *ngIf above -->
+<ng-template #noContainerMarkdown>
+    <div *ngIf="renderingProperties.title">
+        <h1>{{renderingProperties.title}}</h1>
+    </div>
+    <markdown [data]="markdown"></markdown>
+</ng-template>
+  
