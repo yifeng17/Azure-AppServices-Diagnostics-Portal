@@ -1,16 +1,16 @@
 <div class="solution-container">
 
-  <div *ngIf="solution.Description" class="my-2 mx-0">
-    <markdown [data]="solution.Description"></markdown>
+  <div *ngIf="solution.DescriptionMarkdown" class="my-2 mx-0">
+    <markdown [data]="solution.DescriptionMarkdown"></markdown>
   </div>
 
-  <div *ngIf="!solution.IsInternal; else internal_solution" class="solution-action">
+  <div *ngIf="!solution.IsInternal; else internal_solution" class="solution-action mt-5">
     <div *ngIf="solution.RequiresConfirmation; else dont_confirm_buttons" class="confirm-buttons">
-      <span class="mr-3">{{solution.ActionName}} for App <span class="app-name">{{appName}}</span>?</span>
+      <span class="mr-3">{{solution.Name}} for App <span class="app-name">{{appName}}</span>?</span>
       <div class="action-buttons">
-        <button type="button" class="custom-button deny">No, Don't {{solution.ActionName}}</button>
+        <button type="button" class="custom-button deny">No, Don't {{solution.Name}}</button>
         <button type="button" (click)="performAction()" class="custom-button confirm">
-          Yes, {{solution.ActionName}}
+          Yes, {{solution.Name}}
         </button>
       </div>
     </div>
@@ -29,17 +29,19 @@
 </div>
 
 <ng-template #internal_solution>
-  <div class="solution-action">
-    <div (click)="copyInstructions(solution.InternalInstructions)" class="copy-instructions">
-      <i class="fa fa-files-o" aria-hidden="true"></i>
-      {{copyText}}
+    <ng-template #header>
+        Instructions for the Customer
+        <button class="btn btn-default copy-text" (click)="copyInstructions(solution.InternalMarkdown)">
+            <span class="fa fa-copy"></span>
+            {{copyText}}
+        </button>
+    </ng-template>
+
+    <div class="mt-5">
+      <data-container [headerTemplate]="header">
+          <markdown [data]="solution.InternalMarkdown"></markdown>
+      </data-container>
     </div>
-    <div class="internal-instructions">
-      <div class="markdown">
-        <markdown [data]="solution.InternalInstructions"></markdown>
-      </div>
-    </div>
-  </div>
 </ng-template>
 
 <ng-template #dont_confirm_buttons>

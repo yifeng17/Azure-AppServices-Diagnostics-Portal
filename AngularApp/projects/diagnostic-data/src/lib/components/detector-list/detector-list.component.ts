@@ -82,9 +82,10 @@ export class DetectorListComponent extends DataRenderBaseComponent {
 
   public retryRequest(metaData: any) {
     metaData.loadingStatus = LoadingStatus.Loading;
-    metaData.request.subscribe((response: DetectorResponse) => {
-      metaData = this.updateDetectorViewModelSuccess(metaData, response);
-    },
+    metaData.request.subscribe(
+      (response: DetectorResponse) => {
+        metaData = this.updateDetectorViewModelSuccess(metaData, response);
+      },
       (error) => {
         metaData.loadingStatus = LoadingStatus.Failed;
       });

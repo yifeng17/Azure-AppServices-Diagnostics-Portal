@@ -30,6 +30,8 @@ import { TabMonitoringDevelopComponent } from './tabs/tab-monitoring-develop/tab
 import { TabAnalyticsDevelopComponent } from './tabs/tab-analytics-develop/tab-analytics-develop.component';
 import { TabAnalyticsDashboardComponent } from './tabs/tab-analytics-dashboard/tab-analytics-dashboard.component';
 import { DiagnosticSiteService } from 'diagnostic-data';
+import { SolutionService } from 'diagnostic-data';
+import { GenericSolutionService } from '../../shared/services/generic-solution.service';
 import { GistComponent } from './gist/gist.component';
 import { TabGistCommonComponent } from './tabs/tab-gist-common/tab-gist-common.component';
 import { TabGistDevelopComponent } from './tabs/tab-gist-develop/tab-gist-develop.component';
@@ -159,10 +161,11 @@ export const DashboardModuleRoutes: ModuleWithProviders = RouterModule.forChild(
     },
     { provide: DiagnosticService, useExisting: ApplensDiagnosticService },
     { provide: CommsService, useExisting: ApplensCommsService },
-    { provide: DiagnosticSiteService, useExisting: ResourceService }
+    { provide: DiagnosticSiteService, useExisting: ResourceService },
+    { provide: SolutionService, useExisting: GenericSolutionService }
   ],
-  declarations: [DashboardComponent, SideNavComponent, ResourceMenuItemComponent, ResourceHomeComponent, OnboardingFlowComponent, 
-    SearchMenuPipe, TabDataComponent, TabDevelopComponent, TabCommonComponent, TabDataSourcesComponent, TabMonitoringComponent, 
+  declarations: [DashboardComponent, SideNavComponent, ResourceMenuItemComponent, ResourceHomeComponent, OnboardingFlowComponent,
+    SearchMenuPipe, TabDataComponent, TabDevelopComponent, TabCommonComponent, TabDataSourcesComponent, TabMonitoringComponent,
     TabMonitoringDevelopComponent, TabAnalyticsDevelopComponent, TabAnalyticsDashboardComponent, GistComponent, TabGistCommonComponent, TabGistDevelopComponent, TabChangelistComponent, GistChangelistComponent]
 })
 export class DashboardModule { }

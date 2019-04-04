@@ -8,8 +8,6 @@ const loginRedirectKey = 'login_redirect';
 @Injectable()
 export class AadAuthGuard implements CanActivate {
 
-
-
     constructor(private _router: Router, private _adalService: AdalService) { }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | Observable<boolean> {

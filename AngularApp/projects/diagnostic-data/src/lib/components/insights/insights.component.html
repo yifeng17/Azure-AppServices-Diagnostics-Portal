@@ -43,11 +43,20 @@
                 <markdown [data]="getMarkdown(insight.data[key])" *ngIf="isMarkdown(insight.data[key])"></markdown>
               </td>
             </tr>
+
+            <ng-container *ngIf="hasSolutions(insight)">
+              <tr>
+                <td class="table-key">
+                  <b>Troubleshooting and Next Steps</b>
+                </td>
+                <td class="table-value">
+                  <solutions [solutions]="insight.solutions"></solutions>
+                </td>
+              </tr>
+            </ng-container>
           </tbody>
         </table>
       </div>
-
-      <solutions *ngIf="insight.isExpanded && hasSolutions(insight)" [solutions]="insight.solutions"></solutions>
 
     </div>
   </div>

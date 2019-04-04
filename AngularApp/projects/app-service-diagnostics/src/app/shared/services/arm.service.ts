@@ -19,12 +19,18 @@ export class ArmService {
     public storageApiVersion = '2015-05-01-preview';
     public websiteApiVersion = '2015-08-01';
 
-    constructor(private _http: HttpClient, private _authService: AuthService, private _cache: CacheService) {
+    constructor(private _http: HttpClient, private _authService: AuthService, private _cache: CacheService) { }
+
+    createUrl(resourceUri: string, apiVersion?: string) {
+        return `${this.armUrl}${resourceUri}${resourceUri.indexOf('?') >= 0 ? '&' : '?'}` +
+            `api-version=${!!apiVersion ? apiVersion : this.websiteApiVersion}`;
     }
 
     getResource<T>(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Observable<{} | ResponseMessageEnvelope<T>> {
-        if (!resourceUri.startsWith('/')) { resourceUri = '/' + resourceUri; }
-        const url: string = `${this.armUrl}${resourceUri}${resourceUri.indexOf('?') >= 0 ? '&' : '?'}api-version=${!!apiVersion ? apiVersion : this.websiteApiVersion}`;
+        if (!resourceUri.startsWith('/')) {
+            resourceUri = '/' + resourceUri;
+        }
+        const url =  this.createUrl(resourceUri, apiVersion);
 
         const request = this._http.get<ResponseMessageEnvelope<T>>(url, {
             headers: this.getHeaders()
@@ -37,8 +43,10 @@ export class ArmService {
     }
 
     getArmResource<T>(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Observable<T> {
-        if (!resourceUri.startsWith('/')) { resourceUri = '/' + resourceUri; }
-        const url: string = `${this.armUrl}${resourceUri}${resourceUri.indexOf('?') >= 0 ? '&' : '?'}api-version=${!!apiVersion ? apiVersion : this.websiteApiVersion}`;
+        if (!resourceUri.startsWith('/')) {
+            resourceUri = '/' + resourceUri;
+        }
+        const url =  this.createUrl(resourceUri, apiVersion);
 
         const request = this._http.get<T>(url, {
             headers: this.getHeaders()
@@ -51,7 +59,7 @@ export class ArmService {
     }
 
     getResourceWithoutEnvelope<T>(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Observable<{} | T> {
-        const url: string = `${this.armUrl}${resourceUri}${resourceUri.indexOf('?') >= 0 ? '&' : '?'}api-version=${!!apiVersion ? apiVersion : this.websiteApiVersion}`;
+        const url =  this.createUrl(resourceUri, apiVersion);
 
         const request = this._http.get<T>(url, {
             headers: this.getHeaders()
@@ -63,7 +71,7 @@ export class ArmService {
     }
 
     postResource<T, S>(resourceUri: string, body?: S, apiVersion?: string, invalidateCache: boolean = false): Observable<boolean | {} | ResponseMessageEnvelope<T>> {
-        const url: string = `${this.armUrl}${resourceUri}${resourceUri.indexOf('?') >= 0 ? '&' : '?'}api-version=${!!apiVersion ? apiVersion : this.websiteApiVersion}`;
+        const url =  this.createUrl(resourceUri, apiVersion);
         let bodyString: string = '';
         if (body) {
             bodyString = JSON.stringify(body);
@@ -83,7 +91,7 @@ export class ArmService {
     }
 
     deleteResource<T>(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Observable<any> {
-        const url: string = `${this.armUrl}${resourceUri}${resourceUri.indexOf('?') >= 0 ? '&' : '?'}api-version=${!!apiVersion ? apiVersion : this.websiteApiVersion}`;
+        const url =  this.createUrl(resourceUri, apiVersion);
         return this._http.delete(url, { headers: this.getHeaders() }).pipe(
             // map((response: Response) => {
             //     let body = response.text();
@@ -94,7 +102,7 @@ export class ArmService {
     }
 
     postResourceWithoutEnvelope<T, S>(resourceUri: string, body?: S, apiVersion?: string, invalidateCache: boolean = false): Observable<boolean | {} | T> {
-        const url: string = `${this.armUrl}${resourceUri}${resourceUri.indexOf('?') >= 0 ? '&' : '?'}api-version=${!!apiVersion ? apiVersion : this.websiteApiVersion}`;
+        const url =  this.createUrl(resourceUri, apiVersion);
         let bodyString: string = '';
         if (body) {
             bodyString = JSON.stringify(body);
@@ -108,7 +116,7 @@ export class ArmService {
     }
 
     putResource<T, S>(resourceUri: string, body?: S, apiVersion?: string, invalidateCache: boolean = false): Observable<boolean | {} | ResponseMessageEnvelope<T>> {
-        const url: string = `${this.armUrl}${resourceUri}${resourceUri.indexOf('?') >= 0 ? '&' : '?'}api-version=${!!apiVersion ? apiVersion : this.websiteApiVersion}`;
+        const url =  this.createUrl(resourceUri, apiVersion);
         let bodyString: string = '';
         if (body) {
             bodyString = JSON.stringify(body);
@@ -122,7 +130,7 @@ export class ArmService {
     }
 
     patchResource<T, S>(resourceUri: string, body?: S, apiVersion?: string): Observable<boolean | {} | ResponseMessageEnvelope<T>> {
-        const url: string = `${this.armUrl}${resourceUri}${resourceUri.indexOf('?') >= 0 ? '&' : '?'}api-version=${!!apiVersion ? apiVersion : this.websiteApiVersion}`;
+        const url =  this.createUrl(resourceUri, apiVersion);
         let bodyString: string = '';
         if (body) {
             bodyString = JSON.stringify(body);
@@ -138,7 +146,7 @@ export class ArmService {
     }
 
     putResourceWithoutEnvelope<T, S>(resourceUri: string, body?: S, apiVersion?: string, invalidateCache: boolean = false): Observable<boolean | {} | T> {
-        const url: string = `${this.armUrl}${resourceUri}${resourceUri.indexOf('?') >= 0 ? '&' : '?'}api-version=${!!apiVersion ? apiVersion : this.websiteApiVersion}`;
+        const url =  this.createUrl(resourceUri, apiVersion);
         let bodyString: string = '';
         if (body) {
             bodyString = JSON.stringify(body);
@@ -151,9 +159,43 @@ export class ArmService {
         return this._cache.get(url, request, invalidateCache);
     }
 
-    postResourceFullResponse<T>(resourceUri: string, invalidateCache: boolean = false, apiVersion?: string): Observable<HttpResponse<T>> {
-        const url: string = `${this.armUrl}${resourceUri}${resourceUri.indexOf('?') >= 0 ? '&' : '?'}api-version=${!!apiVersion ? apiVersion : this.websiteApiVersion}`;
-        const request = this._http.post<T>(url, null, {
+    postResourceFullResponse<T>(resourceUri: string, body: any, invalidateCache: boolean = false, apiVersion?: string):
+            Observable<HttpResponse<T>> {
+        const url =  this.createUrl(resourceUri, apiVersion);
+        const request = this._http.post<T>(url, body, {
+            headers: this.getHeaders(),
+            observe: 'response'
+        });
+
+        return this._cache.get(resourceUri, request, invalidateCache);
+    }
+
+    putResourceFullResponse<T>(resourceUri: string, body: any = null, invalidateCache = false, apiVersion?: string):
+            Observable<HttpResponse<T>> {
+        const url = this.createUrl(resourceUri, apiVersion);
+        const request = this._http.put<T>(url, body, {
+            headers: this.getHeaders(),
+            observe: 'response'
+        });
+
+        return this._cache.get(resourceUri, request, invalidateCache);
+    }
+
+    patchResourceFullResponse<T>(resourceUri: string, body: any = null, invalidateCache = false, apiVersion?: string):
+            Observable<HttpResponse<T>> {
+        const url = this.createUrl(resourceUri, apiVersion);
+        const request = this._http.patch<T>(url, body, {
+            headers: this.getHeaders(),
+            observe: 'response'
+        });
+
+        return this._cache.get(resourceUri, request, invalidateCache);
+    }
+
+    getResourceFullResponse<T>(resourceUri: string, invalidateCache = false, apiVersion?: string):
+            Observable<HttpResponse<T>> {
+        const url = this.createUrl(resourceUri, apiVersion);
+        const request = this._http.get<T>(url, {
             headers: this.getHeaders(),
             observe: 'response'
         });

@@ -21,7 +21,7 @@ export class BackendCtrlService {
 
     return this._authService.getStartupInfo().pipe(
       mergeMap((startupInfo: StartupInfo) => {
-        const url: string = `${this.apiEndpoint}${path}`;
+        const url =  `${this.apiEndpoint}${path}`;
 
         const request = this._http.get(url, {
           headers: this._getHeaders(startupInfo, headers)

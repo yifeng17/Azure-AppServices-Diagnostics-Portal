@@ -114,7 +114,7 @@ export class SiteFeatureService extends FeatureService {
     ];
 
     this._resourceService.getSitePremierAddOns(resourceId).subscribe(data => {
-      
+
       if (data && data.value) {
         let premierAddOns: any[] = data.value;
         let zRayAddOn = premierAddOns.find(x => (x.plan && (x.plan.product === "z-ray")));

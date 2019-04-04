@@ -5,7 +5,7 @@ import {
 import { SiteService } from 'projects/app-service-diagnostics/src/app/shared/services/site.service';
 import {
     DiagnosticSiteService
-} from 'projects/diagnostic-data/src/lib/services/diagnostic-site.service';
+} from 'diagnostic-data';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -25,6 +25,8 @@ import { GenericApiService } from './shared/services/generic-api.service';
 import { GenericCommsService } from './shared/services/generic-comms.service';
 import { LocalBackendService } from './shared/services/local-backend.service';
 import { PortalKustoTelemetryService } from './shared/services/portal-kusto-telemetry.service';
+import { SolutionService } from 'diagnostic-data';
+import { GenericSolutionService } from './shared/services/generic-solution.service';
 import { SharedModule } from './shared/shared.module';
 import { StartupModule } from './startup/startup.module';
 
@@ -62,7 +64,8 @@ import { StartupModule } from './startup/startup.module';
       useFactory: (_localBackendService: LocalBackendService, _genericApiService: GenericApiService) => environment.useApplensBackend ? _localBackendService : _genericApiService,
       deps: [LocalBackendService, GenericApiService] },
     { provide: CommsService, useExisting: GenericCommsService },
-    { provide: DiagnosticSiteService, useExisting: SiteService }
+    { provide: DiagnosticSiteService, useExisting: SiteService },
+    { provide: SolutionService, useExisting: GenericSolutionService }
   ],
   bootstrap: [AppComponent]
 })
