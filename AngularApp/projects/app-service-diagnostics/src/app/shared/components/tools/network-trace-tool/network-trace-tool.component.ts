@@ -90,7 +90,7 @@ export class NetworkTraceToolComponent implements OnInit {
         this.status = NetworkTraceStatus.Starting;
         this._loggerLocal.LogClickEvent('Collect Network Trace', 'DiagnosticTools');
         const resourceUri: string = this._uriElementsService.getNetworkTraceUrl(this.siteToBeDiagnosed) + '?durationInSeconds=' + this.duration;
-        this._armClient.postResourceFullResponse(resourceUri, true).subscribe((result: HttpResponse<{}>) => {
+        this._armClient.postResourceFullResponse(resourceUri, null, true).subscribe((result: HttpResponse<{}>) => {
             if (result.headers.get('Location') != null) {
                 this.status = NetworkTraceStatus.Started;
                 this.armOperationStatus = result.headers.get('Location');

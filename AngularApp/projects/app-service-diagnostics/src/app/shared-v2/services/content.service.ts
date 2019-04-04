@@ -36,7 +36,7 @@ export class ContentService {
 
     const searchSuffix = this._resourceService.searchSuffix;
     const query = encodeURIComponent(`${questionString} AND ${searchSuffix}`);
-    const url: string = `https://api.cognitive.microsoft.com/bing/v7.0/search?q='${query}'&count=${resultsCount}`;
+    const url = `https://api.cognitive.microsoft.com/bing/v7.0/search?q='${query}'&count=${resultsCount}`;
 
     return this._http.get(url, { headers: this.getWebSearchHeaders() }).pipe(map(response => response.json()));
   }

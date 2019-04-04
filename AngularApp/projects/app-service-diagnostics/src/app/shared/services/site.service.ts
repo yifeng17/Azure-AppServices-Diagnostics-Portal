@@ -113,7 +113,7 @@ export class SiteService {
     restartSiteFromUri(resourceUri: string): Observable<HttpResponse<any>> {
         const restartUri = this._uriElementsService.getRestartUri(resourceUri);
 
-        let result = this._armClient.postResourceFullResponse(restartUri, true);
+        let result = this._armClient.postResourceFullResponse(restartUri, null, true);
         result.subscribe(response => {
             this.logService.logEvent('Solution_RestartSite', {
                 'status': response.status.toString(),
@@ -134,7 +134,7 @@ export class SiteService {
                 }
             }
 
-            const url: string = this._uriElementsService.getKillSiteProcessUrl(subscriptionId, targetedSite.resourceGroup, targetedSite.name);
+            const url =  this._uriElementsService.getKillSiteProcessUrl(subscriptionId, targetedSite.resourceGroup, targetedSite.name);
             const body: any = {
                 'InstanceId': instanceId,
                 'ScmHostName': scmHostName
@@ -148,12 +148,12 @@ export class SiteService {
     }
 
     getSiteAppSettings(subscriptionId: string, resourceGroup: string, siteName: string, slot: string = ''): Observable<any> {
-        const url: string = this._uriElementsService.getListAppSettingsUrl(subscriptionId, resourceGroup, siteName, slot);
+        const url =  this._uriElementsService.getListAppSettingsUrl(subscriptionId, resourceGroup, siteName, slot);
         return this._armClient.postResource(url, {}, null, true);
     }
 
     getSiteConfigSettings(siteInfo: SiteInfoMetaData): Observable<any> {
-        const url: string = this._uriElementsService.getConfigWebUrl(siteInfo);
+        const url =  this._uriElementsService.getConfigWebUrl(siteInfo);
         return this._armClient.getResource<ResponseMessageEnvelope<any>>(url).pipe(map((response: ResponseMessageEnvelope<any>) => {
             return response.properties;
         }));
@@ -167,7 +167,7 @@ export class SiteService {
 
     getVirtualNetworkConnectionsInformation(subscriptionId: string, resourceGroup: string, siteName: string, slot: string = ''): Observable<any> {
 
-        const url: string = this._uriElementsService.getVirtualNetworkConnections(subscriptionId, resourceGroup, siteName, slot);
+        const url =  this._uriElementsService.getVirtualNetworkConnections(subscriptionId, resourceGroup, siteName, slot);
         return this._armClient.getResource(url);
     }
 
@@ -190,7 +190,7 @@ export class SiteService {
     }
 
     updateSiteAppSettings(subscriptionId: string, resourceGroup: string, siteName: string, slot: string = '', body: any): Observable<any> {
-        const url: string = this._uriElementsService.getUpdateAppSettingsUrl(subscriptionId, resourceGroup, siteName, slot);
+        const url =  this._uriElementsService.getUpdateAppSettingsUrl(subscriptionId, resourceGroup, siteName, slot);
         return this._armClient.putResource(url, body, null, true);
     }
 

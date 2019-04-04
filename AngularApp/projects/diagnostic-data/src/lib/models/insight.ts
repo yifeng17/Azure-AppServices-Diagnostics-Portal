@@ -1,5 +1,5 @@
 import { Rendering, DiagnosticData, HealthStatus, RenderingType, DetectorResponse } from './detector';
-import { Solution } from '../components/solution/solution.component';
+import { Solution } from '../components/solution/solution';
 
 export class InsightBase {
     status: HealthStatus;
@@ -67,7 +67,7 @@ export class InsightUtils {
             const row = data.rows[i];
             const insightName = row[insightColumnIndex];
             const nameColumnValue = row[nameColumnIndex];
-            
+
             let solutionsValue = null;
             if (solutionsIndex < row.length) {
                 solutionsValue = <Solution[]>JSON.parse(row[solutionsIndex]);

@@ -1,0 +1,64 @@
+@import '../../../../../app-service-diagnostics/src/styles/main';
+
+.title-container {
+  width: 100%;
+  box-shadow: 0px 5px 4px -4px #bfbfbf;
+  padding: 10px 10px 10px 30px;
+  background-color: #f5f5f5;
+
+  h2 {
+    margin-top: 10px;
+    font-weight: 400;
+    font-size: 20px;
+    margin: 0px
+  }
+}
+
+.outer-container {
+  border: 1px solid #e6e6e6;
+}
+
+.list-item {
+  text-align: right;
+  padding: 15px 10px;
+  cursor: pointer;
+  color: #646464;
+
+  @include xl {
+    padding: 15px 8px;
+  }
+}
+
+.list-item-text {
+  font-size: 14px;
+}
+
+.list-item-selected {
+  border-left: 3px solid #87d286;
+  color: #000000;
+  background-color: #d0d0d0;
+}
+
+.tag-holder {
+  margin-left: auto;
+  margin-right: 0;
+  width: fit-content;
+  padding: 5px;
+}
+
+.row.match-col-height {
+  overflow: hidden;
+  margin-left: 0;
+}
+
+// A hack to force bootstrap columns to be the same height
+.row.match-col-height [class*="col-"] {
+  margin-bottom: -99999px;
+  padding-bottom: 99999px;
+}
+
+.vertical-tabs {
+  padding: 0;
+  margin: 0;
+  background-color: #f5f5f5;
+}

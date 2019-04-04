@@ -1,4 +1,3 @@
-
 export class TimeZones {
     public static readonly UTC: string = 'Etc/UTC';
 }

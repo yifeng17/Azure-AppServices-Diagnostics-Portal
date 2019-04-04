@@ -58,7 +58,7 @@ export class GenericApiService {
     }
 
     public invoke<T>(path: string, method = 'GET', body: any = {}): Observable<T> {
-        const url: string = `${this.localEndpoint}/api/invoke`;
+        const url =  `${this.localEndpoint}/api/invoke`;
 
         const request = this._http.post(url, body, {
             headers: this._getHeaders(path, method)
