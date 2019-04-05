@@ -7,6 +7,8 @@ namespace Backend.Models
 {
     public class ChatConfiguration
     {
+        public string FreshToken { get; set; }
+
         public bool GlobalEnabled { get; set; }
 
         public ChatHoursDuration[] GlobalChatHours { get; set; }
@@ -56,6 +58,8 @@ namespace Backend.Models
 
     public class ChatStatus
     {
+        public string FreshToken { get; set; }
+
         public bool IsEnabled { get; set; }
 
         public bool IsValidTime { get; set; }
