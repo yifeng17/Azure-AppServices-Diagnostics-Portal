@@ -1,19 +1,20 @@
-﻿using Backend.Models;
-using NodaTime;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
+using Backend.Models;
+using Microsoft.Extensions.Configuration;
+using NodaTime;
 
 namespace Backend.Services
 {
     public class ChatService : IChatService
     {
-        ChatConfiguration Config;
+        private ChatConfiguration chatConfig;
+        private IConfiguration overallConfig;
 
-        public ChatService(ChatConfiguration config)
+        public ChatService(ChatConfiguration chatConfig, IConfiguration configuration)
         {
-            Config = config;
+            this.chatConfig = chatConfig;
+            this.overallConfig = configuration;
         }
 
         public ChatStatus GetChatStatus(string product)
@@ -23,19 +24,20 @@ namespace Backend.Services
             ProductSpecificSettings productSettings = null;
             if (!string.IsNullOrWhiteSpace(product))
             {
-                productSettings = Config.ProductSpecificSettings.FirstOrDefault(p => p.Name.Equals(product, StringComparison.OrdinalIgnoreCase));
+                productSettings = chatConfig.ProductSpecificSettings.FirstOrDefault(p => p.Name.Equals(product, StringComparison.OrdinalIgnoreCase));
             }
 
             return new ChatStatus
             {
-                IsEnabled = Config.GlobalEnabled,
+                FreshToken = overallConfig["Chat:FreshToken"],
+                IsEnabled = chatConfig.GlobalEnabled,
                 IsValidTime = IsWorkingHour(currentDateTime, productSettings) && !IsBreakTime(currentDateTime) && !IsHoliday(currentDateTime)
             };
         }
 
         private bool IsHoliday(ZonedDateTime currentDateTime)
         {
-            foreach (var holiday in Config.PublicHolidays)
+            foreach (var holiday in chatConfig.PublicHolidays)
             {
                 if (currentDateTime.Day == holiday.Day && currentDateTime.Month == holiday.Month && currentDateTime.Year == holiday.Year)
                 {
@@ -47,7 +49,7 @@ namespace Backend.Services
 
         private bool IsWorkingHour(ZonedDateTime currentDateTime, ProductSpecificSettings productSettings)
         {
-            ChatHoursDuration[] chatDuration = Config.GlobalChatHours;
+            ChatHoursDuration[] chatDuration = chatConfig.GlobalChatHours;
             if(productSettings != null && productSettings.ChatHours != null && productSettings.ChatHours.Any())
             {
                 chatDuration = productSettings.ChatHours;
@@ -75,14 +77,14 @@ namespace Backend.Services
 
         private bool IsBreakTime(ZonedDateTime currentDateTime)
         {
-            if (Config.OffHours == null)
+            if (chatConfig.OffHours == null)
             {
                 return false;
             }
 
             var dayOfWeek = (int)currentDateTime.DayOfWeek;
 
-            foreach (var breakTime in Config.OffHours)
+            foreach (var breakTime in chatConfig.OffHours)
             {
                 DateTime startTime = DateTime.ParseExact(breakTime.StartTimePST, "HH:mm", null);
                 DateTime endTime = DateTime.ParseExact(breakTime.EndTimePST, "HH:mm", null);

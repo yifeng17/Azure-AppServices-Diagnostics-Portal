@@ -14,6 +14,5 @@ export class LiveAgentChatComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.liveChatService.startChat(this.autoOpen, this.source);
     }
 }

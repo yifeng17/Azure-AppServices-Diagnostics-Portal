@@ -52,4 +52,5 @@ export class LiveChatSettings {
 export class ChatStatus {
     public isEnabled: boolean;
     public isValidTime: boolean;
+    public freshToken: string;
 }

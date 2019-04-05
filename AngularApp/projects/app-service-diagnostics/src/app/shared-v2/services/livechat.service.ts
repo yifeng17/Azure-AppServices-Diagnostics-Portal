@@ -33,10 +33,9 @@ export class LiveChatService {
 
                             setTimeout(() => {
 
-                                this.startChat(false, '', LiveChatSettings.DemoModeForCaseSubmission, 'ltr');
+                                this.startChat(status.freshToken, false, '', LiveChatSettings.DemoModeForCaseSubmission, 'ltr');
 
                             }, LiveChatSettings.InactivityTimeoutInMs);
-
 
                             window.fcWidget.on('widget:loaded', ((resp) => {
 
@@ -60,7 +59,7 @@ export class LiveChatService {
         });
     }
 
-    public startChat(autoOpen: boolean, source: string, demoMode: boolean = false, chatPosition: string = '') {
+    public startChat(freshToken: string, autoOpen: boolean, source: string, demoMode: boolean = false, chatPosition: string = '') {
 
         let restoreId: string = '';
         let externalId: string = '';
@@ -80,7 +79,7 @@ export class LiveChatService {
                 this.logger.LogLiveChatWidgetBeginInit(source);
 
                 window.fcWidget.init({
-                    token: 'ac017aa7-7c07-42bc-8fdc-1114fc962803',
+                    token: freshToken,
                     host: 'https://wchat.freshchat.com',
                     open: autoOpen,
                     externalId: externalId,
@@ -95,6 +94,7 @@ export class LiveChatService {
                                 reply_field: 'Describe your problem or reply here',
                             },
                             headers: {
+                                csat_question: "Finished chatting? We'd love your feedback",
                                 channel_response: {
                                     offline: 'We are currently away. Please leave us a message',
                                     online:

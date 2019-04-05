@@ -1,9 +1,11 @@
 
 import {map} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, BehaviorSubject } from 'rxjs';
 import { Http, Headers } from '@angular/http';
 import { ResourceService } from './resource.service';
+import { BackendCtrlService } from '../../shared/services/backend-ctrl.service';
+import { mergeMap, tap } from 'rxjs/operators';
 
 @Injectable()
 export class ContentService {
@@ -21,7 +23,16 @@ export class ContentService {
     // }
   ];
 
-  constructor(private _http: Http, private _resourceService: ResourceService) { }
+  private ocpApimKeyBehaviorSubject: BehaviorSubject<string> = new BehaviorSubject<string>('');
+  private ocpApimKey: string = '';
+
+  constructor(private _http: Http, private _resourceService: ResourceService, private _backendApi: BackendCtrlService) { 
+
+    this._backendApi.get<string>(`api/appsettings/ContentSearch:Ocp-Apim-Subscription-Key`).subscribe((value: string) =>{
+      this.ocpApimKeyBehaviorSubject.next(value);
+      this.ocpApimKey = value;
+    });
+  }
 
   getContent(searchString?: string): Observable<any[]> {
     const searchResults = searchString ? this.content.filter(article => {
@@ -38,13 +49,18 @@ export class ContentService {
     const query = encodeURIComponent(`${questionString} AND ${searchSuffix}`);
     const url: string = `https://api.cognitive.microsoft.com/bing/v7.0/search?q='${query}'&count=${resultsCount}`;
 
-    return this._http.get(url, { headers: this.getWebSearchHeaders() }).pipe(map(response => response.json()));
+    return this.ocpApimKeyBehaviorSubject.pipe(
+      mergeMap((key:string)=>{
+        return this._http.get(url, { headers: this.getWebSearchHeaders() }).pipe(map(response => response.json()));
+      })
+    );
   }
+  
 
   private getWebSearchHeaders(): Headers {
     const headers = new Headers();
     headers.append('Content-Type', 'application/json');
-    headers.append('Ocp-Apim-Subscription-Key', `c086bfbf436b4be59e3a8c12b2488082`);
+    headers.append('Ocp-Apim-Subscription-Key', this.ocpApimKey);
 
     return headers;
   }
