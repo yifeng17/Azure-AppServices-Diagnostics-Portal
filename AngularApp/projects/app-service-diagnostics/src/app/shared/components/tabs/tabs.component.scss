@@ -5,32 +5,5 @@
 }
 
 #app-content {
-    height: 70%;
-
-    // Dynamic heights are necessary to follow the iFrame height while providing as much room
-    // for content as possible
-    @include xs-height {
-        // 320px
-        height: 82%;
-    }
-
-    @include sm-height {
-        // 432px
-        height: 87%;
-    }
-
-    @include md-height {
-        // 576px
-        height: 90%;
-    }
-
-    @include lg-height {
-        // 744px
-        height: 92%
-    }
-
-    @include xl-height {
-        // 900px
-        height: 93%
-    }
+    height: calc(100vh - 56px);
 }
