@@ -12,11 +12,9 @@ import { filter } from 'rxjs/operators';
 export class TabsComponent implements OnInit {
 
   public navigationItems: INavigationItem[];
-  public contentMaxHeight: number;
 
   constructor(private _router: Router, private _activatedRoute: ActivatedRoute, private _routeReuseStrategy: CustomReuseStrategy) {
     this.navigationItems = [];
-    this.contentMaxHeight = window.innerHeight - 55;
   }
 
   ngOnInit() {
