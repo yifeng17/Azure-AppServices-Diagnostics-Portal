@@ -45,33 +45,33 @@
     text-align: center;
 }
 
-.fxs-progress-dots>div {
-    display: inline-block;
-    height: 6px;
-    width: 6px;
-    -webkit-animation: fxs-progress-animatedEllipses 1.5s infinite;
-    animation: fxs-progress-animatedEllipses 1.5s infinite;
-    background: #aab3bd;
-    margin: 0 2.5px;
-}
+    .fxs-progress-dots > div {
+        display: inline-block;
+        height: 6px;
+        width: 6px;
+        -webkit-animation: fxs-progress-animatedEllipses 1.5s infinite;
+        animation: fxs-progress-animatedEllipses 1.5s infinite;
+        background: #aab3bd;
+        margin: 0 2.5px;
+    }
 
-.fxs-progress-dots>div:nth-child(1) {
-    -webkit-animation-delay: 0s;
-    animation-delay: 0s;
-}
+        .fxs-progress-dots > div:nth-child(1) {
+            -webkit-animation-delay: 0s;
+            animation-delay: 0s;
+        }
 
-.fxs-progress-dots>div:nth-child(2) {
-    -webkit-animation-delay: 0.2s;
-    animation-delay: 0.2s;
-}
+        .fxs-progress-dots > div:nth-child(2) {
+            -webkit-animation-delay: 0.2s;
+            animation-delay: 0.2s;
+        }
 
-.fxs-progress-dots>div:nth-child(3) {
-    -webkit-animation-delay: 0.4s;
-    animation-delay: 0.4s;
-}
+        .fxs-progress-dots > div:nth-child(3) {
+            -webkit-animation-delay: 0.4s;
+            animation-delay: 0.4s;
+        }
 
-.fxs-progress-dots>div:nth-child(4) {
-    padding-top: 20px;
-    width: 100%;
-    background: white;
-}
+        .fxs-progress-dots > div:nth-child(4) {
+            padding-top: 20px;
+            width: 100%;
+            background: white;
+        }

@@ -1,20 +1,16 @@
+.content {
+    position: absolute;
+    height:100%;
+    width: 100%;
+}
+
 .main-container {
-    background-color: #e4e4e4;
-    height: 100vh;
+    padding-left: 250px;
+    height: 100%;
 }
 
-.main-row {
-    padding-top: 30vh;
-}
-
-.go-form {
-    padding: 1em;
-    text-align: right;
-}
-
-.go-button {
-    width: 50px;
-    margin-top: 10px;
+.dropdown-item {
+    cursor: pointer;    
 }
 
 .dropdown-menu > .disabled {
@@ -22,11 +18,11 @@
     color: #dddddd;
 }
 
-.error-msg-container{
+.errorMessage-Container{
     border:4px solid white;
 }
 
-.error-msg-container .errorMessage{
+.errorMessage-Container .errorMessage{
     white-space: pre-wrap;
     overflow-wrap: break-word;
     height:80%;
