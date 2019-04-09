@@ -1,5 +1,5 @@
-<div class="container-fluid" [style.height]="contentHeight" style="background-color: #e4e4e4;">
-  <div class="row" style="padding-top: 200px">
+<div class="container-fluid main-container">
+  <div class="row main-row">
     <div class="col-md-6 col-md-offset-3">
       <div class="box box-primary">
         <div class="box-header with-border">
@@ -48,11 +48,14 @@
               </div>
             </div>
           </div>
-          <div class="form-group" style="padding:15px;text-align:right">
-            <button class="btn btn-primary" style="width:50px;margin-top: 10px;" [disabled]="!(resourceName && resourceName.length > 0)" type="Submit">Go</button>
+          <div class="form-group go-form">
+            <button class="btn btn-primary go-button" 
+                [disabled]="!(resourceName && resourceName.length > 0)" type="Submit">
+              Go
+            </button>
           </div>
         </form>
-        <div class = "errorMessage-Container">
+        <div class = "error-msg-container">
           <div *ngIf = "this.errorMessage!== ''" class="errorMessage">
               {{this.errorMessage}}
           </div>

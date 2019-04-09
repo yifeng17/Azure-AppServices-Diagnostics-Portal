@@ -18,8 +18,8 @@ const moment = momentNs;
 })
 export class MainComponent implements OnInit {
 
-  showResourceTypeOptions: boolean = false;
-  showCaseCleansingOption: boolean = false;
+  showResourceTypeOptions = false;
+  showCaseCleansingOption = false;
   selectedResourceType: ResourceTypeState;
   resourceName: string;
   resourceTypes: ResourceTypeState[] = [
@@ -55,21 +55,13 @@ export class MainComponent implements OnInit {
 
   startTime: momentNs.Moment;
   endTime: momentNs.Moment;
-
-  contentHeight: string;
-
   enabledResourceTypes: ResourceServiceInputs[];
-
-  inIFrame: boolean = false;
-
-  errorMessage:string = "";
+  inIFrame = false;
+  errorMessage = "";
 
   constructor(private _router: Router, private _activatedRoute: ActivatedRoute, private _http: HttpClient, private _adalService: AdalService,) {
     this.endTime = moment.utc();
     this.startTime = this.endTime.clone().add(-1, 'days');
-
-    this.contentHeight = window.innerHeight + 'px';
-
     this.inIFrame = window.parent !== window;
 
     if (this.inIFrame) {
@@ -97,50 +89,50 @@ export class MainComponent implements OnInit {
     }
   }
 
-  private normalizeArmUriForRoute( resourceURI: string, enabledResourceTypes : ResourceServiceInputs[]) : string {
-    
+  private normalizeArmUriForRoute(resourceURI: string, enabledResourceTypes : ResourceServiceInputs[]) : string {
     resourceURI = resourceURI.trim();    
     var resourceUriPattern = /subscriptions\/(.*)\/resourceGroups\/(.*)\/providers\/(.*)/i;
     var result = resourceURI.match(resourceUriPattern);
-    if(result && result.length === 4){
+
+    if (result && result.length === 4) {
       var allowedResources : string = "";
       var routeString : string = '';
-      if(enabledResourceTypes){
+
+      if (enabledResourceTypes) {
         enabledResourceTypes.forEach(enabledResource => {
           allowedResources+= `${enabledResource.resourceType}\n`;
-          var resourcePattern = new RegExp(`(?<=${enabledResource.resourceType.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}\/).*`, 'i');
+          var resourcePattern = new RegExp(
+              `(?<=${enabledResource.resourceType.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}\/).*`, 'i'
+          );
           var enabledResourceResult = result[3].match(resourcePattern);
+
           if(enabledResourceResult){
             routeString = `subscriptions/${result[1]}/resourceGroups/${result[2]}/providers/${enabledResource.resourceType}/${enabledResourceResult[0]}`;
           }
         });
       }
-      if(routeString === ''){
-        this.errorMessage = `The supplied ARM resource is not enabled in AppLens. Allowed resource types are as follows
 
-${allowedResources}`;
-      }
-      else{
-        this.errorMessage = "";
-      }      
+      this.errorMessage = routeString === '' ?
+        'The supplied ARM resource is not enabled in AppLens. Allowed resource types are as follows\n\n' + 
+          `${allowedResources}` :
+        '';
+
       return routeString;
-    }
-    else{
-      this.errorMessage = `Invalid ARM resource id. Resource id must be of the following format.
-e.g..
-  /subscriptions/SUBSCRIPTION_ID/resourceGroups/MY_RG/providers/Microsoft.ContainerService/managedClusters/RESOURCE_NAME`;
+    } else {
+      this.errorMessage = "Invalid ARM resource id. Resource id must be of the following format:\n" + 
+        "  /subscriptions/SUBSCRIPTION_ID/resourceGroups/MY_RG/providers/Microsoft.ContainerService/" +
+        "managedClusters/RESOURCE_NAME";
+
       return resourceURI;
-    }    
+    }
   }
 
   onSubmit(form: any) {
-    
     form.resourceName = form.resourceName.trim();
     
-    if(this.selectedResourceType.displayName === "ARM Resource ID"){
+    if (this.selectedResourceType.displayName === "ARM Resource ID") {
       form.resourceName = this.normalizeArmUriForRoute(form.resourceName, this.enabledResourceTypes);
-    }
-    else{
+    } else {
       this.errorMessage = "";
     }
 
@@ -162,11 +154,13 @@ e.g..
       queryParams: timeParams
     }
     
-    if(this.errorMessage === "")
+    if (this.errorMessage === '') {
       this._router.navigate([route], navigationExtras);
+    }
   }
 
-  caseCleansingNavigate(){
+  caseCleansingNavigate() {
     this._router.navigate(["caseCleansing"]);
   }
+
 }
