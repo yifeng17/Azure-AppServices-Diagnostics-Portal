@@ -9,25 +9,49 @@ export class PortalKustoTelemetryService implements ITelemetryProvider {
   }
 
   logEvent(eventMessage: string, properties: { [name: string]: string }, measurements?: any) {
-    // measurements is ignored
-    this._portalService.logAction('diagnostic-data', eventMessage, properties);
+    this._portalService.logAction('diagnostic-data', eventMessage, {
+      ...properties,
+      'measurements': measurements
+    });
   }
 
-  logException() {
+  logException(exception: Error, handledAt?: string, properties?: { [name: string]: string }, measurements?: any, severityLevel?: any) {
+    this._portalService.logAction('diagnostic-data-exception', exception.message, {
+      ...properties,
+      'handledAt': handledAt,
+      'measurements': measurements,
+      'severityLevel': severityLevel
+    });
   }
 
-  logMetric() {
+  logPageView(name: string, url: string, properties?: { [name: string]: string }, measurements?: any, duration?: number) {
+    this._portalService.logAction('diagnostic-data-pageview', name, {
+      ...properties,
+      'url': url,
+      'measurements': measurements,
+      'duration': duration
+    });
   }
 
-  logTrace() {
+  logTrace(message: string, customProperties?: { [name: string]: string }, customMetrics?: any) {
+    this._portalService.logAction('diagnostic-data-trace', message, {
+      ...customProperties,
+      'customMetrics': customMetrics
+    });
   }
 
-  logPageView() {
-  }
-
-  logUserInteraction() {
+  logMetric(name: string, average: number, sampleCount: number, min: number, max: number, properties?: any) {
+    this._portalService.logAction('diagnostic-data-metric', name, {
+      ...properties,
+      'average': average,
+      'sampleCount': sampleCount,
+      'min': min,
+      'max': max
+    });
   }
 
   flush() {
+    return;
   }
+
 }
