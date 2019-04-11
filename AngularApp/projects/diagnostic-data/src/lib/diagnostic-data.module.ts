@@ -1,6 +1,8 @@
 import 'd3';
 import 'nvd3';
-import { DetectorControlService, DiagnosticService, TelemetryService } from 'diagnostic-data';
+import { DetectorControlService } from './services/detector-control.service';
+import { DiagnosticService } from './services/diagnostic.service';
+import { TelemetryService } from './services/telemetry/telemetry.service';
 import { NvD3Module } from 'ng2-nvd3';
 import { MarkdownModule } from 'ngx-markdown';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
@@ -61,6 +63,11 @@ import { KustoTelemetryService } from './services/telemetry/kusto-telemetry.serv
 import { FormComponent } from './components/form/form.component';
 import { SolutionComponent } from './components/solution/solution.component';
 import { SolutionsComponent } from './components/solutions/solutions.component';
+import { VerticalDisplayListComponent } from './components/vertical-display-list/vertical-display-list.component';
+import { VerticalDisplayListItemComponent } from './components/vertical-display-list/vertical-display-list-item/vertical-display-list-item.component';
+import { SolutionTypeTagComponent } from './components/solution-type-tag/solution-type-tag.component';
+import { SolutionDisplayComponent } from './components/solution-display/solution-display.component';
+import { SolutionDisplayItemComponent } from './components/solution-display/solution-display-item/solution-display-item.component';
 
 
 @NgModule({
@@ -75,14 +82,23 @@ import { SolutionsComponent } from './components/solutions/solutions.component';
   providers: [
     ClipboardService
   ],
-  declarations: [Nvd3GraphComponent, TimeSeriesGraphComponent, DataTableComponent, DynamicDataComponent, DataRenderBaseComponent,
-    DataContainerComponent, TimeSeriesInstanceGraphComponent, DetectorViewComponent, DataSummaryComponent, EmailComponent, InsightsComponent,
-    LoaderViewComponent, DynamicInsightComponent, MarkdownComponent, DetectorListComponent, DetectorOrderPipe, StarRatingComponent, StarRatingFeedbackComponent,
-    DropdownComponent, StatusIconComponent, DetectorControlComponent, DetectorContainerComponent, InternalPipe, CommAlertComponent, FeedbackComponent,
-    CopyInsightDetailsComponent, MarkdownEditorComponent, CardSelectionComponent, GuageGraphicComponent, GuageControlComponent, SolutionComponent, SolutionsComponent, FormComponent
+  declarations: [
+    Nvd3GraphComponent, TimeSeriesGraphComponent, DataTableComponent, DynamicDataComponent,
+    DataRenderBaseComponent, DataContainerComponent, TimeSeriesInstanceGraphComponent, DetectorViewComponent,
+    DataSummaryComponent, EmailComponent, InsightsComponent, LoaderViewComponent, DynamicInsightComponent,
+    MarkdownComponent, DetectorListComponent, DetectorOrderPipe, StarRatingComponent, StarRatingFeedbackComponent,
+    DropdownComponent, StatusIconComponent, DetectorControlComponent, DetectorContainerComponent, InternalPipe,
+    CommAlertComponent, FeedbackComponent, CopyInsightDetailsComponent, MarkdownEditorComponent, CardSelectionComponent,
+    GuageGraphicComponent, GuageControlComponent, SolutionComponent, SolutionsComponent, FormComponent,
+    VerticalDisplayListComponent, VerticalDisplayListItemComponent, SolutionTypeTagComponent, SolutionDisplayComponent,
+    SolutionDisplayItemComponent
   ],
-  exports: [FormsModule, TimeSeriesGraphComponent, DataTableComponent, DynamicDataComponent, DetectorViewComponent, DataSummaryComponent,
-    LoaderViewComponent, StatusIconComponent, DetectorControlComponent, DetectorContainerComponent, InternalPipe, CommAlertComponent, GuageControlComponent, SolutionComponent, FormComponent],
+  exports: [
+    FormsModule, TimeSeriesGraphComponent, DataTableComponent, DynamicDataComponent, DetectorViewComponent,
+    DataSummaryComponent, LoaderViewComponent, StatusIconComponent, DetectorControlComponent,
+    DetectorContainerComponent, InternalPipe, CommAlertComponent, GuageControlComponent, SolutionComponent,
+    FormComponent, VerticalDisplayListComponent, VerticalDisplayListItemComponent, SolutionTypeTagComponent
+  ],
 })
 export class DiagnosticDataModule {
   static forRoot(config: DiagnosticDataConfig = INTERNAL_PROD_CONFIGURATION): ModuleWithProviders {

@@ -16,6 +16,7 @@ import { SolutionFeedbackComponent } from './components/common/solution-feedback
 import { MemoryDumpSolutionComponent } from './components/specific-solutions/memorydump-solution/memorydump-solution.component';
 import { RevertDeploymentComponent } from './components/specific-solutions/revert-deployment-solution/revert-deployment-solution.component';
 import { JavaThreadDumpSolutionComponent } from './components/specific-solutions/java-threaddump-solution/java-threaddump-solution.component';
+import { DiagnosticDataModule } from 'diagnostic-data';
 
 @NgModule({
     declarations: [
@@ -35,7 +36,8 @@ import { JavaThreadDumpSolutionComponent } from './components/specific-solutions
         JavaThreadDumpSolutionComponent
     ],
     imports: [
-        SharedModule
+        SharedModule,
+        DiagnosticDataModule
     ],
     exports: [
         SolutionsWidgetComponent,

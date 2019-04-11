@@ -1,17 +1,16 @@
-import { Component, OnInit, Input, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { GithubApiService } from '../../../shared/services/github-api.service';
-import { DetectorResponse } from 'diagnostic-data';
-import { QueryResponse } from 'diagnostic-data';
-import { CompilationProperties } from 'diagnostic-data';
-import { ResourceService } from '../../../shared/services/resource.service';
-import { Package } from '../../../shared/models/package';
-import { ApplensDiagnosticService } from '../services/applens-diagnostic.service';
-import { NgxSmartModalService } from 'ngx-smart-modal';
-import * as momentNs from 'moment';
-import { DetectorControlService } from 'diagnostic-data';
-import { Observable, of, forkJoin, BehaviorSubject } from 'rxjs';
 import { AdalService } from 'adal-angular4';
+import {
+    CompilationProperties, DetectorControlService, DetectorResponse, QueryResponse
+} from 'diagnostic-data';
+import * as momentNs from 'moment';
+import { NgxSmartModalService } from 'ngx-smart-modal';
+import { forkJoin, Observable, of } from 'rxjs';
 import { flatMap, map } from 'rxjs/operators';
+import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Package } from '../../../shared/models/package';
+import { GithubApiService } from '../../../shared/services/github-api.service';
+import { ResourceService } from '../../../shared/services/resource.service';
+import { ApplensDiagnosticService } from '../services/applens-diagnostic.service';
 
 const moment = momentNs;
 
@@ -27,7 +26,7 @@ export enum DevelopMode {
   templateUrl: './onboarding-flow.component.html',
   styleUrls: ['./onboarding-flow.component.scss']
 })
-export class OnboardingFlowComponent implements OnInit, OnDestroy {
+export class OnboardingFlowComponent implements OnInit {
   @Input() mode: DevelopMode = DevelopMode.Create;
   @Input() id: string = '';
   @Input() dataSource: string = '';
@@ -79,8 +78,10 @@ export class OnboardingFlowComponent implements OnInit, OnDestroy {
 
   private emailRecipients: string = '';
 
-  constructor(private cdRef: ChangeDetectorRef, private githubService: GithubApiService, private diagnosticApiService: ApplensDiagnosticService, private resourceService: ResourceService,
-    private _detectorControlService: DetectorControlService, private _adalService: AdalService, public ngxSmartModalService: NgxSmartModalService) {
+  constructor(private cdRef: ChangeDetectorRef, private githubService: GithubApiService,
+    private diagnosticApiService: ApplensDiagnosticService, private resourceService: ResourceService,
+    private _detectorControlService: DetectorControlService, private _adalService: AdalService,
+    public ngxSmartModalService: NgxSmartModalService) {
 
     this.editorOptions = {
       theme: 'vs',
@@ -124,11 +125,6 @@ export class OnboardingFlowComponent implements OnInit, OnDestroy {
     if (this.initialized) {
       this.initialize();
     }
-  }
-
-  ngOnDestroy() {
-    // TODO: Figure out saving capabilities
-    //this.saveProgress();
   }
 
   gistVersionChange(event: string) {
@@ -227,13 +223,12 @@ export class OnboardingFlowComponent implements OnInit, OnDestroy {
         element.click();
 
         document.body.removeChild(element);
-      }
-        , ((error: any) => {
-          this.localDevButtonDisabled = false;
-          this.publishingPackage = null;
-          this.localDevText = "Something went wrong";
-          this.localDevIcon = "fa fa-download";
-        }));
+      }, ((error: any) => {
+        this.localDevButtonDisabled = false;
+        this.publishingPackage = null;
+        this.localDevText = "Something went wrong";
+        this.localDevIcon = "fa fa-download";
+      }));
   }
 
   runCompilation() {
@@ -269,6 +264,7 @@ export class OnboardingFlowComponent implements OnInit, OnDestroy {
         this.queryResponse.compilationOutput.compilationTraces.forEach(element => {
           this.buildOutput.push(element);
         });
+
         // If the script etag returned by the server does not match the previous script-etag, update the values in memory
         if (response.headers.get('diag-script-etag') != undefined && this.compilationPackage.scriptETag !== response.headers.get('diag-script-etag')) {
           this.compilationPackage.scriptETag = response.headers.get('diag-script-etag');
@@ -276,23 +272,25 @@ export class OnboardingFlowComponent implements OnInit, OnDestroy {
           this.compilationPackage.assemblyBytes = this.queryResponse.compilationOutput.assemblyBytes;
           this.compilationPackage.pdbBytes = this.queryResponse.compilationOutput.pdbBytes;
         }
+
         if (this.queryResponse.compilationOutput.compilationSucceeded === true) {
           this.publishButtonDisabled = false;
           this.preparePublishingPackage(this.queryResponse, currentCode);
           this.buildOutput.push("========== Build: 1 succeeded, 0 failed ==========");
-        }
-        else {
+        } else {
           this.publishButtonDisabled = true;
           this.publishingPackage = null;
           this.buildOutput.push("========== Build: 0 succeeded, 1 failed ==========");
         }
 
-        if ((!this.gistMode && this.queryResponse.runtimeSucceeded != null && this.queryResponse.runtimeSucceeded === false) ||
-          (this.gistMode && this.queryResponse.compilationOutput != null && this.queryResponse.compilationOutput.compilationSucceeded === false)) {
-          this.publishButtonDisabled = true;
-        }
-        this.localDevButtonDisabled = false;
+        this.publishButtonDisabled = (
+          !this.gistMode && this.queryResponse.runtimeSucceeded != null && !this.queryResponse.runtimeSucceeded
+        ) || (
+          this.gistMode && this.queryResponse.compilationOutput != null &&
+          !this.queryResponse.compilationOutput.compilationSucceeded
+        )
 
+        this.localDevButtonDisabled = false;
       }, ((error: any) => {
         this.runButtonDisabled = false;
         this.publishingPackage = null;
@@ -357,7 +355,6 @@ export class OnboardingFlowComponent implements OnInit, OnDestroy {
       });
     }
 
-
     this.configuration['dependencies'] = temp;
     this.configuration['id'] = queryResponse.invocationOutput.metadata.id;
     this.configuration['name'] = queryResponse.invocationOutput.metadata.name;
@@ -365,6 +362,7 @@ export class OnboardingFlowComponent implements OnInit, OnDestroy {
     this.configuration['description'] = queryResponse.invocationOutput.metadata.description;
     this.configuration['category'] = queryResponse.invocationOutput.metadata.category;
     this.configuration['type'] = this.gistMode ? 'Gist' : 'Detector';
+
     return newPackage;
   }
 
@@ -400,41 +398,38 @@ export class OnboardingFlowComponent implements OnInit, OnDestroy {
     this.showAlert = true;
   }
 
-  private hideAlertBox() {
-    this.showAlert = false;
-    this.alertClass = '';
-    this.alertMessage = '';
-  }
-
   private initialize() {
     this.resourceId = this.resourceService.getCurrentResourceId();
     this.hideModal = localStorage.getItem("localdevmodal.hidden") === "true";
     let detectorFile: Observable<string>;
     this.compilationPackage = new CompilationProperties();
-    if (this.mode === DevelopMode.Create) {
-      // CREATE FLOW
-      let templateFileName = (this.gistMode ? "Gist_" : "Detector_") + this.resourceService.templateFileName;
-      detectorFile = this.githubService.getTemplate(templateFileName);
-      this.fileName = "new.csx";
-      this.startTime = this._detectorControlService.startTime;
-      this.endTime = this._detectorControlService.endTime;
-    }
-    else if (this.mode === DevelopMode.Edit) {
-      // EDIT FLOW
-      this.fileName = `${this.id}.csx`;
-      detectorFile = this.githubService.getSourceFile(this.id);
-      this.startTime = this._detectorControlService.startTime;
-      this.endTime = this._detectorControlService.endTime;
-    }
-    else if (this.mode === DevelopMode.EditMonitoring) {
-      // SYSTEM MONITORING FLOW
-      this.fileName = '__monitoring.csx';
-      detectorFile = this.githubService.getSourceFile("__monitoring");
-    }
-    else if (this.mode === DevelopMode.EditAnalytics) {
-      // SYSTEM ANALYTICS FLOW
-      this.fileName = '__analytics.csx';
-      detectorFile = this.githubService.getSourceFile("__analytics");
+
+    switch (this.mode) {
+        case DevelopMode.Create: {
+            let templateFileName = (this.gistMode ? "Gist_" : "Detector_") + this.resourceService.templateFileName;
+            detectorFile = this.githubService.getTemplate(templateFileName);
+            this.fileName = "new.csx";
+            this.startTime = this._detectorControlService.startTime;
+            this.endTime = this._detectorControlService.endTime;
+            break;
+        }
+        case DevelopMode.Edit: {
+            this.fileName = `${this.id}.csx`;
+            detectorFile = this.githubService.getSourceFile(this.id);
+            this.startTime = this._detectorControlService.startTime;
+            this.endTime = this._detectorControlService.endTime;
+            break;
+        }
+        case DevelopMode.EditMonitoring: {
+            this.fileName = '__monitoring.csx';
+            detectorFile = this.githubService.getSourceFile("__monitoring");
+            break;
+        }
+        case DevelopMode.EditAnalytics: {
+            this.fileName = '__analytics.csx';
+            detectorFile = this.githubService.getSourceFile("__analytics");
+            break;
+        }
     }
 
     let configuration = of(null);

@@ -32,7 +32,7 @@ export class LocalBackendService {
     if (this.detectorList) {
       return of(this.detectorList);
     }
-    
+
     return this.invoke<DetectorResponse[]>(path, 'POST').pipe(map(response => {
       this.detectorList = response.map(detector => detector.metadata);
       return this.detectorList;
@@ -48,7 +48,7 @@ export class LocalBackendService {
   }
 
   public invoke<T>(path: string, method = 'GET', body: any = {}): Observable<T> {
-    const url: string = `${this.localEndpoint}/api/invoke`;
+    const url =  `${this.localEndpoint}/api/invoke`;
 
     const request = this._http.post<T>(url, body, {
       headers: this._getHeaders(path, method)
@@ -77,4 +77,3 @@ export class LocalBackendService {
   }
 
 }
-

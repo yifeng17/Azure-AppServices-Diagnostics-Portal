@@ -9,7 +9,6 @@ import { SeverityLevel } from '../../models/telemetry';
 @Injectable()
 export class TelemetryService {
     private telemetryProviders: ITelemetryProvider[] = [];
-    private commonDetectorEventProperties: { [name: string]: string };
     eventPropertiesSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
     private eventPropertiesLocalCopy: { [name: string]: string } = {};
 
@@ -36,10 +35,7 @@ export class TelemetryService {
     /**
      * Writes event to the registered logging providers.
      */
-    public logEvent(
-        eventMessage: string,
-        properties: { [name: string]: string },
-        measurements?: any) {
+    public logEvent(eventMessage: string, properties: { [name: string]: string }, measurements?: any) {
         if (this.eventPropertiesLocalCopy) {
             for (const id of Object.keys(this.eventPropertiesLocalCopy)) {
                 if (this.eventPropertiesLocalCopy.hasOwnProperty(id)) {

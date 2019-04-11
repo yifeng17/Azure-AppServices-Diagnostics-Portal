@@ -122,7 +122,7 @@ export class AppInsightsService {
 
     DeleteAppInsightsAccessKeyIfExists(): Observable<any> {
 
-        const url: string = `${this.armService.armUrl}${this.appInsightsSettings.resourceUri}/ApiKeys?api-version=2015-05-01`;
+        const url =  `${this.armService.armUrl}${this.appInsightsSettings.resourceUri}/ApiKeys?api-version=2015-05-01`;
         return this.http.get(url).pipe(tap((data: any) => {
             if (data && data.length && data.length > 0) {
 
@@ -138,7 +138,7 @@ export class AppInsightsService {
 
     GenerateAppInsightsAccessKey(): Observable<any> {
 
-        const url: string = `${this.appInsightsSettings.resourceUri}/ApiKeys`;
+        const url =  `${this.appInsightsSettings.resourceUri}/ApiKeys`;
         const body: any = {
             name: this.appInsights_KeyStr,
             linkedReadProperties: [`${this.appInsightsSettings.resourceUri}/api`],

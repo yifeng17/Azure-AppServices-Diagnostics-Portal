@@ -57,17 +57,19 @@ export class DetectorListComponent extends DataRenderBaseComponent {
       this.detectorViewModels.forEach((metaData, index) => {
         requests.push((<Observable<DetectorResponse>>metaData.request).pipe(
           map((response: DetectorResponse) => {
-            this.detectorViewModels[index] = this.updateDetectorViewModelSuccess(metaData, response);
+            this.detectorViewModels[index] = this.updateDetectorViewModelSuccess(metaData, response);            
+            return {
+              'ChildDetectorName': this.detectorViewModels[index].title,
+              'ChildDetectorId': this.detectorViewModels[index].metadata.id,
+              'ChildDetectorStatus': this.detectorViewModels[index].status,
+              'ChildDetectorLoadingStatus': this.detectorViewModels[index].loadingStatus
+            };
           })
           , catchError(err => {
             this.detectorViewModels[index].loadingStatus = LoadingStatus.Failed;
             return throwError(err);
           })
         ));
-      });
-
-      requests.forEach(request => {
-        request.subscribe();
       });
 
       // Log all the children detectors
@@ -80,9 +82,10 @@ export class DetectorListComponent extends DataRenderBaseComponent {
 
   public retryRequest(metaData: any) {
     metaData.loadingStatus = LoadingStatus.Loading;
-    metaData.request.subscribe((response: DetectorResponse) => {
-      metaData = this.updateDetectorViewModelSuccess(metaData, response);
-    },
+    metaData.request.subscribe(
+      (response: DetectorResponse) => {
+        metaData = this.updateDetectorViewModelSuccess(metaData, response);
+      },
       (error) => {
         metaData.loadingStatus = LoadingStatus.Failed;
       });

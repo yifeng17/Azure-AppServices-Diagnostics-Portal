@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { SolutionTypeTag } from '../../../../shared/models/solution-type-tag';
+import { SolutionTypeTag } from 'diagnostic-data';
 
 
 @Component({

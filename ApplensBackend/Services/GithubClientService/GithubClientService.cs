@@ -142,8 +142,16 @@ namespace AppLensV3
         /// <returns>Task for getting commit content.</returns>
         public async Task<string> GetCommitContent(string filePath, string sha)
         {
-            var commitContent = await OctokitClient.Repository.Content.GetAllContentsByRef(UserName, RepoName, filePath, sha);
-            return commitContent?[0].Content;
+            try
+            {
+                var commitContent = await OctokitClient.Repository.Content.GetAllContentsByRef(UserName, RepoName, filePath, sha);
+                return commitContent?[0].Content;
+            }
+            catch (NotFoundException)
+            {
+                // Ignore exception and return empty string.
+                return string.Empty;
+            }
         }
 
         /// <summary>

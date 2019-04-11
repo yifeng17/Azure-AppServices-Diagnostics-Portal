@@ -1,32 +1,11 @@
 import { Observable } from 'rxjs';
 import { Component, Input } from '@angular/core';
-import { Dictionary } from '../../../../../applens/src/app/shared/models/extensions';
 import { Rendering } from '../../models/detector';
-import { DiagnosticSiteService } from '../../services/diagnostic-site.service';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
-import { SolutionText, getSolutionText } from './solution-text';
-
-export enum ActionType {
-  RestartSite = "RestartSite",
-  UpdateSiteAppSettings = "UpdateSiteAppSettings",
-  KillW3wpOnInstance = "KillW3wpOnInstance"
-}
-
-export class Solution {
-  Title: string;
-  Description: string;
-  ActionName: string;
-  RequiresConfirmation: boolean;
-  ResourceUri: string;
-  IsInternal: boolean;
-  InternalInstructions: string;
-  DetectorLink: string;
-  Action: ActionType;
-  ActionArgs: Dictionary<any>;
-  PremadeDescription: SolutionText;
-  PremadeInstructions: SolutionText;
-}
+import { UriUtilities } from '../../utilities/uri-utilities';
+import { SolutionService } from '../../services/solution.service';
+import { Solution, ActionType } from './solution';
 
 @Component({
   selector: 'solution',
@@ -38,11 +17,11 @@ export class SolutionComponent extends DataRenderBaseComponent {
   @Input("data") solution: Solution;
   renderingProperties: Rendering;
   actionStatus: string;
-  defaultCopyText = 'Copy';
+  defaultCopyText = 'Copy to Email';
   copyText = this.defaultCopyText;
   appName: string;
 
-  constructor(telemetryService: TelemetryService, private _siteService: DiagnosticSiteService) {
+  constructor(telemetryService: TelemetryService, private _siteService: SolutionService) {
     super(telemetryService);
   }
 
@@ -53,11 +32,20 @@ export class SolutionComponent extends DataRenderBaseComponent {
     this.buildSolutionText();
   }
 
+  buildSolutionText() {
+    let detectorLink = UriUtilities.BuildDetectorLink(this.solution.ResourceUri, this.solution.DetectorId);
+    let detectorLinkMarkdown = `Go to [Diagnose and Solve Problems](${detectorLink})`;
+
+    if (!this.solution.InternalMarkdown.includes(detectorLinkMarkdown)) {
+      this.solution.InternalMarkdown = this.solution.InternalMarkdown + "\n\n" + detectorLinkMarkdown;
+    }
+  }
+
   performAction() {
     this.actionStatus = "Running...";
 
-    this.chooseAction(this.solution.Action, this.solution.ResourceUri, this.solution.ActionArgs).subscribe(res => {
-      if (res.ok == null || res.ok) {
+    this.chooseAction().subscribe(res => {
+      if (res.ok == undefined || res.ok) {
         this.actionStatus = "Complete!"
       } else {
         this.actionStatus = `Error completing request. Status code: ${res.status}`
@@ -65,63 +53,53 @@ export class SolutionComponent extends DataRenderBaseComponent {
     });
   }
 
-  chooseAction(actionType: ActionType, resourceUri: string, args?: Dictionary<string>): Observable<any> {
-    switch (actionType) {
-      case ActionType.RestartSite:
-        return this._siteService.restartSiteFromUri(resourceUri);
-      case ActionType.UpdateSiteAppSettings:
-        // TODO: Convert this call to return HttpResponse<any>
-        return this._siteService.updateSettingsFromUri(resourceUri, args);
-      case ActionType.KillW3wpOnInstance:
+  lowercaseFirst(target: string): string {
+    return target.charAt(0).toLowerCase() + target.slice(1)
+  }
+
+  convertOptions(): {} {
+    let actionOptions = {};
+    switch (this.solution.Action) {
+      case (ActionType.ArmApi): {
+        actionOptions = this.solution.ApiOptions;
         break;
-    }
-  }
-
-  buildSolutionText() {
-    this.applyPremadeText();
-    this.buildDynamicText();
-
-    let detectorLinkMarkdown = `[Go To Detector](${this.solution.DetectorLink})`;
-    this.solution.InternalInstructions = detectorLinkMarkdown + "\n\n" + this.solution.InternalInstructions;
-  }
-
-  applyPremadeText() {
-    if (this.solution.PremadeDescription) {
-      this.solution.Description = getSolutionText(this.solution.PremadeDescription);
-    }
-
-    if (this.solution.PremadeInstructions) {
-      this.solution.InternalInstructions = getSolutionText(this.solution.PremadeInstructions);
-    }
-  }
-
-  buildDynamicText() {
-    let appSettingsText = '';
-
-    if (this.solution.PremadeDescription === SolutionText.UpdateSettingsDescription) {
-      appSettingsText = this.buildAppsettingsText();
-
-      this.solution.Description = this.solution.Description + '\n' + appSettingsText;
-    }
-
-    if (this.solution.PremadeInstructions === SolutionText.UpdateSettingsInstructions) {
-      if (appSettingsText === '') {
-        appSettingsText = this.buildAppsettingsText();
       }
-
-      this.solution.InternalInstructions = this.solution.InternalInstructions + '\n' + appSettingsText;
+      case (ActionType.GoToBlade): {
+        actionOptions = this.solution.BladeOptions;
+        break;
+      }
+      case (ActionType.OpenTab): {
+        actionOptions = this.solution.TabOptions;
+        break;
+      }
     }
+
+    let overrideOptions = {};
+    for (let key in actionOptions) {
+      overrideOptions[this.lowercaseFirst(key)] = actionOptions[key]
+    }
+
+    overrideOptions = {...overrideOptions, ...this.solution.OverrideOptions};
+
+    return overrideOptions;
   }
 
-  buildAppsettingsText() {
-    let resultText = '';
+  chooseAction(): Observable<any> {
+    let options = this.convertOptions();
 
-    for (let key in this.solution.ActionArgs['properties']) {
-      let value = JSON.stringify(this.solution.ActionArgs['properties'][key]);
-      resultText = resultText + '\n' + ` - ${key}: ${value}`;
+    switch (this.solution.Action) {
+      case ActionType.ArmApi: {
+        return this._siteService.ArmApi(this.solution.ResourceUri, options);
+      }
+      case ActionType.GoToBlade: {
+        return this._siteService.GoToBlade(this.solution.ResourceUri, options);
+      }
+      case ActionType.OpenTab: {
+        return this._siteService.OpenTab(this.solution.ResourceUri, options);
+      }
     }
 
-    return resultText
+    throw new Error(`Not Implemented: Solution Service does not have an implementation for the action.`)
   }
 
   copyInstructions(copyValue: string) {
@@ -141,9 +119,20 @@ export class SolutionComponent extends DataRenderBaseComponent {
 
     this.copyText = "Copied!";
 
+    this.logTextCopied();
+
     setTimeout(() => {
       this.copyText = this.defaultCopyText;
     }, 2000);
+  }
+
+  logTextCopied() {
+    this.telemetryService.logEvent('SolutionTextCopied',
+      {
+        'solutionName': this.solution.Name,
+        'appName': this.appName
+      }
+    );
   }
 
 }

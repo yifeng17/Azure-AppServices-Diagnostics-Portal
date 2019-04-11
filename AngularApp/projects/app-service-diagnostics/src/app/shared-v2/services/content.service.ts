@@ -47,7 +47,7 @@ export class ContentService {
 
     const searchSuffix = this._resourceService.searchSuffix;
     const query = encodeURIComponent(`${questionString} AND ${searchSuffix}`);
-    const url: string = `https://api.cognitive.microsoft.com/bing/v7.0/search?q='${query}'&count=${resultsCount}`;
+    const url = `https://api.cognitive.microsoft.com/bing/v7.0/search?q='${query}'&count=${resultsCount}`;
 
     return this.ocpApimKeyBehaviorSubject.pipe(
       mergeMap((key:string)=>{
