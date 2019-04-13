@@ -2,7 +2,7 @@ import { forkJoin as observableForkJoin, Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/internal/operators/map';
 import { catchError } from 'rxjs/operators';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, Pipe, PipeTransform } from '@angular/core';
+import { Component, Pipe, PipeTransform, Output, EventEmitter } from '@angular/core';
 import {
     DetectorListRendering, DetectorMetaData, DetectorResponse, DiagnosticData, HealthStatus, RenderingType
 } from '../../models/detector';
@@ -27,12 +27,14 @@ import { DataRenderBaseComponent } from '../data-render-base/data-render-base.co
   ]
 })
 export class DetectorListComponent extends DataRenderBaseComponent {
+  @Output() onLoadingComplete = new EventEmitter<boolean>();
 
   LoadingStatus = LoadingStatus;
   renderingProperties: DetectorListRendering;
   detectorMetaData: DetectorMetaData[];
   detectorViewModels: any[];
-  status: any = HealthStatus.None;
+  childDetectorCount: any = 0;
+  detectorListStatus: any = HealthStatus.None;
   DetectorStatus = HealthStatus;
   errorDetectors: any[] = [];
   private childDetectorsEventProperties = {};
@@ -81,9 +83,9 @@ export class DetectorListComponent extends DataRenderBaseComponent {
         for (var childDetector in childDetectorData)
         {
           console.log("hhhh Tried to update parent detector status");
-          this.status = childDetector.ChildDetectorStatus < this.status ? childDetector.ChildDetectorStatus : this.status;
-          console.log(childDetector);
-          console.log(childDetector.ChildDetectorStatus);
+          // this.status = childDetector.ChildDetectorStatus < this.status ? childDetector.ChildDetectorStatus : this.status;
+          // console.log(childDetector);
+          // console.log(childDetector.ChildDetectorStatus);
           console.log(this.status);
           console.log("hhhh Finished");
         }
@@ -113,54 +115,70 @@ export class DetectorListComponent extends DataRenderBaseComponent {
       status: null,
       statusColor: null,
       statusIcon: null,
+      isParentDetector: true,
       expanded: false,
       response: null,
       request: this._diagnosticService.getDetector(detector.id, this._detectorControl.startTimeString, this._detectorControl.endTimeString)
     };
   }
 
-  private getNestedDetectorListStatus(status: any, res: DetectorResponse)
-  {
-    status = res.status.statusId < status ? res.status.statusId: status;
-    if (res.dataset && status > 1)
-    {
-      res.dataset.forEach(dataset => {
-        if (dataset.renderingProperties && dataset.renderingProperties.type === RenderingType.DetectorList) {
-          let rendering : DetectorListRendering = <DetectorListRendering>dataset.renderingProperties;
-          let parentStatus: any = 4;
+  // private getNestedDetectorListStatus(status: any, res: DetectorResponse)
+  // {
+  //   status = res.status.statusId < status ? res.status.statusId: status;
+  //   if (res.dataset && status > 1)
+  //   {
+  //     res.dataset.forEach(dataset => {
+  //       if (dataset.renderingProperties && dataset.renderingProperties.type === RenderingType.DetectorList) {
+  //         let rendering : DetectorListRendering = <DetectorListRendering>dataset.renderingProperties;
+  //         let parentStatus: any = 4;
 
-          for (var detectorId in rendering.detectorIds)
-          {
-            const requests: Observable<any>[] = [];
-            rendering.detectorIds.forEach((detectorId) => {
-              let request = this._diagnosticService.getDetector(detectorId, this._detectorControl.startTimeString, this._detectorControl.endTimeString);
-              requests.push((<Observable<DetectorResponse>>request).pipe(
-                map((response: DetectorResponse) => {
-                  let responseStatus = response.status.statusId;
-                  status = responseStatus < status ? responseStatus: status;
-                  if (status == 1)
-                  {
-                    return;
-                  }
-                  else if (response.dataset)       
-                })
-                , catchError(err => {
-                  return throwError(err);
-                })
-              ));
-            });
-          }
-        }
-        return;
-      });
+  //         for (var detectorId in rendering.detectorIds)
+  //         {
+  //           const requests: Observable<any>[] = [];
+  //           rendering.detectorIds.forEach((detectorId) => {
+  //             let request = this._diagnosticService.getDetector(detectorId, this._detectorControl.startTimeString, this._detectorControl.endTimeString);
+  //             requests.push((<Observable<DetectorResponse>>request).pipe(
+  //               map((response: DetectorResponse) => {
+  //                 let responseStatus = response.status.statusId;
+  //                 status = responseStatus < status ? responseStatus: status;
+  //                 if (status == 1)
+  //                 {
+  //                   return;
+  //                 }
+  //                 else if (response.dataset)       
+  //               })
+  //               , catchError(err => {
+  //                 return throwError(err);
+  //               })
+  //             ));
+  //           });
+  //         }
+  //       }
+  //       return;
+  //     });
+  //   }
+  // }
+
+  private setStatus(detectorId: any, status: any) {
+    this.detectorListStatus = status < this.detectorListStatus ? status: this.detectorListStatus;
+    this.childDetectorCount++;
+    if (this.childDetectorCount == this.renderingProperties.detectorIds.length)
+    {
+      this.dataStatus.emit(this.detectorListStatus);
+      console.log(`${detectorId} emit status: ${status}`);
     }
   }
-
 
   private updateDetectorViewModelSuccess(viewModel: any, res: DetectorResponse) {
     const status = res.status.statusId;
 
     viewModel.loadingStatus = LoadingStatus.Success;
+
+    if (!res.dataset.find(dataset => dataset.renderingProperties.type === RenderingType.DetectorList))
+    {
+      viewModel.isParentDetector = false;
+      viewModel.status = status;
+    }
 
     if (res.dataset && res.status.statusId > 1)
     {
@@ -169,6 +187,7 @@ export class DetectorListComponent extends DataRenderBaseComponent {
           let rendering : DetectorListRendering = <DetectorListRendering>dataset.renderingProperties;
           let parentStatus: any = 4;
           viewModel.loadingStatus = LoadingStatus.Loading;
+
           for (var detectorId in rendering.detectorIds)
           {
             const requests: Observable<any>[] = [];
@@ -197,69 +216,25 @@ export class DetectorListComponent extends DataRenderBaseComponent {
       
               for (var childDetector in childDetectorData)
               {
-                console.log("hhhh Tried to update parent detector status");
-                // this.status = childDetector.ChildDetectorStatus < this.status ? childDetector.ChildDetectorStatus : this.status;
-                // console.log(childDetector);
-                // console.log(childDetector.ChildDetectorStatus);
-                console.log(this.status);
-                console.log("hhhh Finished");
+                // console.log("hhhh Tried to update parent detector status");
+                // // this.status = childDetector.ChildDetectorStatus < this.status ? childDetector.ChildDetectorStatus : this.status;
+                // // console.log(childDetector);
+                // // console.log(childDetector.ChildDetectorStatus);
+                // console.log(this.status);
+                // console.log("hhhh Finished");
               }
       
               this.childDetectorsEventProperties['ChildDetectorsList'] = JSON.stringify(childDetectorData);
               this.logEvent(TelemetryEventNames.ChildDetectorsSummary, this.childDetectorsEventProperties);
             });
           }
-
-    //       dataset.table.rows.forEach(row => {
-    //         if ((insightsNameList.find(insightName => insightName === row[insightColumnIndex])) == null) {
-    //           {
-    //             const isExpanded: boolean = row.length > isExpandedIndex ? row[isExpandedIndex].toLowerCase() === 'true' : false;
-    //             const insightInstance = {
-    //               'Name': row[insightColumnIndex],
-    //               'Status': row[statusColumnIndex],
-    //               'IsExpandedByDefault': isExpanded
-    //             };
-    //             insightsList.push(insightInstance);
-    //             insightsNameList.push(row[insightColumnIndex]);
-  
-    //             switch (row[statusColumnIndex]) {
-    //               case 'Critical':
-    //                 criticalCount++;
-    //                 break;
-    //               case 'Warning':
-    //                 warningCount++;
-    //                 break;
-    //               case 'Success':
-    //                 successCount++;
-    //                 break;
-    //               case 'Info':
-    //                 infoCount++;
-    //                 break;
-    //               default:
-    //                 defaultCount++;
-    //             }
-    //           }
-    //         }
-    //       });
-    //     }
-    //   });
-    // }
    
 
 
-      viewModel.status = status;
     viewModel.statusColor = StatusStyles.getColorByStatus(status);
       viewModel.statusIcon = StatusStyles.getIconByStatus(status);
       viewModel.response = res;
-    
-      if (this.status > status)
-      {
-        console.log(`Update the parent detectors status from ${this.status} to ${status}`);
-        this.status = status;
-      }
-      console.log("Child Detector Status");
-      console.log(viewModel.title);
-      console.log(viewModel.status);
+  
 
     return viewModel;
   }

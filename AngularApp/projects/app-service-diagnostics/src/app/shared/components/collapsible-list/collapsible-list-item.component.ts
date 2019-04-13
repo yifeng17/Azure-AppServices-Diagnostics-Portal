@@ -21,5 +21,4 @@ export class CollapsibleListItemComponent {
             this.onSelect.emit();
         }
     }
-
 }

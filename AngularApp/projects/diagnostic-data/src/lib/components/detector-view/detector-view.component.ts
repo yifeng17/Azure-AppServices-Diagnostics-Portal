@@ -1,9 +1,9 @@
 import { Moment } from 'moment';
 import { BehaviorSubject } from 'rxjs';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
-import { DetectorResponse, Rendering, RenderingType } from '../../models/detector';
+import { DetectorResponse, Rendering, RenderingType, DiagnosticData } from '../../models/detector';
 import { DetectorControlService } from '../../services/detector-control.service';
 import { TelemetryEventNames } from '../../services/telemetry/telemetry.common';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
@@ -22,12 +22,17 @@ import { CompilationProperties} from '../../models/compilation-properties';
   ]
 })
 export class DetectorViewComponent implements OnInit {
+  @Output() aggregatedStatus = new EventEmitter<any>();
 
+  detectorStatus: any;
   detectorDataLocalCopy: DetectorResponse;
   errorState: any;
   isPublic: boolean;
 
-  hideDetectorHeader: boolean = false;
+  hideDetectorHeader: boolean = true;
+  hasChildDetector: boolean = false;
+  datasetCount: any = undefined;
+  aggregatedDatasetCount: any = 0;
 
   buttonViewVisible: boolean = false;
   buttonViewActiveComponent: string;
@@ -87,6 +92,7 @@ export class DetectorViewComponent implements OnInit {
     }
   }
 
+  
   protected loadDetector() {
     this.detectorResponseSubject.subscribe((data: DetectorResponse) => {
       this.detectorDataLocalCopy = data;
@@ -126,11 +132,41 @@ export class DetectorViewComponent implements OnInit {
         this.buttonViewVisible = false;
 
         this.logInsights(data);
-
+        
         this.hideDetectorHeader = data.dataset.findIndex(set => (<Rendering>set.renderingProperties).type === RenderingType.Cards) >= 0;
-
+        this.hasChildDetector= data.dataset.findIndex(set => (<Rendering>set.renderingProperties).type === RenderingType.DetectorList) >= 0;
+        this.detectorStatus = data.status.statusId;
+        this.datasetCount = data.dataset.length;
+        if (this.hasChildDetector === false || this.detectorStatus < 1)
+        {
+          this.aggregatedStatus.emit(this.detectorStatus);
+        }
       }
     });
+  }
+
+  setStatus(data: DiagnosticData, dataStatus: any)
+  {
+    if (this.hasChildDetector === false || this.detectorStatus < 1)
+    {
+      return;
+    }
+
+    if (data.renderingProperties.type === RenderingType.DetectorList)
+    {
+      this.detectorStatus = this.detectorStatus < dataStatus ? this.detectorStatus : dataStatus;
+      if (this.detectorStatus < 1)
+      {
+        this.aggregatedStatus.emit(this.detectorStatus);
+        return;
+      }
+    }
+    this.aggregatedDatasetCount++;
+
+    if (this.datasetCount !== undefined && this.datasetCount == this.aggregatedDatasetCount)
+    {
+      this.aggregatedStatus.emit(this.detectorStatus);
+    }
   }
 
   toggleButtonView(feature: string) {

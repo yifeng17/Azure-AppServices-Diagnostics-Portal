@@ -1,7 +1,7 @@
 import { Moment } from 'moment';
 import { BehaviorSubject } from 'rxjs';
 import {
-    Component, ComponentFactoryResolver, Input, OnInit, ViewChild, ViewContainerRef
+    Component, ComponentFactoryResolver, Input, OnInit, ViewChild, ViewContainerRef, Output, EventEmitter
 } from '@angular/core';
 import { DiagnosticData, Rendering, RenderingType } from '../../models/detector';
 import { CardSelectionComponent } from '../card-selection/card-selection.component';
@@ -35,7 +35,7 @@ import { CompilationProperties}  from '../../models/compilation-properties';
 export class DynamicDataComponent implements OnInit {
 
   private dataBehaviorSubject: BehaviorSubject<DiagnosticData> = new BehaviorSubject<DiagnosticData>(null);
-
+  @Output() dataStatus = new EventEmitter<any>();
   @Input() set diagnosticData(data: DiagnosticData) {
     this.dataBehaviorSubject.next(data);
   }
@@ -53,7 +53,8 @@ export class DynamicDataComponent implements OnInit {
 
   ngOnInit(): void {
     this.dataBehaviorSubject.subscribe((diagnosticData: DiagnosticData) => {
-      const component = this._findInputComponent((<Rendering>diagnosticData.renderingProperties).type);
+      let dynamicDataType = (<Rendering>diagnosticData.renderingProperties).type;
+      const component = this._findInputComponent(dynamicDataType);
       const componentFactory = this.componentFactoryResolver.resolveComponentFactory(component);
 
       const viewContainerRef = this.dynamicDataContainer;
@@ -69,6 +70,15 @@ export class DynamicDataComponent implements OnInit {
       instance.executionScript = this.executionScript;
       instance.detector = this.detector;
       instance.compilationPackage = this.compilationPackage;
+      this.dataStatus = instance.dataStatus;
+      if (dynamicDataType === RenderingType.DetectorList)
+      {
+        this.dataStatus.emit(instance.dataStatus);
+      }
+      else
+      {
+        this.dataStatus.emit(4);
+      }
     });
   }
 

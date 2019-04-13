@@ -1,6 +1,6 @@
 import * as momentNs from 'moment';
 import { ReplaySubject } from 'rxjs';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { DiagnosticData, RenderingType } from '../../models/detector';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import {CompilationProperties} from '../../models/compilation-properties';
@@ -17,6 +17,7 @@ export class DataRenderBaseComponent implements OnInit, DataRenderer {
   protected DataRenderingType: RenderingType;
   private _diagnosticDataSubject: ReplaySubject<DiagnosticData> = new ReplaySubject<DiagnosticData>(1);
 
+  @Output() dataStatus = new EventEmitter<any>();
   @Input() set diagnosticDataInput(detector: DiagnosticData) {
     this._diagnosticDataSubject.next(detector);
   }
