@@ -147,13 +147,16 @@ export class DetectorViewComponent implements OnInit {
 
   setStatus(data: DiagnosticData, dataStatus: any)
   {
+
     if (this.hasChildDetector === false || this.detectorStatus < 1)
     {
+      console.log(`No child detector status, updated the latest status with ${this.detectorStatus}`);
       return;
     }
 
     if (data.renderingProperties.type === RenderingType.DetectorList)
     {
+      console.log(`Detector list, updated the latest status with ${this.detectorStatus}`);
       this.detectorStatus = this.detectorStatus < dataStatus ? this.detectorStatus : dataStatus;
       if (this.detectorStatus < 1)
       {
