@@ -20,6 +20,7 @@ export class SolutionComponent extends DataRenderBaseComponent {
   defaultCopyText = 'Copy to Email';
   copyText = this.defaultCopyText;
   appName: string;
+  renderedInternalMarkdown = '';
 
   constructor(telemetryService: TelemetryService, private _siteService: SolutionService) {
     super(telemetryService);
@@ -29,16 +30,24 @@ export class SolutionComponent extends DataRenderBaseComponent {
     let uriParts = this.solution.ResourceUri.split('/');
     this.appName = uriParts[uriParts.length - 1];
 
-    this.buildSolutionText();
+    if (this.renderedInternalMarkdown === '') {
+        this.buildInternalText();
+    }
   }
 
-  buildSolutionText() {
-    let detectorLink = UriUtilities.BuildDetectorLink(this.solution.ResourceUri, this.solution.DetectorId);
-    let detectorLinkMarkdown = `Go to [Diagnose and Solve Problems](${detectorLink})`;
+  buildInternalText() {
+    let markdownBuilder = this.solution.InternalMarkdown;
 
-    if (!this.solution.InternalMarkdown.includes(detectorLinkMarkdown)) {
-      this.solution.InternalMarkdown = this.solution.InternalMarkdown + "\n\n" + detectorLinkMarkdown;
+    let detectorLink = UriUtilities.BuildDetectorLink(this.solution.ResourceUri, this.solution.DetectorId);
+    let detectorLinkMarkdown = `Go to [App Service Diagnostics](${detectorLink})`;
+
+    if (markdownBuilder.toLowerCase().includes("{detectorlink}")) {
+        markdownBuilder = markdownBuilder.replace(/{detectorlink}/gi, detectorLink);
+    } else if (!markdownBuilder.includes(detectorLinkMarkdown)) {
+        markdownBuilder = markdownBuilder + "\n\n" + detectorLinkMarkdown;
     }
+
+    this.renderedInternalMarkdown = markdownBuilder;
   }
 
   performAction() {
