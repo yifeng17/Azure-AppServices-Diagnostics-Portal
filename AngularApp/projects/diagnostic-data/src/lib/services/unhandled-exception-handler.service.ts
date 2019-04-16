@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
+import { Router } from '@angular/router';
 import { SeverityLevel } from '../models/telemetry';
 import { KustoTelemetryService } from './telemetry/kusto-telemetry.service';
 
@@ -7,14 +8,28 @@ import { KustoTelemetryService } from './telemetry/kusto-telemetry.service';
 })
 export class UnhandledExceptionHandlerService {
 
-  constructor(private logService: KustoTelemetryService) { }
+    router: Router;
 
-  handleError(error: Error) {
-    try {
-      this.logService.logException(error, null, null, null, SeverityLevel.Critical);
+    constructor(private logService: KustoTelemetryService, private injector: Injector) { }
+
+    handleError(error: Error) {
+        try {
+            if (this.router == undefined) {
+                this.router = this.injector.get(Router);
+            }
+
+            const props = {
+                'route': this.router.url
+            }
+
+            if (error.stack != undefined) {
+                props['stack'] = error.stack;
+            }
+
+            this.logService.logException(error, "unhandled", props, null, SeverityLevel.Critical);
+        }
+        catch (err) {
+            // Squash logging error
+        }
     }
-    catch(err) {
-      // Squash logging error
-    }
-  }
 }

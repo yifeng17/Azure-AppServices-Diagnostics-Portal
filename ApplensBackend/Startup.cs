@@ -14,9 +14,10 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace AppLensV3
 {
-    public class Startup {
-        public Startup (IHostingEnvironment env) {
-
+    public class Startup
+    {
+        public Startup(IHostingEnvironment env)
+        {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -34,8 +35,8 @@ namespace AppLensV3
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices (IServiceCollection services) {
-
+        public void ConfigureServices(IServiceCollection services)
+        {
             services.AddApplicationInsightsTelemetry(Configuration);
 
             services.AddSingleton(Configuration);
@@ -55,7 +56,8 @@ namespace AppLensV3
             {
                 auth.DefaultScheme = AzureADDefaults.BearerAuthenticationScheme;
             })
-            .AddAzureADBearer(options => {
+            .AddAzureADBearer(options =>
+            {
                 Configuration.Bind("AzureAd", options);
             });
 
@@ -66,19 +68,19 @@ namespace AppLensV3
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
-
-            if (env.IsDevelopment()) {
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
                 app.UseDeveloperExceptionPage();
             }
 
-            // would not need cors if running in same host
             app.UseCors(cors =>
                 cors
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowAnyOrigin()
-                .WithExposedHeaders(new string[] {"diag-script-etag"})
+                .WithExposedHeaders(new string[] { "diag-script-etag" })
             );
 
             app.UseAuthentication();
@@ -97,13 +99,13 @@ namespace AppLensV3
                 }
             });
 
-            app.UseDefaultFiles ();
-            app.UseStaticFiles ();
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
         }
     }
 
     // Use this to skip Auth on local server
-    public class LocalFilterProvider: IFilterProvider
+    public class LocalFilterProvider : IFilterProvider
     {
         public int Order
         {
@@ -120,7 +122,7 @@ namespace AppLensV3
         public void OnProvidersExecuting(FilterProviderContext context)
         {
             // remove authorize filters
-            var authFilters = context.Results.Where(x =>  x.Descriptor.Filter.GetType() == typeof(AuthorizeFilter)).ToList();
+            var authFilters = context.Results.Where(x => x.Descriptor.Filter.GetType() == typeof(AuthorizeFilter)).ToList();
             foreach (var filter in authFilters)
             {
                 context.Results.Remove(filter);

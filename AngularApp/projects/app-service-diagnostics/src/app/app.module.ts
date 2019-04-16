@@ -1,7 +1,6 @@
 import {
     CommsService, DiagnosticDataModule, DiagnosticService, DiagnosticSiteService,
-    PUBLIC_DEV_CONFIGURATION, PUBLIC_PROD_CONFIGURATION, SolutionService,
-    UnhandledExceptionHandlerService
+    PUBLIC_DEV_CONFIGURATION, PUBLIC_PROD_CONFIGURATION, SolutionService
 } from 'diagnostic-data';
 import { SiteService } from 'projects/app-service-diagnostics/src/app/shared/services/site.service';
 import { HttpClientModule } from '@angular/common/http';
@@ -12,6 +11,9 @@ import { RouteReuseStrategy, RouterModule } from '@angular/router';
 import {
     KustoTelemetryService
 } from '../../../diagnostic-data/src/lib/services/telemetry/kusto-telemetry.service';
+import {
+    UnhandledExceptionHandlerService
+} from '../../../diagnostic-data/src/lib/services/unhandled-exception-handler.service';
 import { environment } from '../environments/environment';
 import { CustomReuseStrategy } from './app-route-reusestrategy.service';
 import { AppComponent } from './app.component';
