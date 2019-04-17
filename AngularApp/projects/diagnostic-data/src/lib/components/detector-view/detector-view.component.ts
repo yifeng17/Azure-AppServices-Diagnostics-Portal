@@ -140,6 +140,7 @@ export class DetectorViewComponent implements OnInit {
         if (this.hasChildDetector === false || this.detectorStatus < 1)
         {
           this.aggregatedStatus.emit(this.detectorStatus);
+          console.log(`Inside Detector view: ${data.metadata.id}, emit status: ${this.detectorStatus}`)
         }
       }
     });

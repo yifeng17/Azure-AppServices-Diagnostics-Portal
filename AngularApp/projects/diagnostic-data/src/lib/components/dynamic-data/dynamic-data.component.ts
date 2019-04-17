@@ -74,10 +74,12 @@ export class DynamicDataComponent implements OnInit {
       if (dynamicDataType === RenderingType.DetectorList)
       {
         this.dataStatus.emit(instance.dataStatus);
+        console.log(`In dynamic data, this is detectorlist, emit the instance status: ${instance.dataStatus}`);
       }
       else
       {
         this.dataStatus.emit(4);
+        console.log(`In dynamic data, not a detectorlist, emit the lowest status: 4`);
       }
     });
   }

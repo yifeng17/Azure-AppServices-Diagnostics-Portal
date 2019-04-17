@@ -77,17 +77,17 @@ export class DetectorListComponent extends DataRenderBaseComponent {
 
       // Log all the children detectors
       observableForkJoin(requests).subscribe(childDetectorData => {
-        console.log("***** Child detectors forkjoin***********");
-        console.log(childDetectorData);
+        // console.log("***** Child detectors forkjoin***********");
+        // console.log(childDetectorData);
 
-        for (var childDetector in childDetectorData) {
-          console.log("hhhh Tried to update parent detector status");
-          // this.status = childDetector.ChildDetectorStatus < this.status ? childDetector.ChildDetectorStatus : this.status;
-          // console.log(childDetector);
-          // console.log(childDetector.ChildDetectorStatus);
-          // console.log(this.status);
-          console.log("hhhh Finished");
-        }
+        // for (var childDetector in childDetectorData) {
+        //   console.log("hhhh Tried to update parent detector status");
+        //   // this.status = childDetector.ChildDetectorStatus < this.status ? childDetector.ChildDetectorStatus : this.status;
+        //   // console.log(childDetector);
+        //   // console.log(childDetector.ChildDetectorStatus);
+        //   // console.log(this.status);
+        //   console.log("hhhh Finished");
+        // }
 
         this.childDetectorsEventProperties['ChildDetectorsList'] = JSON.stringify(childDetectorData);
         this.logEvent(TelemetryEventNames.ChildDetectorsSummary, this.childDetectorsEventProperties);
@@ -164,6 +164,7 @@ export class DetectorListComponent extends DataRenderBaseComponent {
     if (this.childDetectorCount == this.renderingProperties.detectorIds.length) {
       this.dataStatus.emit(this.detectorListStatus);
       console.log(`${detectorId} emit status: ${status}`);
+      console.log(`Child detector count: ${this.childDetectorCount}`);
     }
   }
 
@@ -175,58 +176,76 @@ export class DetectorListComponent extends DataRenderBaseComponent {
     if (!res.dataset.find(dataset => dataset.renderingProperties.type === RenderingType.DetectorList)) {
       viewModel.isParentDetector = false;
       viewModel.status = status;
+      viewModel.statusColor = StatusStyles.getColorByStatus(status);
+      viewModel.statusIcon = StatusStyles.getIconByStatus(status);
+      viewModel.response = res;
+      return viewModel;
+    }
+    else
+    {
+      viewModel.status = this.dataStatus;
+      viewModel.statusColor = StatusStyles.getColorByStatus(status);
+      viewModel.statusIcon = StatusStyles.getIconByStatus(status);
+      viewModel.response = res;
+      console.log(`As a parent, set status to be sum of child status: ${this.dataStatus}`);
+      console.log(this.dataStatus);
+      return viewModel;
     }
 
-    if (res.dataset && res.status.statusId > 1) {
-      res.dataset.forEach(dataset => {
-        if (dataset.renderingProperties && dataset.renderingProperties.type === RenderingType.DetectorList) {
-          let rendering: DetectorListRendering = <DetectorListRendering>dataset.renderingProperties;
-          let parentStatus: any = 4;
-          viewModel.loadingStatus = LoadingStatus.Loading;
+    if (res.dataset && res.status.statusId > 0) {
 
-          for (var detectorId in rendering.detectorIds) {
-            const requests: Observable<any>[] = [];
-            rendering.detectorIds.forEach((detectorId) => {
-              let request = this._diagnosticService.getDetector(detectorId, this._detectorControl.startTimeString, this._detectorControl.endTimeString);
-              requests.push((<Observable<DetectorResponse>>request).pipe(
-                map((response: DetectorResponse) => {
-                  let status = response.status.statusId;
-                  parentStatus = status < parentStatus ? status : parentStatus;
-                  if (parentStatus == 1) {
-                    viewModel.status = parentStatus;
-                  }
-                })
-                , catchError(err => {
-                  viewModel.loadingStatus = LoadingStatus.Failed;
-                  return throwError(err);
-                })
-              ));
-            });
-
-            // Log all the children detectors
-            observableForkJoin(requests).subscribe(childDetectorData => {
-              console.log("***** Child detectors forkjoin***********");
-              console.log(childDetectorData);
-
-              // for (var childDetector in childDetectorData) {
-              //   // console.log("hhhh Tried to update parent detector status");
-              //   // // this.status = childDetector.ChildDetectorStatus < this.status ? childDetector.ChildDetectorStatus : this.status;
-              //   // // console.log(childDetector);
-              //   // // console.log(childDetector.ChildDetectorStatus);
-              //   // console.log(this.status);
-              //   // console.log("hhhh Finished");
-              // }
-
-              this.childDetectorsEventProperties['ChildDetectorsList'] = JSON.stringify(childDetectorData);
-              this.logEvent(TelemetryEventNames.ChildDetectorsSummary, this.childDetectorsEventProperties);
-            });
-          }
-
-          viewModel.statusColor = StatusStyles.getColorByStatus(status);
-          viewModel.statusIcon = StatusStyles.getIconByStatus(status);
-          viewModel.response = res;
-        }});
+      if (res.status.statusId > 0)
+      {
+        console.log(`Get Status for detectorlist: ${res.metadata.id}`);
+        res.dataset.forEach(dataset => {
+          if (dataset.renderingProperties && dataset.renderingProperties.type === RenderingType.DetectorList) {
+            let rendering: DetectorListRendering = <DetectorListRendering>dataset.renderingProperties;
+            let parentStatus: any = 4;
+            viewModel.loadingStatus = LoadingStatus.Loading;
+  
+            for (var detectorId in rendering.detectorIds) {
+              const requests: Observable<any>[] = [];
+              rendering.detectorIds.forEach((detectorId) => {
+                let request = this._diagnosticService.getDetector(detectorId, this._detectorControl.startTimeString, this._detectorControl.endTimeString);
+                requests.push((<Observable<DetectorResponse>>request).pipe(
+                  map((response: DetectorResponse) => {
+                    let status = response.status.statusId;
+                    if (status < parentStatus)
+                    {
+                      console.log(`update Parent: ${res.metadata.id} status, from child ${detectorId}: from ${parentStatus} to ${status}`);
+                    }
+                    parentStatus = status < parentStatus ? status : parentStatus;
+                    if (parentStatus < 1) {
+                      viewModel.status = parentStatus;
+                      viewModel.loadingStatus = LoadingStatus.Success;
+                      console.log(`Parent status reached 0: ${parentStatus}`)
+                    }
+                  })
+                  , catchError(err => {
+                    viewModel.loadingStatus = LoadingStatus.Failed;
+                    return throwError(err);
+                  })
+                ));
+              });
+  
+              // Log all the children detectors
+              observableForkJoin(requests).subscribe(childDetectorData => {
+                this.childDetectorsEventProperties['ChildDetectorsList'] = JSON.stringify(childDetectorData);
+                this.logEvent(TelemetryEventNames.ChildDetectorsSummary, this.childDetectorsEventProperties);
+              });
+            }  
+          }});
+      }
     }
+    else
+    {
+      viewModel.loadingStatus = LoadingStatus.Success;
+      viewModel.status = res.status.statusId;
+    }
+
+    viewModel.statusColor = StatusStyles.getColorByStatus(status);
+    viewModel.statusIcon = StatusStyles.getIconByStatus(status);
+    viewModel.response = res;
 
     return viewModel;
   }
