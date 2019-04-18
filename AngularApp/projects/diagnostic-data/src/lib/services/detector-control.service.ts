@@ -99,7 +99,7 @@ export class DetectorControlService {
         return returnValue;
       }
 
-      if (this.isInternalView) {
+      if (this.internalClient) {
         this.allowedDurationInDays = 3;
       }
       else {
