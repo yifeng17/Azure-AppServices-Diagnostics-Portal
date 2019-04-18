@@ -100,10 +100,10 @@ export class DetectorControlService {
       }
 
       if (this.isInternalView) {
-        this.allowedDurationInDays = 1;
+        this.allowedDurationInDays = 3;
       }
       else {
-        this.allowedDurationInDays = 3;
+        this.allowedDurationInDays = 1;
       }
       if (start && end) {
         let diff: momentNs.Duration = moment.duration(end.diff(start));
