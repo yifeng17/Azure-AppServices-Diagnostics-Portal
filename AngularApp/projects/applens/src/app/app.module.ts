@@ -1,25 +1,26 @@
-
-import {map} from 'rxjs/operators';
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, Injectable, ErrorHandler } from '@angular/core';
-import { RouterModule, Resolve, ActivatedRouteSnapshot, Router, UrlSerializer } from '@angular/router';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { AppComponent } from './app.component';
-import { SharedModule } from './shared/shared.module';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { StartupService } from './shared/services/startup.service';
-import { ArmResource, ResourceServiceInputs } from './shared/models/resources';
-import { Http } from '@angular/http';
+import { AdalService } from 'adal-angular4';
+import { DiagnosticDataModule, UnhandledExceptionHandlerService } from 'diagnostic-data';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { HttpClientModule } from '@angular/common/http';
+import { ErrorHandler, Injectable, NgModule } from '@angular/core';
+import { Http } from '@angular/http';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {
+    ActivatedRouteSnapshot, Resolve, Router, RouterModule, UrlSerializer
+} from '@angular/router';
+import { AppComponent } from './app.component';
 import { AadAuthGuard } from './shared/auth/aad-auth-guard.service';
 import { LoginComponent } from './shared/components/login/login.component';
-import { AdalService, AdalGuard, AdalInterceptor } from 'adal-angular4';
+import { ArmResource, ResourceServiceInputs } from './shared/models/resources';
 import { CustomUrlSerializerService } from './shared/services/custom-url-serializer.service';
-import { DiagnosticDataModule } from 'diagnostic-data';
-import { UnhandledExceptionHandlerService } from 'diagnostic-data';
+import { StartupService } from './shared/services/startup.service';
+import { SharedModule } from './shared/shared.module';
 
 @Injectable()
 export class ValidResourceResolver implements Resolve<void>{
+
   constructor(private _startupService: StartupService, private _http: Http, private _router: Router) { }
 
   resolve(route: ActivatedRouteSnapshot): Observable<any> {
@@ -57,6 +58,10 @@ export const Routes = RouterModule.forRoot([
           {
             path: '',
             loadChildren: './modules/main/main.module#MainModule'
+          },
+          {
+            path: 'admin',
+            loadChildren: './modules/admin/admin.module#AdminModule'
           },
           {
             path: 'sites/:site',

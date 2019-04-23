@@ -1,15 +1,14 @@
+import { BehaviorSubject } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
-import { Site } from '../models/site';
-import { ServerFarm } from '../models/server-farm';
-import { StartupInfo, ResourceType } from '../models/portal';
-
-import { ResponseMessageEnvelope } from '../models/responsemessageenvelope';
-import { BehaviorSubject } from 'rxjs';
-import { ArmService } from './arm.service';
-import { UriElementsService } from './urielements.service';
 import { AuthService } from '../../startup/services/auth.service';
+import { ResourceType, StartupInfo } from '../models/portal';
+import { ResponseMessageEnvelope } from '../models/responsemessageenvelope';
+import { ServerFarm } from '../models/server-farm';
+import { Site } from '../models/site';
+import { ArmService } from './arm.service';
 import { RBACService } from './rbac.service';
+import { UriElementsService } from './urielements.service';
 
 @Injectable()
 export class ServerFarmDataService {
