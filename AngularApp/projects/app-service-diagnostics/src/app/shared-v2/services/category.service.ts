@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Category } from '../models/category';
-import { DiagnosticService } from 'diagnostic-data';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable()

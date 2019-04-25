@@ -9,7 +9,6 @@ import { AppType } from '../../../../shared/models/portal';
 import { OperatingSystem, HostingEnvironmentKind } from '../../../../shared/models/site';
 import { Sku } from '../../../../shared/models/server-farm';
 
-
 @Component({
   selector: 'diagnostic-tools',
   templateUrl: './diagnostic-tools.component.html',
@@ -18,13 +17,10 @@ import { Sku } from '../../../../shared/models/server-farm';
 export class DiagnosticToolsComponent {
 
   toolCategories: SiteFilteredItem<any>[] = [];
-
   stackFound: boolean = false;
   stack: string;
-
   siteToBeDiagnosed: SiteDaasInfo;
   scmPath: string;
-
   possibleStacks: string[] = [
     'ASP.NET',
     'ASP.NET Core',
@@ -63,7 +59,7 @@ export class DiagnosticToolsComponent {
         })
       }
     });
-    
+
     this.toolCategories.push(<SiteFilteredItem<any>>{
       appType: AppType.WebApp | AppType.FunctionApp,
       platform: OperatingSystem.windows,

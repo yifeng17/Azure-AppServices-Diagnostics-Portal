@@ -1,10 +1,10 @@
+import { DetectorMetaData, DetectorTag, DiagnosticService } from 'diagnostic-data';
 import { Injectable } from '@angular/core';
-import { DiagnosticService, DetectorMetaData } from 'diagnostic-data';
-import { Category } from '../models/category';
-import { Feature, FeatureType, FeatureTypes, FeatureAction } from '../models/features';
-import { ContentService } from './content.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from '../../startup/services/auth.service';
+import { Category } from '../models/category';
+import { Feature, FeatureAction, FeatureTypes } from '../models/features';
+import { ContentService } from './content.service';
 import { LoggingV2Service } from './logging-v2.service';
 
 @Injectable()
@@ -20,16 +20,19 @@ export class FeatureService {
 
       this._diagnosticApiService.getDetectors().subscribe(detectors => {
         detectors.forEach(detector => {
-          this._features.push(<Feature>{
-            id: detector.id,
-            description: detector.description,
-            category: detector.category,
-            featureType: FeatureTypes.Detector,
-            name: detector.name,
-            clickAction: this._createFeatureAction(detector.name, detector.category, () => {
-              this._router.navigateByUrl(`resource${startupInfo.resourceId}/detectors/${detector.id}`);
-            })
-          });
+          if (!detector.tags.includes(DetectorTag.WaitingForValidation)) {
+            this._features.push(<Feature>{
+                id: detector.id,
+                description: detector.description,
+                category: detector.category,
+                featureType: FeatureTypes.Detector,
+                name: detector.name,
+                tags: detector.tags,
+                clickAction: this._createFeatureAction(detector.name, detector.category, () => {
+                this._router.navigateByUrl(`resource${startupInfo.resourceId}/detectors/${detector.id}`);
+                })
+            });
+          }
         });
       });
 

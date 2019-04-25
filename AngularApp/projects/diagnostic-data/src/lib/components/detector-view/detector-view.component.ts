@@ -8,6 +8,7 @@ import { DetectorControlService } from '../../services/detector-control.service'
 import { TelemetryEventNames } from '../../services/telemetry/telemetry.common';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { CompilationProperties} from '../../models/compilation-properties';
+
 @Component({
   selector: 'detector-view',
   templateUrl: './detector-view.component.html',
@@ -68,8 +69,7 @@ export class DetectorViewComponent implements OnInit {
   @Input() compilationPackage: CompilationProperties;
   feedbackButtonLabel: string = 'Send Feedback';
 
-  constructor(@Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig, private telemetryService: TelemetryService,
-    private detectorControlService: DetectorControlService) {
+  constructor(@Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig, private telemetryService: TelemetryService) {
     this.isPublic = config && config.isPublic;
     this.feedbackButtonLabel = this.isPublic ? 'Send Feedback' : 'Rate Detector';
   }
@@ -128,7 +128,6 @@ export class DetectorViewComponent implements OnInit {
         this.logInsights(data);
 
         this.hideDetectorHeader = data.dataset.findIndex(set => (<Rendering>set.renderingProperties).type === RenderingType.Cards) >= 0;
-
       }
     });
   }

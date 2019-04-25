@@ -7,6 +7,7 @@ import { NgxSmartModalService } from 'ngx-smart-modal';
 import { forkJoin, Observable, of } from 'rxjs';
 import { flatMap, map } from 'rxjs/operators';
 import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Package } from '../../../shared/models/package';
 import { GithubApiService } from '../../../shared/services/github-api.service';
 import { ResourceService } from '../../../shared/services/resource.service';
@@ -265,9 +266,9 @@ export class OnboardingFlowComponent implements OnInit {
           this.buildOutput.push(element);
         });
 
-        // If the script etag returned by the server does not match the previous script-etag, update the values in memory
-        if (response.headers.get('diag-script-etag') != undefined && this.compilationPackage.scriptETag !== response.headers.get('diag-script-etag')) {
-          this.compilationPackage.scriptETag = response.headers.get('diag-script-etag');
+        let diagScriptEtag = response.headers.get('diag-script-etag');
+        if (diagScriptEtag != undefined && diagScriptEtag !== this.compilationPackage.scriptETag) {
+          this.compilationPackage.scriptETag = diagScriptEtag;
           this.compilationPackage.assemblyName = this.queryResponse.compilationOutput.assemblyName;
           this.compilationPackage.assemblyBytes = this.queryResponse.compilationOutput.assemblyBytes;
           this.compilationPackage.pdbBytes = this.queryResponse.compilationOutput.pdbBytes;
@@ -345,12 +346,12 @@ export class OnboardingFlowComponent implements OnInit {
     let temp = {};
     let newPackage = [];
     let ids = new Set(Object.keys(this.configuration['dependencies']));
-    if(queryResponse.compilationOutput.references != null) {
-      queryResponse.compilationOutput.references.forEach(r => {
-        if (ids.has(r)) {
-          temp[r] = this.configuration['dependencies'][r];
+    if (queryResponse.compilationOutput.references != null) {
+      queryResponse.compilationOutput.references.forEach(outputRef => {
+        if (ids.has(outputRef)) {
+          temp[outputRef] = this.configuration['dependencies'][outputRef];
         } else {
-          newPackage.push(r);
+          newPackage.push(outputRef);
         }
       });
     }
@@ -367,7 +368,9 @@ export class OnboardingFlowComponent implements OnInit {
   }
 
   private preparePublishingPackage(queryResponse: QueryResponse<DetectorResponse>, code: string) {
-    if (queryResponse.invocationOutput.metadata.author !== null && queryResponse.invocationOutput.metadata.author !== "" && this.emailRecipients.indexOf(queryResponse.invocationOutput.metadata.author) < 0) {
+    if (queryResponse.invocationOutput.metadata.author !== null &&
+        queryResponse.invocationOutput.metadata.author !== "" &&
+        this.emailRecipients.indexOf(queryResponse.invocationOutput.metadata.author) < 0) {
       this.emailRecipients += ';' + queryResponse.invocationOutput.metadata.author;
     }
 
@@ -387,7 +390,8 @@ export class OnboardingFlowComponent implements OnInit {
         committedByAlias: this.userName,
         dllBytes: queryResponse.compilationOutput.assemblyBytes,
         pdbBytes: queryResponse.compilationOutput.pdbBytes,
-        packageConfig: JSON.stringify(this.configuration)
+        packageConfig: JSON.stringify(this.configuration),
+        tags: queryResponse.invocationOutput.tags
       };
     });
   }

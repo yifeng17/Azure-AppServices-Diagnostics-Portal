@@ -1,3 +1,4 @@
+import { DetectorTag } from "diagnostic-data";
 
 export interface Package {
     codeString: string;
@@ -6,6 +7,7 @@ export interface Package {
     packageConfig: string;
     dllBytes: string;
     pdbBytes: string;
+    tags: DetectorTag[];
 }
 
 export interface Dependency {

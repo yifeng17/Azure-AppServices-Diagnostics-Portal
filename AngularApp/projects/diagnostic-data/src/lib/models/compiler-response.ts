@@ -1,3 +1,5 @@
+import { DetectorTag } from "./detector";
+
 export interface CompilerResponse {
     compilationSucceeded: boolean;
     compilationTraces: string[];
@@ -6,6 +8,7 @@ export interface CompilerResponse {
     pdbBytes: string;
     assemblyName: string;
     scriptETag: string;
+    tags: DetectorTag[];
 }
 
 export interface QueryResponse<T> {

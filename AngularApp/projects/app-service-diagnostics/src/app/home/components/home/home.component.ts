@@ -1,12 +1,10 @@
+import { DetectorControlService } from 'diagnostic-data';
 import { Component, OnInit } from '@angular/core';
-import { ResourceService } from '../../../shared-v2/services/resource.service';
-import { CategoryService } from '../../../shared-v2/services/category.service';
+import { Router } from '@angular/router';
 import { Category } from '../../../shared-v2/models/category';
-import { NotificationService, Notification } from '../../../shared-v2/services/notification.service';
-import { Router, ActivatedRoute } from '@angular/router';
-import { DetectorControlService, FeatureNavigationService } from 'diagnostic-data';
-import { FeatureService } from '../../../shared-v2/services/feature.service';
+import { CategoryService } from '../../../shared-v2/services/category.service';
 import { LoggingV2Service } from '../../../shared-v2/services/logging-v2.service';
+import { ResourceService } from '../../../shared-v2/services/resource.service';
 import { AuthService } from '../../../startup/services/auth.service';
 
 @Component({
@@ -17,19 +15,15 @@ import { AuthService } from '../../../startup/services/auth.service';
 export class HomeComponent implements OnInit {
 
   resourceName: string;
-
   categories: Category[];
-
   searchValue: string;
   searchBoxFocus: boolean;
-
   searchLogTimout: any;
-
   event: any;
 
-  constructor(private _resourceService: ResourceService, private _categoryService: CategoryService, private _notificationService: NotificationService, private _router: Router,
-    private _detectorControlService: DetectorControlService, private _featureService: FeatureService, private _logger: LoggingV2Service, private _authService: AuthService,
-    private _navigator: FeatureNavigationService, private _activatedRoute: ActivatedRoute) {
+  constructor(private _resourceService: ResourceService, private _categoryService: CategoryService,
+    private _router: Router, private _detectorControlService: DetectorControlService, private _logger: LoggingV2Service,
+    private _authService: AuthService) {
     this._categoryService.categories.subscribe(categories => this.categories = categories);
 
     this._authService.getStartupInfo().subscribe(startupInfo => {

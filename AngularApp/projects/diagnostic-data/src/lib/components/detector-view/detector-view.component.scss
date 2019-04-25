@@ -1,5 +1,7 @@
-.edit-button{
-    float:right;
+@import '../../../../../app-service-diagnostics/src/styles/main';
+
+.edit-button {
+    float: right;
     margin-top: 10px;
 }
 
@@ -22,7 +24,7 @@
 
 .description {
     color: #666;
-    padding-left:0;
+    padding-left: 0;
 }
 
 .content-header {
@@ -35,7 +37,7 @@
     display: inline-block
 }
 
-.detector-button-list > span{
+.detector-button-list>span {
     color: white;
 }
 
@@ -45,4 +47,14 @@
 
 .custom-button-align-left {
     margin-left: 0px;
+}
+
+.detector-tag {
+    margin-left: 1.5em;
+    border-radius: 5px;
+    padding: 3px;
+    font-size: 11px;
+    font-weight: bold;
+    color: #fafafa;
+    background-color: $primary-color-dark;
 }

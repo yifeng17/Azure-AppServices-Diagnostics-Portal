@@ -13,19 +13,13 @@ import { ApplensDiagnosticService } from '../services/applens-diagnostic.service
 })
 export class SideNavComponent implements OnInit {
 
-  detectorsLoading: boolean = true;
-
+  detectorsLoading = true;
   currentRoutePath: string[];
-
   categories: CollapsibleMenuItem[] = [];
-
   gists: CollapsibleMenuItem[] = [];
-
   searchValue: string;
-
   contentHeight: string;
-
-  getDetectorsRouteNotFound: boolean = false;
+  getDetectorsRouteNotFound = false;
 
   constructor(private _router: Router, private _activatedRoute: ActivatedRoute, private _diagnosticApiService: ApplensDiagnosticService, public resourceService: ResourceService) {
     this.contentHeight = (window.innerHeight - 139) + 'px';
@@ -145,7 +139,7 @@ export class SideNavComponent implements OnInit {
               categoryMenuItem = new CollapsibleMenuItem(c, null, null, null, true);
               this.gists.push(categoryMenuItem);
             }
-  
+
             categoryMenuItem.subItems.push(menuItem);
           });
         });

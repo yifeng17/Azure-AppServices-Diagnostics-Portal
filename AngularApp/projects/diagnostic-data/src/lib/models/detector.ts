@@ -1,4 +1,3 @@
-
 export interface ArmObject {
     id: string;
     name: string;
@@ -10,6 +9,7 @@ export interface DetectorResponse {
     metadata: DetectorMetaData;
     status: Status;
     dataProvidersMetadata: DataProviderMetadata[];
+    tags: DetectorTag[];
 }
 
 export interface Status {
@@ -49,6 +49,7 @@ export interface DetectorMetaData {
     author: string;
     supportTopicList: SupportTopic[];
     category: string;
+    tags: DetectorTag[];
 }
 
 export interface DataProviderMetadata {
@@ -70,6 +71,10 @@ export interface KustoPropertyBagValue {
 export interface SupportTopic {
     id: string;
     pesId: string;
+}
+
+export enum DetectorTag {
+    WaitingForValidation = "WaitingForValidation"
 }
 
 export enum RenderingType {

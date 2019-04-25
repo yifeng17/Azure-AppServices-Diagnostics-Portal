@@ -32,11 +32,19 @@ export class GenericApiService {
 
         if (this.useLocal) {
             const path = `v4${this.resourceId}/detectors?stampName=waws-prod-bay-085&hostnames=netpractice.azurewebsites.net`;
-            return this.invoke<DetectorResponse[]>(path, 'POST').pipe(map(response => response.map(detector => detector.metadata)));
+            return this.invoke<DetectorResponse[]>(path, 'POST').pipe(
+                map(response => response.map(detector => {
+                    detector.metadata.tags = detector.tags;
+                    return detector.metadata;
+                }))
+            );
         } else {
             const path = `${this.resourceId}/detectors`;
             return this._armService.getResourceCollection<DetectorResponse[]>(path).pipe(map((response: ResponseMessageEnvelope<DetectorResponse>[]) => {
-                this.detectorList = response.map(listItem => listItem.properties.metadata);
+                this.detectorList = response.map(detector => {
+                    detector.properties.metadata.tags = detector.tags;
+                    return detector.properties.metadata;
+                });
                 return this.detectorList;
             }));
         }

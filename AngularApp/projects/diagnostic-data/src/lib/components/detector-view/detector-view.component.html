@@ -6,7 +6,7 @@
       </h1>
       <div class="description">{{detectorDataLocalCopy.metadata.description}}</div>
       <section *ngIf="!isPublic">
-        <div class="description">By
+        <span class="description">By
           <span style="padding:2px; color: #0066c0;">
             <a *ngIf="authorInfo !== ''; else unknownAuthor" href="mailto:{{authorEmails}}?cc=applensdisc@microsoft.com&subject=Detector%20Feedback%20for%20{{feedbackDetector}}&body=Please%20provide%20your%20feedback%20here:%0D%0A%0D%0A%0D%0A%0D%0A{{currentSiteString}}">
               {{authorInfo}}
@@ -15,7 +15,9 @@
               Unknown
             </ng-template>
           </span>
-        </div>
+        </span>
+        <span *ngFor="let tag of detectorDataLocalCopy.tags" class="detector-tag">{{tag}}</span>
+        <span *ngIf="!detectorDataLocalCopy.tags" class="detector-tag">No Tags</span>
       </section>
       <div *ngIf="!insideDetectorList">
         <div style="margin-top:10px">
@@ -46,7 +48,7 @@
   </div>
 
   <div *ngFor="let data of detectorDataLocalCopy.dataset" class="dynamic-data-container">
-    <dynamic-data [diagnosticData]="data" [startTime]="startTime" [endTime]="endTime" [detectorEventProperties]="detectorEventProperties" 
+    <dynamic-data [diagnosticData]="data" [startTime]="startTime" [endTime]="endTime" [detectorEventProperties]="detectorEventProperties"
     [developmentMode]="developmentMode" [executionScript]="script" [detector]="detector" [compilationPackage]="compilationPackage"></dynamic-data>
   </div>
 </div>

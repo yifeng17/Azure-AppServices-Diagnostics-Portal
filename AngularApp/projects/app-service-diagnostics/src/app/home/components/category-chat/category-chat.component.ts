@@ -1,5 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
-import { MessageProcessor } from '../../../supportbot/message-processor.service';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CategoryService } from '../../../shared-v2/services/category.service';
 import { Category } from '../../../shared-v2/models/category';
@@ -17,7 +16,7 @@ export class CategoryChatComponent implements OnInit {
 
   category: Category;
 
-  constructor(private _injector: Injector, private _activatedRoute: ActivatedRoute, private _categoryService: CategoryService, private _chatState: CategoryChatStateService) {
+  constructor(private _activatedRoute: ActivatedRoute, private _categoryService: CategoryService, private _chatState: CategoryChatStateService) {
 
     this._categoryService.categories.subscribe(categories => {
       this.category = categories.find(category => category.id === this._activatedRoute.snapshot.params.category);

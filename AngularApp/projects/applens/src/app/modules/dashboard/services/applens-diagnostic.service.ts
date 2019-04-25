@@ -14,8 +14,8 @@ export class ApplensDiagnosticService {
 
   getDetector(detector: string, startTime: string, endTime: string, refresh: boolean = false, internalView: boolean = true, formQueryParams?: string): Observable<DetectorResponse> {
     return this._diagnosticApi.getDetector(
-      this._resourceService.versionPrefix, 
-      this._resourceService.getCurrentResourceId(true), 
+      this._resourceService.versionPrefix,
+      this._resourceService.getCurrentResourceId(true),
       detector,
       startTime,
       endTime,
@@ -27,7 +27,7 @@ export class ApplensDiagnosticService {
 
   getSystemInvoker(detector: string, systemInvokerId: string = '', dataSource: string, timeRange: string): Observable<DetectorResponse> {
     return this._diagnosticApi.getSystemInvoker(
-      this._resourceService.getCurrentResourceId(true), 
+      this._resourceService.getCurrentResourceId(true),
       detector,
       systemInvokerId,
       dataSource,
@@ -37,7 +37,7 @@ export class ApplensDiagnosticService {
 
   getDetectors(): Observable<DetectorMetaData[]> {
     return this._diagnosticApi.getDetectors(
-      this._resourceService.versionPrefix, 
+      this._resourceService.versionPrefix,
       this._resourceService.getCurrentResourceId(true),
       this._resourceService.getRequestBody());
   }
@@ -49,7 +49,9 @@ export class ApplensDiagnosticService {
       this._resourceService.getRequestBody());
   }
 
-  getCompilerResponse(body: any, isSystemInvoker: boolean, detectorId: string = '', startTime: string = '', endTime: string = '', dataSource: string = '', timeRange: string = '', additionalParams: any): Observable<QueryResponse<DetectorResponse>> {
+  getCompilerResponse(body: any, isSystemInvoker: boolean, detectorId: string = '', startTime: string = '',
+    endTime: string = '', dataSource: string = '', timeRange: string = '', additionalParams: any):
+    Observable<QueryResponse<DetectorResponse>> {
     body.resource = this._resourceService.getRequestBody();
     if (isSystemInvoker === false)
     {
@@ -75,7 +77,7 @@ export class ApplensDiagnosticService {
 
   prepareLocalDevelopment(body: any, detectorId: string = '', startTime: string = '', endTime: string = '', dataSource: string = '', timeRange: string = ''): Observable<string> {
     body.resource = this._resourceService.getRequestBody();
-    detectorId = detectorId === '' ? 'newdetector' : detectorId; 
+    detectorId = detectorId === '' ? 'newdetector' : detectorId;
     return this._diagnosticApi.getLocalDevelopmentResponse(
       detectorId.toLowerCase(),
       this._resourceService.versionPrefix,

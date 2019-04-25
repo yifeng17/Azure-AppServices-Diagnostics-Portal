@@ -57,7 +57,7 @@ export class DetectorListComponent extends DataRenderBaseComponent {
       this.detectorViewModels.forEach((metaData, index) => {
         requests.push((<Observable<DetectorResponse>>metaData.request).pipe(
           map((response: DetectorResponse) => {
-            this.detectorViewModels[index] = this.updateDetectorViewModelSuccess(metaData, response);            
+            this.detectorViewModels[index] = this.updateDetectorViewModelSuccess(metaData, response);
             return {
               'ChildDetectorName': this.detectorViewModels[index].title,
               'ChildDetectorId': this.detectorViewModels[index].metadata.id,
