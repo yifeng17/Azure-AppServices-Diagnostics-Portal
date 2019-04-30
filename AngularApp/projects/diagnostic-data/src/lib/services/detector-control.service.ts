@@ -119,7 +119,7 @@ export class DetectorControlService {
             }
             else {
               if (diff.asMinutes() === 0) {
-                returnValue = 'Start and End date time cannot be equal.';
+                returnValue = 'Start and End date time cannot be the same.';
               }
               else {
                 if (diff.asMinutes() < 15) {
