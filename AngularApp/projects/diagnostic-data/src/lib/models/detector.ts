@@ -74,7 +74,8 @@ export interface SupportTopic {
 }
 
 export enum DetectorTag {
-    WaitingForValidation = "WaitingForValidation"
+    WaitingForValidation = 'WaitingForValidation',
+    OverrideValidation = 'OverrideValidation'
 }
 
 export enum RenderingType {

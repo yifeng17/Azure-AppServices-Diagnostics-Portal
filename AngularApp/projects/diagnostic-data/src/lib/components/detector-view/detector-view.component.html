@@ -37,6 +37,9 @@
             <span *ngIf="buttonViewActiveComponent !== Report">Copy Report</span>
             <span *ngIf="buttonViewActiveComponent === Report">Hide Report</span>
           </button>
+          <button *ngIf="hasValidationTag" (click)="overrideValidation()" class="custom-button detector-button-list">
+            Override Validation
+          </button>
         </div>
         <div style="height:0px;overflow-y: hidden" [@expand]="buttonViewVisible ? 'shown' : 'hidden'">
             <feedback *ngIf="buttonViewActiveComponent === Feedback" [showFeedbackForm]="buttonViewVisible" (showFeedbackFormChange)="toggleButtonView(Feedback)" [source]="'appanalysis'" [ratingEventProperties]="ratingEventProperties"></feedback>
@@ -56,5 +59,6 @@
 <loader-view style="margin-top:300px" *ngIf="!detectorDataLocalCopy && !errorState" message="Loading Detector..."></loader-view>
 
 <ng-container *ngIf="!detectorDataLocalCopy && errorState">
-  Error: <span class="critical-color" *ngIf="errorState.error">{{errorState.error}}</span><span class="critical-color" *ngIf="!errorState.error">Unknown error occurred.</span>
+  Error: <span class="critical-color" *ngIf="errorState.error">{{errorState.error}}</span>
+  <span class="critical-color" *ngIf="!errorState.error">Unknown error occurred.</span>
 </ng-container>

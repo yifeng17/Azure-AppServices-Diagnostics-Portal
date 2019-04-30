@@ -1,13 +1,13 @@
+import { DetectorTag } from 'diagnostic-data';
 import { Moment } from 'moment';
 import { BehaviorSubject } from 'rxjs';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
+import { CompilationProperties } from '../../models/compilation-properties';
 import { DetectorResponse, Rendering, RenderingType } from '../../models/detector';
-import { DetectorControlService } from '../../services/detector-control.service';
 import { TelemetryEventNames } from '../../services/telemetry/telemetry.common';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
-import { CompilationProperties} from '../../models/compilation-properties';
 
 @Component({
   selector: 'detector-view',
@@ -28,22 +28,23 @@ export class DetectorViewComponent implements OnInit {
   errorState: any;
   isPublic: boolean;
 
-  hideDetectorHeader: boolean = false;
+  hideDetectorHeader = false;
 
-  buttonViewVisible: boolean = false;
+  buttonViewVisible = false;
   buttonViewActiveComponent: string;
 
-  readonly Feedback: string = 'Feedback';
-  readonly Report: string = 'Report';
+  readonly Feedback = 'Feedback';
+  readonly Report = 'Report';
 
-  private detectorResponseSubject: BehaviorSubject<DetectorResponse> = new BehaviorSubject<DetectorResponse>(null);
-  private errorSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+  private detectorResponseSubject = new BehaviorSubject<DetectorResponse>(null);
+  private errorSubject = new BehaviorSubject<any>(null);
 
   detectorEventProperties: { [name: string]: string };
   ratingEventProperties: { [name: string]: string };
   authorEmails: string;
   insightsListEventProperties = {};
   currentSiteString = `Current Site: ${window.location.href} `;
+  hasValidationTag: boolean;
 
   @Input()
   set detectorResponse(value: DetectorResponse) {
@@ -57,17 +58,17 @@ export class DetectorViewComponent implements OnInit {
 
   @Input() startTime: Moment;
   @Input() endTime: Moment;
-  @Input() showEdit: boolean = true;
-  @Input() insideDetectorList: boolean = false;
-  @Input() parentDetectorId: string = '';
-  @Input() isSystemInvoker: boolean = false;
-  @Input() authorInfo: string = '';
-  @Input() feedbackDetector: string = '';
-  @Input() developmentMode: boolean = false;
+  @Input() showEdit = true;
+  @Input() insideDetectorList = false;
+  @Input() parentDetectorId = '';
+  @Input() isSystemInvoker = false;
+  @Input() authorInfo = '';
+  @Input() feedbackDetector = '';
+  @Input() developmentMode = false;
   @Input() script: string = '';
   @Input() detector: string = '';
   @Input() compilationPackage: CompilationProperties;
-  feedbackButtonLabel: string = 'Send Feedback';
+  feedbackButtonLabel = 'Send Feedback';
 
   constructor(@Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig, private telemetryService: TelemetryService) {
     this.isPublic = config && config.isPublic;
@@ -85,6 +86,8 @@ export class DetectorViewComponent implements OnInit {
     if (!this.insideDetectorList) {
       this.telemetryService.logPageView(TelemetryEventNames.DetectorViewLoaded);
     }
+
+    this.hasValidationTag = this.detectorDataLocalCopy.tags.includes(DetectorTag.WaitingForValidation);
   }
 
   protected loadDetector() {
@@ -130,6 +133,15 @@ export class DetectorViewComponent implements OnInit {
         this.hideDetectorHeader = data.dataset.findIndex(set => (<Rendering>set.renderingProperties).type === RenderingType.Cards) >= 0;
       }
     });
+  }
+
+  overrideValidation() {
+    this.detectorDataLocalCopy.tags = this.detectorDataLocalCopy.tags.map(x => {
+        if (x != DetectorTag.WaitingForValidation){
+            return x;
+        }
+    });
+    this.detectorDataLocalCopy.tags.push(DetectorTag.OverrideValidation);
   }
 
   toggleButtonView(feature: string) {
@@ -221,7 +233,6 @@ export class DetectorViewComponent implements OnInit {
       this.logEvent(TelemetryEventNames.InsightsSummary, this.insightsListEventProperties);
     }
   }
-
 
   protected logEvent(eventMessage: string, eventProperties?: any, measurements?: any) {
     for (const id of Object.keys(this.detectorEventProperties)) {
