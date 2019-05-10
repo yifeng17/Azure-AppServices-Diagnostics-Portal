@@ -48,6 +48,8 @@ export interface DetectorMetaData {
     description: string;
     author: string;
     supportTopicList: SupportTopic[];
+    analysisTypes: string[];
+    type: DetectorType;
     category: string;
 }
 
@@ -72,6 +74,10 @@ export interface SupportTopic {
     pesId: string;
 }
 
+export enum DetectorType{
+    Detector = "Detector",
+    Analysis = "Analysis"
+}
 export enum RenderingType {
     NoGraph = 0,
     Table,
