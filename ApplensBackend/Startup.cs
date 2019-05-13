@@ -40,9 +40,16 @@ namespace AppLensV3
             services.AddApplicationInsightsTelemetry(Configuration);
 
             services.AddSingleton(Configuration);
-
-            services.AddSingleton<IObserverClientService, SupportObserverClientService>();
             services.AddSingleton<IDiagnosticClientService, DiagnosticRoleClient>();
+            if (Configuration.GetValue<bool>("Observer:diagnosticObserverEnabled"))
+            {
+                services.AddSingleton<IObserverClientService, DiagnosticObserverClientService>();
+            }
+            else
+            {
+                services.AddSingleton<IObserverClientService, SupportObserverClientService>();
+            }
+
             services.AddSingleton<IGithubClientService, GithubClientService>();
             services.AddSingleton<IKustoQueryService, KustoQueryService>();
             services.AddSingleton<IKustoTokenRefreshService, KustoTokenRefreshService>();
