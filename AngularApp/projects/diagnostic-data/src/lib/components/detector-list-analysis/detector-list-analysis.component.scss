@@ -35,9 +35,15 @@
 }
 
 .stepper-circle-green {
-    background-color: #87d286;
+    background-color: #7fba00;
     z-index: 1;
 }
+
+.stepper-circle-brown {
+    background-color: #ff9104;
+    z-index: 1;
+}
+
 
 .list-item {
     // display: table-row;
@@ -69,8 +75,9 @@
     z-index: 0;
 }
 
-.dark{
-    color:black;
+.list-text {
+    margin-top: 10px;
+    margin-bottom: 20px;
 }
 
 .detector-list {
@@ -101,3 +108,18 @@
     font-size: 20px;
     font-weight: lighter;
   }
+
+.special .list-group-item:first-child {
+    border-top-right-radius: 0px !important;
+    border-top-left-radius: 0px !important;
+ }
+ 
+.special .list-group-item:last-child {
+   border-bottom-right-radius: 0px !important;
+   border-bottom-left-radius: 0px !important;
+ }
+
+.nopadding {
+    padding: 0 !important;
+    margin: 5px !important;
+ }
