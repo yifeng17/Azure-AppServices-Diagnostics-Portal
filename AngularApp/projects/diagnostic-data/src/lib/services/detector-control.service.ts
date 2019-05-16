@@ -15,22 +15,26 @@ export class DetectorControlService {
     {
       displayName: '1h',
       duration: momentNs.duration(1, 'hours'),
-      internalOnly: false
+      internalOnly: false,
+      ariaLabel: "1 Hour"
     },
     {
       displayName: '6h',
       duration: momentNs.duration(6, 'hours'),
-      internalOnly: false
+      internalOnly: false,
+      ariaLabel: "6 Hours"
     },
     {
       displayName: '1d',
       duration: momentNs.duration(1, 'days'),
-      internalOnly: false
+      internalOnly: false,
+      ariaLabel: "1 Day"
     },
     {
       displayName: '3d',
       duration: momentNs.duration(3, 'days'),
-      internalOnly: true
+      internalOnly: true,
+      ariaLabel: "3 Days"
     }
   ];
 
@@ -281,4 +285,5 @@ export interface DurationSelector {
   displayName: string;
   duration: momentNs.Duration;
   internalOnly: boolean;
+  ariaLabel: string;
 }
