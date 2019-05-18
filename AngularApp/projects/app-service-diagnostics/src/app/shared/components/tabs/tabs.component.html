@@ -2,7 +2,7 @@
   <div class="panel-heading app-nav-bar">
     <ul class="nav nav-tabs">
 
-      <li role="presentation" class="app-nav-tab" *ngFor="let tab of navigationItems; let i = index"
+      <li role="tab" class="app-nav-tab" *ngFor="let tab of navigationItems; let i = index"
           [routerLink]="[tab.url]" [ngClass]="{'active':  tab.isActive}">
         <a>
           {{tab.title}}
