@@ -115,13 +115,13 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
 
                 if (this.detectorViewModels[index].loadingStatus !== LoadingStatus.Failed) {
                   if (this.detectorViewModels[index].status === HealthStatus.Critical || this.detectorViewModels[index].status === HealthStatus.Warning) {
-                    let insight = this.getDetectorInsight(this.detectorViewModels[index]);
-                    let issueDetectedViewModel = { model: this.detectorViewModels[index], insightTitle: insight.title, insightDescription: insight.description };
+                    let insights = this.getDetectorInsights(this.detectorViewModels[index], (status:HealthStatus)=>{ return status === HealthStatus.Critical || status === HealthStatus.Warning });
+                    let issueDetectedViewModel = { model: this.detectorViewModels[index], insights: insights };
                     this.issueDetectedViewModels.push(issueDetectedViewModel);
                     this.issueDetectedViewModels = this.issueDetectedViewModels.sort((n1, n2) => n1.model.status - n2.model.status);
                   } else {
-                    let insight = this.getDetectorInsight(this.detectorViewModels[index]);
-                    let successViewModel = { model: this.detectorViewModels[index], insightTitle: insight.title, insightDescription: insight.description };
+                    let insights = this.getDetectorInsights(this.detectorViewModels[index], (status:HealthStatus)=>{ return status === HealthStatus.Success || status === HealthStatus.Info || HealthStatus.None });
+                    let successViewModel = { model: this.detectorViewModels[index], insights: insights };
                     this.successfulViewModels.push(successViewModel);
                   }
                 }
@@ -171,19 +171,18 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
     this.successfulViewModels = [];
 
   }
-  getDetectorInsight(viewModel: any): any {
+  getDetectorInsights(viewModel: any, checkInsightStatus:Function): any[] {
     let allInsights: Insight[] = InsightUtils.parseAllInsightsFromResponse(viewModel.response);
-    let insight: any;
+    let insights: any[] = [];
+
     if (allInsights.length > 0) {
-
-      let description = null;
-      if (allInsights[0].hasData()) {
-        description = allInsights[0].data["Description"];
-      }
-      insight = { title: allInsights[0].title, description: description };
-
-      // now populate solutions for all the insights
       allInsights.forEach(i => {
+        if (checkInsightStatus(i.status) ) {
+          let description = (i.hasData()) ? i.data["Description"] : null;
+          let insight = { title: i.title, description: description };
+          insights.push(insight);
+        }
+
         if (i.solutions != null) {
           i.solutions.forEach(s => {
             if (this.allSolutions.findIndex(x => x.Name === s.Name) === -1) {
@@ -194,7 +193,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
       });
     }
 
-    return insight;
+    return insights;
 
   }
 

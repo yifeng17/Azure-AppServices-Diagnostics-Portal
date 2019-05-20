@@ -4,7 +4,8 @@
         <i class="fa fa-circle-o-notch fa-2x fa-spin spin-icon" aria-hidden="true"></i>
         <span [@loadingAnimation]="showLoadingMessage ? 'shown' : 'hidden'"
             class="loading-message">{{loadingMessages[loadingMessageIndex]}}</span>
-        <span style="margin-left:10px">({{ detectors.length - getPendingDetectorCount() }} of {{ detectors.length }} checks
+        <span style="margin-left:10px">({{ detectors.length - getPendingDetectorCount() }} of {{ detectors.length }}
+            checks
             completed)</span>
     </div>
 
@@ -50,10 +51,12 @@
                                         </div>
                                     </td>
                                     <td>
-                                        {{ viewModel.insightTitle }}
-                                        <div style="margin-top:10px">
-                                            <markdown [data]="viewModel.insightDescription"></markdown>
-                                        </div>
+                                        <ng-container *ngFor="let insight of viewModel.insights">
+                                            {{ insight.title }}
+                                            <div style="margin-top:10px">
+                                                <markdown [data]="insight.description"></markdown>
+                                            </div>
+                                        </ng-container>
                                     </td>
                                     <td>
                                         <div style="margin-top: 5px;white-space: nowrap;">
@@ -125,7 +128,9 @@
                                     </div>
                                 </td>
                                 <td>
-                                    {{ viewModel.insightTitle }}
+                                    <div *ngIf="viewModel.insights != null && viewModel.insights.length > 0">
+                                        {{ viewModel.insights[0].title }}
+                                    </div>
                                 </td>
                                 <td>
                                     <div style="margin-top: 5px;white-space: nowrap;">
