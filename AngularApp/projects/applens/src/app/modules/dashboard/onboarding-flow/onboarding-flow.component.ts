@@ -337,7 +337,7 @@ export class OnboardingFlowComponent implements OnInit {
       this.modalPublishingButtonDisabled = false;
       this.modalPublishingButtonText = "Publish";
       this.ngxSmartModalService.getModal('publishModal').close();
-      this.showAlertBox('alert-dander', 'Publishing failed. Please try again after some time.');
+      this.showAlertBox('alert-danger', 'Publishing failed. Please try again after some time.');
     });
   }
 
