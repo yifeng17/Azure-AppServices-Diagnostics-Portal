@@ -1,5 +1,6 @@
 import { DetectorControlService, FeatureNavigationService } from 'diagnostic-data';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Category } from '../../../shared-v2/models/category';
 import { CategoryService } from '../../../shared-v2/services/category.service';
@@ -89,11 +90,14 @@ export class HomeComponent implements OnInit {
 
   registerChangeAnalysisFeature(): void {
     let url = `/subscriptions/${this.subscriptionId}/providers/Microsoft.Features/providers/Microsoft.ChangeAnalysis/features/PreviewAccess/register`;
-    let logData = {
-        'subscriptionId' : this.subscriptionId
-    };
-    this.armService.postResource(url, {}, '2015-12-01', true).subscribe(data => {
+    this.armService.postResourceFullResponse(url, {}, true, '2015-12-01').subscribe((data: HttpResponse<{}>) => {
+        let logData = {
+            'subscriptionId' : this.subscriptionId,
+            'responseStatus': data.status
+        };
         this._logger.LogAction('Home', 'Registered Change Analysis feature', logData)
+    }, (error: any) => {
+        this._logger.LogError('HTTP Error while registering change analysis feature: '+error.message, + 'Status Code : '+error.status);
     });
   }
 }
