@@ -42,8 +42,11 @@ export class DiagnosticApiService {
     return this.invoke<DetectorResponse>(path, HttpMethod.POST, body);
   }
 
-  public getDetectors(version: string, resourceId: string, body?: any): Observable<DetectorMetaData[]> {
+  public getDetectors(version: string, resourceId: string, body?: any, queryParams? : any[]): Observable<DetectorMetaData[]> {
     let path = `${version}${resourceId}/detectors`;
+    if (queryParams) {
+      path = path + "?" + queryParams.map(qp => qp.key + "=" + qp.value).join("&");
+    }
     return this.invoke<DetectorResponse[]>(path, HttpMethod.POST, body).pipe(retry(1), map(response => response.map(detector => detector.metadata)));
   }
 
@@ -59,6 +62,10 @@ export class DiagnosticApiService {
 
     if(additionalParams.formQueryParams != undefined) {
       path += additionalParams.formQueryParams;
+    }
+
+    if (additionalParams.detectorUtterances) {
+      path += "&detectorUtterances=" + additionalParams.detectorUtterances;
     }
 
     return this.invoke<QueryResponse<DetectorResponse>>(path, HttpMethod.POST, body, false, undefined, undefined,
@@ -150,7 +157,6 @@ export class DiagnosticApiService {
         headers: this._getHeaders(path, method, internalView, emailRecipients, additionalParams)
       });
     }
-
     return useCache ? this._cacheService.get(this.getCacheKey(method, path), request, invalidateCache) : request;
   }
 
