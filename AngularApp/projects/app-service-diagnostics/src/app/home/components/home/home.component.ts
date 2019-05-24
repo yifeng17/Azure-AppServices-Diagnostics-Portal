@@ -20,14 +20,16 @@ export class HomeComponent implements OnInit {
 
   resourceName: string;
   categories: Category[];
-  searchValue: string;
+  searchValue = '';
   searchBoxFocus: boolean;
   searchLogTimout: any;
   event: any;
   subscriptionId: string;
   searchResultCount: number;
   get inputAriaLabel(): string {
-    return this.searchResultCount > 0 ? `${this.searchResultCount} Results` : 'Search App Service Diagnostics';
+    return this.searchValue !== '' ?
+        `${this.searchResultCount} Result` + (this.searchResultCount !== 1 ? 's' : '') :
+        '';
   }
 
   constructor(private _resourceService: ResourceService, private _categoryService: CategoryService, private _notificationService: NotificationService, private _router: Router,
@@ -82,7 +84,9 @@ export class HomeComponent implements OnInit {
   }
 
   onSearchLostFocus() {
-    this.searchResultCount = 0;
+    if (this.searchValue == '') {
+      this.searchResultCount = 0;
+    }
   }
 
   private _updateRouteBasedOnAdditionalParameters(route: string, additionalParameters: any): string {
