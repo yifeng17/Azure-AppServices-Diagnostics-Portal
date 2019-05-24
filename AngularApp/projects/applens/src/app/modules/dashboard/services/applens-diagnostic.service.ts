@@ -35,15 +35,11 @@ export class ApplensDiagnosticService {
       this._resourceService.getRequestBody());
   }
 
-  getDetectors(query?: string): Observable<DetectorMetaData[]> {
-    var queryParams: any[] = null;
-    if (query != null)
-      queryParams = [{ "key": "text", "value": query }];
-      return this._diagnosticApi.getDetectors(
+  getDetectors(): Observable<DetectorMetaData[]> {
+    return this._diagnosticApi.getDetectors(
       this._resourceService.versionPrefix, 
       this._resourceService.getCurrentResourceId(true),
-      this._resourceService.getRequestBody(),
-      queryParams);
+      this._resourceService.getRequestBody());
   }
 
   getGists(): Observable<DetectorMetaData[]> {
