@@ -46,6 +46,7 @@ import { AvatarModule } from 'ngx-avatar';
 import { SupportTopicPageComponent } from './support-topic-page/support-topic-page.component';
 import { SelfHelpContentComponent } from './self-help-content/self-help-content.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
+import { SearchTermAdditionComponent } from './search-term-addition/search-term-addition.component';
 
 @Injectable()
 export class InitResolver implements Resolve<Observable<boolean>>{
@@ -248,7 +249,7 @@ export const DashboardModuleRoutes: ModuleWithProviders = RouterModule.forChild(
     { provide: DiagnosticSiteService, useExisting: ResourceService },
     { provide: SolutionService, useExisting: GenericSolutionService }
   ],
-  declarations: [DashboardComponent, SideNavComponent, ResourceMenuItemComponent, ResourceHomeComponent, OnboardingFlowComponent,
+  declarations: [DashboardComponent, SideNavComponent, ResourceMenuItemComponent, ResourceHomeComponent, OnboardingFlowComponent, SearchTermAdditionComponent,
     SearchMenuPipe, TabDataComponent, TabDevelopComponent, TabCommonComponent, TabDataSourcesComponent, TabMonitoringComponent,
     TabMonitoringDevelopComponent, TabAnalyticsDevelopComponent, TabAnalyticsDashboardComponent, GistComponent, TabGistCommonComponent, TabGistDevelopComponent, TabChangelistComponent, GistChangelistComponent, TabAnalysisComponent, CategoryPageComponent, SupportTopicPageComponent, SelfHelpContentComponent, UserProfileComponent]
 })

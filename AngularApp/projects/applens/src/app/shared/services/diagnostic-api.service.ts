@@ -44,8 +44,11 @@ export class DiagnosticApiService {
     return this.invoke<DetectorResponse>(path, HttpMethod.POST, body);
   }
 
-  public getDetectors(version: string, resourceId: string, body?: any, internalClient: boolean = true): Observable<DetectorMetaData[]> {
+  public getDetectors(version: string, resourceId: string, body?: any, queryParams?: any[], internalClient: boolean = true): Observable<DetectorMetaData[]> {
     let path = `${version}${resourceId}/detectors`;
+    if (queryParams) {
+      path = path + "?" + queryParams.map(qp => qp.key + "=" + qp.value).join("&");
+    }
     return this.invoke<DetectorResponse[]>(path, HttpMethod.POST, body, true, false, internalClient).pipe(retry(1), map(response => response.map(detector => detector.metadata)));
   }
 
@@ -106,6 +109,10 @@ export class DiagnosticApiService {
 
     if (additionalParams.formQueryParams != undefined) {
       path += additionalParams.formQueryParams;
+    }
+
+    if (additionalParams.detectorUtterances) {
+      path += "&detectorUtterances=" + additionalParams.detectorUtterances;
     }
 
     return this.invoke<QueryResponse<DetectorResponse>>(path, HttpMethod.POST, body, false, undefined, undefined, undefined,
