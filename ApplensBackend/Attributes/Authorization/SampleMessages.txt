@@ -1,0 +1,1343 @@
+﻿--------------------------------------------------------------------
+TimeStamp: 6 / 3 / 2019 10: 48: 55 PM
+Headers: [{
+		"Key": "Cache-Control",
+		"Value": ["no-cache"]
+	}, {
+		"Key": "Connection",
+		"Value": ["Keep-Alive"]
+	}, {
+		"Key": "Accept",
+		"Value": ["*/*"]
+	}, {
+		"Key": "Accept-Encoding",
+		"Value": ["gzip", "deflate"]
+	}, {
+		"Key": "Cookie",
+		"Value": ["ARRAffinity=17cf5910c7b22ce5426b4142b3486f89fac148ae0051ded962b5d0febddea8b4"]
+	}, {
+		"Key": "Host",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "Max-Forwards",
+		"Value": ["10"]
+	}, {
+		"Key": "User-Agent",
+		"Value": ["PostmanRuntime/7.6.0"]
+	}, {
+		"Key": "Postman-Token",
+		"Value": ["4a05dd37-4d4d-4076-8b43-8382adf46180"]
+	}, {
+		"Key": "X-WAWS-Unencoded-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "CLIENT-IP",
+		"Value": ["167.220.2.159:56815"]
+	}, {
+		"Key": "X-ARR-LOG-ID",
+		"Value": ["1989d017-5b21-4b32-91ca-637c44e33c39"]
+	}, {
+		"Key": "DISGUISED-HOST",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-SITE-DEPLOYMENT-ID",
+		"Value": ["nmallickLogChatMessagesSample"]
+	}, {
+		"Key": "WAS-DEFAULT-HOSTNAME",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-Original-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "X-Forwarded-For",
+		"Value": ["167.220.2.159:56815"]
+	}, {
+		"Key": "X-ARR-SSL",
+		"Value": ["2048|256|C=US, S=Washington, L=Redmond, O=Microsoft Corporation, OU=Microsoft IT, CN=Microsoft IT TLS CA 4|CN=*.azurewebsites.net"]
+	}, {
+		"Key": "X-Forwarded-Proto",
+		"Value": ["https"]
+	}
+]
+Body: {
+	"someData": "Some Description",
+	"Nested": {
+		"Level One": "One Level",
+		"Bool Data": false,
+		"Int Data": 200
+	}
+}
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+TimeStamp: 6 / 3 / 2019 10: 54: 49 PM
+Headers: [{
+		"Key": "Connection",
+		"Value": ["Keep-Alive"]
+	}, {
+		"Key": "Accept-Encoding",
+		"Value": ["gzip", "deflate"]
+	}, {
+		"Key": "Host",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "Max-Forwards",
+		"Value": ["10"]
+	}, {
+		"Key": "User-Agent",
+		"Value": ["Freshchat", "User", "Agent"]
+	}, {
+		"Key": "X-Freshchat-Signature",
+		"Value": ["aVqZdFe/chfBWE3O9MbWELxiAvXcRtXknnmHa9Tch3H4QMF9flvqZIFDqcHvdVgAq3pzG8AinpL8BEE9MSOciJHEwkm83S3Y4ut2su3nLsG+uhncelhOtblveTY6xhvx5utue/05vcbnCR8yJZ/BouJ8sGeK+dOoXC2sMGEPt8W6QjsBRFcuMGKu7M8S70x2KIKwYq2umQvy/ZYVRwhNn7Vgakfn+xa6gXtAL7eptJSjrj6WM8cDauTJtHL9d/F6UcsCUYxQEIRpTOF3turtpYWn0EEZh77IlM96w0GCKrOK1RBa0HUpYwG2UqZGc2itLRNDYGI/uExLHPPyN+sxdA=="]
+	}, {
+		"Key": "X-Freshchat-Payload-Version",
+		"Value": ["1.0.0"]
+	}, {
+		"Key": "X-Freshchat-Correlation-Id",
+		"Value": ["cakogf2lsr8n6hnipn64"]
+	}, {
+		"Key": "X-WAWS-Unencoded-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "CLIENT-IP",
+		"Value": ["52.201.75.8:24025"]
+	}, {
+		"Key": "X-ARR-LOG-ID",
+		"Value": ["3c3148e7-dad0-4794-b5b6-64325948e546"]
+	}, {
+		"Key": "DISGUISED-HOST",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-SITE-DEPLOYMENT-ID",
+		"Value": ["nmallickLogChatMessagesSample"]
+	}, {
+		"Key": "WAS-DEFAULT-HOSTNAME",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-Original-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "X-Forwarded-For",
+		"Value": ["52.201.75.8:24025"]
+	}, {
+		"Key": "X-ARR-SSL",
+		"Value": ["2048|128|C=US, S=Washington, L=Redmond, O=Microsoft Corporation, OU=Microsoft IT, CN=Microsoft IT TLS CA 4|CN=*.azurewebsites.net"]
+	}, {
+		"Key": "X-Forwarded-Proto",
+		"Value": ["https"]
+	}
+]
+Body: {
+	"actor": {
+		"actor_type": "user",
+		"actor_id": "0cb5f08d-3979-4fe7-a2a3-7a713f42878b"
+	},
+	"action": "message_create",
+	"action_time": "2019-06-03T22:54:49.438Z",
+	"data": {
+		"message": {
+			"message_parts": [{
+					"text": {
+						"content": "it will help me with the high cpu that happened earlier?"
+					}
+				}
+			],
+			"app_id": "4a9bc03e-66e8-4755-aa65-0fd008d1cec0",
+			"actor_id": "0cb5f08d-3979-4fe7-a2a3-7a713f42878b",
+			"id": "32a75c59-8907-46d1-8aaf-99e390e1632b",
+			"channel_id": "ba9bbcf0-b229-469f-8763-4370ea17d69f",
+			"conversation_id": "bc9cef09-0894-4fa2-82e4-393bd40e8776",
+			"message_type": "normal",
+			"actor_type": "user",
+			"created_time": "2019-06-03T22:54:49.427Z"
+		}
+	}
+}
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+TimeStamp: 6 / 3 / 2019 10: 55: 39 PM
+Headers: [{
+		"Key": "Connection",
+		"Value": ["Keep-Alive"]
+	}, {
+		"Key": "Accept-Encoding",
+		"Value": ["gzip", "deflate"]
+	}, {
+		"Key": "Host",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "Max-Forwards",
+		"Value": ["10"]
+	}, {
+		"Key": "User-Agent",
+		"Value": ["Freshchat", "User", "Agent"]
+	}, {
+		"Key": "X-Freshchat-Signature",
+		"Value": ["hYGrW6kJkvnm4gb5x98KyKXlAnwziVOS24DhPAGJnYvJ9btY7bdjJKUKWfacaG7eDxVpnFQM189kql6Dhd/oLkcdOCKCI60vWWyTv/+9Y/BByHqyV5EFieB1n598IYcMUjyDM1j15x1XUT5/FihAINHOWascw7yDWBhcZc7u0fQbDmNsEX0Pz8nG5zwCBhOot9XRHmmPh3Bg2APbuWgUEnd7l+BUnZL85vm7m58t8pVdPxVLcrRjyyBe+ltjsEbKyDCD+auLa6JUervKyH8KT/tICoHnj7ui4tIaYUxPHDDgBR4d92hhhbj243NqE/1+Kz2BndGkv0I5UmqkGbmStQ=="]
+	}, {
+		"Key": "X-Freshchat-Payload-Version",
+		"Value": ["1.0.0"]
+	}, {
+		"Key": "X-Freshchat-Correlation-Id",
+		"Value": ["6mmu9meqj9qbcf7memkf"]
+	}, {
+		"Key": "X-WAWS-Unencoded-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "CLIENT-IP",
+		"Value": ["34.231.139.135:8524"]
+	}, {
+		"Key": "X-ARR-LOG-ID",
+		"Value": ["9f2a679f-a2a0-4ae1-a425-cd5415e89f9f"]
+	}, {
+		"Key": "DISGUISED-HOST",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-SITE-DEPLOYMENT-ID",
+		"Value": ["nmallickLogChatMessagesSample"]
+	}, {
+		"Key": "WAS-DEFAULT-HOSTNAME",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-Original-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "X-Forwarded-For",
+		"Value": ["34.231.139.135:8524"]
+	}, {
+		"Key": "X-ARR-SSL",
+		"Value": ["2048|128|C=US, S=Washington, L=Redmond, O=Microsoft Corporation, OU=Microsoft IT, CN=Microsoft IT TLS CA 4|CN=*.azurewebsites.net"]
+	}, {
+		"Key": "X-Forwarded-Proto",
+		"Value": ["https"]
+	}
+]
+Body: {
+	"actor": {
+		"actor_type": "agent",
+		"actor_id": "a22f60c8-917f-4de0-8824-0de6898da6d3"
+	},
+	"action": "message_create",
+	"action_time": "2019-06-03T22:55:39.063Z",
+	"data": {
+		"message": {
+			"message_parts": [{
+					"text": {
+						"content": "no it won't help but when the cpu is high.  You need to run this or you can set up the under auto heal to collect automatically when it happens next time"
+					}
+				}
+			],
+			"app_id": "4a9bc03e-66e8-4755-aa65-0fd008d1cec0",
+			"actor_id": "a22f60c8-917f-4de0-8824-0de6898da6d3",
+			"id": "ab7a979f-ce3a-4384-8b7c-fbea24d80515",
+			"channel_id": "ba9bbcf0-b229-469f-8763-4370ea17d69f",
+			"conversation_id": "bc9cef09-0894-4fa2-82e4-393bd40e8776",
+			"message_type": "normal",
+			"actor_type": "agent",
+			"created_time": "2019-06-03T22:55:39.005Z"
+		}
+	}
+}
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+TimeStamp: 6 / 3 / 2019 10: 59: 07 PM
+Headers: [{
+		"Key": "Connection",
+		"Value": ["Keep-Alive"]
+	}, {
+		"Key": "Accept-Encoding",
+		"Value": ["gzip", "deflate"]
+	}, {
+		"Key": "Host",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "Max-Forwards",
+		"Value": ["10"]
+	}, {
+		"Key": "User-Agent",
+		"Value": ["Freshchat", "User", "Agent"]
+	}, {
+		"Key": "X-Freshchat-Signature",
+		"Value": ["GMNy91uCCo+od9/gjhCgtGxnq5IxoBbvLC93W8ShO279t99D/Uopz9k9liIR5l73O1vwimxzOZfVtdpQkKiV0aGNGZl1+pqPgNLhLpSj3tFGj1eZMtzJW7gc51O9bs6CvvnMN5G4nSbiHgIOK6bpxXSH2JKgqS+Ng0bWV10Jfc1a3IFtIMpoE0u05N4/V77AmvbnX8dTJW/S/xmiNw5aEN78DBHXn+g6RcyIsvn5qT2+Sc0dJjTQinqWUw0e7VmjrpxSKO6skNuIhVQrVi5itMEvZYJ3Urj0GUyaRtu9N5R084n0Bmtw1UJw2t1p3IJj1poAId5AbQCiGVyr2pE1UQ=="]
+	}, {
+		"Key": "X-Freshchat-Payload-Version",
+		"Value": ["1.0.0"]
+	}, {
+		"Key": "X-Freshchat-Correlation-Id",
+		"Value": ["vd63nfphadt7g8q0cav3"]
+	}, {
+		"Key": "X-WAWS-Unencoded-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "CLIENT-IP",
+		"Value": ["34.231.245.167:6167"]
+	}, {
+		"Key": "X-ARR-LOG-ID",
+		"Value": ["d0124445-9068-4e96-9c99-0fb7aedccdee"]
+	}, {
+		"Key": "DISGUISED-HOST",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-SITE-DEPLOYMENT-ID",
+		"Value": ["nmallickLogChatMessagesSample"]
+	}, {
+		"Key": "WAS-DEFAULT-HOSTNAME",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-Original-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "X-Forwarded-For",
+		"Value": ["34.231.245.167:6167"]
+	}, {
+		"Key": "X-ARR-SSL",
+		"Value": ["2048|128|C=US, S=Washington, L=Redmond, O=Microsoft Corporation, OU=Microsoft IT, CN=Microsoft IT TLS CA 4|CN=*.azurewebsites.net"]
+	}, {
+		"Key": "X-Forwarded-Proto",
+		"Value": ["https"]
+	}
+]
+Body: {
+	"actor": {
+		"actor_type": "user",
+		"actor_id": "831f6156-957f-4f38-8030-45baa9f0e67a"
+	},
+	"action": "message_create",
+	"action_time": "2019-06-03T22:59:07.458Z",
+	"data": {
+		"message": {
+			"message_parts": [{
+					"text": {
+						"content": "Hello"
+					}
+				}
+			],
+			"app_id": "4a9bc03e-66e8-4755-aa65-0fd008d1cec0",
+			"actor_id": "831f6156-957f-4f38-8030-45baa9f0e67a",
+			"id": "dcf62b42-f5bb-4f0c-b56d-16049a76f179",
+			"channel_id": "ba9bbcf0-b229-469f-8763-4370ea17d69f",
+			"conversation_id": "d6443175-e2c7-44b9-899f-b4be1c7dd2c0",
+			"message_type": "normal",
+			"actor_type": "user",
+			"created_time": "2019-06-03T22:59:07.44Z"
+		}
+	}
+}
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+TimeStamp: 6 / 3 / 2019 10: 59: 09 PM
+Headers: [{
+		"Key": "Connection",
+		"Value": ["Keep-Alive"]
+	}, {
+		"Key": "Accept-Encoding",
+		"Value": ["gzip", "deflate"]
+	}, {
+		"Key": "Host",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "Max-Forwards",
+		"Value": ["10"]
+	}, {
+		"Key": "User-Agent",
+		"Value": ["Freshchat", "User", "Agent"]
+	}, {
+		"Key": "X-Freshchat-Signature",
+		"Value": ["R8aWV/rWKP/Tndys8ygQnI3b/LBUGPi6d8NBkXHSUeCDa+LrUjlaK3AchnSUovWg7iFgLtF0BGCtDzyACMQeGy5bsEAxxy1QCYmPuP2DtBVZx/J0UMuBSPU2IVjHZBAgIGYUMmmT8ztrHtCgYLLNwhTQjYcCDjSHvxaz41ldQO0TWp+SFdvrj7wKRiNSeU5XWOu5VU494zupXj0hk4I0HPwURClVswJBHEDkx+1dL1hb36pMKLsc7aKy4fOxBT4S8j0pCUl9IbUrQz3MEp38ybdrtVj4mTnb+tGctWwiNd6rwDVecux1vavQlX6KAxLYTNCSJcEiz0x8kODdnn27YQ=="]
+	}, {
+		"Key": "X-Freshchat-Payload-Version",
+		"Value": ["1.0.0"]
+	}, {
+		"Key": "X-Freshchat-Correlation-Id",
+		"Value": ["guur6s9g8ag4st2v366f"]
+	}, {
+		"Key": "X-WAWS-Unencoded-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "CLIENT-IP",
+		"Value": ["34.231.139.135:35992"]
+	}, {
+		"Key": "X-ARR-LOG-ID",
+		"Value": ["b4fd8ac6-9a58-4898-bada-218d92447729"]
+	}, {
+		"Key": "DISGUISED-HOST",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-SITE-DEPLOYMENT-ID",
+		"Value": ["nmallickLogChatMessagesSample"]
+	}, {
+		"Key": "WAS-DEFAULT-HOSTNAME",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-Original-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "X-Forwarded-For",
+		"Value": ["34.231.139.135:35992"]
+	}, {
+		"Key": "X-ARR-SSL",
+		"Value": ["2048|128|C=US, S=Washington, L=Redmond, O=Microsoft Corporation, OU=Microsoft IT, CN=Microsoft IT TLS CA 4|CN=*.azurewebsites.net"]
+	}, {
+		"Key": "X-Forwarded-Proto",
+		"Value": ["https"]
+	}
+]
+Body: {
+	"actor": {
+		"actor_type": "system"
+	},
+	"action": "conversation_assignment",
+	"action_time": "2019-06-03T22:59:09.651Z",
+	"data": {
+		"assignment": {
+			"assignor": "system",
+			"to_agent_id": "162bd49c-b503-494e-9216-a5a23645634c",
+			"to_group_id": "7568cd13-9e07-49d5-9cbf-30c2b8d994db",
+			"from_agent_id": "",
+			"from_group_id": "7568cd13-9e07-49d5-9cbf-30c2b8d994db",
+			"conversation": {
+				"conversation_id": "d6443175-e2c7-44b9-899f-b4be1c7dd2c0",
+				"app_id": "4a9bc03e-66e8-4755-aa65-0fd008d1cec0",
+				"status": "assigned",
+				"channel_id": "ba9bbcf0-b229-469f-8763-4370ea17d69f",
+				"assigned_agent_id": "162bd49c-b503-494e-9216-a5a23645634c",
+				"assigned_group_id": "7568cd13-9e07-49d5-9cbf-30c2b8d994db"
+			}
+		}
+	}
+}
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+TimeStamp: 6 / 3 / 2019 10: 59: 20 PM
+Headers: [{
+		"Key": "Connection",
+		"Value": ["Keep-Alive"]
+	}, {
+		"Key": "Accept-Encoding",
+		"Value": ["gzip", "deflate"]
+	}, {
+		"Key": "Host",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "Max-Forwards",
+		"Value": ["10"]
+	}, {
+		"Key": "User-Agent",
+		"Value": ["Freshchat", "User", "Agent"]
+	}, {
+		"Key": "X-Freshchat-Signature",
+		"Value": ["Jaa+AzIZhdzH1hNJFKjVZT42MiS6xS4nOE2/o2T6spS2xqLSk3dfZnpXan0w2s0WhlIaDBxXC4vvhYJs5pTWctPnQIaRjLJu5+AqnP1rk1SuuS5MFWUcX/kMMBCzmWLa6pcEpMXpGU+8xGHX9uM88w920obRIa3vRr/6WQx/TjXjQBHWUWRC/HaxgmNwmp4h0mpq7JI3QBJ5rYjlV/MaSyWUnmLZxUR21T0/zubztI4bWtjJ6GOjkYY1CTqwCwaTZGZDXLrqcyZf9YfgZfEiy/LTJfkVjyUPFoakAt50Usr0/ryB+1Jkaq2TxiZNfAcH3h+fIB+wH9Zpcm/7PobBQg=="]
+	}, {
+		"Key": "X-Freshchat-Payload-Version",
+		"Value": ["1.0.0"]
+	}, {
+		"Key": "X-Freshchat-Correlation-Id",
+		"Value": ["dgat2i2833tve0r60hhg"]
+	}, {
+		"Key": "X-WAWS-Unencoded-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "CLIENT-IP",
+		"Value": ["34.231.139.135:59205"]
+	}, {
+		"Key": "X-ARR-LOG-ID",
+		"Value": ["5c11dcbb-e53d-4e0a-8676-2b25fef4c573"]
+	}, {
+		"Key": "DISGUISED-HOST",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-SITE-DEPLOYMENT-ID",
+		"Value": ["nmallickLogChatMessagesSample"]
+	}, {
+		"Key": "WAS-DEFAULT-HOSTNAME",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-Original-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "X-Forwarded-For",
+		"Value": ["34.231.139.135:59205"]
+	}, {
+		"Key": "X-ARR-SSL",
+		"Value": ["2048|128|C=US, S=Washington, L=Redmond, O=Microsoft Corporation, OU=Microsoft IT, CN=Microsoft IT TLS CA 4|CN=*.azurewebsites.net"]
+	}, {
+		"Key": "X-Forwarded-Proto",
+		"Value": ["https"]
+	}
+]
+Body: {
+	"actor": {
+		"actor_type": "agent",
+		"actor_id": "162bd49c-b503-494e-9216-a5a23645634c"
+	},
+	"action": "message_create",
+	"action_time": "2019-06-03T22:59:20.443Z",
+	"data": {
+		"message": {
+			"message_parts": [{
+					"text": {
+						"content": "hi"
+					}
+				}
+			],
+			"app_id": "4a9bc03e-66e8-4755-aa65-0fd008d1cec0",
+			"actor_id": "162bd49c-b503-494e-9216-a5a23645634c",
+			"id": "139e51a5-9b83-4b89-9d90-8f52e34598c4",
+			"channel_id": "ba9bbcf0-b229-469f-8763-4370ea17d69f",
+			"conversation_id": "d6443175-e2c7-44b9-899f-b4be1c7dd2c0",
+			"message_type": "normal",
+			"actor_type": "agent",
+			"created_time": "2019-06-03T22:59:20.418Z"
+		}
+	}
+}
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+TimeStamp: 6 / 3 / 2019 10: 59: 24 PM
+Headers: [{
+		"Key": "Connection",
+		"Value": ["Keep-Alive"]
+	}, {
+		"Key": "Accept-Encoding",
+		"Value": ["gzip", "deflate"]
+	}, {
+		"Key": "Host",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "Max-Forwards",
+		"Value": ["10"]
+	}, {
+		"Key": "User-Agent",
+		"Value": ["Freshchat", "User", "Agent"]
+	}, {
+		"Key": "X-Freshchat-Signature",
+		"Value": ["hXoiqExzR09a+XBZiqqj+r1ENsndIyPPgTCisbAgxtFAAgrik/uSL3s0d3YZVGzSVxJORGMABrgzxx9/tid5bWwKzJojJPkXRidDPpR4xAO3ftXaii+6zWwaXqgqkYRO2cTd1uXlWb+RPNpDFl4aebJM0ETDsojo8RAXqfj5QDCpMysUZYujHyPj4gLz/FfYCzM8wQo9U1E4Mz4QlzYbm6dcIhG2iaSyp9KIn3dSoxh1c8l15GH+uYrqdaMdxtJecFY/eOWvDTIoXMKg+MNoUT6FV8yJWi2H+BdWlyikMWEp6XcOLM9No6pJMfhEgduOsXgCFOhTzuxqX7HvNqYjEw=="]
+	}, {
+		"Key": "X-Freshchat-Payload-Version",
+		"Value": ["1.0.0"]
+	}, {
+		"Key": "X-Freshchat-Correlation-Id",
+		"Value": ["9kg4pi09icrug4cuhfdv"]
+	}, {
+		"Key": "X-WAWS-Unencoded-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "CLIENT-IP",
+		"Value": ["52.201.75.8:55524"]
+	}, {
+		"Key": "X-ARR-LOG-ID",
+		"Value": ["c021be36-6ba9-4014-8226-5018238cf269"]
+	}, {
+		"Key": "DISGUISED-HOST",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-SITE-DEPLOYMENT-ID",
+		"Value": ["nmallickLogChatMessagesSample"]
+	}, {
+		"Key": "WAS-DEFAULT-HOSTNAME",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-Original-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "X-Forwarded-For",
+		"Value": ["52.201.75.8:55524"]
+	}, {
+		"Key": "X-ARR-SSL",
+		"Value": ["2048|128|C=US, S=Washington, L=Redmond, O=Microsoft Corporation, OU=Microsoft IT, CN=Microsoft IT TLS CA 4|CN=*.azurewebsites.net"]
+	}, {
+		"Key": "X-Forwarded-Proto",
+		"Value": ["https"]
+	}
+]
+Body: {
+	"actor": {
+		"actor_type": "agent",
+		"actor_id": "162bd49c-b503-494e-9216-a5a23645634c"
+	},
+	"action": "message_create",
+	"action_time": "2019-06-03T22:59:23.787Z",
+	"data": {
+		"message": {
+			"message_parts": [{
+					"text": {
+						"content": "While I assist you with your issue, can you please duplicate your current tab to perform any other operations in Azure Portal? Else, you will loose the chat with me.&nbsp;"
+					}
+				}
+			],
+			"app_id": "4a9bc03e-66e8-4755-aa65-0fd008d1cec0",
+			"actor_id": "162bd49c-b503-494e-9216-a5a23645634c",
+			"id": "f928d632-14bf-4fbe-9d7b-5cb08b37b3b1",
+			"channel_id": "ba9bbcf0-b229-469f-8763-4370ea17d69f",
+			"conversation_id": "d6443175-e2c7-44b9-899f-b4be1c7dd2c0",
+			"message_type": "normal",
+			"actor_type": "agent",
+			"created_time": "2019-06-03T22:59:23.771Z"
+		}
+	}
+}
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+TimeStamp: 6 / 3 / 2019 10: 59: 24 PM
+Headers: [{
+		"Key": "Connection",
+		"Value": ["Keep-Alive"]
+	}, {
+		"Key": "Accept-Encoding",
+		"Value": ["gzip", "deflate"]
+	}, {
+		"Key": "Host",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "Max-Forwards",
+		"Value": ["10"]
+	}, {
+		"Key": "User-Agent",
+		"Value": ["Freshchat", "User", "Agent"]
+	}, {
+		"Key": "X-Freshchat-Signature",
+		"Value": ["YM/OPFD2IxjtbRgwezin/9yvUAI739APXFGDFeUkLKfE0X/Q3M6Zr0jpXHiYQYd+90jJJAenaDtCUK59g8n9yBFMcjzaURMmIy2rVnLA1DMJTy4DmaDWjBNegizdWy3NFjCBNMRb3TRhOo94vWFUpNNJf5ElaPzpNKjWcyRoB0ikbJLKmBAiMikSFoFgnUVgU6yKqVmeJ6yElX0/fsD4mmVZANmLS6lcpvNKNa6c1pFL7cw630yFhy/Iq7R/hJ0pNCeQzHUPYzNcJo48pzWPhs25Lion94iF4y4mqXcvXpm0L78XRhgUJ1OZp/yxfZa31w3rjD2F96BaeV7B7BRPKA=="]
+	}, {
+		"Key": "X-Freshchat-Payload-Version",
+		"Value": ["1.0.0"]
+	}, {
+		"Key": "X-Freshchat-Correlation-Id",
+		"Value": ["510lr9smr6tg6mlqm1o8"]
+	}, {
+		"Key": "X-WAWS-Unencoded-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "CLIENT-IP",
+		"Value": ["52.201.75.8:30000"]
+	}, {
+		"Key": "X-ARR-LOG-ID",
+		"Value": ["12c56817-8ae7-4e01-a602-cce40c5cfc70"]
+	}, {
+		"Key": "DISGUISED-HOST",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-SITE-DEPLOYMENT-ID",
+		"Value": ["nmallickLogChatMessagesSample"]
+	}, {
+		"Key": "WAS-DEFAULT-HOSTNAME",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-Original-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "X-Forwarded-For",
+		"Value": ["52.201.75.8:30000"]
+	}, {
+		"Key": "X-ARR-SSL",
+		"Value": ["2048|128|C=US, S=Washington, L=Redmond, O=Microsoft Corporation, OU=Microsoft IT, CN=Microsoft IT TLS CA 4|CN=*.azurewebsites.net"]
+	}, {
+		"Key": "X-Forwarded-Proto",
+		"Value": ["https"]
+	}
+]
+Body: {
+	"actor": {
+		"actor_type": "user",
+		"actor_id": "831f6156-957f-4f38-8030-45baa9f0e67a"
+	},
+	"action": "message_create",
+	"action_time": "2019-06-03T22:59:23.933Z",
+	"data": {
+		"message": {
+			"message_parts": [{
+					"text": {
+						"content": "this is a test"
+					}
+				}
+			],
+			"app_id": "4a9bc03e-66e8-4755-aa65-0fd008d1cec0",
+			"actor_id": "831f6156-957f-4f38-8030-45baa9f0e67a",
+			"id": "36295ed2-24af-4aa8-b303-4396c887e36b",
+			"channel_id": "ba9bbcf0-b229-469f-8763-4370ea17d69f",
+			"conversation_id": "d6443175-e2c7-44b9-899f-b4be1c7dd2c0",
+			"message_type": "normal",
+			"actor_type": "user",
+			"created_time": "2019-06-03T22:59:23.925Z"
+		}
+	}
+}
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+TimeStamp: 6 / 3 / 2019 10: 59: 28 PM
+Headers: [{
+		"Key": "Connection",
+		"Value": ["Keep-Alive"]
+	}, {
+		"Key": "Accept-Encoding",
+		"Value": ["gzip", "deflate"]
+	}, {
+		"Key": "Host",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "Max-Forwards",
+		"Value": ["10"]
+	}, {
+		"Key": "User-Agent",
+		"Value": ["Freshchat", "User", "Agent"]
+	}, {
+		"Key": "X-Freshchat-Signature",
+		"Value": ["aSafJtHCVvC3GaOPUeiQjMQ/2Ay0Q6Ea0SDb2J6yhr0SgdV8E9UbWGJK/wg7iyR+KiNEBZqm/uHaMkZX58tdzS85N/jrIzAKriougWYI4Y8tXBe26Q3JayqVBUyKVOq1YM9DlCOqO+j6di2WwMYNikEg7ct9026gsZi+ttF2oW/w7tps+mOL7VYenvFuY1H0A0/82azj/MjxiLEkdPJj7HmpcjGYC8OK/E6Fqk2yJrW5yeBaCWC6Zs54DXL8fwelpA/kkCVHrutE7f8bBPf5c2jmbkFoXulpJu+aFFfdZ8pUNxXM1OPlSSVpqIOFi5QkQJN/4SqpZEZRcGkG0SZv1Q=="]
+	}, {
+		"Key": "X-Freshchat-Payload-Version",
+		"Value": ["1.0.0"]
+	}, {
+		"Key": "X-Freshchat-Correlation-Id",
+		"Value": ["e71iirgrdlt9hcdr364l"]
+	}, {
+		"Key": "X-WAWS-Unencoded-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "CLIENT-IP",
+		"Value": ["34.231.245.167:4371"]
+	}, {
+		"Key": "X-ARR-LOG-ID",
+		"Value": ["5ef208c4-73f9-4ae2-a90c-bfaf3e2e4d95"]
+	}, {
+		"Key": "DISGUISED-HOST",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-SITE-DEPLOYMENT-ID",
+		"Value": ["nmallickLogChatMessagesSample"]
+	}, {
+		"Key": "WAS-DEFAULT-HOSTNAME",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-Original-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "X-Forwarded-For",
+		"Value": ["34.231.245.167:4371"]
+	}, {
+		"Key": "X-ARR-SSL",
+		"Value": ["2048|128|C=US, S=Washington, L=Redmond, O=Microsoft Corporation, OU=Microsoft IT, CN=Microsoft IT TLS CA 4|CN=*.azurewebsites.net"]
+	}, {
+		"Key": "X-Forwarded-Proto",
+		"Value": ["https"]
+	}
+]
+Body: {
+	"actor": {
+		"actor_type": "agent",
+		"actor_id": "162bd49c-b503-494e-9216-a5a23645634c"
+	},
+	"action": "message_create",
+	"action_time": "2019-06-03T22:59:28.494Z",
+	"data": {
+		"message": {
+			"message_parts": [{
+					"text": {
+						"content": "sure"
+					}
+				}
+			],
+			"app_id": "4a9bc03e-66e8-4755-aa65-0fd008d1cec0",
+			"actor_id": "162bd49c-b503-494e-9216-a5a23645634c",
+			"id": "2c651608-a7cd-40c2-b8a6-2ec4eb4b2425",
+			"channel_id": "ba9bbcf0-b229-469f-8763-4370ea17d69f",
+			"conversation_id": "d6443175-e2c7-44b9-899f-b4be1c7dd2c0",
+			"message_type": "normal",
+			"actor_type": "agent",
+			"created_time": "2019-06-03T22:59:28.472Z"
+		}
+	}
+}
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+TimeStamp: 6 / 3 / 2019 10: 59: 31 PM
+Headers: [{
+		"Key": "Connection",
+		"Value": ["Keep-Alive"]
+	}, {
+		"Key": "Accept-Encoding",
+		"Value": ["gzip", "deflate"]
+	}, {
+		"Key": "Host",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "Max-Forwards",
+		"Value": ["10"]
+	}, {
+		"Key": "User-Agent",
+		"Value": ["Freshchat", "User", "Agent"]
+	}, {
+		"Key": "X-Freshchat-Signature",
+		"Value": ["AS6xdieg1PZFEdSc+GhXHE7TkXCL+Q0ZbLDxazWvWGqFtwr2UcDlyQqRKCDDQCXxpcwOBsHo+ItnUVeC+SkvmOSpNTc5d7JfY4MYr+4N3Ux+Q1NlVhWnilBi9h1LILuNhky/eVJxy226ozYKPRex8L7vwm546XaFDDnUgNnPtgcbZ0YhkW632lB7lvKv+gXKGRCsFPIl6+xkDadCT+6Po9Oye+mkCYlRdZiijMJh2ESU0yGQ8ONwr5ZXQYv5nVoeYeRWcLXCLZZGCvW1X2q5O6WQD16iwC2wX2zcJem33a/TBdDsIZz4Qba5dK6Ps7t+sRRGz91v06Rpeg8nbubj7Q=="]
+	}, {
+		"Key": "X-Freshchat-Payload-Version",
+		"Value": ["1.0.0"]
+	}, {
+		"Key": "X-Freshchat-Correlation-Id",
+		"Value": ["2piukc8eollkp4ev50ok"]
+	}, {
+		"Key": "X-WAWS-Unencoded-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "CLIENT-IP",
+		"Value": ["34.231.139.135:9030"]
+	}, {
+		"Key": "X-ARR-LOG-ID",
+		"Value": ["6d4dda8e-eeb1-4547-937f-430f6adf540c"]
+	}, {
+		"Key": "DISGUISED-HOST",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-SITE-DEPLOYMENT-ID",
+		"Value": ["nmallickLogChatMessagesSample"]
+	}, {
+		"Key": "WAS-DEFAULT-HOSTNAME",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-Original-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "X-Forwarded-For",
+		"Value": ["34.231.139.135:9030"]
+	}, {
+		"Key": "X-ARR-SSL",
+		"Value": ["2048|128|C=US, S=Washington, L=Redmond, O=Microsoft Corporation, OU=Microsoft IT, CN=Microsoft IT TLS CA 4|CN=*.azurewebsites.net"]
+	}, {
+		"Key": "X-Forwarded-Proto",
+		"Value": ["https"]
+	}
+]
+Body: {
+	"actor": {
+		"actor_type": "user",
+		"actor_id": "831f6156-957f-4f38-8030-45baa9f0e67a"
+	},
+	"action": "message_create",
+	"action_time": "2019-06-03T22:59:31.733Z",
+	"data": {
+		"message": {
+			"message_parts": [{
+					"text": {
+						"content": "kindly ignore"
+					}
+				}
+			],
+			"app_id": "4a9bc03e-66e8-4755-aa65-0fd008d1cec0",
+			"actor_id": "831f6156-957f-4f38-8030-45baa9f0e67a",
+			"id": "545b5c3e-191a-429c-bed4-aa3a3cd0c861",
+			"channel_id": "ba9bbcf0-b229-469f-8763-4370ea17d69f",
+			"conversation_id": "d6443175-e2c7-44b9-899f-b4be1c7dd2c0",
+			"message_type": "normal",
+			"actor_type": "user",
+			"created_time": "2019-06-03T22:59:31.724Z"
+		}
+	}
+}
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+TimeStamp: 6 / 3 / 2019 10: 59: 34 PM
+Headers: [{
+		"Key": "Connection",
+		"Value": ["Keep-Alive"]
+	}, {
+		"Key": "Accept-Encoding",
+		"Value": ["gzip", "deflate"]
+	}, {
+		"Key": "Host",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "Max-Forwards",
+		"Value": ["10"]
+	}, {
+		"Key": "User-Agent",
+		"Value": ["Freshchat", "User", "Agent"]
+	}, {
+		"Key": "X-Freshchat-Signature",
+		"Value": ["A9eNRDbN6O1W4uM6fFZIHJwn620uCYzMbp6Cp7s2PPCT6LyNCqn7XZGTjlGsoVIdZEjKUQ/S2pfbJ9+aR8H69HXlLROZHFfo1nlXqokF0XxYZMI07Q9hdzGZ3LWOIbavcn/F0be1p//45ajvMLgX24Z9n3LdecJ3BFdautVzpdCPiSZodHajO38BQyEsjoY/k0prg4y3hc/hMbQbz5whpjppmhb9+h9Hw3UH8c7PO4fWEwmC2aj+XWNr/sm8PE/0kBDwhUee18GZN/gjPIXNpvzDe/YSd7YlGgiy27gbM+AnUlLO4Iu4N06g7cjK1jxjhpWO2Erdg+iFZK7L9bTFFg=="]
+	}, {
+		"Key": "X-Freshchat-Payload-Version",
+		"Value": ["1.0.0"]
+	}, {
+		"Key": "X-Freshchat-Correlation-Id",
+		"Value": ["mghe7v1ed3pqk8jdnd8e"]
+	}, {
+		"Key": "X-WAWS-Unencoded-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "CLIENT-IP",
+		"Value": ["52.201.75.8:29276"]
+	}, {
+		"Key": "X-ARR-LOG-ID",
+		"Value": ["064ae554-b133-44c0-ba28-bef38985ede7"]
+	}, {
+		"Key": "DISGUISED-HOST",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-SITE-DEPLOYMENT-ID",
+		"Value": ["nmallickLogChatMessagesSample"]
+	}, {
+		"Key": "WAS-DEFAULT-HOSTNAME",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-Original-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "X-Forwarded-For",
+		"Value": ["52.201.75.8:29276"]
+	}, {
+		"Key": "X-ARR-SSL",
+		"Value": ["2048|128|C=US, S=Washington, L=Redmond, O=Microsoft Corporation, OU=Microsoft IT, CN=Microsoft IT TLS CA 4|CN=*.azurewebsites.net"]
+	}, {
+		"Key": "X-Forwarded-Proto",
+		"Value": ["https"]
+	}
+]
+Body: {
+	"actor": {
+		"actor_type": "agent",
+		"actor_id": "162bd49c-b503-494e-9216-a5a23645634c"
+	},
+	"action": "message_create",
+	"action_time": "2019-06-03T22:59:34.3Z",
+	"data": {
+		"message": {
+			"message_parts": [{
+					"text": {
+						"content": "sure"
+					}
+				}
+			],
+			"app_id": "4a9bc03e-66e8-4755-aa65-0fd008d1cec0",
+			"actor_id": "162bd49c-b503-494e-9216-a5a23645634c",
+			"id": "ea045238-42e9-4899-b53d-20ef577ae262",
+			"channel_id": "ba9bbcf0-b229-469f-8763-4370ea17d69f",
+			"conversation_id": "d6443175-e2c7-44b9-899f-b4be1c7dd2c0",
+			"message_type": "normal",
+			"actor_type": "agent",
+			"created_time": "2019-06-03T22:59:34.283Z"
+		}
+	}
+}
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+TimeStamp: 6 / 3 / 2019 10: 59: 43 PM
+Headers: [{
+		"Key": "Connection",
+		"Value": ["Keep-Alive"]
+	}, {
+		"Key": "Accept-Encoding",
+		"Value": ["gzip", "deflate"]
+	}, {
+		"Key": "Host",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "Max-Forwards",
+		"Value": ["10"]
+	}, {
+		"Key": "User-Agent",
+		"Value": ["Freshchat", "User", "Agent"]
+	}, {
+		"Key": "X-Freshchat-Signature",
+		"Value": ["SVYEHtEAe8Qh+6N1TK7JpBAOCzuZKFGfARYdJhhCAI+pOw6GON7Mx+wg3JoGP070wlNaQJog27SJUEWtc7W/tYJ1r9W7mqrQMnbm64I8/ic/euDYShQ7LZQihNI2ZxSf0UH6AQUbQWgxna9/phmXMVq+qFnCWmYg8Gp2W7SH4A7JFosLDAmkQhw1VhHVJdkiYU3thEWrUy8d5IERm//4+ZPG0HxZbbS7eRMHZAkwmqYiLpEMDIryc4HVNrInPaqtkEIgUiO2e9WdA+KjLHgHtUsvuVAQA9FXQ1RylmDyR5BJ3csCF/0hmbwh23rGPXlxDA4eR4vQXBiZrNtaGPvXDQ=="]
+	}, {
+		"Key": "X-Freshchat-Payload-Version",
+		"Value": ["1.0.0"]
+	}, {
+		"Key": "X-Freshchat-Correlation-Id",
+		"Value": ["89p67j1p67cd6cgpr0ve"]
+	}, {
+		"Key": "X-WAWS-Unencoded-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "CLIENT-IP",
+		"Value": ["34.231.139.135:40224"]
+	}, {
+		"Key": "X-ARR-LOG-ID",
+		"Value": ["517ef50e-c6f5-4f1a-9ef1-a97ed62fea3c"]
+	}, {
+		"Key": "DISGUISED-HOST",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-SITE-DEPLOYMENT-ID",
+		"Value": ["nmallickLogChatMessagesSample"]
+	}, {
+		"Key": "WAS-DEFAULT-HOSTNAME",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-Original-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "X-Forwarded-For",
+		"Value": ["34.231.139.135:40224"]
+	}, {
+		"Key": "X-ARR-SSL",
+		"Value": ["2048|128|C=US, S=Washington, L=Redmond, O=Microsoft Corporation, OU=Microsoft IT, CN=Microsoft IT TLS CA 4|CN=*.azurewebsites.net"]
+	}, {
+		"Key": "X-Forwarded-Proto",
+		"Value": ["https"]
+	}
+]
+Body: {
+	"actor": {
+		"actor_type": "agent",
+		"actor_id": "162bd49c-b503-494e-9216-a5a23645634c"
+	},
+	"action": "message_create",
+	"action_time": "2019-06-03T22:59:43.255Z",
+	"data": {
+		"message": {
+			"message_parts": [{
+					"text": {
+						"content": "can I close the chat ?"
+					}
+				}
+			],
+			"app_id": "4a9bc03e-66e8-4755-aa65-0fd008d1cec0",
+			"actor_id": "162bd49c-b503-494e-9216-a5a23645634c",
+			"id": "5d563e48-55fa-4eb8-85ea-7909efeddc24",
+			"channel_id": "ba9bbcf0-b229-469f-8763-4370ea17d69f",
+			"conversation_id": "d6443175-e2c7-44b9-899f-b4be1c7dd2c0",
+			"message_type": "normal",
+			"actor_type": "agent",
+			"created_time": "2019-06-03T22:59:43.237Z"
+		}
+	}
+}
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+TimeStamp: 6 / 3 / 2019 10: 59: 52 PM
+Headers: [{
+		"Key": "Connection",
+		"Value": ["Keep-Alive"]
+	}, {
+		"Key": "Accept-Encoding",
+		"Value": ["gzip", "deflate"]
+	}, {
+		"Key": "Host",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "Max-Forwards",
+		"Value": ["10"]
+	}, {
+		"Key": "User-Agent",
+		"Value": ["Freshchat", "User", "Agent"]
+	}, {
+		"Key": "X-Freshchat-Signature",
+		"Value": ["jV2MAhRH2JTLBrWIH7xxR0Gw1RJOCWTM3Zg/6DhuHvQ9YWePiUEHkjtaROMq3p7lnTLoWKo3/n+7XVwry0/0JZGUu4YaoPtlWscnd8JzrPzU+NF4+DrvM+FHij2+AOAQBllh26EMrhbu49dcWEqMBW53gU3PvrfnFn+WBON4U0cUTweevH86hy/HOXdk5PT/4GuAILh8QpAnB8zjF9PMjv0KI8tncK5iqVuvq9bJKrC28rEvlzWZCmmX2aC2EcMlGb1HsCGMyoa53A429bGTrJJOJ0cmLrXjzm4L/TzE9yQRRHvGlqtdrIH4PazREJ0aSXbua9ljUCCY1dcIY04SpQ=="]
+	}, {
+		"Key": "X-Freshchat-Payload-Version",
+		"Value": ["1.0.0"]
+	}, {
+		"Key": "X-Freshchat-Correlation-Id",
+		"Value": ["o2ihfjn01lh6qsrku4bv"]
+	}, {
+		"Key": "X-WAWS-Unencoded-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "CLIENT-IP",
+		"Value": ["52.201.75.8:6064"]
+	}, {
+		"Key": "X-ARR-LOG-ID",
+		"Value": ["f1db4f4b-acd5-43ef-a3c0-f623542b417f"]
+	}, {
+		"Key": "DISGUISED-HOST",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-SITE-DEPLOYMENT-ID",
+		"Value": ["nmallickLogChatMessagesSample"]
+	}, {
+		"Key": "WAS-DEFAULT-HOSTNAME",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-Original-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "X-Forwarded-For",
+		"Value": ["52.201.75.8:6064"]
+	}, {
+		"Key": "X-ARR-SSL",
+		"Value": ["2048|128|C=US, S=Washington, L=Redmond, O=Microsoft Corporation, OU=Microsoft IT, CN=Microsoft IT TLS CA 4|CN=*.azurewebsites.net"]
+	}, {
+		"Key": "X-Forwarded-Proto",
+		"Value": ["https"]
+	}
+]
+Body: {
+	"actor": {
+		"actor_type": "user",
+		"actor_id": "831f6156-957f-4f38-8030-45baa9f0e67a"
+	},
+	"action": "message_create",
+	"action_time": "2019-06-03T22:59:51.863Z",
+	"data": {
+		"message": {
+			"message_parts": [{
+					"text": {
+						"content": "please keep it open for a few"
+					}
+				}
+			],
+			"app_id": "4a9bc03e-66e8-4755-aa65-0fd008d1cec0",
+			"actor_id": "831f6156-957f-4f38-8030-45baa9f0e67a",
+			"id": "65a1a555-4fea-4f8f-82a1-c4af6298387c",
+			"channel_id": "ba9bbcf0-b229-469f-8763-4370ea17d69f",
+			"conversation_id": "d6443175-e2c7-44b9-899f-b4be1c7dd2c0",
+			"message_type": "normal",
+			"actor_type": "user",
+			"created_time": "2019-06-03T22:59:51.855Z"
+		}
+	}
+}
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+TimeStamp: 6 / 3 / 2019 10: 59: 55 PM
+Headers: [{
+		"Key": "Connection",
+		"Value": ["Keep-Alive"]
+	}, {
+		"Key": "Accept-Encoding",
+		"Value": ["gzip", "deflate"]
+	}, {
+		"Key": "Host",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "Max-Forwards",
+		"Value": ["10"]
+	}, {
+		"Key": "User-Agent",
+		"Value": ["Freshchat", "User", "Agent"]
+	}, {
+		"Key": "X-Freshchat-Signature",
+		"Value": ["A+3+tY/sHWNf6OzWy/IXGpv0788j9WQc/7x11uaLSJZQ/nWbP4XRSjkH/9VMV0wjWIP5QrS8fs8+FlOjgJbqYp5nWmp7zIwZVc+1iqgPiTltP9f6St4yb0/foWrWq5Mi2RI16y0hpTGZUJ97/NyaqZkpHfi0ZGK7BFZeRmwLO+Q3crpLiKKdpK50mVVRKeiwAw0eIGcG/TkyFTpADVeCCwAfUMLMlOXbdODZRwx7OVrC0npMTR5b/xWZVGyPM9bfiKcz+wzhWUeRCPEE+bOrRj7WrBI5khai5A9ZQXJ32u9Ff8C4Czp/dvQNg+bCiUoTQz7llXdG28ec2f/p/IdmTw=="]
+	}, {
+		"Key": "X-Freshchat-Payload-Version",
+		"Value": ["1.0.0"]
+	}, {
+		"Key": "X-Freshchat-Correlation-Id",
+		"Value": ["fku2h9h4b5j2acg4fgni"]
+	}, {
+		"Key": "X-WAWS-Unencoded-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "CLIENT-IP",
+		"Value": ["52.201.75.8:30811"]
+	}, {
+		"Key": "X-ARR-LOG-ID",
+		"Value": ["fa6d832f-5b64-4728-bcf2-78773498051b"]
+	}, {
+		"Key": "DISGUISED-HOST",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-SITE-DEPLOYMENT-ID",
+		"Value": ["nmallickLogChatMessagesSample"]
+	}, {
+		"Key": "WAS-DEFAULT-HOSTNAME",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-Original-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "X-Forwarded-For",
+		"Value": ["52.201.75.8:30811"]
+	}, {
+		"Key": "X-ARR-SSL",
+		"Value": ["2048|128|C=US, S=Washington, L=Redmond, O=Microsoft Corporation, OU=Microsoft IT, CN=Microsoft IT TLS CA 4|CN=*.azurewebsites.net"]
+	}, {
+		"Key": "X-Forwarded-Proto",
+		"Value": ["https"]
+	}
+]
+Body: {
+	"actor": {
+		"actor_type": "agent",
+		"actor_id": "162bd49c-b503-494e-9216-a5a23645634c"
+	},
+	"action": "message_create",
+	"action_time": "2019-06-03T22:59:55.113Z",
+	"data": {
+		"message": {
+			"message_parts": [{
+					"text": {
+						"content": "sure"
+					}
+				}
+			],
+			"app_id": "4a9bc03e-66e8-4755-aa65-0fd008d1cec0",
+			"actor_id": "162bd49c-b503-494e-9216-a5a23645634c",
+			"id": "614583f8-d537-4829-bc0b-ee796e1b9408",
+			"channel_id": "ba9bbcf0-b229-469f-8763-4370ea17d69f",
+			"conversation_id": "d6443175-e2c7-44b9-899f-b4be1c7dd2c0",
+			"message_type": "normal",
+			"actor_type": "agent",
+			"created_time": "2019-06-03T22:59:55.088Z"
+		}
+	}
+}
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+TimeStamp: 6 / 3 / 2019 11: 00: 38 PM
+Headers: [{
+		"Key": "Connection",
+		"Value": ["Keep-Alive"]
+	}, {
+		"Key": "Accept-Encoding",
+		"Value": ["gzip", "deflate"]
+	}, {
+		"Key": "Host",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "Max-Forwards",
+		"Value": ["10"]
+	}, {
+		"Key": "User-Agent",
+		"Value": ["Freshchat", "User", "Agent"]
+	}, {
+		"Key": "X-Freshchat-Signature",
+		"Value": ["dbL/vLmRhEM7nnwK/qgoIGtMqwKFcOjCWg3gyZLjH/vW6fo66ZENVocZNREkvZOc+h3ecMR1ibOXF/Tqm3mgJzirCc9cmaeNAEyc2/OWWG4r+yKccgL/JgKIzaLSGvmjxjT+T3jn5ADvHiS3h+5pShbs7tCvoKnRC7Aa/uFNbleYBinA3izAX8eFDgSdzGwiql0s0A1/miE1gzdylakGVZmrTmCDx/EN9UA/w4O4N9R+69TOvEvdtfeJoixi3F18wqyEBK1fKTk5kHVeOqKC/w5/jzGVwjZpmR6ByySLGQN7KJyiZdUTot+hCAUESEhnI8F3ha1nMM/Xw7rm3Ps6sg=="]
+	}, {
+		"Key": "X-Freshchat-Payload-Version",
+		"Value": ["1.0.0"]
+	}, {
+		"Key": "X-Freshchat-Correlation-Id",
+		"Value": ["otj0k0ge6sb29s84fptn"]
+	}, {
+		"Key": "X-WAWS-Unencoded-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "CLIENT-IP",
+		"Value": ["34.231.245.167:23843"]
+	}, {
+		"Key": "X-ARR-LOG-ID",
+		"Value": ["b38b3018-004c-40b2-a3e8-82fafd69f0b3"]
+	}, {
+		"Key": "DISGUISED-HOST",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-SITE-DEPLOYMENT-ID",
+		"Value": ["nmallickLogChatMessagesSample"]
+	}, {
+		"Key": "WAS-DEFAULT-HOSTNAME",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-Original-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "X-Forwarded-For",
+		"Value": ["34.231.245.167:23843"]
+	}, {
+		"Key": "X-ARR-SSL",
+		"Value": ["2048|128|C=US, S=Washington, L=Redmond, O=Microsoft Corporation, OU=Microsoft IT, CN=Microsoft IT TLS CA 4|CN=*.azurewebsites.net"]
+	}, {
+		"Key": "X-Forwarded-Proto",
+		"Value": ["https"]
+	}
+]
+Body: {
+	"actor": {
+		"actor_type": "agent",
+		"actor_id": "a22f60c8-917f-4de0-8824-0de6898da6d3"
+	},
+	"action": "message_create",
+	"action_time": "2019-06-03T23:00:38.213Z",
+	"data": {
+		"message": {
+			"message_parts": [{
+					"text": {
+						"content": "it seem we lost you again.  Please feel free to reopen the chat"
+					}
+				}
+			],
+			"app_id": "4a9bc03e-66e8-4755-aa65-0fd008d1cec0",
+			"actor_id": "a22f60c8-917f-4de0-8824-0de6898da6d3",
+			"id": "48db25ff-c3fd-49e7-99fa-c8b815e9fe5c",
+			"channel_id": "ba9bbcf0-b229-469f-8763-4370ea17d69f",
+			"conversation_id": "bc9cef09-0894-4fa2-82e4-393bd40e8776",
+			"message_type": "normal",
+			"actor_type": "agent",
+			"created_time": "2019-06-03T23:00:38.196Z"
+		}
+	}
+}
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+TimeStamp: 6 / 3 / 2019 11: 00: 46 PM
+Headers: [{
+		"Key": "Connection",
+		"Value": ["Keep-Alive"]
+	}, {
+		"Key": "Accept-Encoding",
+		"Value": ["gzip", "deflate"]
+	}, {
+		"Key": "Host",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "Max-Forwards",
+		"Value": ["10"]
+	}, {
+		"Key": "User-Agent",
+		"Value": ["Freshchat", "User", "Agent"]
+	}, {
+		"Key": "X-Freshchat-Signature",
+		"Value": ["JRk5QS+ECLstHg8ou821vZnomgzC764B8heSJ8FifDGC7IxM05MbqnU3DUx+9f1ehRtPtUEzYlqDEhjr/XgcnHoBTpf5fwudgPQw5lpZT248BWXv7OmxF+KWaI/p6s22SMm72SXZZc/+h86ZXc2/mySmnPTUoGYwhhzpdbpuyHjvL9/kslvGILWBok+KBbM1e8bXGE2gtYlUPL7D+Vs4nld0iA4b+fU1ZZ25N6vMtJCF8rqqodS93YJwACeCGEThidhctnLpqcWmkGTutkfpsCFJGqWjaPtUnfFKxVHdX2L+sAqQ+4VafUUFmHxxvZ2xDsPyIbzKShmq2HrgKswU0Q=="]
+	}, {
+		"Key": "X-Freshchat-Payload-Version",
+		"Value": ["1.0.0"]
+	}, {
+		"Key": "X-Freshchat-Correlation-Id",
+		"Value": ["lgf1dn9sb1v0e87joub7"]
+	}, {
+		"Key": "X-WAWS-Unencoded-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "CLIENT-IP",
+		"Value": ["34.231.245.167:12921"]
+	}, {
+		"Key": "X-ARR-LOG-ID",
+		"Value": ["39e7817e-e975-453d-bddb-774894977a4f"]
+	}, {
+		"Key": "DISGUISED-HOST",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-SITE-DEPLOYMENT-ID",
+		"Value": ["nmallickLogChatMessagesSample"]
+	}, {
+		"Key": "WAS-DEFAULT-HOSTNAME",
+		"Value": ["nmallicklogchatmessagessample.azurewebsites.net"]
+	}, {
+		"Key": "X-Original-URL",
+		"Value": ["/api/home/logMessage"]
+	}, {
+		"Key": "X-Forwarded-For",
+		"Value": ["34.231.245.167:12921"]
+	}, {
+		"Key": "X-ARR-SSL",
+		"Value": ["2048|128|C=US, S=Washington, L=Redmond, O=Microsoft Corporation, OU=Microsoft IT, CN=Microsoft IT TLS CA 4|CN=*.azurewebsites.net"]
+	}, {
+		"Key": "X-Forwarded-Proto",
+		"Value": ["https"]
+	}
+]
+Body: {
+	"actor": {
+		"actor_type": "agent",
+		"actor_id": "a22f60c8-917f-4de0-8824-0de6898da6d3"
+	},
+	"action": "message_create",
+	"action_time": "2019-06-03T23:00:45.89Z",
+	"data": {
+		"message": {
+			"message_parts": [{
+					"text": {
+						"content": "Thanks for chatting with us today."
+					}
+				}
+			],
+			"app_id": "4a9bc03e-66e8-4755-aa65-0fd008d1cec0",
+			"actor_id": "a22f60c8-917f-4de0-8824-0de6898da6d3",
+			"id": "6ad7fe28-1c4e-4d6e-ade2-eedc5ff9be2e",
+			"channel_id": "ba9bbcf0-b229-469f-8763-4370ea17d69f",
+			"conversation_id": "bc9cef09-0894-4fa2-82e4-393bd40e8776",
+			"message_type": "normal",
+			"actor_type": "agent",
+			"created_time": "2019-06-03T23:00:45.872Z"
+		}
+	}
+}
+--------------------------------------------------------------------
