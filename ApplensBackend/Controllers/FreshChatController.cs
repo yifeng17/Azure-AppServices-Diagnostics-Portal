@@ -141,6 +141,83 @@ namespace AppLensV3.Controllers
                             }
 
                             break;
+                        case Actions.ConversationReopen:
+                            ReopenDetails reopenData = ((ConvReopenData) incomingPayload.Data).Reopen;
+                            logMsg.ResourceUri = string.Empty;
+                            logMsg.Id = string.Empty;
+                            logMsg.ChannelId = reopenData.Conversation.ChannelId;
+                            logMsg.ConversationId = reopenData.Conversation.ChannelId;
+                            logMsg.TimeStamp = incomingPayload.ActionTime;
+                            logMsg.MessageType = MessageTypes.Private;
+                            logMsg.TextContent = new List<string>();
+                            if (reopenData.Reopener == ActorTypes.Agent)
+                            {
+                                logMsg.Sender = new AgentDetails();
+                            }
+                            else
+                            {
+                                logMsg.Sender = new UserDetails();
+                            }
+
+                            logMsg.Sender.Id = reopenData.ReopenerId;
+                            logMsg.TextContent.Add($"Conversation re-opened by {reopenData.Reopener.ToString()}.");
+                            break;
+                        case Actions.ConversationAssignment:
+                            AssignmentDetails assignmentData = ((ConvAssignmentData)incomingPayload.Data).Assignment;
+                            logMsg.ResourceUri = string.Empty;
+                            logMsg.Id = string.Empty;
+                            logMsg.ChannelId = assignmentData.Conversation.ChannelId;
+                            logMsg.ConversationId = assignmentData.Conversation.ChannelId;
+                            logMsg.TimeStamp = incomingPayload.ActionTime;
+                            logMsg.MessageType = MessageTypes.Private;
+                            string assignedToDetails = string.Empty;
+                            if (string.IsNullOrWhiteSpace(assignmentData.Conversation.AssignedAgentId))
+                            {
+                                // Conversation assigned to a group and waiting to be assigned to an agent
+                                logMsg.Sender = new UserDetails();
+                                logMsg.Sender.Id = assignmentData.Conversation.AssignedGroupId;
+                                assignedToDetails = " to group";
+                            }
+                            else
+                            {
+                                // Conversation assigned to an agent.
+                                logMsg.Sender = new AgentDetails();
+                                logMsg.Sender.Id = assignmentData.Conversation.AssignedAgentId;
+                                assignedToDetails = " to agent";
+                            }
+
+                            logMsg.TextContent = new List<string>();
+                            logMsg.TextContent.Add($"Conversation assigned {assignedToDetails}.");
+                            break;
+                        case Actions.ConversationResolution:
+                            ResolveDetails resolveData = ((ConvResolutionData) incomingPayload.Data).Resolve;
+                            logMsg.ResourceUri = string.Empty;
+                            logMsg.Id = string.Empty;
+                            logMsg.ChannelId = resolveData.Conversation.ChannelId;
+                            logMsg.ConversationId = resolveData.Conversation.ChannelId;
+                            logMsg.TimeStamp = incomingPayload.ActionTime;
+                            logMsg.MessageType = MessageTypes.Private;
+                            if (resolveData.Resolver == ActorTypes.Agent)
+                            {
+                                logMsg.Sender = new AgentDetails();
+                                logMsg.Sender.Id = resolveData.ResolverId;
+                            }
+                            else
+                            {
+                                logMsg.Sender = new UserDetails();
+                                if (resolveData.Resolver == ActorTypes.User)
+                                {
+                                    logMsg.Sender.Id = resolveData.ResolverId;
+                                }
+                                else
+                                {
+                                    logMsg.Sender.Id = string.Empty;
+                                }
+                            }
+
+                            logMsg.TextContent = new List<string>();
+                            logMsg.TextContent.Add($"Conversation resolved by {resolveData.Resolver.ToString()}.");
+                            break;
                         default:
                             throw new Exception($"Unhandled message type {incomingPayload.Action.ToString()}. Unable to handle.");
                             break;

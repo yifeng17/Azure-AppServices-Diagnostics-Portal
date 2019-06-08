@@ -248,6 +248,12 @@ namespace AppLensV3
 
         [JsonProperty(PropertyName = "assigned_agent_id")]
         public string AssignedAgentId;
+
+        [JsonProperty(PropertyName = "assigned_group_id")]
+        public string AssignedGroupId;
+
+        [JsonProperty(PropertyName = "channel_id")]
+        public string ChannelId;
     }
 
     public class ReopenDetails
