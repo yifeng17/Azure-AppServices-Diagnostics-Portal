@@ -7,6 +7,7 @@ import { Subscription, interval } from 'rxjs';
 import { ArmResource } from '../../../shared-v2/models/arm';
 import { ResourceService } from '../../../shared-v2/services/resource.service';
 import { PortalKustoTelemetryService} from '../../../shared/services/portal-kusto-telemetry.service';
+import { HttpResponse } from '@angular/common/http';
 
 @Component({
   selector: 'diagnostics-settings',
@@ -22,15 +23,8 @@ export class DiagnosticsSettingsComponent implements OnInit, OnDestroy {
 // ARM Urls
   featureRegUrl: string = '';
   providerRegUrl: string = '';
-// State received from api
-  codeScanState: boolean = false;
+// Feature State received from api
   isFeatureRegistered: boolean = false;
-  isProviderRegistered: boolean = false;
-  alwaysOnState: boolean = false;
-// UI controls
-  changeAnalyisisEnabled: boolean;
-  alwaysOnEnabled: boolean = false;
-  codeScanEnabled: boolean = false;
 // Loading related properties
   updatingProvider: boolean = false;
   updatingTag: boolean = false;
@@ -39,6 +33,20 @@ export class DiagnosticsSettingsComponent implements OnInit, OnDestroy {
   showGeneralError: boolean = false;
   generalErrorMsg: string = '';
   subscription: Subscription;
+  EnablementOptions = [{
+    option: 'On',
+    value: '1',
+  }, {
+      option: 'Off',
+      value: '0'
+  }];
+  codeScanOption: any = {};
+  providerRegOption: any = {};
+  alwaysOnOption: any = {};
+  retryCount: number = 1;
+  showFeatureRegProgress: boolean = false;
+  permissionErrorMsg: string = 'You may not have sufficient permissions to perform this operation. Make sure you have required permissions for this subscription and try again.';
+  tokenErrorMsg: string = 'Your token may have expired. Please refresh and try again.';
   constructor(private armService: ArmService, private authService: AuthService,
      private activatedRoute: ActivatedRoute, private resourceService: ResourceService,
      private loggingService: PortalKustoTelemetryService) { }
@@ -55,63 +63,85 @@ export class DiagnosticsSettingsComponent implements OnInit, OnDestroy {
   }
 
    checkIfFeatureRegister(): void {
-    this.armService.getResource<any>(this.featureRegUrl, '2015-12-01', true).subscribe(response => {
-        let featureRegistrationResponse = <FeatureRegistration>response;
+    this.clearErrors();
+    this.armService.getResourceFullResponse<any>(this.featureRegUrl, true, '2015-12-01').subscribe(response => {
+        let featureRegistrationResponse = <FeatureRegistration>response.body;
         let state = featureRegistrationResponse.properties.state;
-        if(state.toLowerCase() == 'notregistered') {
-            // show in progres text and disable enabling
-            this.isFeatureRegistered = false;
-            // start polling until registered
-            this.subscription = interval(20000).subscribe(res => {
-                this.pollForFeatureRegStatus();
-            });
-        } else {
+        if(state.toLowerCase() === 'registered') {
             // Once feature is registered, check if Resource Provider is registered
             this.isFeatureRegistered = true;
             this.checkIfProviderRegistered();
             this.checkIfCodeScanEnabled();
             this.getSiteConfig();
         }
+        else {
+            // show in progres text and disable enabling
+            this.isFeatureRegistered = false;
+            this.showFeatureRegProgress = true;
+            this.providerRegOption = this.EnablementOptions[1];
+            this.alwaysOnOption = this.EnablementOptions[1];
+            this.codeScanOption = this.EnablementOptions[0];
+            // start polling until registered
+            this.subscription = interval(20000).subscribe(res => {
+                this.loggingService.logTrace("Polling for Feature Registration Status");
+                this.pollForFeatureRegStatus();
+            });
+        }
     }, (error: any) => {
+        this.logHTTPError(error, 'checkIfFeatureRegister');
         this.showGeneralError = true;
-        this.generalErrorMsg = 'Unable to check feature registration status.  Please try again later.';
+        if(error.status === 403) {
+            this.generalErrorMsg = 'Unable to check Change Analysis feature status. ' + this.permissionErrorMsg;
+        } else if (error.status === 401) {
+            this.generalErrorMsg = 'Unable to check Change Anaylsis feature status. ' + this.tokenErrorMsg;
+        } else {
+            this.generalErrorMsg = 'Unable to check Change Analysis feature status. Please try again later.';
+        }
         this.isFeatureRegistered = false;
+        this.showFeatureRegProgress = false;
     });
    }
 
    checkIfProviderRegistered(): void {
-       this.armService.getResource<any>(this.providerRegUrl, '2018-05-01', true).subscribe(response => {
-           let providerRegistrationStateResponse = <ProviderRegistration>response;
+       this.clearErrors();
+       this.armService.getResourceFullResponse<any>(this.providerRegUrl, true, '2018-05-01').subscribe(response => {
+           let providerRegistrationStateResponse = <ProviderRegistration>response.body;
            let state = providerRegistrationStateResponse.registrationState;
-           if (state.toLowerCase() == 'registered') {
-               this.changeAnalyisisEnabled = true;
-               this.isProviderRegistered = true;
-           } else if (state.toLowerCase() == 'unregistered') {
-               this.changeAnalyisisEnabled = false;
-               this.isProviderRegistered = false;
+           if (state.toLowerCase() === 'registered') {
+               this.providerRegOption = this.EnablementOptions[0];
+           } else if (state.toLowerCase() === 'unregistered') {
+               this.providerRegOption = this.EnablementOptions[1];
            } // It could be that Resource Provider is 'Registering' or 'Unregistering', show in progress and poll for status.
-           else {
+           else if (state.toLowerCase() === 'registering' || state.toLowerCase() === 'unregistering'){
                 this.showInProgress = true;
                 this.regState = state;
                 this.subscription = interval(30000).subscribe(res => {
                     this.pollResourceProviderReg();
                 });
+           } else {
+               // Default to 'Off'
+                this.providerRegOption = this.EnablementOptions[1];
            }
        }, (error: any) => {
+            this.logHTTPError(error, 'checkIfProviderRegistered');
             this.showGeneralError = true;
-            this.generalErrorMsg = 'Unable to check resource provider registration status. Please try again later.';
-            this.changeAnalyisisEnabled = false;
-            this.isProviderRegistered = false;
+            if(error.status === 403) {
+                this.generalErrorMsg = 'Unable to check Change Analysis Resource Provider status. ' + this.permissionErrorMsg;
+            } else if (error.status === 401) {
+                this.generalErrorMsg = 'Unable to check Change Anaylsis Resource Provider status. ' + this.tokenErrorMsg;
+            } else {
+                this.generalErrorMsg = 'Unable to check Change Analysis Resource Provider status. Please try again later.';
+            }
+            this.providerRegOption = this.EnablementOptions[1];
        })
    }
 
    checkIfCodeScanEnabled(): void {
        let tags = this.currentResource.tags;
        if(tags && tags['hidden-related:diagnostics/changeAnalysisScanEnabled']) {
-           this.codeScanState = tags['hidden-related:diagnostics/changeAnalysisScanEnabled'] == 'true' ? true : false;
-       } else {
-           this.codeScanState = false;
-           this.codeScanEnabled = false;
+           this.codeScanOption = tags['hidden-related:diagnostics/changeAnalysisScanEnabled'] == 'true' ? this.EnablementOptions[0] : this.EnablementOptions[1];
+        } else {
+           this.codeScanOption = this.EnablementOptions[0];
        }
    }
 
@@ -119,61 +149,51 @@ export class DiagnosticsSettingsComponent implements OnInit, OnDestroy {
        let url = this.resourceId + '/config/web';
        this.armService.getResource(url, '2016-08-01', true).subscribe(data =>{
            this.siteConfig = data;
-           this.alwaysOnState = this.siteConfig.properties['alwaysOn'];
+           if(this.siteConfig.properties['alwaysOn']) {
+                this.alwaysOnOption = this.EnablementOptions[0];
+           } else {
+                this.alwaysOnOption = this.EnablementOptions[1];
+           }
        });
    }
 
 
    pollForFeatureRegStatus(): void {
-    this.armService.getResource<any>(this.featureRegUrl, '2015-12-01', true).subscribe(response => {
-        let featureRegistrationStateResponse = <FeatureRegistration>response;
+    this.armService.getResourceFullResponse<any>(this.featureRegUrl, true, '2015-12-01').subscribe(response => {
+        let featureRegistrationStateResponse = <FeatureRegistration>response.body;
         let state = featureRegistrationStateResponse.properties.state;
         // Stop polling once its registered
-        if(state.toLowerCase() == 'registered') {
+        if(state.toLowerCase() === 'registered') {
             this.isFeatureRegistered = true;
+            this.showFeatureRegProgress = false;
+            // Default to Off after Feature is Registered.
+            this.providerRegOption = this.EnablementOptions[1];
+            this.alwaysOnOption = this.EnablementOptions[1];
             if(this.subscription) {
                 this.subscription.unsubscribe();
             }
         }
     }, (error: any) => {
+        this.logHTTPError(error, 'pollForFeatureRegStatus');
         this.isFeatureRegistered = false;
         this.showGeneralError = true;
-        this.generalErrorMsg = 'Unable to check feature registration status. Please try again later.';
+        this.showFeatureRegProgress = false;
+        if(error.status === 403) {
+            this.generalErrorMsg = 'Unable to check Change Anaylsis feature status. ' +this.permissionErrorMsg;
+        } else if(error.status === 401) {
+            this.generalErrorMsg = 'Unable to check Change Anaylsis feature status. ' +this.tokenErrorMsg;
+        } else {
+            this.generalErrorMsg = 'Unable to check Change Anaylsis feature status. Please try again later.';
+        }
         if(this.subscription) {
             this.subscription.unsubscribe();
         }
     });
    }
 
-
-   setChangeAnalysisEnabled(val: any): void {
-        if(val == '1') {
-            this.changeAnalyisisEnabled = true;
-        } else {
-            this.changeAnalyisisEnabled = false;
-        }
-   }
-
-
-   setCodeScanEnabled(val: any): void {
-       if (val == '1') {
-           this.codeScanEnabled = true;
-       } else {
-           this.codeScanEnabled = false;
-       }
-   }
-
-   setAlwaysOnEnabled(val: any): void {
-        if (val == '1') {
-            this.alwaysOnEnabled = true;
-        } else {
-            this.alwaysOnEnabled = false;
-        }
-   }
-
-   updateScanTag(isEnabled: boolean): void {
-       this.updatingTag = true;
-        let tagValue = isEnabled ? 'true' : 'false';
+   updateScanTag(codeScanOption: any): void {
+        this.updatingTag = true;
+        let tagValue = codeScanOption.value == '1' ? 'true' : 'false';
         if(this.currentResource.tags) {
             this.currentResource.tags['hidden-related:diagnostics/changeAnalysisScanEnabled'] = tagValue;
         } else {
@@ -193,34 +213,49 @@ export class DiagnosticsSettingsComponent implements OnInit, OnDestroy {
             let tags = response.tags;
             let scanTagName = `hidden-related:diagnostics/changeAnalysisScanEnabled`;
             if(tags[scanTagName] == 'true') {
-                this.codeScanState = true;
+                this.codeScanOption = this.EnablementOptions[0];
             } else {
-                this.codeScanState = false;
+                this.codeScanOption = this.EnablementOptions[1];
             }
+        } else {
+            this.codeScanOption = this.EnablementOptions[1];
         }
         this.updatingTag = false;
     }, (error: any) => {
+        this.logHTTPError(error, 'updateScanTag');
         this.updatingTag = false;
-        this.codeScanState = false;
+        this.codeScanOption = this.EnablementOptions[1];
     });
    }
 
-   updateAlwaysOn(isEnabled: boolean = true):void {
+   updateAlwaysOn(alwaysOnOption: any):void {
        let url = this.resourceId + '/config/web';
+       let isEnabled = alwaysOnOption.value == '1' ? true : false;
        this.siteConfig.properties['alwaysOn'] = isEnabled;
        let eventProps = {
            alwaysOnEnabled: isEnabled.toString(),
            resourceId: this.resourceId
        };
        this.loggingService.logEvent("UpdateAlwaysOn", eventProps);
-       this.armService.putResource(url, this.siteConfig, '2016-08-01').subscribe(data =>{
+       this.armService.putResource(url, this.siteConfig, '2016-08-01', true).subscribe(data =>{
         this.siteConfig = data;
-        this.alwaysOnState = this.siteConfig.properties['alwaysOn'];
+        if(this.siteConfig.properties['alwaysOn']) {
+            this.alwaysOnOption = this.EnablementOptions[0];
+        } else {
+            this.alwaysOnOption = this.EnablementOptions[1];
+        }
+        }, (error:any) => {
+            this.logHTTPError(error, 'updateAlwaysOn');
+            this.alwaysOnOption = this.EnablementOptions[0];
         });
    }
 
-   updateProviderRegister(isRegister: boolean): void {
-       this.updatingProvider = true;
+   updateProviderRegister(providerRegOption: any, isRetry: boolean = false): void {
+       this.clearErrors();
+       if(!isRetry) {
+            this.updatingProvider = true;
+       }
+       let isRegister = providerRegOption.value == '1' ? true : false;
         let url = `/subscriptions/${this.subscriptionId}/providers/Microsoft.ChangeAnalysis/`;
         url += isRegister ? `register` : `unregister`;
         let props = {
@@ -228,15 +263,13 @@ export class DiagnosticsSettingsComponent implements OnInit, OnDestroy {
             resourceId: this.resourceId
         };
         this.loggingService.logEvent('UpdateChangeAnalysisResourceProvider', props);
-        this.armService.postResource(url, {}, '2018-05-01', true).subscribe((response: any) => {
-            let providerRegistrationStateResponse = <ProviderRegistration>response;
+        this.armService.postResourceFullResponse(url, {}, true, '2018-05-01').subscribe((response: HttpResponse<{}>) => {
+            let providerRegistrationStateResponse = <ProviderRegistration>response.body;
             let state = providerRegistrationStateResponse.registrationState;
-            if (state.toLowerCase() == 'registered') {
-                this.changeAnalyisisEnabled = true;
-                this.isProviderRegistered = true;
-            } else if (state.toLowerCase() == 'unregistered') {
-                this.changeAnalyisisEnabled = false;
-                this.isProviderRegistered = false;
+            if (state.toLowerCase() === 'registered') {
+                this.providerRegOption = this.EnablementOptions[0];
+            } else if (state.toLowerCase() === 'unregistered') {
+                this.providerRegOption = this.EnablementOptions[1];
             } else {
                 this.showInProgress = true;
                 this.regState = state;
@@ -246,11 +279,30 @@ export class DiagnosticsSettingsComponent implements OnInit, OnDestroy {
             }
             this.updatingProvider = false;
         }, (error: any) => {
-            this.showGeneralError = true;
-            this.generalErrorMsg = 'Unable to register/unregister Change Analysis Resource Provider. Please try again later.';
-            this.isProviderRegistered = false;
-            this.changeAnalyisisEnabled = false;
-            this.updatingProvider = false;
+           this.logHTTPError(error, 'updateProviderRegister');
+            // When error occurs when updating Resource Provider, retry
+            if(this.retryCount <= 3 && isRegister) {
+                this.updatingProvider = false;
+                this.showInProgress = true;
+                this.regState = 'Registering';
+                setTimeout( () => {
+                    this.loggingService.logTrace('Attempting retry to register resource provider, retry attempt '+this.retryCount);
+                    this.updateProviderRegister(this.EnablementOptions[0], true);
+                    this.retryCount++;
+                }, 30000);
+            } else {
+                this.showGeneralError = true;
+                if(error.status === 403) {
+                    this.generalErrorMsg = 'Unable to register/unregister Change Analysis Resource Provider. ' +this.permissionErrorMsg;
+                } else if(error.status === 401) {
+                    this.generalErrorMsg = 'Unable to register/unregister Change Analysis Resource Provider. '+this.tokenErrorMsg;
+                } else {
+                    this.generalErrorMsg = 'Unable to register/unregister Change Analysis Resource Provider. Please try again later.';
+                }
+                this.updatingProvider = false;
+                this.showInProgress = false;
+                this.providerRegOption = this.EnablementOptions[1];
+            }
         });
    }
 
@@ -259,36 +311,47 @@ export class DiagnosticsSettingsComponent implements OnInit, OnDestroy {
         let providerRegistrationStateResponse = <ProviderRegistration>response;
         let state = providerRegistrationStateResponse.registrationState;
         // Final state, stop polling
-        if (state.toLowerCase() == 'registered') {
-            this.changeAnalyisisEnabled = true;
-            this.isProviderRegistered = true;
+        if (state.toLowerCase() === 'registered') {
+            this.providerRegOption = this.EnablementOptions[0];
             if(this.subscription) {
                 this.subscription.unsubscribe();
             }
             this.showInProgress = false;
         }
-        if (state.toLowerCase() == 'unregistered') {
-            this.changeAnalyisisEnabled = false;
-            this.isProviderRegistered = false;
+        if (state.toLowerCase() === 'unregistered') {
+            this.providerRegOption = this.EnablementOptions[1];
             if(this.subscription) {
                 this.subscription.unsubscribe();
             }
             this.showInProgress = false;
         }
     }, (error: any) => {
-        this.changeAnalyisisEnabled = false;
-        this.isProviderRegistered = false;
+        this.logHTTPError(error, 'pollResourceProviderReg');
+        this.providerRegOption = this.EnablementOptions[1];
         this.showInProgress = false;
     })
    }
 
    saveSettings(): void {
        // Register the Resource Provider
-       this.updateProviderRegister(this.changeAnalyisisEnabled);
+       this.updateProviderRegister(this.providerRegOption);
         // Update hidden tag
-       this.updateScanTag(this.codeScanEnabled);
+       this.updateScanTag(this.codeScanOption);
        // Update always on
-       this.updateAlwaysOn(this.alwaysOnEnabled);
+       this.updateAlwaysOn(this.alwaysOnOption);
+   }
+
+   logHTTPError(error: any, methodName: string): void {
+        let errorLoggingProps = {
+            errorMsg: error.message ? error.message : 'Server Error',
+            statusCode: error.status ? error.status : 500
+        };
+        this.loggingService.logTrace('HTTP error in '+methodName, errorLoggingProps);
+   }
+
+   clearErrors(): void {
+       this.generalErrorMsg = '';
+       this.showGeneralError = false;
    }
 
    ngOnDestroy(): void {

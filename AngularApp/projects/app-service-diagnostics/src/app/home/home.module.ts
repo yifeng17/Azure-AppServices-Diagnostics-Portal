@@ -119,7 +119,7 @@ export const HomeRoutes = RouterModule.forChild([
   },
   {
     path: 'settings',
-    component: DiagnosticsSettingsComponent, 
+    component: DiagnosticsSettingsComponent,
     data: {
       navigationTitle: 'App Service Diagnostics Settings'
     }

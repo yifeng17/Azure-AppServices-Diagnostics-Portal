@@ -1,5 +1,5 @@
 import { DiffEditorModel } from 'ngx-monaco-editor';
-import { isBoolean, isString } from 'util';
+import { isBoolean, isString, isNumber } from 'util';
 
 export class ChangeAnalysisUtilities {
     public static  prepareDisplayValueForTable(displayName: string): string {
@@ -10,7 +10,13 @@ export class ChangeAnalysisUtilities {
       public static prepareValuesForDiffView(diffvalue: any): DiffEditorModel {
         try {
             let jsonObject: any;
-            if(isBoolean(diffvalue)) {
+            if(diffvalue === null || typeof diffvalue === 'undefined') {
+                return {
+                    "code": "",
+                    "language": 'text/plain'
+                }
+            }
+            if(isBoolean(diffvalue) || isNumber(diffvalue)) {
                 return {
                     "code": diffvalue.toString(),
                     "language": 'text/plain'
@@ -49,6 +55,11 @@ export class ChangeAnalysisUtilities {
                 "language": 'text/plain'
             }
         }
+    }
+
+    public static getDataSourceFromChangesetId(changesetId: string): string {
+        let splits = changesetId ? changesetId.split('_') : [];
+        return splits.length > 0 ? splits[0] : null;
     }
 
     public static findGroupBySource(source: string): number {

@@ -35,9 +35,20 @@
 }
 
 .stepper-circle-green {
-    background-color: #87d286;
+    background-color: #7fba00;
     z-index: 1;
 }
+
+.stepper-circle-purple {
+    background-color: #68217a;
+    z-index: 1;
+}
+
+.stepper-circle-brown {
+    background-color: #ff9104;
+    z-index: 1;
+}
+
 
 .list-item {
     // display: table-row;
@@ -69,8 +80,9 @@
     z-index: 0;
 }
 
-.dark{
-    color:black;
+.list-text {
+    margin-top: 10px;
+    margin-bottom: 20px;
 }
 
 .detector-list {
@@ -101,3 +113,65 @@
     font-size: 20px;
     font-weight: lighter;
   }
+
+.special .list-group-item:first-child {
+    border-top-right-radius: 0px !important;
+    border-top-left-radius: 0px !important;
+ }
+ 
+.special .list-group-item:last-child {
+   border-bottom-right-radius: 0px !important;
+   border-bottom-left-radius: 0px !important;
+ }
+
+.nopadding {
+    padding: 0 !important;
+    margin: 5px !important;
+ }
+
+.app-insights-image {
+    width:18px; 
+    height: 18px; 
+    margin-top:-3px;
+}
+
+.loading-status {
+    margin-left:5px;
+}
+
+.loading-status-container {
+    margin-top:10px
+}
+
+.app-insights-container {
+    font-size:13px
+}
+
+.app-insights-disabled {
+   color:#505050;
+}
+
+.app-insights-disabled-site
+{
+    font-weight:500;
+    color:black;
+}
+
+.app-insights-blade-link
+{
+    width:100%;
+    text-align:right;
+    font-size:13px;
+    padding:3px; 
+    margin:12px 0px;
+}
+
+.app-insights-blade-link i
+{
+    font-size: 15px;
+}
+
+.analysis-content
+{
+    width:98%
+}

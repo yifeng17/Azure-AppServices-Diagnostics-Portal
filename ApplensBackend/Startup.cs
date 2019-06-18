@@ -6,11 +6,17 @@ using System.IO;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.AzureAD.UI;
 using AppLensV3.Services;
-using AppLensV3.Services.EmailNotificationService;
 using System;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Identity;
+using System.Collections.Generic;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Tokens.Saml;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.WsFederation;
+using Microsoft.IdentityModel.Tokens.Saml2;
 
 namespace AppLensV3
 {
@@ -56,17 +62,42 @@ namespace AppLensV3
             services.AddSingleton<IOutageCommunicationService, OutageCommunicationService>();
             services.AddSingleton<ILocalDevelopmentClientService, LocalDevelopmentClientService>();
             services.AddSingleton<IEmailNotificationService, EmailNotificationService>();
+            services.AddSingleton<IGraphClientService, GraphClientService>();
+            services.AddSingleton<IGraphTokenService, GraphTokenService>();
+            services.AddSingleton<ISupportTopicService, SupportTopicService>();
+            services.AddSingleton<ISelfHelpContentService, SelfHelpContentService>();
 
+            services.AddMemoryCache();
             services.AddMvc();
 
-            services.AddAuthentication(auth =>
+            if (Configuration.GetValue<bool>("DatacenterFederationEnabled", false))
             {
-                auth.DefaultScheme = AzureADDefaults.BearerAuthenticationScheme;
-            })
-            .AddAzureADBearer(options =>
+                services.AddAuthentication(options =>
+                {
+                    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = WsFederationDefaults.AuthenticationScheme;
+                })
+                .AddWsFederation(options =>
+                {
+                    options.MetadataAddress = Configuration["DatacenterFederationConfiguration:MetadataAddress"];
+                    options.Wtrealm = Configuration["DatacenterFederationConfiguration:Realm"];
+                    options.ClaimsIssuer = Configuration["DatacenterFederationConfiguration:Issuer"];
+                    options.SecurityTokenHandlers = new List<ISecurityTokenValidator> { new Saml2SecurityTokenHandler() };
+                })
+                .AddCookie();
+            }
+            else
             {
-                Configuration.Bind("AzureAd", options);
-            });
+                services.AddAuthentication(auth =>
+                {
+                    auth.DefaultScheme = AzureADDefaults.BearerAuthenticationScheme;
+                })
+                .AddAzureADBearer(options =>
+                {
+                    Configuration.Bind("AzureAd", options);
+                });
+            }
 
             if (Configuration["ServerMode"] == "internal")
             {

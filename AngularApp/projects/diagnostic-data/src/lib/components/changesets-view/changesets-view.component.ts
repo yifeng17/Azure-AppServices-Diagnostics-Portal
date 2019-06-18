@@ -11,7 +11,8 @@ import * as momentNs from 'moment';
 import { Subscription, interval } from 'rxjs';
 import { TelemetryEventNames } from '../../services/telemetry/telemetry.common';
 import { SettingsService} from '../../services/settings.service';
-import {ChangeAnalysisUtilities} from '../../utilities/changeanalysis-utilities';
+import { ChangeAnalysisUtilities } from '../../utilities/changeanalysis-utilities';
+import { DataTableUtilities } from '../../utilities/datatable-utilities';
 const moment = momentNs;
 @Component({
   selector: 'changesets-view',
@@ -29,8 +30,8 @@ export class ChangesetsViewComponent extends DataRenderBaseComponent implements 
     loadingChangesTimeline: boolean = false;
     changesTableError: string = '';
     sourceGroups = new DataSet([
-        {id: 1, content: 'Properties'},
-        {id: 2, content: 'Code'}
+        {id: 1, content: '<strong> Properties </strong>'},
+        {id: 2, content: '<strong> Code </strong>'}
     ]);
     scanStatusMessage: string = '';
     allowScanAction: boolean = false;
@@ -87,7 +88,7 @@ export class ChangesetsViewComponent extends DataRenderBaseComponent implements 
             content: ' ',
             start: changeset[3],
             group: ChangeAnalysisUtilities.findGroupBySource(changeset[2]),
-            className: ChangeAnalysisUtilities.findGroupBySource(changeset[2]) == 1 ? 'red' : 'green'
+            className: ChangeAnalysisUtilities.findGroupBySource(changeset[2]) == 1 ? 'blue' : 'green'
         })
         });
         this.loadingChangesTimeline = false;
@@ -109,7 +110,17 @@ export class ChangesetsViewComponent extends DataRenderBaseComponent implements 
     }
 
     private initializeChangesView(data: DataTableResponseObject) {
-        let latestChangeSet = data.rows[0][7];
+        if (data.rows.length == 0) {
+            return;
+        }
+
+        let changeSetIdColumnIndex = DataTableUtilities.getColumnIndexByName(data, "ChangeSetId");
+        let inputsColumnIndex = DataTableUtilities.getColumnIndexByName(data, "Inputs");
+        let initiatedByColumnIndex = DataTableUtilities.getColumnIndexByName(data, "InitiatedBy");
+        let latestChangeSetId = data.rows[0][changeSetIdColumnIndex];
+        let latestChangeSet = data.rows[0][inputsColumnIndex];
+        this.selectedChangeSetId = latestChangeSetId;
+
         if(latestChangeSet != null) {
             this.loadingChangesTable = true;
             this.changesTableError = '';
@@ -120,7 +131,7 @@ export class ChangesetsViewComponent extends DataRenderBaseComponent implements 
                     },
                 renderingProperties: RenderingType.ChangesView
             }];
-            this.initiatedBy = this.changeSetsLocalCopy.hasOwnProperty(data.rows[0][0]) ? this.changeSetsLocalCopy[data.rows[0][0]][5] : '';
+            this.initiatedBy = this.changeSetsLocalCopy.hasOwnProperty(latestChangeSetId) ? this.changeSetsLocalCopy[latestChangeSetId][initiatedByColumnIndex] : '';
             this.loadingChangesTable = false;
             this.changesTableError = '';
         }
@@ -131,9 +142,11 @@ export class ChangesetsViewComponent extends DataRenderBaseComponent implements 
     // TODO: Find a better way of updating angular UI
     private triggerChangeEvent(properties: any): void {
         let domelement = <HTMLInputElement>document.getElementById("changeSetId");
-        domelement.value = properties.items[0];
-        let event = new Event('change');
-        domelement.dispatchEvent(event);
+        if(properties.items.length > 0 && typeof properties.items[0] != 'undefined') {
+            domelement.value = properties.items[0];
+            let event = new Event('change');
+            domelement.dispatchEvent(event);
+        }
     }
 
      refreshChangesTable(): void {
@@ -157,7 +170,7 @@ export class ChangesetsViewComponent extends DataRenderBaseComponent implements 
             this.loadingChangesTable = false;
             this.changesTableError = '';
         } else {
-            let queryParams = `&changeSetId=${changeSetId}`;
+            let queryParams = `&changeSetId=${encodeURIComponent(changeSetId)}`;
             this.diagnosticService.getDetector(this.detector, this.detectorControlService.startTimeString, this.detectorControlService.endTimeString,
             this.detectorControlService.shouldRefresh, this.detectorControlService.isInternalView, queryParams).subscribe((response: DetectorResponse) =>{
             this.changeSetsCache[changeSetId] = response.dataset;
@@ -194,11 +207,12 @@ export class ChangesetsViewComponent extends DataRenderBaseComponent implements 
                     }
                     this.setScanState("");
                     this.scanStatusMessage = 'Unable to submit scan request. Please check if you have enabled scan for code changes in settings and try again.';
+                } else {
+                    // Start polling every 15 secs to see the progress.
+                    this.subscription = interval(15000).subscribe(res => {
+                        this.pollForScanStatus();
+                    });
                 }
-                // Start polling every 15 secs to see the progress.
-                this.subscription = interval(15000).subscribe(res => {
-                    this.pollForScanStatus();
-                });
             }, (error: any) => {
                 this.scanState = "";
                 this.scanStatusMessage = "Unable to submit scan request. Please refresh or try again after sometime";
@@ -375,7 +389,7 @@ export class ChangesetsViewComponent extends DataRenderBaseComponent implements 
                     content: ' ',
                     start: row[3],
                     group: ChangeAnalysisUtilities.findGroupBySource(row[2]),
-                    className: ChangeAnalysisUtilities.findGroupBySource(row[2]) == 1 ? 'red' : 'green'
+                    className: ChangeAnalysisUtilities.findGroupBySource(row[2]) == 1 ? 'blue' : 'green'
                 });
                 }
             });

@@ -61,7 +61,7 @@ export class TabsComponent implements OnInit {
   }
 
   getAnalysisTabIfAnalysisDetector(url: string) {
-    if (url.indexOf("/analysis/") && url.indexOf("/detectors/") >= 0) {
+    if (url.indexOf("/analysis/") >=0 && url.indexOf("/detectors/") >= 0 && url.indexOf("/legacy/") === -1) {
       let detectorWithAnalysisPath = url.split("/analysis/")[1];
       if (detectorWithAnalysisPath.indexOf("/detectors/") > 0) {
         if (detectorWithAnalysisPath.indexOf("/") > 0) {
@@ -104,6 +104,17 @@ export class TabsComponent implements OnInit {
         this._router.navigateByUrl(this.navigationItems[index - 1].url);
       }
     }
-  }
+    }
+
+    navigateTab(index: number): void {
+
+        if (index >= 0) {
+            const tab = this.navigationItems[index];
+            if (!tab.isActive) {
+                this._router.navigateByUrl(tab.url);
+            }
+        }
+    }
+
 
 }

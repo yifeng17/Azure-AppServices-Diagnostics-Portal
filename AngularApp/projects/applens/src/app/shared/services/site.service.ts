@@ -22,26 +22,38 @@ export class SiteService extends ResourceService {
       .pipe(map((observerResponse: Observer.ObserverSiteResponse) => {
         this._siteObject = this.getSiteFromObserverResponse(observerResponse);
         this._currentResource.next(this._siteObject);
+        this.updatePesIdAndImgSrc();
         return true;
       }))
   }
 
-  public getCurrentResource(): Observable<any> {
-    return this._currentResource;
-  }
+    public getCurrentResource(): Observable<any> {
+        return this._currentResource;
+    }
 
-  public restartSiteFromUri(resourceUri: string): Observable<HttpResponse<any>> {
-    return null;
-  }
+    public restartSiteFromUri(resourceUri: string): Observable<HttpResponse<any>> {
+        return null;
+    }
 
-  public updateSettingsFromUri(resourceUri: string, body: any): Observable<any> {
-    return null;
-  }
+    public updateSettingsFromUri(resourceUri: string, body: any): Observable<any> {
+        return null;
+    }
 
-  private getSiteFromObserverResponse(observerResponse: Observer.ObserverSiteResponse): Observer.ObserverSiteInfo {
-    return observerResponse.details.find(site =>
-      site.Subscription.toLowerCase() === this._armResource.subscriptionId.toLowerCase() &&
-      site.ResourceGroupName.toLowerCase() === this._armResource.resourceGroup.toLowerCase())
-  }
+    private getSiteFromObserverResponse(observerResponse: Observer.ObserverSiteResponse): Observer.ObserverSiteInfo {
+        return observerResponse.details.find(site =>
+            site.Subscription.toLowerCase() === this._armResource.subscriptionId.toLowerCase() &&
+            site.ResourceGroupName.toLowerCase() === this._armResource.resourceGroup.toLowerCase())
+    }
 
+    public updatePesIdAndImgSrc() {
+        if (this._requestBody.Kind && this._requestBody.Kind.toString().toLowerCase().indexOf("functionapp") !== -1) {
+            this.pesId = '16072';
+            this.imgSrc = 'assets/img/Azure-Functions-Logo.png';
+            this.staticSelfHelpContent = 'microsoft.function';
+        }
+        else if (this._requestBody.IsLinux) {
+            this.pesId = '16170';   
+            this.imgSrc = 'assets/img/Azure-Tux-Logo.png';
+        }
+    }
 }

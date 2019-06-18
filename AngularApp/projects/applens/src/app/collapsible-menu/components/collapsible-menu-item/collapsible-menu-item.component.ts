@@ -34,12 +34,12 @@ export class CollapsibleMenuItemComponent {
   constructor(private _searchPipe: SearchPipe) { }
 
   ngOnInit() {
-
     this.children = this.menuItem.subItems;
     this.hasChildren = this.menuItem.subItems && this.menuItem.subItems.length > 0;
 
     this._searchValueSubject.subscribe(searchValue => {
       this.searchValueLocal = searchValue;
+      this.menuItem.expanded = searchValue != undefined;
       this.hasChildren = this.menuItem.subItems ? this._searchPipe.transform(this.menuItem.subItems, searchValue).length > 0 : false;
       this.matchesSearchTerm = !this.searchValueLocal || this.menuItem.label.toLowerCase().indexOf(this.searchValueLocal.toLowerCase()) >= 0 || this.hasChildren;
     });
@@ -62,7 +62,11 @@ export class CollapsibleMenuItemComponent {
   }
 
   getPadding() {
-    return (15 + this.level * 12) + 'px';
+    return (25 + this.level * 10) + 'px';
+  }
+
+  getFontSize() {
+      return (14 - this.level) + 'px';
   }
 
 }
