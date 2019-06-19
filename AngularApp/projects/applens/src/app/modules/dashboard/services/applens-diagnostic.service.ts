@@ -76,7 +76,6 @@ export class ApplensDiagnosticService {
   }
 
   getCompilerResponse(body: any, isSystemInvoker: boolean, detectorId: string = '', startTime: string = '', endTime: string = '', dataSource: string = '', timeRange: string = '', additionalParams: any): Observable<QueryResponse<DetectorResponse>> {
-    body.resource = this._resourceService.getResourceByObserver();
     if (isSystemInvoker === false)
     {
       return this._diagnosticApi.getCompilerResponse(
