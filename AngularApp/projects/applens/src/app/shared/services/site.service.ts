@@ -20,7 +20,7 @@ export class SiteService extends ResourceService {
   public startInitializationObservable() {
     this._initialized = this._observerApiService.getSite(this._armResource.resourceName)
       .pipe(map((observerResponse: Observer.ObserverSiteResponse) => {
-        this._siteObject = this.getSiteFromObserverResponse(observerResponse);
+        this._observerResource = this._siteObject = this.getSiteFromObserverResponse(observerResponse);
         this._currentResource.next(this._siteObject);
         this.updatePesIdAndImgSrc();
         return true;
@@ -51,7 +51,7 @@ export class SiteService extends ResourceService {
             this.imgSrc = 'assets/img/Azure-Functions-Logo.png';
             this.staticSelfHelpContent = 'microsoft.function';
         }
-        else if (this._siteObject.IsLinux !== undefined && this._siteObject.IsLinux) {
+        else if (this._siteObject.IsLinux != undefined && this._siteObject.IsLinux) {
             this.pesId = '16170';   
             this.imgSrc = 'assets/img/Azure-Tux-Logo.png';
         }
