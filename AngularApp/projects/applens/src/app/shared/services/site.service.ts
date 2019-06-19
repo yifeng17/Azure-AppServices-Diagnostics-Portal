@@ -46,12 +46,12 @@ export class SiteService extends ResourceService {
     }
 
     public updatePesIdAndImgSrc() {
-        if (this._requestBody.Kind && this._requestBody.Kind.toString().toLowerCase().indexOf("functionapp") !== -1) {
+        if (this._siteObject.Kind && this._siteObject.Kind.toString().toLowerCase().indexOf("functionapp") !== -1) {
             this.pesId = '16072';
             this.imgSrc = 'assets/img/Azure-Functions-Logo.png';
             this.staticSelfHelpContent = 'microsoft.function';
         }
-        else if (this._requestBody.IsLinux) {
+        else if (this._siteObject.IsLinux !== undefined && this._siteObject.IsLinux) {
             this.pesId = '16170';   
             this.imgSrc = 'assets/img/Azure-Tux-Logo.png';
         }

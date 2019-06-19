@@ -13,7 +13,9 @@ namespace Observer {
       WebSpace: string;
       ResourceGroupName: string;
       SlotName: string;
-      Hostnames: string[];
+      Hostnames: string[],
+      Kind: string,
+      IsLinux?: boolean;
   }
 
   export interface ObserverAseResponse {
