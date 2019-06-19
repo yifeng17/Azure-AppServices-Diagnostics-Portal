@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
 
 namespace AppLensV3
 {
@@ -489,5 +490,23 @@ namespace AppLensV3
         public List<string> TextContent { get; set; }
 
         public List<string> ImageUrls { get; set; }
+
+        public double TimeInMilliSeconds { get; set; }
+    }
+
+    /// <summary>
+    /// Defines the structure to use when sending the message to be logged in Kusto.
+    /// </summary>
+    public class InternalEventBody
+    {
+        /// <summary>
+        /// Gets or sets EventType.
+        /// </summary>
+        public string EventType { get; set; }
+
+        /// <summary>
+        /// Gets or sets EventContent.
+        /// </summary>
+        public string EventContent { get; set; }
     }
 }

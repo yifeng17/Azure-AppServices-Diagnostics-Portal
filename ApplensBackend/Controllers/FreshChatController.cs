@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AppLensV3.Attributes;
 using Newtonsoft.Json;
+using System.Net.Http;
 
 namespace AppLensV3.Controllers
 {
@@ -92,6 +93,29 @@ namespace AppLensV3.Controllers
             return imageUrl;
         }
 
+        private async Task<bool> logToKusto(InternalEventBody logMessage)
+        {
+            try
+            {
+                string body = JsonConvert.SerializeObject(logMessage);
+                var response = await _diagnosticClient.Execute("POST", "/internal/logger", body);
+                response.EnsureSuccessStatusCode();
+                return true;
+            }
+            catch (JsonSerializationException jsException)
+            {
+                throw new JsonSerializationException("Failed to serialize data while sengding a request to log in Kusto.", jsException);
+            }
+            catch (HttpRequestException hException)
+            {
+                throw new HttpRequestException("Failed to send a to log in Kusto.", hException);
+            }
+            catch(Exception ex)
+            {
+                throw new Exception("Unknown exception. Review for more details.", ex);
+            }
+        }
+
         /// <summary>
         /// Action for freshchat webhook.
         /// </summary>
@@ -104,8 +128,10 @@ namespace AppLensV3.Controllers
             {
                 try
                 {
+                    DateTime startTime = DateTime.Now;
                     FreshChatPayload incomingPayload = incomingPayload = body.ToObject<FreshChatPayload>();
                     ChatMessageToLog logMsg = new ChatMessageToLog();
+                    InternalEventBody kustoLog = new InternalEventBody();
                     switch (incomingPayload.Action)
                     {
                         case Actions.MessageCreate:
@@ -219,18 +245,43 @@ namespace AppLensV3.Controllers
                             logMsg.TextContent.Add($"Conversation resolved by {resolveData.Resolver.ToString()}.");
                             break;
                         default:
+                            kustoLog.EventType = "FreshChatLoggingUnhandledException";
+
+                            // Remove PII function will likely garble the text body and make the object non serializable however it will be helpful for a human to debug the problem.
+                            kustoLog.EventContent = $"Unhandled message type {incomingPayload.Action.ToString()}. Unable to handle. Body : {_freshChatClientService.RemovePII(JsonConvert.SerializeObject(body))}";
+                            logToKusto(kustoLog);
+
                             throw new Exception($"Unhandled message type {incomingPayload.Action.ToString()}. Unable to handle.");
-                            break;
                     }
+
+                    logMsg.TimeInMilliSeconds = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+
+                    kustoLog.EventType = "FreshChatLoggingUnhandledException";
+                    kustoLog.EventContent = JsonConvert.SerializeObject(logMsg);
+                    logToKusto(kustoLog);
 
                     return Content(JsonConvert.SerializeObject(logMsg));
                 }
                 catch (JsonSerializationException sException)
                 {
-                    throw new JsonSerializationException("Failed to Deserialize the incoming data.", sException);
+                    InternalEventBody kustoLog = new InternalEventBody();
+                    kustoLog.EventType = "FreshChatLoggingUnhandledException";
+
+                    // Remove PII function will likely garble the text body and make the object non serializable however it will be helpful for a human to debug the problem.
+                    kustoLog.EventContent = JsonConvert.SerializeObject(new JsonSerializationException("Failed to deserialize the incoming data.", sException));
+                    logToKusto(kustoLog);
+
+                    throw new JsonSerializationException("Failed to deserialize the incoming data.", sException);
                 }
                 catch (Exception ex)
                 {
+                    InternalEventBody kustoLog = new InternalEventBody();
+                    kustoLog.EventType = "FreshChatLoggingUnhandledException";
+
+                    // Remove PII function will likely garble the text body and make the object non serializable however it will be helpful for a human to debug the problem.
+                    kustoLog.EventContent = JsonConvert.SerializeObject(new ArgumentException("Unknwon error while trying to read the incoming post body ", ex));
+                    logToKusto(kustoLog);
+
                     throw new ArgumentException("Unknwon error while trying to read the incoming post body ", ex);
                 }
             }

@@ -203,12 +203,11 @@ namespace AppLensV3.Services
         public bool VerifyCall(string ApiKey)
         {
             if (string.IsNullOrWhiteSpace(ApiKey))
+            {
                 return false;
+            }
 
             return string.Compare(ApiKey, this.ApplensApiKey, true) == 0;
         }
-
-        
-        
     }
 }
