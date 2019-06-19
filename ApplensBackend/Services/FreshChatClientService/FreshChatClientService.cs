@@ -177,7 +177,6 @@ namespace AppLensV3.Services
             LoadConfigurations(configuration);
             InitializeHttpClient();
             //InitializeDelegates();
-
         }
 
         public bool MakeCallToFreshChat(string baseUri, string uri, HttpMethod method, string jsonBody)
