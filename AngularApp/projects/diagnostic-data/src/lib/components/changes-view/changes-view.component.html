@@ -71,7 +71,7 @@
   <ng-container matColumnDef="expandedDetail">
     <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length" class="detail-cell">
       <div [@changeRowExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-          <ngx-monaco-diff-editor class="diff-view" [options]="options" [(originalModel)]="element.originalModel"
+          <ngx-monaco-diff-editor [ngStyle]="{'height': getHeight(element)}" [options]="options" [(originalModel)]="element.originalModel"
             [(modifiedModel)]="element.modifiedModel"></ngx-monaco-diff-editor>
           <div class="feedback-view">
             <div class="feedback-indication">Did this information help you diagnose the problem?</div>

@@ -68,10 +68,15 @@ export class ChangesViewComponent extends DataRenderBaseComponent implements OnI
         }
     }
 
+    calculateHeight(element: any) {
+        let value = Math.floor(Math.random() * Math.floor(1000));
+        return value.toString() + "px";
+    }
+
     private parseChangesData(changesTable: DataTableResponseObject) {
         if(changesTable.rows.length > 0) {
-            changesTable.rows.forEach(row => {
-                let level: ChangeLevel = ChangeLevel[this.getChangeProperty(row, "level", changesTable)];
+            changesTable.rows.forEach((row, index) => {
+                let level: ChangeLevel = ChangeLevel[<string>this.getChangeProperty(row, "level", changesTable)];
                 let description = this.getChangeProperty(row, "description", changesTable);
                 let oldValue    = this.getChangeProperty(row, "oldValue", changesTable);
                 let newValue    = this.getChangeProperty(row, "newValue", changesTable);
@@ -79,6 +84,21 @@ export class ChangesViewComponent extends DataRenderBaseComponent implements OnI
                 let timestamp   = this.getChangeProperty(row, "timeStamp", changesTable);
                 let jsonPath    = this.getChangeProperty(row, "jsonPath", changesTable);
                 let initiatedBy = this.initiatedBy;
+                if (index == 1) {
+                    oldValue = {"a": 3, "b": 4, "c": 4, "d": 6};
+                    for (let i = 0; i < 100; i++) {
+                        oldValue[i.toString()] = i;
+                    }
+                    
+                    newValue = {"a": 3, "b": 5, "e": 6, "c": 4};
+                } else if (index == 2) {
+                    oldValue = {"a": 3, "c": 5};
+                    newValue = {"b": 4};
+                }
+
+                let originalModel = ChangeAnalysisUtilities.prepareValuesForDiffView(oldValue);
+                let modifiedModel = ChangeAnalysisUtilities.prepareValuesForDiffView(newValue);
+
                 this.tableItems.push({
                     "time":  moment(timestamp).format("MMM D YYYY, h:mm:ss a"),
                     "level": level,
@@ -90,7 +110,8 @@ export class ChangesViewComponent extends DataRenderBaseComponent implements OnI
                     'initiatedBy': initiatedBy == null || initiatedBy == "" ? "N/A" : initiatedBy,
                     'jsonPath': jsonPath,
                     'originalModel': ChangeAnalysisUtilities.prepareValuesForDiffView(oldValue),
-                    'modifiedModel': ChangeAnalysisUtilities.prepareValuesForDiffView(newValue)
+                    'modifiedModel': ChangeAnalysisUtilities.prepareValuesForDiffView(newValue),
+                    'maxRows': Math.max(this.getNumberOfLines(originalModel.code), this.getNumberOfLines(modifiedModel.code))
                 });
             });
             this.tableItems.sort((i1, i2) => i1.level - i2.level);
@@ -98,7 +119,19 @@ export class ChangesViewComponent extends DataRenderBaseComponent implements OnI
         }
     }
 
-    private getChangeProperty(row: any[], propertyName: string, changesTable: DataTableResponseObject): string {
+    getHeight(element: Change): string {
+        let height: number = element.maxRows * 20;
+        height = Math.max(height, 50);
+        height = Math.min(height, 250);
+
+        return height + "px";
+    }
+
+    private getNumberOfLines(str: string): number {
+        return (str.match(/\r|\n|\r\n/g) || []).length + 1;
+    }
+
+    private getChangeProperty(row: any[], propertyName: string, changesTable: DataTableResponseObject): any {
         if(row.hasOwnProperty(propertyName)) {
             return row[propertyName];
         } else {

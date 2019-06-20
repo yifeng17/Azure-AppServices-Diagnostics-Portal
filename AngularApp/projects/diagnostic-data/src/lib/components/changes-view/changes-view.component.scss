@@ -41,9 +41,6 @@ tr.element-row:not(.expanded-row):active {
     border-bottom-width: 0;
 }
 
-.diff-view {
-    height: 250px;
-}
 .level-icon {
     max-width: 20px;
 }
@@ -62,7 +59,7 @@ tr.element-row:not(.expanded-row):active {
 .feedback-view {
     display: flex;
     background-color: #FFFFFF;
-    padding: 10px 30px;
+    padding: 20px 30px 10px 30px;
     margin-top: -5px;
 }
 .feedback-indication {

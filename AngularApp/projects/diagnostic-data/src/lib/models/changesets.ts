@@ -11,6 +11,7 @@ export interface Change {
     jsonPath: string;
     originalModel: DiffEditorModel;
     modifiedModel: DiffEditorModel;
+    maxRows: number;
 }
 
 export enum ChangeLevel {
