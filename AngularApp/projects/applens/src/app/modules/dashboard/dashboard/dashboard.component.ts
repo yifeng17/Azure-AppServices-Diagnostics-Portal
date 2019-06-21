@@ -1,6 +1,6 @@
 import { AdalService } from 'adal-angular4';
 import { Subscription } from 'rxjs';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, Pipe, PipeTransform } from '@angular/core';
 import { ResourceService } from '../../../shared/services/resource.service';
 import * as momentNs from 'moment';
 import { DetectorControlService, FeatureNavigationService, DetectorMetaData, DetectorType } from 'diagnostic-data';
@@ -131,3 +131,17 @@ export class DashboardComponent implements OnDestroy {
   }
 
 }
+
+@Pipe({name: 'formatResourceName'})
+export class FormatResourceNamePipe implements PipeTransform {
+    transform(resourceName: string): string {
+        let displayedResourceName = resourceName;
+        if (resourceName && resourceName.length >= 35)
+        {
+            displayedResourceName = resourceName.substring(0, 35).concat("...");
+        }
+
+        return displayedResourceName;
+    }
+}
+
