@@ -11,7 +11,9 @@ export interface Change {
     jsonPath: string;
     originalModel: DiffEditorModel;
     modifiedModel: DiffEditorModel;
-}
+    initiatedByList: string[];
+  }
+
 
 export enum ChangeLevel {
   Important,

@@ -11,6 +11,7 @@ import * as momentNs from 'moment';
 import { ChangeAnalysisUtilities } from '../../utilities/changeanalysis-utilities';
 import { DataTableUtilities } from '../../utilities/datatable-utilities';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
+
 const moment = momentNs;
   @Component({
     selector: 'changes-view',
@@ -28,7 +29,7 @@ export class ChangesViewComponent extends DataRenderBaseComponent implements OnI
 
     @Input() changesetId: string = '';
     @Input() changesDataSet: DiagnosticData[];
-    @Input() initiatedBy: string = '';
+    @Input() initiatedByList: any;
     changesResponse: DetectorResponse;
     dataSource: MatTableDataSource<Change>;
     displayedColumns = ['level', 'time', 'displayName', 'description', 'initiatedBy'];
@@ -78,7 +79,7 @@ export class ChangesViewComponent extends DataRenderBaseComponent implements OnI
                 let displayName = this.getChangeProperty(row, "displayName", changesTable);
                 let timestamp   = this.getChangeProperty(row, "timeStamp", changesTable);
                 let jsonPath    = this.getChangeProperty(row, "jsonPath", changesTable);
-                let initiatedBy = this.initiatedBy;
+                let initiatedBy = this.initiatedByList;
                 this.tableItems.push({
                     "time":  moment(timestamp).format("MMM D YYYY, h:mm:ss a"),
                     "level": level,
@@ -87,10 +88,11 @@ export class ChangesViewComponent extends DataRenderBaseComponent implements OnI
                     "description": description == null || description == "" ? "N/A" : description,
                     'oldValue': oldValue,
                     'newValue': newValue,
-                    'initiatedBy': initiatedBy == null || initiatedBy == "" ? "N/A" : initiatedBy,
+                    'initiatedBy': ChangeAnalysisUtilities.getInitiatedByField(this.initiatedByList),
                     'jsonPath': jsonPath,
                     'originalModel': ChangeAnalysisUtilities.prepareValuesForDiffView(oldValue),
-                    'modifiedModel': ChangeAnalysisUtilities.prepareValuesForDiffView(newValue)
+                    'modifiedModel': ChangeAnalysisUtilities.prepareValuesForDiffView(newValue),
+                    'initiatedByList' : this.initiatedByList
                 });
             });
             this.tableItems.sort((i1, i2) => i1.level - i2.level);

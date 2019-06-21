@@ -1,6 +1,6 @@
 import { Component, Inject, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
-import { DiagnosticData, DataTableResponseObject, DetectorResponse, RenderingType } from '../../models/detector';
+import { DiagnosticData, DataTableResponseObject, DetectorResponse, RenderingType, DataTableResponseColumn } from '../../models/detector';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
 import { DiagnosticService } from '../../services/diagnostic.service';
@@ -39,10 +39,11 @@ export class ChangesetsViewComponent extends DataRenderBaseComponent implements 
     subscription: Subscription;
     scanState: string = '';
     showViewChanges: boolean = false;
-    timeLineDataSet: DataSet;
+    timeLineDataSet: any;
     changesTimeline: Timeline;
     changeSetsLocalCopy: {};
-    initiatedBy: string = '';
+    initiatedBy: string[];
+    changeSetsColumn: DataTableResponseColumn[];
 
     private readonly noScanMsg: string = 'No recent scans were performed on this web app.';
 
@@ -56,6 +57,7 @@ export class ChangesetsViewComponent extends DataRenderBaseComponent implements 
 
     protected processData(data: DiagnosticData) {
         super.processData(data);
+        this.changeSetsColumn = data.table.columns;
         this.parseData(data.table);
     }
 
@@ -134,7 +136,7 @@ export class ChangesetsViewComponent extends DataRenderBaseComponent implements 
                     },
                 renderingProperties: RenderingType.ChangesView
             }];
-            this.initiatedBy = this.changeSetsLocalCopy.hasOwnProperty(latestChangeSetId) ? this.changeSetsLocalCopy[latestChangeSetId][initiatedByColumnIndex] : '';
+            this.initiatedBy = this.changeSetsLocalCopy.hasOwnProperty(data.rows[0][0]) ? this.getInitiatedByUsers(this.changeSetsLocalCopy[data.rows[0][0]]) : [];
             this.loadingChangesTable = false;
             this.changesTableError = '';
         }
@@ -167,7 +169,7 @@ export class ChangesetsViewComponent extends DataRenderBaseComponent implements 
         // Check cache first
         if (this.changeSetsCache.hasOwnProperty(changeSetId)) {
             this.changesDataSet = this.changeSetsCache[changeSetId];
-            this.initiatedBy = this.changeSetsLocalCopy.hasOwnProperty(changeSetId) ? this.changeSetsLocalCopy[changeSetId][5] : '';
+            this.initiatedBy = this.changeSetsLocalCopy.hasOwnProperty(changeSetId) ? this.getInitiatedByUsers(this.changeSetsLocalCopy[changeSetId]) : [];
             // Angular change detector does not check contents of array itself, so manually trigger the ui to update.
             this.changeDetectorRef.detectChanges();
             this.loadingChangesTable = false;
@@ -178,7 +180,7 @@ export class ChangesetsViewComponent extends DataRenderBaseComponent implements 
             this.detectorControlService.shouldRefresh, this.detectorControlService.isInternalView, queryParams).subscribe((response: DetectorResponse) =>{
             this.changeSetsCache[changeSetId] = response.dataset;
             this.changesDataSet = this.changeSetsCache[changeSetId];
-            this.initiatedBy = this.changeSetsLocalCopy.hasOwnProperty(changeSetId) ? this.changeSetsLocalCopy[changeSetId][5] : '';
+            this.initiatedBy = this.changeSetsLocalCopy.hasOwnProperty(changeSetId) ?  this.getInitiatedByUsers(this.changeSetsLocalCopy[changeSetId]) : [];
             this.changeDetectorRef.detectChanges();
             this.loadingChangesTable = false;
             this.changesTableError = '';
@@ -450,4 +452,21 @@ export class ChangesetsViewComponent extends DataRenderBaseComponent implements 
         let path = this.settingsService.getUrlToNavigate();
         this.router.navigateByUrl(path);
    }
+
+
+   getColumnIndexByName(searchColumnName: string):number {
+        return this.changeSetsColumn.findIndex(column => column.columnName.toLowerCase() === searchColumnName.toLowerCase());
+    }
+
+    getInitiatedByUsers(changeSet: any[]):any[] {
+        let initiatedByListIndex = this.getColumnIndexByName('initiatedByList');
+        let initiatedByIndex = this.getColumnIndexByName('initiatedBy');
+        if(initiatedByListIndex >= 0) {
+            return changeSet[initiatedByListIndex];
+        }
+        if(changeSet[initiatedByIndex] === null || changeSet[initiatedByIndex] === "") {
+            return ["N/A"];
+        }
+        return [changeSet[initiatedByIndex]];
+    }
 }
