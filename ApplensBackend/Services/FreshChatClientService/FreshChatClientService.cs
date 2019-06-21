@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -10,49 +12,212 @@ using System.Threading.Tasks;
 
 namespace AppLensV3.Services
 {
+    /// <summary>
+    /// Helper class to process and log freshchat messages.
+    /// </summary>
     public class FreshChatClientService : IFreshChatClientService
     {
-
+        private readonly IDiagnosticClientService _diagnosticClient;
         private IConfiguration _configuration;
 
-        private ConcurrentDictionary<string, AgentDetails> _agentCache;
+        // Using the same limit for all caches. The number of agents and caht volume is low and the same limit will work for all caches
+        private int maxCacheEntries = 400;
+        private ConcurrentDictionary<string, AgentCacheEntry> _agentCache;
+        private ConcurrentDictionary<string, UserCacheEntry> _userCache;
+        private ConcurrentDictionary<string, ResourceCacheEntry> _resourceConversationCache;
 
         private HttpClient HttpClient { get; set; }
 
         private string ApplensApiKey { get; set; }
-        private string FreshChatApiKey { get; set; }
+        private string FreshChatAuthHeader { get; set; }
         private string FreshChatBaseUri { get; set; }
         private string UserAgentToFreshChat { get; set; }
 
+        /// <summary>
+        /// Set locals based on configuation.
+        /// </summary>
+        /// <param name="configuration"></param>
         public void LoadConfigurations(IConfiguration configuration)
         {
             _configuration = configuration;
             ApplensApiKey = _configuration["FreshChat:ApplensApiKey"];
-            FreshChatApiKey = _configuration["FreshChat:FreshChatApiKey"];
+            FreshChatAuthHeader = _configuration["FreshChat:FreshChatAuthHeader"];
             FreshChatBaseUri = _configuration["FreshChat:FreshChatBaseUri"];
             UserAgentToFreshChat = _configuration["FreshChat:UserAgentToFreshChat"];
 
-            _agentCache = new ConcurrentDictionary<string, AgentDetails>();
+            _agentCache = new ConcurrentDictionary<string, AgentCacheEntry>();
+            _userCache = new ConcurrentDictionary<string, UserCacheEntry>();
+            _resourceConversationCache =  new ConcurrentDictionary<string, ResourceCacheEntry>();
+    }
+
+        /// <summary>
+        /// Add or update agent information in agent cache.
+        /// </summary>
+        /// <param name="agentId">Identifier for the agent.</param>
+        /// <param name="value">Details of the Agent. See <see cref="AgentDetails"/>.</param>
+        private void AddOrUpdateAgent(string agentId, AgentDetails value)
+        {
+            if (!string.IsNullOrWhiteSpace(agentId))
+            {
+                AgentCacheEntry newEntry = new AgentCacheEntry();
+                newEntry.agent = value;
+                newEntry.timeStamp = DateTime.Now;
+                _agentCache.AddOrUpdate(agentId.ToLower(), newEntry, (existingKey, oldValue) => newEntry);
+
+                if (_agentCache.Count > maxCacheEntries)
+                {
+                    TryRemoveAgent(_agentCache.OrderBy(o => o.Value.timeStamp).FirstOrDefault().Key);
+                }
+            }
         }
 
-        public IEnumerable<AgentDetails> GetAllAgents()
+        private bool TryRemoveAgent(string agentId)
         {
-            return _agentCache.Values;
+            AgentCacheEntry ignored;
+            return _agentCache.TryRemove(agentId.ToLower(), out ignored);
         }
 
-        public void AddOrUpdateAgent(string agentId, AgentDetails value)
+        /// <inheritdoc/>
+        public async Task<AgentDetails> GetAgentDetails(string agentId)
         {
-            _agentCache.AddOrUpdate(agentId.ToLower(), value, (existingKey, oldValue) => value);
+            AgentCacheEntry cacheEntry;
+            bool result = _agentCache.TryGetValue(agentId.ToLower(), out cacheEntry);
+            if (result)
+            {
+                return cacheEntry.agent;
+            }
+            else
+            {
+                AgentDetails currAgent = new AgentDetails();
+                string uri = $"/agents/{agentId}";
+                try
+                {
+                    HttpResponseMessage response = await MakeGetCallToFreshChat(uri);
+                    string responseContent = await response.Content.ReadAsStringAsync();
+                    var jsonResponse = JToken.Parse(responseContent);
+
+                    currAgent.Id = agentId;
+                    currAgent.FirstName = (string)jsonResponse["first_name"];
+                    currAgent.LastName = (string)jsonResponse["last_name"];
+                    currAgent.Email = (string)jsonResponse["email"];
+                    currAgent.Avatar = new Avatar() { Url = (string)jsonResponse["avatar"].Value<JToken>("url") };
+
+                    // Add to cache for future lookups
+                    AddOrUpdateAgent(currAgent.Id, currAgent);
+                    return currAgent;
+                }
+                catch (Exception ex)
+                {
+                    InternalEventBody kustoLog = new InternalEventBody();
+                    kustoLog.EventType = "FreshChatLoggingUnhandledException";
+                    kustoLog.EventContent = $"Unhandled {ex.GetType().ToString()} exception while calling FreshChat server to fetch sender details. URI: {uri}";
+                    await LogToKusto(kustoLog);
+                    throw ex;
+                }
+            }
         }
 
-        public bool TryRemoveAgent(string agentId, out AgentDetails value)
+        private void AddOrUpdateUser(string userId, UserDetails value)
         {
-            return _agentCache.TryRemove(agentId.ToLower(), out value);
+            if (!string.IsNullOrWhiteSpace(userId))
+            {
+                UserCacheEntry newEntry = new UserCacheEntry();
+                newEntry.user = value;
+                newEntry.timeStamp = DateTime.Now;
+                _userCache.AddOrUpdate(userId.ToLower(), newEntry, (existingKey, oldValue) => newEntry);
+
+                if (_userCache.Count > maxCacheEntries)
+                {
+                    TryRemoveUser(_userCache.OrderBy(o => o.Value.timeStamp).FirstOrDefault().Key);
+                }
+            }
         }
 
-        public bool TryGetAgent(string agentId, out AgentDetails value)
+        private bool TryRemoveUser(string userId)
         {
-            return _agentCache.TryGetValue(agentId.ToLower(), out value);
+            UserCacheEntry ignored;
+            return _userCache.TryRemove(userId.ToLower(), out ignored);
+        }
+
+        /// <inheritdoc/>
+        public async Task<UserDetails> GetUserDetails(string userId, string conversationId = null)
+        {
+            UserCacheEntry cacheEntry;
+            bool result = _userCache.TryGetValue(userId.ToLower(), out cacheEntry);
+            if (result)
+            {
+                return cacheEntry.user;
+            }
+            else
+            {
+                UserDetails currUser = new UserDetails();
+                string uri = $"/users/{userId}";
+                try
+                {
+                    HttpResponseMessage response = await MakeGetCallToFreshChat(uri);
+                    string responseContent = await response.Content.ReadAsStringAsync();
+                    var jsonResponse = JToken.Parse(responseContent);
+
+                    currUser.Id = userId;
+                    currUser.ReferenceId = (string)jsonResponse["reference_id"];
+                    currUser.FirstName = currUser.ReferenceId.Split("sites/").Length > 1 ? currUser.ReferenceId.Split("sites/")[1] : (string)jsonResponse["first_name"];
+                    currUser.LastName = string.Empty;
+                    currUser.Email = string.Empty;
+                    currUser.Avatar = new Avatar() { Url = (string)jsonResponse["avatar"].Value<JToken>("url") };
+
+                    // Add to cache for future lookups
+                    AddOrUpdateUser(currUser.Id, currUser);
+
+                    // Update the _resourceConversationCache
+                    if (!string.IsNullOrWhiteSpace(conversationId))
+                    {
+                        AddOrUpdateResourceUri(conversationId, currUser.ReferenceId);
+                    }
+
+                    return currUser;
+                }
+                catch (Exception ex)
+                {
+                    InternalEventBody kustoLog = new InternalEventBody();
+                    kustoLog.EventType = "FreshChatLoggingUnhandledException";
+                    kustoLog.EventContent = $"Unhandled {ex.GetType().ToString()} exception while calling FreshChat server to fetch sender details. URI: {uri}";
+                    await LogToKusto(kustoLog);
+                    throw ex;
+                }
+            }
+        }
+
+        private void AddOrUpdateResourceUri(string conversationId, string resourceUri)
+        {
+            ResourceCacheEntry newEntry = new ResourceCacheEntry();
+            newEntry.resourceUri = resourceUri;
+            newEntry.timeStamp = DateTime.Now;
+            _resourceConversationCache.AddOrUpdate(conversationId.ToLower(), newEntry, (existingKey, oldValue) => newEntry);
+
+            if (_resourceConversationCache.Count > maxCacheEntries)
+            {
+                TryRemoveResourceUri(_resourceConversationCache.OrderBy(o => o.Value.timeStamp).FirstOrDefault().Key);
+            }
+        }
+
+        /// <inheritdoc/>
+        public string GetResourceUri(string conversationId)
+        {
+            ResourceCacheEntry cacheEntry;
+            string resourceUri = string.Empty;
+
+            if (_resourceConversationCache.TryGetValue(conversationId, out cacheEntry))
+            {
+                resourceUri = cacheEntry.resourceUri;
+            }
+
+            return resourceUri;
+        }
+
+        private bool TryRemoveResourceUri(string conversationId)
+        {
+            ResourceCacheEntry ignored;
+            return _resourceConversationCache.TryRemove(conversationId.ToLower(), out ignored);
         }
 
         private void InitializeHttpClient()
@@ -62,9 +227,10 @@ namespace AppLensV3.Services
                 MaxResponseContentBufferSize = int.MaxValue,
                 Timeout = TimeSpan.FromSeconds(30)
             };
-
+            HttpClient.BaseAddress = new Uri(FreshChatBaseUri);
             HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             HttpClient.DefaultRequestHeaders.Add("User-Agent", this.UserAgentToFreshChat);
+            HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", FreshChatAuthHeader);
         }
 
         private string MaskPhone(string content)
@@ -144,16 +310,7 @@ namespace AppLensV3.Services
             return Regex.Replace(content, pattern, m => new string('*', m.Length));
         }
 
-        //private List<Func<string, string>> Anonymizers = new List<Func<string, string>>();
-
-        //private void InitializeDelegates()
-        //{
-        //    Anonymizers.Add(MaskEmails);
-        //    Anonymizers.Add(MaskPassword);
-        //    Anonymizers.Add(MaskQueryString);
-        //    Anonymizers.Add(MaskPhone);
-        //}
-
+        /// <inheritdoc/>
         public string RemovePII(string content)
         {
             string currContent = content;
@@ -165,48 +322,89 @@ namespace AppLensV3.Services
             currContent = MaskIPV4Address(currContent);
 
             return currContent;
-            //string currContent = content;
-            //foreach (Func<string, string> currAnonymizer in Anonymizers)
-            //{
-            //    currContent = currAnonymizer(currContent);
-            //}
         }
 
-        public FreshChatClientService(IConfiguration configuration)
+        /// <inheritdoc/>
+        public async Task<bool> LogToKusto(InternalEventBody logMessage)
+        {
+            try
+            {
+                string body = JsonConvert.SerializeObject(logMessage);
+                var response = await _diagnosticClient.Execute("POST", "/internal/logger", body);
+                response.EnsureSuccessStatusCode();
+                return true;
+            }
+            catch (JsonSerializationException jsException)
+            {
+                throw new JsonSerializationException("Failed to serialize data while sending a request to log in Kusto.", jsException);
+            }
+            catch (HttpRequestException hException)
+            {
+                throw new HttpRequestException("Failed to send a log in Kusto.", hException);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Unknown exception. Review for more details.", ex);
+            }
+        }
+
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FreshChatClientService"/> class.
+        /// </summary>
+        /// <param name="configuration">Will be passed via DI.</param>
+        /// <param name="diagnosticClient">Will be passed via DI. Used to log messages to Kusto.</param>
+        public FreshChatClientService(IConfiguration configuration, IDiagnosticClientService diagnosticClient)
         {
             LoadConfigurations(configuration);
+            _diagnosticClient = diagnosticClient;
             InitializeHttpClient();
-            //InitializeDelegates();
         }
 
-        public bool MakeCallToFreshChat(string baseUri, string uri, HttpMethod method, string jsonBody)
+        private async Task<HttpResponseMessage> MakeGetCallToFreshChat(string uriPath)
         {
-            throw new NotImplementedException();
+            HttpResponseMessage response;
+            response = await HttpClient.GetAsync(uriPath.TrimStart('/'));
+            response.EnsureSuccessStatusCode();
+            return response;
         }
 
-        public bool MakeCallToFreshChat(string fullUri, HttpMethod method, string jsonBody)
+        /// <inheritdoc />
+        public bool VerifyCall(string apiKey)
         {
-            throw new NotImplementedException();
-        }
-
-        public bool MakeGetCallToFreshChat(string baseUri, string uri)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool MakeGetCallToFreshChat(string fullUri)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool VerifyCall(string ApiKey)
-        {
-            if (string.IsNullOrWhiteSpace(ApiKey))
+            if (string.IsNullOrWhiteSpace(apiKey))
             {
                 return false;
             }
 
-            return string.Compare(ApiKey, this.ApplensApiKey, true) == 0;
+            return string.Compare(apiKey, this.ApplensApiKey, true) == 0;
         }
+    }
+
+    /// <summary>
+    /// Cache entry for agent cache.
+    /// </summary>
+    public class AgentCacheEntry
+    {
+        public AgentDetails agent;
+        public DateTime timeStamp;
+    }
+
+    /// <summary>
+    /// Cache entry for user cache.
+    /// </summary>
+    public class UserCacheEntry
+    {
+        public UserDetails user;
+        public DateTime timeStamp;
+    }
+
+    /// <summary>
+    /// Cache entry for resourceUri cache. This cache is required because anytime a message is generated via an agent / system, the resourceURI is missing in it. We can lookup the resourceURI for a given conversationID via this.
+    /// </summary>
+    public class ResourceCacheEntry
+    {
+        public string resourceUri;
+        public DateTime timeStamp;
     }
 }
