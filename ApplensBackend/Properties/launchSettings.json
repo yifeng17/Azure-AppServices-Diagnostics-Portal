@@ -24,6 +24,12 @@
     "AppLensV3NationalCloud": {
       "commandName": "Project",
       "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "NationalCloud"
+      }
+    },
+    "AppLensV3NationalCloudDevelopment": {
+      "commandName": "Project",
+      "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "NationalCloudDevelopment"
       }
     }

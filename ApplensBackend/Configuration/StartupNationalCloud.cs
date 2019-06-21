@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.WsFederation;
 using Microsoft.AspNetCore.Builder;
@@ -79,24 +80,52 @@ namespace AppLensV3.Configuration
             if (env.IsEnvironment("NationalCloud"))
             {
                 app.UseAuthentication();
-            }
-
-            app.UseMvc();
-
-            app.Use(async (context, next) =>
-            {
-                await next();
-                if (context.Response.StatusCode == 404 &&
-                    !Path.HasExtension(context.Request.Path.Value) &&
-                    !context.Request.Path.Value.StartsWith("/api/"))
+                app.Use(async (context, next) =>
                 {
-                    context.Request.Path = "/index.html";
+                    if (!context.User.Identity.IsAuthenticated)
+                    {
+                        if (!context.Request.Path.ToString().Contains("signin"))
+                        {
+                            context.Response.Redirect($"https://{context.Request.Host}/federation/signin", false);
+                        }
+                        else
+                        {
+                            //The controller is backed by auth, get auth middleware to kick in
+                            await next.Invoke();
+                        }
+                    }
+                    else
+                    {
+                        if (context.Request.Path.ToString().Contains("signin"))
+                        {
+                            context.Response.Redirect($"https://{context.Request.Host}/index.html", true);
+                        }
+                        else
+                        {
+                            await next.Invoke();
+                        }
+                    }
+                });
+            }
+            else
+            {
+                app.Use(async (context, next) =>
+                {
                     await next();
-                }
-            });
+                    if (context.Response.StatusCode == 404 &&
+                        !Path.HasExtension(context.Request.Path.Value) &&
+                        !context.Request.Path.Value.StartsWith("/api/"))
+                    {
+                        context.Request.Path = "/index.html";
+                        await next();
+                    }
+                });
+            }
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
+
+            app.UseMvc();
         }
     }
 }
