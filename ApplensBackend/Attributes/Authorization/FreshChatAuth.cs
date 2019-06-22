@@ -39,7 +39,7 @@ namespace AppLensV3.Attributes
             }
             else
             {
-                Microsoft.Extensions.Primitives.StringValues apiKeyValues = new Microsoft.Extensions.Primitives.StringValues();
+                Microsoft.Extensions.Primitives.StringValues apiKeyValues = default(Microsoft.Extensions.Primitives.StringValues);
                 if (context.HttpContext.Request.Query.TryGetValue("apikey", out apiKeyValues))
                 {
                     if (apiKeyValues.Count > 0)
@@ -61,6 +61,6 @@ namespace AppLensV3.Attributes
                     context.Result = new UnauthorizedResult();
                 }
             }
-        } //void IAuthorizationFilter.OnAuthorization(AuthorizationFilterContext context)
+        }
     }
 }
