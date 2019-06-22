@@ -32,7 +32,8 @@ namespace AppLensV3.Attributes
         /// <param name="context"></param>
         void IAuthorizationFilter.OnAuthorization(AuthorizationFilterContext context)
         {
-            if (!context.HttpContext.Request.Headers.ContainsKey("X-Freshchat-Signature"))
+            var freshChatHeaderPresent = context.HttpContext.Request.Headers.Keys.Where(k => string.Compare(k, "X-Freshchat-Signature", true) == 0);
+            if (!freshChatHeaderPresent.Any())
             {
                 context.Result = new BadRequestResult();
             }
