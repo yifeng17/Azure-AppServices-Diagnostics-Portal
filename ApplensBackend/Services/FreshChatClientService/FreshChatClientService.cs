@@ -110,7 +110,7 @@ namespace AppLensV3.Services
                 {
                     InternalEventBody kustoLog = new InternalEventBody();
                     kustoLog.EventType = "FreshChatLoggingUnhandledException";
-                    kustoLog.EventContent = $"Unhandled {ex.GetType().ToString()} exception while calling FreshChat server to fetch sender details. URI: {uri}";
+                    kustoLog.EventContent = $"FreshChatException. Unhandled {ex.GetType().ToString()} exception while calling FreshChat server to fetch sender details. URI: {uri}";
                     await LogToKusto(kustoLog);
                     throw ex;
                 }
@@ -180,7 +180,7 @@ namespace AppLensV3.Services
                 {
                     InternalEventBody kustoLog = new InternalEventBody();
                     kustoLog.EventType = "FreshChatLoggingUnhandledException";
-                    kustoLog.EventContent = $"Unhandled {ex.GetType().ToString()} exception while calling FreshChat server to fetch sender details. URI: {uri}";
+                    kustoLog.EventContent = $"FreshChatException. Unhandled {ex.GetType().ToString()} exception while calling FreshChat server to fetch sender details. URI: {uri}";
                     await LogToKusto(kustoLog);
                     throw ex;
                 }
@@ -336,15 +336,15 @@ namespace AppLensV3.Services
             }
             catch (JsonSerializationException jsException)
             {
-                throw new JsonSerializationException("Failed to serialize data while sending a request to log in Kusto.", jsException);
+                throw new JsonSerializationException("FreshChatException. Failed to serialize data while sending a request to log in Kusto.", jsException);
             }
             catch (HttpRequestException hException)
             {
-                throw new HttpRequestException("Failed to send a log in Kusto.", hException);
+                throw new HttpRequestException("FreshChatException. Failed to send a log in Kusto.", hException);
             }
             catch (Exception ex)
             {
-                throw new Exception("Unknown exception. Review for more details.", ex);
+                throw new Exception("FreshChatException. Unknown exception. Review for more details.", ex);
             }
         }
 

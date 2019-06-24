@@ -35,12 +35,12 @@ namespace AppLensV3.Attributes
             var freshChatHeaderPresent = context.HttpContext.Request.Headers.Keys.Where(k => string.Compare(k, "X-Freshchat-Signature", true) == 0);
             if (!freshChatHeaderPresent.Any())
             {
-                context.Result = new BadRequestResult();
+                context.Result = new BadRequestObjectResult("Missing X-Freshchat-Signature header.");
             }
             else
             {
                 Microsoft.Extensions.Primitives.StringValues apiKeyValues = default(Microsoft.Extensions.Primitives.StringValues);
-                if (context.HttpContext.Request.Query.TryGetValue("apikey", out apiKeyValues))
+                if (context.HttpContext.Request.Query.TryGetValue("freshchatAPIKey", out apiKeyValues))
                 {
                     if (apiKeyValues.Count > 0)
                     {
@@ -53,12 +53,12 @@ namespace AppLensV3.Attributes
                     }
                     else
                     {
-                        context.Result = new BadRequestResult();
+                        context.Result = new BadRequestObjectResult("Missing freshchatAPIKey.");
                     }
                 }
                 else
                 {
-                    context.Result = new UnauthorizedResult();
+                    context.Result = new BadRequestObjectResult("Missing freshchatAPIKey.");
                 }
             }
         }

@@ -13,7 +13,7 @@ using System.Net.Http;
 
 namespace AppLensV3.Controllers
 {
-    [Route("api")]
+    [Route("api/freshchat")]
     [FreshChatAuth()]
     public class FreshChatController: ControllerBase
     {
@@ -224,10 +224,10 @@ namespace AppLensV3.Controllers
                             kustoLog.EventType = "FreshChatLoggingUnhandledException";
 
                             // Remove PII function will likely garble the text body and make the object non serializable however it will be helpful for a human to debug the problem.
-                            kustoLog.EventContent = $"Unhandled message type {incomingPayload.Action.ToString()}. Unable to handle. Body : {_freshChatClientService.RemovePII(JsonConvert.SerializeObject(body))}";
+                            kustoLog.EventContent = $"FreshChatException. Unhandled message type {incomingPayload.Action.ToString()}. Unable to handle. Body : {_freshChatClientService.RemovePII(JsonConvert.SerializeObject(body))}";
                             _freshChatClientService.LogToKusto(kustoLog);
 
-                            throw new Exception($"Unhandled message type {incomingPayload.Action.ToString()}. Unable to handle.");
+                            throw new Exception($"FreshChatException. Unhandled message type {incomingPayload.Action.ToString()}. Unable to handle.");
                     }
 
                     if (logMsg == null)
@@ -251,10 +251,10 @@ namespace AppLensV3.Controllers
                     kustoLog.EventType = "FreshChatLoggingUnhandledException";
 
                     // Remove PII function will likely garble the text body and make the object non serializable however it will be helpful for a human to debug the problem.
-                    kustoLog.EventContent = JsonConvert.SerializeObject(new JsonSerializationException("Failed to deserialize the incoming data.", sException));
+                    kustoLog.EventContent = JsonConvert.SerializeObject(new JsonSerializationException("FreshChatException. Failed to deserialize the incoming data.", sException));
                     _freshChatClientService.LogToKusto(kustoLog);
 
-                    throw new JsonSerializationException("Failed to deserialize the incoming data.", sException);
+                    throw new JsonSerializationException("FreshChatException. Failed to deserialize the incoming data.", sException);
                 }
                 catch (Exception ex)
                 {
@@ -262,10 +262,10 @@ namespace AppLensV3.Controllers
                     kustoLog.EventType = "FreshChatLoggingUnhandledException";
 
                     // Remove PII function will likely garble the text body and make the object non serializable however it will be helpful for a human to debug the problem.
-                    kustoLog.EventContent = JsonConvert.SerializeObject(new ArgumentException("Unknwon error while trying to read the incoming post body ", ex));
+                    kustoLog.EventContent = JsonConvert.SerializeObject(new ArgumentException("FreshChatException. Unknwon error while trying to read the incoming post body ", ex));
                     _freshChatClientService.LogToKusto(kustoLog);
 
-                    throw new ArgumentException("Unknwon error while trying to read the incoming post body ", ex);
+                    throw new ArgumentException("FreshChatException. Unknwon error while trying to read the incoming post body ", ex);
                 }
             }
             else
