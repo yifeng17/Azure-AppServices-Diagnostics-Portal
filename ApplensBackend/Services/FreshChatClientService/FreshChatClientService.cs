@@ -160,7 +160,7 @@ namespace AppLensV3.Services
 
                     currUser.Id = userId;
                     currUser.ReferenceId = (string)jsonResponse["reference_id"];
-                    currUser.FirstName = currUser.ReferenceId.Split("sites/").Length > 1 ? currUser.ReferenceId.Split("sites/")[1] : (string)jsonResponse["first_name"];
+                    currUser.FirstName = !string.IsNullOrWhiteSpace(currUser.ReferenceId) && currUser.ReferenceId.Split("sites/").Length > 1 ? currUser.ReferenceId.Split("sites/")[1] : (string)jsonResponse["first_name"];
                     currUser.LastName = string.Empty;
                     currUser.Email = string.Empty;
                     currUser.Avatar = new Avatar() { Url = (string)jsonResponse["avatar"].Value<JToken>("url") };
