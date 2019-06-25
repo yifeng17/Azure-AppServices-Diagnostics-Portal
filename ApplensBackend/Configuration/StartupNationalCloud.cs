@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using AppLensV3.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.WsFederation;
@@ -39,6 +40,7 @@ namespace AppLensV3.Configuration
         {
             services.AddSingleton<IDiagnosticClientService, DiagnosticRoleClient>();
             services.AddSingleton<IObserverClientService, DiagnosticObserverClientService>();
+            services.AddSingleton<IEmailNotificationService, NullableEmailNotificationService>();
             services.AddMemoryCache();
 
             if (env.IsEnvironment("NationalCloud"))
