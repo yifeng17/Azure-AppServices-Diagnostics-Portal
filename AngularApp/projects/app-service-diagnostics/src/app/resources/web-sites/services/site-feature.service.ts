@@ -26,7 +26,7 @@ export class SiteFeatureService extends FeatureService {
   constructor(protected _diagnosticApiService: DiagnosticService, protected _resourceService: WebSitesService, protected _contentService: ContentService, protected _router: Router,
     protected _authService: AuthService, private _portalActionService: PortalActionService, private _websiteFilter: WebSiteFilter, protected _logger: LoggingV2Service) {
 
-    super(_diagnosticApiService, _contentService, _router, _authService, _logger);
+    super(_diagnosticApiService, _contentService, _router, _authService, _logger, _resourceService);
     this._authService.getStartupInfo().subscribe(startupInfo => {
       
       // removing v2 detectors for Availability and Perf
