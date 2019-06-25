@@ -1,5 +1,15 @@
 export const TelemetryEventNames = {
     DetectorViewLoaded: 'DetectorViewLoaded',
+    HomePageLoaded: 'HomePageLoaded',
+    CategoryPageLoaded: 'CategoryPageLoaded',
+    OnboardingFlowLoaded: 'OnboardingFlowLoaded',
+    SearchTermAdditionLoaded: 'SearchTermAdditionLoaded',
+    SideNavigationLoaded: 'SideNavigationLoaded',
+    SupportTopicsLoaded: 'SupportTopicsLoaded',
+    CategoryCardClicked: 'CategoryClicked',
+    DetectorCardClicked: 'DetectorClicked',
+    SideNavigationFilter: 'SideNavigationFilter',
+    SideNavigationItemClicked: 'SideNavigationItemClicked',
     InsightTitleClicked: 'InsightTitleClicked',
     InsightRated: 'InsightRated',
     ChildDetectorClicked: 'ChildDetectorClicked',
@@ -14,6 +24,13 @@ export const TelemetryEventNames = {
     ChangeAnalysisEnableClicked: 'ChangeAnalysisEnableClicked',
     ChangeAnalysisChangeClicked: 'ChangeAnalysisChangeClicked',
     ChangeAnalysisChangeFeedbackClicked: 'ChangeAnalysisChangeFeedbackClicked',
+    SearchResultsLoaded: 'SearchResultsLoaded',
+    SearchQueryResults: 'SearchQueryResults',
+    SearchResultClicked: 'SearchResultClicked',
+    SearchResultFeedback: 'SearchResultFeedback',
+    AuthorSelectSearchTerm: 'AuthorSelectSearchTerm',
+    AuthorCreateSearchTerm: 'AuthorCreateSearchTerm',
+    AuthorRemoveSearchTerm: 'AuthorRemoveSearchTerm'
 };
 
 export interface ITelemetryProvider {

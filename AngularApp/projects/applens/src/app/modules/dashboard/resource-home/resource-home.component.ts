@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, ElementRef, HostListener, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, ElementRef, HostListener, EventEmitter, OnDestroy } from '@angular/core';
 import { ResourceService } from '../../../shared/services/resource.service';
 import { Router, ActivatedRoute, NavigationExtras, NavigationEnd, Params } from '@angular/router';
 import { DetectorMetaData } from 'diagnostic-data';
@@ -8,6 +8,12 @@ import { ApplensSupportTopicService } from '../services/applens-support-topic.se
 import { CacheService } from '../../../shared/services/cache.service';
 import { HttpClient } from '@angular/common/http';
 import { catchError, mergeMap, retry, map, retryWhen, delay, take, concat } from 'rxjs/operators';
+import { TelemetryService } from '../../../../../../diagnostic-data/src/lib/services/telemetry/telemetry.service';
+import {TelemetryEventNames} from '../../../../../../diagnostic-data/src/lib/services/telemetry/telemetry.common';
+import {AdalService} from 'adal-angular4';
+import {SearchService} from '../services/search.service';
+import { v4 as uuid } from 'uuid';
+
 
 @Component({
     selector: 'resource-home',
@@ -33,10 +39,10 @@ export class ResourceHomeComponent implements OnInit {
     supportTopicL2Images: { [name: string]: any } = {};
     viewType: string = 'category';
 
-
-    constructor(private _router: Router, private _activatedRoute: ActivatedRoute, private _http: HttpClient, private _resourceService: ResourceService, private _diagnosticService: ApplensDiagnosticService, private _supportTopicService: ApplensSupportTopicService, private _cacheService: CacheService) { }
+    constructor(private _router: Router, private _activatedRoute: ActivatedRoute, private _http: HttpClient, private _resourceService: ResourceService, private _diagnosticService: ApplensDiagnosticService, private _supportTopicService: ApplensSupportTopicService, private _cacheService: CacheService, private _telemetryService: TelemetryService, public _searchService: SearchService, private _adalService: AdalService) { }
 
     ngOnInit() {
+        this._searchService.resourceHomeOpen = true;
         this.viewType = this._activatedRoute.snapshot.params['viewType'];
         this._resourceService.getCurrentResource().subscribe(resource => {
             if (resource) {
@@ -112,6 +118,9 @@ export class ResourceHomeComponent implements OnInit {
 
 
             });
+            let alias = this._adalService.userInfo.profile ? this._adalService.userInfo.profile.upn : '';
+            let userId = alias.replace('@microsoft.com', '').toLowerCase();
+            this._telemetryService.logPageView(TelemetryEventNames.HomePageLoaded, {"numCategories": this.categories.length.toString(), "userId": userId});
 
 
             if (detectorLists[1]) {
@@ -123,7 +132,16 @@ export class ResourceHomeComponent implements OnInit {
 
     };
 
+    triggerSearch(){
+        if (this._searchService.searchIsEnabled && this._searchService.searchTerm && this._searchService.searchTerm.length>3){
+            this._searchService.searchId = uuid();
+            this._searchService.newSearch = true;
+            this.navigateTo(`../../search`, {searchTerm: this._searchService.searchTerm}, 'merge');
+        }
+    }
+
     navigateToCategory(category: CategoryItem) {
+        this._telemetryService.logEvent(TelemetryEventNames.CategoryCardClicked, { "category": category.label});
         this.navigateTo(`../../categories/${category.label}`);
     }
 
@@ -131,19 +149,24 @@ export class ResourceHomeComponent implements OnInit {
         this.navigateTo(`../../supportTopics/${supportTopic.supportTopicL2Name}`);
     }
 
-    navigateTo(path: string) {
+    navigateTo(path: string, queryParams?: any, queryParamsHandling?: any) {
         let navigationExtras: NavigationExtras = {
-            queryParamsHandling: 'preserve',
+            queryParamsHandling: queryParamsHandling || 'preserve',
             preserveFragment: true,
-            relativeTo: this._activatedRoute
+            relativeTo: this._activatedRoute,
+            queryParams: queryParams
         };
-
+    
         this._router.navigate([path], navigationExtras);
     }
 
     selectView(type: string) {
         this.viewType = type;
         this.navigateTo(`../${type}/`);
+    }
+
+    ngOnDestroy(){
+        this._searchService.resourceHomeOpen = false;
     }
 }
 
