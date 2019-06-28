@@ -103,7 +103,11 @@ export class SearchResultsComponent implements OnInit {
 
   ngOnInit() {
     this._activatedRoute.queryParams.subscribe(params => {
-      var searchTerm = params['searchTerm'];
+      var searchTerm: string = params['searchTerm'];
+      // Trim search term (to handle cases when we deeplink applens search)
+      if (searchTerm && searchTerm.length>0){
+        searchTerm = searchTerm.trim();
+      }
       if (searchTerm != this._searchService.currentSearchTerm){
         this._searchService.newSearch = true;
         this._searchService.currentSearchTerm = searchTerm;

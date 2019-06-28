@@ -47,7 +47,7 @@
   </div>
   <div class="feedback-link-container">
     <div *ngIf="detectorsLoaded" class="feedback-link">
-      <a tabindex=0 href="mailto:khzayed@microsoft.com;ajsharm@microsoft.com?Subject=Applens%20Search%20Feedback&body=Search%20Query%3A%20{{searchTermDisplay}}%0AFeedback%3A%20%0AScreenshots%20below%3A" target="_top">Unexpected Results?</a>
+      <a tabindex=0 href="mailto:khzayed@microsoft.com;ajsharm@microsoft.com?Subject=AppLens%20Search%20Feedback%20SearchId%20{{_searchService.searchId}}&body=Search%20Query%3A%20{{searchTermDisplay}}%0AFeedback%3A%20%0AScreenshots%20below%3A" target="_top">Unexpected Results?</a>
     </div>
   </div>
   <div *ngIf="detectorsLoaded && !(_searchService.detectors.length>0) && !searchTermErrorDisplay && !searchResultsFetchErrorDisplay" class="no-search-results">
