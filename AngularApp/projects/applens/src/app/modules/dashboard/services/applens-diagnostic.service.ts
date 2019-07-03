@@ -38,7 +38,7 @@ export class ApplensDiagnosticService {
   getDetectors(internalClient: boolean = true, query?: string): Observable<DetectorMetaData[]> {
     var queryParams: any[] = null;
     if (query != null)
-      queryParams = [{ "key": "text", "value": query }];
+      queryParams = [{ "key": "text", "value": encodeURIComponent(query) }];
       return this._diagnosticApi.getDetectors(
         this._resourceService.versionPrefix, 
         this._resourceService.getCurrentResourceId(true),
@@ -53,6 +53,11 @@ export class ApplensDiagnosticService {
 
   getSupportTopics(pesId: any): Observable<any> {
     return this._diagnosticApi.getSupportTopics(pesId);
+  }
+
+  getSearchEnabledForProductId(): Observable<any> {
+    let pesId = this._resourceService.pesId;
+    return this._diagnosticApi.get(`api/github/search/isEnabledForProductId/${pesId}`, true);
   }
 
   getSelfHelpContent(pesId: string = "14748", supportTopicId: string = "32581605", path: string = "microsoft.web"): Observable<any> {
@@ -73,6 +78,10 @@ export class ApplensDiagnosticService {
 
   getUserInfo(userId: string = ""): Observable<any> {
     return this._diagnosticApi.getUserInfo(userId);
+  }
+
+  getHasTestersAccess(userId: string = ""): Observable<any> {
+    return this._diagnosticApi.getHasTestersAccess(userId);
   }
 
   getCompilerResponse(body: any, isSystemInvoker: boolean, detectorId: string = '', startTime: string = '', endTime: string = '', dataSource: string = '', timeRange: string = '', additionalParams: any): Observable<QueryResponse<DetectorResponse>> {
