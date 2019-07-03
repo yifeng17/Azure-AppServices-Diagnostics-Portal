@@ -10,12 +10,12 @@ import { environment } from '../environments/environment';
 export class AppComponent {
 
   constructor(private _adalService: AdalService) {
-    this._adalService.init({
-      clientId: environment.adal.clientId,
-      popUp: window.parent !== window,
-      redirectUri: `${window.location.origin}`,
-      postLogoutRedirectUri: `${window.location.origin}/login`,
-      cacheLocation: 'localStorage'
-    });
+    //this._adalService.init({
+    //  clientId: environment.adal.clientId,
+    //  popUp: window.parent !== window,
+    //  redirectUri: `${window.location.origin}`,
+    //  postLogoutRedirectUri: `${window.location.origin}/login`,
+    //  cacheLocation: 'localStorage'
+    //});
   }
 }

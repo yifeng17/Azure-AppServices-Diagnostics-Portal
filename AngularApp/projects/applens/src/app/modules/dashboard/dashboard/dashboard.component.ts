@@ -73,6 +73,7 @@ export class DashboardComponent implements OnDestroy {
       this._router.navigate([], { queryParams: routeParams, relativeTo: this._activatedRoute });
     }
 
+    /*
     let alias = this._adalService.userInfo.profile ? this._adalService.userInfo.profile.upn : '';
     this.userId = alias.replace('@microsoft.com', '');
     this._diagnosticService.getUserPhoto(this.userId).subscribe(image => {
@@ -82,7 +83,7 @@ export class DashboardComponent implements OnDestroy {
     this._diagnosticService.getUserInfo(this.userId).subscribe((userInfo: UserInfo) => {
       this.userName = userInfo.givenName;
       this.displayName = userInfo.displayName;
-    });
+    });*/
   }
 
   ngOnInit() {

@@ -35,8 +35,9 @@ export class SideNavComponent implements OnInit {
 
   constructor(private _router: Router, private _activatedRoute: ActivatedRoute, private _adalService: AdalService, private _diagnosticApiService: ApplensDiagnosticService, public resourceService: ResourceService, private _telemetryService: TelemetryService) {
     this.contentHeight = (window.innerHeight - 139) + 'px';
+    /*
     let alias = this._adalService.userInfo.profile ? this._adalService.userInfo.profile.upn : '';
-    this.userId = alias.replace('@microsoft.com', '');
+    this.userId = alias.replace('@microsoft.com', '');*/
   }
 
   documentation: CollapsibleMenuItem[] = [
