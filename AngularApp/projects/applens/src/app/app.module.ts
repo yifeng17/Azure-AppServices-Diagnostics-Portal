@@ -50,6 +50,7 @@ export class ValidResourceResolver implements Resolve<void>{
 export const Routes = RouterModule.forRoot([
   {
     path: '',
+    canActivate: [AadAuthGuard],
     children: [
       {
         path: '',
