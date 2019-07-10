@@ -15,7 +15,8 @@
         <div class="panel-body data-container-body">
           <ng-container *ngFor="let property of providerMetadata.propertyBag">
             <div style="margin-bottom: 10px" *ngIf="property.key == 'Query' && property.value">
-              <pre><code>{{ property.value.text }}</code></pre>
+              <div class="operationName" *ngIf="property.value.operationName"> {{ property.value.operationName }} </div>
+              <pre style="border-radius: 0px"><code>{{ property.value.text }}</code></pre>
               <div style="margin-bottom: 5px">
                 <a class="kustolink" [attr.href]="property.value.url" target='_blank'>Run in Kusto Web Explorer</a>
               </div>
