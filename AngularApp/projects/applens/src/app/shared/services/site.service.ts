@@ -24,6 +24,12 @@ export class SiteService extends ResourceService {
                 this._currentResource.next(this._siteObject);
                 return this._observerApiService.getSiteRequestBody(this._siteObject.SiteName, this._siteObject.InternalStampName);
             }), map((requestBody: any) => {
+                if (!requestBody.details.HostNames) {
+                    requestBody.details.HostNames = this._siteObject.Hostnames.map(hostname => <any>{
+                        name: hostname,
+                        type: 0
+                    });
+                }
                 this._requestBody = requestBody.details;
                 this.updatePesIdAndImgSrc();
                 return true;
