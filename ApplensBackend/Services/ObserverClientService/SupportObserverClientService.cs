@@ -46,11 +46,11 @@ namespace AppLensV3
                 //Add condition for Debugger.IsAttached so that we never mistakenly target Support Api test slot in production
                 if (Debugger.IsAttached && targetSupportApiTestSlot)
                 {
-                    return "https://wawsobserver-prod-staging.azurewebsites.net/api/";
+                    return "https://support-bay-api-test.azurewebsites.net/observer/";
                 }
                 else
                 {
-                    return "https://wawsobserver-prod.azurewebsites.net/api/";
+                    return "https://support-bay-api.azurewebsites.net/observer/";
                 }
             }
         }
@@ -126,7 +126,7 @@ namespace AppLensV3
         /// <param name="siteName">Site Name</param>
         public async Task<ObserverResponse> GetSite(string siteName)
         {
-            return await GetSiteInternal(SupportObserverApiEndpoint + "sites/" + siteName + "/adminsites");
+            return await GetSiteInternal(SupportObserverApiEndpoint + "sites/" + siteName + "/adminsites?api-version=2.0");
         }
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace AppLensV3
         /// <param name="siteName">Site Name</param>
         public async Task<ObserverResponse> GetSite(string stamp, string siteName)
         {
-            return await GetSiteInternal(SupportObserverApiEndpoint + "stamps/" + stamp + "/sites/" + siteName + "/adminsites");
+            return await GetSiteInternal(SupportObserverApiEndpoint + "stamps/" + stamp + "/sites/" + siteName + "/adminsites?api-version=2.0");
         }
 
         private async Task<ObserverResponse> GetSiteInternal(string endpoint)
@@ -163,7 +163,7 @@ namespace AppLensV3
         {
             var request = new HttpRequestMessage()
             {
-                RequestUri = new Uri(SupportObserverApiEndpoint + "sites/" + site + "/resourcegroupname"),
+                RequestUri = new Uri(SupportObserverApiEndpoint + "sites/" + site + "/resourcegroupname?api-version=2"),
                 Method = HttpMethod.Get
             };
           
@@ -196,11 +196,32 @@ namespace AppLensV3
             return res;
         }
 
+        /// <summary>
+        /// Get Hostnames for a site
+        /// </summary>
+        /// <param name="siteName">SiteName</param>
+        /// <returns>Hostnames</returns>
+        public async Task<ObserverResponse> GetHostnames(string siteName)
+        {
+            var request = new HttpRequestMessage()
+            {
+                RequestUri = new Uri(SupportObserverApiEndpoint + "sites/" + siteName + "/hostnames?api-version=2.0"),
+                Method = HttpMethod.Get
+            };
+
+            var serializedParameters = JsonConvert.SerializeObject(new Dictionary<string, string>() { { "site", siteName } });
+            request.Headers.Add("Authorization", await GetSupportObserverAccessToken());
+            var response = await _httpClient.SendAsync(request);
+
+            ObserverResponse res = await CreateObserverResponse(response, "GetHostnames(2.0)");
+            return res;
+        }
+
         public async Task<ObserverResponse> GetHostingEnvironmentDetails(string hostingEnvironmentName)
         {
             var request = new HttpRequestMessage()
             {
-                RequestUri = new Uri(SupportObserverApiEndpoint + "hostingEnvironments/" + hostingEnvironmentName),
+                RequestUri = new Uri(SupportObserverApiEndpoint + "hostingEnvironments/" + hostingEnvironmentName + "?api-version=2.0"),
                 Method = HttpMethod.Get
             };
 

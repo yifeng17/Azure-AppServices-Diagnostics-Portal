@@ -2,6 +2,7 @@ namespace Observer {
   export interface ObserverSiteResponse {
       siteName: string;
       details: ObserverSiteInfo[];
+      hostNames: string[];
   }
 
   export interface ObserverSiteInfo {
@@ -12,6 +13,7 @@ namespace Observer {
       WebSpace: string;
       ResourceGroupName: string;
       SlotName: string;
+      Hostnames: string[];
   }
 
   export interface ObserverAseResponse {

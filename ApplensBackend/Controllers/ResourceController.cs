@@ -64,14 +64,17 @@ namespace AppLensV3
 
         private async Task<IActionResult> GetSiteInternal(string stamp, string siteName)
         {
+            var hostnamesTask = _observerService.GetHostnames(siteName);
             var siteDetailsTask = stamp == null ? _observerService.GetSite(siteName) : _observerService.GetSite(stamp, siteName);
 
+            var hostNameResponse = await hostnamesTask;
             var siteDetailsResponse = await siteDetailsTask;
 
             var details = new
             {
                 SiteName = siteName,
-                Details = siteDetailsResponse.Content
+                Details = siteDetailsResponse.Content,
+                HostNames = hostNameResponse.Content
             };
 
             if (siteDetailsResponse.StatusCode == HttpStatusCode.NotFound)
