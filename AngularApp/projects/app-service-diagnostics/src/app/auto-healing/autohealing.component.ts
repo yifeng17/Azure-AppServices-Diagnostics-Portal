@@ -116,20 +116,21 @@ export class AutohealingComponent implements OnInit {
     this.saveEnabled = false;
     if (this.autohealingSettings.autoHealEnabled) {
       if (this.checkRulesValid()) {
-        const originalAutoHealSettingsString = this.orderedJsonStringify(this.originalAutoHealSettings.autoHealRules);
+        let originalAutoHealSettingsString = "";
+        if (this.originalAutoHealSettings != null && this.originalAutoHealSettings.autoHealRules != null) {
+          originalAutoHealSettingsString = this.orderedJsonStringify(this.originalAutoHealSettings.autoHealRules);
+        }
         let currentSettingsString = this.orderedJsonStringify(this.autohealingSettings.autoHealRules);
         if (originalAutoHealSettingsString != currentSettingsString) {
           this.saveEnabled = true;
         }
       }
-
     }
     else {
       if (this.originalAutoHealSettings.autoHealEnabled !== this.autohealingSettings.autoHealEnabled) {
         this.saveEnabled = true;
       }
     }
-
     this.updateSummaryText();
   }
 
