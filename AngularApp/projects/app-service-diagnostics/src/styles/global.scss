@@ -127,6 +127,12 @@ body{
         font-weight: 400 !important;
         font-family: inherit !important;
     }
+
+    .nvd3.nv-noData text {
+        font-size: 18px;
+        font-weight: 700;
+        fill: #000 !important;
+    }
 }
 @media screen and (-ms-high-contrast: white-on-black) {
     .nvd3 text {
@@ -134,6 +140,12 @@ body{
         font-size: 12px !important;
         font-weight: 400 !important;
         font-family: inherit !important;
+    }
+
+    .nvd3.nv-noData text {
+        font-size: 18px;
+        font-weight: 700;
+        fill: #fff !important;
     }
 }
 
