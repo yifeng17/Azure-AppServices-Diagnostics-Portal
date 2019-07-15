@@ -2,6 +2,32 @@ import { DiffEditorModel } from 'ngx-monaco-editor';
 import { isBoolean, isString, isNumber } from 'util';
 
 export class ChangeAnalysisUtilities {
+
+    static readonly basePath: string = '../../../assets/img/azure-icons/';
+    static readonly changeAnalysisSupportedResources = ['Microsoft.Sql', 'Microsoft.Storage', 'Microsoft.Cache', 'Microsoft.Network', 'Microsoft.Web'];
+    static readonly azureResourceList = [
+        {
+            "resourceType": "Microsoft.Web",
+            "imgPath": ChangeAnalysisUtilities.basePath +"AzureAppService.png"
+        },
+        {
+            "resourceType": "Microsoft.Sql",
+            "imgPath": ChangeAnalysisUtilities.basePath +"AzureSQLDatabase.png"
+        },
+        {
+            "resourceType": "Microsoft.Cache",
+            "imgPath": ChangeAnalysisUtilities.basePath +"AzureCacheRedis.png"
+        },
+        {
+            "resourceType": "Microsoft.Storage",
+            "imgPath": ChangeAnalysisUtilities.basePath + "AzureStorage.png"
+        },
+        {
+            "resourceType": "Microsoft.Network",
+            "imgPath": ChangeAnalysisUtilities.basePath + "AzureVirtualNetwork.png"
+        }
+    ];
+
     public static  prepareDisplayValueForTable(displayName: string): string {
         displayName = displayName.replace("D:\\home\\site\\wwwroot", "");
         return displayName;
@@ -86,5 +112,33 @@ export class ChangeAnalysisUtilities {
         }
         return initiatedByList.join(',');
     }
+
+    public static getResourceType(resourceUri: string): string {
+        return resourceUri.split("providers/")[1].split("/")[0];
+    }
+
+    public static getImgPathForResource(searchResourceType: string): string {
+        let azureIconsList = this.azureResourceList;
+        let resource = azureIconsList.find(element => element.resourceType.toLowerCase() == searchResourceType.toLowerCase());
+        return resource ? resource.imgPath : ChangeAnalysisUtilities.basePath + 'AzureResouce.png';
+    }
+
+    public static getSubscription(resourceUri: string): string {
+        return resourceUri.split("subscriptions/")[1].split("/")[0];
+    }
+
+    public static getResourceGroup(resourceUri: string): string {
+        let regex = new RegExp("resourceGroups/", "i");
+        return resourceUri.split(regex)[1].split("/")[0];
+    }
+
+    public static getResourceName(resourceUri: string, provider:string): string {
+        return resourceUri.split(provider+"/")[1];
+    }
+
+    public static isResourceProviderSupported(provider: string): boolean {
+        return ChangeAnalysisUtilities.changeAnalysisSupportedResources.indexOf(provider) >= 0;
+    }
+
 
 }
