@@ -54,7 +54,13 @@ export class HomeComponent implements OnInit {
     }
 
 
+    if (_resourceService.armResourceConfig !== null) {
+      this._categoryService.initCategoriesForArmResource(_resourceService.resource.id);
+    }
+    
     this._categoryService.categories.subscribe(categories => this.categories = categories);
+        
+    
     this._authService.getStartupInfo().subscribe(startupInfo => {
       if (startupInfo.additionalParameters && Object.keys(startupInfo.additionalParameters).length > 0) {
         let path = 'resource' + startupInfo.resourceId.toLowerCase();

@@ -18,7 +18,16 @@ export class GenericArmConfigService {
       armApiVersion : '2019-04-01',
       isSearchEnabled : true,
       isApplicableForLiveChat : false,
-      categories:[]
+      categories:[{
+        id: 'ConfigurationAndManagement',
+        name: 'Configuration and Management',
+        description: 'Are you having issues with something that you configured specifically for your cluster? Find out if you misconfigured AKS features, such as (some top config mistakes).',
+        keywords: ['Scaling', 'Migration'],
+        color: 'rgb(186, 211, 245)',
+        createFlowForCategory: true,
+        //overridePath?: string, --> This will take in parameters and hence needs to be modified by the Applens team and is not configrable.
+        chatEnabled: false
+      }]
     });
   } 
 
