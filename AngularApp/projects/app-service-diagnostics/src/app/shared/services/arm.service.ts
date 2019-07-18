@@ -8,6 +8,8 @@ import { AuthService } from '../../startup/services/auth.service';
 import { CacheService } from './cache.service';
 import { catchError, retry, map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { GenericArmConfigService } from './generic-arm-config.service';
+import { resource } from 'selenium-webdriver/http';
 
 
 @Injectable()
@@ -19,11 +21,28 @@ export class ArmService {
     public storageApiVersion = '2015-05-01-preview';
     public websiteApiVersion = '2015-08-01';
 
-    constructor(private _http: HttpClient, private _authService: AuthService, private _cache: CacheService) { }
+    constructor(private _http: HttpClient, private _authService: AuthService, private _cache: CacheService, private _genericArmConfigService : GenericArmConfigService) { }
 
-    createUrl(resourceUri: string, apiVersion?: string) {
+    getApiVersion(resourceUri: string, apiVersion?: string){
+        if(!!apiVersion) {
+            return apiVersion;
+        }
+        else
+        {
+            const apiVersion = this._genericArmConfigService.getApiVersion(resourceUri);
+            if (apiVersion == '') {
+                return this.websiteApiVersion;
+            }
+            else
+            {                
+                return apiVersion;
+            }
+        }
+    }
+
+    createUrl(resourceUri: string, apiVersion?: string) {        
         return `${this.armUrl}${resourceUri}${resourceUri.indexOf('?') >= 0 ? '&' : '?'}` +
-            `api-version=${!!apiVersion ? apiVersion : this.websiteApiVersion}`;
+            `api-version=${this.getApiVersion(resourceUri, apiVersion)}`;
     }
 
     getResource<T>(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Observable<{} | ResponseMessageEnvelope<T>> {

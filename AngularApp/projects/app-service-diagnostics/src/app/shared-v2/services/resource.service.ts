@@ -4,6 +4,8 @@ import { Injectable } from '@angular/core';
 import { Observable ,  BehaviorSubject } from 'rxjs';
 import { ArmResource } from '../models/arm';
 import { ArmService } from '../../shared/services/arm.service';
+import { ArmResourceConfig, ResourceDescriptor } from '../../shared/models/arm/armResourceConfig';
+import { GenericArmConfigService } from '../../shared/services/generic-arm-config.service';
 
 @Injectable()
 export class ResourceService {
@@ -15,7 +17,7 @@ export class ResourceService {
   public warmUpCallFinished: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
   public error: any;
 
-  constructor(protected _armService: ArmService) { }
+    constructor(protected _armService: ArmService, private _genericArmConfigService? : GenericArmConfigService) { }
 
   private _initialize() {
     const pieces = this.resource.id.toLowerCase().split('/');
@@ -26,12 +28,43 @@ export class ResourceService {
     return this.resource.id.toLowerCase();
   }
 
+  public get armResourceConfig(): ArmResourceConfig {
+    if (this._genericArmConfigService !==null) {
+      return this._genericArmConfigService.getArmResourceConfig(this.resource.id);
+    }
+    else {
+      return null;
+    }
+  }
+
   public get searchSuffix(): string {
-    return 'Azure';
+    if (this._genericArmConfigService !==null) {
+      let currConfig : ArmResourceConfig = this._genericArmConfigService.getArmResourceConfig(this.resource.id);
+      if (currConfig.searchSuffix) {
+        return currConfig.searchSuffix;
+      }
+      else {
+        return 'Azure';
+      }
+    }
+    else {
+      return 'Azure';
+    }
   }
 
   public get azureServiceName(): string {
-    return '';
+    if (this._genericArmConfigService !==null) {
+      let currConfig : ArmResourceConfig = this._genericArmConfigService.getArmResourceConfig(this.resource.id);
+      if (currConfig.azureServiceName) {
+        return currConfig.azureServiceName;
+      }
+      else {
+        return '';
+      }
+    }
+    else {
+      return '';
+    }
   }
 
   public get subscriptionId(): string {
@@ -39,7 +72,18 @@ export class ResourceService {
   }
 
   public get isApplicableForLiveChat(): boolean {
-    return false;
+    if (this._genericArmConfigService !== null) {
+      let currConfig : ArmResourceConfig = this._genericArmConfigService.getArmResourceConfig(this.resource.id);
+      if (currConfig.isApplicableForLiveChat) {
+        return currConfig.isApplicableForLiveChat;
+      }
+      else {
+        return false;
+      }
+    }
+    else {
+      return false;
+    }
   }
 
   public registerResource(resourceUri: string): Observable<{} | ArmResource> {
@@ -50,6 +94,61 @@ export class ResourceService {
         this.makeWarmUpCalls();
         return resource;
       }));
+  }
+
+  
+  public parseResourceUri(resourceUri: string) : ResourceDescriptor {
+    let resourceDesc:ResourceDescriptor ;
+    if(resourceUri) {
+      const resourceUriRegEx:RegExp = new RegExp('/subscriptions/(?<subscriptionId>[^/]+)/(resourceGroups/(?<resourceGroup>[^/]+)/)?providers/(?<provider>[^/]+)/(?<resource>.+)', "i");
+      var result = resourceUri.match(resourceUriRegEx);
+      if (result && result.length > 0) {
+        const groups = result['groups'];
+
+        if (groups['subscriptionId']) {
+          resourceDesc.subscription = groups['subscriptionId'];
+        }
+        else {
+          resourceDesc.subscription = '';
+        }
+
+        if (groups['resourceGroup']) {
+          resourceDesc.resourceGroup = groups['resourceGroup'];
+        }
+        else {
+          resourceDesc.resourceGroup = '';
+        }
+
+        if (groups['provider']) {
+          resourceDesc.provider = groups['provider'];
+        }
+        else {
+          resourceDesc.provider = '';
+        }
+
+        if (groups['resource']) {
+          const resourceParts =  groups['resource'].split('/');
+          if (resourceParts.length%2 != 0) {
+            //ARM URI is incorrect. The resource section contains an uneven number of parts
+            resourceDesc.resource = '';
+          }
+          else {
+            for (var i = 0; i < resourceParts.length; i +=2) {
+              resourceDesc.type = resourceParts[i];
+              resourceDesc.resource = resourceParts[i+1];
+
+              resourceDesc.types.push(resourceDesc.type);
+              resourceDesc.resources.push(resourceDesc.resource);
+            }
+          }
+        }
+        else {
+          resourceDesc.resource = '';
+        }
+
+      }
+    }    
+    return resourceDesc;
   }
 
 
