@@ -39,7 +39,6 @@ export class MainMenuComponent implements OnInit, AfterViewInit, IChatMessageCom
     }
 
     ngOnInit(): void {
-        console.log("Inside main component ngoninit");
         if (this._authService.resourceType == ResourceType.Site) {
             this._siteService.currentSite.subscribe(site => {
                 if (site) {
