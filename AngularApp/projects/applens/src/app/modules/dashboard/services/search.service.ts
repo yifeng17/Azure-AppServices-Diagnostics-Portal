@@ -4,7 +4,7 @@ import { DetectorItem } from '../search-results/search-results.component';
 import {AdalService} from 'adal-angular4';
 import {forkJoin, of} from 'rxjs';
 import { map, catchError} from 'rxjs/operators';
-import { environment } from '../../../../environments/environment.ncloud';
+import { environment } from '../../../../environments/environment';
 
 @Injectable()
 export class SearchService {

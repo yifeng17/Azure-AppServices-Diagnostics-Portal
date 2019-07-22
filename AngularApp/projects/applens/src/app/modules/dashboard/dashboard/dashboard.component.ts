@@ -11,7 +11,7 @@ import { UserInfo } from '../user-profile/user-profile.component';
 import { StartupService } from '../../../shared/services/startup.service';
 import { SearchService } from '../services/search.service';
 import { v4 as uuid } from 'uuid';
-import { environment } from '../../../../environments/environment.ncloud';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'dashboard',
