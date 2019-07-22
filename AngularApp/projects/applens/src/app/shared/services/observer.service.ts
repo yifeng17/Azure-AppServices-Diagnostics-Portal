@@ -6,6 +6,9 @@ import { isArray } from 'util';
 
 @Injectable()
 export class ObserverService {
+  public setSiteGeomaster(site: Observer.ObserverSiteInfo){
+    this._diagnosticApiService.GeomasterServiceAddress = site.GeomasterServiceAddress;
+  }
 
   constructor(private _diagnosticApiService: DiagnosticApiService) { }
 
@@ -16,7 +19,7 @@ export class ObserverService {
     return this._diagnosticApiService.get<Observer.ObserverSiteResponse>(`api/sites/${site}`).pipe(
       map((siteRes: Observer.ObserverSiteResponse) => {
         if (siteRes && siteRes.details && isArray(siteRes.details)) {
-          siteRes.details.map(info => this.getSiteInfoWithSlotAndHostnames(info, siteRes.hostNames));
+          siteRes.details.map(info => this.getSiteInfoWithSlot(info));
         }
 
         return siteRes;
@@ -27,7 +30,15 @@ export class ObserverService {
     return this._diagnosticApiService.get<Observer.ObserverAseResponse>(`api/hostingEnvironments/${ase}`);
   }
 
-  private getSiteInfoWithSlotAndHostnames(site: Observer.ObserverSiteInfo, hostnames: string[]): Observer.ObserverSiteInfo {
+  public getSiteRequestBody(site: string, stamp: string) {
+    return this._diagnosticApiService.get<Observer.ObserverSiteResponse>(`api/stamps/${stamp}/sites/${site}/postBody`);
+  }
+
+  public getAseRequestBody(name: string) {
+    return this._diagnosticApiService.get<Observer.ObserverSiteResponse>(`api/hostingEnvironments/${name}/postBody`);
+  }
+
+  private getSiteInfoWithSlot(site: Observer.ObserverSiteInfo): Observer.ObserverSiteInfo {
     const siteName = site.SiteName;
     let slot = '';
 
@@ -37,8 +48,6 @@ export class ObserverService {
     }
 
     site.SlotName = slot;
-    site.Hostnames = hostnames;
-
     return site;
   }
 

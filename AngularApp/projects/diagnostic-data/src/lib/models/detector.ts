@@ -101,7 +101,8 @@ export enum RenderingType {
     ChangeSets,
     ChangeAnalysisOnboarding,
     ChangesView,
-    ApplicationInsightsView
+    ApplicationInsightsView,
+    DependencyGraph
 }
 
 export enum TimeSeriesType {

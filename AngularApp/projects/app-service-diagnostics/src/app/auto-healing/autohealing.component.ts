@@ -88,8 +88,8 @@ export class AutohealingComponent implements OnInit {
     } else {
       this.autohealingSettings = new AutoHealSettings();
       this.autohealingSettings.autoHealRules = new AutoHealRules();
-      this.autohealingSettings.autoHealRules.actions = new AutoHealActions();
-      this.autohealingSettings.autoHealRules.triggers = new AutoHealTriggers();
+      this.autohealingSettings.autoHealRules.actions = null;
+      this.autohealingSettings.autoHealRules.triggers = null;
     }
     this.initTriggersAndActions();
   }
@@ -107,14 +107,67 @@ export class AutohealingComponent implements OnInit {
     this.collapseAllTiles();
   }
 
+
+  orderedJsonStringify(o: any) {
+    return JSON.stringify(Object.keys(o).sort().reduce((r, k) => (r[k] = o[k], r), {}));
+  }
+
   checkForChanges() {
-    const originalAutoHealSettingsString = JSON.stringify(this.originalAutoHealSettings);
-    if (originalAutoHealSettingsString != JSON.stringify(this.autohealingSettings)) {
-      this.saveEnabled = true;
-    } else {
-      this.saveEnabled = false;
+    this.saveEnabled = false;
+    if (this.autohealingSettings.autoHealEnabled) {
+      if (this.checkRulesValid()) {
+        let originalAutoHealSettingsString = "";
+        if (this.originalAutoHealSettings != null && this.originalAutoHealSettings.autoHealRules != null) {
+          originalAutoHealSettingsString = this.orderedJsonStringify(this.originalAutoHealSettings.autoHealRules);
+        }
+        let currentSettingsString = this.orderedJsonStringify(this.autohealingSettings.autoHealRules);
+        if (originalAutoHealSettingsString != currentSettingsString) {
+          this.saveEnabled = true;
+        }
+      }
+    }
+    else {
+      if (this.originalAutoHealSettings.autoHealEnabled !== this.autohealingSettings.autoHealEnabled) {
+        this.saveEnabled = true;
+      }
     }
     this.updateSummaryText();
+  }
+
+  checkTriggersValid(triggers: AutoHealTriggers): boolean {
+    let isValid = false;
+    if ((triggers.privateBytesInKB != null && triggers.privateBytesInKB > 0)
+      || triggers.requests != null && triggers.requests.count > 0
+      || triggers.slowRequests != null && triggers.slowRequests.count > 0
+      || triggers.statusCodes != null && triggers.statusCodes.length > 0) {
+      isValid = true;
+    }
+    return isValid;
+  }
+
+  checkActionsValid(actions: AutoHealActions): boolean {
+    let isValid = false;
+    if (actions.actionType === AutoHealActionType.LogEvent
+      || actions.actionType === AutoHealActionType.Recycle) {
+      isValid = true;
+    } else {
+      if (actions.customAction != null &&
+        actions.customAction.exe != null
+        && actions.customAction.exe.length > 0) {
+        isValid = true;
+      }
+    }
+    return isValid;
+  }
+
+  checkRulesValid(): boolean {
+    let rulesValid: boolean = false;
+    if (this.autohealingSettings.autoHealRules != null && this.autohealingSettings.autoHealRules.actions != null && this.autohealingSettings.autoHealRules.triggers != null) {
+      if (this.checkTriggersValid(this.autohealingSettings.autoHealRules.triggers) && this.checkActionsValid(this.autohealingSettings.autoHealRules.actions)) {
+        rulesValid = true;
+      }
+    }
+    return rulesValid;
   }
 
   updateCustomAction(action: AutoHealCustomAction) {
@@ -279,7 +332,8 @@ export class AutohealingComponent implements OnInit {
 
       this.validationWarning.push(appDomainRestartWarning);
 
-      if (this.autohealingSettings.autoHealRules.actions.minProcessExecutionTime != null && FormatHelper.timespanToSeconds(this.autohealingSettings.autoHealRules.actions.minProcessExecutionTime) < 600) {
+      if (this.autohealingSettings.autoHealRules.actions.minProcessExecutionTime == null
+        || (this.autohealingSettings.autoHealRules.actions.minProcessExecutionTime != null && FormatHelper.timespanToSeconds(this.autohealingSettings.autoHealRules.actions.minProcessExecutionTime) < 600)) {
         this.validationWarning.push(minProcessExecutionTimeNotSet);
       }
 

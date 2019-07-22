@@ -15,6 +15,7 @@ import { catchError, tap } from 'rxjs/operators';
 export class DiagnosticApiService {
 
   public readonly localDiagnosticApi = "http://localhost:5000/";
+  public GeomasterServiceAddress: string = null;
 
   constructor(private _httpClient: HttpClient, private _cacheService: CacheService,
     private _adalService: AdalService) { }
@@ -242,6 +243,9 @@ export class DiagnosticApiService {
     if (environment.adal.enabled){
       headers = headers.set('Authorization', `Bearer ${this._adalService.userInfo.token}`)
     }
+
+    if (this.GeomasterServiceAddress)
+    headers = headers.set("x-ms-geomaster-hostname", this.GeomasterServiceAddress);
 
     if (emailRecipients !== "") {
       headers = headers.set('x-ms-emailRecipients', emailRecipients);
