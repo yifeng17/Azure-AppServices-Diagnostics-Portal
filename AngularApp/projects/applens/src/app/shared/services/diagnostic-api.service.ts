@@ -238,7 +238,10 @@ export class DiagnosticApiService {
     headers = headers.set('Accept', 'application/json');
     headers = headers.set('x-ms-internal-client', String(internalClient));
     headers = headers.set('x-ms-internal-view', String(internalView));
-    //headers = headers.set('Authorization', `Bearer ${this._adalService.userInfo.token}`)
+
+    if (environment.adal.enabled){
+      headers = headers.set('Authorization', `Bearer ${this._adalService.userInfo.token}`)
+    }
 
     if (emailRecipients !== "") {
       headers = headers.set('x-ms-emailRecipients', emailRecipients);
