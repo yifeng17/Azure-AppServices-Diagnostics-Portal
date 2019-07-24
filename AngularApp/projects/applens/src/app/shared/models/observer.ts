@@ -14,6 +14,8 @@ namespace Observer {
         SlotName: string;
         GeomasterName: string;
         GeomasterServiceAddress: string;
+        Kind: string,
+        IsLinux?: boolean;
     }
   
     export interface ObserverAseResponse {
@@ -74,4 +76,3 @@ namespace Observer {
         ResourceGroupName: string;
     }
   }
-  

@@ -163,7 +163,8 @@ namespace AppLensV3
         {
             return !_nonPassThroughResourceProviderList.Exists(p => path.ToLower().Contains(p))
                 || new Regex("/detectors/[^/]*/statistics").IsMatch(path.ToLower())
-                || path.ToLower().Contains("/diagnostics/publish");
+                || path.ToLower().Contains("/diagnostics/publish")
+                || path.ToLower().StartsWith("observer");
         }
 
         private X509Certificate2 GetMyX509Certificate()

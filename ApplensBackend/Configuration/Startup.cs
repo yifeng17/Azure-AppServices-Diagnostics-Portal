@@ -1,22 +1,14 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using System.IO;
+﻿using System.IO;
+using System.Linq;
+using AppLensV3.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.AzureAD.UI;
-using AppLensV3.Services;
-using System;
-using Microsoft.AspNetCore.Mvc.Filters;
-using System.Linq;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.AspNetCore.Identity;
-using System.Collections.Generic;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.IdentityModel.Tokens.Saml;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.WsFederation;
-using Microsoft.IdentityModel.Tokens.Saml2;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AppLensV3
 {
@@ -64,34 +56,14 @@ namespace AppLensV3
             services.AddMemoryCache();
             services.AddMvc();
 
-            if (Configuration.GetValue<bool>("DatacenterFederationEnabled", false))
+            services.AddAuthentication(auth =>
             {
-                services.AddAuthentication(options =>
-                {
-                    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = WsFederationDefaults.AuthenticationScheme;
-                })
-                .AddWsFederation(options =>
-                {
-                    options.MetadataAddress = Configuration["DatacenterFederationConfiguration:MetadataAddress"];
-                    options.Wtrealm = Configuration["DatacenterFederationConfiguration:Realm"];
-                    options.ClaimsIssuer = Configuration["DatacenterFederationConfiguration:Issuer"];
-                    options.SecurityTokenHandlers = new List<ISecurityTokenValidator> { new Saml2SecurityTokenHandler() };
-                })
-                .AddCookie();
-            }
-            else
+                auth.DefaultScheme = AzureADDefaults.BearerAuthenticationScheme;
+            })
+            .AddAzureADBearer(options =>
             {
-                services.AddAuthentication(auth =>
-                {
-                    auth.DefaultScheme = AzureADDefaults.BearerAuthenticationScheme;
-                })
-                .AddAzureADBearer(options =>
-                {
-                    Configuration.Bind("AzureAd", options);
-                });
-            }
+                Configuration.Bind("AzureAd", options);
+            });
 
             if (Configuration["ServerMode"] == "internal")
             {
