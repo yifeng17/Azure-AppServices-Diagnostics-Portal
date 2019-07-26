@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace AppLensV3
 {
     [Route("api")]
-    [Authorize]
+    //[Authorize]
     public class CommsController : Controller
     {
         private readonly IOutageCommunicationService _outageService;
@@ -35,6 +35,16 @@ namespace AppLensV3
             }
             
             List<Communication> comms = await _outageService.GetCommunicationsAsync(subscriptionId, startTimeUtc, endTimeUtc);
+            return Ok(comms);
+        }
+
+        [HttpGet("kusto")]
+        [HttpOptions("kusto")]
+        public async Task<IActionResult> ExecuteKusto()
+        {
+         
+
+            List<ConnectionRow> comms = await _outageService.GetFunctionsAsync();
             return Ok(comms);
         }
     }

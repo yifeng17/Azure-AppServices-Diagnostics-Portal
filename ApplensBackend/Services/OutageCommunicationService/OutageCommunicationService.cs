@@ -32,6 +32,7 @@ namespace AppLensV3.Services
             _kustoQueryService = kustoQueryService;
         }
 
+
         public async Task<List<Communication>> GetCommunicationsAsync(string subscription, DateTime startTime, DateTime endTime, string impactedService = "appservice")
         {
             if (string.IsNullOrWhiteSpace(subscription))
@@ -120,6 +121,98 @@ namespace AppLensV3.Services
 
             return commsList;
         }
+
+        public async Task<List<ConnectionRow>> GetFunctionsAsync()
+        {
+     
+
+            DateTime currentTimeUTC = DateTime.UtcNow;
+
+
+
+            //string kustoQuery = _commsQuery
+            //    .Replace("{START_TIME}", startTimeStr)
+            //    .Replace("{END_TIME}", endTimeStr)
+            //    .Replace("{SUBSCRIPTION}", subscription);
+
+            string kustoQuery = @"
+    cindyConnections 
+    | where functionApp =~ 'cindyfn'
+    | extend timeStamp = todatetime(timeStamp)
+| where timeStamp> ago(2d)
+| summarize arg_max(timeStamp, *) by level, functionName, bindingType, direction";
+
+            DataTable dt = await _kustoQueryService.ExecuteQueryAsync("cindycluster.southcentralus", "cindydb", kustoQuery);
+
+            List<ConnectionRow> connectionRows = new List<ConnectionRow>();
+
+            if (dt == null || dt.Rows == null || dt.Rows.Count == 0)
+            {
+                return connectionRows;
+            }
+
+            foreach (DataRow row in dt.Rows)
+            {
+                ConnectionRow comm = new ConnectionRow
+                {
+                    timeStamp = row["timeStamp"].ToString(),
+                    batchId =  row["batchId"].ToString(),
+                    //batchId = 1,
+                    functionApp = row["functionApp"].ToString(),
+                    level = row["level"].ToString(),
+                    functionName = row["functionName"].ToString(),
+                    bindingType = row["bindingType"].ToString(),
+                    direction = row["direction"].ToString(),
+                    settingKey = row["settingKey"].ToString(),
+                    accountName = row["accountName"].ToString(),
+                    validationPassed = row["validationPassed"].ToString() == "true",
+                    details = row["details"].ToString(),
+            };
+
+                connectionRows.Add(comm);
+            }
+            return connectionRows;
+        }
+
+
+        //Communication impactedServiceComm = null;
+        //Communication mostRecentImpactedServiceComm = commsList.FirstOrDefault(p => p.ImpactedServices.Exists(q => q.Name.ToLower().Contains(impactedService.ToLower())));
+        //if (mostRecentImpactedServiceComm != null)
+        //{
+        //    if (mostRecentImpactedServiceComm.Status == CommunicationStatus.Active)
+        //    {
+        //        mostRecentImpactedServiceComm.IsAlert = true;
+        //        mostRecentImpactedServiceComm.IsExpanded = true;
+        //        impactedServiceComm = mostRecentImpactedServiceComm;
+        //    }
+        //    else if (mostRecentImpactedServiceComm.Status == CommunicationStatus.Resolved)
+        //    {
+        //        Communication rca = commsList.FirstOrDefault(p => (
+        //                    p.IncidentId == mostRecentImpactedServiceComm.IncidentId &&
+        //                    p.PublishedTime > mostRecentImpactedServiceComm.PublishedTime &&
+        //                    p.CommunicationId != mostRecentImpactedServiceComm.CommunicationId &&
+        //                    p.Title.ToUpper().Contains("RCA")));
+
+        //        if (rca != null && ((currentTimeUTC - rca.PublishedTime) <= _commAlertWindow))
+        //        {
+        //            rca.IsAlert = true;
+        //            // NOTE:- For now, resolved incidents will be collapsed by Default.
+        //            // Uncommenting below line would make resolved incidents expanded by default for certain timespan.
+        //            //rca.IsExpanded = ((currentTimeUTC - rca.PublishedTime) <= _commExpandedWindow);
+        //            impactedServiceComm = rca;
+        //        }
+        //        else if ((currentTimeUTC - mostRecentImpactedServiceComm.PublishedTime) <= _commAlertWindow)
+        //        {
+        //            mostRecentImpactedServiceComm.IsAlert = true;
+        //            // NOTE:- For now, resolved incidents will be collapsed by Default.
+        //            // Uncommenting below line would make resolved incidents expanded by default for certain timespan.
+        //            //mostRecentImpactedServiceComm.IsExpanded = ((currentTimeUTC - mostRecentImpactedServiceComm.PublishedTime) <= _commExpandedWindow);
+        //            impactedServiceComm = mostRecentImpactedServiceComm;
+        //        }
+        //    }
+        //}
+
+
 
         private List<ImpactedService> GetImpactedRegions(string jsonStr)
         {

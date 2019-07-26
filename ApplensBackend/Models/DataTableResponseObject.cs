@@ -44,7 +44,7 @@ namespace AppLensV3
 
             var dataTable = new DataTable(dataTableResponse.TableName);
 
-            dataTable.Columns.AddRange(dataTableResponse.Columns.Select(column => new DataColumn(column.ColumnName, GetColumnType(column.DataType))).ToArray());
+            dataTable.Columns.AddRange(dataTableResponse.Columns.Select(column => new DataColumn(column.ColumnName, typeof(string))).ToArray());
 
             foreach (var row in dataTableResponse.Rows)
             {
@@ -55,7 +55,7 @@ namespace AppLensV3
 
                     if (row[i] != null)
                     {
-                        rowValueWithCorrectType = Convert.ChangeType(row[i], dataTable.Columns[i].DataType, CultureInfo.InvariantCulture);
+                        rowValueWithCorrectType = Convert.ChangeType(row[i], typeof(string), CultureInfo.InvariantCulture);
 
                         if (dataTable.Columns[i].DataType == typeof(DateTime))
                         {
