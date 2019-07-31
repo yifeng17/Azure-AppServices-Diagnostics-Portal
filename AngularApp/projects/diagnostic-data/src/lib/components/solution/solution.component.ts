@@ -55,13 +55,13 @@ export class SolutionComponent extends DataRenderBaseComponent {
         }
 
         let overrideKeys = Object.keys(solution.OverrideOptions).map(key => key.toLowerCase());
-        if (overrideKeys.includes('route')) {
+        if (overrideKeys.indexOf('route') > -1) {
             return ActionType.ArmApi;
         }
-        if (overrideKeys.includes('taburl')) {
+        if (overrideKeys.indexOf('taburl') > -1) {
             return ActionType.OpenTab;
         }
-        if (overrideKeys.includes('detailblade')) {
+        if (overrideKeys.indexOf('detailblade') > -1) {
             return ActionType.GoToBlade;
         }
 
