@@ -3,7 +3,6 @@ import { Category } from '../models/category';
 import { DiagnosticService } from 'diagnostic-data';
 import { BehaviorSubject } from 'rxjs';
 import { GenericArmConfigService } from '../../shared/services/generic-arm-config.service';
-import { ArmResource } from 'projects/applens/src/app/shared/models/resources';
 import { ArmResourceConfig } from '../../shared/models/arm/armResourceConfig';
 @Injectable()
 export class CategoryService {
@@ -14,14 +13,14 @@ export class CategoryService {
 
   private _commonCategories: Category[] = [];
 
-  constructor(private _genericArmConfigService? : GenericArmConfigService) {
+  constructor(private _genericArmConfigService?: GenericArmConfigService) {
     this._addCategories(this._commonCategories);
   }
 
-  public initCategoriesForArmResource(resourceUri:string) {
-    if(this._genericArmConfigService !== null) {
+  public initCategoriesForArmResource(resourceUri: string) {
+    if (!!this._genericArmConfigService) {
       let currConfig: ArmResourceConfig = this._genericArmConfigService.getArmResourceConfig(resourceUri);
-      if (currConfig.categories && currConfig.categories.length > 0) {
+      if (!!currConfig.categories && currConfig.categories.length > 0) {
         this._addCategories(currConfig.categories);
       }
     }
