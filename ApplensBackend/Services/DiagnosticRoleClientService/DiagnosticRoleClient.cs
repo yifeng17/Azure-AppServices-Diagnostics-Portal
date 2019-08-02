@@ -140,13 +140,13 @@ namespace AppLensV3
                         Content = new StringContent(body ?? string.Empty, Encoding.UTF8, "application/json")
                     };
 
+                    requestMessage.Headers.Add("x-ms-internal-client", internalClient.ToString());
+                    requestMessage.Headers.Add("x-ms-internal-view", internalView.ToString());
+
                     if (additionalHeaders != null)
                     {
                         AddAdditionalHeaders(additionalHeaders, ref requestMessage);
                     }
-
-                    requestMessage.Headers.Add("x-ms-internal-client", internalClient.ToString());
-                    requestMessage.Headers.Add("x-ms-internal-view", internalView.ToString());
 
                     response = await _client.SendAsync(requestMessage);
                 }
@@ -163,7 +163,8 @@ namespace AppLensV3
         {
             return !_nonPassThroughResourceProviderList.Exists(p => path.ToLower().Contains(p))
                 || new Regex("/detectors/[^/]*/statistics").IsMatch(path.ToLower())
-                || path.ToLower().Contains("/diagnostics/publish");
+                || path.ToLower().Contains("/diagnostics/publish")
+                || path.ToLower().StartsWith("observer");
         }
 
         private X509Certificate2 GetMyX509Certificate()
@@ -207,7 +208,10 @@ namespace AppLensV3
         {
             foreach (var header in additionalHeaders)
             {
-                request.Headers.Add(header.Key, header.Value);
+                if(!request.Headers.Contains(header.Key))
+                {
+                    request.Headers.Add(header.Key, header.Value);
+                }
             }
         }
     }
