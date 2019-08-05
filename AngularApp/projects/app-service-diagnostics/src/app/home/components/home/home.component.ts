@@ -28,7 +28,7 @@ export class HomeComponent implements OnInit {
   subscriptionId: string;
   searchResultCount: number;
   homePageText: HomePageText;
-  searchPlaceHolder: string = 'Search App Service Diagnostics';
+  searchPlaceHolder: string;
   get inputAriaLabel(): string {
     return this.searchValue !== '' ?
       `${this.searchResultCount} Result` + (this.searchResultCount !== 1 ? 's' : '') :
@@ -47,7 +47,13 @@ export class HomeComponent implements OnInit {
       this.searchPlaceHolder = this.homePageText.searchBarPlaceHolder;
     }
     else {
-      this.homePageText = null;
+      this.homePageText = {
+        title:'App Service Diagnostics',
+        description: 'App Service Diagnostics to investigate how your app is performing, diagnose issues, and discover how to\
+         improve your application. Select the problem category that best matches the information or tool that you\'re\
+         interested in:',
+         searchBarPlaceHolder: 'Search App Service Diagnostics'
+      };      
     }
 
 

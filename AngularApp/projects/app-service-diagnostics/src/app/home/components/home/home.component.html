@@ -20,18 +20,8 @@
     </ng-container>
   </div>
   <div class="main-area">
-    <span *ngIf = "homePageText === null">
-      <h2 tabindex="0">App Service Diagnostics</h2>
-      <p id="page-description" tabindex="0">
-          App Service Diagnostics to investigate how your app is performing, diagnose issues, and discover how to
-          improve your application. Select the problem category that best matches the information or tool that you're
-          interested in:
-      </p>
-    </span>
-    <span *ngIf = "homePageText !== null">
-        <h2 tabindex="0">{{homePageText.title}}</h2>
-        <p id="page-description" tabindex="0">{{homePageText.description}}</p>
-      </span>
+    <h2 tabindex="0">{{homePageText.title}}</h2>
+    <p id="page-description" tabindex="0">{{homePageText.description}}</p>
     <div *ngIf="categories" class="category-container">
       <div *ngFor="let category of categories" style="display: inline-block;padding: 20px 40px 20px 0px">
         <category-tile [category]="category"></category-tile>
