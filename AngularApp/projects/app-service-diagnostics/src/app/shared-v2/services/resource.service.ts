@@ -40,7 +40,7 @@ export class ResourceService {
   public get searchSuffix(): string {
     if (!!this._genericArmConfigService) {
       let currConfig: ArmResourceConfig = this._genericArmConfigService.getArmResourceConfig(this.resource.id);
-      if (currConfig.searchSuffix) {
+      if (!!currConfig.searchSuffix) {
         return currConfig.searchSuffix;
       }
       else {
@@ -55,7 +55,7 @@ export class ResourceService {
   public get azureServiceName(): string {
     if (!!this._genericArmConfigService) {
       let currConfig: ArmResourceConfig = this._genericArmConfigService.getArmResourceConfig(this.resource.id);
-      if (currConfig.azureServiceName) {
+      if (!!currConfig.azureServiceName) {
         return currConfig.azureServiceName;
       }
       else {
@@ -74,7 +74,7 @@ export class ResourceService {
   public get isApplicableForLiveChat(): boolean {
     if (!!this._genericArmConfigService) {
       let currConfig: ArmResourceConfig = this._genericArmConfigService.getArmResourceConfig(this.resource.id);
-      if (currConfig.isApplicableForLiveChat) {
+      if (!!currConfig.isApplicableForLiveChat) {
         return currConfig.isApplicableForLiveChat;
       }
       else {

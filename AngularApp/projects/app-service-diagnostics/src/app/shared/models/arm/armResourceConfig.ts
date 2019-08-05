@@ -1,7 +1,7 @@
 import { Category } from "../../../shared-v2/models/category";
 import { MessageGroup } from "../../../supportbot/models/message-group";
 
-export interface ArmResourceConfig {
+export class ArmResourceConfig {
 	homePageText?: HomePageText;
 	matchRegEx?: string;
 	searchSuffix?: string;
@@ -17,7 +17,7 @@ export interface GenieConfig {
 	Messages: MessageGroup[];
 }
 
-export interface HomePageText {
+export class HomePageText {
 	title: string;
 	description: string;
 	searchBarPlaceHolder: string;

@@ -359,7 +359,7 @@ export class GenericArmConfigService {
 
 
   getArmResourceConfig(resourceUri: string, recurse?: boolean): ArmResourceConfig {
-    let returlValue: ArmResourceConfig;
+    let returlValue: ArmResourceConfig = new ArmResourceConfig();
     if (this.resourceMap.length > 0) {
       this.resourceMap.some((resource: ArmResourceConfig) => {
         const matchPattern: RegExp = new RegExp(`${resource.matchRegEx.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}`, "i");
