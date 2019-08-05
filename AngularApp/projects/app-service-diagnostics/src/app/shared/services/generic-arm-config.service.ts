@@ -130,7 +130,7 @@ export class GenericArmConfigService {
       resourceUri = '/' + resourceUri;
     }
     let resourceDesc = this.parseResourceUri(resourceUri);
-    const baseUri: string = 'armResourceConfig/' + resourceDesc.provider + '/' + resourceDesc.types.join('/') + '/';
+    const baseUri: string = 'armResourceConfig/' + resourceDesc.provider + '/' + resourceDesc.type + '/';
 
     let override = this._http.get<ArmResourceConfig>(baseUri + 'override.json')
     let config = this._http.get<ArmResourceConfig>(baseUri + 'config.json')
