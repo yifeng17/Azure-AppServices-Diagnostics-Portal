@@ -170,7 +170,7 @@ export class DetectorControlService {
     if (start && end) {
       startTime = moment.utc(start);
       if(moment.duration(moment.utc().diff(moment.utc(end))).asMinutes() < 16 ) {
-        //The supplied end time > now - 15 minutes. Adjust the end time so that it becomes now())-15 minutes.
+        //The supplied end time > now - 15 minutes. Adjust the end time so that it becomes now()-15 minutes.
         endTime = moment.utc().subtract(16, 'minutes');
       }
       else {
@@ -180,7 +180,7 @@ export class DetectorControlService {
     } else if (start) {
       startTime = moment.utc(start);
       if (moment.duration(moment.utc().diff(startTime.clone().add(1, 'days'))).asMinutes() < 16) {
-        //The new endtime > now() - 15 minutes of. Adjust the end time so that it becomes now())-15 minutes.
+        //No endtime was passed. If (start time + 1 day) > (now() - 15 minutes), adjust the end time so that it becomes less than now()-15 minutes.
         endTime = moment.utc().subtract(16, 'minutes');
       }
       else {
@@ -188,7 +188,7 @@ export class DetectorControlService {
       }
     } else if (end) {
       if(moment.duration(moment.utc().diff(moment.utc(end))).asMinutes() < 16) {
-        //The supplied end time > now - 15 minutes. Adjust the end time so that it becomes now())-15 minutes.
+        //The supplied end time > now - 15 minutes. Adjust the end time so that it becomes now()-15 minutes.
         endTime = moment.utc().subtract(16,'minutes');
       }
       else {
