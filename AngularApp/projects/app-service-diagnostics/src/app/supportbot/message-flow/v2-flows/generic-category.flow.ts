@@ -64,9 +64,9 @@ export class GenericCategoryFlow extends IMessageFlowProvider {
 
       let serviceName: string = 'App Service Diagnostics';
 
-      if (!!this._resourceService.armResourceConfig
-        && !!this._resourceService.armResourceConfig.homePageText
-        && !!this._resourceService.armResourceConfig.homePageText.title
+      if (this._resourceService.armResourceConfig
+        && this._resourceService.armResourceConfig.homePageText
+        && this._resourceService.armResourceConfig.homePageText.title
         && this._resourceService.armResourceConfig.homePageText.title.length > 0) {
         serviceName = this._resourceService.armResourceConfig.homePageText.title;
       }

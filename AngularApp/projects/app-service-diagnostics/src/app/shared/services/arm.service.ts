@@ -25,11 +25,11 @@ export class ArmService {
     }
 
     getApiVersion(resourceUri: string, apiVersion?: string): string {
-        if (!!apiVersion) {
+        if (apiVersion) {
             return apiVersion;
         }
         else {
-            if (!!this._genericArmConfigService) {
+            if (this._genericArmConfigService) {
                 apiVersion = this._genericArmConfigService.getApiVersion(resourceUri);
             }
             if (!apiVersion || apiVersion == '') {

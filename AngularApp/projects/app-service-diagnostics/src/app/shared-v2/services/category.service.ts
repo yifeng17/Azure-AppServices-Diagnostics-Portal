@@ -18,9 +18,9 @@ export class CategoryService {
   }
 
   public initCategoriesForArmResource(resourceUri: string) {
-    if (!!this._genericArmConfigService) {
+    if (this._genericArmConfigService) {
       let currConfig: ArmResourceConfig = this._genericArmConfigService.getArmResourceConfig(resourceUri);
-      if (!!currConfig.categories && currConfig.categories.length > 0) {
+      if (currConfig.categories && currConfig.categories.length > 0) {
         this._addCategories(currConfig.categories);
       }
     }

@@ -39,10 +39,10 @@ export class HomeComponent implements OnInit {
     private _detectorControlService: DetectorControlService, private _featureService: FeatureService, private _logger: LoggingV2Service, private _authService: AuthService,
     private _navigator: FeatureNavigationService, private _activatedRoute: ActivatedRoute, private armService: ArmService) {
 
-    if (!!_resourceService.armResourceConfig && !!_resourceService.armResourceConfig.homePageText
-      && !!_resourceService.armResourceConfig.homePageText.title && _resourceService.armResourceConfig.homePageText.title.length > 1
-      && !!_resourceService.armResourceConfig.homePageText.description && _resourceService.armResourceConfig.homePageText.description.length > 1
-      && !!_resourceService.armResourceConfig.homePageText.searchBarPlaceHolder && _resourceService.armResourceConfig.homePageText.searchBarPlaceHolder.length > 1) {
+    if (_resourceService.armResourceConfig && _resourceService.armResourceConfig.homePageText
+      && _resourceService.armResourceConfig.homePageText.title && _resourceService.armResourceConfig.homePageText.title.length > 1
+      && _resourceService.armResourceConfig.homePageText.description && _resourceService.armResourceConfig.homePageText.description.length > 1
+      && _resourceService.armResourceConfig.homePageText.searchBarPlaceHolder && _resourceService.armResourceConfig.homePageText.searchBarPlaceHolder.length > 1) {
       this.homePageText = _resourceService.armResourceConfig.homePageText;
       this.searchPlaceHolder = this.homePageText.searchBarPlaceHolder;
     }
@@ -57,7 +57,7 @@ export class HomeComponent implements OnInit {
     }
 
 
-    if (!!_resourceService.armResourceConfig) {
+    if (_resourceService.armResourceConfig) {
       this._categoryService.initCategoriesForArmResource(_resourceService.resource.id);
     }
 

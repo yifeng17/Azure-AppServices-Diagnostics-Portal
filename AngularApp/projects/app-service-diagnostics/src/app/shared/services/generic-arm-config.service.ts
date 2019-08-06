@@ -13,7 +13,7 @@ export class GenericArmConfigService {
 
   public parseResourceUri(resourceUri: string): ResourceDescriptor {
     let resourceDesc: ResourceDescriptor = new ResourceDescriptor();
-    if (!!resourceUri) {
+    if (resourceUri) {
       if (!resourceUri.startsWith('/')) {
         resourceUri = '/' + resourceUri;
       }
@@ -71,11 +71,11 @@ export class GenericArmConfigService {
 
   getValue(source: any, override: any): any {
 
-    if (!!source && !override) {
+    if (typeof source != 'undefined' && typeof override == 'undefined') {
       return source;
     }
 
-    if (!source && !!override) {
+    if (typeof source == 'undefined' && typeof override != 'undefined') {
       return override;
     }
 
@@ -164,24 +164,24 @@ export class GenericArmConfigService {
 
         //currConfig.homePageText.title
         if (
-          (!!this.overrideConfig.homePageText && !!this.overrideConfig.homePageText.title) ||
-          (!!this.resourceConfig.homePageText && !!this.resourceConfig.homePageText.title)
+          (this.overrideConfig.homePageText && this.overrideConfig.homePageText.title) ||
+          (this.resourceConfig.homePageText && this.resourceConfig.homePageText.title)
         ) {
           currConfig.homePageText.title = this.getValue(this.resourceConfig.homePageText.title, this.overrideConfig.homePageText.title);
         }
 
         //currConfig.homePageText.description
         if (
-          (!!this.overrideConfig.homePageText && !!this.overrideConfig.homePageText.description) ||
-          (!!this.resourceConfig.homePageText && !!this.resourceConfig.homePageText.description)
+          (this.overrideConfig.homePageText && this.overrideConfig.homePageText.description) ||
+          (this.resourceConfig.homePageText && this.resourceConfig.homePageText.description)
         ) {
           currConfig.homePageText.description = this.getValue(this.resourceConfig.homePageText.description, this.overrideConfig.homePageText.description);
         }
 
         //currConfig.homePageText.searchBarPlaceHolder
         if (
-          (!!this.overrideConfig.homePageText && !!this.overrideConfig.homePageText.searchBarPlaceHolder) ||
-          (!!this.resourceConfig.homePageText && !!this.resourceConfig.homePageText.searchBarPlaceHolder)
+          (this.overrideConfig.homePageText && this.overrideConfig.homePageText.searchBarPlaceHolder) ||
+          (this.resourceConfig.homePageText && this.resourceConfig.homePageText.searchBarPlaceHolder)
         ) {
           currConfig.homePageText.searchBarPlaceHolder = this.getValue(this.resourceConfig.homePageText.searchBarPlaceHolder, this.overrideConfig.homePageText.searchBarPlaceHolder);
         }
@@ -217,11 +217,11 @@ export class GenericArmConfigService {
         }
 
         //currConfig.categories
-        if (!!this.overrideConfig.categories && !this.resourceConfig.categories) {
+        if (this.overrideConfig.categories && !this.resourceConfig.categories) {
           currConfig.categories = this.overrideConfig.categories.filter(cat => { return cat.id !== '' });
         }
         else {
-          if (!this.overrideConfig.categories && !!this.resourceConfig.categories) {
+          if (!this.overrideConfig.categories && this.resourceConfig.categories) {
             currConfig.categories = this.resourceConfig.categories.filter(cat => { return cat.id !== '' });
           }
           else {
@@ -248,27 +248,27 @@ export class GenericArmConfigService {
                 }
               })
 
-              if (!!categoryToCompare) {
+              if (categoryToCompare) {
                 //currConfig.categories[x].id
                 currMergedCategory.id = categoryToCompare.id;
 
                 //currConfig.categories[x].name
-                if (!!categoryToCompare.name || !!currCat.name) {
+                if (categoryToCompare.name || currCat.name) {
                   currMergedCategory.name = this.getValue(currCat.name, categoryToCompare.name);
                 }
 
                 //currConfig.categories[x].description
-                if (!!categoryToCompare.description || !!currCat.description) {
+                if (categoryToCompare.description || currCat.description) {
                   currMergedCategory.description = this.getValue(currCat.description, categoryToCompare.description);
                 }
 
                 //currConfig.categories[x].keywords
-                if (!!categoryToCompare.keywords || !!currCat.keywords) {
+                if (categoryToCompare.keywords || currCat.keywords) {
                   currMergedCategory.keywords = this.getValue(currCat.keywords, categoryToCompare.keywords);
                 }
 
                 //currConfig.categories[x].color
-                if (!!categoryToCompare.color || !!currCat.color) {
+                if (categoryToCompare.color || currCat.color) {
                   currMergedCategory.color = this.getValue(currCat.color, categoryToCompare.color);
                 }
 

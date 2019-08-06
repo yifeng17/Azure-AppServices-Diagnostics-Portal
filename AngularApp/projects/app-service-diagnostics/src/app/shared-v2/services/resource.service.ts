@@ -29,7 +29,7 @@ export class ResourceService {
   }
 
   public get armResourceConfig(): ArmResourceConfig {
-    if (!!this._genericArmConfigService) {
+    if (this._genericArmConfigService) {
       return this._genericArmConfigService.getArmResourceConfig(this.resource.id);
     }
     else {
@@ -38,9 +38,9 @@ export class ResourceService {
   }
 
   public get searchSuffix(): string {
-    if (!!this._genericArmConfigService) {
+    if (this._genericArmConfigService) {
       let currConfig: ArmResourceConfig = this._genericArmConfigService.getArmResourceConfig(this.resource.id);
-      if (!!currConfig.searchSuffix) {
+      if (currConfig.searchSuffix) {
         return currConfig.searchSuffix;
       }
       else {
@@ -53,9 +53,9 @@ export class ResourceService {
   }
 
   public get azureServiceName(): string {
-    if (!!this._genericArmConfigService) {
+    if (this._genericArmConfigService) {
       let currConfig: ArmResourceConfig = this._genericArmConfigService.getArmResourceConfig(this.resource.id);
-      if (!!currConfig.azureServiceName) {
+      if (currConfig.azureServiceName) {
         return currConfig.azureServiceName;
       }
       else {
@@ -72,9 +72,9 @@ export class ResourceService {
   }
 
   public get isApplicableForLiveChat(): boolean {
-    if (!!this._genericArmConfigService) {
+    if (this._genericArmConfigService) {
       let currConfig: ArmResourceConfig = this._genericArmConfigService.getArmResourceConfig(this.resource.id);
-      if (!!currConfig.isApplicableForLiveChat) {
+      if (typeof currConfig.isApplicableForLiveChat == 'boolean') {
         return currConfig.isApplicableForLiveChat;
       }
       else {
@@ -87,7 +87,7 @@ export class ResourceService {
   }
 
   public registerResource(resourceUri: string): Observable<{} | ArmResource> {
-    if (!!this._genericArmConfigService && resourceUri.indexOf('hostingenvironments') < 0) {
+    if (this._genericArmConfigService && resourceUri.indexOf('hostingenvironments') < 0) {
       return this._genericArmConfigService.initArmConfig(resourceUri).pipe(
         flatMap(value => {
           return this._armService.getArmResource<ArmResource>(resourceUri).pipe(
@@ -114,7 +114,7 @@ export class ResourceService {
 
   public parseResourceUri(resourceUri: string): ResourceDescriptor {
     let resourceDesc: ResourceDescriptor = new ResourceDescriptor();
-    if (!!resourceUri) {
+    if (resourceUri) {
       if (!resourceUri.startsWith('/')) {
         resourceUri = '/' + resourceUri;
       }
