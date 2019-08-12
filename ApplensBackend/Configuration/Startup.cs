@@ -1,6 +1,7 @@
-﻿using System.IO;
+using System.IO;
 using System.Linq;
 using AppLensV3.Services;
+using AppLensV3.Services.DiagnosticClientService;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.AzureAD.UI;
 using Microsoft.AspNetCore.Builder;
@@ -9,6 +10,8 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Tokens.Saml2;
 
 namespace AppLensV3
 {
@@ -40,21 +43,28 @@ namespace AppLensV3
             services.AddSingleton(Configuration);
 
             services.AddSingleton<IObserverClientService, SupportObserverClientService>();
-            services.AddSingleton<IDiagnosticClientService, DiagnosticRoleClient>();
+            services.AddSingleton<IDiagnosticClientService, DiagnosticClient>();
             services.AddSingleton<IGithubClientService, GithubClientService>();
             services.AddSingleton<IKustoQueryService, KustoQueryService>();
-            services.AddSingleton<IKustoTokenRefreshService, KustoTokenRefreshService>();
             services.AddSingleton<IOutageCommunicationService, OutageCommunicationService>();
             services.AddSingleton<ILocalDevelopmentClientService, LocalDevelopmentClientService>();
             services.AddSingleton<IEmailNotificationService, EmailNotificationService>();
             services.AddSingleton<IGraphClientService, GraphClientService>();
-            services.AddSingleton<IGraphTokenService, GraphTokenService>();
             services.AddSingleton<ISupportTopicService, SupportTopicService>();
             services.AddSingleton<ISelfHelpContentService, SelfHelpContentService>();
             services.AddSingleton<IFreshChatClientService, FreshChatClientService>();
 
             services.AddMemoryCache();
             services.AddMvc();
+
+            GraphTokenService.Instance.Initialize(Configuration);
+            KustoTokenRefreshService.Instance.Initialize(Configuration);
+
+            // If we are using runtime host directly
+            if (Configuration.GetValue<bool>("DiagnosticRole:UseAppService"))
+            {
+                DiagnosticClientToken.Instance.Initialize(Configuration);
+            }
 
             services.AddAuthentication(auth =>
             {
