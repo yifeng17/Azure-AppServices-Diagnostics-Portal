@@ -100,7 +100,7 @@
             "service": "ResourceService",
             "resourceType": "Microsoft.Microservices4Spring/appClusters",
             "templateFileName": "SpringCloudService",
-            "imgSrc": "assets/img/Azure-WebApps-Logo.png",
+            "imgSrc": "assets/img/Azure-SpringCloudService-Logo.svg",
             "versionPrefix": "",
             "azureCommImpactedServicesList": "",
             "pesId": "",
