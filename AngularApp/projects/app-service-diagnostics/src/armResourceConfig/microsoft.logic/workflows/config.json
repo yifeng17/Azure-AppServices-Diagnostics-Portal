@@ -1,0 +1,23 @@
+{
+	"homePageText": {
+		"title": "Logic Apps Diagnostics",
+		"description": "Use Logic Apps Diagnostics to investigate how your app is performing, diagnose issues, and discover how to improve its reliability. Select the problem category that best matches the information or tool that you're interested in:",
+		"searchBarPlaceHolder": "Search Logic Apps Diagnostics"
+	},
+	"matchRegEx": "/Microsoft.Logic/workflows/",
+	"searchSuffix": "LA",
+	"azureServiceName": "Logic Apps",
+	"armApiVersion": "2016-06-01",
+	"isSearchEnabled": true,
+	"isApplicableForLiveChat": false,
+	"categories": [{
+			"id": "Diagnostics",
+			"name": "Diagnostics",
+			"description": "Is your logic app experiencing problems or slowness? To get an overview about the most recent runs and their steps, troubleshoot, and identify possible improvements, select this category.",
+			"keywords": ["Overview", "Runs", "Performance", "Triggers"],
+			"color": "rgb(186, 211, 245)",
+			"createFlowForCategory": true,
+			"chatEnabled": false
+		}
+	]
+}
