@@ -32,6 +32,7 @@ import {CustomMaterialModule} from './material-module';
 import { PortalSettingsService } from './shared/services/settings.service';
 import { AppInsightsService } from './shared/services/appinsights/appinsights.service';
 import { AppInsightsQueryService } from './../../../diagnostic-data/src/lib/services/appinsights.service';
+import { HighchartsChartModule } from 'highcharts-angular';
 
 @NgModule({
   imports: [
@@ -55,7 +56,8 @@ import { AppInsightsQueryService } from './../../../diagnostic-data/src/lib/serv
         loadChildren: './resources/resources.module#ResourcesModule'
       }
     ]),
-    CustomMaterialModule
+    CustomMaterialModule,
+    HighchartsChartModule
   ],
   declarations: [
     AppComponent

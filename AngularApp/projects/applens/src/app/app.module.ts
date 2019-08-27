@@ -18,6 +18,7 @@ import { CustomUrlSerializerService } from './shared/services/custom-url-seriali
 import { DiagnosticDataModule } from 'diagnostic-data';
 import { UnhandledExceptionHandlerService } from 'diagnostic-data';
 import {CustomMaterialModule} from './material-module';
+import { HighchartsChartModule } from 'highcharts-angular';
 
 @Injectable()
 export class ValidResourceResolver implements Resolve<void>{
@@ -101,7 +102,8 @@ export const Routes = RouterModule.forRoot([
     DiagnosticDataModule.forRoot(),
     Routes,
     SharedModule.forRoot(),
-    CustomMaterialModule
+    CustomMaterialModule,
+    HighchartsChartModule
   ],
   providers: [
     ValidResourceResolver,

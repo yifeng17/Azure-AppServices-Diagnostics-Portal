@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AdalService } from 'adal-angular4';
 import { environment } from '../environments/environment';
+import * as Highcharts from 'highcharts';
 
 @Component({
   selector: 'app-root',

@@ -76,6 +76,7 @@ import { ChangesViewComponent } from './components/changes-view/changes-view.com
 import { CustomMaterialModule } from './material-module';
 import { DetectorListAnalysisComponent } from './components/detector-list-analysis/detector-list-analysis.component';
 import { AppDependenciesComponent } from './components/app-dependencies/app-dependencies.component';
+import { HighchartsGraphComponent } from './components/highcharts-graph/highcharts-graph.component';
 
 @NgModule({
   imports: [
@@ -105,7 +106,8 @@ import { AppDependenciesComponent } from './components/app-dependencies/app-depe
     ChangesViewComponent,
     DetectorListAnalysisComponent,
     AppDependenciesComponent,
-    AppInsightsMarkdownComponent
+    AppInsightsMarkdownComponent,
+    HighchartsGraphComponent
   ],
   exports: [
     FormsModule, TimeSeriesGraphComponent, DataTableComponent, DynamicDataComponent, DetectorViewComponent,

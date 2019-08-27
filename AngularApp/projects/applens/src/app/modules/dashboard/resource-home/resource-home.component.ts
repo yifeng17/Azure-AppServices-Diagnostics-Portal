@@ -13,7 +13,10 @@ import {TelemetryEventNames} from '../../../../../../diagnostic-data/src/lib/ser
 import {AdalService} from 'adal-angular4';
 import {SearchService} from '../services/search.service';
 import { v4 as uuid } from 'uuid';
+import * as Highcharts from 'highcharts';
+import AccessibilityModule from 'highcharts/modules/accessibility';
 
+AccessibilityModule(Highcharts);
 
 @Component({
     selector: 'resource-home',
@@ -21,6 +24,26 @@ import { v4 as uuid } from 'uuid';
     styleUrls: ['./resource-home.component.scss']
 })
 export class ResourceHomeComponent implements OnInit {
+
+    // highcharts experiment
+    Highcharts: typeof Highcharts = Highcharts; // required
+    chartConstructor: string = 'chart'; // optional string, defaults to 'chart'
+    chartOptions: Highcharts.Options = {
+        accessibility: {
+            addTableShortcut: true,
+            describeSingleSeries: true,
+            description: "This is the description of this graph",
+            enabled: true,
+        },
+        series: [{
+          data: [1, 2, 3],
+          type: 'line'
+        }]
+      };// required
+    chartCallback: Highcharts.ChartCallbackFunction = function (chart) { ... } // optional function, defaults to null
+    updateFlag: boolean = false; // optional boolean
+    oneToOneFlag: boolean = true; // optional boolean, defaults to false
+    runOutsideAngular: boolean = false; // optional boolean, defaults to false
 
     currentRoutePath: string[];
     categories: CategoryItem[] = [];
@@ -157,7 +180,7 @@ export class ResourceHomeComponent implements OnInit {
             relativeTo: this._activatedRoute,
             queryParams: queryParams
         };
-    
+
         this._router.navigate([path], navigationExtras);
     }
 

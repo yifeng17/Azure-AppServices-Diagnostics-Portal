@@ -50,6 +50,7 @@ import { SearchTermAdditionComponent } from './search-term-addition/search-term-
 import { SearchResultsComponent } from './search-results/search-results.component';
 import { Sort } from '../../shared/pipes/sort.pipe';
 import { SearchService } from './services/search.service';
+import { HighchartsChartModule } from 'highcharts-angular';
 
 @Injectable()
 export class InitResolver implements Resolve<Observable<boolean>>{
@@ -239,7 +240,8 @@ export const DashboardModuleRoutes: ModuleWithProviders = RouterModule.forChild(
         CollapsibleMenuModule,
         NgxSmartModalModule.forRoot(),
         NgSelectModule,
-        MarkdownModule.forRoot()
+        MarkdownModule.forRoot(),
+        HighchartsChartModule
     ],
     providers: [
         ApplensDiagnosticService,
