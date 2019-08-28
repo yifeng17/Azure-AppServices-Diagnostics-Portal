@@ -117,30 +117,4 @@ namespace AppLensV3
             app.UseStaticFiles();
         }
     }
-
-    // Use this to skip Auth on local server
-    public class LocalFilterProvider : IFilterProvider
-    {
-        public int Order
-        {
-            get
-            {
-                return -1500;
-            }
-        }
-
-        public void OnProvidersExecuted(FilterProviderContext context)
-        {
-        }
-
-        public void OnProvidersExecuting(FilterProviderContext context)
-        {
-            // remove authorize filters
-            var authFilters = context.Results.Where(x => x.Descriptor.Filter.GetType() == typeof(AuthorizeFilter)).ToList();
-            foreach (var filter in authFilters)
-            {
-                context.Results.Remove(filter);
-            }
-        }
-    }
 }

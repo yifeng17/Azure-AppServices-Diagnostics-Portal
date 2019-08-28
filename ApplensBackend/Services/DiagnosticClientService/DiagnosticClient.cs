@@ -81,7 +81,7 @@ namespace AppLensV3.Services.DiagnosticClientService
                 {
                     return true;
                 };
-            } 
+            }
 
             var client = new HttpClient(handler)
             {
@@ -97,93 +97,86 @@ namespace AppLensV3.Services.DiagnosticClientService
 
         public async Task<HttpResponseMessage> Execute(string method, string path, string body = null, bool internalClient = true, bool internalView = true, HttpRequestHeaders additionalHeaders = null)
         {
-            try
+            HttpResponseMessage response;
+            // Sends request to DiagRole.
+            if (!IsLocalDevelopment && !IsRunTimeHostEnabled)
             {
-                HttpResponseMessage response;
-                // Sends request to DiagRole.
-                if (!IsLocalDevelopment && !IsRunTimeHostEnabled)
+                if (!HitPassThroughApi(path))
                 {
-                    if (!HitPassThroughApi(path))
-                    {
-                        var requestMessage = new HttpRequestMessage(method == "POST" ? HttpMethod.Post : HttpMethod.Get, path);
-                        requestMessage.Headers.Add("x-ms-internal-client", internalClient.ToString());
-                        requestMessage.Headers.Add("x-ms-internal-view", internalView.ToString());
-                        if (IsRunTimeHostEnabled)
-                        {
-                            var authToken = await DiagnosticClientToken.Instance.GetAuthorizationTokenAsync();
-                            requestMessage.Headers.Add("Authorization", authToken);
-                        }
-                        if (method.ToUpper() == "POST")
-                        {
-                            requestMessage.Content = new StringContent(body ?? string.Empty, Encoding.UTF8, "application/json");
-                        }
-
-                        if (additionalHeaders != null)
-                        {
-                            AddAdditionalHeaders(additionalHeaders, ref requestMessage);
-                        }
-
-                        response = await _client.SendAsync(requestMessage);
-                    }
-                    else
-                    {
-                        var requestMessage = new HttpRequestMessage(HttpMethod.Post, "api/invoke");
-                        requestMessage.Headers.Add("x-ms-path-query", path);
-                        requestMessage.Headers.Add("x-ms-internal-client", internalClient.ToString());
-                        requestMessage.Headers.Add("x-ms-internal-view", internalView.ToString());
-                        requestMessage.Headers.Add("x-ms-verb", method);
-                        requestMessage.Content = new StringContent(body ?? string.Empty, Encoding.UTF8, "application/json");
-                        if (IsRunTimeHostEnabled)
-                        {
-                            var authToken = await DiagnosticClientToken.Instance.GetAuthorizationTokenAsync();
-                            requestMessage.Headers.Add("Authorization", authToken);
-                        }
-
-                        if (additionalHeaders != null)
-                        {
-                            AddAdditionalHeaders(additionalHeaders, ref requestMessage);
-                        }
-
-                        response = await _client.SendAsync(requestMessage);
-                    }
-                }
-                else
-                {
-                    // If running locally or using App Service for Runtimehost, we can send requests directly.
-                    path = path.TrimStart('/');
-                    if (new Regex("^v[0-9]+/").Matches(path).Any())
-                    {
-                        path = path.Substring(path.IndexOf('/'));
-                    }
-
-                    var requestMessage = new HttpRequestMessage(method.Trim().ToUpper() == "POST" ? HttpMethod.Post : HttpMethod.Get, path)
-                    {
-                        Content = new StringContent(body ?? string.Empty, Encoding.UTF8, "application/json")
-                    };
-
+                    var requestMessage = new HttpRequestMessage(method == "POST" ? HttpMethod.Post : HttpMethod.Get, path);
                     requestMessage.Headers.Add("x-ms-internal-client", internalClient.ToString());
                     requestMessage.Headers.Add("x-ms-internal-view", internalView.ToString());
+                    if (IsRunTimeHostEnabled)
+                    {
+                        var authToken = await DiagnosticClientToken.Instance.GetAuthorizationTokenAsync();
+                        requestMessage.Headers.Add("Authorization", authToken);
+                    }
+                    if (method.ToUpper() == "POST")
+                    {
+                        requestMessage.Content = new StringContent(body ?? string.Empty, Encoding.UTF8, "application/json");
+                    }
 
                     if (additionalHeaders != null)
                     {
                         AddAdditionalHeaders(additionalHeaders, ref requestMessage);
                     }
 
+                    response = await _client.SendAsync(requestMessage);
+                }
+                else
+                {
+                    var requestMessage = new HttpRequestMessage(HttpMethod.Post, "api/invoke");
+                    requestMessage.Headers.Add("x-ms-path-query", path);
+                    requestMessage.Headers.Add("x-ms-internal-client", internalClient.ToString());
+                    requestMessage.Headers.Add("x-ms-internal-view", internalView.ToString());
+                    requestMessage.Headers.Add("x-ms-verb", method);
+                    requestMessage.Content = new StringContent(body ?? string.Empty, Encoding.UTF8, "application/json");
                     if (IsRunTimeHostEnabled)
                     {
                         var authToken = await DiagnosticClientToken.Instance.GetAuthorizationTokenAsync();
                         requestMessage.Headers.Add("Authorization", authToken);
                     }
 
+                    if (additionalHeaders != null)
+                    {
+                        AddAdditionalHeaders(additionalHeaders, ref requestMessage);
+                    }
+
                     response = await _client.SendAsync(requestMessage);
                 }
-
-                return response;
             }
-            catch (Exception ex)
+            else
             {
-                throw ex;
+                // If running locally or using App Service for Runtimehost, we can send requests directly.
+                path = path.TrimStart('/');
+                if (new Regex("^v[0-9]+/").Matches(path).Any())
+                {
+                    path = path.Substring(path.IndexOf('/'));
+                }
+
+                var requestMessage = new HttpRequestMessage(method.Trim().ToUpper() == "POST" ? HttpMethod.Post : HttpMethod.Get, path)
+                {
+                    Content = new StringContent(body ?? string.Empty, Encoding.UTF8, "application/json")
+                };
+
+                requestMessage.Headers.Add("x-ms-internal-client", internalClient.ToString());
+                requestMessage.Headers.Add("x-ms-internal-view", internalView.ToString());
+
+                if (additionalHeaders != null)
+                {
+                    AddAdditionalHeaders(additionalHeaders, ref requestMessage);
+                }
+
+                if (IsRunTimeHostEnabled)
+                {
+                    var authToken = await DiagnosticClientToken.Instance.GetAuthorizationTokenAsync();
+                    requestMessage.Headers.Add("Authorization", authToken);
+                }
+
+                response = await _client.SendAsync(requestMessage);
             }
+
+            return response;
         }
 
         private bool HitPassThroughApi(string path)
@@ -236,7 +229,7 @@ namespace AppLensV3.Services.DiagnosticClientService
         {
             foreach (var header in additionalHeaders)
             {
-                if(!request.Headers.Contains(header.Key))
+                if (!request.Headers.Contains(header.Key))
                 {
                     request.Headers.Add(header.Key, header.Value);
                 }
