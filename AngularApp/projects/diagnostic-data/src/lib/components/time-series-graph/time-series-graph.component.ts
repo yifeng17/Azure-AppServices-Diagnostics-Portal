@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { DataTableDataType, DiagnosticData, TimeSeriesRendering, DataTableResponseObject, RenderingType } from '../../models/detector';
 import { GraphSeries, GraphPoint } from '../nvd3-graph/nvd3-graph.component';
+import { HighchartsData, HighchartGraphSeries } from '../highcharts-graph/highcharts-graph.component';
 import { DataRenderBaseComponent, DataRenderer } from '../data-render-base/data-render-base.component';
-import { TimeSeries, TablePoint } from '../../models/time-series';
+import { TimeSeries, TablePoint, HighChartTimeSeries } from '../../models/time-series';
 import * as momentNs from 'moment';
 import { TimeUtilities } from '../../utilities/time-utilities';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
@@ -25,7 +26,12 @@ export class TimeSeriesGraphComponent extends DataRenderBaseComponent implements
   allSeries: TimeSeries[] = [];
   allSeriesNames: string[] = [];
 
+  // All series with highchart
+  allHighChartSeries: HighChartTimeSeries[] = [];
+  allHighChartSeriesNames: string[] = [];
+
   selectedSeries: GraphSeries[];
+  selectedHighChartSeries: HighchartGraphSeries[];
 
   renderingProperties: TimeSeriesRendering;
   dataTable: DataTableResponseObject;
@@ -52,6 +58,9 @@ export class TimeSeriesGraphComponent extends DataRenderBaseComponent implements
 
   selectSeries() {
     this.selectedSeries = this.allSeries.map(series => series.series);
+    this.selectedHighChartSeries = this.allHighChartSeries.map(series => series.series);
+
+    console.log("selectedHighChartSeries", this.selectedHighChartSeries);
   }
 
   private _processDiagnosticData(data: DiagnosticData) {
@@ -66,16 +75,19 @@ export class TimeSeriesGraphComponent extends DataRenderBaseComponent implements
     }
 
     const timeSeriesDictionary = {};
+    const highchartTimeSeriesDictionary = {};
 
     numberValueColumns.forEach(column => {
       if (uniqueCounterNames.length > 0) {
         uniqueCounterNames.forEach(counterName => {
           const seriesName = this._getSeriesName(column.columnName, counterName);
           timeSeriesDictionary[seriesName] = <TimeSeries>{ name: seriesName, series: <GraphSeries>{ key: seriesName, values: [] } };
+          highchartTimeSeriesDictionary[seriesName] = <HighChartTimeSeries>{ name: seriesName, series: <HighchartGraphSeries>{ name: seriesName, type: "line", data: [] } };
         });
       } else {
         const seriesName = column.columnName;
         timeSeriesDictionary[seriesName] = <TimeSeries>{ name: seriesName, series: <GraphSeries>{ key: seriesName, values: [] } };
+        highchartTimeSeriesDictionary[seriesName] = <HighChartTimeSeries>{ name: seriesName, series: <HighchartGraphSeries>{ name: seriesName, type: "line", data: [] } };
       }
     });
 
@@ -153,6 +165,41 @@ export class TimeSeriesGraphComponent extends DataRenderBaseComponent implements
 
       this.allSeries.push(timeSeriesDictionary[key]);
     });
+
+
+    Object.keys(highchartTimeSeriesDictionary).forEach(key => {
+
+        const pointsForThisSeries =
+          tablePoints
+            .filter(point => this._getSeriesName(point.column, point.counterName) === key)
+            .sort((b,  a) => !this.customizeXAxis ? a.timestamp.diff(b.timestamp) :  b.timestamp.diff(a.timestamp));
+
+        if (!this.customizeXAxis) {
+          let pointToAdd = pointsForThisSeries.pop();
+
+          while  (pointToAdd && pointToAdd.timestamp && pointToAdd.timestamp.isBefore(this.startTime)) {
+            pointToAdd =  pointsForThisSeries.pop();
+          }
+
+          for (const d = this.startTime.clone(); d.isBefore(this.endTime); d.add(this.timeGrain)) {
+            let value = this.defaultValue;
+            if (pointToAdd && d.isSame(moment.utc(pointToAdd.timestamp))) {
+              value = pointToAdd.value;
+              pointToAdd = pointsForThisSeries.pop();
+            }
+            highchartTimeSeriesDictionary[key].series.data.push([d.clone().valueOf(), value ]);
+          }
+        } else {
+          pointsForThisSeries.forEach(pointToAdd => {
+            if (pointToAdd.timestamp.isBefore(this.startTime)) {
+              this.startTime = pointToAdd.timestamp;
+            }
+            highchartTimeSeriesDictionary[key].series.data.push([momentNs.utc(pointToAdd.timestamp).valueOf(), pointToAdd.value ]);
+          });
+        }
+
+        this.allHighChartSeries.push(highchartTimeSeriesDictionary[key]);
+      });
   }
 
   private _getGreatestCommonFactor(timestamp: momentNs.Moment): momentNs.Duration {
