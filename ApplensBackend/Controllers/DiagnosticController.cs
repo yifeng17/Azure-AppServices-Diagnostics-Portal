@@ -28,6 +28,13 @@ namespace AppLensV3.Controllers
     [Authorize]
     public class DiagnosticController : Controller
     {
+        public const string PathQueryHeader = "x-ms-path-query";
+        public const string MethodHeader = "x-ms-method";
+        public const string EmailRecipientsHeader = "x-ms-emailRecipients";
+        public const string InternalClientHeader = "x-ms-internal-client";
+        public const string InternalViewHeader = "x-ms-internal-view";
+        public const string ScriptEtagHeader = "diag-script-etag";
+
         private class InvokeHeaders
         {
             public string Path { get; set; }
@@ -72,7 +79,7 @@ namespace AppLensV3.Controllers
 
             if (string.IsNullOrWhiteSpace(invokeHeaders.Path))
             {
-                return BadRequest("Missing x-ms-path-query header");
+                return BadRequest($"Missing {PathQueryHeader} header");
             }
 
             var detectorId = body?["id"] != null ? body["id"].ToString() : string.Empty;
@@ -109,9 +116,9 @@ namespace AppLensV3.Controllers
                 return StatusCode((int)response.StatusCode, await responseTask);
             }
 
-            if (response.Headers.Contains("diag-script-etag"))
+            if (response.Headers.Contains(ScriptEtagHeader))
             {
-                Request.HttpContext.Response.Headers.Add("diag-script-etag", response.Headers.GetValues("diag-script-etag").First());
+                Request.HttpContext.Response.Headers.Add(ScriptEtagHeader, response.Headers.GetValues(ScriptEtagHeader).First());
             }
 
             if (invokeHeaders.Path.EndsWith("/diagnostics/publish", StringComparison.OrdinalIgnoreCase) && detectorAuthorEmails.Count > 0 && Env.IsProduction())
@@ -125,19 +132,19 @@ namespace AppLensV3.Controllers
         private InvokeHeaders ProcessInvokeHeaders()
         {
             var path = string.Empty;
-            if (Request.Headers.TryGetValue("x-ms-path-query", out var outPath))
+            if (Request.Headers.TryGetValue(PathQueryHeader, out var outPath))
             {
                 path = outPath;
             }
 
             string method = HttpMethod.Get.Method;
-            if (Request.Headers.TryGetValue("x-ms-method", out var outMethod))
+            if (Request.Headers.TryGetValue(MethodHeader, out var outMethod))
             {
                 method = outMethod;
             }
 
             var rawDetectorAuthors = string.Empty;
-            if (Request.Headers.TryGetValue("x-ms-emailRecipients", out var outDetectorAuthors))
+            if (Request.Headers.TryGetValue(EmailRecipientsHeader, out var outDetectorAuthors))
             {
                 rawDetectorAuthors = outDetectorAuthors;
             }
@@ -145,13 +152,13 @@ namespace AppLensV3.Controllers
             var detectorAuthors = rawDetectorAuthors.Split(new char[] { ' ', ',', ';', ':' }, StringSplitOptions.RemoveEmptyEntries);
 
             var internalClient = true;
-            if (Request.Headers.TryGetValue("x-ms-internal-client", out var outClient))
+            if (Request.Headers.TryGetValue(InternalClientHeader, out var outClient))
             {
                 bool.TryParse(outClient, out internalClient);
             }
 
             var internalView = true;
-            if (Request.Headers.TryGetValue("x-ms-internal-view", out var outView))
+            if (Request.Headers.TryGetValue(InternalViewHeader, out var outView))
             {
                 bool.TryParse(outView, out internalView);
             }
