@@ -1,18 +1,32 @@
 <ng-template #graphView>
   <nvd3-graph [chartData]="selectedSeries" [chartType]="renderingProperties.graphType" [chartOptions]="graphOptions"
     *ngIf="selectedSeries" [startTime]="startTime" [endTime]="endTime"></nvd3-graph>
-    <highcharts-graph
-    [HighchartData]="selectedHighChartSeries"
-    style="width: 100%; height: 350px; display: block;"
-  ></highcharts-graph >
   <div *ngIf="!selectedSeries">Loading Data...</div>
 </ng-template>
+
+<ng-template #graphView1>
+<highcharts-graph
+[HighchartData]="selectedHighChartSeries"
+></highcharts-graph >
+  <div *ngIf="!selectedSeries">Loading Data...</div>
+</ng-template>
+
+
 
 <data-container *ngIf="renderingProperties.title; else noContainer" [title]="renderingProperties.title"
     [description]="renderingProperties.description">
   <ng-container *ngTemplateOutlet="graphView"></ng-container>
 </data-container>
 
+<data-container *ngIf="renderingProperties.title; else noContainer1" [title]="renderingProperties.title"
+    [description]="renderingProperties.description">
+  <ng-container *ngTemplateOutlet="graphView1"></ng-container>
+</data-container>
+
 <ng-template #noContainer>
   <ng-container *ngTemplateOutlet="graphView"></ng-container>
+</ng-template>
+
+<ng-template #noContainer1>
+  <ng-container *ngTemplateOutlet="graphView1"></ng-container>
 </ng-template>

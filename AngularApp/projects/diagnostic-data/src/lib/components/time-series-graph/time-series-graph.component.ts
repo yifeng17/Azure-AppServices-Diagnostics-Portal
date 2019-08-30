@@ -188,7 +188,8 @@ export class TimeSeriesGraphComponent extends DataRenderBaseComponent implements
               pointToAdd = pointsForThisSeries.pop();
             }
             highchartTimeSeriesDictionary[key].series.data.push([d.clone().valueOf(), value ]);
-          }
+  
+            }
         } else {
           pointsForThisSeries.forEach(pointToAdd => {
             if (pointToAdd.timestamp.isBefore(this.startTime)) {
@@ -197,6 +198,15 @@ export class TimeSeriesGraphComponent extends DataRenderBaseComponent implements
             highchartTimeSeriesDictionary[key].series.data.push([momentNs.utc(pointToAdd.timestamp).valueOf(), pointToAdd.value ]);
           });
         }
+
+        highchartTimeSeriesDictionary[key].series.events =  {
+          dblclick: function () {
+            console.log('dblclick -  click Events ');
+            this.telemetryService.logEvent('SeriesClicked',
+            {
+                'seriesName': highchartTimeSeriesDictionary[key].series.name,
+            });
+        }};
 
         this.allHighChartSeries.push(highchartTimeSeriesDictionary[key]);
       });

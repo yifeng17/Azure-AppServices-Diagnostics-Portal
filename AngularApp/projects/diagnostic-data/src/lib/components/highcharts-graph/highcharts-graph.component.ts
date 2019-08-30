@@ -95,27 +95,64 @@ export class HighchartsGraphComponent implements OnInit {
 
 
         this.chartOptions = {
-            title: { text: this.chartTitle },
-            subtitle: { text: '1st data set' },
-            // plotOptions: {
-            //   series: {
-            //      pointStart: Date.now(),
-            //      pointInterval: 86400000 // 1 day
-            //   }
-            // },
+          //   legend: {
+          //     layout: 'vertical',
+          //     backgroundColor: '#FFFFFF',
+          //     align: 'left',
+          //     verticalAlign: 'middle',
+          //     floating: true,
+          //     x: 90,
+          //     y: 45
+          // },
+          title: { text: '' },
+          chart: {
+            height: 200,
+            type: 'line',
+        },
+            legend: {
+              enabled: true,
+              align: 'center',
+              layout: 'horizontal',
+              verticalAlign: 'top',
+              itemStyle: {"color": "#333", "cursor": "pointer", "fontSize": "12px",  "textOverflow": "ellipsis", "font-weight":"normal", "font-family":" Arial, sans-serif"},
+              itemMarginTop: 0,
+              itemMarginBottom: 0,
+              accessibility: {
+                enabled: true,
+                keyboardNavigation: {
+                  enabled: true
+                }
+              }
+            },
+            plotOptions: {
+              series: {
+                showInLegend: true
+              }
+            },
             xAxis: {
                 type: 'datetime',
+                axisLabel: 'Time (UTC)',
+                tickSize: 10,
+                tickFormat: function (d: any) { return moment(d).utc().format('MM/DD HH:mm'); },
                 dateTimeLabelFormats: {
-                    millisecond: '%H:%M:%S.%L',
-                    second: '%H:%M:%S',
-                    minute: '%H:%M',
-                    hour: '%H:%M',
-                    day: '%e. %b',
-                    week: '%e. %b',
-                    month: '%b \'%y',
+                    second: '%m-%d<br/>%H:%M:%S',
+                    minute: '%m-%d<br/>%H:%M',
+                    hour: '%m-%d<br/>%H:%M',
+                    day: '%Y<br/>%m-%d',
+                    week: '%Y<br/>%m-%d',
+                    month: '%Y-%m',
                     year: '%Y'
                 }
             },
+          yAxis: {
+            axisLabel: '',
+            title: {
+              text: ''
+          }
+            // showMaxMin: false,
+            // tickFormat: d3.format('.2f'),
+            // axisLabelDistance: -10
+          },
             series: this.HighchartData  //as Array<Highcharts.Series>,
           } as Highcharts.Options;
 
@@ -178,8 +215,6 @@ export class HighchartsGraphComponent implements OnInit {
 
     charts = [{
         hcOptions: {
-        title: { text: this.chartTitle },
-        subtitle: { text: '1st data set' },
         plotOptions: {
           series: {
              pointStart: Date.now(),
@@ -233,5 +268,6 @@ export class HighchartsGraphComponent implements OnInit {
   export interface HighchartGraphSeries {
     name: string;
     type: string;
-    data: [];
+    data: any;
+    events: Function;
   }
