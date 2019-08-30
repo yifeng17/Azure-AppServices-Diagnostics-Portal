@@ -3,7 +3,7 @@ import { DiagnosticService } from '../../services/diagnostic.service';
 import { DetectorControlService } from '../../services/detector-control.service';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { TelemetryEventNames } from '../../services/telemetry/telemetry.common';
-import { DetectorResponse, DiagnosticData, DataTableResponseObject, Rendering } from '../../models/detector';
+import { DetectorResponse, DiagnosticData, DataTableResponseObject, Rendering, RenderingType } from '../../models/detector';
 import { MatTableDataSource} from '@angular/material';
 import { Change, ChangeLevel } from '../../models/changesets';
 import { animate, state, style, transition, trigger } from '@angular/animations';
@@ -63,7 +63,7 @@ export class ChangesViewComponent extends DataRenderBaseComponent implements OnI
 
     ngOnInit() {
         this.tableItems = [];
-        let changesDataItem = this.changesDataSet.find(set => (<Rendering>set.renderingProperties).type === 18);
+        let changesDataItem = this.changesDataSet.find(set => (<Rendering>set.renderingProperties).type === RenderingType.ChangesView);
         if(changesDataItem && changesDataItem.table) {
             this.parseChangesData(changesDataItem.table);
         }
