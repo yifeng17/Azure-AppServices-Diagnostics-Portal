@@ -107,7 +107,17 @@ export class HighchartsGraphComponent implements OnInit {
           title: { text: '' },
           chart: {
             height: 200,
-            type: 'line',
+            // 'area', 'column'
+            type: 'column',
+            zoomType: 'x',
+            resetZoomButton: {
+              position: {
+                  // align: 'right', // by default
+                  // verticalAlign: 'top', // by default
+                  x: 0,
+                  y: -20
+              }
+          }
         },
             legend: {
               enabled: true,
@@ -126,7 +136,8 @@ export class HighchartsGraphComponent implements OnInit {
             },
             plotOptions: {
               series: {
-                showInLegend: true
+                showInLegend: true,
+                lineWidth: 1.5,
               }
             },
             xAxis: {
@@ -148,7 +159,8 @@ export class HighchartsGraphComponent implements OnInit {
             axisLabel: '',
             title: {
               text: ''
-          }
+          },
+          endOnTick: false,
             // showMaxMin: false,
             // tickFormat: d3.format('.2f'),
             // axisLabelDistance: -10

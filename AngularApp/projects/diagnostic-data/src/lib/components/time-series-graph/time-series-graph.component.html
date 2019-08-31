@@ -5,9 +5,7 @@
 </ng-template>
 
 <ng-template #graphView1>
-<highcharts-graph
-[HighchartData]="selectedHighChartSeries"
-></highcharts-graph >
+<highcharts-graph [HighchartData]="selectedHighChartSeries"></highcharts-graph >
   <div *ngIf="!selectedSeries">Loading Data...</div>
 </ng-template>
 
