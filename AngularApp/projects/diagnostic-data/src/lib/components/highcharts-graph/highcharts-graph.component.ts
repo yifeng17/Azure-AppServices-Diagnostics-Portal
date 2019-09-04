@@ -77,10 +77,6 @@ export class HighchartsGraphComponent implements OnInit {
                 type = 'column';
                 stacking = 'normal';
                 break;
-            // case TimeSeriesType.StackedBarGraph:
-            //     type = 'column';
-            //     stacking = 'normal';
-            //     break;
             case TimeSeriesType.LineGraph:
             default:
                 type = 'line';

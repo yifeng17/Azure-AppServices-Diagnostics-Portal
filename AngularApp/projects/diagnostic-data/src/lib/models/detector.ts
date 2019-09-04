@@ -110,7 +110,7 @@ export enum TimeSeriesType {
     BarGraph,
   //  AreaGraph,
     StackedAreaGraph,
-    StackedBarGraph,
+    StackedBarGraph
   //  PieChart,
 }
 
