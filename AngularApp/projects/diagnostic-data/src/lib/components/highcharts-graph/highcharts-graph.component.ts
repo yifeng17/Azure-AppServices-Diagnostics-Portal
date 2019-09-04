@@ -106,14 +106,15 @@ export class HighchartsGraphComponent implements OnInit {
           // },
           title: { text: '' },
           chart: {
+            reflow: true,
             height: 200,
             // 'area', 'column'
             type: 'column',
             zoomType: 'x',
             resetZoomButton: {
               position: {
-                  // align: 'right', // by default
-                  // verticalAlign: 'top', // by default
+                  // align: 'left', // by default
+                  // verticalAlign: 'bottom', // by default
                   x: 0,
                   y: -20
               }

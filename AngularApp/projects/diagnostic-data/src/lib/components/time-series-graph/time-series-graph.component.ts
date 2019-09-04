@@ -82,12 +82,12 @@ export class TimeSeriesGraphComponent extends DataRenderBaseComponent implements
         uniqueCounterNames.forEach(counterName => {
           const seriesName = this._getSeriesName(column.columnName, counterName);
           timeSeriesDictionary[seriesName] = <TimeSeries>{ name: seriesName, series: <GraphSeries>{ key: seriesName, values: [] } };
-          highchartTimeSeriesDictionary[seriesName] = <HighChartTimeSeries>{ name: seriesName, series: <HighchartGraphSeries>{ name: seriesName, type: "line", data: [] } };
+          highchartTimeSeriesDictionary[seriesName] = <HighChartTimeSeries>{ name: seriesName, series: <HighchartGraphSeries>{ name: seriesName, type: "column", data: [] } };
         });
       } else {
         const seriesName = column.columnName;
         timeSeriesDictionary[seriesName] = <TimeSeries>{ name: seriesName, series: <GraphSeries>{ key: seriesName, values: [] } };
-        highchartTimeSeriesDictionary[seriesName] = <HighChartTimeSeries>{ name: seriesName, series: <HighchartGraphSeries>{ name: seriesName, type: "line", data: [] } };
+        highchartTimeSeriesDictionary[seriesName] = <HighChartTimeSeries>{ name: seriesName, series: <HighchartGraphSeries>{ name: seriesName, type: "column", data: [] } };
       }
     });
 
