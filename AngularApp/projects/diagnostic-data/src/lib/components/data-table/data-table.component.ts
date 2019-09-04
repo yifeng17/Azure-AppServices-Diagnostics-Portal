@@ -61,9 +61,19 @@ export class DataTableComponent extends DataRenderBaseComponent implements After
         name: column.columnName,
         resizable: true,
         sortable: true,
-        prop: column.columnName,
-        headerTemplate: this.headerTemplate
+        prop: column.columnName
       });
+
+    if (this.renderingProperties.allowColumnSearch) {
+      columns = this.diagnosticData.table.columns.map(column =>
+        <any>{
+          name: column.columnName,
+          resizable: true,
+          sortable: true,
+          prop: column.columnName,
+          headerTemplate: this.headerTemplate
+        });
+    }
 
     this.columns = columns.filter((item) => item.name !== this.renderingProperties.descriptionColumnName);
     this.rows = [];
@@ -98,8 +108,8 @@ export class DataTableComponent extends DataRenderBaseComponent implements After
 
     const temp = this.rowsClone.filter(item => {
       let allMatch = true;
-      Object.keys(this.searchTexts).forEach(key=>{
-        if (item[key]){
+      Object.keys(this.searchTexts).forEach(key => {
+        if (item[key]) {
           allMatch = allMatch && item[key].toString().toLowerCase().indexOf(this.searchTexts[key]) !== -1;
         }
       });
