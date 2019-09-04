@@ -56,13 +56,43 @@ export class HighchartsGraphComponent implements OnInit {
 
     console.log("ChartObject", this.Highcharts);
     console.log("Input Data", this.HighchartData);
-      console.log("ChartData", this.chartOptions);
+    console.log("ChartData", this.chartOptions);
+
+    //   Highcharts.Pointer.prototype.reset = function () {
+    //     return undefined;
+    // };
+    
+    // /**
+    //  * Highlight a point by showing tooltip, setting hover state and draw crosshair
+    //  */
+    // Highcharts.Point.prototype.highlight = function (event) {
+    //     event = this.series.chart.pointer.normalize(event);
+    //     this.onMouseOver(); // Show the hover marker
+    //     this.series.chart.tooltip.refresh(this); // Show the tooltip
+    //     this.series.chart.xAxis[0].drawCrosshair(event, this); // Show the crosshair
+    // };
 
       setTimeout(() => {
         this.loading = false;
       }, 100);
     }
 
+    syncEvent(e) {
+      var chart,
+      point,
+      i;
+      for (i = 0; i < Highcharts.charts.length; i = i + 1) {
+        chart = Highcharts.charts[i];
+        // Find coordinates within the chart
+        event = chart.pointer.normalize(e);
+        // Get the hovered point
+        point = chart.series[0].searchPoint(event, true);
+
+        if (point) {
+            point.highlight(e);
+        }
+    }
+    }
     private _updateOptions() {
       if (this.chartType) {
 
@@ -81,6 +111,19 @@ export class HighchartsGraphComponent implements OnInit {
             default:
                 type = 'line';
                 break;
+        }
+
+
+        if (this.chartOptions && this.chartOptions["type"])
+        {
+          type = this.chartOptions["type"];
+          console.log("type", this.chartOptions["type"]);
+        }
+
+        if (this.chartOptions && this.chartOptions["stacking"])
+        {
+          stacking = this.chartOptions["stacking"];
+          console.log("stacking", this.chartOptions["stacking"]);
         }
 
         this.options.chart.type = type;
@@ -111,6 +154,7 @@ export class HighchartsGraphComponent implements OnInit {
 
         return obj;
       }
+      
 
     private _setOptions() {
 
@@ -166,6 +210,7 @@ export class HighchartsGraphComponent implements OnInit {
                 type: 'datetime',
                 axisLabel: 'Time (UTC)',
                 tickSize: 10,
+                crosshair: true,
                 tickFormat: function (d: any) { return moment(d).utc().format('MM/DD HH:mm'); },
                 dateTimeLabelFormats: {
                     second: '%m-%d<br/>%H:%M:%S',

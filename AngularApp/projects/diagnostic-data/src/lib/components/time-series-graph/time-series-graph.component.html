@@ -10,16 +10,19 @@
 </ng-template>
 
 
-
+<div *ngIf="!useHighchart">
 <data-container *ngIf="renderingProperties.title; else noContainer" [title]="renderingProperties.title"
     [description]="renderingProperties.description">
   <ng-container *ngTemplateOutlet="graphView"></ng-container>
 </data-container>
+</div>
 
+<div *ngIf="useHighchart">
 <data-container *ngIf="renderingProperties.title; else noContainer1" [title]="renderingProperties.title"
     [description]="renderingProperties.description">
   <ng-container *ngTemplateOutlet="graphView1"></ng-container>
 </data-container>
+</div>
 
 <ng-template #noContainer>
   <ng-container *ngTemplateOutlet="graphView"></ng-container>

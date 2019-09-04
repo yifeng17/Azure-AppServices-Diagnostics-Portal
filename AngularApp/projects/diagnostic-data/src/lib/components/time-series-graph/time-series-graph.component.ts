@@ -38,6 +38,7 @@ export class TimeSeriesGraphComponent extends DataRenderBaseComponent implements
   defaultValue: number = 0;
   graphOptions: any;
   customizeXAxis: boolean;
+  useHighchart: boolean = false;
 
   timeGrain: momentNs.Duration;
 
@@ -48,6 +49,7 @@ export class TimeSeriesGraphComponent extends DataRenderBaseComponent implements
       this.renderingProperties = <TimeSeriesRendering>data.renderingProperties;
       this.defaultValue = this.renderingProperties.defaultValue !== null ? this.renderingProperties.defaultValue : this.defaultValue;
       this.graphOptions = this.renderingProperties.graphOptions;
+      this.useHighchart = this.graphOptions && this.graphOptions.useHighchart &&  this.graphOptions.useHighchart === 'true';
       this.customizeXAxis = this.graphOptions && this.graphOptions.customizeX &&  this.graphOptions.customizeX === 'true';
       this.timeGrain = this._getInitialTimegrain();
       this.dataTable = data.table;
