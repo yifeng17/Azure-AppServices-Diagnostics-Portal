@@ -3,6 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { TimeSeriesType } from '../../models/detector';
 import * as Highcharts from 'highcharts';
 import AccessibilityModule from 'highcharts/modules/accessibility';
+import { HighchartsUtilities } from '../../utilities/highcharts-utilities';
 
 AccessibilityModule(Highcharts);
 
@@ -29,15 +30,15 @@ declare let d3: any;
 export class HighchartsGraphComponent implements OnInit {
     Highcharts: typeof Highcharts = Highcharts;
     options: any;
-    chartOptions: any;
-    chartType: TimeSeriesType;
+    // chartOptions: any;
+    // chartType: TimeSeriesType;
 
  //   @Input() chartData: GraphSeries[];
     @Input() HighchartData: any = [];
 
-    // @Input() chartType: TimeSeriesType;
+    @Input() chartType: TimeSeriesType;
 
-    // @Input() chartOptions: any;
+    @Input() chartOptions: any;
 
      @Input() startTime: momentNs.Moment;
 
@@ -64,12 +65,36 @@ export class HighchartsGraphComponent implements OnInit {
 
     private _updateOptions() {
       if (this.chartType) {
-      //  this.options.chart.type = Nvd3Utilities.getChartType(this.chartType);
+
+        let type: string = 'line';
+        let stacking = undefined;
+        switch (this.chartType as TimeSeriesType) {
+            case TimeSeriesType.StackedAreaGraph:
+                type = 'area';
+                stacking = 'normal';
+                break;
+            case TimeSeriesType.BarGraph:
+                type = 'column';
+                stacking = 'normal';
+                break;
+            // case TimeSeriesType.StackedBarGraph:
+            //     type = 'column';
+            //     stacking = 'normal';
+            //     break;
+            case TimeSeriesType.LineGraph:
+            default:
+                type = 'line';
+                break;
+        }
+
+        this.options.chart.type = type;
+        this.options.plotOptions.series.stacking = stacking;
+
       }
 
-    //   if (this.chartOptions) {
-    //     this._updateObject(this.options.chart, this.chartOptions);
-    //   }
+      if (this.chartOptions) {
+        this._updateObject(this.options.chart, this.chartOptions);
+      }
 
       if (this.startTime && this.endTime) {
         this.options.forceX = [this.startTime, this.endTime];
@@ -77,24 +102,24 @@ export class HighchartsGraphComponent implements OnInit {
     }
 
     private _updateObject(obj: Object, replacement: any): Object {
-      Object.keys(replacement).forEach(key => {
-        const subItem = obj[key];
-        const replace = replacement[key];
-        // Below returns true if subItem is an object
-        if (subItem === Object(subItem)) {
-          obj[key] = this._updateObject(subItem, replace);
-        } else {
-          obj[key] = replace;
-        }
-      });
+        Object.keys(replacement).forEach(key => {
+          const subItem = obj[key];
+          const replace = replacement[key];
+          // Below returns true if subItem is an object
+          if (subItem === Object(subItem)) {
+            obj[key] = this._updateObject(subItem, replace);
+          } else {
+            obj[key] = replace;
+          }
+        });
 
-      return obj;
-    }
+        return obj;
+      }
 
     private _setOptions() {
 
 
-        this.chartOptions = {
+        this.options = {
           //   legend: {
           //     layout: 'vertical',
           //     backgroundColor: '#FFFFFF',
@@ -108,8 +133,8 @@ export class HighchartsGraphComponent implements OnInit {
           chart: {
             reflow: true,
             height: 200,
-            // 'area', 'column'
-            type: 'column',
+            // 'line', 'area', 'column'
+            type: 'line',
             zoomType: 'x',
             resetZoomButton: {
               position: {

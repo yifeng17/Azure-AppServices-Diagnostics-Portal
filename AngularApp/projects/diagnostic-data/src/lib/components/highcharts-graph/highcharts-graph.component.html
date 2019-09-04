@@ -1,4 +1,4 @@
-<highcharts-chart [Highcharts]="Highcharts" [options]="chartOptions" style="width:100%; height: 200px; display: block;">
+<highcharts-chart *ngIf="HighchartData && !loading" [Highcharts]="Highcharts" [options]="optionss" style="width:100%; height: 200px; display: flex;">
 </highcharts-chart>
 <div *ngIf="!HighchartData || loading" style="height:200px">
   <i class="fa fa-circle-o-notch fa-spin"></i>

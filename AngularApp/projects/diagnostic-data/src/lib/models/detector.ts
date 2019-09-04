@@ -108,8 +108,10 @@ export enum RenderingType {
 export enum TimeSeriesType {
     LineGraph = 0,
     BarGraph,
+  //  AreaGraph,
     StackedAreaGraph,
-    StackedBarGraph
+    StackedBarGraph,
+  //  PieChart,
 }
 
 export class DataTableDataType {
