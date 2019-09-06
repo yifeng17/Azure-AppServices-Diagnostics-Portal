@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SendGrid.Helpers.Mail;
+using static AppLensV3.Helpers.HeaderConstants;
 
 namespace AppLensV3.Controllers
 {
@@ -28,13 +29,6 @@ namespace AppLensV3.Controllers
     [Authorize]
     public class DiagnosticController : Controller
     {
-        public const string PathQueryHeader = "x-ms-path-query";
-        public const string MethodHeader = "x-ms-method";
-        public const string EmailRecipientsHeader = "x-ms-emailRecipients";
-        public const string InternalClientHeader = "x-ms-internal-client";
-        public const string InternalViewHeader = "x-ms-internal-view";
-        public const string ScriptEtagHeader = "diag-script-etag";
-
         private class InvokeHeaders
         {
             public string Path { get; set; }

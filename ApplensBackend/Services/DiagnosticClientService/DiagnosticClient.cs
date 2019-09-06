@@ -8,6 +8,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using AppLensV3.Helpers;
 using Microsoft.Extensions.Configuration;
 
 namespace AppLensV3.Services.DiagnosticClientService
@@ -98,14 +99,14 @@ namespace AppLensV3.Services.DiagnosticClientService
         public async Task<HttpResponseMessage> Execute(string method, string path, string body = null, bool internalClient = true, bool internalView = true, HttpRequestHeaders additionalHeaders = null)
         {
             HttpResponseMessage response;
-            // Sends request to DiagRole.
+
             if (!IsLocalDevelopment && !IsRunTimeHostEnabled)
             {
                 if (!HitPassThroughApi(path))
                 {
                     var requestMessage = new HttpRequestMessage(method == "POST" ? HttpMethod.Post : HttpMethod.Get, path);
-                    requestMessage.Headers.Add("x-ms-internal-client", internalClient.ToString());
-                    requestMessage.Headers.Add("x-ms-internal-view", internalView.ToString());
+                    requestMessage.Headers.Add(HeaderConstants.InternalClientHeader, internalClient.ToString());
+                    requestMessage.Headers.Add(HeaderConstants.InternalViewHeader, internalView.ToString());
                     if (IsRunTimeHostEnabled)
                     {
                         var authToken = await DiagnosticClientToken.Instance.GetAuthorizationTokenAsync();
@@ -126,10 +127,10 @@ namespace AppLensV3.Services.DiagnosticClientService
                 else
                 {
                     var requestMessage = new HttpRequestMessage(HttpMethod.Post, "api/invoke");
-                    requestMessage.Headers.Add("x-ms-path-query", path);
-                    requestMessage.Headers.Add("x-ms-internal-client", internalClient.ToString());
-                    requestMessage.Headers.Add("x-ms-internal-view", internalView.ToString());
-                    requestMessage.Headers.Add("x-ms-verb", method);
+                    requestMessage.Headers.Add(HeaderConstants.PathQueryHeader, path);
+                    requestMessage.Headers.Add(HeaderConstants.InternalClientHeader, internalClient.ToString());
+                    requestMessage.Headers.Add(HeaderConstants.InternalViewHeader, internalView.ToString());
+                    requestMessage.Headers.Add(HeaderConstants.VerbHeader, method);
                     requestMessage.Content = new StringContent(body ?? string.Empty, Encoding.UTF8, "application/json");
                     if (IsRunTimeHostEnabled)
                     {
@@ -159,8 +160,8 @@ namespace AppLensV3.Services.DiagnosticClientService
                     Content = new StringContent(body ?? string.Empty, Encoding.UTF8, "application/json")
                 };
 
-                requestMessage.Headers.Add("x-ms-internal-client", internalClient.ToString());
-                requestMessage.Headers.Add("x-ms-internal-view", internalView.ToString());
+                requestMessage.Headers.Add(HeaderConstants.InternalClientHeader, internalClient.ToString());
+                requestMessage.Headers.Add(HeaderConstants.InternalViewHeader, internalView.ToString());
 
                 if (additionalHeaders != null)
                 {
