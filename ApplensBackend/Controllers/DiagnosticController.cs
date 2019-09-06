@@ -123,39 +123,30 @@ namespace AppLensV3.Controllers
             return Ok(JsonConvert.DeserializeObject(await responseTask));
         }
 
+        private static string GetHeaderOrDefault(IHeaderDictionary headers, string headerName, string defaultValue = "")
+        {
+            if (headers == null || headerName == null)
+            {
+                return defaultValue;
+            }
+
+            if (headers.TryGetValue(headerName, out var outValue))
+            {
+                return outValue;
+            }
+
+            return defaultValue;
+        }
+
         private InvokeHeaders ProcessInvokeHeaders()
         {
-            var path = string.Empty;
-            if (Request.Headers.TryGetValue(PathQueryHeader, out var outPath))
-            {
-                path = outPath;
-            }
-
-            string method = HttpMethod.Get.Method;
-            if (Request.Headers.TryGetValue(MethodHeader, out var outMethod))
-            {
-                method = outMethod;
-            }
-
-            var rawDetectorAuthors = string.Empty;
-            if (Request.Headers.TryGetValue(EmailRecipientsHeader, out var outDetectorAuthors))
-            {
-                rawDetectorAuthors = outDetectorAuthors;
-            }
-
+            var path = GetHeaderOrDefault(Request.Headers, PathQueryHeader);
+            var method = GetHeaderOrDefault(Request.Headers, MethodHeader, HttpMethod.Get.Method);
+            var rawDetectorAuthors = GetHeaderOrDefault(Request.Headers, EmailRecipientsHeader);
             var detectorAuthors = rawDetectorAuthors.Split(new char[] { ' ', ',', ';', ':' }, StringSplitOptions.RemoveEmptyEntries);
 
-            var internalClient = true;
-            if (Request.Headers.TryGetValue(InternalClientHeader, out var outClient))
-            {
-                bool.TryParse(outClient, out internalClient);
-            }
-
-            var internalView = true;
-            if (Request.Headers.TryGetValue(InternalViewHeader, out var outView))
-            {
-                bool.TryParse(outView, out internalView);
-            }
+            bool.TryParse(GetHeaderOrDefault(Request.Headers, InternalClientHeader, true.ToString()), out var internalClient);
+            bool.TryParse(GetHeaderOrDefault(Request.Headers, InternalViewHeader, true.ToString()), out var internalView);
 
             return new InvokeHeaders()
             {
