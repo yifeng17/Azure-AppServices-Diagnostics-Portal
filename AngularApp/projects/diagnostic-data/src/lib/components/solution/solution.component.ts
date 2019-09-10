@@ -55,7 +55,7 @@ export class SolutionComponent extends DataRenderBaseComponent {
         }
 
         if (solution.OverrideOptions == undefined) {
-            return ActionType.Markdown
+            return ActionType.Markdown;
         }
 
         let overrideKeys = Object.keys(solution.OverrideOptions).map(key => key.toLowerCase());
