@@ -51,7 +51,7 @@ export class HighchartsGraphComponent implements OnInit {
     }
 
     ngOnInit() {
-        this._setOptions();
+      this._setOptions();
       this._updateOptions();
 
     console.log("ChartObject", this.Highcharts);
@@ -157,8 +157,6 @@ export class HighchartsGraphComponent implements OnInit {
       
 
     private _setOptions() {
-
-
         this.options = {
           //   legend: {
           //     layout: 'vertical',
@@ -203,7 +201,7 @@ export class HighchartsGraphComponent implements OnInit {
             plotOptions: {
               series: {
                 showInLegend: true,
-                lineWidth: 1.5,
+                lineWidth: 1.5
               }
             },
             xAxis: {
