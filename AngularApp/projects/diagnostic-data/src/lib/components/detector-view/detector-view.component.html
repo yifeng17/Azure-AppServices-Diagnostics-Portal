@@ -47,6 +47,13 @@
     <dynamic-data [isAnalysisView]="isAnalysisView" [diagnosticData]="data" [startTime]="startTime" [endTime]="endTime" [detectorEventProperties]="detectorEventProperties"
     [developmentMode]="developmentMode" [executionScript]="script" [detector]="detector" [compilationPackage]="compilationPackage"></dynamic-data>
   </div>
+
+  <select class ="downtime-select" [(ngModel)]="selectedDownTime" *ngIf="isAnalysisView && downTimes.length > 0" (change)="onDownTimeChange()">
+    <option *ngFor = "let downtime of downTimes" [ngValue]="downtime">
+      {{ getDowntimeLabel(downtime) }}
+    </option>
+  </select>
+
 </div>
 
 <loader-view style="margin-top:300px" *ngIf="!detectorDataLocalCopy && !errorState" message="Loading Detector..."></loader-view>

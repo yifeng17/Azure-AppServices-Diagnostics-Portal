@@ -1,13 +1,15 @@
 import { Moment } from 'moment';
 import { BehaviorSubject } from 'rxjs';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
-import { DetectorResponse, Rendering, RenderingType } from '../../models/detector';
+import { DetectorResponse, Rendering, RenderingType, DataTableResponseObject, DownTime } from '../../models/detector';
 import { DetectorControlService } from '../../services/detector-control.service';
 import { TelemetryEventNames } from '../../services/telemetry/telemetry.common';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
-import { CompilationProperties} from '../../models/compilation-properties';
+import { CompilationProperties } from '../../models/compilation-properties';
+import moment = require('moment');
+
 @Component({
   selector: 'detector-view',
   templateUrl: './detector-view.component.html',
@@ -68,9 +70,13 @@ export class DetectorViewComponent implements OnInit {
   @Input() script: string = '';
   @Input() detector: string = '';
   @Input() compilationPackage: CompilationProperties;
-  @Input() analysisMode:boolean = false;
+  @Input() analysisMode: boolean = false;
   @Input() isAnalysisView: boolean = false;
   feedbackButtonLabel: string = 'Send Feedback';
+  downTimes: DownTime[] = [];
+  selectedDownTime:DownTime;
+
+  @Output() downTimeChanged: EventEmitter<DownTime> = new EventEmitter<DownTime>();
 
   constructor(@Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig, private telemetryService: TelemetryService,
     private detectorControlService: DetectorControlService) {
@@ -110,7 +116,7 @@ export class DetectorViewComponent implements OnInit {
         this.feedbackDetector = this.isSystemInvoker ? this.feedbackDetector : data.metadata.id;
         let subject = encodeURIComponent(`Detector Feedback for ${this.feedbackDetector}`);
         let body = encodeURIComponent('Current site: ' + window.location.href + '\n' + 'Please provide feedback here:');
-        this.emailToApplensTeam  = `mailto:applensdisc@microsoft.com?subject=${subject}&body=${body}`;
+        this.emailToApplensTeam = `mailto:applensdisc@microsoft.com?subject=${subject}&body=${body}`;
 
         if (!this.isSystemInvoker && data.metadata && data.metadata.author) {
           this.authorInfo = data.metadata.author;
@@ -136,8 +142,49 @@ export class DetectorViewComponent implements OnInit {
 
         this.hideDetectorHeader = data.dataset.findIndex(set => (<Rendering>set.renderingProperties).type === RenderingType.Cards) >= 0;
 
+        if (this.isAnalysisView) {
+          let downTime = data.dataset.find(set => (<Rendering>set.renderingProperties).type === RenderingType.DownTime);
+          if (downTime) {
+            this.parseDownTimeData(downTime.table);
+          }
+          let defaultDowntime = this.downTimes.find(x => x.isSelected);
+          if (defaultDowntime == null && this.downTimes.length > 0) {
+            this.downTimes[0].isSelected = true;
+            defaultDowntime = this.downTimes[0];
+          }
+          this.selectedDownTime = defaultDowntime;
+          this.downTimeChanged.emit(defaultDowntime);
+        }
+
       }
     });
+  }
+
+  getDowntimeLabel(d: DownTime) {
+    //return "Downtime from " + d.StartTime + " to " + d.EndTime ;
+    return d.downTimeLabel;
+  }
+
+  private parseDownTimeData(table: DataTableResponseObject) {
+
+    if (!(table.rows === undefined || table.rows.length < 1)) {
+
+      const startTimeIndex = 0;
+      const endTimeIndex = 1;
+      const downtimeLabelIndex = 2;
+      const isSelectedIndex = 3;
+
+      this.downTimes = [];
+      for (let i: number = 0; i < table.rows.length; i++) {
+        const row = table.rows[i];
+        let d = new DownTime();
+        d.StartTime = moment(row[startTimeIndex]);
+        d.EndTime = moment(row[endTimeIndex]);
+        d.downTimeLabel = row[downtimeLabelIndex];
+        d.isSelected = row[isSelectedIndex];
+        this.downTimes.push(d);
+      }
+    }
   }
 
   toggleButtonView(feature: string) {
@@ -230,6 +277,9 @@ export class DetectorViewComponent implements OnInit {
     }
   }
 
+  onDownTimeChange() {
+    this.downTimeChanged.emit(this.selectedDownTime);
+  }
 
   protected logEvent(eventMessage: string, eventProperties?: any, measurements?: any) {
     for (const id of Object.keys(this.detectorEventProperties)) {

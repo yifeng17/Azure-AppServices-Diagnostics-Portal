@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { GenericDetectorComponent } from '../generic-detector/generic-detector.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ResourceService } from '../../../shared-v2/services/resource.service';
-import { FeatureNavigationService, TelemetryService, DiagnosticService } from 'diagnostic-data';
+import { FeatureNavigationService, TelemetryService, DiagnosticService, DownTime } from 'diagnostic-data';
 import { AuthService } from '../../../startup/services/auth.service';
 
 @Component({
@@ -15,6 +15,7 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
   detectorId: string = "";
   analysisId: string = "";
   detectorName: string = "";
+  downTime: DownTime;
 
   constructor(private _activatedRouteLocal: ActivatedRoute, private _diagnosticServiceLocal: DiagnosticService, _resourceService: ResourceService, _authServiceInstance: AuthService, _telemetryService: TelemetryService,
     _navigator: FeatureNavigationService, private _routerLocal: Router) {
@@ -36,6 +37,10 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
         }
       });
     });
+  }
+
+  ondownTimeChanged(event: DownTime) {
+    this.downTime = event;
   }
 
   goBackToAnalysis() {

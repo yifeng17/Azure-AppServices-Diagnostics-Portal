@@ -11,7 +11,7 @@ import { Solution } from '../solution/solution';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin as observableForkJoin, Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import { DetectorResponse, DetectorMetaData, HealthStatus } from '../../models/detector';
+import { DetectorResponse, DetectorMetaData, HealthStatus, DownTime } from '../../models/detector';
 import { Insight, InsightUtils } from '../../models/insight';
 import { DataTableResponseColumn, DataTableResponseObject, DiagnosticData, RenderingType, Rendering, TimeSeriesType, TimeSeriesRendering } from '../../models/detector';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
@@ -68,6 +68,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
   diagnosticDataSet: DiagnosticData[] = [];
   loadingAppInsightsResource: boolean = true;
   loadingAppInsightsQueryData: boolean = true;
+  readonly stringFormat: string = 'YYYY-MM-DDTHH:mm';
 
   constructor(private _activatedRoute: ActivatedRoute, private _router: Router,
     private _diagnosticService: DiagnosticService, private _detectorControl: DetectorControlService,
@@ -90,10 +91,18 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
   @Input()
   withinDiagnoseAndSolve: boolean = false;
 
+  @Input()
+  set downTime(downTime: DownTime) {
+    if (downTime != null && downTime.StartTime != null && downTime.EndTime != null) {
+      this.refresh(downTime);
+    }
+
+  }
+
   ngOnInit() {
     this._detectorControl.update.subscribe(isValidUpdate => {
       if (isValidUpdate) {
-        this.refresh();
+        this.refresh(null);
       }
     });
 
@@ -166,7 +175,10 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
     }
   }
 
-  refresh() {
+  refresh(downTime: DownTime) {
+    if (downTime == null) {
+      return;
+    }
     this._activatedRoute.paramMap.subscribe(params => {
       this.analysisId = params.get('analysisId');
       this.detectorId = params.get(this.detectorParmName) === null ? "" : params.get(this.detectorParmName);
@@ -208,7 +220,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
           });
 
           this.detectorMetaData = detectorList.filter(detector => this.detectors.findIndex(d => d.id === detector.id) >= 0);
-          this.detectorViewModels = this.detectorMetaData.map(detector => this.getDetectorViewModel(detector));
+          this.detectorViewModels = this.detectorMetaData.map(detector => this.getDetectorViewModel(detector, downTime));
           this.issueDetectedViewModels = [];
 
           const requests: Observable<any>[] = [];
@@ -321,17 +333,28 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
     return viewModel;
   }
 
-  private getDetectorViewModel(detector: DetectorMetaData) {
+  private getDetectorViewModel(detector: DetectorMetaData, downtime: DownTime) {
+
+    let startTimeString = this._detectorControl.startTimeString;
+    let endTimeString = this._detectorControl.endTimeString;
+
+    if (downtime != null && downtime.StartTime != null && downtime.EndTime != null) {
+      startTimeString = downtime.StartTime.format(this.stringFormat);
+      endTimeString = downtime.EndTime.format(this.stringFormat);
+    }
+
     return {
       title: detector.name,
       metadata: detector,
       loadingStatus: LoadingStatus.Loading,
+      startTime: startTimeString,
+      endTime: endTimeString,
       status: null,
       statusColor: null,
       statusIcon: null,
       expanded: false,
       response: null,
-      request: this._diagnosticService.getDetector(detector.id, this._detectorControl.startTimeString, this._detectorControl.endTimeString)
+      request: this._diagnosticService.getDetector(detector.id, startTimeString, endTimeString)
     };
   }
 
@@ -350,7 +373,14 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
         // Log children detectors click
         this.logEvent(TelemetryEventNames.ChildDetectorClicked, clickDetectorEventProperties);
 
-        this._router.navigate([`../../analysis/${this.analysisId}/detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true });
+        if (viewModel.model.startTime != null && viewModel.model.endTime != null) {
+          this._router.navigate([`../../analysis/${this.analysisId}/detectors/${detectorId}`], { relativeTo: this._activatedRoute, 
+            queryParams: { startTimeChildDetector: viewModel.model.startTime, endTimeChildDetector: viewModel.model.endTime },
+            queryParamsHandling: 'merge'});
+        }
+        else {
+          this._router.navigate([`../../analysis/${this.analysisId}/detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true });
+        }
       }
     }
 
