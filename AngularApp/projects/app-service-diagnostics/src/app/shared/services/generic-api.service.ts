@@ -1,9 +1,9 @@
 
-import { map, retry } from 'rxjs/operators';
+import { map, retry, catchError } from 'rxjs/operators';
 import { Http, Headers, Response } from '@angular/http';
 import { Injectable } from '@angular/core';
 import { ResponseMessageEnvelope } from '../models/responsemessageenvelope';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { AuthService } from '../../startup/services/auth.service';
 import { ArmService } from './arm.service';
 import { DetectorResponse, DetectorMetaData } from 'diagnostic-data';
@@ -40,6 +40,24 @@ export class GenericApiService {
                 return this.detectorList;
             }));
         }
+    }
+
+    public getDetectorsSearch(searchTerm): Observable<DetectorMetaData[]> {
+
+        if (this.useLocal) {
+            const path = `v4${this.resourceId}/detectors?stampName=waws-prod-bay-085&hostnames=netpractice.azurewebsites.net&text=` + encodeURIComponent(searchTerm);
+            return this.invoke<DetectorResponse[]>(path, 'POST').pipe(map(response => response.map(detector => detector.metadata)));
+        } else {
+            const path = `${this.resourceId}/detectors?text=` + encodeURIComponent(searchTerm);
+            return this._armService.getResourceCollection<DetectorResponse[]>(path).pipe(map((response: ResponseMessageEnvelope<DetectorResponse>[]) => {
+                var searchResults = response.map(listItem => listItem.properties.metadata).sort((a,b) => {return b.score>a.score? 1: -1;});
+                return searchResults;
+            }));
+        }
+    }
+
+    public getSupportTopicsForSearchConfig(): Observable<any> {
+        return this._http.get("/assets/supportTopicConfig.json").pipe(map((res) => res), catchError(e => of(false)));
     }
 
     public getDetector(detectorName: string, startTime: string, endTime: string, refresh?: boolean, internalView?: boolean, additionalQueryParams?: string) {

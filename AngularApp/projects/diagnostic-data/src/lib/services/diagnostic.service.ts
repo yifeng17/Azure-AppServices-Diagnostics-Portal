@@ -24,6 +24,14 @@ export class DiagnosticService {
         return null;
     }
 
+    public getDetectorsSearch(searchTerm: string, internalClient:boolean = true): Observable<DetectorMetaData[]> {
+        return null;
+    }
+
+    public getSupportTopicsForSearchConfig(): Observable<any> {
+        return null;
+    }
+
     getCompilerResponse(body: any, isSystemInvoker: boolean, detectorId: string = '', startTime: string = '',
             endTime: string = '', dataSource: string = '', timeRange: string = '', additionalParams?: any):
             Observable<QueryResponse<DetectorResponse>> {
