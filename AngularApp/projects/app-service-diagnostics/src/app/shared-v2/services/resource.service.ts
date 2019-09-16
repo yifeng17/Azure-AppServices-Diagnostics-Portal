@@ -38,7 +38,7 @@ export class ResourceService {
   }
 
   public getPesId(): Observable<string>{
-    return null;
+    return Observable.of(null);
   }
 
   public get searchSuffix(): string {

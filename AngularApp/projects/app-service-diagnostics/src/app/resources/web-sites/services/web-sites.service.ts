@@ -38,7 +38,7 @@ export class WebSitesService extends ResourceService {
                 return Observable.of("16072");
             }
             else{
-                return null;
+                return Observable.of(null);
             }
         }));
     }
