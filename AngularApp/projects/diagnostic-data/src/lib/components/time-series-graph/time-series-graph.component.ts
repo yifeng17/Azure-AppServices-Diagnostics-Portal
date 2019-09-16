@@ -51,7 +51,7 @@ export class TimeSeriesGraphComponent extends DataRenderBaseComponent implements
       this.graphOptions = this.renderingProperties.graphOptions;
       if (this.graphOptions != undefined && this.graphOptions.useHighchart != undefined)
       {
-        this.useHighchart = this.graphOptions && this.graphOptions.useHighchart &&  this.graphOptions.useHighchart === 'true';
+        this.useHighchart = this.graphOptions && this.graphOptions.useHighchart &&  this.graphOptions.useHighchart === "true";
       }
       
       console.log("useHighchart", this.useHighchart);

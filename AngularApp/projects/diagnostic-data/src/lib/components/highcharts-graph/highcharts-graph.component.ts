@@ -95,24 +95,31 @@ export class HighchartsGraphComponent implements OnInit {
     }
     private _updateOptions() {
       if (this.chartType) {
+        // stacking: 
+          // Undefined to disable
+          // "Normal" to stack by value
+          // "Stack" by "percent".
 
         let type: string = 'line';
         let stacking = undefined;
         switch (this.chartType as TimeSeriesType) {
-            case TimeSeriesType.StackedAreaGraph:
-                type = 'area';
+          case TimeSeriesType.StackedAreaGraph:
+            type = 'area';
+            stacking = 'normal';
+          break;
+            case TimeSeriesType.StackedBarGraph:
+                type = 'column';
                 stacking = 'normal';
                 break;
             case TimeSeriesType.BarGraph:
                 type = 'column';
-                stacking = 'normal';
+                stacking = undefined;
                 break;
             case TimeSeriesType.LineGraph:
             default:
                 type = 'line';
                 break;
         }
-
 
         if (this.chartOptions && this.chartOptions["type"])
         {
@@ -168,6 +175,9 @@ export class HighchartsGraphComponent implements OnInit {
           //     y: 45
           // },
           title: { text: '' },
+          caption: {
+            text: '<b>The caption renders in the bottom, and is part of the exported chart.</b><br><em>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</em>'
+        },
           chart: {
             reflow: true,
             height: 200,
@@ -179,7 +189,7 @@ export class HighchartsGraphComponent implements OnInit {
                   // align: 'left', // by default
                   // verticalAlign: 'bottom', // by default
                   x: 0,
-                  y: -20
+                  y: -10
               }
           }
         },
@@ -201,7 +211,33 @@ export class HighchartsGraphComponent implements OnInit {
             plotOptions: {
               series: {
                 showInLegend: true,
-                lineWidth: 1.5
+                lineWidth: 1.5,
+    //             events: {
+    //               legendItemClick: function(event) {
+    //                   var visibility = this.visible ? 'visible' : 'hidden';
+    //                   if (!confirm('The series is currently '+ 
+    //                                visibility +'. Do you want to change that?')) {
+    //                       return false;
+    //                   }
+
+    //                   if (!this.visible)
+    //     return false;
+
+    // var seriesIndex = this.index;
+    // var series = this.chart.series;
+
+    // for (var i = 0; i < series.length; i++)
+    // {
+    //     if (series[i].index != seriesIndex)
+    //     {
+    //         series[i].visible ?
+    //         series[i].hide() :
+    //         series[i].show();
+    //     } 
+    // }
+    // return false;
+    //               }
+    //           }
               }
             },
             xAxis: {
