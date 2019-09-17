@@ -28,7 +28,8 @@ export class DataRenderBaseComponent implements OnInit, DataRenderer {
   @Input() detector: string = '';
   @Input() compilationPackage: CompilationProperties;
   @Input() isAnalysisView:boolean = false;
-  
+  @Input() synchronizingZoom: boolean = true;
+
   constructor(protected telemetryService: TelemetryService) { }
 
   ngOnInit() {

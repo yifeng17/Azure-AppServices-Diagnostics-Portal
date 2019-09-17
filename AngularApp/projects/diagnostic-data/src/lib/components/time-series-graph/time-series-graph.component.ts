@@ -53,11 +53,11 @@ export class TimeSeriesGraphComponent extends DataRenderBaseComponent implements
       {
         this.useHighchart = this.graphOptions && this.graphOptions.useHighchart &&  this.graphOptions.useHighchart === "true";
       }
-      
+
       console.log("useHighchart", this.useHighchart);
       console.log("User high chart init");
       console.log(this.useHighchart);
-      
+
       this.customizeXAxis = this.graphOptions && this.graphOptions.customizeX &&  this.graphOptions.customizeX === 'true';
       this.timeGrain = this._getInitialTimegrain();
       this.dataTable = data.table;
@@ -209,14 +209,16 @@ export class TimeSeriesGraphComponent extends DataRenderBaseComponent implements
           });
         }
 
-        highchartTimeSeriesDictionary[key].series.events =  {
-          dblclick: function () {
-            console.log('dblclick -  click Events ');
-            this.telemetryService.logEvent('SeriesClicked',
-            {
-                'seriesName': highchartTimeSeriesDictionary[key].series.name,
-            });
-        }};
+        // highchartTimeSeriesDictionary[key].series.events =  {
+        //   dblclick: function () {
+        //    let i = 0;
+
+        //     console.log('dblclick -  click Events ');
+        //     this.telemetryService.logEvent('SeriesClicked',
+        //     {
+        //         'seriesName': highchartTimeSeriesDictionary[key].series.name,
+        //     });
+        // }};
 
         this.allHighChartSeries.push(highchartTimeSeriesDictionary[key]);
       });

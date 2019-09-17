@@ -70,6 +70,7 @@ export class DetectorViewComponent implements OnInit {
   @Input() compilationPackage: CompilationProperties;
   @Input() analysisMode:boolean = false;
   @Input() isAnalysisView: boolean = false;
+  @Input() synchronizingZoom: boolean = true;
   feedbackButtonLabel: string = 'Send Feedback';
 
   constructor(@Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig, private telemetryService: TelemetryService,
