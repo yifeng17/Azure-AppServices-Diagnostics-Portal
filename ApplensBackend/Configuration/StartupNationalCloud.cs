@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using AppLensV3.Helpers;
 using AppLensV3.Services;
@@ -100,49 +101,57 @@ namespace AppLensV3.Configuration
                 .AllowAnyOrigin()
                 .WithExposedHeaders(new string[] { HeaderConstants.ScriptEtagHeader }));
 
-            if (env.IsEnvironment("NationalCloud"))
+            try
             {
-                app.UseAuthentication();
-                app.Use(async (context, next) =>
+                if (env.IsEnvironment("NationalCloud"))
                 {
-                    if (!context.User.Identity.IsAuthenticated)
+                    app.UseAuthentication();
+                    app.Use(async (context, next) =>
                     {
-                        if (!context.Request.Path.ToString().Contains("signin"))
+                        if (!context.User.Identity.IsAuthenticated)
                         {
-                            context.Response.Redirect($"https://{context.Request.Host}/federation/signin", false);
+                            if (!context.Request.Path.ToString().Contains("signin"))
+                            {
+                                context.Response.Redirect($"https://{context.Request.Host}/federation/signin", false);
+                            }
+                            else
+                            {
+                                //The controller is backed by auth, get auth middleware to kick in
+                                await next.Invoke();
+                            }
                         }
                         else
                         {
-                            //The controller is backed by auth, get auth middleware to kick in
-                            await next.Invoke();
+                            if (context.Request.Path.ToString().Contains("signin"))
+                            {
+                                context.Response.Redirect($"https://{context.Request.Host}/index.html", true);
+                            }
+                            else
+                            {
+                                await next.Invoke();
+                            }
                         }
-                    }
-                    else
-                    {
-                        if (context.Request.Path.ToString().Contains("signin"))
-                        {
-                            context.Response.Redirect($"https://{context.Request.Host}/index.html", true);
-                        }
-                        else
-                        {
-                            await next.Invoke();
-                        }
-                    }
-                });
-            }
-            else
-            {
-                app.Use(async (context, next) =>
+                    });
+                }
+                else
                 {
-                    await next();
-                    if (context.Response.StatusCode == 404 &&
-                        !Path.HasExtension(context.Request.Path.Value) &&
-                        !context.Request.Path.Value.StartsWith("/api/"))
+                    app.Use(async (context, next) =>
                     {
-                        context.Request.Path = "/index.html";
                         await next();
-                    }
-                });
+                        if (context.Response.StatusCode == 404 &&
+                            !Path.HasExtension(context.Request.Path.Value) &&
+                            !context.Request.Path.Value.StartsWith("/api/"))
+                        {
+                            context.Request.Path = "/index.html";
+                            await next();
+                        }
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine($"{DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss")}Type:{ex.GetType()} Message: {ex.Message} Details: {ex.ToString()}");
+                throw;
             }
 
             app.UseDefaultFiles();
