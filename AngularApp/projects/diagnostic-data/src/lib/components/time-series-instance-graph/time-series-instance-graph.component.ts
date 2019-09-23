@@ -125,7 +125,7 @@ export class TimeSeriesInstanceGraphComponent extends DataRenderBaseComponent im
                 enabled: true
             }
           }
-        });
+        }});
         }
     ));
 

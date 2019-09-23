@@ -114,10 +114,16 @@ export class HighchartsGraphComponent implements OnInit {
         Object.keys(replacement).forEach(key => {
             const subItem = obj[key];
             const replace = replacement[key];
+
             // Below returns true if subItem is an object
             if (subItem === Object(subItem)) {
                 obj[key] = this._updateObject(subItem, replace);
             } else {
+                // Special handling to make graph option keys to both highchart formatting and nvd3 formatting
+                if (key === "color" || key === "colors")
+                {
+                    key = "colors";
+                }
                 obj[key] = replace;
             }
         });
@@ -135,11 +141,11 @@ export class HighchartsGraphComponent implements OnInit {
             accessibility: {
                 enabled: true,
                 describeSingleSeries: true,
-                description: `${this.chartDescription}`,
+            //    description: `${this.chartDescription}`,
                 keyboardNavigation: {
                     enabled: true,
                     mode: "normal",
-                    order: ["legend", "series", "zoom", "rangeSelector", "chartMenu", "SelectAllButton", "DeselectAllButton"]
+                    order: ["legend", "series", "zoom", "rangeSelector", "chartMenu"]
                 }
             },
             caption: {
@@ -185,7 +191,7 @@ export class HighchartsGraphComponent implements OnInit {
                         enabled: true,
                         keyboardNavigation: {
                             enabled: true
-                        } 
+                        }
                     }
                 }
             },

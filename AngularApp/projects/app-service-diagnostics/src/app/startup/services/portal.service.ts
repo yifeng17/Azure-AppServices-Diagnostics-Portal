@@ -34,7 +34,6 @@ export class PortalService {
     initializeIframe(): void {
         this.shellSrc = this.getQueryStringParameter('trustedAuthority');
 
-        console.log("this.shellSrc", this.shellSrc);
         window.addEventListener(Verbs.message, this.iframeReceivedMsg.bind(this), false);
 
         // This is a required message. It tells the shell that your iframe is ready to receive messages.
@@ -47,7 +46,7 @@ export class PortalService {
             }
         });
     }
-  
+
     openBlade(bladeInfo: OpenBladeInfo, source: string) {
         this.postMessage(Verbs.openBlade, JSON.stringify(bladeInfo));
     }
@@ -99,7 +98,6 @@ export class PortalService {
         const data = event.data.data;
         const methodName = event.data.kind;
         console.log('[iFrame] Received mesg: ' + methodName);
-        console.log('event.data.data', event);
 
         if (methodName === Verbs.sendStartupInfo) {
             const info = <StartupInfo>data;
