@@ -56,7 +56,12 @@ namespace AppLensV3.Services.DiagnosticClientService
         {
             get
             {
-                return _configuration.GetValue<bool>("DiagnosticRole:UseAppService");
+                if (bool.TryParse(_configuration["DiagnosticRole:UseAppService"], out bool retVal))
+                {
+                    return retVal;
+                }
+
+                return false;
             }
         }
 
