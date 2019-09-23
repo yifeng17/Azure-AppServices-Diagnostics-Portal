@@ -46,6 +46,7 @@ namespace AppLensV3.Configuration
             services.AddSingleton<IDiagnosticClientService, DiagnosticClient>();
             services.AddSingleton<IObserverClientService, DiagnosticObserverClientService>();
             services.AddSingleton<IEmailNotificationService, NullableEmailNotificationService>();
+            services.AddSingleton<IGithubClientService, GithubClientService>();
             services.AddMemoryCache();
 
             if (env.IsEnvironment("NationalCloud"))
@@ -91,7 +92,7 @@ namespace AppLensV3.Configuration
             }
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public virtual void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseCors(cors =>
                 cors
