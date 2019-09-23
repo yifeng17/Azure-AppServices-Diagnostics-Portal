@@ -17,7 +17,16 @@ export interface InstanceTimeSeries extends TimeSeries {
   instance: string;
 }
 
+export interface InstanceHighChartTimeSeries extends HighChartTimeSeries {
+  aggregated: boolean;
+  instance: string;
+}
+
 export interface DetailedInstanceTimeSeries extends TimeSeries {
+  instance: InstanceDetails;
+}
+
+export interface DetailedInstanceHighChartTimeSeries extends HighChartTimeSeries {
   instance: InstanceDetails;
 }
 

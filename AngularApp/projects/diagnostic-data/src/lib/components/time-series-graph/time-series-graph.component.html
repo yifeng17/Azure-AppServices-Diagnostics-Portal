@@ -5,10 +5,9 @@
 </ng-template>
 
 <ng-template #highchartGraphView>
-<highcharts-graph [HighchartData]="selectedHighChartSeries"[chartType]="renderingProperties.graphType" [chartOptions]="graphOptions" [synchronizingZoom]="synchronizingZoom"></highcharts-graph >
+<highcharts-graph [HighchartData]="selectedHighChartSeries" [chartDescription]="renderingProperties.description" [chartType]="renderingProperties.graphType" [chartOptions]="graphOptions" [synchronizingZoom]="synchronizingZoom"></highcharts-graph >
   <div *ngIf="!selectedSeries">Loading Data...</div>
 </ng-template>
-
 
 <div *ngIf="!useHighchart">
 <data-container *ngIf="renderingProperties.title; else noContainer" [title]="renderingProperties.title"

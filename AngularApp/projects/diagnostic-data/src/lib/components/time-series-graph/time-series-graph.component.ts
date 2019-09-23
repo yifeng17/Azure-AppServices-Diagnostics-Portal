@@ -49,16 +49,13 @@ export class TimeSeriesGraphComponent extends DataRenderBaseComponent implements
       this.renderingProperties = <TimeSeriesRendering>data.renderingProperties;
       this.defaultValue = this.renderingProperties.defaultValue !== null ? this.renderingProperties.defaultValue : this.defaultValue;
       this.graphOptions = this.renderingProperties.graphOptions;
-      if (this.graphOptions != undefined && this.graphOptions.useHighchart != undefined)
-      {
-        this.useHighchart = this.graphOptions && this.graphOptions.useHighchart &&  this.graphOptions.useHighchart === "true";
+      if (this.graphOptions != undefined && this.graphOptions.useHighchart != undefined) {
+        this.useHighchart = this.graphOptions && this.graphOptions.useHighchart && this.graphOptions.useHighchart === "true";
       }
 
-      console.log("useHighchart", this.useHighchart);
-      console.log("User high chart init");
       console.log(this.useHighchart);
 
-      this.customizeXAxis = this.graphOptions && this.graphOptions.customizeX &&  this.graphOptions.customizeX === 'true';
+      this.customizeXAxis = this.graphOptions && this.graphOptions.customizeX && this.graphOptions.customizeX === 'true';
       this.timeGrain = this._getInitialTimegrain();
       this.dataTable = data.table;
       this._processDiagnosticData(data);
@@ -69,8 +66,6 @@ export class TimeSeriesGraphComponent extends DataRenderBaseComponent implements
   selectSeries() {
     this.selectedSeries = this.allSeries.map(series => series.series);
     this.selectedHighChartSeries = this.allHighChartSeries.map(series => series.series);
-
-    console.log("selectedHighChartSeries", this.selectedHighChartSeries);
   }
 
   private _processDiagnosticData(data: DiagnosticData) {
@@ -92,12 +87,29 @@ export class TimeSeriesGraphComponent extends DataRenderBaseComponent implements
         uniqueCounterNames.forEach(counterName => {
           const seriesName = this._getSeriesName(column.columnName, counterName);
           timeSeriesDictionary[seriesName] = <TimeSeries>{ name: seriesName, series: <GraphSeries>{ key: seriesName, values: [] } };
-          highchartTimeSeriesDictionary[seriesName] = <HighChartTimeSeries>{ name: seriesName, series: <HighchartGraphSeries>{ name: seriesName, data: [] } };
-        });
+          let accessibilitySetting = {
+            description: seriesName,
+            enabled: true,
+            exposeAsGroupOnly: false,
+            keyboardNavigation: {
+              enabled: true
+            }
+          };
+
+          highchartTimeSeriesDictionary[seriesName] = <HighChartTimeSeries>{ name: seriesName, series: <HighchartGraphSeries>{ name: seriesName, data: [], accessibility: accessibilitySetting } };
+        })
       } else {
         const seriesName = column.columnName;
+        let accessibilitySetting = {
+          description: seriesName,
+          enabled: true,
+          exposeAsGroupOnly: false,
+          keyboardNavigation: {
+            enabled: true
+          }
+        };
         timeSeriesDictionary[seriesName] = <TimeSeries>{ name: seriesName, series: <GraphSeries>{ key: seriesName, values: [] } };
-        highchartTimeSeriesDictionary[seriesName] = <HighChartTimeSeries>{ name: seriesName, series: <HighchartGraphSeries>{ name: seriesName, data: [] } };
+        highchartTimeSeriesDictionary[seriesName] = <HighChartTimeSeries>{ name: seriesName, series: <HighchartGraphSeries>{ name: seriesName, data: [], accessibility: accessibilitySetting } };
       }
     });
 
@@ -147,13 +159,13 @@ export class TimeSeriesGraphComponent extends DataRenderBaseComponent implements
       const pointsForThisSeries =
         tablePoints
           .filter(point => this._getSeriesName(point.column, point.counterName) === key)
-          .sort((b,  a) => !this.customizeXAxis ? a.timestamp.diff(b.timestamp) :  b.timestamp.diff(a.timestamp));
+          .sort((b, a)  =>  !this.customizeXAxis  ?  a.timestamp.diff(b.timestamp)  : b.timestamp.diff(a.timestamp));
 
       if (!this.customizeXAxis) {
         let pointToAdd = pointsForThisSeries.pop();
 
-        while  (pointToAdd && pointToAdd.timestamp && pointToAdd.timestamp.isBefore(this.startTime)) {
-          pointToAdd =  pointsForThisSeries.pop();
+        while (pointToAdd  && pointToAdd.timestamp &&  pointToAdd.timestamp.isBefore(this.startTime)) {
+          pointToAdd  = pointsForThisSeries.pop();
         }
 
         for (const d = this.startTime.clone(); d.isBefore(this.endTime); d.add(this.timeGrain)) {
@@ -163,6 +175,7 @@ export class TimeSeriesGraphComponent extends DataRenderBaseComponent implements
             pointToAdd = pointsForThisSeries.pop();
           }
           timeSeriesDictionary[key].series.values.push(<GraphPoint>{ x: d.clone(), y: value });
+          highchartTimeSeriesDictionary[key].series.data.push([d.clone().valueOf(), value]);
         }
       } else {
         pointsForThisSeries.forEach(pointToAdd => {
@@ -170,58 +183,14 @@ export class TimeSeriesGraphComponent extends DataRenderBaseComponent implements
             this.startTime = pointToAdd.timestamp;
           }
           timeSeriesDictionary[key].series.values.push(<GraphPoint>{ x: momentNs.utc(pointToAdd.timestamp), y: pointToAdd.value });
+          highchartTimeSeriesDictionary[key].series.data.push([momentNs.utc(pointToAdd.timestamp).valueOf(), pointToAdd.value]);
         });
       }
 
       this.allSeries.push(timeSeriesDictionary[key]);
+
+      this.allHighChartSeries.push(highchartTimeSeriesDictionary[key]);
     });
-
-
-    Object.keys(highchartTimeSeriesDictionary).forEach(key => {
-
-        const pointsForThisSeries =
-          tablePoints
-            .filter(point => this._getSeriesName(point.column, point.counterName) === key)
-            .sort((b,  a) => !this.customizeXAxis ? a.timestamp.diff(b.timestamp) :  b.timestamp.diff(a.timestamp));
-
-        if (!this.customizeXAxis) {
-          let pointToAdd = pointsForThisSeries.pop();
-
-          while  (pointToAdd && pointToAdd.timestamp && pointToAdd.timestamp.isBefore(this.startTime)) {
-            pointToAdd =  pointsForThisSeries.pop();
-          }
-
-          for (const d = this.startTime.clone(); d.isBefore(this.endTime); d.add(this.timeGrain)) {
-            let value = this.defaultValue;
-            if (pointToAdd && d.isSame(moment.utc(pointToAdd.timestamp))) {
-              value = pointToAdd.value;
-              pointToAdd = pointsForThisSeries.pop();
-            }
-            highchartTimeSeriesDictionary[key].series.data.push([d.clone().valueOf(), value ]);
-
-            }
-        } else {
-          pointsForThisSeries.forEach(pointToAdd => {
-            if (pointToAdd.timestamp.isBefore(this.startTime)) {
-              this.startTime = pointToAdd.timestamp;
-            }
-            highchartTimeSeriesDictionary[key].series.data.push([momentNs.utc(pointToAdd.timestamp).valueOf(), pointToAdd.value ]);
-          });
-        }
-
-        // highchartTimeSeriesDictionary[key].series.events =  {
-        //   dblclick: function () {
-        //    let i = 0;
-
-        //     console.log('dblclick -  click Events ');
-        //     this.telemetryService.logEvent('SeriesClicked',
-        //     {
-        //         'seriesName': highchartTimeSeriesDictionary[key].series.name,
-        //     });
-        // }};
-
-        this.allHighChartSeries.push(highchartTimeSeriesDictionary[key]);
-      });
   }
 
   private _getGreatestCommonFactor(timestamp: momentNs.Moment): momentNs.Duration {
@@ -242,12 +211,12 @@ export class TimeSeriesGraphComponent extends DataRenderBaseComponent implements
   private _gcd(a: number, b: number) {
     a = Math.abs(a);
     b = Math.abs(b);
-    if (b > a) {const temp = a; a = b; b = temp; }
+    if (b > a) { const temp = a; a = b; b = temp; }
     while (true) {
-        if (b === 0) { return a; }
-        a %= b;
-        if (a === 0) { return b; }
-        b %= a;
+      if (b === 0) { return a; }
+      a %= b;
+      if (a === 0) { return b; }
+      b %= a;
     }
   }
 
