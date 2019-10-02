@@ -3,6 +3,8 @@ import { Category } from '../../../shared-v2/models/category';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { NotificationService } from '../../../shared-v2/services/notification.service';
 import { LoggingV2Service } from '../../../shared-v2/services/logging-v2.service';
+import { DiagnosticService, DetectorMetaData } from 'diagnostic-data';
+import { ResourceService } from '../../../shared-v2/services/resource.service';
 
 @Component({
   selector: 'category-tile',
@@ -13,7 +15,7 @@ export class CategoryTileComponent implements OnInit {
 
   @Input() category: Category;
 
-  constructor(private _router: Router, private _activatedRoute: ActivatedRoute, private _notificationService: NotificationService, private _logger: LoggingV2Service) { }
+  constructor(private _router: Router, private _activatedRoute: ActivatedRoute, private _notificationService: NotificationService, private _logger: LoggingV2Service, private _diagnosticService: DiagnosticService, private _resourceService: ResourceService) { }
 
   ngOnInit() {
   }
@@ -28,16 +30,27 @@ export class CategoryTileComponent implements OnInit {
       return;
     }
 
-    const path = ['categories', this.category.id];
+    this._diagnosticService.getDetectors().subscribe(detectors => {
 
-    const navigationExtras: NavigationExtras = {
-      queryParamsHandling: 'preserve',
-      preserveFragment: true,
-      relativeTo: this._activatedRoute
-    };
+      var currentCategoryDetectors = detectors.filter(detector => detector.category === this.category.id);
 
-    this._notificationService.dismiss();
+      if (currentCategoryDetectors.length === 1) {
+        this._notificationService.dismiss();
+        this._logger.LogTopLevelDetector(currentCategoryDetectors[0].id, currentCategoryDetectors[0].name, this.category.id);
+        this._router.navigateByUrl(`resource${this._resourceService.resourceIdForRouting}/detectors/${currentCategoryDetectors[0].id}`);
+      }
+      else {
+        const path = ['categories', this.category.id];
+        const navigationExtras: NavigationExtras = {
+          queryParamsHandling: 'preserve',
+          preserveFragment: true,
+          relativeTo: this._activatedRoute
+        };
 
-    this._router.navigate(path, navigationExtras);
+        this._notificationService.dismiss();
+
+        this._router.navigate(path, navigationExtras);
+      }
+    });
   }
 }
