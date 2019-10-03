@@ -9,6 +9,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authorization;
+using AppLensV3.Authorization;
+using System.Collections.Generic;
 
 namespace AppLensV3
 {
@@ -53,9 +56,11 @@ namespace AppLensV3
 
             services.AddMemoryCache();
             services.AddMvc();
+            services.AddHttpContextAccessor();
 
             GraphTokenService.Instance.Initialize(Configuration);
             KustoTokenRefreshService.Instance.Initialize(Configuration);
+            AuthorizationTokenService.Instance.Initialize(Configuration);
 
             // If we are using runtime host directly
             if (Configuration.GetValue<bool>("DiagnosticRole:UseAppService"))
@@ -71,6 +76,21 @@ namespace AppLensV3
             {
                 Configuration.Bind("AzureAd", options);
             });
+            services.AddAuthorization(options => {
+                var applensAccess = new SecurityGroupConfig();
+                var applensTesters = new SecurityGroupConfig();
+                Configuration.Bind("ApplensAccess", applensAccess);
+                Configuration.Bind("ApplensTesters", applensTesters);
+
+                options.AddPolicy(applensAccess.GroupName, policy => {
+                   policy.Requirements.Add(new SecurityGroupRequirement(applensAccess.GroupName, applensAccess.GroupId));
+                });
+                options.AddPolicy(applensTesters.GroupName, policy => {
+                    policy.Requirements.Add(new SecurityGroupRequirement(applensTesters.GroupName, applensTesters.GroupId));
+                });
+            });
+
+            services.AddSingleton<IAuthorizationHandler, SecurityGroupHandler>();
 
             if (Configuration["ServerMode"] == "internal")
             {

@@ -26,7 +26,7 @@ namespace AppLensV3.Controllers
     /// Diagnostic controller.
     /// </summary>
     [Route("api")]
-    [Authorize]
+    [Authorize(Policy = "ApplensAccess")]
     public class DiagnosticController : Controller
     {
         private class InvokeHeaders
@@ -56,6 +56,12 @@ namespace AppLensV3.Controllers
         private IEmailNotificationService EmailNotificationService { get; }
 
         private IHostingEnvironment Env { get; }
+
+        [HttpGet("ping")]
+        public IActionResult Ping()
+        {
+            return new OkResult();
+        }
 
         private static string TryGetHeader(HttpRequest request, string headerName, string defaultValue = "") =>
             request.Headers.ContainsKey(headerName) ? (string)request.Headers[headerName] : defaultValue;
