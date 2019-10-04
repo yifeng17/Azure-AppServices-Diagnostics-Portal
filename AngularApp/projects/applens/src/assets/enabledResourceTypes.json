@@ -108,7 +108,7 @@
         },
         {
             "service": "ResourceService",
-            "resourceType": "Microsoft.ContainerRegistry",
+            "resourceType": "Microsoft.ContainerRegistry/registries",
             "templateFileName": "ContainerRegistry",
             "imgSrc": "assets/img/acr-logo.png",
             "versionPrefix": "",
