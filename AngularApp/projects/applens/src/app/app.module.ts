@@ -22,6 +22,11 @@ import { HighchartsChartModule } from 'highcharts-angular';
 import {UnauthorizedComponent} from './shared/components/unauthorized/unauthorized.component';
 import {AuthRequestFailedComponent} from './shared/components/auth-request-failed/auth-request-failed.component';
 import {TokenInvalidComponent} from './shared/components/tokeninvalid/tokeninvalid.component';
+import { AngularReactBrowserModule } from '@angular-react/core';
+// import {
+//   FabButtonModule,
+//   FabDialogModule,
+// } from '@angular-react/fabric';
 
 @Injectable()
 export class ValidResourceResolver implements Resolve<void>{
@@ -114,7 +119,9 @@ export const Routes = RouterModule.forRoot([
     TokenInvalidComponent
   ],
   imports: [
-    BrowserModule,
+    AngularReactBrowserModule,
+    // FabButtonModule,
+    // FabDialogModule,
     BrowserAnimationsModule,
     HttpClientModule,
     DiagnosticDataModule.forRoot(),

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { AdalService } from 'adal-angular4';
 import { environment } from '../environments/environment';
 import * as Highcharts from 'highcharts';
+import { DialogType } from 'office-ui-fabric-react/lib/Dialog';
 
 @Component({
   selector: 'app-root',
@@ -9,6 +10,7 @@ import * as Highcharts from 'highcharts';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+
   env = environment;
   constructor(private _adalService: AdalService) {
     if (environment.adal.enabled){

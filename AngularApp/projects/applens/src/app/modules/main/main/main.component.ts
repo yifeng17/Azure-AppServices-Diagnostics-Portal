@@ -9,6 +9,8 @@ import {
 } from '../../../shared/models/resources';
 import { trimTrailingNulls } from '@angular/compiler/src/render3/view/util';
 import { HttpClient } from '@angular/common/http';
+import { DialogType } from 'office-ui-fabric-react/lib/Dialog';
+import { FabDialogModule, FabButtonModule } from '@angular-react/fabric';
 const moment = momentNs;
 
 @Component({
@@ -17,6 +19,19 @@ const moment = momentNs;
   styleUrls: ['./main.component.scss']
 })
 export class MainComponent implements OnInit {
+  DialogType = DialogType;
+
+  name = 'Cindy';
+  dialogHidden = true;
+  counter = 0;
+
+  toggleDialog() {
+    this.dialogHidden = !this.dialogHidden;
+  }
+
+  incrementCounter() {
+    this.counter += 1;
+  }
 
   showResourceTypeOptions = false;
   showCaseCleansingOption = false;
