@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { OwlDateTimeModule, OwlNativeDateTimeModule, OWL_DATE_TIME_FORMATS } from 'ng-pick-datetime';
 import { OwlMomentDateTimeModule } from 'ng-pick-datetime-moment';
 import { CUSTOM_MOMENT_FORMATS } from '../../shared/models/datetime';
+import { FabDialogModule, FabButtonModule } from '@angular-react/fabric';
 
 export const MainModuleRoutes : ModuleWithProviders = RouterModule.forChild([
   {
@@ -21,7 +22,8 @@ export const MainModuleRoutes : ModuleWithProviders = RouterModule.forChild([
     FormsModule,
     OwlDateTimeModule,
     OwlNativeDateTimeModule,
-    OwlMomentDateTimeModule 
+    OwlMomentDateTimeModule ,
+    FabButtonModule, FabDialogModule,
   ],
   providers: [{
     provide: OWL_DATE_TIME_FORMATS, 
