@@ -3,7 +3,7 @@ import { Category } from '../../../shared-v2/models/category';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { NotificationService } from '../../../shared-v2/services/notification.service';
 import { LoggingV2Service } from '../../../shared-v2/services/logging-v2.service';
-import { DiagnosticService, DetectorMetaData } from 'diagnostic-data';
+import { DiagnosticService, DetectorMetaData, DetectorType } from 'diagnostic-data';
 import { ResourceService } from '../../../shared-v2/services/resource.service';
 
 @Component({
@@ -37,7 +37,11 @@ export class CategoryTileComponent implements OnInit {
       if (currentCategoryDetectors.length === 1) {
         this._notificationService.dismiss();
         this._logger.LogTopLevelDetector(currentCategoryDetectors[0].id, currentCategoryDetectors[0].name, this.category.id);
-        this._router.navigateByUrl(`resource${this._resourceService.resourceIdForRouting}/detectors/${currentCategoryDetectors[0].id}`);
+        if(currentCategoryDetectors[0].type === DetectorType.Detector) {
+          this._router.navigateByUrl(`resource${this._resourceService.resourceIdForRouting}/detectors/${currentCategoryDetectors[0].id}`);
+        }  else if (currentCategoryDetectors[0].type === DetectorType.Analysis) {
+          this._router.navigateByUrl(`resource${this._resourceService.resourceIdForRouting}/analysis/${currentCategoryDetectors[0].id}`);
+        }        
       }
       else {
         const path = ['categories', this.category.id];
