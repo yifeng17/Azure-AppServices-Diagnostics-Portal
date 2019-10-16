@@ -54,7 +54,9 @@ import { AppInsightsQueryService } from './../../../diagnostic-data/src/lib/serv
         path: 'resource',
         loadChildren: './resources/resources.module#ResourcesModule'
       }
-    ]),
+    ], {
+        enableTracing: true
+    }),
     CustomMaterialModule
   ],
   declarations: [

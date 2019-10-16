@@ -11,6 +11,8 @@ import { ResourceService } from '../../../shared-v2/services/resource.service';
 import { HomePageText } from '../../../shared/models/arm/armResourceConfig';
 import { ArmService } from '../../../shared/services/arm.service';
 import { AuthService } from '../../../startup/services/auth.service';
+import { TelemetryService } from 'diagnostic-data';
+import { PortalKustoTelemetryService } from '../../../shared/services/portal-kusto-telemetry.service';
 
 @Component({
   selector: 'home',
@@ -37,7 +39,7 @@ export class HomeComponent implements OnInit {
 
   constructor(private _resourceService: ResourceService, private _categoryService: CategoryService, private _notificationService: NotificationService, private _router: Router,
     private _detectorControlService: DetectorControlService, private _featureService: FeatureService, private _logger: LoggingV2Service, private _authService: AuthService,
-    private _navigator: FeatureNavigationService, private _activatedRoute: ActivatedRoute, private armService: ArmService) {
+    private _navigator: FeatureNavigationService, private _activatedRoute: ActivatedRoute, private armService: ArmService, private logService: TelemetryService, private kustologgingService: PortalKustoTelemetryService) {
 
     if (_resourceService.armResourceConfig && _resourceService.armResourceConfig.homePageText
       && _resourceService.armResourceConfig.homePageText.title && _resourceService.armResourceConfig.homePageText.title.length > 1
@@ -53,7 +55,7 @@ export class HomeComponent implements OnInit {
          improve your application. Select the problem category that best matches the information or tool that you\'re\
          interested in:',
          searchBarPlaceHolder: 'Search App Service Diagnostics'
-      };      
+      };
     }
 
 
@@ -82,6 +84,9 @@ export class HomeComponent implements OnInit {
     if (!this._detectorControlService.startTime) {
       this._detectorControlService.setDefault();
     }
+
+    this.logService.logEvent("telemetry service logging", {});
+    this.kustologgingService.logEvent("kusto telemetry service logging", {});
   }
 
   onSearchBoxFocus(event: any): void {

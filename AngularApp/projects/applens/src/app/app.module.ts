@@ -108,7 +108,10 @@ export const Routes = RouterModule.forRoot([
     path: 'login',
     component: LoginComponent
   }
-]);
+],
+{
+    enableTracing: true
+});
 
 @NgModule({
   declarations: [
