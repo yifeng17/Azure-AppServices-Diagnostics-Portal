@@ -11,6 +11,7 @@ import { ResourceService } from '../../../shared-v2/services/resource.service';
 import { HomePageText } from '../../../shared/models/arm/armResourceConfig';
 import { ArmService } from '../../../shared/services/arm.service';
 import { AuthService } from '../../../startup/services/auth.service';
+import { TelemetryService } from 'diagnostic-data';
 import { PortalKustoTelemetryService } from '../../../shared/services/portal-kusto-telemetry.service';
 import { WebSitesService } from '../../../resources/web-sites/services/web-sites.service';
 import { AppType } from '../../../shared/models/portal';
@@ -49,7 +50,7 @@ export class HomeComponent implements OnInit {
 
   constructor(private _resourceService: ResourceService, private _categoryService: CategoryService, private _notificationService: NotificationService, private _router: Router,
     private _detectorControlService: DetectorControlService, private _featureService: FeatureService, private _logger: LoggingV2Service, private _authService: AuthService,
-    private _navigator: FeatureNavigationService, private _activatedRoute: ActivatedRoute, private armService: ArmService,private loggingService:PortalKustoTelemetryService) {
+    private _navigator: FeatureNavigationService, private _activatedRoute: ActivatedRoute, private armService: ArmService, private logService: TelemetryService, private kustologgingService: PortalKustoTelemetryService) {
 
     if (_resourceService.armResourceConfig && _resourceService.armResourceConfig.homePageText
       && _resourceService.armResourceConfig.homePageText.title && _resourceService.armResourceConfig.homePageText.title.length > 1
@@ -68,7 +69,7 @@ export class HomeComponent implements OnInit {
           searchBarPlaceHolder: 'Search App Service Environment Diagnostics'
         };
         this.searchPlaceHolder = this.homePageText.searchBarPlaceHolder;
-      } 
+      }
       else {
         if(this._resourceService && this._resourceService instanceof WebSitesService && (this._resourceService as WebSitesService).appType === AppType.FunctionApp) {
           this.homePageText = {
@@ -90,7 +91,7 @@ export class HomeComponent implements OnInit {
           };
           this.searchPlaceHolder = this.homePageText.searchBarPlaceHolder;
         }
-      }      
+      }
     }
 
     if (this.isPublicAzure == false && this.isIE_Browser == false){

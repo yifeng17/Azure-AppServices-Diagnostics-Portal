@@ -22,6 +22,7 @@ import { DiagnosticsSettingsComponent } from './components/diagnostics-settings/
 import { SupportTopicService } from '../shared-v2/services/support-topic.service';
 import { MarkdownModule } from 'ngx-markdown';
 import { PortalReferrerResolverComponent } from '../shared/components/portal-referrer-resolver/portal-referrer-resolver.component';
+import { FabDialogModule, FabButtonModule } from '@angular-react/fabric';
 
 export const HomeRoutes = RouterModule.forChild([
   {
@@ -190,6 +191,8 @@ export const HomeRoutes = RouterModule.forChild([
     HomeRoutes,
     SupportBotModule,
     FormsModule,
+    FabButtonModule,
+    FabDialogModule,
     MarkdownModule.forRoot()
   ],
   declarations: [HomeComponent, CategoryChatComponent, CategoryTileComponent, SearchResultsComponent, SupportTopicRedirectComponent, DiagnosticsSettingsComponent],
