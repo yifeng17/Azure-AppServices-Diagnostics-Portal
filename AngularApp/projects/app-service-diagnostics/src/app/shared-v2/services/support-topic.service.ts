@@ -1,10 +1,11 @@
 
+import {of as observableOf,  Observable } from 'rxjs';
+
 import { map, flatMap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 import { DiagnosticService, DetectorMetaData, DetectorType } from 'diagnostic-data';
-import { Observable } from 'rxjs';
-import 'rxjs/add/observable/of';
+
 import { ResourceService } from './resource.service';
 import {AuthService} from '../../startup/services/auth.service';
 
@@ -33,7 +34,7 @@ export class SupportTopicService {
         });
       }));
     }
-    return Observable.of(null);
+    return observableOf(null);
   }
 
   getPathForSupportTopic(supportTopicId: string, pesId: string, searchTerm: string): Observable<any>{
@@ -41,7 +42,7 @@ export class SupportTopicService {
     return this._webSiteService.getPesId().pipe(flatMap(pesId => {
       this.pesId = pesId;
       if (this.supportTopicConfig.hasOwnProperty(this.pesId) && this.supportTopicConfig[this.pesId].findIndex(spId => spId===supportTopicId)>=0){
-          return Observable.of({path: `/analysis/searchResultsAnalysis/search`, queryParams: {"searchTerm": searchTerm}});
+          return observableOf({path: `/analysis/searchResultsAnalysis/search`, queryParams: {"searchTerm": searchTerm}});
       }
       else{
           this.detectorTask = this._diagnosticService.getDetectors();

@@ -30,3 +30,16 @@
 ::placeholder {
     color: #626262;
 }
+
+
+:host {
+    display: block;
+
+    fab-button {
+      margin-right: 20px;
+    }
+
+    hr {
+      margin: 40px 0 20px 0;
+    }
+  }

@@ -2,7 +2,6 @@ import { Injectable, Inject } from '@angular/core';
 import * as momentNs from 'moment';
 import { BehaviorSubject } from 'rxjs';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../config/diagnostic-data-config';
-import { stringify } from '@angular/core/src/render3/util';
 
 const moment = momentNs;
 
