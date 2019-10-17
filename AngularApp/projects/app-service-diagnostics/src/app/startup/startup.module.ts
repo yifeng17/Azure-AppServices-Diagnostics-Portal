@@ -1,5 +1,5 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/http';
 import { CommonModule } from '@angular/common';
 import { WindowService } from './services/window.service';
 import { PortalService } from './services/portal.service';
@@ -8,7 +8,7 @@ import { AuthService } from './services/auth.service';
 
 @NgModule({
   imports: [
-    HttpModule,
+    HttpClientModule,
     CommonModule
   ],
   declarations: []

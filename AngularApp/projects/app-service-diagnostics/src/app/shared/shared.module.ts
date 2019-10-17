@@ -3,7 +3,7 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/http';
 import { LimitToFilter } from './utilities/limitToFilter.pipe';
 import { nvD3 } from './utilities/nvd3graph.component';
 import { MarkupPipe } from './pipes/markup.pipe';
@@ -156,7 +156,7 @@ import { FrebViewerComponent } from './components/daas/freb-viewer/freb-viewer.c
         FrebViewerComponent
     ],
     imports: [
-        HttpModule,
+        HttpClientModule,
         CommonModule,
         StartupModule,
         FormsModule,
@@ -167,7 +167,7 @@ import { FrebViewerComponent } from './components/daas/freb-viewer/freb-viewer.c
     exports: [
         CommonModule,
         FormsModule,
-        HttpModule,
+        HttpClientModule,
         LimitToFilter,
         RouterModule,
         nvD3,

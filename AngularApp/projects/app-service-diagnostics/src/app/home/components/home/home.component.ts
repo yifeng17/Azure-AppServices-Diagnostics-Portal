@@ -13,6 +13,18 @@ import { ArmService } from '../../../shared/services/arm.service';
 import { AuthService } from '../../../startup/services/auth.service';
 import { TelemetryService } from 'diagnostic-data';
 import { PortalKustoTelemetryService } from '../../../shared/services/portal-kusto-telemetry.service';
+import {
+    ICalendarStrings,
+    IContextualMenuProps,
+    ISelection,
+    Selection,
+    DropdownMenuItemType,
+    IDropdownOption,
+    ICheckboxProps,
+    IPersonaProps,
+    IPeoplePickerProps,
+  } from 'office-ui-fabric-react';
+// import { FabPeoplePickerComponent } from '@angular-react/fabric/public-api';
 
 @Component({
   selector: 'home',
@@ -20,6 +32,80 @@ import { PortalKustoTelemetryService } from '../../../shared/services/portal-kus
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
+
+
+  strings: ICalendarStrings = {
+    months: [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ],
+
+    shortMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+
+    days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+
+    shortDays: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
+
+    goToToday: 'Go to today',
+  };
+
+
+    disabled = true;
+  dialogHidden = true;
+  sampleContentCounter = 0;
+  secondsCounter = 0;
+  sampleContent2 = '0 Seconds Passed';
+  sampleContent3 = '';
+  selectedComboBoxKey: string = "None";
+  selectedComboBoxValue: string = "None";
+  selectedDate: Date;
+
+//   comboBoxOptions: IComboBoxOption[] = [
+//     { key: 'A', text: 'See option A' },
+//     { key: 'B', text: 'See option B' },
+//   ];
+
+  onSelectDate(event) {
+    this.selectedDate = event.date;
+  }
+
+  comboChange(event) {
+    this.selectedComboBoxKey = event.option.key;
+    this.selectedComboBoxValue = event.option.text;
+  }
+
+  get sampleContent() {
+    return `Button clicked ${this.sampleContentCounter} times.`;
+  }
+
+  toggle() {
+    this.disabled = !this.disabled;
+  }
+
+  toggleDialog() {
+    this.dialogHidden = !this.dialogHidden;
+    this.sampleContent3 = '';
+  }
+
+  click() {
+    this.sampleContentCounter += 1;
+  }
+
+  clickSave() {
+    this.sampleContent3 = 'Saved...';
+  }
+
+
 
   resourceName: string;
   categories: Category[];
@@ -40,6 +126,15 @@ export class HomeComponent implements OnInit {
   constructor(private _resourceService: ResourceService, private _categoryService: CategoryService, private _notificationService: NotificationService, private _router: Router,
     private _detectorControlService: DetectorControlService, private _featureService: FeatureService, private _logger: LoggingV2Service, private _authService: AuthService,
     private _navigator: FeatureNavigationService, private _activatedRoute: ActivatedRoute, private armService: ArmService, private logService: TelemetryService, private kustologgingService: PortalKustoTelemetryService) {
+
+        const i = setInterval(() => {
+            this.secondsCounter += 1;
+            this.sampleContent2 = `${this.secondsCounter} Seconds Passed`;
+          }, 1000);
+
+          setTimeout(() => {
+            clearInterval(i);
+          }, 12000);
 
     if (_resourceService.armResourceConfig && _resourceService.armResourceConfig.homePageText
       && _resourceService.armResourceConfig.homePageText.title && _resourceService.armResourceConfig.homePageText.title.length > 1

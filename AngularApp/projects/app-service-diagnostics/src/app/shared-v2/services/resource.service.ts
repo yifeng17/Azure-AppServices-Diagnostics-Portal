@@ -1,7 +1,8 @@
 
+import {of as observableOf,  Observable, BehaviorSubject } from 'rxjs';
+
 import { map, flatMap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject } from 'rxjs';
 import { ArmResource } from '../models/arm';
 import { ArmService } from '../../shared/services/arm.service';
 import { ArmResourceConfig, ResourceDescriptor, ResourceDescriptorGroups } from '../../shared/models/arm/armResourceConfig';
@@ -38,7 +39,7 @@ export class ResourceService {
   }
 
   public getPesId(): Observable<string>{
-    return Observable.of(null);
+    return observableOf(null);
   }
 
   public get searchSuffix(): string {

@@ -25,13 +25,8 @@
     "bundle-report": "webpack-bundle-analyzer ../Backend/wwwroot/stats.json -p 8889"
   },
   "dependencies": {
-    "react": "16.3.2",
-    "react-dom": "16.3.2",
-    "@types/react": "16.3.11",
-    "@types/react-dom": "16.0.5",
-    "@angular-react/core": "0.1.12",
-    "@angular-react/fabric": "0.1.6",
-    "office-ui-fabric-react": "5.82.4",
+    "@angular-react/core": "1.0.1",
+    "@angular-react/fabric": "1.2.1",
     "@angular/animations": "^7.2.13",
     "@angular/cdk": "^7.3.7",
     "@angular/common": "6.1.10",
@@ -47,6 +42,8 @@
     "@ng-select/ng-select": "^2.16.0",
     "@swimlane/ngx-datatable": "^15.0.2",
     "@types/applicationinsights-js": "^1.0.9",
+    "@types/react": "16.3.11",
+    "@types/react-dom": "16.0.5",
     "adal-angular4": "^3.0.16",
     "admin-lte": "^2.4.3",
     "angular-split-ng6": "^1.0.0-rc.5",
@@ -67,13 +64,17 @@
     "ngx-markdown": "6.0.0 - 6.2.0",
     "ngx-monaco-editor": "^6.0.0",
     "ngx-smart-modal": "^6.0.4",
+    "node-sass": "^4.12.0",
+    "office-ui-fabric-react": "6.201.1",
+    "react": "16.3.2",
+    "react-dom": "16.3.2",
     "reflect-metadata": "^0.1.3",
     "rxjs": "6.2.2",
-    "rxjs-compat": "6.2.2",
+    "tsickle": "^0.37.0",
     "ua-parser-js": "^0.7.19",
     "vis": "^4.21.0",
     "web-animations-js": "^2.3.1",
-    "zone.js": "^0.8.4"
+    "zone.js": "~0.8.4"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.8.0",
@@ -103,7 +104,7 @@
     "ts-node": "~4.1.0",
     "tslib": "^1.9.0",
     "tslint": "~5.9.1",
-    "typescript": "^2.7.2",
+    "typescript": "~3.4.5",
     "webpack": "4.24.0",
     "webpack-bundle-analyzer": "^3.0.2"
   }

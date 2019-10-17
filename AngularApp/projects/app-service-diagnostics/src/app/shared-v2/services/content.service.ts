@@ -1,11 +1,10 @@
 
-import {map} from 'rxjs/operators';
+import {map,  mergeMap, tap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { Observable, of, BehaviorSubject } from 'rxjs';
 import { Http, Headers } from '@angular/http';
 import { ResourceService } from './resource.service';
 import { BackendCtrlService } from '../../shared/services/backend-ctrl.service';
-import { mergeMap, tap } from 'rxjs/operators';
 
 @Injectable()
 export class ContentService {

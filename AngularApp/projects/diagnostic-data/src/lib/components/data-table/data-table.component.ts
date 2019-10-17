@@ -25,7 +25,7 @@ export class DataTableComponent extends DataRenderBaseComponent implements After
     }
 
     if (this.renderingProperties.tableOptions != null) {
-      Object.keys(this.renderingProperties.tableOptions).forEach(item => {
+      Object.keys(this.renderingProperties.tableOptions).forEach(item => {v
         this.table[item] = this.renderingProperties.tableOptions[item];
       });
     }

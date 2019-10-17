@@ -32,10 +32,11 @@ import {CustomMaterialModule} from './material-module';
 import { PortalSettingsService } from './shared/services/settings.service';
 import { AppInsightsService } from './shared/services/appinsights/appinsights.service';
 import { AppInsightsQueryService } from './../../../diagnostic-data/src/lib/services/appinsights.service';
+import { AngularReactBrowserModule } from '@angular-react/core';
 
 @NgModule({
   imports: [
-    BrowserModule,
+    AngularReactBrowserModule,
     HttpClientModule,
     SharedModule.forRoot(),
     StartupModule.forRoot(),
