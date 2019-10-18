@@ -1,4 +1,3 @@
-
 <div class="home-container">
   <div class="input-group input-group-lg search-input-group" (keyup.escape)="clearSearch()" role="search" *ngIf="isPublicAzure || isIE_Browser">
     <input tabindex="0" type="search" class="form-control" placeholder="{{searchPlaceHolder}}" [ngModel]="searchValue"
@@ -94,3 +93,43 @@
     </div>
   </div>
 </div>
+
+
+
+
+<fab-dropdown
+  [label]="'test label'"
+  [selectedKey]="selectedItem && selectedItem.key"
+  [options]="options"
+  [placeholder]="'select one'"
+  (onChange)="logEvent('dropdown change', $event)"
+  (onFocus)="logEvent('dropdown focus', $event)"
+  (onBlur)="logEvent('dropdown blur', $event)"
+></fab-dropdown>
+
+
+<fab-calendar [strings]="strings" (onSelectDate)="onSelectDate($event)"></fab-calendar>
+
+  <fab-calendar (onSelectDate)="onSelectDate($event)">
+    <fab-calendar-strings
+      [months]="[
+        'January',
+        'Fabruary',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December'
+      ]"
+      [shortMonths]="['Jan', 'Fab', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']"
+      [days]="['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']"
+      [shortDays]="['S', 'M', 'T', 'W', 'T', 'F', 'S']"
+      goToToday="Go to tomorrow"
+      weekNumberFormatString="Week number {0}"
+    ></fab-calendar-strings>
+  </fab-calendar>

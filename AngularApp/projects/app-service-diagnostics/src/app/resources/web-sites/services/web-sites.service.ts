@@ -6,10 +6,10 @@ import { AppAnalysisService } from '../../../shared/services/appanalysis.service
 import { ArmService } from '../../../shared/services/arm.service';
 import { Sku } from '../../../shared/models/server-farm';
 import { IDiagnosticProperties } from '../../../shared/models/diagnosticproperties';
-import { Observable, BehaviorSubject } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
 import { PortalReferrerMap } from '../../../shared/models/portal-referrer-map';
 import { DetectorType } from 'diagnostic-data';
+import {of as observableOf,  Observable, BehaviorSubject } from 'rxjs';
 
 @Injectable()
 export class WebSitesService extends ResourceService {
@@ -30,8 +30,8 @@ export class WebSitesService extends ResourceService {
 
     public getIbizaBladeToDetectorMapings():Observable<PortalReferrerMap[]> {
         return this.warmUpCallFinished.pipe(flatMap( ()=>{
-            let bladeToDetectorMap:PortalReferrerMap[]; 
-            
+            let bladeToDetectorMap:PortalReferrerMap[];
+
             bladeToDetectorMap = [{
                 ReferrerExtensionName: 'Websites',
                 ReferrerBladeName: 'CertificatesBlade',
@@ -46,7 +46,7 @@ export class WebSitesService extends ResourceService {
                 DetectorType: DetectorType.Detector,
                 DetectorId: 'configuringsslandcustomdomains'
             }];
-            
+
 
             if(this.appType == AppType.WebApp) {
                 bladeToDetectorMap.push({
@@ -57,23 +57,23 @@ export class WebSitesService extends ResourceService {
                     DetectorId: 'backupFailures'
                 });
             }
-            return Observable.of(bladeToDetectorMap);            
+            return Observable.of(bladeToDetectorMap);
         }  ));
     }
 
     public getPesId(): Observable<string> {
         return this.warmUpCallFinished.pipe(flatMap(() => {
             if (this.appType == AppType.WebApp && this.platform == OperatingSystem.windows){
-                return Observable.of("14748");
+                return observableOf("14748");
             }
             else if (this.appType == AppType.WebApp && this.platform == OperatingSystem.linux){
-                return Observable.of("16170");
+                return observableOf("16170");
             }
             else if (this.appType == AppType.FunctionApp){
-                return Observable.of("16072");
+                return observableOf("16072");
             }
             else{
-                return Observable.of(null);
+                return observableOf(null);
             }
         }));
     }

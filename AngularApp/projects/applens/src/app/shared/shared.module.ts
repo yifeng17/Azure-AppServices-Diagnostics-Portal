@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { TreeViewComponent } from './components/tree-view/tree-view.component';
 import { DiagnosticApiService } from './services/diagnostic-api.service';
 import { ModuleWithProviders } from '@angular/compiler/src/core';
-import { HttpClientModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 import { SiteService } from './services/site.service';
 import { FormsModule } from '@angular/forms';
 import { StartupService } from './services/startup.service';

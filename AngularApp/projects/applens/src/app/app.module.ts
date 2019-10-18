@@ -3,13 +3,12 @@ import {map} from 'rxjs/operators';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, Injectable, ErrorHandler } from '@angular/core';
 import { RouterModule, Resolve, ActivatedRouteSnapshot, Router, UrlSerializer } from '@angular/router';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { StartupService } from './shared/services/startup.service';
 import { ArmResource, ResourceServiceInputs } from './shared/models/resources';
-import { Http } from '@angular/http';
 import { Observable } from 'rxjs';
 import { AadAuthGuard } from './shared/auth/aad-auth-guard.service';
 import { LoginComponent } from './shared/components/login/login.component';
@@ -30,16 +29,15 @@ import { AngularReactBrowserModule } from '@angular-react/core';
 
 @Injectable()
 export class ValidResourceResolver implements Resolve<void>{
-  constructor(private _startupService: StartupService, private _http: Http, private _router: Router) { }
+  constructor(private _startupService: StartupService, private _http: HttpClient, private _router: Router) { }
 
   resolve(route: ActivatedRouteSnapshot): Observable<any> {
-    return this._http.get('assets/enabledResourceTypes.json').pipe(map(response => {
+    return this._http.get<ResourceServiceInputs[]>('assets/enabledResourceTypes.json').pipe(map(response => {
       let resource = <ArmResource>route.params;
       let type = `${resource.provider}/${resource.resourceTypeName}`
 
-      if (response && response.json().enabledResourceTypes) {
-
-        let enabledResourceTypes = <ResourceServiceInputs[]>response.json().enabledResourceTypes;
+      if (response && response.length > 0) {
+        let enabledResourceTypes = <ResourceServiceInputs[]>response;
         let matchingResourceInputs = enabledResourceTypes.find(t => t.resourceType == type);
 
         if (matchingResourceInputs) {

@@ -15,6 +15,7 @@ import { TelemetryService } from 'diagnostic-data';
 import { PortalKustoTelemetryService } from '../../../shared/services/portal-kusto-telemetry.service';
 import { WebSitesService } from '../../../resources/web-sites/services/web-sites.service';
 import { AppType } from '../../../shared/models/portal';
+import { FabDropdownComponent } from '@angular-react/fabric';
 import {
     ICalendarStrings,
     IContextualMenuProps,
@@ -27,38 +28,95 @@ import {
     IPeoplePickerProps,
   } from 'office-ui-fabric-react';
 
+
 @Component({
-  selector: 'home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+    selector: 'home',
+    templateUrl: './home.component.html',
+    styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
+    logEvent(...args: any[]) {
+        console.log(args);
+    }
+
+    selectedItem?: IDropdownOption;
+    options: FabDropdownComponent['options'] = [
+        { key: 'A', text: 'Option a' },
+        { key: 'B', text: 'Option b' },
+        { key: 'C', text: 'Option c' },
+        { key: 'D', text: 'Option d' },
+        { key: 'divider_1', text: '-', itemType: DropdownMenuItemType.Divider },
+        { key: 'E', text: 'Option e' },
+        { key: 'F', text: 'Option f' },
+        { key: 'G', text: 'Option g' },
+    ];
 
 
-  strings: ICalendarStrings = {
-    months: [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ],
+    strings: ICalendarStrings = {
+        months: [
+          'January',
+          'February',
+          'March',
+          'April',
+          'May',
+          'June',
+          'July',
+          'August',
+          'September',
+          'October',
+          'November',
+          'December',
+        ],
 
-    shortMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        shortMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
 
-    days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+        days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
 
-    shortDays: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
+        shortDays: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
 
-    goToToday: 'Go to today',
-  };
+        goToToday: 'Go to today',
+        weekNumberFormatString: 'Week number {0}',
+      };
+
+      detailItems = [
+        { field1: 'f1content1', field2: 'f2content1' },
+        { field1: 'f1content2', field2: 'f2content2' },
+        { field1: 'f1content3', field2: 'f2content3' },
+        { field1: 'f1content4' },
+        { field2: 'f2content5' },
+      ];
+
+      onNewClicked() {
+        console.log('New clicked');
+      }
+
+      onCopyClicked() {
+        console.log('Copy clicked');
+      }
+
+      onSaveAsClicked() {
+        console.log('Save as clicked');
+      }
+
+      onSaveAsFirstClicked() {
+        console.log('Save as 1 clicked');
+      }
+
+      onSaveAsSecondClicked() {
+        console.log('Save as 2 clicked');
+      }
+
+      customItemCount = 1;
+
+      onCustomItemClick(item: any) {
+        this.customItemCount++;
+        console.log('custom item clicked', item);
+      }
+
+      onColumnHeaderClicked(event: any) {
+        console.log('Column header clicked', event);
+      }
+
 
 
     disabled = true;
@@ -140,9 +198,9 @@ export class HomeComponent implements OnInit {
         const i = setInterval(() => {
             this.secondsCounter += 1;
             this.sampleContent2 = `${this.secondsCounter} Seconds Passed`;
-          }, 1000);
+        }, 1000);
 
-          setTimeout(() => {
+        setTimeout(() => {
             clearInterval(i);
           }, 12000);
 
@@ -203,87 +261,101 @@ export class HomeComponent implements OnInit {
     this._categoryService.categories.subscribe(categories => this.categories = categories);
 
 
-    this._authService.getStartupInfo().subscribe(startupInfo => {
-      if (startupInfo.additionalParameters && Object.keys(startupInfo.additionalParameters).length > 0) {
-        let path = 'resource' + startupInfo.resourceId.toLowerCase();
-        path = this._updateRouteBasedOnAdditionalParameters(path, startupInfo.additionalParameters);
-        if (path) {
-          this._router.navigateByUrl(path);
+        if (_resourceService.armResourceConfig) {
+            this._categoryService.initCategoriesForArmResource(_resourceService.resource.id);
         }
-      }
-    });
-    this.subscriptionId = this._activatedRoute.snapshot.params['subscriptionid'];
-  }
 
-  ngOnInit() {
-    this.resourceName = this._resourceService.resource.name;
-    this.providerRegisterUrl = `/subscriptions/${this.subscriptionId}/providers/Microsoft.ChangeAnalysis/register`;
-    if (!this._detectorControlService.startTime) {
-      this._detectorControlService.setDefault();
+        this._categoryService.categories.subscribe(categories => this.categories = categories);
+
+
+        this._authService.getStartupInfo().subscribe(startupInfo => {
+            if (startupInfo.additionalParameters && Object.keys(startupInfo.additionalParameters).length > 0) {
+                let path = 'resource' + startupInfo.resourceId.toLowerCase();
+                path = this._updateRouteBasedOnAdditionalParameters(path, startupInfo.additionalParameters);
+                if (path) {
+                    this._router.navigateByUrl(path);
+                }
+            }
+        });
+        this.subscriptionId = this._activatedRoute.snapshot.params['subscriptionid'];
     }
 
-    if(this._resourceService.resource.type === 'Microsoft.Web/sites') {
-        // Register Change Analysis Resource Provider.
-        this.armService.postResourceFullResponse(this.providerRegisterUrl, {}, true, '2018-05-01').subscribe((response: HttpResponse<{}>) => {
-            let eventProps = {
-                url: this.providerRegisterUrl
-                };
-                this.loggingService.logEvent("Change Analysis Resource Provider registered",eventProps);
-            }, (error: any) => {
-                this.logHTTPError(error, 'registerResourceProvider');
-            });
-    }
-  }
+    ngOnInit() {
+        this.resourceName = this._resourceService.resource.name;
+        this.providerRegisterUrl = `/subscriptions/${this.subscriptionId}/providers/Microsoft.ChangeAnalysis/register`;
+        if (!this._detectorControlService.startTime) {
+          this._detectorControlService.setDefault();
+        }
 
-  onSearchBoxFocus(event: any): void {
-    this.searchBoxFocus = true;
-  }
+        if(this._resourceService.resource.type === 'Microsoft.Web/sites') {
+            // Register Change Analysis Resource Provider.
+            this.armService.postResourceFullResponse(this.providerRegisterUrl, {}, true, '2018-05-01').subscribe((response: HttpResponse<{}>) => {
+                let eventProps = {
+                    url: this.providerRegisterUrl
+                    };
+                    this.loggingService.logEvent("Change Analysis Resource Provider registered",eventProps);
+                }, (error: any) => {
+                    this.logHTTPError(error, 'registerResourceProvider');
+                });
+        }
 
-  clearSearch() {
-    this.searchBoxFocus = false;
-    this.searchValue = '';
-    this.searchResultCount = 0;
-  }
 
-  updateSearchValue(searchValue) {
-    this.searchValue = searchValue;
+        if (!this._detectorControlService.startTime) {
+            this._detectorControlService.setDefault();
+        }
 
-    if (this.searchLogTimout) {
-      clearTimeout(this.searchLogTimout);
+        this.logService.logEvent("telemetry service logging", {});
+        this.kustologgingService.logEvent("kusto telemetry service logging", {});
     }
 
-    this.searchLogTimout = setTimeout(() => {
-      this._logSearch();
-    }, 5000);
-  }
-
-  onResultCount(count: number) {
-    this.searchResultCount = count;
-  }
-
-  onSearchLostFocus() {
-    if (this.searchValue === '') {
-      this.searchResultCount = 0;
-    }
-  }
-
-  onFocusClear() {
-    if (this.searchValue === '') {
-      this.clearSearch();
-    }
-  }
-
-  private _updateRouteBasedOnAdditionalParameters(route: string, additionalParameters: any): string {
-    if (additionalParameters.featurePath) {
-      let featurePath: string = additionalParameters.featurePath;
-      featurePath = featurePath.startsWith('/') ? featurePath.replace('/', '') : featurePath;
-
-      return `${route}/${featurePath}`;
+    onSearchBoxFocus(event: any): void {
+        this.searchBoxFocus = true;
     }
 
-    return null;
-  }
+    clearSearch() {
+        this.searchBoxFocus = false;
+        this.searchValue = '';
+        this.searchResultCount = 0;
+    }
 
+    updateSearchValue(searchValue) {
+        this.searchValue = searchValue;
+
+        if (this.searchLogTimout) {
+            clearTimeout(this.searchLogTimout);
+        }
+
+        this.searchLogTimout = setTimeout(() => {
+            this._logSearch();
+        }, 5000);
+    }
+
+    onResultCount(count: number) {
+        this.searchResultCount = count;
+    }
+
+    onSearchLostFocus() {
+        if (this.searchValue === '') {
+            this.searchResultCount = 0;
+        }
+    }
+
+    onFocusClear() {
+        if (this.searchValue === '') {
+            this.clearSearch();
+        }
+    }
+
+    private _updateRouteBasedOnAdditionalParameters(route: string, additionalParameters: any): string {
+        if (additionalParameters.featurePath) {
+            let featurePath: string = additionalParameters.featurePath;
+            featurePath = featurePath.startsWith('/') ? featurePath.replace('/', '') : featurePath;
+
+            return `${route}/${featurePath}`;
+        }
+
+        return null;
+    }
 
   private _logSearch() {
     this._logger.LogSearch(this.searchValue);

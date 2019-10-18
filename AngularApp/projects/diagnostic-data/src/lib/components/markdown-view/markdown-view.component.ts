@@ -29,7 +29,7 @@ Content-Type: text/html
 })
 export class MarkdownViewComponent extends DataRenderBaseComponent implements AfterViewInit, OnDestroy {
 
-  @ViewChild(MarkdownComponent)
+  @ViewChild(MarkdownComponent, {static: false})
   public set markdown(v: MarkdownComponent) {
     this.markdownDiv = v;
   }

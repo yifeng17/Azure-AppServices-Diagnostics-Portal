@@ -1,5 +1,4 @@
 import { RouteReuseStrategy, ActivatedRouteSnapshot, DetachedRouteHandle } from '@angular/router';
-import { getParentRenderElement } from '@angular/core/src/view/util';
 import { Injectable, ComponentRef } from '@angular/core';
 
 @Injectable()

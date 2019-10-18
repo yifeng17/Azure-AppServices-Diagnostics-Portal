@@ -9,6 +9,7 @@
     "swimlane",
     "copy-html-to-clipboard",
     "applicationinsights-js",
-    "ngx-monaco-editor"
+    "ngx-monaco-editor",
+    "react"
   ]
 }
