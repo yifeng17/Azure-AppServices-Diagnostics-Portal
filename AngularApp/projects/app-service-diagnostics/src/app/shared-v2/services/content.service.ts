@@ -2,7 +2,7 @@
 import {map,  mergeMap, tap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { Observable, of, BehaviorSubject } from 'rxjs';
-import { Http, Headers } from '@angular/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ResourceService } from './resource.service';
 import { BackendCtrlService } from '../../shared/services/backend-ctrl.service';
 
@@ -25,7 +25,7 @@ export class ContentService {
   private ocpApimKeyBehaviorSubject: BehaviorSubject<string> = new BehaviorSubject<string>('');
   private ocpApimKey: string = '';
 
-  constructor(private _http: Http, private _resourceService: ResourceService, private _backendApi: BackendCtrlService) { 
+  constructor(private _http: HttpClient, private _resourceService: ResourceService, private _backendApi: BackendCtrlService) {
 
     this._backendApi.get<string>(`api/appsettings/ContentSearch:Ocp-Apim-Subscription-Key`).subscribe((value: string) =>{
       this.ocpApimKeyBehaviorSubject.next(value);
@@ -50,14 +50,14 @@ export class ContentService {
 
     return this.ocpApimKeyBehaviorSubject.pipe(
       mergeMap((key:string)=>{
-        return this._http.get(url, { headers: this.getWebSearchHeaders() }).pipe(map(response => response.json()));
+        return this._http.get(url, { headers: this.getWebSearchHeaders() }).pipe(map(response => response));
       })
     );
   }
-  
 
-  private getWebSearchHeaders(): Headers {
-    const headers = new Headers();
+
+  private getWebSearchHeaders(): HttpHeaders {
+    const headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     headers.append('Ocp-Apim-Subscription-Key', this.ocpApimKey);
 

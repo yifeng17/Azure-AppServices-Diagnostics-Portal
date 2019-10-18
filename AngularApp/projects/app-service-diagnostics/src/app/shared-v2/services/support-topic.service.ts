@@ -3,7 +3,7 @@ import {of as observableOf,  Observable } from 'rxjs';
 
 import { map, flatMap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
-import { Http, Headers } from '@angular/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DiagnosticService, DetectorMetaData, DetectorType } from 'diagnostic-data';
 
 import { ResourceService } from './resource.service';
@@ -20,14 +20,14 @@ export class SupportTopicService {
     "14748": ["32444077", "32444080", "32444081", "32444082", "32444083", "32444084", "32550703"]
   };
 
-  constructor(protected _http: Http, protected _authService: AuthService, protected _diagnosticService: DiagnosticService, protected _webSiteService: ResourceService) {
+  constructor(protected _http: HttpClient, protected _authService: AuthService, protected _diagnosticService: DiagnosticService, protected _webSiteService: ResourceService) {
   }
 
   public getSelfHelpContentDocument(): Observable<any>{
     if (this.pesId && this.pesId.length>0){
       return this._authService.getStartupInfo().pipe(flatMap(res => {
         var selfHelpContentForSupportTopicUrl = this.selfHelpContentUrl + "&productId=" + encodeURIComponent(this.pesId) + "&topicId=" + encodeURIComponent(this.supportTopicId);
-        const headers = new Headers();
+        const headers = new HttpHeaders();
         headers.append('Authorization', `Bearer ${res.token}`);
         return this._http.get(selfHelpContentForSupportTopicUrl, {
           headers: headers
@@ -48,12 +48,12 @@ export class SupportTopicService {
           this.detectorTask = this._diagnosticService.getDetectors();
           return this.detectorTask.pipe(map(detectors => {
             let detectorPath = '';
-      
+
             if (detectors) {
               const matchingDetector = detectors.find(detector =>
                 detector.supportTopicList &&
                 detector.supportTopicList.findIndex(supportTopic => supportTopic.id === supportTopicId) >= 0);
-      
+
               if (matchingDetector) {
                 if (matchingDetector.type === DetectorType.Detector) {
                   detectorPath = `/detectors/${matchingDetector.id}`;
@@ -61,7 +61,7 @@ export class SupportTopicService {
                   detectorPath = `/analysis/${matchingDetector.id}`;
                 }
               }
-            }    
+            }
             return {path: detectorPath, queryParams: {}};
           }));
       }

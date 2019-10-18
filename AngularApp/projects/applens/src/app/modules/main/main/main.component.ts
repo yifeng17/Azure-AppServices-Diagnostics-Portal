@@ -2,7 +2,6 @@ import { AdalService } from 'adal-angular4';
 import * as momentNs from 'moment';
 import { map, catchError } from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
-import { Http } from '@angular/http';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import {
     ResourceServiceInputs, ResourceType, ResourceTypeState, ResourceServiceInputsJsonResponse

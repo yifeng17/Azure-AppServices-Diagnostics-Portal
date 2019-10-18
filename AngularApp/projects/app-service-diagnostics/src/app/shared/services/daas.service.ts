@@ -1,7 +1,7 @@
 
 import { map } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
-import { Http, RequestOptions, Headers, Response } from '@angular/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { SiteDaasInfo } from '../models/solution-metadata';
 import { ArmService } from './arm.service';
@@ -15,7 +15,7 @@ export class DaasService {
 
     public currentSite: SiteDaasInfo;
 
-    constructor(private _armClient: ArmService, private _authService: AuthService, private _http: Http, private _uriElementsService: UriElementsService) {
+    constructor(private _armClient: ArmService, private _authService: AuthService, private _http: HttpClient, private _uriElementsService: UriElementsService) {
     }
 
     getDaasSessions(site: SiteDaasInfo): Observable<Session[]> {
@@ -134,9 +134,9 @@ export class DaasService {
         return <Observable<string>>(this._armClient.deleteResource(resourceUri, null, true));
     }
 
-    private _getHeaders(): Headers {
+    private _getHeaders(): HttpHeaders {
 
-        const headers = new Headers();
+        const headers = new HttpHeaders();
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
         headers.append('Authorization', `Bearer ${this._authService.getAuthToken()}`);

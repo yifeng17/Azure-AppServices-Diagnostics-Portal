@@ -1,6 +1,6 @@
 
 import { map, retry, catchError } from 'rxjs/operators';
-import { Http, Headers, Response } from '@angular/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ResponseMessageEnvelope } from '../models/responsemessageenvelope';
 import { Observable, of } from 'rxjs';
@@ -18,7 +18,7 @@ export class GenericApiService {
 
     useLocal: boolean = false;
 
-    constructor(private _http: Http, private _armService: ArmService, private _authService: AuthService) {
+    constructor(private _http: HttpClient, private _armService: ArmService, private _authService: AuthService) {
         this._authService.getStartupInfo().subscribe(info => {
             this.resourceId = info.resourceId;
         });
@@ -79,14 +79,13 @@ export class GenericApiService {
             headers: this._getHeaders(path, method)
         }).pipe(
             retry(2),
-            map((response: Response) => <T>(response.json())
-            ));
+            map((response) => <T>(response)));
 
         return request;
     }
 
-    private _getHeaders(path?: string, method?: string): Headers {
-        const headers = new Headers();
+    private _getHeaders(path?: string, method?: string): HttpHeaders {
+        const headers = new HttpHeaders();
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 

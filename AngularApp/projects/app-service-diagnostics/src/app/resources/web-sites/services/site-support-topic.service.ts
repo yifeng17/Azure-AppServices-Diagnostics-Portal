@@ -6,7 +6,7 @@ import { ResourceService } from '../../../shared-v2/services/resource.service';
 import { Observable, of } from 'rxjs';
 import { OperatingSystem } from '../../../shared/models/site';
 import { VersioningHelper } from '../../../shared/utilities/versioningHelper';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import {AuthService} from '../../../startup/services/auth.service';
 
 @Injectable()
@@ -14,14 +14,14 @@ export class SiteSupportTopicService extends SupportTopicService {
 
   private _hardCodedSupportTopicIdMapping = [];
 
-  constructor(protected _http: Http, protected _authService: AuthService, protected _diagnosticService: DiagnosticService, protected _webSiteService: WebSitesService) {
+  constructor(protected _http: HttpClient, protected _authService: AuthService, protected _diagnosticService: DiagnosticService, protected _webSiteService: WebSitesService) {
     super(_http, _authService, _diagnosticService, _webSiteService);
 
     if (!VersioningHelper.isV2Subscription(_webSiteService.subscriptionId)) {
 
       // To enable a/b testing, uncomment the below line with the right path and Support Topic Id
       // (the below is an example of how we did the testing for CPU detector)
-      
+
       //this._hardCodedSupportTopicIdMapping.push({pesId: '14748',supportTopicId: '32542218',path: '/diagnostics/availability/analysis' });
     }
   }

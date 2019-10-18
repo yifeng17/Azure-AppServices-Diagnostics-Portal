@@ -1,3 +1,37 @@
+<div class="home-container">
+  <div class="input-group input-group-lg search-input-group" (keyup.escape)="clearSearch()" role="search">
+    <input tabindex="0" type="search" class="form-control" placeholder="{{searchPlaceHolder}}"
+      [ngModel]="searchValue" (ngModelChange)="updateSearchValue($event)" (focus)="onSearchBoxFocus(event)"
+      (focusout)="onSearchLostFocus()" aria-controls="search-results">
+    <div class="input-group-btn" id="clear-search">
+      <button class="btn btn-default" type="button" aria-label="Clear" title="Clear" tabindex="0"
+        (click)="clearSearch()" (focus)="onFocusClear()">
+        <i class="fa fa-close"></i>
+      </button>
+    </div>
+  </div>
+  <div role="status">
+    <p *ngIf="inputAriaLabel">{{inputAriaLabel}}</p>
+  </div>
+  <div id="search-results" role="region" aria-live="polite">
+    <ng-container *ngIf="searchBoxFocus">
+      <search-results [searchValue]="searchValue" (resultCount)="onResultCount($event)"
+        (keyup.escape)="clearSearch()"></search-results>
+    </ng-container>
+  </div>
+  <div class="main-area">
+    <h2 tabindex="0">{{homePageText.title}}</h2>
+    <p id="page-description" tabindex="0">{{homePageText.description}}</p>
+    <div *ngIf="categories" class="category-container">
+      <div *ngFor="let category of categories" style="display: inline-block;padding: 20px 40px 20px 0px">
+        <category-tile [category]="category"></category-tile>
+      </div>
+    </div>
+    <div class="privacy-statement" tabindex="0">
+      <a href="https://azure.microsoft.com/en-us/support/legal/?amp%3Bclcid=0x9" target="_blank">Privacy</a>
+    </div>
+  </div>
+</div>
 <h1>Microsoft Fabric [React] Components</h1>
 
 <h2>Button</h2>
@@ -77,4 +111,30 @@
   (onBlur)="logEvent('dropdown blur', $event)"
 ></fab-dropdown>
 
+
+<fab-calendar [strings]="strings" (onSelectDate)="onSelectDate($event)"></fab-calendar>
+
+  <fab-calendar (onSelectDate)="onSelectDate($event)">
+    <fab-calendar-strings
+      [months]="[
+        'January',
+        'Fabruary',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December'
+      ]"
+      [shortMonths]="['Jan', 'Fab', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']"
+      [days]="['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']"
+      [shortDays]="['S', 'M', 'T', 'W', 'T', 'F', 'S']"
+      goToToday="Go to tomorrow"
+      weekNumberFormatString="Week number {0}"
+    ></fab-calendar-strings>
+  </fab-calendar>
 <!--  -->
