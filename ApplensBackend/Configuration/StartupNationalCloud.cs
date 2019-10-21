@@ -49,6 +49,8 @@ namespace AppLensV3.Configuration
             services.AddSingleton<IObserverClientService, DiagnosticObserverClientService>();
             services.AddSingleton<IEmailNotificationService, NullableEmailNotificationService>();
             services.AddSingleton<IGithubClientService, GithubClientService>();
+            services.AddSingleton<IGraphClientService, NationalCloudGraphClientService>();
+
             services.AddMemoryCache();
             // Add auth policies as they are applied on controllers
             services.AddAuthorization(options => {
