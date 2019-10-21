@@ -145,6 +145,16 @@
             "azureCommImpactedServicesList": "containerGroups",
             "pesId": "",
             "staticSelfHelpContent": ""
+        },
+        {
+            "service": "ResourceService",
+            "resourceType": "Microsoft.BatchAI/workspaces",
+            "templateFileName": "BatchAI",
+            "imgSrc": "assets/img/batchailogo.png",
+            "versionPrefix": "",
+            "azureCommImpactedServicesList": "BatchAI",
+            "pesId": "",
+            "staticSelfHelpContent": ""
         }
     ]
 }
