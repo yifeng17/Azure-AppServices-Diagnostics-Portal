@@ -16,6 +16,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Tokens.Saml2;
+using AppLensV3.Authorization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AppLensV3.Configuration
 {
@@ -48,6 +50,17 @@ namespace AppLensV3.Configuration
             services.AddSingleton<IEmailNotificationService, NullableEmailNotificationService>();
             services.AddSingleton<IGithubClientService, GithubClientService>();
             services.AddMemoryCache();
+            // Add auth policies as they are applied on controllers
+            services.AddAuthorization(options => {
+                options.AddPolicy("ApplensAccess", policy => {
+                policy.Requirements.Add(new SecurityGroupRequirement("ApplensAccess", string.Empty));
+                });
+                options.AddPolicy("ApplensTesters", policy => {
+                    policy.Requirements.Add(new SecurityGroupRequirement("ApplensTesters", string.Empty));
+                });
+            });
+
+            services.AddSingleton<IAuthorizationHandler, SecurityGroupHandlerNationalCloud>();
 
             if (env.IsEnvironment("NationalCloud"))
             {

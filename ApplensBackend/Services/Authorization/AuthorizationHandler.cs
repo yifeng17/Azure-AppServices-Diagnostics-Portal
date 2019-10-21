@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Hosting;
 
 namespace AppLensV3.Authorization
 {
@@ -45,6 +46,16 @@ namespace AppLensV3.Authorization
         public string SecurityGroupName { get; }
 
         public string SecurityGroupObjectId { get; }
+    }
+
+    class SecurityGroupHandlerNationalCloud : AuthorizationHandler<SecurityGroupRequirement>
+    {
+        protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, SecurityGroupRequirement requirement)
+        {
+            // Not required in national cloud, so succeed the context always
+            context.Succeed(requirement);
+            return;
+        }
     }
 
     /// <summary>
