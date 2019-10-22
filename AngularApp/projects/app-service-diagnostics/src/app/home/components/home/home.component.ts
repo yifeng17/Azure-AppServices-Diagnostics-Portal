@@ -11,6 +11,7 @@ import { ResourceService } from '../../../shared-v2/services/resource.service';
 import { HomePageText } from '../../../shared/models/arm/armResourceConfig';
 import { ArmService } from '../../../shared/services/arm.service';
 import { AuthService } from '../../../startup/services/auth.service';
+import { PortalKustoTelemetryService } from '../../../shared/services/portal-kusto-telemetry.service';
 
 @Component({
   selector: 'home',
@@ -29,6 +30,7 @@ export class HomeComponent implements OnInit {
   searchResultCount: number;
   homePageText: HomePageText;
   searchPlaceHolder: string;
+  providerRegisterUrl: string;
   get inputAriaLabel(): string {
     return this.searchValue !== '' ?
       `${this.searchResultCount} Result` + (this.searchResultCount !== 1 ? 's' : '') :
@@ -37,7 +39,7 @@ export class HomeComponent implements OnInit {
 
   constructor(private _resourceService: ResourceService, private _categoryService: CategoryService, private _notificationService: NotificationService, private _router: Router,
     private _detectorControlService: DetectorControlService, private _featureService: FeatureService, private _logger: LoggingV2Service, private _authService: AuthService,
-    private _navigator: FeatureNavigationService, private _activatedRoute: ActivatedRoute, private armService: ArmService) {
+    private _navigator: FeatureNavigationService, private _activatedRoute: ActivatedRoute, private armService: ArmService,private loggingService:PortalKustoTelemetryService) {
 
     if (_resourceService.armResourceConfig && _resourceService.armResourceConfig.homePageText
       && _resourceService.armResourceConfig.homePageText.title && _resourceService.armResourceConfig.homePageText.title.length > 1
@@ -53,7 +55,7 @@ export class HomeComponent implements OnInit {
          improve your application. Select the problem category that best matches the information or tool that you\'re\
          interested in:',
          searchBarPlaceHolder: 'Search App Service Diagnostics'
-      };      
+      };
     }
 
 
@@ -78,9 +80,21 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     this.resourceName = this._resourceService.resource.name;
-
+    this.providerRegisterUrl = `/subscriptions/${this.subscriptionId}/providers/Microsoft.ChangeAnalysis/register`;
     if (!this._detectorControlService.startTime) {
       this._detectorControlService.setDefault();
+    }
+
+    if(this._resourceService.resource.type === 'Microsoft.Web/sites') {
+        // Register Change Analysis Resource Provider.
+        this.armService.postResourceFullResponse(this.providerRegisterUrl, {}, true, '2018-05-01').subscribe((response: HttpResponse<{}>) => {
+            let eventProps = {
+                url: this.providerRegisterUrl
+                };
+                this.loggingService.logEvent("Change Analysis Resource Provider registered",eventProps);
+            }, (error: any) => {
+                this.logHTTPError(error, 'registerResourceProvider');
+            });
     }
   }
 
@@ -137,4 +151,13 @@ export class HomeComponent implements OnInit {
   private _logSearch() {
     this._logger.LogSearch(this.searchValue);
   }
+
+  private logHTTPError(error: any, methodName: string): void {
+    let errorLoggingProps = {
+        errorMsg: error.message ? error.message : 'Server Error',
+        statusCode: error.status ? error.status : 500
+    };
+    this.loggingService.logTrace('HTTP error in ' + methodName, errorLoggingProps);
 }
+}
+
