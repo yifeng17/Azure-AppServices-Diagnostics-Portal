@@ -38,6 +38,9 @@ export class ResourceService {
   }
 
   public getPesId(): Observable<string>{
+    if (this.armResourceConfig){
+      return Observable.of(this.armResourceConfig.pesId);
+    }
     return Observable.of(null);
   }
 
