@@ -57,7 +57,8 @@ import {
     FabTextFieldModule,
     FabPeoplePickerModule,
     FabTagPickerModule,
-    FabProgressIndicatorModule
+    FabProgressIndicatorModule,
+    FabNavModule
   } from '@angular-react/fabric';
 
 export const HomeRoutes = RouterModule.forChild([
@@ -253,7 +254,8 @@ export const HomeRoutes = RouterModule.forChild([
     FabTextFieldModule,
     FabPeoplePickerModule,
     FabTagPickerModule,
-    FabProgressIndicatorModule
+    FabProgressIndicatorModule,
+    FabNavModule
   ],
   declarations: [HomeComponent, CategoryChatComponent, CategoryTileComponent, SearchResultsComponent, SupportTopicRedirectComponent, DiagnosticsSettingsComponent],
   providers: [CategoryTabResolver, CategoryChatResolver, TimeControlResolver,

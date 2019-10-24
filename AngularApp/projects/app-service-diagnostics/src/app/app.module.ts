@@ -56,7 +56,7 @@ import { AngularReactBrowserModule } from '@angular-react/core';
         loadChildren: './resources/resources.module#ResourcesModule'
       }
     ], {
-        enableTracing: true
+        enableTracing: false
     }),
     CustomMaterialModule
   ],
