@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CategoryService } from '../../../shared-v2/services/category.service';
 import { Category } from '../../../shared-v2/models/category';
 import { CategoryChatStateService } from '../../../shared-v2/services/category-chat-state.service';
+import { INavProps, INavLink, INav } from 'office-ui-fabric-react';
 
 @Component({
   selector: 'category-chat',
@@ -17,6 +18,8 @@ export class CategoryChatComponent implements OnInit {
 
   category: Category;
 
+  groups: INavProps["groups"];
+
   constructor(private _injector: Injector, private _activatedRoute: ActivatedRoute, private _categoryService: CategoryService, private _chatState: CategoryChatStateService) {
 
     this._categoryService.categories.subscribe(categories => {
@@ -24,6 +27,42 @@ export class CategoryChatComponent implements OnInit {
       this._chatState.category = this.category;
 
       this.startingKey = `welcome-${this.category.id}`;
+      this.groups = [
+        {
+          links: [
+            {
+              name: 'Home',
+              url: 'http://example.com',
+              expandAriaLabel: 'Overview',
+              collapseAriaLabel: 'Overview',
+              isExpanded: true
+            },
+            {
+              name: 'Web app down',
+              url: '#/../../analysis/appDownAnalysis',
+              key: 'key1',
+              isExpanded: true,
+            },
+            {
+                name: 'Web app slow',
+                url: 'http://example.com',
+                key: 'key2',
+                isExpanded: true,
+                target: '_blank'
+              },
+              {
+                name: 'Hig CPU performance',
+                url: 'http://example.com',
+                key: 'key3',
+                isExpanded: true,
+                target: '_blank'
+              }
+          ],
+        }
+      ];
+
+      console.log("Loading category", this.category);
+      console.log("starting key", this.startingKey);
     });
 
   }

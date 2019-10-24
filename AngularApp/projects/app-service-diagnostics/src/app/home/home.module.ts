@@ -60,7 +60,8 @@ import {
     FabTextFieldModule,
     FabPeoplePickerModule,
     FabTagPickerModule,
-    FabProgressIndicatorModule
+    FabProgressIndicatorModule,
+    FabNavModule
   } from '@angular-react/fabric';
 
 export const HomeRoutes = RouterModule.forChild([
@@ -218,7 +219,7 @@ export const HomeRoutes = RouterModule.forChild([
     },
     resolve: {
       time: TimeControlResolver
-    }    
+    }
   }
 ]);
 
@@ -267,6 +268,7 @@ export const HomeRoutes = RouterModule.forChild([
     FabPeoplePickerModule,
     FabTagPickerModule,
     FabProgressIndicatorModule,
+    FabNavModule,
     MarkdownModule.forRoot()
   ],
   declarations: [HomeComponent, CategoryChatComponent, CategoryTileComponent, SearchResultsComponent, SupportTopicRedirectComponent, DiagnosticsSettingsComponent],
