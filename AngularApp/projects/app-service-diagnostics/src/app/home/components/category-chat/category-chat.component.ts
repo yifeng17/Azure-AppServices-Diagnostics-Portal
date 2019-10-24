@@ -1,6 +1,6 @@
 import { Component, OnInit, Injector } from '@angular/core';
 import { MessageProcessor } from '../../../supportbot/message-processor.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { CategoryService } from '../../../shared-v2/services/category.service';
 import { Category } from '../../../shared-v2/models/category';
 import { CategoryChatStateService } from '../../../shared-v2/services/category-chat-state.service';
@@ -20,7 +20,7 @@ export class CategoryChatComponent implements OnInit {
 
   groups: INavProps["groups"];
 
-  constructor(private _injector: Injector, private _activatedRoute: ActivatedRoute, private _categoryService: CategoryService, private _chatState: CategoryChatStateService) {
+  constructor(private _route: Router, private _injector: Injector, private _activatedRoute: ActivatedRoute, private _categoryService: CategoryService, private _chatState: CategoryChatStateService) {
 
     this._categoryService.categories.subscribe(categories => {
       this.category = categories.find(category => category.id === this._activatedRoute.snapshot.params.category);
@@ -32,14 +32,17 @@ export class CategoryChatComponent implements OnInit {
           links: [
             {
               name: 'Home',
-              url: 'http://example.com',
+              url: '/',
+              onClick: () => {
+                this.navigateTo('../../analysis/appDownAnalysis');
+              },
               expandAriaLabel: 'Overview',
               collapseAriaLabel: 'Overview',
               isExpanded: true
             },
             {
               name: 'Web app down',
-              url: '#/../../analysis/appDownAnalysis',
+              url: '../../analysis/appDownAnalysis',
               key: 'key1',
               isExpanded: true,
             },
@@ -70,5 +73,15 @@ export class CategoryChatComponent implements OnInit {
   ngOnInit() {
 
   }
+
+  navigateTo(path: string) {
+    let navigationExtras: NavigationExtras = {
+        queryParamsHandling: 'preserve',
+        preserveFragment: true,
+        relativeTo: this._activatedRoute
+    };
+    this._route.navigate([path], navigationExtras);
+    console.log("this._route", this._route);
+}
 
 }
