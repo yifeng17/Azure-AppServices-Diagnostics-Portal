@@ -97,7 +97,7 @@ export class DetectorControlService {
         this.timeRangeErrorString = returnValue;
         return returnValue;
       }
-      if (moment.duration(moment.utc().diff(end)).asMinutes() < 0) {        
+      if (moment.duration(moment.utc().diff(end)).asMinutes() < 0) {
         returnValue = 'End date time must be 15 minutes less than current date time';
         this.timeRangeErrorString = returnValue;
         return returnValue;
@@ -176,7 +176,7 @@ export class DetectorControlService {
       else {
         endTime = moment.utc(end);
       }
-      
+
     } else if (start) {
       startTime = moment.utc(start);
       if (moment.duration(moment.utc().diff(startTime.clone().add(1, 'days'))).asMinutes() < 16) {
@@ -228,7 +228,7 @@ export class DetectorControlService {
             else {
               this._endTime = this._startTime.clone().add(1, 'days');
             }
-            
+
             this.timeRangeErrorString += ' Auto adjusted End date time.';
           }
         }

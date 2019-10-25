@@ -5,12 +5,12 @@
       <div class="control">
         <input class="date-input" [(ngModel)]="startTime" (keyup.enter)="setManualDate()"/>
       </div>
-      
+
       <div class="control">
           <input class="date-input" [(ngModel)]="endTime" (keyup.enter)="setManualDate()"/>
       </div>
     </div> -->
-    
+
     <div class="control-group" *ngIf="detectorControlService.duration">
       <div (keyup.enter) = "detectorControlService.moveBackwardDuration()" (click)="detectorControlService.moveBackwardDuration()" attr.name = "Last {{detectorControlService.duration.displayName}}" attr.value = "Last {{detectorControlService.duration.displayName}}" attr.aria-label = "Move time duration back by {{detectorControlService.duration.ariaLabel}}" tabindex="0" role= "button" class="control">
         <i class="fa fa-chevron-left"></i>

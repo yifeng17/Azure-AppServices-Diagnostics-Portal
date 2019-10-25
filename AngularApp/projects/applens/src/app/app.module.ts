@@ -18,6 +18,7 @@ import { CustomUrlSerializerService } from './shared/services/custom-url-seriali
 import { DiagnosticDataModule } from 'diagnostic-data';
 import { UnhandledExceptionHandlerService } from 'diagnostic-data';
 import {CustomMaterialModule} from './material-module';
+import { HighchartsChartModule } from 'highcharts-angular';
 import {UnauthorizedComponent} from './shared/components/unauthorized/unauthorized.component';
 import {AuthRequestFailedComponent} from './shared/components/auth-request-failed/auth-request-failed.component';
 import {TokenInvalidComponent} from './shared/components/tokeninvalid/tokeninvalid.component';
@@ -119,7 +120,8 @@ export const Routes = RouterModule.forRoot([
     DiagnosticDataModule.forRoot(),
     Routes,
     SharedModule.forRoot(),
-    CustomMaterialModule
+    CustomMaterialModule,
+    HighchartsChartModule
   ],
   providers: [
     ValidResourceResolver,
