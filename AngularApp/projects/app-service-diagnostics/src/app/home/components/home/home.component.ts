@@ -37,6 +37,10 @@ export class HomeComponent implements OnInit {
       '';
   }
 
+  get cloudLocation(): string {
+    return window.parent.location.hostname;
+  }
+
   constructor(private _resourceService: ResourceService, private _categoryService: CategoryService, private _notificationService: NotificationService, private _router: Router,
     private _detectorControlService: DetectorControlService, private _featureService: FeatureService, private _logger: LoggingV2Service, private _authService: AuthService,
     private _navigator: FeatureNavigationService, private _activatedRoute: ActivatedRoute, private armService: ArmService,private loggingService:PortalKustoTelemetryService) {
@@ -58,6 +62,13 @@ export class HomeComponent implements OnInit {
       };
     }
 
+    if (this.cloudLocation == "portal.azure.cn"){
+      this.homePageText = {
+        title:'Azure Kubernetes Service Diagnostics',
+        description: 'Explore ways to diagnose and troubleshoot the common problems of your cluster from CRUD operations to connection problems. Click on any of the documents below to start troubleshooting.',
+         searchBarPlaceHolder: 'Search a keyword that best describes your issue'
+      };
+    }
 
     if (_resourceService.armResourceConfig) {
       this._categoryService.initCategoriesForArmResource(_resourceService.resource.id);
