@@ -79,6 +79,7 @@ import { DetectorListAnalysisComponent } from './components/detector-list-analys
 import { AppDependenciesComponent } from './components/app-dependencies/app-dependencies.component';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { HighchartsGraphComponent } from './components/highcharts-graph/highcharts-graph.component';
+import { FabNavModule } from './components/fab-nav/fab-nav.module';
 
 @NgModule({
   imports: [
@@ -90,6 +91,7 @@ import { HighchartsGraphComponent } from './components/highcharts-graph/highchar
     MonacoEditorModule.forRoot(),
     CustomMaterialModule,
     HighchartsChartModule
+    FabNavModule
   ],
   providers: [
     ClipboardService
@@ -121,7 +123,8 @@ import { HighchartsGraphComponent } from './components/highcharts-graph/highchar
     ChangesetsViewComponent,
     ChangesViewComponent,
     DetectorListAnalysisComponent,
-    AppInsightsMarkdownComponent
+    AppInsightsMarkdownComponent,
+    FabNavModule
   ],
 })
 export class DiagnosticDataModule {
@@ -138,7 +141,8 @@ export class DiagnosticDataModule {
         DetectorControlService,
         CommsService,
         FeatureNavigationService,
-        AppInsightsQueryService
+        AppInsightsQueryService,
+        FabNavModule
       ]
     };
   }

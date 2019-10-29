@@ -16,7 +16,7 @@ import { TabTitleResolver } from '../shared/resolvers/tab-name.resolver';
 import { SupportTopicRedirectComponent } from './components/support-topic-redirect/support-topic-redirect.component';
 import { TimeControlResolver } from './resolvers/time-control.resolver';
 import { ContentService } from '../shared-v2/services/content.service';
-import { DiagnosticDataModule } from 'diagnostic-data';
+import { FabNavModule, DiagnosticDataModule } from 'diagnostic-data';
 import { GenericAnalysisComponent } from '../shared/components/generic-analysis/generic-analysis.component';
 import { DiagnosticsSettingsComponent } from './components/diagnostics-settings/diagnostics-settings.component';
 import { SupportTopicService } from '../shared-v2/services/support-topic.service';
@@ -61,7 +61,6 @@ import {
     FabPeoplePickerModule,
     FabTagPickerModule,
     FabProgressIndicatorModule,
-    FabNavModule
   } from '@angular-react/fabric';
 
 export const HomeRoutes = RouterModule.forChild([
