@@ -46,7 +46,9 @@ export class CategoryChatComponent implements OnInit {
               name: 'Home',
               url: '',
               onClick: () => {
-                this.navigateTo('../../analysis/appDownAnalysis');
+                console.log("home router before navigate", this._route);
+                this.navigateTo('analysis/appDownAnalysis');
+                console.log("home router before navigate", this._route);
               },
               expandAriaLabel: 'Overview',
               collapseAriaLabel: 'Overview',
@@ -58,7 +60,7 @@ export class CategoryChatComponent implements OnInit {
               key: 'key1',
               isExpanded: true,
               onClick: () => {
-                this.navigateTo('../../detectors/tcpconnections');
+                this.navigateTo('detectors/tcpconnections');
               },
             },
             {

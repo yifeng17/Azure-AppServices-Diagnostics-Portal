@@ -3,19 +3,18 @@
    
 </div> -->
 
-<div className="App">
-    <div className="header"></div>        
-    <div className="body">
-      <div className="content">
-          <h1>This is the place holder</h1>
-        <router-outlet></router-outlet>
-      </div>
-      <div className="sidebar">
-        <fab-nav [groups]="groups" [styles]="styles"></fab-nav>
-      </div>      
+<div class="App">
+    <div class="header"></div>
+    <div class="body">
+        <div class="sidebar col-md-3">
+            <fab-nav [groups]="groups" [styles]="styles"></fab-nav>
+        </div>
+        <div class="content col-md-9">
+            <router-outlet></router-outlet>
+        </div>
     </div>
-    <div className="footer"></div>
-  </div>
+    <div class="footer"></div>
+</div>
 <!-- <div class="chat-container">
     <div>
         <support-bot [startingKey]="startingKey"></support-bot>
