@@ -77,6 +77,7 @@ import { ChangesViewComponent } from './components/changes-view/changes-view.com
 import { CustomMaterialModule } from './material-module';
 import { DetectorListAnalysisComponent } from './components/detector-list-analysis/detector-list-analysis.component';
 import { AppDependenciesComponent } from './components/app-dependencies/app-dependencies.component';
+import { FabNavModule } from './components/fab-nav/fab-nav.module';
 
 @NgModule({
   imports: [
@@ -86,7 +87,8 @@ import { AppDependenciesComponent } from './components/app-dependencies/app-depe
     MarkdownModule.forRoot(),
     FormsModule,
     MonacoEditorModule.forRoot(),
-    CustomMaterialModule
+    CustomMaterialModule,
+    FabNavModule
   ],
   providers: [
     ClipboardService
@@ -117,7 +119,8 @@ import { AppDependenciesComponent } from './components/app-dependencies/app-depe
     ChangesetsViewComponent,
     ChangesViewComponent,
     DetectorListAnalysisComponent,
-    AppInsightsMarkdownComponent
+    AppInsightsMarkdownComponent,
+    FabNavModule
   ],
 })
 export class DiagnosticDataModule {
@@ -134,7 +137,8 @@ export class DiagnosticDataModule {
         DetectorControlService,
         CommsService,
         FeatureNavigationService,
-        AppInsightsQueryService
+        AppInsightsQueryService,
+        FabNavModule
       ]
     };
   }

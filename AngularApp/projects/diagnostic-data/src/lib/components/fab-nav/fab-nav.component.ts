@@ -19,6 +19,7 @@ import {
     <Nav
       #reactNode
       [groups]="groups"
+      [styles]="styles"
       [LinkClick]="onLinkClickHandler"
       [selectedKey]="selectedKey"
       [expandButtonAriaLabel]="expandButtonAriaLabel"
@@ -41,6 +42,7 @@ export class FabNavComponent extends ReactWrapperComponent<INavProps> {
 
   @Input() componentRef?: INavProps['componentRef'];
   @Input() groups: INavProps["groups"];
+  @Input() styles?: any = ['react-renderer'];
   @Input() selectedKey?: INavProps["selectedKey"];
   @Input() expandedStateText?: INavProps["expandedStateText"];
   @Input() collapsedStateText?: INavProps["collapsedStateText"];

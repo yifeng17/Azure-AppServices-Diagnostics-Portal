@@ -20,6 +20,8 @@ export class CategoryChatComponent implements OnInit {
 
   groups: INavProps["groups"];
 
+  styles: any;
+
   constructor(private _route: Router, private _injector: Injector, private _activatedRoute: ActivatedRoute, private _categoryService: CategoryService, private _chatState: CategoryChatStateService) {
 
     this._categoryService.categories.subscribe(categories => {
@@ -27,12 +29,22 @@ export class CategoryChatComponent implements OnInit {
       this._chatState.category = this.category;
 
       this.startingKey = `welcome-${this.category.id}`;
+      this.styles = {
+        root: {
+          width: 264,
+          height: 350,
+          boxSizing: 'border-box',
+          border: '1px solid #eee',
+          overflowY: 'auto'
+        }
+      };
+      
       this.groups = [
         {
           links: [
             {
               name: 'Home',
-              url: '/',
+              url: '',
               onClick: () => {
                 this.navigateTo('../../analysis/appDownAnalysis');
               },
@@ -42,9 +54,12 @@ export class CategoryChatComponent implements OnInit {
             },
             {
               name: 'Web app down',
-              url: '../../analysis/appDownAnalysis',
+              url: '',
               key: 'key1',
               isExpanded: true,
+              onClick: () => {
+                this.navigateTo('../../detectors/tcpconnections');
+              },
             },
             {
                 name: 'Web app slow',

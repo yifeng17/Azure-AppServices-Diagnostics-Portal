@@ -1,7 +1,23 @@
-<fab-default-button text='Cancel'></fab-default-button>
-<fab-nav [groups]="groups"></fab-nav>
-<div class="chat-container">
+<!-- 
+<div class="content-wrapper gray-background">
+   
+</div> -->
+
+<div className="App">
+    <div className="header"></div>        
+    <div className="body">
+      <div className="content">
+          <h1>This is the place holder</h1>
+        <router-outlet></router-outlet>
+      </div>
+      <div className="sidebar">
+        <fab-nav [groups]="groups" [styles]="styles"></fab-nav>
+      </div>      
+    </div>
+    <div className="footer"></div>
+  </div>
+<!-- <div class="chat-container">
     <div>
         <support-bot [startingKey]="startingKey"></support-bot>
     </div>
-</div>
+</div> -->
