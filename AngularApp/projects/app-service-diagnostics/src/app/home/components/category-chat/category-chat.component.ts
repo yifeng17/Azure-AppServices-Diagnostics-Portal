@@ -31,10 +31,12 @@ export class CategoryChatComponent implements OnInit {
       this.startingKey = `welcome-${this.category.id}`;
       this.styles = {
         root: {
-          width: 265,
+          position: 'fixed',
+          width: 264,
           boxSizing: 'border-box',
-          overflowY: 'auto'
-        }
+          overflowY: 'auto',
+          overflowX: 'hiden',
+        },
       };
 
       this.groups = [
@@ -48,7 +50,8 @@ export class CategoryChatComponent implements OnInit {
               },
               expandAriaLabel: 'Overview',
               collapseAriaLabel: 'Overview',
-              isExpanded: true
+              isExpanded: true,
+              forceAnchor: false
             },
             {
               name: 'Web app down',
@@ -58,17 +61,18 @@ export class CategoryChatComponent implements OnInit {
               onClick: () => {
                 this.navigateTo('detectors/tcpconnections');
               },
+              forceAnchor: true
             },
             {
                 name: 'Web app slow',
-                url: 'http://example.com',
+                url: '',
                 key: 'key2',
                 isExpanded: true,
                 target: '_blank'
               },
               {
                 name: 'Hig CPU performance',
-                url: 'http://example.com',
+                url: '',
                 key: 'key3',
                 isExpanded: true,
                 target: '_blank'
@@ -81,53 +85,31 @@ export class CategoryChatComponent implements OnInit {
                 },
                 expandAriaLabel: 'Overview',
                 collapseAriaLabel: 'Overview',
-                isExpanded: true
-              },         {
-                name: 'Home',
-                url: '',
-                onClick: () => {
-                  this.navigateTo('analysis/appDownAnalysis');
-                },
-                expandAriaLabel: 'Overview',
-                collapseAriaLabel: 'Overview',
-                isExpanded: true
-              },         {
-                name: 'Home',
-                url: '',
-                onClick: () => {
-                  this.navigateTo('analysis/appDownAnalysis');
-                },
-                expandAriaLabel: 'Overview',
-                collapseAriaLabel: 'Overview',
-                isExpanded: true
-              },         {
-                name: 'Home',
-                url: '',
-                onClick: () => {
-                  this.navigateTo('analysis/appDownAnalysis');
-                },
-                expandAriaLabel: 'Overview',
-                collapseAriaLabel: 'Overview',
-                isExpanded: true
-              },         {
-                name: 'Home',
-                url: '',
-                onClick: () => {
-                  this.navigateTo('analysis/appDownAnalysis');
-                },
-                expandAriaLabel: 'Overview',
-                collapseAriaLabel: 'Overview',
-                isExpanded: true
-              },         {
-                name: 'Home',
-                url: '',
-                onClick: () => {
-                  this.navigateTo('analysis/appDownAnalysis');
-                },
-                expandAriaLabel: 'Overview',
-                collapseAriaLabel: 'Overview',
-                isExpanded: true
+                isExpanded: true,
+                forceAnchor: true
               },
+              {
+                name: 'Home',
+                url: '',
+                onClick: () => {
+                  this.navigateTo('analysis/appDownAnalysis');
+                },
+                expandAriaLabel: 'Overview',
+                collapseAriaLabel: 'Overview',
+                isExpanded: true,
+                forceAnchor: true
+              },
+              {
+                name: 'Home',
+                url: '',
+                onClick: () => {
+                  this.navigateTo('analysis/appDownAnalysis');
+                },
+                expandAriaLabel: 'Overview',
+                collapseAriaLabel: 'Overview',
+                isExpanded: true,
+                forceAnchor: true
+              }
           ],
         }
       ];

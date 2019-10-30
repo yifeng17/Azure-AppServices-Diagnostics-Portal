@@ -4,25 +4,49 @@
 //     background-color: #f3f3f3;
 // }
 
-.App {
-    min-height: 100vh;
-  }
+// .App {
+//     min-height: 100vh;
+//   }
 
   .body-content {
-      display: flex!important;
-      flex-direction: row;
-      min-height: 100%!important;;
+    //   display: flex!important;
+    //   flex-direction: row;
+      min-height: 100%!important;
+   //   overflow-y: scroll;
     }
+
+    section.sidebar {
+        width: 265px;
+        position: fixed;
+       // float: left;
+        top: 43px;
+        bottom: 0px;
+        border-right: 1px solid #eee;
+        overflow-y: scroll;
+      }
+
+      section.content {
+        position: fixed;
+        width:85%;
+        top: 43px;
+        bottom: 0px;
+        left: 265px;
+        overflow-y: auto;
+        // if set padding-left, the sidebar item becomes unclickable
+     }
 
   .sidebar, .content{
     display: inline-block;
+    min-height: 100vh;
   }
 
-  .sidebar {
-    padding-right: 1px!important;
-    min-height: 100%!important;
-    border-right: 1px solid #eee;
-  }
+//   .sidebar {
+//     //padding: 0px 1px 0px 0px!important;
+//     min-height: 100%!important;
+//     // border-right: 1px solid #eee;
+//   //  height: inherit;
+//   //  overflow-y: scroll;
+//   }
 
 //  {
 //     padding: 0px!important;
@@ -75,10 +99,13 @@
   header and footer components.
   */
   .App .header {
+    position: fixed;
     height: 43px;
+    width: 100%;
     padding-left: 25px;
     padding-right: 115px;
     box-shadow: inset 0px -1px 0px rgba(204, 204, 204, 0.8);
+    border-bottom: 1px solid #eee;
   }
 
   .category-label {
