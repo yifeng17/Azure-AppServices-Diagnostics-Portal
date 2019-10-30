@@ -5,22 +5,34 @@
 // }
 
 .App {
-    min-height: 100vh; 
+    min-height: 100vh;
   }
 
-  .body {
+  .body-content {
       display: flex!important;
       flex-direction: row;
+      min-height: 100%!important;;
     }
 
-  .sidebar .content{
-    padding: 0px;
+  .sidebar, .content{
+    display: inline-block;
   }
+
+  .sidebar {
+    padding-right: 1px!important;
+    min-height: 100%!important;
+    border-right: 1px solid #eee;
+  }
+
+//  {
+//     padding: 0px!important;
+//   }
+
   /*
   To use Flexbox we need to set the display
   setting of the container component to flex.
-  The we set the direction of the wrapped 
-  components. By default flexbox will order 
+  The we set the direction of the wrapped
+  components. By default flexbox will order
   them by row, but we can also tell it to do
   it by column.
   */
@@ -29,8 +41,8 @@
   //   flex-direction: column;
   // }
   /*
-  Something similar is done to the body 
-  element, except we order the wrapped 
+  Something similar is done to the body
+  element, except we order the wrapped
   component as rows.
   */
   // .App .body {
@@ -38,10 +50,10 @@
   //   flex-direction: row;
   // }
   /*
-  Flexbox let's us reorder the way the 
+  Flexbox let's us reorder the way the
   elements are placed inside the wrapper
   component. Using the order rule, we move
-  the sidebar to the left of the content 
+  the sidebar to the left of the content
   component. We also set its width to 12em
   and set its flex propertires so it doesn't
   grow or shrink with the rest of the page.
@@ -59,26 +71,47 @@
   //   flex-basis: 12em;/* Default value of the element before distribuing the remaing space */
   // }
   /*
-  Lastly we give some custom height to our 
+  Lastly we give some custom height to our
   header and footer components.
   */
-  .App .header,
-  .App .footer {
-    height: 4em;
+  .App .header {
+    height: 43px;
+    padding-left: 25px;
+    padding-right: 115px;
+    box-shadow: inset 0px -1px 0px rgba(204, 204, 204, 0.8);
   }
 
-.content-wrapper.white-background, .content-wrapper.gray-background {
-    min-height: calc(100vh - 95px);
-    height: 100%;
-    margin-top:0px;
+  .category-label {
+    font-family: Segoe UI;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 24px;
+    height: 25px;
+  }
 
-    // Nested onboarding-flow components have two navbars totalling 92px
-    ::ng-deep onboarding-flow {
-        height: calc(100vh - 92px);
-    }
+  .category-description {
+    font-family: Segoe UI;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 10px;
+    line-height: 14px;
+    height: 18px;
+    color: #605E5C;;
+  }
 
-    // The immediate child onboarding-flow does not have a 42px header
-    ::ng-deep>onboarding-flow {
-        height: calc(100vh - 50px);
-    }
-}
+// .content-wrapper.white-background, .content-wrapper.gray-background {
+//     min-height: calc(100vh - 95px);
+//     height: 100%;
+//     margin-top:0px;
+
+//     // Nested onboarding-flow components have two navbars totalling 92px
+//     ::ng-deep onboarding-flow {
+//         height: calc(100vh - 92px);
+//     }
+
+//     // The immediate child onboarding-flow does not have a 42px header
+//     ::ng-deep>onboarding-flow {
+//         height: calc(100vh - 50px);
+//     }
+// }

@@ -1,19 +1,22 @@
-<!-- 
+<!--
 <div class="content-wrapper gray-background">
-   
+
 </div> -->
 
 <div class="App">
-    <div class="header"></div>
-    <div class="body">
-        <div class="sidebar col-md-3">
+    <div class="header">
+      <span class="category-label">Availability and Performance</span>
+      <br />
+      <span class="category-description">Diagnose and solve problems</span>
+    </div>
+    <div class="body-content" style="height: 100%!important;">
+        <div class="sidebar col-md-2">
             <fab-nav [groups]="groups" [styles]="styles"></fab-nav>
         </div>
-        <div class="content col-md-9">
+        <div class="content col-md-8">
             <router-outlet></router-outlet>
         </div>
     </div>
-    <div class="footer"></div>
 </div>
 <!-- <div class="chat-container">
     <div>
