@@ -4,7 +4,7 @@ import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { CategoryService } from '../../../shared-v2/services/category.service';
 import { Category } from '../../../shared-v2/models/category';
 import { CategoryChatStateService } from '../../../shared-v2/services/category-chat-state.service';
-import { INavProps, INavLink, INav } from 'office-ui-fabric-react';
+import { INavProps, INavLink, INav, autobind } from 'office-ui-fabric-react';
 
 @Component({
   selector: 'category-chat',
@@ -31,14 +31,12 @@ export class CategoryChatComponent implements OnInit {
       this.startingKey = `welcome-${this.category.id}`;
       this.styles = {
         root: {
-          width: 264,
-          height: 350,
+          width: 265,
           boxSizing: 'border-box',
-          border: '1px solid #eee',
           overflowY: 'auto'
         }
       };
-      
+
       this.groups = [
         {
           links: [
@@ -46,9 +44,7 @@ export class CategoryChatComponent implements OnInit {
               name: 'Home',
               url: '',
               onClick: () => {
-                console.log("home router before navigate", this._route);
                 this.navigateTo('analysis/appDownAnalysis');
-                console.log("home router before navigate", this._route);
               },
               expandAriaLabel: 'Overview',
               collapseAriaLabel: 'Overview',
@@ -76,7 +72,62 @@ export class CategoryChatComponent implements OnInit {
                 key: 'key3',
                 isExpanded: true,
                 target: '_blank'
-              }
+              },
+              {
+                name: 'Home',
+                url: '',
+                onClick: () => {
+                  this.navigateTo('analysis/appDownAnalysis');
+                },
+                expandAriaLabel: 'Overview',
+                collapseAriaLabel: 'Overview',
+                isExpanded: true
+              },         {
+                name: 'Home',
+                url: '',
+                onClick: () => {
+                  this.navigateTo('analysis/appDownAnalysis');
+                },
+                expandAriaLabel: 'Overview',
+                collapseAriaLabel: 'Overview',
+                isExpanded: true
+              },         {
+                name: 'Home',
+                url: '',
+                onClick: () => {
+                  this.navigateTo('analysis/appDownAnalysis');
+                },
+                expandAriaLabel: 'Overview',
+                collapseAriaLabel: 'Overview',
+                isExpanded: true
+              },         {
+                name: 'Home',
+                url: '',
+                onClick: () => {
+                  this.navigateTo('analysis/appDownAnalysis');
+                },
+                expandAriaLabel: 'Overview',
+                collapseAriaLabel: 'Overview',
+                isExpanded: true
+              },         {
+                name: 'Home',
+                url: '',
+                onClick: () => {
+                  this.navigateTo('analysis/appDownAnalysis');
+                },
+                expandAriaLabel: 'Overview',
+                collapseAriaLabel: 'Overview',
+                isExpanded: true
+              },         {
+                name: 'Home',
+                url: '',
+                onClick: () => {
+                  this.navigateTo('analysis/appDownAnalysis');
+                },
+                expandAriaLabel: 'Overview',
+                collapseAriaLabel: 'Overview',
+                isExpanded: true
+              },
           ],
         }
       ];
