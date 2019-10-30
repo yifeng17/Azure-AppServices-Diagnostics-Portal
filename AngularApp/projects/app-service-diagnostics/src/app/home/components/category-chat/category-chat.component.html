@@ -9,13 +9,13 @@
       <br />
       <span class="category-description">Diagnose and solve problems</span>
     </div>
-    <div class="body-content" style="height: 100%!important;">
-        <div class="sidebar col-md-2">
+    <div class="body-content flex-row">
+        <section class="sidebar">
             <fab-nav [groups]="groups" [styles]="styles"></fab-nav>
-        </div>
-        <div class="content col-md-8">
+        </section>
+        <section class="content">
             <router-outlet></router-outlet>
-        </div>
+        </section>
     </div>
 </div>
 <!-- <div class="chat-container">
