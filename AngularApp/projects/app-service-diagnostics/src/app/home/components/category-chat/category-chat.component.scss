@@ -9,9 +9,10 @@
 //   }
 
   .body-content {
-    //   display: flex!important;
+       display: flex!important;
     //   flex-direction: row;
-      min-height: 100%!important;
+      // min-height: 100%!important;
+      height: calc(100vh - 100px);
    //   overflow-y: scroll;
     }
 
@@ -36,8 +37,7 @@
      }
 
   .sidebar, .content{
-    display: inline-block;
-    min-height: 100vh;
+    flex-basis: auto;
   }
 
 //   .sidebar {

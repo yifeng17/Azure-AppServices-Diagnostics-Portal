@@ -68,6 +68,7 @@ export class FabNavComponent extends ReactWrapperComponent<INavProps> {
   }
 
   onLinkClickHandler(event: React.MouseEvent<HTMLElement>, link?: INavLink): void {
+    event.preventDefault();
     this.onLinkClick.emit({
       event: event.nativeEvent,
       link: link

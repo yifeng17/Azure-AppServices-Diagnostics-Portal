@@ -33,6 +33,7 @@ export class CategoryTileComponent implements OnInit {
     this._diagnosticService.getDetectors().subscribe(detectors => {
 
         console.log("All detectors", detectors);
+        console.log("category id", this.category.id);
       var currentCategoryDetectors = detectors.filter(detector => detector.category === this.category.id);
       console.log("this category", this.category);
 
