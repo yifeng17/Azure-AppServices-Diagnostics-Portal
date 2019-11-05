@@ -161,6 +161,7 @@ export class HighchartsGraphComponent implements OnInit {
                 type: 'line',
                 zoomType: 'x',
                 panKey: 'shift',
+                panning: true,
                 resetZoomButton: {
                     position: {
                         x: 0,
@@ -281,7 +282,7 @@ export class HighchartsGraphComponent implements OnInit {
                 },
             },
             yAxis: {
-                tickAmount: 4,
+                tickAmount: 3,
                 softMin: 0,
                 crosshair: true,
                 accessibility: {
