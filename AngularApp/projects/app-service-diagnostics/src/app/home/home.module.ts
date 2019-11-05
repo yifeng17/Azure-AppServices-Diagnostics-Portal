@@ -18,6 +18,7 @@ import { TimeControlResolver } from './resolvers/time-control.resolver';
 import { ContentService } from '../shared-v2/services/content.service';
 import { FabNavModule, DiagnosticDataModule } from 'diagnostic-data';
 import { GenericAnalysisComponent } from '../shared/components/generic-analysis/generic-analysis.component';
+import { CategoryOverviewComponent } from '../shared/components/category-overview/category-overview.component';
 import { DiagnosticsSettingsComponent } from './components/diagnostics-settings/diagnostics-settings.component';
 import { SupportTopicService } from '../shared-v2/services/support-topic.service';
 import {
@@ -72,10 +73,19 @@ export const HomeRoutes = RouterModule.forChild([
   {
     path: 'categories/:category',
     component: CategoryChatComponent,
-    data: {
-      cacheComponent: true
-    },
+    // data: {
+    //   cacheComponent: true
+    // },
     children: [
+      {
+        path: '',
+        redirectTo: 'overview',
+        pathMatch: 'full',
+      },
+      {
+        path: 'overview',
+        component: CategoryOverviewComponent,
+      },
       {
         path: 'analysis/:analysisId',
         component: GenericAnalysisComponent,

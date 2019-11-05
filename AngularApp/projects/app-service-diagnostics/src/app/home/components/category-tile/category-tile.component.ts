@@ -6,6 +6,7 @@ import { LoggingV2Service } from '../../../shared-v2/services/logging-v2.service
 import { DiagnosticService, DetectorMetaData } from 'diagnostic-data';
 import { ResourceService } from '../../../shared-v2/services/resource.service';
 
+const imageRootPath = '../../../../assets/img/landing-home';
 @Component({
   selector: 'category-tile',
   templateUrl: './category-tile.component.html',
@@ -14,10 +15,12 @@ import { ResourceService } from '../../../shared-v2/services/resource.service';
 export class CategoryTileComponent implements OnInit {
 
   @Input() category: Category;
+  categoryImgPath: string;
 
   constructor(private _router: Router, private _activatedRoute: ActivatedRoute, private _notificationService: NotificationService, private _logger: LoggingV2Service, private _diagnosticService: DiagnosticService, private _resourceService: ResourceService) { }
 
   ngOnInit() {
+    this.categoryImgPath = this.generateImagePath(this.category.name);
   }
 
   navigateToCategory(): void {
@@ -59,5 +62,9 @@ export class CategoryTileComponent implements OnInit {
     });
 
     console.log("Get detectors")
+  }
+
+  generateImagePath(name : string):string {
+    return `${imageRootPath}/${name}.svg`;
   }
 }

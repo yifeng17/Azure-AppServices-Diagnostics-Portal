@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { FeatureService } from '../../../shared-v2/services/feature.service';
 import { DiagnosticService } from 'diagnostic-data';
 import { ContentService } from '../../../shared-v2/services/content.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../startup/services/auth.service';
 import { Feature, FeatureTypes } from '../../../shared-v2/models/features';
 import { AppType, SupportBladeDefinitions } from '../../../shared/models/portal';
