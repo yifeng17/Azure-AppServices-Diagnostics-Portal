@@ -20,7 +20,6 @@ export class FeatureService {
   constructor(protected _diagnosticApiService: DiagnosticService, protected _contentService: ContentService, protected _router: Router, protected _authService: AuthService,
     protected _logger: LoggingV2Service) {
 
-
     this._authService.getStartupInfo().subscribe(startupInfo => {
       this._diagnosticApiService.getDetectors().subscribe(detectors => {
         detectors.forEach(detector => {

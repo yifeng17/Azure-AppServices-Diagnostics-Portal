@@ -5,13 +5,13 @@
 
 <div class="App">
     <div class="header">
-      <span class="category-label">Availability and Performance</span>
+      <span class="category-label">{{categoryName}}</span>
       <br />
       <span class="category-description">Diagnose and solve problems</span>
     </div>
     <div class="body-content flex-row">
         <section class="sidebar">
-            <fab-nav [groups]="groups" [styles]="styles" [initialSelectedKey]='initialSelectedKey'></fab-nav>
+            <fab-nav [groups]="groups" [styles]="styles" [initialSelectedKey]='initialSelectedKey' [selectedKey]='selectedKey'></fab-nav>
         </section>
         <section class="content">
             <router-outlet></router-outlet>
@@ -22,7 +22,7 @@
     <!-- <div *ngFor="let category of allProblemCategories;let i = index">
         <collapsible-list [title]="category.Name" [collapsed]="category.Collapsed" *ngIf="(category.Subcategories | toolstack:AppStack | platformfilter:platform  | apptype:appType).length > 0">
             <collapsible-list-item>
-                <div class="col zoomIn animated category-box" 
+                <div class="col zoomIn animated category-box"
                     *ngFor="let subcategory of category.Subcategories | toolstack:AppStack | platformfilter:platform | apptype:appType" [style.background-color]="category.BgColor" [style.color]="category.TextColor"
                     [routerLink]="[subcategory.Href]" (click)="logCategorySelected(subcategory.Name)">
                     <div class="category-content">{{subcategory.Name}}</div>

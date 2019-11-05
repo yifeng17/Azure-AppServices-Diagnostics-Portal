@@ -1,135 +1,34 @@
-<div class="home-container">
-  <div class="input-group input-group-lg search-input-group" (keyup.escape)="clearSearch()" role="search" *ngIf="isPublicAzure || isIE_Browser">
-    <input tabindex="0" type="search" class="form-control" placeholder="{{searchPlaceHolder}}" [ngModel]="searchValue"
-      (ngModelChange)="updateSearchValue($event)" (focus)="onSearchBoxFocus(event)" (focusout)="onSearchLostFocus()"
-      aria-controls="search-results">
-    <div class="input-group-btn" id="clear-search">
-      <button class="btn btn-default" type="button" aria-label="Clear" title="Clear" tabindex="0"
-        (click)="clearSearch()" (focus)="onFocusClear()">
-        <i class="fa fa-close"></i>
-      </button>
-    </div>
-    <div>
-    <fab-dialog [hidden]="dialogHidden" (onDismiss)="onFocusClear()" key="d2" title="Fabric [React] Dialog" subText="Use Fabric React components inside Applens" [type]="DialogType.largeHeader">
-      Click Count:
-      <fab-dialog-footer>
-        <fab-button (onClick)="onFocusClear()" label='Save' style="margin-right:10px;"></fab-button>
-        <fab-button (onClick)="onFocusClear()" label='Cancel'></fab-button>
-      </fab-dialog-footer>
-    </fab-dialog>
+<div class="main-area">
+  <div class="home-content">
+      <h2 tabindex="0" class="home-title">{{homePageText.title}}</h2>
+      <p  tabindex="0" class="home-description">{{homePageText.description}}</p>
+      <p class="home-description">If you would like to look at the health check then <a>click here.</a>You can also ask chatbot <a>Genie</a> any questions you may have</p>
   </div>
-  </div>
-  <div>
-      <fab-dialog-footer>
-        <fab-button (onClick)="clearSearch()" label='Clear' style="margin-right:10px;">hahah</fab-button>
-      </fab-dialog-footer>
-    </div>
-  <div role="status">
-    <p *ngIf="inputAriaLabel">{{inputAriaLabel}}</p>
-  </div>
-  <div id="search-results" role="region" aria-live="polite">
-    <ng-container *ngIf="searchBoxFocus">
-      <search-results [searchValue]="searchValue" (resultCount)="onResultCount($event)" (keyup.escape)="clearSearch()">
-      </search-results>
-    </ng-container>
-  </div>
-  <div class="main-area">
-    <h2 tabindex="0">{{homePageText.title}}</h2>
-    <p id="page-description" tabindex="0">{{homePageText.description}}</p>
-    <div>
-        <fab-dialog-footer>
-          <fab-button (onClick)="clearSearch()" label='Clear' style="width:10px; height: 10px; color: black">hahah</fab-button>
-        </fab-dialog-footer>
+  <div class="home-container">
+    <div style="margin:25px 0px;" (keyup.escape)="clearSearch()" role="search">
+      <div class="search-box">
+      <fab-search-box tabindex="0" type="search" placeholder="Search" [value]="searchValue"
+        (onChange)="updateSearchValue($event)" (onFocus)="onSearchBoxFocus($event)" (onBlur)="clearSearch()"
+        aria-controls="search-results"></fab-search-box>
       </div>
-    <div *ngIf="categories && (isPublicAzure || isIE_Browser)" class="category-container">
-      <div *ngFor="let category of categories" style="display: inline-block;padding: 20px 40px 20px 0px">
+      <div role="status">
+        <p style="margin-top: 7px;" *ngIf="inputAriaLabel">{{inputAriaLabel}}</p>
+      </div>
+      <div id="search-results" role="region" aria-live="polite">
+        <ng-container *ngIf="searchBoxFocus">
+          <search-results [searchValue]="searchValue" (resultCount)="onResultCount($event)"
+            (keyup.escape)="clearSearch()">
+          </search-results>
+        </ng-container>
+      </div>
+    </div>
+    <div *ngIf="categories" class="category-container row">
+      <div *ngFor="let category of categories" style="display: inline-block;padding: 20px 40px 20px 0px" class="col-md-4">
         <category-tile [category]="category"></category-tile>
       </div>
     </div>
-    <markdown ngPreserveWhitespaces *ngIf="isPublicAzure == false && !isIE_Browser">
-      ## Management
-      Cannot stop, start, or edit my Kubernetes containers
-
-      - <a href="https://docs.azure.cn/aks/troubleshooting" target="_blank">https://docs.azure.cn/aks/troubleshooting</a>
-      - <a href="https://docs.azure.cn/aks/kubernetes-dashboard" target="_blank">https://docs.azure.cn/aks/kubernetes-dashboard</a>
-      - <a href="https://docs.azure.cn/aks/scale-cluster" target="_blank">https://docs.azure.cn/aks/scale-cluster</a>
-      - <a href="https://docs.azure.cn/aks/upgrade-cluster" target="_blank">https://docs.azure.cn/aks/upgrade-cluster</a>
-      - <a href="https://docs.azure.cn/aks/configure-azure-cni" target="_blank">https://docs.azure.cn/aks/configure-azure-cni</a>
-      - <a href="https://docs.azure.cn/aks/kube-advisor-tool" target="_blank">https://docs.azure.cn/aks/kube-advisor-tool</a>
-      - <a href="https://stackoverflow.com/questions/tagged/azure-container-service" target="_blank">https://stackoverflow.com/questions/tagged/azure-container-service</a>
-
-      ## Configuration and setup issues
-      Cannot create Azure Kubernetes service container cluster
-
-      - <a href="https://docs.microsoft.com/azure/aks/create-cluster" target="_blank">https://docs.microsoft.com/azure/aks/create-cluster</a>
-      - <a href="https://docs.azure.cn/aks/scale-cluster" target="_blank">https://docs.azure.cn/aks/scale-cluster</a>
-      - <a href="https://docs.azure.cn/aks/upgrade-cluster" target="_blank">https://docs.azure.cn/aks/upgrade-cluster</a>
-      - <a href="https://docs.azure.cn/aks/azure-disks-dynamic-pv" target="_blank">https://docs.azure.cn/aks/azure-disks-dynamic-pv</a>
-      - <a href="https://docs.azure.cn/aks/ssh" target="_blank">https://docs.azure.cn/aks/ssh</a>
-      - <a href="https://docs.azure.cn/aks/concepts-identity" target="_blank">https://docs.azure.cn/aks/concepts-identity</a>
-      - <a href="https://docs.azure.cn/aks/troubleshooting" target="_blank">https://docs.azure.cn/aks/troubleshooting</a>
-      - <a href="https://docs.azure.cn/aks/kube-advisor-tool" target="_blank">https://docs.azure.cn/aks/kube-advisor-tool</a>
-      - <a href="https://docs.azure.cn/aks/kubernetes-dashboard" target="_blank">https://docs.azure.cn/aks/kubernetes-dashboard</a>
-      - <a href="https://stackoverflow.com/questions/tagged/azure-container-service" target="_blank">https://stackoverflow.com/questions/tagged/azure-container-service</a>
-
-      ## Connectivity
-      Cannot connect to my Azure Kubernetes service container
-      - <a href="https://docs.azure.cn/aks/ssh" target="_blank">https://docs.azure.cn/aks/ssh</a>
-      - <a href="https://docs.azure.cn/aks/Kubernetes-dashboard" target="_blank">https://docs.azure.cn/aks/Kubernetes-dashboard</a>
-      - <a href="https://docs.azure.cn/aks/configure-azure-cni" target="_blank">https://docs.azure.cn/aks/configure-azure-cni</a>
-      - <a href="https://stackoverflow.com/questions/49560394/new-aks-cluster-unreachable-via-network-including-dashboard" target="_blank">https://stackoverflow.com/questions/49560394/new-aks-cluster-unreachable-via-network-including-dashboard</a>
-      - <a href="https://stackoverflow.com/questions/51531561/kubernetes-aks-unable-to-view-the-site" target="_blank">https://stackoverflow.com/questions/51531561/kubernetes-aks-unable-to-view-the-site</a>
-      - <a href="https://docs.azure.cn/aks/troubleshooting" target="_blank">https://docs.azure.cn/aks/troubleshooting</a>
-      - <a href="https://docs.azure.cn/aks/kube-advisor-tool" target="_blank">https://docs.azure.cn/aks/kube-advisor-tool</a>
-      - <a href="https://stackoverflow.com/questions/tagged/azure-container-service" target="_blank">https://stackoverflow.com/questions/tagged/azure-container-service</a>
-
-      ## Connectivity
-      Certificate Management issue (SSH key)
-
-      - <a href="https://docs.azure.cn/aks/ssh" target="_blank">https://docs.azure.cn/aks/ssh</a>
-    </markdown>
     <div class="privacy-statement" tabindex="0">
       <a href="https://azure.microsoft.com/en-us/support/legal/?amp%3Bclcid=0x9" target="_blank">Privacy</a>
     </div>
   </div>
 </div>
-
-
-
-
-<fab-dropdown
-  [label]="'test label'"
-  [selectedKey]="selectedItem && selectedItem.key"
-  [options]="options"
-  [placeholder]="'select one'"
-  (onChange)="logEvent('dropdown change', $event)"
-  (onFocus)="logEvent('dropdown focus', $event)"
-  (onBlur)="logEvent('dropdown blur', $event)"
-></fab-dropdown>
-
-
-<fab-calendar [strings]="strings" (onSelectDate)="onSelectDate($event)"></fab-calendar>
-
-  <fab-calendar (onSelectDate)="onSelectDate($event)">
-    <fab-calendar-strings
-      [months]="[
-        'January',
-        'Fabruary',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December'
-      ]"
-      [shortMonths]="['Jan', 'Fab', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']"
-      [days]="['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']"
-      [shortDays]="['S', 'M', 'T', 'W', 'T', 'F', 'S']"
-      goToToday="Go to tomorrow"
-      weekNumberFormatString="Week number {0}"
-    ></fab-calendar-strings>
-  </fab-calendar>
