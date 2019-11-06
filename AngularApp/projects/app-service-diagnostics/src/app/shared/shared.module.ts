@@ -94,6 +94,7 @@ import { FrebViewerComponent } from './components/daas/freb-viewer/freb-viewer.c
 import { PortalReferrerResolverComponent } from './components/portal-referrer-resolver/portal-referrer-resolver.component';
 import { ConfigureStorageAccountComponent } from './components/daas/configure-storage-account/configure-storage-account.component';
 import { CategoryOverviewComponent } from './components/category-overview/category-overview.component';
+import { SupportBotModule } from '../supportbot/supportbot.module';
 
 @NgModule({
     declarations: [

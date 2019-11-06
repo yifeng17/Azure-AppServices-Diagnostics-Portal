@@ -347,7 +347,7 @@ export const HomeRoutes = RouterModule.forChild([
     FabNavModule,
     MarkdownModule.forRoot()
   ],
-  declarations: [HomeComponent, CategoryChatComponent, CategoryTileComponent, SearchResultsComponent, SupportTopicRedirectComponent, DiagnosticsSettingsComponent, CategoryNavComponent, CategoryMenuItemComponent, SearchPipe, SearchMatchPipe, SectionDividerComponent],
+  declarations: [HomeComponent, CategoryChatComponent, CategoryTileComponent, SearchResultsComponent, SupportTopicRedirectComponent, DiagnosticsSettingsComponent, CategoryOverviewComponent, CategoryNavComponent, CategoryMenuItemComponent, SearchPipe, SearchMatchPipe, SectionDividerComponent],
   providers: [CategoryTabResolver, CategoryChatResolver, TimeControlResolver,
     { provide: GenericSupportTopicService, useExisting: SupportTopicService}
   ]
