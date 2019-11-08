@@ -7,7 +7,7 @@
     "matchRegEx": "/Microsoft.AppPlatform/Spring/",
     "searchSuffix": "ASC",
     "azureServiceName": "Azure Spring Cloud Diagnostics",
-    "armApiVersion": "2019-04-01",
+    "armApiVersion": "2019-05-01-preview",
     "isSearchEnabled": true,
     "isApplicableForLiveChat": false,
     "categories": [
