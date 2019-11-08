@@ -1,0 +1,25 @@
+{
+    "homePageText": {
+        "title": "Azure Spring Cloud Diagnostics",
+        "description": "Use Azure Spring Cloud Diagnostics to investigate how your application is performing, diagnose issues, and discover how to improve its reliability. Select the problem category that best matches the information or tool that you're interested in:",
+        "searchBarPlaceHolder": "Search a keyword that best describes your issue"
+    },
+    "matchRegEx": "/Microsoft.AppPlatform/Spring/",
+    "searchSuffix": "ASC",
+    "azureServiceName": "Azure Spring Cloud Diagnostics",
+    "armApiVersion": "2019-04-01",
+    "isSearchEnabled": true,
+    "isApplicableForLiveChat": false,
+    "categories": [
+        {
+            "id": "Troubleshooting",
+            "name": "Troubleshooting",
+            "description": "Is your application experiencing downtimes or unexpected errors? Investigate and discover issues that may cause your application's availability.",
+            "keywords": [ "Downtime", "Crashes", "High CPU", "High Memory" ],
+            "color": "rgb(186, 211, 245)",
+            "createFlowForCategory": true,
+            "chatEnabled": false
+        }
+    ],
+    "pesId": "16450"
+}
