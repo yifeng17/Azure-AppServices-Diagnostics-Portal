@@ -16,9 +16,9 @@ import { filter } from 'rxjs/operators';
 import { CollapsibleMenuItem, CategoryMenuItemComponent } from '../category-menu-item/category-menu-item.component';
 
 @Component({
-  selector: 'category-nav',
-  templateUrl: './category-nav.component.html',
-  styleUrls: ['./category-nav.component.scss']
+    selector: 'category-nav',
+    templateUrl: './category-nav.component.html',
+    styleUrls: ['./category-nav.component.scss']
 })
 export class CategoryNavComponent implements OnInit {
 
@@ -40,7 +40,7 @@ export class CategoryNavComponent implements OnInit {
     selectedKey: INavProps["initialSelectedKey"];
 
     styles: any;
-
+    collapsible: any = false;
 
     navigateTo(path: string) {
         let navigationExtras: NavigationExtras = {
@@ -53,155 +53,145 @@ export class CategoryNavComponent implements OnInit {
     }
 
 
-  constructor(protected _diagnosticApiService: DiagnosticService, private _route: Router, private _injector: Injector, private _activatedRoute: ActivatedRoute, private categoryService: CategoryService,
-    private _chatState: CategoryChatStateService, private _genericApiService: GenericApiService
-    , private _featureService: FeatureService, protected _authService: AuthService) { }
+    constructor(protected _diagnosticApiService: DiagnosticService, private _route: Router, private _injector: Injector, private _activatedRoute: ActivatedRoute, private categoryService: CategoryService,
+        private _chatState: CategoryChatStateService, private _genericApiService: GenericApiService
+        , private _featureService: FeatureService, protected _authService: AuthService) { }
 
 
-    detectors: CollapsibleMenuItem =
+    detectorList: CollapsibleMenuItem[] = [];
+    // [
+    //     {
+    //       label: 'Diagnostic Report',
+    //       onClick: () => { window.open('https://app-service-diagnostics-docs.azurewebsites.net/api/Diagnostics.ModelsAndUtils.Models.Response.html#extensionmethods', '_blank') },
+    //       expanded: false,
+    //       subItems: [],
+    //       isSelected: null,
+    //       icon: null
+    //     }];
+    createNew: CollapsibleMenuItem[] = [
         {
-          label: 'Diagnostic Report',
-          onClick: () => { window.open('https://app-service-diagnostics-docs.azurewebsites.net/api/Diagnostics.ModelsAndUtils.Models.Response.html#extensionmethods', '_blank') },
-          expanded: false,
-          subItems: [],
-          isSelected: null,
-          icon: null
-        };
-      createNew: CollapsibleMenuItem[] = [
-        {
-          label: 'Your Detectors',
-          onClick: () => {
-            this.navigateTo('create');
-          },
-          expanded: false,
-          subItems: null,
-          isSelected: null,
-          icon: null
-        },
-        {
-        label: 'New Detector',
-        onClick: () => {
-          this.navigateTo('create');
-        },
-        expanded: false,
-        subItems: null,
-        isSelected: null,
-        icon: null
-      },
-      {
-        label: 'New Gist',
-        onClick: () => {
-          this.navigateTo('createGist');
-        },
-        expanded: false,
-        subItems: null,
-        isSelected: null,
-        icon: null
-      }
-      ];
-
-  ngOnInit() {
-    this.categoryService.categories.subscribe(categories => {
-        this.category = categories.find(category => category.id === this._activatedRoute.snapshot.params.category);
-        this._chatState.category = this.category;
-        this.categoryName = this.category.name;
-
-        this._authService.getStartupInfo().subscribe(startupInfo => {
-            this.resourceId = startupInfo.resourceId;
-            console.log("****** resourceId");
-            this.baseUrl = `resource${this.resourceId}/categories/${this.category.id}/`;
-            this.groups = [{
-                links: [{
-                    name: 'Overview',
-                    key: 'overview',
-                    icon: 'globe',
-                    onClick: (e) => {
-                        e.preventDefault();
-                     //   this._route.navigateByUrl(`resource${this.resourceId}/categories/${this.category.id}/`);
-                    //    this._route.navigate([`resource${this.resourceId}/categories/${this.category.id}/`]);
-                        this._route.navigate([`./overview`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge' });
-                    },
-                }]
+            label: 'Your Detectors',
+            onClick: () => {
+                this.navigateTo('create');
             },
-            {
-                name: 'Diagnostic Reports',
-                key: 'diagnosticreport',
-                isExpanded: true,
-                // onClick: (e) => {
-                //     e.preventDefault();
-                //    // this._route.navigateByUrl(`resource${this.resourceId}/categories/${this.category.id}/`);
-                //     this._route.navigate([`resource${this.resourceId}/categories/${this.category.id}/`]);
-                // },
-                links: []
+            expanded: false,
+            subItems: null,
+            isSelected: null,
+            icon: null
+        },
+        {
+            label: 'New Detector',
+            onClick: () => {
+                this.navigateTo('create');
             },
-            ];
-        });
+            expanded: false,
+            subItems: null,
+            isSelected: null,
+            icon: null
+        },
+        {
+            label: 'New Gist',
+            onClick: () => {
+                this.navigateTo('createGist');
+            },
+            expanded: false,
+            subItems: null,
+            isSelected: null,
+            icon: null
+        }
+    ];
 
-        this._diagnosticApiService.getDetectors().subscribe(detectors => {
-            detectors.forEach(detector => {
-                if (detector.category === this.category.name) {
+    ngOnInit() {
+        this.categoryService.categories.subscribe(categories => {
+            this.category = categories.find(category => category.id === this._activatedRoute.snapshot.params.category);
+            this._chatState.category = this.category;
+            this.categoryName = this.category.name;
 
-                    this._diagnosticApiService.getDetectors().subscribe(detectors => {
-                        detectors.forEach(detector => {
-                            if (detector.category === this.category.name) {
-                                if ((detector.category && detector.category.length > 0) ||
-                                    (detector.description && detector.description.length > 0)) {
-                                        let routePath: any = "detectors";
-                                        if (detector.type === DetectorType.Analysis)
-                                        {
-                                            routePath = "analysis";
-                                        }
-                                        let onClick = () => {
-                                        //   this._telemetryService.logEvent(TelemetryEventNames.SideNavigationItemClicked, { "elementId": element.id });
-                                            this.navigateTo(`${routePath}/${detector.id}`);
-                                        };
-
-                                        let isSelected = () => {
-                                          return this.currentRoutePath && this.currentRoutePath.join('/') === `detectors/${detector.id}`;
-                                        };
-
-                                        let category = detector.category ? detector.category : "Uncategorized";
-                                        let menuItem = new CollapsibleMenuItem(detector.name, onClick, isSelected);
-
-                                        this.detectors.subItems.push(menuItem);
-                                }
-                            }
-                        });
-                    });
-                }
+            this._authService.getStartupInfo().subscribe(startupInfo => {
+                this.resourceId = startupInfo.resourceId;
+                console.log("****** resourceId");
+                this.baseUrl = `resource${this.resourceId}/categories/${this.category.id}/`;
+                this.groups = [{
+                    links: [{
+                        name: 'Overview',
+                        key: 'overview',
+                        icon: 'globe',
+                        onClick: (e) => {
+                            e.preventDefault();
+                            //   this._route.navigateByUrl(`resource${this.resourceId}/categories/${this.category.id}/`);
+                            //    this._route.navigate([`resource${this.resourceId}/categories/${this.category.id}/`]);
+                            this._route.navigate([`./overview`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge' });
+                        },
+                    }]
+                },
+                {
+                    name: 'Diagnostic Reports',
+                    key: 'diagnosticreport',
+                    isExpanded: true,
+                    // onClick: (e) => {
+                    //     e.preventDefault();
+                    //    // this._route.navigateByUrl(`resource${this.resourceId}/categories/${this.category.id}/`);
+                    //     this._route.navigate([`resource${this.resourceId}/categories/${this.category.id}/`]);
+                    // },
+                    links: []
+                },
+                ];
             });
+
+            this._diagnosticApiService.getDetectors().subscribe(detectors => {
+                detectors.forEach(detector => {
+                    if (detector.category === this.category.name) {
+                        if ((detector.category && detector.category.length > 0) ||
+                            (detector.description && detector.description.length > 0)) {
+                            let routePath: any = "detectors";
+                            if (detector.type === DetectorType.Analysis) {
+                                routePath = "analysis";
+                            }
+                            let onClick = () => {
+                                //   this._telemetryService.logEvent(TelemetryEventNames.SideNavigationItemClicked, { "elementId": element.id });
+                                this.navigateTo(`${routePath}/${detector.id}`);
+                            };
+
+                            let isSelected = () => {
+                                return this.currentRoutePath && this.currentRoutePath.join('/') === `detectors/${detector.id}`;
+                            };
+
+                            let category = detector.category ? detector.category : "Uncategorized";
+                            let menuItem = new CollapsibleMenuItem(detector.name, onClick, isSelected);
+
+                            this.detectorList.push(menuItem);
+
+                        }
+                    }
+                });
+            });
+
+            console.log("detectors", this.detectorList);
+
+            this.styles = {
+                root: {
+                    position: 'fixed',
+                    width: 264,
+                    boxSizing: 'border-box',
+                    overflowY: 'auto',
+                    overflowX: 'hiden',
+                },
+
+                link: {
+                    fontSize: 13,
+                    color: "#000"
+                },
+                chevronIcon: {
+                    display: 'none'
+                },
+                chevronButton: {
+                    marginTop: -20,
+                    paddingLeft: 10,
+                    fontSize: 12,
+                    fontWeight: 600
+                }
+            };
         });
-
-        console.log("detectors", this.detectors);
-
-
-        this.styles = {
-            root: {
-                position: 'fixed',
-                width: 264,
-                boxSizing: 'border-box',
-                overflowY: 'auto',
-                overflowX: 'hiden',
-            },
-
-            link: {
-                fontSize: 13,
-                color: "#000"
-            },
-            chevronIcon: {
-            display: 'none'
-            },
-            chevronButton: {
-                marginTop: -20,
-                paddingLeft: 10,
-                fontSize: 12,
-                fontWeight: 600
-            },
-            navItem: {
-
-            }
-        };
-    });
-  }
+    }
 
 }
