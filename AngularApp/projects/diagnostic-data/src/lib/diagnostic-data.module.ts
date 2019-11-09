@@ -78,6 +78,7 @@ import { CustomMaterialModule } from './material-module';
 import { DetectorListAnalysisComponent } from './components/detector-list-analysis/detector-list-analysis.component';
 import { AppDependenciesComponent } from './components/app-dependencies/app-dependencies.component';
 import { FabNavModule } from './components/fab-nav/fab-nav.module';
+// import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   imports: [
@@ -88,7 +89,8 @@ import { FabNavModule } from './components/fab-nav/fab-nav.module';
     FormsModule,
     MonacoEditorModule.forRoot(),
     CustomMaterialModule,
-    FabNavModule
+    FabNavModule,
+    // BrowserAnimationsModule
   ],
   providers: [
     ClipboardService

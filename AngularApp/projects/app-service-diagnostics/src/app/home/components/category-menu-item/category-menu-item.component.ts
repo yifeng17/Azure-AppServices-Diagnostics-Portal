@@ -16,27 +16,29 @@ export class CategoryMenuItemComponent implements OnInit {
 
     @Input() menuItem: CollapsibleMenuItem;
     @Input() level: number = 0;
-    @Input() set searchValue(value) {
-      this._searchValueSubject.next(value);
-    };
+    // @Input() set searchValue(value) {
+    //   this._searchValueSubject.next(value);
+    // };
 
     children: CollapsibleMenuItem[];
 
     hasChildren: boolean;
     matchesSearchTerm: boolean = true;
 
-    constructor(private _searchPipe: SearchPipe) { }
+    //private _searchPipe: SearchPipe
+    constructor() { }
 
     ngOnInit() {
       this.children = this.menuItem.subItems;
       this.hasChildren = this.menuItem.subItems && this.menuItem.subItems.length > 0;
 
-      this._searchValueSubject.subscribe(searchValue => {
-        this.searchValueLocal = searchValue;
-        this.menuItem.expanded = searchValue != undefined;
-        this.hasChildren = this.menuItem.subItems ? this._searchPipe.transform(this.menuItem.subItems, searchValue).length > 0 : false;
-        this.matchesSearchTerm = !this.searchValueLocal || this.menuItem.label.toLowerCase().indexOf(this.searchValueLocal.toLowerCase()) >= 0 || this.hasChildren;
-      });
+      // this._searchValueSubject.subscribe(searchValue => {
+      //   this.searchValueLocal = searchValue;
+      //   this.menuItem.expanded = searchValue != undefined;
+      // //  this.hasChildren = this.menuItem.subItems ? this._searchPipe.transform(this.menuItem.subItems, searchValue).length > 0 : false;
+      // this.hasChildren  = false; 
+      // this.matchesSearchTerm = !this.searchValueLocal || this.menuItem.label.toLowerCase().indexOf(this.searchValueLocal.toLowerCase()) >= 0 || this.hasChildren;
+      // });
     }
 
     handleClick() {

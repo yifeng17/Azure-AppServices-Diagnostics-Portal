@@ -185,15 +185,15 @@ export class CategoryChatComponent implements OnInit {
                 }
             };
         });
-        this.getCurrentRoutePath();
+        // this.getCurrentRoutePath();
 
-        this._route.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(event => {
-          this.getCurrentRoutePath();
-        });
+        // this._route.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(event => {
+        //   this.getCurrentRoutePath();
+        // });
 
-        this._route.events.pipe(filter(event => event instanceof Scroll)).subscribe(event => {
-            this.getCurrentRoutePath();
-          });
+        // this._route.events.pipe(filter(event => event instanceof Scroll)).subscribe(event => {
+        //     this.getCurrentRoutePath();
+        //   });
     }
 
     private getCurrentRoutePath() {

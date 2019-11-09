@@ -11,7 +11,7 @@
 
   </div>
   <div class="section-children">
-    <div class="expandable-content" [@expand]="collapsible && expanded ? 'shown' : 'hidden'">
+    <div class="expandable-content" [@expand]="'shown'">
         <ng-content select="collapsible-menu-item"></ng-content>
         <ng-content select=".fa-spin "></ng-content>
     </div>
