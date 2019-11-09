@@ -3,23 +3,84 @@
 
 </div> -->
 
+<!--
+<div>
+  <button class="btn btn-sm" [routerLink]="['analysis/webappdown']" preserveFragment queryParamsHandling="preserve">Go
+    to Detector</button>
+</div>
+<div>
+  <button class="btn btn-sm" [routerLink]="['analysis/tcpconnections']" preserveFragment
+    queryParamsHandling="preserve">Back to Observations</button>
+</div> -->
+<!--
+React refresh bug test
+<div>
+  <fab-icon iconName="Filter" style="float:right" (click)="showChoiceGroup = !showChoiceGroup"></fab-icon>
+  <span>counter</span>
+  <fab-primary-button type="Submit" text='Go'></fab-primary-button>
+  <fab-primary-button type="Go" text='Go'>
+    </fab-primary-button>
+</div> -->
+
+<!--
+<div class="site-content">
+  <section class="sidebar">
+    <div class="user-panel" [class.active]="doesMatchCurrentRoute('home')">
+      <div class="pull-left image" (click)="navigateTo('home/category')">
+        <img [src]="resourceService.imgSrc" class="resource-logo" style="max-width:25px">
+      </div>
+      <div class="info" (click)="navigateTo('home/category')">
+        <p>{{resourceService.getResourceName() | formatResourceName}}</p>
+      </div>
+      <div class='resource-summary' (click)="openResourceInfoModal()">
+        <i class="fa fa-info-circle" aria-hidden="true"></i>
+      </div>
+    </div>
+  </section>
+  <category-nav></category-nav>
+  <div class="content-wrapper gray-background">
+    <router-outlet></router-outlet>
+    <ngx-smart-modal #resourceInfoModal identifier="resourceInfoModal" [customClass]="'wide-modal'">
+      <div class="modal-header" style="background-color: #4968d0; padding: 10px 15px 10px 15px">
+        <h4 class="modal-title" id="myModalLabel" style="color:white">Resource Information</h4>
+      </div>
+      <div class="modal-content">
+        <div class="resource-content">
+          <div *ngIf="observerLink !== ''">
+            <a href="{{observerLink}}" target="_blank">Observer Link
+              <i class="fa fa-link" aria-hidden="true"></i>
+            </a>
+          </div>
+          <div *ngFor="let key of keys">
+            <b>{{key}}:</b> {{resource[key]}}
+          </div>
+        </div>
+      </div>
+    </ngx-smart-modal>
+  </div>
+</div> -->
+
 <div class="App">
-    <div class="header">
-      <span class="category-label">{{categoryName}}</span>
-      <br />
-      <span class="category-description">Diagnose and solve problems</span>
-    </div>
-    <div class="body-content flex-row">
-        <section class="sidebar">
-            <fab-nav [groups]="groups" [styles]="styles" [initialSelectedKey]='initialSelectedKey' [selectedKey]='selectedKey'></fab-nav>
-        </section>
-        <section class="content">
-            <router-outlet></router-outlet>
-        </section>
-    </div>
+  <div class="header">
+    <span class="category-label">{{categoryName}}</span>
+    <br />
+    <span class="category-description">Diagnose and solve problems</span>
+  </div>
+  <div class="body-content flex-row" style="border:bold; color:black">
+    <section class="sidebar">
+
+      <!-- <fab-nav [groups]="groups" [styles]="styles" [initialSelectedKey]='initialSelectedKey'
+        [selectedKey]='selectedKey'></fab-nav> -->
+
+      <category-nav>hahah</category-nav>
+    </section>
+    <section class="content">
+      <router-outlet></router-outlet>
+    </section>
+  </div>
 </div>
 
-    <!-- <div *ngFor="let category of allProblemCategories;let i = index">
+<!-- <div *ngFor="let category of allProblemCategories;let i = index">
         <collapsible-list [title]="category.Name" [collapsed]="category.Collapsed" *ngIf="(category.Subcategories | toolstack:AppStack | platformfilter:platform  | apptype:appType).length > 0">
             <collapsible-list-item>
                 <div class="col zoomIn animated category-box"

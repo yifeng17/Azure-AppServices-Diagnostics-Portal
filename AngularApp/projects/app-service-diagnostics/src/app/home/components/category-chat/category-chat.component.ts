@@ -1,6 +1,6 @@
 import { Component, OnInit, Injector } from '@angular/core';
 import { MessageProcessor } from '../../../supportbot/message-processor.service';
-import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
+import { ActivatedRoute, Router, NavigationExtras, NavigationEnd, Scroll } from '@angular/router';
 import { CategoryService } from '../../../shared-v2/services/category.service';
 import { Category } from '../../../shared-v2/models/category';
 import { CategoryChatStateService } from '../../../shared-v2/services/category-chat-state.service';
@@ -12,6 +12,7 @@ import { Tile } from '../../../shared/components/tile-list/tile-list.component';
 import { Feature } from '../../../shared-v2/models/features';
 import { AuthService } from '../../../startup/services/auth.service';
 import { DiagnosticService, DetectorMetaData, DetectorType } from 'diagnostic-data';
+import { filter } from 'rxjs/operators';
 
 @Component({
     selector: 'category-chat',
@@ -20,6 +21,8 @@ import { DiagnosticService, DetectorMetaData, DetectorType } from 'diagnostic-da
     providers: [CategoryChatStateService]
 })
 export class CategoryChatComponent implements OnInit {
+    showChoiceGroup: boolean = true;
+    currentRoutePath: string[];
     allProblemCategories: Category[] = [];
     features: Feature[];
     tiles: Tile[];
@@ -32,15 +35,33 @@ export class CategoryChatComponent implements OnInit {
     baseUrl = "";
 
     groups: any;
+    counter: number = 0;
 
     initialSelectedKey: INavProps["initialSelectedKey"] = "overview";
     selectedKey: INavProps["initialSelectedKey"];
 
     styles: any;
 
+    selectedCategoryIndex = "1";
+    setCategoryIndex(event:any) {
+        const categoryIndex = event.option.key;
+        this.selectedCategoryIndex = categoryIndex;
+      }
     constructor(protected _diagnosticApiService: DiagnosticService, private _route: Router, private _injector: Injector, private _activatedRoute: ActivatedRoute, private categoryService: CategoryService,
         private _chatState: CategoryChatStateService, private _genericApiService: GenericApiService
         , private _featureService: FeatureService, protected _authService: AuthService) {
+            // this._route.routeReuseStrategy.shouldReuseRoute = function(){
+            //     return true;
+            //  }
+
+             this._route.events.subscribe((evt) => {
+                if (evt instanceof NavigationEnd) {
+                   // trick the Router into believing it's last link wasn't previously loaded
+                   this._route.navigated = false;
+                   // if you need to scroll back to top, here is the right place
+                   window.scrollTo(0, 0);
+                }
+            });
     }
 
     ngOnInit() {
@@ -63,7 +84,8 @@ export class CategoryChatComponent implements OnInit {
                         onClick: (e) => {
                             e.preventDefault();
                          //   this._route.navigateByUrl(`resource${this.resourceId}/categories/${this.category.id}/`);
-                            this._route.navigate([`resource${this.resourceId}/categories/${this.category.id}/`]);
+                        //    this._route.navigate([`resource${this.resourceId}/categories/${this.category.id}/`]);
+                            this._route.navigate([`./overview`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge' });
                         },
                     }]
                 },
@@ -71,11 +93,11 @@ export class CategoryChatComponent implements OnInit {
                     name: 'Diagnostic Reports',
                     key: 'diagnosticreport',
                     isExpanded: true,
-                    onClick: (e) => {
-                        e.preventDefault();
-                       // this._route.navigateByUrl(`resource${this.resourceId}/categories/${this.category.id}/`);
-                        this._route.navigate([`resource${this.resourceId}/categories/${this.category.id}/`]);
-                    },
+                    // onClick: (e) => {
+                    //     e.preventDefault();
+                    //    // this._route.navigateByUrl(`resource${this.resourceId}/categories/${this.category.id}/`);
+                    //     this._route.navigate([`resource${this.resourceId}/categories/${this.category.id}/`]);
+                    // },
                     links: []
                 },
                 ];
@@ -95,11 +117,15 @@ export class CategoryChatComponent implements OnInit {
                                     //   url: `resource${this.resourceId}/categories/${this.category.id}/detectors/${detector.id}`,
                                     //   forceAnchor: true,
                                     onClick: (e) => {
+                                        console.log("clicked event", detector.name);
                                         e.preventDefault();
+                                     //  this._route.navigate([`./detectors/${detector.id}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge' });
                                         //     feature.clickAction();
-                                        this.selectedKey = detector.id;
-                                        //      this.navigateTo(`detectors/${detector.id}`);
-                                        this._route.navigateByUrl(`resource${this.resourceId}/categories/${this.category.id}/detectors/${detector.id}`);
+                                        // this.selectedKey = detector.id;
+                                        console.log("Route before", this._route);
+                                              this.navigateTo(`detectors/${detector.id}`);
+                                              console.log("Route After", this._route);
+                                        // this._route.navigateByUrl(`resource${this.resourceId}/categories/${this.category.id}/detectors/${detector.id}`);
                                         //    this.navigateTo('analysis/tcpconnections');
                                     },
                                     expandAriaLabel: detector.name,
@@ -116,7 +142,7 @@ export class CategoryChatComponent implements OnInit {
                                         e.preventDefault();
                                         this.selectedKey = detector.id;
                                         //     feature.clickAction();
-
+                                     //  this._route.navigateByUrl(`resource${this.resourceId}/analysis/${detector.id}`);
                                         this._route.navigateByUrl(`resource${this.resourceId}/categories/${this.category.id}/analysis/${detector.id}`);
                                         //   this.navigateTo(`analysis/${detector.id}`);
                                         //    this.navigateTo('analysis/tcpconnections');
@@ -131,29 +157,6 @@ export class CategoryChatComponent implements OnInit {
             });
 
             console.log("groups", this.groups);
-
-            this.tiles = this.features.map(feature => <Tile>{
-                title: feature.name,
-                action: () => feature.clickAction()
-            });
-
-            //   this._diagnosticApiService.getDetectors().subscribe(detectors => {
-            //   var currentCategoryDetectors = detectors.filter(detector => detector.category === this.category.name);
-            //   if (currentCategoryDetectors.length === 1) {
-            // //    this._logger.LogTopLevelDetector(currentCategoryDetectors[0].id, currentCategoryDetectors[0].name, this.category.id);
-            // //    this._router.navigateByUrl(`resource${this._resourceService.resourceIdForRouting}/detectors/${currentCategoryDetectors[0].id}`);
-            //   }
-            //   else {
-            //     const path = ['categories', this.category.id];
-            //     const navigationExtras: NavigationExtras = {
-            //       queryParamsHandling: 'preserve',
-            //       preserveFragment: true,
-            //       relativeTo: this._activatedRoute
-            //     };
-
-            // //   this._router.navigate(path, navigationExtras);
-            //   }
-            // });
 
             this.styles = {
                 root: {
@@ -182,7 +185,19 @@ export class CategoryChatComponent implements OnInit {
                 }
             };
         });
+        this.getCurrentRoutePath();
 
+        this._route.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(event => {
+          this.getCurrentRoutePath();
+        });
+
+        this._route.events.pipe(filter(event => event instanceof Scroll)).subscribe(event => {
+            this.getCurrentRoutePath();
+          });
+    }
+
+    private getCurrentRoutePath() {
+        this.currentRoutePath = this._activatedRoute.firstChild.snapshot.url.map(urlSegment => urlSegment.path);
     }
 
     navigateTo(path: string) {
@@ -191,9 +206,7 @@ export class CategoryChatComponent implements OnInit {
             preserveFragment: true,
             relativeTo: this._activatedRoute
         };
-        this._route.navigate([path], navigationExtras);
+        this._route.navigate(path.split('/'), navigationExtras);
         console.log("this._route", this._route);
     }
-
-
 }
