@@ -21,6 +21,8 @@ import { GenericAnalysisComponent } from '../shared/components/generic-analysis/
 import { CategoryOverviewComponent } from '../shared/components/category-overview/category-overview.component';
 import { DiagnosticsSettingsComponent } from './components/diagnostics-settings/diagnostics-settings.component';
 import { SupportTopicService } from '../shared-v2/services/support-topic.service';
+import { SearchPipe, SearchMatchPipe } from './components/pipes/search.pipe';
+
 import {
     FabBreadcrumbModule,
     FabButtonModule,
@@ -60,6 +62,9 @@ import {
     FabTagPickerModule,
     FabProgressIndicatorModule,
   } from '@angular-react/fabric';
+import { CategoryNavComponent } from './components/category-nav/category-nav.component';
+import { CategoryMenuItemComponent } from './components/category-menu-item/category-menu-item.component';
+import { SectionDividerComponent } from './components/section-divider/section-divider.component';
 
 export const HomeRoutes = RouterModule.forChild([
   {
@@ -77,11 +82,11 @@ export const HomeRoutes = RouterModule.forChild([
     //   cacheComponent: true
     // },
     children: [
-      {
-        path: '',
-        redirectTo: 'overview',
-        pathMatch: 'full',
-      },
+    //   {
+    //     path: '',
+    //     redirectTo: 'overview',
+    //     pathMatch: 'full',
+    //   },
       {
         path: 'overview',
         component: CategoryOverviewComponent,
@@ -145,59 +150,59 @@ export const HomeRoutes = RouterModule.forChild([
       messageList: CategoryChatResolver
     }
   },
-  // {
-  //   path: 'detectors/:detectorName',
-  //   component: GenericDetectorComponent,
-  //   data: {
-  //     cacheComponent: true
-  //   },
-  //   resolve: {
-  //     time: TimeControlResolver,
-  //     navigationTitle: TabTitleResolver,
-  //   }
-  // },
-  // {
-  //   path: 'analysis/:analysisId/detectors/:detectorName',
-  //   component: GenericAnalysisComponent,
-  //   data: {
-  //     cacheComponent: true
-  //   },
-  //   children: [
-  //     {
-  //       path: '',
-  //       component: GenericDetectorComponent,
-  //       data: {
-  //         analysisMode: true,
-  //         cacheComponent: true
-  //       }
-  //     }
-  //   ],
-  //   resolve: {
-  //     time: TimeControlResolver,
-  //     navigationTitle: TabTitleResolver,
-  //   }
-  // },
-  // {
-  //   path: 'analysis/:analysisId',
-  //   component: GenericAnalysisComponent,
-  //   data: {
-  //     cacheComponent: true
-  //   },
-  //   children: [
-  //     {
-  //       path: '',
-  //       component: GenericDetectorComponent,
-  //       data: {
-  //         analysisMode: true,
-  //         cacheComponent: true
-  //       }
-  //     }
-  //   ],
-  //   resolve: {
-  //     time: TimeControlResolver,
-  //     navigationTitle: TabTitleResolver,
-  //   }
-  // },
+  {
+    path: 'detectors/:detectorName',
+    component: GenericDetectorComponent,
+    data: {
+      cacheComponent: true
+    },
+    resolve: {
+      time: TimeControlResolver,
+      navigationTitle: TabTitleResolver,
+    }
+  },
+  {
+    path: 'analysis/:analysisId/detectors/:detectorName',
+    component: GenericAnalysisComponent,
+    data: {
+      cacheComponent: true
+    },
+    children: [
+      {
+        path: '',
+        component: GenericDetectorComponent,
+        data: {
+          analysisMode: true,
+          cacheComponent: true
+        }
+      }
+    ],
+    resolve: {
+      time: TimeControlResolver,
+      navigationTitle: TabTitleResolver,
+    }
+  },
+  {
+    path: 'analysis/:analysisId',
+    component: GenericAnalysisComponent,
+    data: {
+      cacheComponent: true
+    },
+    children: [
+      {
+        path: '',
+        component: GenericDetectorComponent,
+        data: {
+          analysisMode: true,
+          cacheComponent: true
+        }
+      }
+    ],
+    resolve: {
+      time: TimeControlResolver,
+      navigationTitle: TabTitleResolver,
+    }
+  },
   {
     path: 'analysis/:analysisId/search',
     component: GenericAnalysisComponent,
@@ -321,7 +326,7 @@ export const HomeRoutes = RouterModule.forChild([
     FabProgressIndicatorModule,
     FabNavModule
   ],
-  declarations: [HomeComponent, CategoryChatComponent, CategoryTileComponent, SearchResultsComponent, SupportTopicRedirectComponent, DiagnosticsSettingsComponent],
+  declarations: [HomeComponent, CategoryChatComponent, CategoryTileComponent, SearchResultsComponent, SupportTopicRedirectComponent, DiagnosticsSettingsComponent, CategoryNavComponent, CategoryMenuItemComponent, SearchPipe, SearchMatchPipe, SectionDividerComponent],
   providers: [CategoryTabResolver, CategoryChatResolver, TimeControlResolver,
     { provide: GenericSupportTopicService, useExisting: SupportTopicService}
   ]

@@ -55,8 +55,10 @@ import { AngularReactBrowserModule } from '@angular-react/core';
         path: 'resource',
         loadChildren: './resources/resources.module#ResourcesModule'
       }
-    ], {
-        enableTracing: false
+    ],
+    {
+        enableTracing: true,
+        scrollPositionRestoration: 'top'
     }),
     CustomMaterialModule
   ],
