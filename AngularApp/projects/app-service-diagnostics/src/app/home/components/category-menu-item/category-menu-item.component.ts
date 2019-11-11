@@ -3,14 +3,13 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 import { BehaviorSubject } from 'rxjs';
 import { SearchPipe } from '../pipes/search.pipe';
 
-
 @Component({
   selector: 'collapsible-menu-item',
   templateUrl: './category-menu-item.component.html',
   styleUrls: ['./category-menu-item.component.scss']
 })
-export class CategoryMenuItemComponent implements OnInit {
 
+export class CategoryMenuItemComponent implements OnInit {
     private _searchValueSubject: BehaviorSubject<string> = new BehaviorSubject<string>(null);
     private searchValueLocal: string;
 
@@ -64,7 +63,6 @@ export class CategoryMenuItemComponent implements OnInit {
     getFontSize() {
         return (14 - this.level) + 'px';
     }
-
   }
 
   export class CollapsibleMenuItem {
@@ -83,5 +81,4 @@ export class CategoryMenuItemComponent implements OnInit {
       this.isSelected = isSelected;
       this.icon = icon;
     }
-
 }
