@@ -21,7 +21,7 @@ import { CollapsibleMenuItem, CategoryMenuItemComponent } from '../category-menu
     styleUrls: ['./category-nav.component.scss']
 })
 export class CategoryNavComponent implements OnInit {
-
+    imageRootPath = '../../../../assets/img/detectors';
     currentRoutePath: string[];
     allProblemCategories: Category[] = [];
     features: Feature[];
@@ -156,8 +156,9 @@ export class CategoryNavComponent implements OnInit {
                                 return this.currentRoutePath && this.currentRoutePath.join('/') === `detectors/${detector.id}`;
                             };
 
-                            let category = detector.category ? detector.category : "Uncategorized";
-                            let menuItem = new CollapsibleMenuItem(detector.name, onClick, isSelected);
+                            let icon = `${this.imageRootPath}/overview.png`;
+                         //   let icon = `${this.imageRootPath}/${detector.name}.png`;
+                            let menuItem = new CollapsibleMenuItem(detector.name, onClick, isSelected, icon);
 
                             this.detectorList.push(menuItem);
 

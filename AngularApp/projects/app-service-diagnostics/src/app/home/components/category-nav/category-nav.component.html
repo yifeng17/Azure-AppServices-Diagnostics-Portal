@@ -44,7 +44,8 @@
             <div  class="menu" [ngClass]="'light-theme'">
             <div id="scroll-container">
             <section-divider [label]="'Diagnostic Report'" [initiallyExpanded]="false" [collapsible]="false" (click)="collapsible = !collapsible">
-              <i class="fa fa-book fa-fw menu-icon menu-icon-documentation" aria-hidden="true"></i>
+              <!-- <i class="fa fa-book fa-fw menu-icon menu-icon-documentation" aria-hidden="true"></i> -->
+
               <collapsible-menu-item *ngFor="let detector of detectorList" [menuItem]="detector"></collapsible-menu-item>
             </section-divider>
           </div>
