@@ -156,7 +156,7 @@ export class CategoryNavComponent implements OnInit {
                                 return this.currentRoutePath && this.currentRoutePath.join('/') === `detectors/${detector.id}`;
                             };
 
-                            let icon = `${this.imageRootPath}/overview.png`;
+                            let icon = `${this.imageRootPath}/${detector.name}.png`;
                          //   let icon = `${this.imageRootPath}/${detector.name}.png`;
                             let menuItem = new CollapsibleMenuItem(detector.name, onClick, isSelected, icon);
 
