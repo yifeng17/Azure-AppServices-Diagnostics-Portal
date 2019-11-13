@@ -53,6 +53,8 @@
   <markdown *ngIf="supportDocumentContent.length>0" #markdownDiv [data]="supportDocumentContent"></markdown>
 </data-container>
 
+<cxp-chat-launcher *ngIf="showChatButton()" [trackingId] = "cxpChatTrackingId" [chatUrl] = "cxpChatUrl" ></cxp-chat-launcher>
+
 <loader-view style="margin-top:300px" *ngIf="!detectorDataLocalCopy && !errorState" message="Loading Detector..."></loader-view>
 
 <ng-container *ngIf="!detectorDataLocalCopy && errorState">

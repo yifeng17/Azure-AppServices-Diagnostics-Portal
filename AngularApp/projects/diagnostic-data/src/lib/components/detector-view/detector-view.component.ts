@@ -9,6 +9,7 @@ import { TelemetryEventNames } from '../../services/telemetry/telemetry.common';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { CompilationProperties} from '../../models/compilation-properties';
 import {GenericSupportTopicService} from '../../services/generic-support-topic.service';
+import { CXPChatService } from 'projects/app-service-diagnostics/src/app/shared/services/cxp-chat.service';
 @Component({
   selector: 'detector-view',
   templateUrl: './detector-view.component.html',
@@ -50,6 +51,9 @@ export class DetectorViewComponent implements OnInit {
   emailToAuthor: string = '';
   emailToApplensTeam: string = '';
 
+  cxpChatTrackingId:string= '';
+  cxpChatUrl:string = '';
+
   @Input()
   set detectorResponse(value: DetectorResponse) {
     this.detectorResponseSubject.next(value);
@@ -77,7 +81,7 @@ export class DetectorViewComponent implements OnInit {
   feedbackButtonLabel: string = 'Send Feedback';
 
   constructor(@Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig, private telemetryService: TelemetryService,
-    private detectorControlService: DetectorControlService, private _supportTopicService: GenericSupportTopicService) {
+    private detectorControlService: DetectorControlService, private _supportTopicService: GenericSupportTopicService, private _cxpChatService: CXPChatService) {
     this.isPublic = config && config.isPublic;
     this.feedbackButtonLabel = this.isPublic ? 'Send Feedback' : 'Rate Detector';
   }
@@ -248,6 +252,10 @@ export class DetectorViewComponent implements OnInit {
     this.telemetryService.logEvent(eventMessage, eventProperties, measurements);
   }
 
+  showChatButton():boolean {
+    return !this.isAnalysisView && this.supportDocumentRendered && this.cxpChatTrackingId != '' && this.cxpChatUrl != '';    
+  }
+
   populateSupportTopicDocument(){
     if (!this.supportDocumentRendered){
       this._supportTopicService.getSelfHelpContentDocument().subscribe(res => {
@@ -264,6 +272,15 @@ export class DetectorViewComponent implements OnInit {
           // Set the innter html for support document display
           this.supportDocumentContent = tmp.innerHTML;
           this.supportDocumentRendered = true;
+
+          if(this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId)) {
+            this.cxpChatTrackingId = this._cxpChatService.generateTrackingId();
+            this._cxpChatService.getChatURL(this._supportTopicService.supportTopicId, this.cxpChatTrackingId).subscribe((chatApiResponse:any)=>{
+              if (chatApiResponse && chatApiResponse != '') {
+                this.cxpChatUrl = chatApiResponse;
+              }
+            });
+          }          
         }
       });
     }
