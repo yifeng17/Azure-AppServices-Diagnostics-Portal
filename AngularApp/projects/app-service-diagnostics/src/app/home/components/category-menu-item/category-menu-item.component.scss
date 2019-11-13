@@ -5,7 +5,12 @@
 .menu-item {
     cursor: pointer;
     font-family: az_ea_font,"Segoe UI",wf_segoe-ui_normal,"Segoe WP",Tahoma,Arial,sans-serif;
-    
+
+}
+
+:host-context(.light-theme) .menu-item:hover,
+:host-context(.light-theme) .menu-item.selected {
+    background-color: rgba(0,137,250,.1);
 }
 
 .expand-icon {
@@ -44,7 +49,7 @@
     color: #ffb353;
 }
 
-.menu-label {
-    font-size: "13px!important";
-    font-family: "az_ea_font,'Segoe UI',az_font,system-ui,-apple-system,BlinkMacSystemFont,Roboto,Oxygen,Ubuntu,Cantarell,'Open Sans','Helvetica Neue',sans-serif!important";
-}
+// .menu-label {
+//     font-size: "13px!important";
+//     font-family: "az_ea_font,'Segoe UI',az_font,system-ui,-apple-system,BlinkMacSystemFont,Roboto,Oxygen,Ubuntu,Cantarell,'Open Sans','Helvetica Neue',sans-serif";
+// }

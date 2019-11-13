@@ -3,7 +3,7 @@
       <ng-content select=".menu-icon"></ng-content>
       </div>
     <div class="menu-label">
-        {{label.toUpperCase()}}
+        {{label}}
     </div>
     <div class="menu-expand-icon">
         <span class="fa section-expand-icon" *ngIf="collapsible" [class.fa-angle-down]="!expanded && !disableExpandIcon" [class.fa-angle-up]="expanded && !disableExpandIcon"></span>

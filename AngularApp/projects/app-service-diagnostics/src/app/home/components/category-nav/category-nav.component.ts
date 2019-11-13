@@ -33,6 +33,7 @@ export class CategoryNavComponent implements OnInit {
     categoryName: string;
     resourceId = "";
     baseUrl = "";
+    selectedId = "";
 
     groups: any;
 
@@ -41,6 +42,13 @@ export class CategoryNavComponent implements OnInit {
 
     styles: any;
     collapsible: any = false;
+
+    isSelected(detectorId: string) {
+        console.log("router url", this._route.url, detectorId);
+        var s = this._route.url.includes(detectorId);
+        console.log("Is selected", s);
+        return this._route.url.includes(detectorId);
+    }
 
     navigateTo(path: string) {
         let navigationExtras: NavigationExtras = {
@@ -101,7 +109,18 @@ export class CategoryNavComponent implements OnInit {
         }
     ];
 
+
+    private getCurrentRoutePath() {
+        this.currentRoutePath = this._activatedRoute.firstChild.snapshot.url.map(urlSegment => urlSegment.path);
+      }
     ngOnInit() {
+
+    this._route.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(event => {
+        this.getCurrentRoutePath();
+      });
+
+
+
         this.categoryService.categories.subscribe(categories => {
             this.category = categories.find(category => category.id === this._activatedRoute.snapshot.params.category);
             this._chatState.category = this.category;
@@ -109,7 +128,6 @@ export class CategoryNavComponent implements OnInit {
 
             this._authService.getStartupInfo().subscribe(startupInfo => {
                 this.resourceId = startupInfo.resourceId;
-                console.log("****** resourceId");
                 this.baseUrl = `resource${this.resourceId}/categories/${this.category.id}/`;
                 this.groups = [{
                     links: [{
@@ -153,21 +171,23 @@ export class CategoryNavComponent implements OnInit {
                             };
 
                             let isSelected = () => {
-                                return this.currentRoutePath && this.currentRoutePath.join('/') === `detectors/${detector.id}`;
+                                //return this.currentRoutePath && this.currentRoutePath.join('/') === `detectors/${detector.id}`;
+
+                                // return this.currentRoutePath && this.currentRoutePath.join('/').includes(detector.id);
+                                return this._route.url.includes(detector.id);
                             };
 
-                            let icon = `${this.imageRootPath}/${detector.name}.png`;
-                         //   let icon = `${this.imageRootPath}/${detector.name}.png`;
+                         //   let icon = `${this.imageRootPath}/${detector.name}.svg`;
+                           let icon = `${this.imageRootPath}/${detector.name}.png`;
                             let menuItem = new CollapsibleMenuItem(detector.name, onClick, isSelected, icon);
 
                             this.detectorList.push(menuItem);
-
                         }
                     }
                 });
             });
 
-            console.log("detectors", this.detectorList);
+            console.log("*****detectors", this.detectorList);
 
             this.styles = {
                 root: {

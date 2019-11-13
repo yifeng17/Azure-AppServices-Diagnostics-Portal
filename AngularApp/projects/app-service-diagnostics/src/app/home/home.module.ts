@@ -77,22 +77,29 @@ export const HomeRoutes = RouterModule.forChild([
       navigationTitle: 'Home',
       cacheComponent: true
     },
+    pathMatch: 'full',
   },
   {
     path: 'categories/:category',
     component: CategoryChatComponent,
-    // data: {
-    //   cacheComponent: true
-    // },
+    data: {
+      cacheComponent: true
+    },
     children: [
-    //   {
-    //     path: '',
-    //     redirectTo: 'overview',
-    //     pathMatch: 'full',
-    //   },
       {
         path: 'overview',
         component: CategoryOverviewComponent,
+        data: {
+            cacheComponent: true
+        },
+      },
+      {
+        path: '',
+        redirectTo: 'overview',
+        pathMatch: 'full',
+        data: {
+            cacheComponent: true
+        },
       },
       {
         path: 'analysis/:analysisId',

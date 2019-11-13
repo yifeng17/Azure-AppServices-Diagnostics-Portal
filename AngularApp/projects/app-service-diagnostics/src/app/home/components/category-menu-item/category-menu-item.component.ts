@@ -35,7 +35,7 @@ export class CategoryMenuItemComponent implements OnInit {
       //   this.searchValueLocal = searchValue;
       //   this.menuItem.expanded = searchValue != undefined;
       // //  this.hasChildren = this.menuItem.subItems ? this._searchPipe.transform(this.menuItem.subItems, searchValue).length > 0 : false;
-      // this.hasChildren  = false; 
+      // this.hasChildren  = false;
       // this.matchesSearchTerm = !this.searchValueLocal || this.menuItem.label.toLowerCase().indexOf(this.searchValueLocal.toLowerCase()) >= 0 || this.hasChildren;
       // });
     }
