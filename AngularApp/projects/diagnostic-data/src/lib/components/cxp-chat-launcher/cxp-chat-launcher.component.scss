@@ -1,0 +1,86 @@
+@import "../../../../../app-service-diagnostics/src/styles/common/variables";
+@import "../../../../../app-service-diagnostics/src/styles/controls/buttons";
+
+$chatBubble-color: rgb(0, 120, 212);
+
+ .cxpChat-Container  {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-end;
+    padding: 0px;
+    position: relative;
+ }
+
+ .cxpChat-cellContainer {
+    display: flex;
+    align-items: center;     
+ }
+
+ .arrow-bottom  {
+    width: 2.5%;
+    height: 0;
+    z-index: 100;     
+ }
+
+ .arrow-bottom::before {
+    content: '';
+    display: block;
+    width: 0;
+    margin-top:-10px;
+    z-index:100;
+      
+    border-left: 10px solid transparent;
+    border-right: 10px solid  transparent;
+    border-top: 10px solid $chatBubble-color;
+    border-bottom: 10px solid transparent;
+}
+
+.cxpChat-ConfContainer {
+    background: $chatBubble-color;
+    color:white;
+    font-size:14px;
+    padding: 5px;
+    z-index:99;
+    border-radius: 2px;
+    border:solid 1px grey;
+    position: absolute;
+    margin-left:-30em;
+    margin-top: -5.2em;
+}
+
+
+.cxpChat-ConfText {
+    padding-top: 18px;
+    padding-right: 24px;
+    padding-bottom: 20px;
+    padding-left: 24px;    
+}
+
+
+.cxpChat-actionBtnContainer {
+    display: flex;
+    justify-content: space-evenly;
+    margin-bottom: 10px;
+}
+
+.inactive-button {
+    background-color: $chatBubble-color;
+    &:hover {
+        background-color: $primary-color;
+    }
+}
+
+.default-button {
+    background-color: white;
+    color: $chatBubble-color;
+    font-weight: bold;
+    &:hover{
+        color: white;
+        background-color: $primary-color;
+    }
+}
+
+.white-border {
+    border: 1px solid white;
+}
