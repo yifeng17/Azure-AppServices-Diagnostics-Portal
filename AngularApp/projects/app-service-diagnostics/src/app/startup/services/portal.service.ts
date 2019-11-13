@@ -11,6 +11,13 @@ export class PortalService {
     private portalSignature: string = 'FxFrameBlade';
     private startupInfoObservable: ReplaySubject<StartupInfo>;
     private appInsightsResourceObservable: ReplaySubject<any>;
+
+    private sendChatAvailabilityObservable: ReplaySubject<any>;
+    private sendbuiltChatUrlObservable: ReplaySubject<any>;
+    private sendChatUrlObservable: ReplaySubject<any>;
+    private notifyChatOpenedObservable: ReplaySubject<any>;
+
+
     private shellSrc: string;
 
     constructor(private _broadcastService: BroadcastService) {
@@ -18,9 +25,15 @@ export class PortalService {
 
         this.startupInfoObservable = new ReplaySubject<StartupInfo>(1);
         this.appInsightsResourceObservable = new ReplaySubject<any>(1);
+        
+        //CXP Chat messages
+        this.sendChatAvailabilityObservable = new ReplaySubject<any>(1);
+        this.sendbuiltChatUrlObservable = new ReplaySubject<any>(1);
+        this.sendChatUrlObservable = new ReplaySubject<any>(1);
+
         if (this.inIFrame()) {
             this.initializeIframe();
-        }
+        }        
     }
 
     getStartupInfo(): ReplaySubject<StartupInfo> {
@@ -29,6 +42,22 @@ export class PortalService {
 
     getAppInsightsResourceInfo(): ReplaySubject<any> {
         return this.appInsightsResourceObservable;
+    }
+
+    getChatAvailability(): ReplaySubject<any> {
+        return this.sendChatAvailabilityObservable;
+    }
+
+    buildChatUrl(): ReplaySubject<any> {
+        return this.sendbuiltChatUrlObservable;
+    }
+
+    getChatUrl(): ReplaySubject<any> {
+        return this.sendChatUrlObservable;
+    }
+
+    notifyChatOpened():ReplaySubject<any> {
+        return this.notifyChatOpenedObservable;
     }
 
     initializeIframe(): void {
@@ -106,6 +135,18 @@ export class PortalService {
         } else if (methodName === Verbs.sendAppInsightsResource) {
             const aiResource = data;
             this.appInsightsResourceObservable.next(aiResource);
+        } else if (methodName === Verbs.sendChatAvailability) {
+            const chatAvailability = data;
+            this.sendChatAvailabilityObservable.next(chatAvailability);
+        } else if(methodName === Verbs.sendbuiltChatUrl) {
+            const chatUrl = data;
+            this.sendbuiltChatUrlObservable.next(chatUrl);
+        } else if(methodName === Verbs.sendChatUrl) {
+            const chatUrlAfterAvailability = data;
+            this.sendChatUrlObservable.next(chatUrlAfterAvailability);
+        } else if (methodName == Verbs.notifyChatOpenedResponse) {
+            const notifyChatOpenedResponse = data;
+            this.notifyChatOpenedObservable.next(notifyChatOpenedResponse);
         }
     }
 

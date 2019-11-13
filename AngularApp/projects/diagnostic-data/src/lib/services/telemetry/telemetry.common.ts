@@ -32,7 +32,11 @@ export const TelemetryEventNames = {
     AuthorSelectSearchTerm: 'AuthorSelectSearchTerm',
     AuthorCreateSearchTerm: 'AuthorCreateSearchTerm',
     AuthorRemoveSearchTerm: 'AuthorRemoveSearchTerm',
-    DependencyGraphClick: 'DependencyGraphClick'
+    DependencyGraphClick: 'DependencyGraphClick',
+    GetCXPChatAvailability: 'GetCXPChatAvailability',
+    BuildCXPChatUrl: 'BuildCXPChatUrl',
+    GetCXPChatURL: 'GetCXPChatURL',
+    CXPChatURLOpened: 'CXPChatURLOpened'
 };
 
 export interface ITelemetryProvider {
