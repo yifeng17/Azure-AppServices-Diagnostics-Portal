@@ -9,7 +9,10 @@
 	"azureServiceName": "Azure Kubernetes Services",
 	"armApiVersion": "2019-04-01",
 	"isSearchEnabled": true,
-	"isApplicableForLiveChat": false,
+	"liveChatConfig": {
+		"isApplicableForLiveChat": false,
+		"supportTopics": []
+	},
     "categories": [
         {
             "id": "Cluster Insights",

@@ -81,8 +81,8 @@ export class ResourceService {
   public get isApplicableForLiveChat(): boolean {
     if (this._genericArmConfigService) {
       let currConfig: ArmResourceConfig = this._genericArmConfigService.getArmResourceConfig(this.resource.id);
-      if (typeof currConfig.isApplicableForLiveChat == 'boolean') {
-        return currConfig.isApplicableForLiveChat;
+      if ( currConfig.liveChatConfig && typeof currConfig.liveChatConfig.isApplicableForLiveChat == 'boolean') {
+        return currConfig.liveChatConfig.isApplicableForLiveChat;
       }
       else {
         return false;
