@@ -79,6 +79,9 @@ import { DetectorListAnalysisComponent } from './components/detector-list-analys
 import { AppDependenciesComponent } from './components/app-dependencies/app-dependencies.component';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { HighchartsGraphComponent } from './components/highcharts-graph/highcharts-graph.component';
+import { CXPChatService } from 'projects/app-service-diagnostics/src/app/shared/services/cxp-chat.service';
+import { CxpChatLauncherComponent } from './components/cxp-chat-launcher/cxp-chat-launcher.component';
+
 
 @NgModule({
   imports: [
@@ -110,7 +113,8 @@ import { HighchartsGraphComponent } from './components/highcharts-graph/highchar
     DetectorListAnalysisComponent,
     AppDependenciesComponent,
     AppInsightsMarkdownComponent,
-    HighchartsGraphComponent
+    HighchartsGraphComponent,
+    CxpChatLauncherComponent
   ],
   exports: [
     FormsModule, TimeSeriesGraphComponent, DataTableComponent, DynamicDataComponent, DetectorViewComponent,
@@ -121,7 +125,8 @@ import { HighchartsGraphComponent } from './components/highcharts-graph/highchar
     ChangesetsViewComponent,
     ChangesViewComponent,
     DetectorListAnalysisComponent,
-    AppInsightsMarkdownComponent
+    AppInsightsMarkdownComponent,
+    CxpChatLauncherComponent
   ],
 })
 export class DiagnosticDataModule {
@@ -132,6 +137,7 @@ export class DiagnosticDataModule {
         DiagnosticService,
         GenericSupportTopicService,
         { provide: DIAGNOSTIC_DATA_CONFIG, useValue: config },
+        CXPChatService,
         KustoTelemetryService,
         AppInsightsTelemetryService,
         TelemetryService,

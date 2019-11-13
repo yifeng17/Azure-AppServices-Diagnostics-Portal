@@ -21,6 +21,7 @@ import { GenericAnalysisComponent } from '../shared/components/generic-analysis/
 import { DiagnosticsSettingsComponent } from './components/diagnostics-settings/diagnostics-settings.component';
 import { SupportTopicService } from '../shared-v2/services/support-topic.service';
 import { MarkdownModule } from 'ngx-markdown';
+import { CXPChatService } from '../shared/services/cxp-chat.service';
 
 export const HomeRoutes = RouterModule.forChild([
   {
@@ -183,7 +184,7 @@ export const HomeRoutes = RouterModule.forChild([
   ],
   declarations: [HomeComponent, CategoryChatComponent, CategoryTileComponent, SearchResultsComponent, SupportTopicRedirectComponent, DiagnosticsSettingsComponent],
   providers: [CategoryTabResolver, CategoryChatResolver, TimeControlResolver,
-    { provide: GenericSupportTopicService, useExisting: SupportTopicService}
+    { provide: GenericSupportTopicService, useExisting: SupportTopicService}, CXPChatService
   ]
 })
 export class HomeModule { }

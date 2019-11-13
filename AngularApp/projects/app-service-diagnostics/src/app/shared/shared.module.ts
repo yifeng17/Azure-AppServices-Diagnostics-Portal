@@ -91,6 +91,7 @@ import { CpuMonitoringSessionsComponent } from './components/daas/cpu-monitoring
 import { GenericAnalysisComponent } from './components/generic-analysis/generic-analysis.component';
 import { EventViewerComponent } from './components/daas/event-viewer/event-viewer.component';
 import { FrebViewerComponent } from './components/daas/freb-viewer/freb-viewer.component';
+import { CXPChatService } from './services/cxp-chat.service';
 
 @NgModule({
     declarations: [
@@ -227,6 +228,7 @@ export class SharedModule {
                 WindowService,
                 ArmService,
                 GenericArmConfigService,
+                CXPChatService,
                 UriElementsService,
                 PortalActionService,
                 SiteService,
