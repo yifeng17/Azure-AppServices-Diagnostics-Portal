@@ -60,19 +60,27 @@ React refresh bug test
   </div>
 </div> -->
 
+
+<!-- <div class="site-content">
+  <category-nav></category-nav>
+  <div class="content-wrapper gray-background">
+    <router-outlet></router-outlet>
+  </div>
+</div> -->
+
+
+
 <div class="App">
   <div class="header">
     <span class="category-label">{{categoryName}}</span>
     <br />
     <span class="category-description">Diagnose and solve problems</span>
   </div>
-  <div class="body-content flex-row" style="border:bold; color:black">
+  <div class="body-content" style="border:bold; color:black">
     <section class="sidebar">
-
-      <!-- <fab-nav [groups]="groups" [styles]="styles" [initialSelectedKey]='initialSelectedKey'
+     <category-nav></category-nav>
+         <!-- <fab-nav [groups]="groups" [styles]="styles" [initialSelectedKey]='initialSelectedKey'
         [selectedKey]='selectedKey'></fab-nav> -->
-
-      <category-nav>hahah</category-nav>
     </section>
     <section class="content">
       <router-outlet></router-outlet>
