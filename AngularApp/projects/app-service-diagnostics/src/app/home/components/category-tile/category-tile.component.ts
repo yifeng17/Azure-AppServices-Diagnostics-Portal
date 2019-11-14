@@ -5,6 +5,7 @@ import { NotificationService } from '../../../shared-v2/services/notification.se
 import { LoggingV2Service } from '../../../shared-v2/services/logging-v2.service';
 import { DiagnosticService, DetectorMetaData, DetectorType } from 'diagnostic-data';
 import { ResourceService } from '../../../shared-v2/services/resource.service';
+import { PortalActionService } from '../../../shared/services/portal-action.service';
 
 const imageRootPath = '../../../../assets/img/landing-home';
 @Component({
@@ -17,11 +18,15 @@ export class CategoryTileComponent implements OnInit {
   @Input() category: Category;
   categoryImgPath: string;
 
-  constructor(private _router: Router, private _activatedRoute: ActivatedRoute, private _notificationService: NotificationService, private _logger: LoggingV2Service, private _diagnosticService: DiagnosticService, private _resourceService: ResourceService) { }
+  constructor(private _portalService: PortalActionService, private _router: Router, private _activatedRoute: ActivatedRoute, private _notificationService: NotificationService, private _logger: LoggingV2Service, private _diagnosticService: DiagnosticService, private _resourceService: ResourceService) { }
 
   ngOnInit() {
     this.categoryImgPath = this.generateImagePath(this.category.name);
   }
+
+  openBladeDiagnoseCategoryBlade() {
+    this._portalService.openBladeDiagnoseCategoryBlade(this.category.id);
+}
 
   navigateToCategory(): void {
 

@@ -5,7 +5,7 @@
 .menu-item {
     cursor: pointer;
     font-family: az_ea_font,"Segoe UI",wf_segoe-ui_normal,"Segoe WP",Tahoma,Arial,sans-serif;
-
+    height: 32px;
 }
 
 :host-context(.light-theme) .menu-item:hover,
@@ -42,7 +42,8 @@
 
 :host-context(.light-theme) .menu-item:hover,
 :host-context(.light-theme) .menu-item.selected {
-    background-color: rgba(0,137,250,.1);
+    //background-color: rgba(0,137,250,.1);
+    background-color: #edebe9;
 }
 
 .menu-label > b {
