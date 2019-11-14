@@ -57,7 +57,7 @@ import { AngularReactBrowserModule } from '@angular-react/core';
       }
     ],
     {
-        enableTracing: true,
+        enableTracing: false,
         scrollPositionRestoration: 'top'
     }),
     CustomMaterialModule

@@ -32,25 +32,29 @@
   </aside> -->
 
 
-  <aside class="main-sidebar">
-      <section class="sidebar">
-        <!-- <collapsible-menu theme="light"> -->
-          <!-- <search-box [(searchValue)]="searchValue"></search-box> -->
-          <!-- <menu-scroll> -->
-            <!-- <section-divider [label]="'Develop'" [initiallyExpanded]="false" [disableExpandIcon]="true">
+<aside class="main-sidebar">
+  <section class="sidebar">
+    <!-- <collapsible-menu theme="light"> -->
+    <!-- <search-box [(searchValue)]="searchValue"></search-box> -->
+    <!-- <menu-scroll> -->
+    <!-- <section-divider [label]="'Develop'" [initiallyExpanded]="false" [disableExpandIcon]="true">
               <i class="fa fa-code fa-fw menu-icon menu-icon-create" aria-hidden="true"></i>
               <collapsible-menu-item *ngFor="let item of createNew" [menuItem]="item"></collapsible-menu-item>
             </section-divider> -->
-            <div class="menu" [ngClass]="'light-theme'">
-            <div id="scroll-container">
-            <section-divider [label]="'Diagnostic Report'" [initiallyExpanded]="false" [collapsible]="false" (click)="collapsible = !collapsible">
-              <!-- <i class="fa fa-book fa-fw menu-icon menu-icon-documentation" aria-hidden="true"></i> -->
+    <div class="menu" [ngClass]="'light-theme'">
+      <div id="scroll-container">
+        <!-- <section-divider [label]="'Overview'" [initiallyExpanded]="false" [collapsible]="false"
+          (click)="collapsible = !collapsible">
+        </section-divider> -->
+        <section-divider [label]="'Overview'" [initiallySelected]="false" [collapsible]="false" [routePath]="'overview'"
+          (click)="collapsible = !collapsible">
+          <!-- <i class="fa fa-book fa-fw menu-icon menu-icon-documentation" aria-hidden="true"></i> -->
 
-              <collapsible-menu-item *ngFor="let detector of detectorList" [menuItem]="detector"></collapsible-menu-item>
-            </section-divider>
-          </div>
-        </div>
-            <!-- <section-divider  *ngIf="analysisTypes.length > 0" [label]="'Analysis'">
+          <collapsible-menu-item *ngFor="let detector of detectorList" [menuItem]="detector" [class.selected]="isSelecte"></collapsible-menu-item>
+        </section-divider>
+      </div>
+    </div>
+    <!-- <section-divider  *ngIf="analysisTypes.length > 0" [label]="'Analysis'">
               <i class="fa fa-heartbeat fa-fw menu-icon menu-icon-analysis" aria-hidden="true"></i>
               <collapsible-menu-item *ngFor="let item of analysisTypes" [menuItem]="item"></collapsible-menu-item>
               <i *ngIf="!categories || categories.length === 0" class="fa fa-spinner fa-spin fa-3x fa-fw loading-menu"></i>
@@ -65,8 +69,7 @@
               <collapsible-menu-item *ngFor="let gist of gists" [searchValue]="searchValue" [menuItem]="gist"></collapsible-menu-item>
               <i *ngIf="!gists || gists.length === 0" class="fa fa-spinner fa-spin fa-3x fa-fw loading-menu"></i>
             </section-divider> -->
-          <!-- </menu-scroll> -->
-        <!-- </collapsible-menu> -->
-      </section>
-    </aside>
-
+    <!-- </menu-scroll> -->
+    <!-- </collapsible-menu> -->
+  </section>
+</aside>

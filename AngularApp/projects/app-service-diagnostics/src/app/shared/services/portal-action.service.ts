@@ -27,9 +27,27 @@ export class PortalActionService {
         });
     }
 
+    public openBladeDiagnoseCategoryBlade(category: string) {
+        const bladeInfo = {
+            title: category,
+            detailBlade: 'SCIFrameBlade',
+            extension: 'WebsitesExtension',
+            detailBladeInputs: {
+                id: this.currentSite.id,
+                categoryId: category,
+                optionalParameters: [{
+                    key: "categoryId",
+                    value: category
+                }]
+            }
+        };
+
+        this._portalService.openBlade(bladeInfo, 'troubleshoot');
+    }
+
     public openBladeScaleUpBlade() {
         const bladeInfo = {
-            detailBlade: 'scaleup',
+            detailBlade: 'SciFrameBlade',
             detailBladeInputs: {}
         };
         this._portalService.postMessage(Verbs.openScaleUpBlade, JSON.stringify(bladeInfo));

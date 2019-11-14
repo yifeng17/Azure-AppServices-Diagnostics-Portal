@@ -108,7 +108,7 @@ export const Routes = RouterModule.forRoot([
   }
 ],
 {
-    enableTracing: true
+    enableTracing: false
 });
 
 @NgModule({

@@ -16,6 +16,12 @@
     cursor: pointer;
     display: flex;
     align-items: center;
+    margin-left: 24px;
+    margin-right:24px;
+}
+
+.section-divider.selected {
+    background-color: #edebe9;
 }
 
 /* DARK THEME */

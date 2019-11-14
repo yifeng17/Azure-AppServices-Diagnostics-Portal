@@ -23,6 +23,7 @@ export class ResourceRedirectComponent implements OnInit {
     this._authService.getStartupInfo()
       .subscribe(info => {
         if (info && info.resourceId && info.token) {
+            console.log("startupinfo", info);
 
           // Uncomment to enable only for internal subs
           //let split = info.resourceId.split('/');
@@ -35,12 +36,31 @@ export class ResourceRedirectComponent implements OnInit {
 
           let path = 'resource/' + info.resourceId.toLowerCase();
           var caseSubject = null;
+          var categoryId = null;
           if (info.optionalParameters){
             var caseSubjectParam = info.optionalParameters.find(param => param.key === "caseSubject");
             if (caseSubjectParam){
               caseSubject = caseSubjectParam.value;
             }
           }
+
+          // To Open the right category page
+          if (info.optionalParameters)
+          {
+            console.log("category Id param before");
+            var categoryIdParam = info.optionalParameters.find(param => param.key === "categoryId");
+            console.log("category Id param after", categoryIdParam);
+
+            if (categoryIdParam)
+            {
+                var categoryId = categoryIdParam.value;
+                path += `/categories/${categoryId}`;
+                this._router.navigateByUrl(
+                    this._router.createUrlTree([path], navigationExtras)
+                  );
+            }
+          }
+
           if (info.supportTopicId) {
             path += `/supportTopicId`;
             navigationExtras.queryParams = {
