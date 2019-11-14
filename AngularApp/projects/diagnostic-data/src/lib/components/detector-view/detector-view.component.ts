@@ -112,6 +112,7 @@ export class DetectorViewComponent implements OnInit {
 
         if (data.metadata.supportTopicList && data.metadata.supportTopicList.findIndex(supportTopic => supportTopic.id === this._supportTopicService.supportTopicId) >= 0){
           this.populateSupportTopicDocument();
+          this.renderCXPChatButton();
         }
 
         this.ratingEventProperties = {
@@ -253,7 +254,20 @@ export class DetectorViewComponent implements OnInit {
   }
 
   showChatButton():boolean {
-    return !this.isAnalysisView && this.supportDocumentRendered && this.cxpChatTrackingId != '' && this.cxpChatUrl != '';    
+    return !this.isAnalysisView && this.cxpChatTrackingId != '' && this.cxpChatUrl != '';
+  }
+
+  renderCXPChatButton(){
+    if(this.cxpChatTrackingId === '' && this.cxpChatUrl === '') {
+      if(this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId)) {
+        this.cxpChatTrackingId = this._cxpChatService.generateTrackingId();
+        this._cxpChatService.getChatURL(this._supportTopicService.supportTopicId, this.cxpChatTrackingId).subscribe((chatApiResponse:any)=>{
+          if (chatApiResponse && chatApiResponse != '') {
+            this.cxpChatUrl = chatApiResponse;
+          }
+        });
+      }
+    }
   }
 
   populateSupportTopicDocument(){
@@ -272,15 +286,7 @@ export class DetectorViewComponent implements OnInit {
           // Set the innter html for support document display
           this.supportDocumentContent = tmp.innerHTML;
           this.supportDocumentRendered = true;
-
-          if(this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId)) {
-            this.cxpChatTrackingId = this._cxpChatService.generateTrackingId();
-            this._cxpChatService.getChatURL(this._supportTopicService.supportTopicId, this.cxpChatTrackingId).subscribe((chatApiResponse:any)=>{
-              if (chatApiResponse && chatApiResponse != '') {
-                this.cxpChatUrl = chatApiResponse;
-              }
-            });
-          }          
+          
         }
       });
     }

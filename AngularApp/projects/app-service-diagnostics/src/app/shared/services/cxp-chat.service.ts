@@ -270,7 +270,7 @@ export class CXPChatService {
             "returnValue": 'NULL object returned. Likely cause, unknown. Followup with CXP team with trackingId.'
           });
         }
-
+        
         return Observable.of('');
       }
     } ));

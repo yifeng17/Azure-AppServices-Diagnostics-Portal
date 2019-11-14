@@ -181,7 +181,20 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
   }
 
   showChatButton():boolean {
-    return this.supportDocumentRendered && this.cxpChatTrackingId != '' && this.cxpChatUrl != '';
+    return this.cxpChatTrackingId != '' && this.cxpChatUrl != '';
+  }
+
+  renderCXPChatButton(){
+    if(this.cxpChatTrackingId === '' && this.cxpChatUrl === '') {
+      if(this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId)) {
+        this.cxpChatTrackingId = this._cxpChatService.generateTrackingId();
+        this._cxpChatService.getChatURL(this._supportTopicService.supportTopicId, this.cxpChatTrackingId).subscribe((chatApiResponse:any)=>{
+          if (chatApiResponse && chatApiResponse != '') {
+            this.cxpChatUrl = chatApiResponse;
+          }
+        });
+      }
+    }
   }
 
   populateSupportTopicDocument(){
@@ -220,6 +233,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
       this.detectorId = params.get(this.detectorParmName) === null ? "" : params.get(this.detectorParmName);
       this.resetGlobals();
       this.populateSupportTopicDocument();
+      this.renderCXPChatButton();
 
         if (this.analysisId === "searchResultsAnalysis"){
           this._activatedRoute.queryParamMap.subscribe(qParams => {
