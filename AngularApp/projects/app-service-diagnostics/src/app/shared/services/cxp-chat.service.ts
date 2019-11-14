@@ -112,7 +112,7 @@ export class CXPChatService {
       let returnValue:boolean = false;
 
       this.supportedSupportTopics.some((currValue : string) => {
-        returnValue = supportTopicIdToCheck === currValue;
+        returnValue = (supportTopicIdToCheck === currValue || currValue === '*' );
         return returnValue;
       });
             
@@ -136,9 +136,9 @@ export class CXPChatService {
     let input = {
       tagName: this.cxpChatTagName,
       eligibilityParams: {
-        productId: this.pesId, //'14797'
-        supportPlanType: this.supportPlanType, //"Basic",
-        supportTopicId: supportTopicId, //"32133039",
+        productId: this.pesId,
+        supportPlanType: this.supportPlanType,
+        supportTopicId: supportTopicId,
         language: this.chatLanguage,
         subscriptionId: this._resourceService.subscriptionId
       },
@@ -215,21 +215,19 @@ export class CXPChatService {
   }
 
   
-
-  
 /**
  * @param supportTopicId  Support Topic id for which the chat is being initiated for.
  * @param trackingIdGuid  Guid used for tracking. Get this by calling generateTrackingId().
  * @returns Chat URL string. This can be an empty string if no agents are available or if the queue is not found. Always handle for empty string.
  */
     public getChatURL( supportTopicId:string, trackingIdGuid:string):Observable<string> {
-    let input = {
-      tagName: this.cxpChatTagName,// 'detailtab'
-      eligibilityParams: {
-        productId: this.pesId, // '16051',
+      let input = {
+        tagName: this.cxpChatTagName,
+        eligibilityParams: {
+        productId: this.pesId,
         supportTopicId: supportTopicId,
-        language: this.chatLanguage,//'en',
-        subscriptionId: this._resourceService.subscriptionId //"76cb77fa-8b17-4eab-9493-b65dace99813"
+        language: this.chatLanguage,
+        subscriptionId: this._resourceService.subscriptionId
       },
       additionalInfo: {
         resourceId: this._resourceService.resource.id,
@@ -259,7 +257,7 @@ export class CXPChatService {
         if(chatUrl === '') {
           this._telemetryService.logEvent(TelemetryEventNames.GetCXPChatURL, {
             "trackingId": trackingIdGuid,
-            "passedInput" : JSON.stringify(input),          
+            "passedInput" : JSON.stringify(input),
             "returnValue": 'Empty URL returned. Likely cause, no engineer available.'
           });
         }
@@ -270,7 +268,7 @@ export class CXPChatService {
             "returnValue": 'NULL object returned. Likely cause, unknown. Followup with CXP team with trackingId.'
           });
         }
-        
+
         return Observable.of('');
       }
     } ));
