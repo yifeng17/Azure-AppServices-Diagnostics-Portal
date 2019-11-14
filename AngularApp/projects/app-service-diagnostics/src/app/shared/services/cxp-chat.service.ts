@@ -21,6 +21,7 @@ export class CXPChatService {
   public chatLanguage: string = 'en';
 
   constructor(private _resourceService: ResourceService, private _portalService: PortalService, private _telemetryService: TelemetryService) {
+
     if(this._resourceService && this._resourceService instanceof WebSitesService && (this._resourceService as WebSitesService).appType === AppType.WebApp) {
       //Chat supported for webapps only at the moment
       this.isChatSupported = true;
@@ -31,65 +32,82 @@ export class CXPChatService {
         this.isChatSupported = _resourceService.armResourceConfig.liveChatConfig.isApplicableForLiveChat;
       }
       else {
-        //This is for function apps and ASE
-        this.isChatSupported = false;
-      }
-    }  
-
-    if(this.isChatSupported) {
-      if(this._resourceService && this._resourceService instanceof WebSitesService) {
-        this.initSupportTopicsForSites((this._resourceService as WebSitesService).appType);
-      }
-      else {
-        if(this._resourceService.resource.type === 'Microsoft.Web/hostingEnvironments') {
-          this.initSupportTopicsForASE();
+        if(this._resourceService && this._resourceService instanceof WebSitesService && (this._resourceService as WebSitesService).appType === AppType.FunctionApp) {
+          //This is for function apps
+          this.isChatSupported = false;
         }
         else {
-          if(this._resourceService && 
-            this._resourceService.armResourceConfig && 
-            this._resourceService.armResourceConfig.liveChatConfig && 
-            this._resourceService.armResourceConfig.liveChatConfig.supportTopics && 
-            this._resourceService.armResourceConfig.liveChatConfig.supportTopics.length > 0 ) {
-              this.supportedSupportTopics = this._resourceService.armResourceConfig.liveChatConfig.supportTopics;
-         }
-        }
+          //This is for function  ASE
+          this.isChatSupported = false;
+        }        
       }
     }
 
     this._resourceService.getPesId().subscribe(pesId => {
       this.pesId = pesId;
+      if(this.pesId == '16333') {
+        //Web app for containers. Disable chat. 
+        this.isChatSupported = false;
+      }
+      
+      if(this.isChatSupported) {
+        if(this._resourceService && this._resourceService instanceof WebSitesService) {
+          this.initSupportTopicsForSites((this._resourceService as WebSitesService).appType, this.pesId);
+        }
+        else {
+          if(this._resourceService.resource.type === 'Microsoft.Web/hostingEnvironments') {
+            this.initSupportTopicsForASE();
+          }
+          else {
+            if(this._resourceService && 
+              this._resourceService.armResourceConfig && 
+              this._resourceService.armResourceConfig.liveChatConfig && 
+              this._resourceService.armResourceConfig.liveChatConfig.supportTopics && 
+              this._resourceService.armResourceConfig.liveChatConfig.supportTopics.length > 0 ) {
+                this.supportedSupportTopics = this._resourceService.armResourceConfig.liveChatConfig.supportTopics;
+           }
+          }
+        }
+      }
     });
-
   }
 
 
-  private initSupportTopicsForSites(currAppType : AppType) {
+  private initSupportTopicsForSites(currAppType : AppType, pesId : string) {
     if(currAppType === AppType.WebApp) {
-      this.supportedSupportTopics = [
-        "32542218", //Availability and Performance/Web App Down
-        "32583701", //Availability and Performance/Web App experiencing High CPU
-        "32581616", //Availability and Performance/Web App experiencing High Memory Usage
-        "32457411", //Availability and Performance/Web App Slow
-        "32570954", //Availability and Performance/Web App Restarted
-        "32440123", //Configuration and Management/Configuring SSL
-        "32440122", //Configuration and Management/Configuring custom domain names
-        "32542210", //Configuration and Management/IP Configuration
-        "32581615", //Configuration and Management/Deployment Slots
-        "32542208", //Configuration and Management/Backup and Restore
-        "32589277", //How Do I/Configure domains and certificates,
-        "32589281", //How Do I/IP Configuration
-        "32588774", // Deployment/Visual Studio
-        "32589276", //How Do I/Backup and Restore
-        "32542218", //Availability and Performance/Web App Down
-        "32570954", //Availability and Performance/Web App Restarted
-        "32440123", //Configuration and Management/Configuring SSL
-        "32440122", //Configuration and Management/Configuring custom domain names
-        "32542208", //Configuration and Management/Backup and Restore
-        "32542210" //Configuration and Management/IP Configuration
-      ];
+      if(pesId === '14748') {
+        //Web app Windows
+        this.supportedSupportTopics = [
+          '32583701', //Availability and Performance/Web App experiencing High CPU
+          '32542218', //Availability and Performance/Web App Down
+          '32581616', //Availability and Performance/Web App experiencing High Memory Usage
+          '32457411', //Availability and Performance/Web App Slow
+          '32570954', //Availability and Performance/Web App Restarted
+          '32440123', //Configuration and Management/Configuring SSL
+          '32440122', //Configuration and Management/Configuring custom domain names
+          '32542210', //Configuration and Management/IP Configuration
+          '32581615', //Configuration and Management/Deployment Slots
+          '32542208', //Configuration and Management/Backup and Restore
+          '32589277', //How Do I/Configure domains and certificates,
+          '32589281', //How Do I/IP Configuration
+          '32588774', // Deployment/Visual Studio
+          '32589276' //How Do I/Backup and Restore
+        ];
+      } else if(pesId === '16170') {
+        //Web app Linux
+        this.supportedSupportTopics = [
+          '32440123', //Configuration and Management/Configuring SSL
+          '32440122', //Configuration and Management/Configuring custom domain names
+          '32542208', //Configuration and Management/Backup and Restore
+          '32542210' //Configuration and Management/IP Configuration
+        ];        
+      } else if(pesId === '16333') {
+        //Web app for containers
+        this.supportedSupportTopics = [];
+      }
     } 
     else {
-      if(currAppType === AppType.FunctionApp) {
+      if(currAppType === AppType.FunctionApp) {        
         this.supportedSupportTopics = [];
       }
     }   
@@ -206,8 +224,7 @@ export class CXPChatService {
             "passedInput" : JSON.stringify(input),          
             "returnValue": 'NULL object returned. Likely cause, unknown. Followup with CXP team with trackingId.'
           });
-        }  
-        //return Observable.of("https://chat.azure.com/mseg.html?a=ACID-e02bb897-25a4-48cb-8c23-7b33463b8b5d&tenant=72f988bf-86f1-41af-91ab-2d7cd011db47&loginhint=nmallick@microsoft.com&trk=8022d47e-ccac-449c-ae85-5787d5ed0358&s=d339f1c0bf754cd380da77a953e0c5d5");
+        }
         return Observable.of('');
       }
     } ));
