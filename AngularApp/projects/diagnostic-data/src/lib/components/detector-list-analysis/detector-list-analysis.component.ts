@@ -20,7 +20,7 @@ import { AppInsightsQueryService } from '../../services/appinsights.service';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { AppInsightQueryMetadata, AppInsightData, BladeInfo } from '../../models/app-insights';
 import {GenericSupportTopicService} from '../../services/generic-support-topic.service';
-import { CXPChatService } from 'projects/app-service-diagnostics/src/app/shared/services/cxp-chat.service';
+
 
 @Component({
   selector: 'detector-list-analysis',
@@ -79,14 +79,11 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
   showPreLoader: boolean = false;
   preLoadingErrorMessage: string = "Some error occurred while fetching diagnostics."
   showPreLoadingError: boolean = false;
-  cxpChatTrackingId:string= '';
-  cxpChatUrl:string = '';
 
   constructor(private _activatedRoute: ActivatedRoute, private _router: Router,
     private _diagnosticService: DiagnosticService, private _detectorControl: DetectorControlService,
     protected telemetryService: TelemetryService, public _appInsightsService: AppInsightsQueryService, 
-    private _supportTopicService: GenericSupportTopicService, private _cxpChatService:CXPChatService,
-    @Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig) {
+    private _supportTopicService: GenericSupportTopicService, @Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig) {
     super(telemetryService);
     this.isPublic = config && config.isPublic;
 
@@ -180,23 +177,6 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
     }
   }
 
-  showChatButton():boolean {
-    return this.cxpChatTrackingId != '' && this.cxpChatUrl != '';
-  }
-
-  renderCXPChatButton(){
-    if(this.cxpChatTrackingId === '' && this.cxpChatUrl === '') {
-      if(this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId)) {
-        this.cxpChatTrackingId = this._cxpChatService.generateTrackingId();
-        this._cxpChatService.getChatURL(this._supportTopicService.supportTopicId, this.cxpChatTrackingId).subscribe((chatApiResponse:any)=>{
-          if (chatApiResponse && chatApiResponse != '') {
-            this.cxpChatUrl = chatApiResponse;
-          }
-        });
-      }
-    }
-  }
-
   populateSupportTopicDocument(){
     if (!this.supportDocumentRendered){
       this._supportTopicService.getSelfHelpContentDocument().subscribe(res => {
@@ -212,16 +192,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
 
           // Set the innter html for support document display
           this.supportDocumentContent = tmp.innerHTML;
-          this.supportDocumentRendered = true;
-
-          if(this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId)) {
-            this.cxpChatTrackingId = this._cxpChatService.generateTrackingId();
-            this._cxpChatService.getChatURL(this._supportTopicService.supportTopicId, this.cxpChatTrackingId).subscribe((chatApiResponse:any)=>{
-              if (chatApiResponse && chatApiResponse != '') {
-                this.cxpChatUrl = chatApiResponse;
-              }
-            });
-          } 
+          this.supportDocumentRendered = true;          
         }
       });
     }
@@ -233,7 +204,6 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
       this.detectorId = params.get(this.detectorParmName) === null ? "" : params.get(this.detectorParmName);
       this.resetGlobals();
       this.populateSupportTopicDocument();
-      this.renderCXPChatButton();
 
         if (this.analysisId === "searchResultsAnalysis"){
           this._activatedRoute.queryParamMap.subscribe(qParams => {
