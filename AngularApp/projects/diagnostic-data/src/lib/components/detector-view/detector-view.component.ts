@@ -3,7 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
-import { DetectorResponse, Rendering, RenderingType } from '../../models/detector';
+import { DetectorResponse, Rendering, RenderingType, DetectorType } from '../../models/detector';
 import { DetectorControlService } from '../../services/detector-control.service';
 import { TelemetryEventNames } from '../../services/telemetry/telemetry.common';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
@@ -112,7 +112,10 @@ export class DetectorViewComponent implements OnInit {
 
         if (data.metadata.supportTopicList && data.metadata.supportTopicList.findIndex(supportTopic => supportTopic.id === this._supportTopicService.supportTopicId) >= 0){
           this.populateSupportTopicDocument();
-          this.renderCXPChatButton();
+          if(this.isPublic && !this.isAnalysisView && data.metadata.type === DetectorType.Detector) {
+            //Since the analysis view is already showing the chat button, no need to show the chat button on the detector (csx) implementing the analysis view.
+            this.renderCXPChatButton();
+          }          
         }
 
         this.ratingEventProperties = {
@@ -254,18 +257,19 @@ export class DetectorViewComponent implements OnInit {
   }
 
   showChatButton():boolean {
-    return !this.isAnalysisView && this.cxpChatTrackingId != '' && this.cxpChatUrl != '';
+    return this.isPublic && !this.isAnalysisView && this.cxpChatTrackingId != '' && this.cxpChatUrl != '';
   }
+
 
   renderCXPChatButton(){
     if(this.cxpChatTrackingId === '' && this.cxpChatUrl === '') {
-      if(this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId)) {
-        this.cxpChatTrackingId = this._cxpChatService.generateTrackingId();
-        this._cxpChatService.getChatURL(this._supportTopicService.supportTopicId, this.cxpChatTrackingId).subscribe((chatApiResponse:any)=>{
-          if (chatApiResponse && chatApiResponse != '') {
-            this.cxpChatUrl = chatApiResponse;
-          }
-        });
+      if(this._supportTopicService && this._cxpChatService && this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId)) {        
+          this.cxpChatTrackingId = this._cxpChatService.generateTrackingId();
+          this._cxpChatService.getChatURL(this._supportTopicService.supportTopicId, this.cxpChatTrackingId).subscribe((chatApiResponse:any)=>{
+            if (chatApiResponse && chatApiResponse != '') {
+              this.cxpChatUrl = chatApiResponse;
+            }
+          });               
       }
     }
   }
