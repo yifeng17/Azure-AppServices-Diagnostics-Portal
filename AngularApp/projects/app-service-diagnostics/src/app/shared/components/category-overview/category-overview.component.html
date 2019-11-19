@@ -12,16 +12,18 @@
       your app's high availability. You can also drill down on an area by selecting a topic in the side navigation</p>
   </div>
 
-  <div style="margin: 15px 0px">
-    <img class="genie" src="../../../../assets/img/genie.svg">
+  <div style="margin: 15px 0px" (click)="isOpen=!isOpen">
+    <img src="../../../../assets/img/genie.svg">
     <span>Ask Genie</span>
     <span class="fa status-icon fa-info-circle" style="margin-left: 5px;"></span>
   </div>
 
   <div class="search-box">
-    <fab-search-box placeholder="Search"></fab-search-box>
+    <fab-search-box placeholder="Search" ></fab-search-box>
   </div>
-
+       <fab-nav [groups]="groups" [styles]="styles" [initialSelectedKey]='initialSelectedKey'
+        [selectedKey]='selectedKey'></fab-nav>
+  <fab-panel [renderNavigationContent]="navigationContent" [isOpen]="isOpen" [isHiddenOnDismiss]="true" (onDismiss)="isOpen=!isOpen" [isLightDismiss]="true" [hasCloseButton]="true" [closeButtonAriaLabel]="close" [headerText]="'Panel Text'">This is a panel</fab-panel>
   <health-check-v3></health-check-v3>
   <p style="font-size: 12px;">Are you looking for something else ?</p>
   <div class="search-box">
