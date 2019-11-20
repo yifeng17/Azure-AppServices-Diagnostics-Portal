@@ -32,12 +32,12 @@ export class ValidResourceResolver implements Resolve<void>{
   constructor(private _startupService: StartupService, private _http: HttpClient, private _router: Router) { }
 
   resolve(route: ActivatedRouteSnapshot): Observable<any> {
-    return this._http.get<ResourceServiceInputs[]>('assets/enabledResourceTypes.json').pipe(map(response => {
+    return this._http.get<any>('assets/enabledResourceTypes.json').pipe(map(response => {
       let resource = <ArmResource>route.params;
       let type = `${resource.provider}/${resource.resourceTypeName}`
 
-      if (response && response.length > 0) {
-        let enabledResourceTypes = <ResourceServiceInputs[]>response;
+      if (response && response.enabledResourceTypes.length > 0) {
+        let enabledResourceTypes = <ResourceServiceInputs[]>response.enabledResourceTypes;
         let matchingResourceInputs = enabledResourceTypes.find(t => t.resourceType == type);
 
         if (matchingResourceInputs) {
@@ -109,7 +109,7 @@ export const Routes = RouterModule.forRoot([
   }
 ],
 {
-    enableTracing: false
+    enableTracing: true
 });
 
 @NgModule({
