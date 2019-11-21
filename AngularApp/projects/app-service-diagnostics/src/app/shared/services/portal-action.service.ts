@@ -45,6 +45,14 @@ export class PortalActionService {
         this._portalService.openBlade(bladeInfo, 'troubleshoot');
     }
 
+    public updateDiagnoseCategoryBladeTitle(category: string) {
+        const bladeInfo = {
+            title: category
+        };
+
+        this._portalService.updateBladeInfo(bladeInfo, 'updateBlade');
+    }
+
     public openBladeScaleUpBlade() {
         const bladeInfo = {
             detailBlade: 'SciFrameBlade',

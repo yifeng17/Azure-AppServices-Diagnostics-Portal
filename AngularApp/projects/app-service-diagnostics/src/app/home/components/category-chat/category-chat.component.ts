@@ -13,6 +13,7 @@ import { Feature } from '../../../shared-v2/models/features';
 import { AuthService } from '../../../startup/services/auth.service';
 import { DiagnosticService, DetectorMetaData, DetectorType } from 'diagnostic-data';
 import { filter } from 'rxjs/operators';
+import { PortalActionService } from '../../../shared/services/portal-action.service';
 
 @Component({
     selector: 'category-chat',
@@ -33,6 +34,7 @@ export class CategoryChatComponent implements OnInit {
     categoryName: string;
     resourceId = "";
     baseUrl = "";
+    resourceName = "";
 
     groups: any;
     counter: number = 0;
@@ -49,7 +51,7 @@ export class CategoryChatComponent implements OnInit {
       }
     constructor(protected _diagnosticApiService: DiagnosticService, private _route: Router, private _injector: Injector, private _activatedRoute: ActivatedRoute, private categoryService: CategoryService,
         private _chatState: CategoryChatStateService, private _genericApiService: GenericApiService
-        , private _featureService: FeatureService, protected _authService: AuthService) {
+        , private _featureService: FeatureService, protected _authService: AuthService, private _portalActionService: PortalActionService) {
             // this._route.routeReuseStrategy.shouldReuseRoute = function(){
             //     return true;
             //  }
@@ -65,12 +67,15 @@ export class CategoryChatComponent implements OnInit {
     }
 
     ngOnInit() {
-
         this.categoryService.categories.subscribe(categories => {
             this.category = categories.find(category => category.id === this._activatedRoute.snapshot.params.category);
             this._chatState.category = this.category;
             this.categoryName = this.category.name;
+
+            this.resourceName = this._activatedRoute.snapshot.params.resourcename;
+            this._portalActionService.updateDiagnoseCategoryBladeTitle(`${this.resourceName} - ` + this.categoryName);
         });
+
 
         //     this._authService.getStartupInfo().subscribe(startupInfo => {
         //         this.resourceId = startupInfo.resourceId;

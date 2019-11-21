@@ -46,9 +46,14 @@ export class PortalService {
             }
         });
     }
-  
+
     openBlade(bladeInfo: OpenBladeInfo, source: string) {
         this.postMessage(Verbs.openBlade, JSON.stringify(bladeInfo));
+    }
+
+    updateBladeInfo(bladeInfo: any, source: string) {
+    //    this.postMessage(Verbs.openBlade, JSON.stringify(bladeInfo));
+        this.postMessage("update-blade-info", JSON.stringify(bladeInfo));
     }
 
     openSupportRequestBlade(obj: any, source: string): void {
@@ -97,7 +102,7 @@ export class PortalService {
 
         const data = event.data.data;
         const methodName = event.data.kind;
-        console.log('[iFrame] Received mesg: ' + methodName);
+        console.log('[iFrame] Received mesg: ' + methodName, event);
 
         if (methodName === Verbs.sendStartupInfo) {
             const info = <StartupInfo>data;
