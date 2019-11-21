@@ -19,13 +19,13 @@
       <span>Chart Header</span>
       <span (click)="showChoiceGroup = !showChoiceGroup">
         <span style="margin-right: 5px;">Label: All</span>
-        <fab-icon iconName="Filter" style="color: #0078D7;"></fab-icon>
+        <fab-icon iconName="Filter" contentStyle="color: #0078D7;"></fab-icon>
       </span>
-      <fab-choice-group *ngIf="showChoiceGroup" 
-      style="position: absolute; 
-              top: 20px; 
-              right: 0px ; 
-              background: #FFFFFF; 
+      <fab-choice-group *ngIf="showChoiceGroup"
+      style="position: absolute;
+              top: 20px;
+              right: 0px ;
+              background: #FFFFFF;
               padding: 8px;
               color: #323130;
               font-size: 14px;" label="Label" [options]="options" (onChange)="setCategoryIndex($event)"

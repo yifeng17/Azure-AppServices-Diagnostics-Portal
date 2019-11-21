@@ -19,11 +19,15 @@
   </div>
 
   <div class="search-box">
-    <fab-search-box placeholder="Search" ></fab-search-box>
+    <fab-search-box placeholder="Search"></fab-search-box>
   </div>
-       <fab-nav [groups]="groups" [styles]="styles" [initialSelectedKey]='initialSelectedKey'
-        [selectedKey]='selectedKey'></fab-nav>
-  <fab-panel [renderNavigationContent]="navigationContent" [isOpen]="isOpen" [isHiddenOnDismiss]="true" (onDismiss)="isOpen=!isOpen" [isLightDismiss]="true" [hasCloseButton]="true" [closeButtonAriaLabel]="close" [headerText]="'Panel Text'">This is a panel</fab-panel>
+
+  <!-- [renderNavigationContent]="navigationContent"  -->
+  <fab-panel [renderNavigationContent]="navigationContent" [isOpen]="isOpen" [isHiddenOnDismiss]="true"
+    (onDismiss)="isOpen=!isOpen" [isLightDismiss]="isLightDismiss" [hasCloseButton]="true" [closeButtonAriaLabel]="'close'"
+    [headerText]="'Hi my name is Genie'">
+    <span >Chat</span>
+  </fab-panel>
   <health-check-v3></health-check-v3>
   <p style="font-size: 12px;">Are you looking for something else ?</p>
   <div class="search-box">

@@ -187,7 +187,7 @@ export class CategoryNavComponent implements OnInit {
                 });
             });
 
-            console.log("*****detectors", this.detectorList);
+         //   console.log("*****detectors", this.detectorList);
 
             this.styles = {
                 root: {

@@ -1,5 +1,7 @@
 import { Component, OnInit, isDevMode } from '@angular/core';
 import { Router } from '@angular/router';
+import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
+
 
 @Component({
     selector: 'sc-app',
@@ -26,5 +28,6 @@ export class AppComponent implements OnInit {
         }
 
         this._router.navigate(['/resourceRedirect']);
+        initializeIcons('https://static2.sharepointonline.com/files/fabric/assets/icons/');
     }
 }
