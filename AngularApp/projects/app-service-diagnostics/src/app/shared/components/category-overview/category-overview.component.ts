@@ -11,11 +11,14 @@ import { IPanelHeaderRenderer, IPanelProps } from 'office-ui-fabric-react/lib/Pa
   templateUrl: './category-overview.component.html',
   styleUrls: ['./category-overview.component.scss']
 })
-export class CategoryOverviewComponent implements OnInit {
+//extends Renderable
+export class CategoryOverviewComponent implements OnInit   {
 
   categoryId: string = "";
   isOpen: boolean = true;
-  navigationContent: InputRendererOptions<IPanelProps>;
+  //navigationContent: InputRendererOptions<IPanelProps>;
+//  navigationContent: RenderPropContext<IPanelProps>;
+navigationContent: (() => HTMLElement);
   isLightDismiss: boolean = true;
   constructor(private _activatedRoute: ActivatedRoute) {
 
@@ -28,6 +31,7 @@ export class CategoryOverviewComponent implements OnInit {
 
   ngOnInit() {
     this.categoryId = this._activatedRoute.parent.snapshot.params.category;
+    let elem = document.createElement('div') as HTMLElement
     // this.navigationContent = useConstCallback((props, defaultRender) => (
     //     <>
     //       <SearchBox placeholder="Search here..." styles={searchboxStyles} ariaLabel="Sample search box. Does not actually search anything." />
@@ -46,18 +50,49 @@ export class CategoryOverviewComponent implements OnInit {
         // }
 
 
-        this.navigationContent = {
-            getProps: defaultProps => ({
-              ...defaultProps,
-           //   label: defaultProps.label,
-            //  onRenderNavigationContent: createInputJsxRenderer()
-            }),
-          };
+        // this.navigationContent = {
+        //     render: defaultProps => {
+        //         (<h1>Hello World</h1>)
+        //         // {
+        //         // ${defaultRender!(props)}
+        //             // <>
+        //     //   </>)
+        //    //   label: defaultProps.label,
+        //     //  onRenderNavigationContent: createInputJsxRenderer()
+        //     },
+        //   };
+
+        // this.navigationContent = {
+        //     getProps: defaultProps => ({
+        //       ...defaultProps,
+        //    //   label: defaultProps.label,
+        //       onRenderNavigationContent: ()=>{
+        //           document.createElement('div') as HTMLElement;
+        //         // (props?: P, defaultRender?: (props?: P) => JSX.Element | null): JSX.Element | null;
+        //       }
+        //     }),
+        //   };
+
+          this.navigationContent = ()=>{
+              let panelTitle =  document.createElement('div') as HTMLElement;
+              panelTitle.style.position = 'absolute';
+              panelTitle.style.left = '25px';
+              panelTitle.style.right = '32px';
+              panelTitle.style.top = '0px';
+              panelTitle.style.height = '27px';
+              panelTitle.style.fontFamily = "Segoe UI";
+              panelTitle.style.fontSize = "18px";
+              panelTitle.style.lineHeight = "24px";
+              panelTitle.style.display = "flex";
+              panelTitle.style.alignItems = "flex-end";
+              panelTitle.innerHTML= "Hi my name is Genie"
+            return panelTitle;
+          // (props?: P, defaultRender?: (props?: P) => JSX.Element | null): JSX.Element | null;
+        };
 
     // this.navigationContent =  {
-    //     getProps: defaultProps => ({
+    //     render: defaultProps => ({
     //       ...defaultProps,
-    //       label: defaultProps.label.toUpperCase(),
     //       onRenderNavigationContent: (props, defaultRender) => return (
     //         <>
     //     <SearchBox placeholder="Search here..." styles={searchboxStyles} ariaLabel="Sample search box. Does not actually search anything." />
