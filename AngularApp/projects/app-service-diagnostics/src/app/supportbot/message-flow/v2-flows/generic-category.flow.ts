@@ -72,7 +72,7 @@ export class GenericCategoryFlow extends IMessageFlowProvider {
       }
 
       const welcomeCategory: MessageGroup = new MessageGroup(`welcome-${category.id}`, [], () => mainMenuId);
-      welcomeCategory.messages.push(new TextMessage(`Hello! Welcome to ${serviceName}! My name is Genie and I\'m here to help you diagnose and solve problems.`));
+      welcomeCategory.messages.push(new TextMessage(`Hello! Haha! Welcome to ${serviceName}! My name is Genie and I\'m here to help you diagnose and solve problems.`));
       welcomeCategory.messages.push(new TextMessage(`Here are some issues related to ${category.name} that I can help with. Please select the tile that best describes your issue.`, MessageSender.System, 500));
 
       const categoryMainMenu: MessageGroup = new MessageGroup(mainMenuId, [], () => feedback);

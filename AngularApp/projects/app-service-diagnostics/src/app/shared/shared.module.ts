@@ -93,6 +93,7 @@ import { EventViewerComponent } from './components/daas/event-viewer/event-viewe
 import { FrebViewerComponent } from './components/daas/freb-viewer/freb-viewer.component';
 import { CategoryOverviewComponent } from './components/category-overview/category-overview.component';
 import { SupportBotModule } from '../supportbot/supportbot.module';
+// import { DynamicComponent } from '../supportbot/dynamic-component/dynamic.component';
 
 @NgModule({
     declarations: [
@@ -156,6 +157,7 @@ import { SupportBotModule } from '../supportbot/supportbot.module';
         GenericAnalysisComponent,
         EventViewerComponent,
         FrebViewerComponent,
+        // DynamicComponent
     ],
     imports: [
         HttpClientModule,
@@ -164,7 +166,8 @@ import { SupportBotModule } from '../supportbot/supportbot.module';
         FormsModule,
         RouterModule,
         DiagnosticDataModule,
-        Ng5SliderModule
+        Ng5SliderModule,
+        // DynamicComponent
     ],
     exports: [
         CommonModule,
