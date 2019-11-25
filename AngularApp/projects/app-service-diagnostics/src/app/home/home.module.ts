@@ -90,7 +90,9 @@ export const HomeRoutes = RouterModule.forChild([
         path: 'overview',
         component: CategoryOverviewComponent,
         data: {
-            cacheComponent: true
+            cacheComponent: true,
+            navigationTitle: CategoryTabResolver,
+            messageList: CategoryChatResolver
         },
       },
       {

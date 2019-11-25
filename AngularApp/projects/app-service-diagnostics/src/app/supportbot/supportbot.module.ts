@@ -75,7 +75,8 @@ import { SummaryCardComponent } from './message-flow/summary-card/summary-card.c
         SupportBotComponent,
         CategoryMenuComponent,
         DetectorSummaryComponent,
-        HealthCheckV3Component
+        HealthCheckV3Component,
+        DynamicComponent
     ],
     providers: [
         StartupMessages,

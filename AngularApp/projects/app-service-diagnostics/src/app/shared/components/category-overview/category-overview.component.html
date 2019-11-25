@@ -5,11 +5,23 @@
 <!-- <div style="margin: 0px -10px;">
   <support-bot startingKey="welcome-WindowsAvailabilityAndPerformance"></support-bot>
 </div> -->
+<template #tpl>
+  <span>I am span in template</span>
+</template>
+
+<ng-template #panelTitle>
+  <h1>Hi my name is genie</h1>
+</ng-template>
+
+<ng-template #headerTemplate let-column="column" let-sort="sortFn">
+  <div (click)="sort()">{{ column.name }}</div>
+  <input type="text" placeholder="{{column.name}}" (keyup)="updateFilter($event, column.prop)" />
+</ng-template>
 <div class="category-container">
   <div>
     <h3 class="category-title">Availability and performance</h3>
-    <p class="category-description">Explore this overview to discover any application or platform issues that may affect
-      your app's high availability. You can also drill down on an area by selecting a topic in the side navigation</p>
+    <p class="category-description">Explore this overview to discover any application or platform issues that may affect your app's high availability. You
+      can also drill down on an area by selecting a topic in the side navigation</p>
   </div>
 
   <div style="margin: 15px 0px" (click)="isOpen=!isOpen">
@@ -23,13 +35,37 @@
   </div>
 
   <!-- [renderNavigationContent]="navigationContent"  -->
-  <fab-panel [renderNavigationContent]="navigationContent" [isOpen]="isOpen" [isHiddenOnDismiss]="true"
-    (onDismiss)="isOpen=!isOpen" [isLightDismiss]="isLightDismiss" [hasCloseButton]="true" [closeButtonAriaLabel]="'close'"
-    [headerText]="'Hi my name is Genie'">
-    <span >Chat</span>
+  <!-- [headerText]="'Hi my name is Genie'" -->
+  <!-- [renderFooter]="renderFooter" -->
+  <fab-panel [isOpen]="isOpen" [renderNavigationContent]="navigationContent" [isHiddenOnDismiss]="true" (onDismiss)="isOpen=!isOpen" [isLightDismiss]="isLightDismiss" [hasCloseButton]="true"
+    [closeButtonAriaLabel]="'close'" >
+    <div class="panel-content" style="margin-left: -25px;">
+        <!-- *ngIf="messages != undefined && messages.count > 0" -->
+    <fab-pivot>
+      <fab-pivot-item headerText="Chat">
+        <div *ngIf="messages != undefined && messages.count > 0">
+        <div class="row animated fadeIn chat-message-container" *ngFor="let item of messages">
+          <span>hahaha</span>
+          <dynamic-component [componentData]="item" (onViewUpdate)="scrollToBottom()" (onComplete)="getMessage($event)"></dynamic-component>
+      </div>
+    </div>
+      </fab-pivot-item>
+      <fab-pivot-item headerText="Insights">
+        <div></div>
+      </fab-pivot-item>
+      <fab-pivot-item headerText="History">
+        <div></div>
+      </fab-pivot-item>
+    </fab-pivot>
+
+    <div class="chat-search-box" style="position: absolute; bottom: 19px; left: 37px; right: 37px">
+      <fab-text-field [placeholder]="'Type your question'" [iconProps]="{iconName: 'send'}"></fab-text-field>
+    </div>
+  </div>
+    <!-- <span>Chat</span> -->
   </fab-panel>
   <health-check-v3></health-check-v3>
-  <p style="font-size: 12px;">Are you looking for something else ?</p>
+  <p style="font-size: 12px;">Are you looking for something else?</p>
   <div class="search-box">
     <fab-search-box placeholder="Search"></fab-search-box>
   </div>

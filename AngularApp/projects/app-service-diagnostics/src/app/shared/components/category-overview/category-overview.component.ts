@@ -1,47 +1,98 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { InputRendererOptions, JsxRenderFunc, ReactWrapperComponent} from '@angular-react/core';
+import { InputRendererOptions, JsxRenderFunc, ReactWrapperComponent } from '@angular-react/core';
 import { IPanelHeaderRenderer, IPanelProps } from 'office-ui-fabric-react/lib/Panel';
+import { Message } from '../../../supportbot/models/message';
+import { MessageProcessor } from '../../../supportbot/message-processor.service';
+import { DynamicComponent } from '../../../supportbot/dynamic-component/dynamic.component';
 
 //  createInputJsxRenderer, createRenderPropHandler
 
 
 @Component({
-  selector: 'category-overview',
-  templateUrl: './category-overview.component.html',
-  styleUrls: ['./category-overview.component.scss']
+    selector: 'category-overview',
+    templateUrl: './category-overview.component.html',
+    styleUrls: ['./category-overview.component.scss']
 })
 //extends Renderable
-export class CategoryOverviewComponent implements OnInit   {
+export class CategoryOverviewComponent implements OnInit {
 
-  categoryId: string = "";
-  isOpen: boolean = true;
-  //navigationContent: InputRendererOptions<IPanelProps>;
-//  navigationContent: RenderPropContext<IPanelProps>;
-navigationContent: (() => HTMLElement);
-  isLightDismiss: boolean = true;
-  constructor(private _activatedRoute: ActivatedRoute) {
+    @ViewChild('scrollMe', { static: false }) myScrollContainer: ElementRef;
 
+    messages: Message[] = [];
+    showTypingMessage: boolean;
+    chatContainerHeight: number;
+    categoryId: string = "";
+    isOpen: boolean = true;
+    // navigationContent: InputRendererOptions<IPanelProps>;
+    //  navigationContent: RenderPropContext<IPanelProps>;
+    navigationContent: (() => HTMLElement);
+    renderFooter: (() => HTMLElement);
+    isLightDismiss: boolean = true;
+    @ViewChild('panelTitle', { static: true }) navigationContentTemplate: TemplateRef<any>;
+    @ViewChild("headerTemplate", { static: true }) headerTemplate: TemplateRef<any>;
+    @ViewChild('tpl', { static: true }) tpl: TemplateRef<any>;
 
-    // this._activatedRoute.paramMap.subscribe(params => {
-    //     console.log("category params", params);
-    //     this.categoryId = params.get('category');
-    //   });
-  }
+    constructor(private _activatedRoute: ActivatedRoute, private _messageProcessor: MessageProcessor) {
+        // this._activatedRoute.paramMap.subscribe(params => {
+        //     console.log("category params", params);
+        //     this.categoryId = params.get('category');
+        //   });
+    }
 
-  ngOnInit() {
-    this.categoryId = this._activatedRoute.parent.snapshot.params.category;
-    let elem = document.createElement('div') as HTMLElement
-    // this.navigationContent = useConstCallback((props, defaultRender) => (
-    //     <>
-    //       <SearchBox placeholder="Search here..." styles={searchboxStyles} ariaLabel="Sample search box. Does not actually search anything." />
-    //       {// This custom navigation still renders the close button (defaultRender).
-    //       // If you don't use defaultRender, be sure to provide some other way to close the panel.
-    //       defaultRender!(props)}
-    //     </>
-    //   ));
+    scrollToBottom(event?: any): void {
 
-    // This custom navigation still renders the close button (defaultRender).
+        try {
+            this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+        } catch (err) { }
+    }
+
+    getMessage(event?: any): void {
+        const self = this;
+        const message = this._messageProcessor.getNextMessage(event);
+
+        console.log("message in support bot", message);
+        if (message) {
+            this.messages.push(message);
+            console.log("message not empty", message);
+            if (message.messageDelayInMs >= 2000) {
+                console.log("1st settimeout");
+                this.showTypingMessage = true;
+
+                // To show the typing message icon, we need to scroll the page to the bottom.
+                setTimeout(() => {
+                    this.scrollToBottom();
+                }, 200);
+            }
+
+            setTimeout(function () {
+                self.showTypingMessage = false;
+                //    self.messages.push(message);
+                this.messages.push(message);
+                console.log("2nd settimeout");
+            }, message.messageDelayInMs);
+        }
+    }
+
+    ngOnInit() {
+        this.categoryId = this._activatedRoute.parent.snapshot.params.category;
+        // let elem = document.createElement('div') as HTMLElement
+        // this.messages.push(new Message {
+
+        // });
+        this.getMessage();
+
+        console.log("this.messages after init", this.messages);
+        // this.navigationContent = useConstCallback((props, defaultRender) => (
+        //     <>
+        //       <SearchBox placeholder="Search here..." styles={searchboxStyles} ariaLabel="Sample search box. Does not actually search anything." />
+        //       {// This custom navigation still renders the close button (defaultRender).
+        //       // If you don't use defaultRender, be sure to provide some other way to close the panel.
+        //       defaultRender!(props)}
+        //     </>
+        //   ));
+
+        // This custom navigation still renders the close button (defaultRender).
         // If you don't use defaultRender, be sure to provide some other way to close the panel.
 
 
@@ -73,45 +124,66 @@ navigationContent: (() => HTMLElement);
         //     }),
         //   };
 
-          this.navigationContent = ()=>{
-              let panelTitle =  document.createElement('div') as HTMLElement;
-              panelTitle.style.position = 'absolute';
-              panelTitle.style.left = '25px';
-              panelTitle.style.right = '32px';
-              panelTitle.style.top = '0px';
-              panelTitle.style.height = '27px';
-              panelTitle.style.fontFamily = "Segoe UI";
-              panelTitle.style.fontSize = "18px";
-              panelTitle.style.lineHeight = "24px";
-              panelTitle.style.display = "flex";
-              panelTitle.style.alignItems = "flex-end";
-              panelTitle.innerHTML= "Hi my name is Genie"
+        this.navigationContent = () => {
+            let panelTitle = document.createElement('div') as HTMLElement;
+            panelTitle.style.position = 'absolute';
+            panelTitle.style.left = '25px';
+            panelTitle.style.right = '32px';
+            panelTitle.style.top = '0px';
+            panelTitle.style.height = '27px';
+            panelTitle.style.fontFamily = "Segoe UI";
+            panelTitle.style.fontSize = "18px";
+            panelTitle.style.lineHeight = "24px";
+            panelTitle.style.display = "flex";
+            panelTitle.style.alignItems = "flex-end";
+            panelTitle.innerHTML = "Hi my name is Genie"
             return panelTitle;
-          // (props?: P, defaultRender?: (props?: P) => JSX.Element | null): JSX.Element | null;
+            // (props?: P, defaultRender?: (props?: P) => JSX.Element | null): JSX.Element | null;
         };
 
-    // this.navigationContent =  {
-    //     render: defaultProps => ({
-    //       ...defaultProps,
-    //       onRenderNavigationContent: (props, defaultRender) => return (
-    //         <>
-    //     <SearchBox placeholder="Search here..." styles={searchboxStyles} ariaLabel="Sample search box. Does not actually search anything." />
-    //     {
-    //     ${defaultRender!(props)}
-    //   </>)
-    //     }),
-    //   };
 
-//     this.navigationContent =   (props, defaultRender) => {
-//         `<>
-//     <SearchBox placeholder="Search here..." styles={searchboxStyles} ariaLabel="Sample search box. Does not actually search anything." />
-//     {// This custom navigation still renders the close button (defaultRender).
-//     // If you don't use defaultRender, be sure to provide some other way to close the panel.
-//     ${defaultRender!(props)}
-//   </>`;
-// };
-    console.log("routes", this._activatedRoute.parent);
-    console.log("categoryId", this.categoryId);
-  }
+        this.renderFooter = () => {
+            // let panelTitle =  document.createElement('fab-search-box') as HTMLElement;
+            let panelTitle = document.createElement('div') as HTMLElement;
+            //  panelTitle.placeholder = 'Type your question';
+            // panelTitle.style.left = '25px';
+            // panelTitle.style.right = '32px';
+            // panelTitle.style.top = '0px';
+            // panelTitle.style.height = '27px';
+            // panelTitle.style.fontFamily = "Segoe UI";
+            // panelTitle.style.fontSize = "18px";
+            // panelTitle.style.lineHeight = "24px";
+            // panelTitle.style.display = "flex";
+            // panelTitle.style.alignItems = "flex-end";
+            panelTitle.innerHTML = "Hi my name is Genie"
+            return panelTitle;
+            // (props?: P, defaultRender?: (props?: P) => JSX.Element | null): JSX.Element | null;
+        };
+
+
+
+        // this.navigationContent =  {
+        //     render: defaultProps => ({
+        //       ...defaultProps,
+        //       onRenderNavigationContent: (props, defaultRender) => return (
+        //         <>
+        //     <SearchBox placeholder="Search here..." styles={searchboxStyles} ariaLabel="Sample search box. Does not actually search anything." />
+        //     {
+        //     ${defaultRender!(props)}
+        //   </>)
+        //     }),
+        //   };
+
+        //     this.navigationContent =   (props, defaultRender) => {
+        //         `<>
+        //     <SearchBox placeholder="Search here..." styles={searchboxStyles} ariaLabel="Sample search box. Does not actually search anything." />
+        //     {// This custom navigation still renders the close button (defaultRender).
+        //     // If you don't use defaultRender, be sure to provide some other way to close the panel.
+        //     ${defaultRender!(props)}
+        //   </>`;
+        // };
+        console.log("routes", this._activatedRoute.parent);
+        console.log("categoryId", this.categoryId);
+    }
 
 }
