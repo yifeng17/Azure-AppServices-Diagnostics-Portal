@@ -74,6 +74,9 @@ export class CategoryOverviewComponent implements OnInit {
         }
     }
 
+    closePanel(){
+      this.isOpen = false;
+    }
     ngOnInit() {
         this.categoryId = this._activatedRoute.parent.snapshot.params.category;
         // let elem = document.createElement('div') as HTMLElement
@@ -125,7 +128,17 @@ export class CategoryOverviewComponent implements OnInit {
         //   };
 
         this.navigationContent = () => {
-            let panelTitle = document.createElement('div') as HTMLElement;
+          let panelTitleContainer = document.createElement('DIV') as HTMLElement;
+          let closeButton = document.createElement('BUTTON') as HTMLElement;
+            let panelTitle = document.createElement('SPAN') as HTMLElement;
+            closeButton.innerHTML="close";
+            closeButton.id = "close";
+            // closeButton.addEventListener("click", function(e) {
+              
+            // })
+            // closeButton.onclick = this.closePanel();
+            closeButton.style.position='absolute';
+            closeButton.style.right = '10px';
             panelTitle.style.position = 'absolute';
             panelTitle.style.left = '25px';
             panelTitle.style.right = '32px';
@@ -137,9 +150,16 @@ export class CategoryOverviewComponent implements OnInit {
             panelTitle.style.display = "flex";
             panelTitle.style.alignItems = "flex-end";
             panelTitle.innerHTML = "Hi my name is Genie"
-            return panelTitle;
+            panelTitleContainer.appendChild(panelTitle);
+             panelTitleContainer.appendChild(closeButton);
+            return panelTitleContainer;
             // (props?: P, defaultRender?: (props?: P) => JSX.Element | null): JSX.Element | null;
         };
+
+        document.getElementById('close').onclick = () => {
+          this.isOpen = false;
+          console.log("this.isOpen", this.isOpen);
+        }
 
 
         this.renderFooter = () => {
