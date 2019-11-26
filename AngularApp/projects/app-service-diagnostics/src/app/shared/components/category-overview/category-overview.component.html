@@ -37,31 +37,56 @@
   <!-- [renderNavigationContent]="navigationContent"  -->
   <!-- [headerText]="'Hi my name is Genie'" -->
   <!-- [renderFooter]="renderFooter" -->
-  <fab-panel [isOpen]="isOpen" [renderNavigationContent]="navigationContent" [isHiddenOnDismiss]="true" (onDismiss)="isOpen=!isOpen" [isLightDismiss]="isLightDismiss" [hasCloseButton]="true"
-    [closeButtonAriaLabel]="'close'" >
-    <div class="panel-content" style="margin-left: -25px;">
-        <!-- *ngIf="messages != undefined && messages.count > 0" -->
-    <fab-pivot>
-      <fab-pivot-item headerText="Chat">
-        <div *ngIf="messages != undefined && messages.count > 0">
-        <div class="row animated fadeIn chat-message-container" *ngFor="let item of messages">
-          <span>hahaha</span>
-          <dynamic-component [componentData]="item" (onViewUpdate)="scrollToBottom()" (onComplete)="getMessage($event)"></dynamic-component>
+  <!-- [renderNavigationContent]="navigationContent"  -->
+  <fab-panel [isOpen]="isOpen" [isHiddenOnDismiss]="true" (onDismiss)="isOpen=!isOpen" [isLightDismiss]="isLightDismiss" [hasCloseButton]="false"
+    [closeButtonAriaLabel]="'close'">
+
+    <!-- closeButton.style.position='absolute';
+    closeButton.style.right = '10px';
+    panelTitle.style.position = 'absolute';
+    panelTitle.style.left = '25px';
+    panelTitle.style.right = '32px';
+    panelTitle.style.top = '0px';
+    panelTitle.style.height = '27px';
+    panelTitle.style.fontFamily = "Segoe UI";
+    panelTitle.style.fontSize = "18px";
+    panelTitle.style.lineHeight = "24px";
+    panelTitle.style.display = "flex";
+    panelTitle.style.alignItems = "flex-end";
+    panelTitle.innerHTML = "Hi my name is Genie" -->
+
+    <!-- style="position: absolute;" -->
+    <div style="margin-bottom: 10px">
+      <div style="position: absolute; left:25px; right: 32px; top:0px; height: 32px; font-family: 'segoe UI'; font-size: 18px; line-height: 24px; display: flex; align-items: flex-end">Hi my name is genie</div>
+      <div style="color:#605E5C; position: absolute; left:25px; right: 32px; top:27px; height: 19px; font-family: 'segoe UI'; font-size: 10px; line-height: 14px; display: block">Help bot</div>
+      <div style="position: absolute; top:10px; right: 10px; display: flex; align-items: flex-end">
+        <i class="ms-Icon ms-Icon--x" aria-hidden="true"></i>
+      </div>
+      <!-- <button style="position: absolute; right: 10px; display: flex; align-items: flex-end" (click)="isOpen=false">X</button> -->
+    </div>
+    <div class="panel-content" style="margin-top: 40px;">
+      <!-- *ngIf="messages != undefined && messages.count > 0" -->
+      <fab-pivot>
+        <fab-pivot-item headerText="Chat">
+          <div *ngIf="messages != undefined && messages.count > 0">
+            <div class="row animated fadeIn chat-message-container" *ngFor="let item of messages">
+              <span>hahaha</span>
+              <dynamic-component [componentData]="item" (onViewUpdate)="scrollToBottom()" (onComplete)="getMessage($event)"></dynamic-component>
+            </div>
+          </div>
+        </fab-pivot-item>
+        <fab-pivot-item headerText="Insights">
+          <div></div>
+        </fab-pivot-item>
+        <fab-pivot-item headerText="History">
+          <div></div>
+        </fab-pivot-item>
+      </fab-pivot>
+
+      <div class="chat-search-box" style="position: absolute; bottom: 19px; left: 37px; right: 37px">
+        <fab-text-field [placeholder]="'Type your question'" [iconProps]="{iconName: 'send'}"></fab-text-field>
       </div>
     </div>
-      </fab-pivot-item>
-      <fab-pivot-item headerText="Insights">
-        <div></div>
-      </fab-pivot-item>
-      <fab-pivot-item headerText="History">
-        <div></div>
-      </fab-pivot-item>
-    </fab-pivot>
-
-    <div class="chat-search-box" style="position: absolute; bottom: 19px; left: 37px; right: 37px">
-      <fab-text-field [placeholder]="'Type your question'" [iconProps]="{iconName: 'send'}"></fab-text-field>
-    </div>
-  </div>
     <!-- <span>Chat</span> -->
   </fab-panel>
   <health-check-v3></health-check-v3>
