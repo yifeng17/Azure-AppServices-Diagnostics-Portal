@@ -64,14 +64,21 @@
       <div style="color:#605E5C; position: absolute; left:25px; right: 32px; top:35px; height: 19px; font-family: 'segoe UI'; font-size: 10px; line-height: 14px; display: block">Help bot</div>
       <div style="position: absolute; top:10px; right: 10px; display: flex; align-items: flex-end; cursor: pointer;">
         <i class="ms-Icon ms-Icon--Cancel" (click)="closePanel()" aria-hidden="true"></i>
+        <!-- <fab-icon iconName="Cancel" style="float:right" (onClick)="closePanel()"></fab-icon> -->
       </div>
       <!-- <button style="position: absolute; right: 10px; display: flex; align-items: flex-end" (click)="isOpen=false">X</button> -->
     </div>
     <div class="panel-content" style="margin-top: 60px; margin-left: -25px;">
       <!-- *ngIf="messages != undefined && messages.count > 0" -->
       <fab-pivot>
-        <fab-pivot-item headerText="Chat">
-          <div class="genie-message message-sent-by-system">{{welcomeMessage}}</div>
+        <fab-pivot-item headerText="Chat" #scrollMe>
+             <div *ngIf="messages != undefined && messages.length > 0">
+            <div class="row animated fadeIn chat-message-container" *ngFor="let item of messages">
+                <!-- <div *ngIf class="genie-message message-sent-by-system">{{welcomeMessage}}</div> -->
+              <dynamic-component [componentData]="item" (onViewUpdate)="scrollToBottom()" (onComplete)="getMessage($event)"></dynamic-component>
+            </div>
+          </div>
+          <!-- <div class="genie-message message-sent-by-system">{{welcomeMessage}}</div> -->
           <!-- <div *ngIf="messages != undefined && messages.length > 0">
             <div class="row animated fadeIn chat-message-container" *ngFor="let item of messages">
               <span>hahaha</span>
@@ -88,8 +95,10 @@
       </fab-pivot>
 
       <div class="chat-search-box" style="position: absolute; bottom: 19px; left: 37px; right: 37px">
-        <fab-text-field [placeholder]="'Type your question'" [iconProps]="{iconName: 'send'}"></fab-text-field>
-      </div>
+        <!-- <fab-text-field [placeholder]="'Type your question'" [iconProps]="{iconName: 'send'}"></fab-text-field> -->
+        <!-- [iconProps]="{iconName: 'send'}" -->
+        <fab-search-box [placeholder]="'Type your question'" (onSearch)="onSearchEnter($event)" [iconProps]="{iconName: 'none'}" contentStyle="height:31px;border-radius:15px" ></fab-search-box>
+        </div>
     </div>
     <!-- <span>Chat</span> -->
   </fab-panel>

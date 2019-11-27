@@ -2,9 +2,11 @@ import { Component, OnInit, ViewChild, TemplateRef, ElementRef } from '@angular/
 import { ActivatedRoute, Router } from '@angular/router';
 import { InputRendererOptions, JsxRenderFunc, ReactWrapperComponent } from '@angular-react/core';
 import { IPanelHeaderRenderer, IPanelProps } from 'office-ui-fabric-react/lib/Panel';
-import { Message } from '../../../supportbot/models/message';
+import { Message, TextMessage} from '../../../supportbot/models/message';
+import { MessageSender, ButtonActionType } from '../../../supportbot/models/message-enums';
 import { MessageProcessor } from '../../../supportbot/message-processor.service';
 import { DynamicComponent } from '../../../supportbot/dynamic-component/dynamic.component';
+import { TextMessageComponent } from '../../../supportbot/common/text-message/text-message.component';
 import { PanelType, IPanelStyles } from 'office-ui-fabric-react';
 //  import {} from 'office-ui-fabric-core/lib';
 
@@ -20,7 +22,7 @@ import { PanelType, IPanelStyles } from 'office-ui-fabric-react';
 //extends Renderable
 export class CategoryOverviewComponent implements OnInit {
 
-    // @ViewChild('scrollMe', { static: false }) myScrollContainer: ElementRef;
+    @ViewChild('ms-Panel-scrollableContent', { static: false }) myScrollContainer: ElementRef;
 
     messages: Message[] = [];
     showTypingMessage: boolean;
@@ -59,17 +61,18 @@ export class CategoryOverviewComponent implements OnInit {
         }
     }
 
-    // scrollToBottom(event?: any): void {
+    scrollToBottom(event?: any): void {
 
-    //     try {
-    //         this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
-    //     } catch (err) { }
-    // }
+        try {
+            this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+            console.log()
+        } catch (err) { }
+    }
 
     getMessage(event?: any): void {
         const self = this;
-        const message = this._messageProcessor.getNextMessage(event);
-
+     //   const message = this._messageProcessor.getNextMessage(event);
+     const message = null;
         console.log("message in support bot", message);
         if (message) {
             this.messages.push(message);
@@ -93,6 +96,13 @@ export class CategoryOverviewComponent implements OnInit {
         }
     }
 
+    onSearchEnter(event: any): void {
+        // this.searchBoxFocus = true;
+        console.log("search Event", event);
+        this.messages.push(new TextMessage(event.newValue, MessageSender.System, 100));
+        this.messages.push(new TextMessage('Great, we are running some analysis for you', MessageSender.User));
+    }
+
     closePanel() {
         this.isOpen = false;
         console.log("isOpen", this.isOpen);
@@ -110,6 +120,7 @@ export class CategoryOverviewComponent implements OnInit {
         // this.messages.push(new Message {
 
         // });
+        this.messages.push(new TextMessage(this.welcomeMessage, MessageSender.User, 200));
         this.getMessage();
         console.log("is Open status", this.isOpen);
 
