@@ -38,7 +38,8 @@
   <!-- [headerText]="'Hi my name is Genie'" -->
   <!-- [renderFooter]="renderFooter" -->
   <!-- [renderNavigationContent]="navigationContent"  -->
-  <fab-panel [isOpen]="isOpen" [isHiddenOnDismiss]="true" (onDismiss)="isOpen=!isOpen" [isLightDismiss]="isLightDismiss" [hasCloseButton]="false"
+  <!-- (onDismiss)="isOpen=!isOpen" -->
+  <fab-panel [isOpen]="isOpen" [isHiddenOnDismiss]="true" [styles]="panelStyles" [isLightDismiss]="isLightDismiss" [hasCloseButton]="false"
     [closeButtonAriaLabel]="'close'">
 
     <!-- closeButton.style.position='absolute';
@@ -57,17 +58,18 @@
 
     <!-- style="position: absolute;" -->
     <div style="margin-bottom: 10px">
-      <div style="position: absolute; left:25px; right: 32px; top:0px; height: 32px; font-family: 'segoe UI'; font-size: 18px; line-height: 24px; display: flex; align-items: flex-end">Hi my name is genie</div>
-      <div style="color:#605E5C; position: absolute; left:25px; right: 32px; top:27px; height: 19px; font-family: 'segoe UI'; font-size: 10px; line-height: 14px; display: block">Help bot</div>
-      <div style="position: absolute; top:10px; right: 10px; display: flex; align-items: flex-end">
-        <i class="ms-Icon ms-Icon--x" aria-hidden="true"></i>
+      <div style="position: absolute; left:25px; right: 32px; top:0px; height: 32px; font-family: 'segoe UI'; font-size: 18px; line-height: 24px; font-weight: 600;display: flex; align-items: flex-end">Hi my name is genie</div>
+      <div style="color:#605E5C; position: absolute; left:25px; right: 32px; top:35px; height: 19px; font-family: 'segoe UI'; font-size: 10px; line-height: 14px; display: block">Help bot</div>
+      <div style="position: absolute; top:10px; right: 10px; display: flex; align-items: flex-end; cursor: pointer;">
+        <i class="ms-Icon ms-Icon--Cancel" (click)="closePanel()" aria-hidden="true"></i>
       </div>
       <!-- <button style="position: absolute; right: 10px; display: flex; align-items: flex-end" (click)="isOpen=false">X</button> -->
     </div>
-    <div class="panel-content" style="margin-top: 40px;">
+    <div class="panel-content" style="margin-top: 60px; margin-left: -25px">
       <!-- *ngIf="messages != undefined && messages.count > 0" -->
       <fab-pivot>
         <fab-pivot-item headerText="Chat">
+          <div class="genie-message">{{welcomeMessage}}</div>
           <div *ngIf="messages != undefined && messages.count > 0">
             <div class="row animated fadeIn chat-message-container" *ngFor="let item of messages">
               <span>hahaha</span>
