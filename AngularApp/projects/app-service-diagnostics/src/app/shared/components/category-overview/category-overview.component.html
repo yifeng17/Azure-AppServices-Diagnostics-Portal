@@ -39,8 +39,10 @@
   <!-- [renderFooter]="renderFooter" -->
   <!-- [renderNavigationContent]="navigationContent"  -->
   <!-- (onDismiss)="isOpen=!isOpen" -->
-  <fab-panel [isOpen]="isOpen" [isHiddenOnDismiss]="true" [styles]="panelStyles" [isLightDismiss]="isLightDismiss" [hasCloseButton]="false"
-    [closeButtonAriaLabel]="'close'">
+  <!-- width: 585px -->
+  <!-- " [styles]="panelStyles"" -->
+  <fab-panel [isOpen]="isOpen" [type]="type" [customWidth]="width" [isHiddenOnDismiss]="true" [isLightDismiss]="true" [hasCloseButton]="false"
+    [closeButtonAriaLabel]="'close'" >
 
     <!-- closeButton.style.position='absolute';
     closeButton.style.right = '10px';
@@ -65,17 +67,17 @@
       </div>
       <!-- <button style="position: absolute; right: 10px; display: flex; align-items: flex-end" (click)="isOpen=false">X</button> -->
     </div>
-    <div class="panel-content" style="margin-top: 60px; margin-left: -25px">
+    <div class="panel-content" style="margin-top: 60px; margin-left: -25px;">
       <!-- *ngIf="messages != undefined && messages.count > 0" -->
       <fab-pivot>
         <fab-pivot-item headerText="Chat">
-          <div class="genie-message">{{welcomeMessage}}</div>
-          <div *ngIf="messages != undefined && messages.count > 0">
+          <div class="genie-message message-sent-by-system">{{welcomeMessage}}</div>
+          <!-- <div *ngIf="messages != undefined && messages.length > 0">
             <div class="row animated fadeIn chat-message-container" *ngFor="let item of messages">
               <span>hahaha</span>
               <dynamic-component [componentData]="item" (onViewUpdate)="scrollToBottom()" (onComplete)="getMessage($event)"></dynamic-component>
             </div>
-          </div>
+          </div> -->
         </fab-pivot-item>
         <fab-pivot-item headerText="Insights">
           <div></div>
