@@ -5,6 +5,8 @@ import { IPanelHeaderRenderer, IPanelProps } from 'office-ui-fabric-react/lib/Pa
 import { Message } from '../../../supportbot/models/message';
 import { MessageProcessor } from '../../../supportbot/message-processor.service';
 import { DynamicComponent } from '../../../supportbot/dynamic-component/dynamic.component';
+import { PanelType } from 'office-ui-fabric-react';
+//  import {} from 'office-ui-fabric-core/lib';
 
 //  createInputJsxRenderer, createRenderPropHandler
 
@@ -12,12 +14,13 @@ import { DynamicComponent } from '../../../supportbot/dynamic-component/dynamic.
 @Component({
     selector: 'category-overview',
     templateUrl: './category-overview.component.html',
-    styleUrls: ['./category-overview.component.scss']
+    styleUrls: ['./category-overview.component.scss',
+    ]
 })
 //extends Renderable
 export class CategoryOverviewComponent implements OnInit {
 
-    @ViewChild('scrollMe', { static: false }) myScrollContainer: ElementRef;
+    // @ViewChild('scrollMe', { static: false }) myScrollContainer: ElementRef;
 
     messages: Message[] = [];
     showTypingMessage: boolean;
@@ -29,23 +32,30 @@ export class CategoryOverviewComponent implements OnInit {
     navigationContent: (() => HTMLElement);
     renderFooter: (() => HTMLElement);
     isLightDismiss: boolean = true;
-    @ViewChild('panelTitle', { static: true }) navigationContentTemplate: TemplateRef<any>;
-    @ViewChild("headerTemplate", { static: true }) headerTemplate: TemplateRef<any>;
-    @ViewChild('tpl', { static: true }) tpl: TemplateRef<any>;
+    welcomeMessage: string = "";
+    panelStyles: IPanelProps;
+
+    // @ViewChild('panelTitle', { static: true }) navigationContentTemplate: TemplateRef<any>;
+    // @ViewChild("headerTemplate", { static: true }) headerTemplate: TemplateRef<any>;
+    // @ViewChild('tpl', { static: true }) tpl: TemplateRef<any>;
 
     constructor(private _activatedRoute: ActivatedRoute, private _messageProcessor: MessageProcessor) {
         // this._activatedRoute.paramMap.subscribe(params => {
         //     console.log("category params", params);
         //     this.categoryId = params.get('category');
         //   });
+            this.panelStyles = {
+            type: PanelType.smallFixedNear,
+         //   customWidth: "585",
+        }
     }
 
-    scrollToBottom(event?: any): void {
+    // scrollToBottom(event?: any): void {
 
-        try {
-            this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
-        } catch (err) { }
-    }
+    //     try {
+    //         this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+    //     } catch (err) { }
+    // }
 
     getMessage(event?: any): void {
         const self = this;
@@ -61,7 +71,7 @@ export class CategoryOverviewComponent implements OnInit {
 
                 // To show the typing message icon, we need to scroll the page to the bottom.
                 setTimeout(() => {
-                    this.scrollToBottom();
+                  //  this.scrollToBottom();
                 }, 200);
             }
 
@@ -74,16 +84,25 @@ export class CategoryOverviewComponent implements OnInit {
         }
     }
 
-    closePanel(){
-      this.isOpen = false;
+    closePanel() {
+        this.isOpen = false;
+        console.log("isOpen", this.isOpen);
     }
     ngOnInit() {
+        this.welcomeMessage = "Welcome to App Service Diagnostics. My name is Genie and I am here to help you answer any questions you may have about diagnosing and solving your problems with your app. First let me run a quick helath check for you and give you an overview of the availability and performance of your app.";
         this.categoryId = this._activatedRoute.parent.snapshot.params.category;
+
+        this.panelStyles = {
+            type: PanelType.smallFixedNear,
+         //   customWidth: "585",
+        }
+
         // let elem = document.createElement('div') as HTMLElement
         // this.messages.push(new Message {
 
         // });
         this.getMessage();
+        console.log("is Open status", this.isOpen);
 
         console.log("this.messages after init", this.messages);
         // this.navigationContent = useConstCallback((props, defaultRender) => (
@@ -127,38 +146,38 @@ export class CategoryOverviewComponent implements OnInit {
         //     }),
         //   };
 
-        this.navigationContent = () => {
-          let panelTitleContainer = document.createElement('DIV') as HTMLElement;
-          let closeButton = document.createElement('BUTTON') as HTMLElement;
-            let panelTitle = document.createElement('SPAN') as HTMLElement;
-            closeButton.innerHTML="close";
-            closeButton.id = "close";
-            // closeButton.addEventListener("click", function(e) {
-              
-            // })
-            // closeButton.onclick = this.closePanel();
-            closeButton.style.position='absolute';
-            closeButton.style.right = '10px';
-            panelTitle.style.position = 'absolute';
-            panelTitle.style.left = '25px';
-            panelTitle.style.right = '32px';
-            panelTitle.style.top = '0px';
-            panelTitle.style.height = '27px';
-            panelTitle.style.fontFamily = "Segoe UI";
-            panelTitle.style.fontSize = "18px";
-            panelTitle.style.lineHeight = "24px";
-            panelTitle.style.display = "flex";
-            panelTitle.style.alignItems = "flex-end";
-            panelTitle.innerHTML = "Hi my name is Genie"
-            panelTitleContainer.appendChild(panelTitle);
-             panelTitleContainer.appendChild(closeButton);
-            return panelTitleContainer;
-            // (props?: P, defaultRender?: (props?: P) => JSX.Element | null): JSX.Element | null;
-        };
+        // this.navigationContent = () => {
+        //   let panelTitleContainer = document.createElement('DIV') as HTMLElement;
+        //   let closeButton = document.createElement('BUTTON') as HTMLElement;
+        //     let panelTitle = document.createElement('SPAN') as HTMLElement;
+        //     closeButton.innerHTML="close";
+        //     closeButton.id = "close";
+        //     // closeButton.addEventListener("click", function(e) {
+
+        //     // })
+        //     // closeButton.onclick = this.closePanel();
+        //     closeButton.style.position='absolute';
+        //     closeButton.style.right = '10px';
+        //     panelTitle.style.position = 'absolute';
+        //     panelTitle.style.left = '25px';
+        //     panelTitle.style.right = '32px';
+        //     panelTitle.style.top = '0px';
+        //     panelTitle.style.height = '27px';
+        //     panelTitle.style.fontFamily = "Segoe UI";
+        //     panelTitle.style.fontSize = "18px";
+        //     panelTitle.style.lineHeight = "24px";
+        //     panelTitle.style.display = "flex";
+        //     panelTitle.style.alignItems = "flex-end";
+        //     panelTitle.innerHTML = "Hi my name is Genie"
+        //     panelTitleContainer.appendChild(panelTitle);
+        //      panelTitleContainer.appendChild(closeButton);
+        //     return panelTitleContainer;
+        //     // (props?: P, defaultRender?: (props?: P) => JSX.Element | null): JSX.Element | null;
+        // };
 
         document.getElementById('close').onclick = () => {
-          this.isOpen = false;
-          console.log("this.isOpen", this.isOpen);
+            this.isOpen = false;
+            console.log("this.isOpen", this.isOpen);
         }
 
 
