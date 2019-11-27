@@ -5,7 +5,7 @@ import { IPanelHeaderRenderer, IPanelProps } from 'office-ui-fabric-react/lib/Pa
 import { Message } from '../../../supportbot/models/message';
 import { MessageProcessor } from '../../../supportbot/message-processor.service';
 import { DynamicComponent } from '../../../supportbot/dynamic-component/dynamic.component';
-import { PanelType } from 'office-ui-fabric-react';
+import { PanelType, IPanelStyles } from 'office-ui-fabric-react';
 //  import {} from 'office-ui-fabric-core/lib';
 
 //  createInputJsxRenderer, createRenderPropHandler
@@ -33,7 +33,9 @@ export class CategoryOverviewComponent implements OnInit {
     renderFooter: (() => HTMLElement);
     isLightDismiss: boolean = true;
     welcomeMessage: string = "";
-    panelStyles: IPanelProps;
+    panelStyles: any;
+    type: PanelType = PanelType.custom;
+    width: string = "585px";
 
     // @ViewChild('panelTitle', { static: true }) navigationContentTemplate: TemplateRef<any>;
     // @ViewChild("headerTemplate", { static: true }) headerTemplate: TemplateRef<any>;
@@ -45,7 +47,14 @@ export class CategoryOverviewComponent implements OnInit {
         //     this.categoryId = params.get('category');
         //   });
             this.panelStyles = {
-            type: PanelType.smallFixedNear,
+           // type: PanelType.smallFixedNear,
+            root: {
+                          // position: 'fixed',
+                          width: 585,
+                          // boxSizing: 'border-box',
+                          // overflowY: 'auto',
+                          // overflowX: 'hiden',
+                      },
          //   customWidth: "585",
         }
     }
@@ -92,10 +101,10 @@ export class CategoryOverviewComponent implements OnInit {
         this.welcomeMessage = "Welcome to App Service Diagnostics. My name is Genie and I am here to help you answer any questions you may have about diagnosing and solving your problems with your app. First let me run a quick helath check for you and give you an overview of the availability and performance of your app.";
         this.categoryId = this._activatedRoute.parent.snapshot.params.category;
 
-        this.panelStyles = {
-            type: PanelType.smallFixedNear,
-         //   customWidth: "585",
-        }
+        // this.panelStyles = {
+        //     type: PanelType.custom,
+        //     customWidth: "585px",
+        // }
 
         // let elem = document.createElement('div') as HTMLElement
         // this.messages.push(new Message {
