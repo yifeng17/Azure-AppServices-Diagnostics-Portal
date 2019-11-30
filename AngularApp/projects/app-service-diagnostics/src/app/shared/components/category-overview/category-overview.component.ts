@@ -99,8 +99,8 @@ export class CategoryOverviewComponent implements OnInit {
     onSearchEnter(event: any): void {
         // this.searchBoxFocus = true;
         console.log("search Event", event);
-        this.messages.push(new TextMessage(event.newValue, MessageSender.System, 100));
-        this.messages.push(new TextMessage('Great, we are running some analysis for you', MessageSender.User));
+        this.messages.push(new TextMessage(event.newValue, MessageSender.User, 100));
+        this.messages.push(new TextMessage('Ok give me a moment while I analyze your app for any issue related to this.', MessageSender.System));
     }
 
     closePanel() {
@@ -108,7 +108,7 @@ export class CategoryOverviewComponent implements OnInit {
         console.log("isOpen", this.isOpen);
     }
     ngOnInit() {
-        this.welcomeMessage = "Welcome to App Service Diagnostics. My name is Genie and I am here to help you answer any questions you may have about diagnosing and solving your problems with your app. First let me run a quick helath check for you and give you an overview of the availability and performance of your app.";
+        this.welcomeMessage = "Welcome to App Service Diagnostics. My name is Genie and I am here to help you answer any questions you may have about diagnosing and solving your problems with your app. Please describe the issue of your app.";
         this.categoryId = this._activatedRoute.parent.snapshot.params.category;
 
         // this.panelStyles = {
@@ -120,7 +120,7 @@ export class CategoryOverviewComponent implements OnInit {
         // this.messages.push(new Message {
 
         // });
-        this.messages.push(new TextMessage(this.welcomeMessage, MessageSender.User, 200));
+        this.messages.push(new TextMessage(this.welcomeMessage, MessageSender.System, 200));
         this.getMessage();
         console.log("is Open status", this.isOpen);
 

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { CategoryService } from '../../shared-v2/services/category.service';
 import { Observable, of } from 'rxjs';
 import { GenericCategoryFlow } from '../../supportbot/message-flow/v2-flows/generic-category.flow';
+import { GenieChatFlow } from '../../supportbot/message-flow/v2-flows/genie-chat.flow';
 import { mergeMap, first, map } from 'rxjs/operators';
 
 @Injectable()
@@ -22,13 +23,13 @@ export class CategoryTabResolver implements Resolve<Observable<string>> {
 
 @Injectable()
 export class CategoryChatResolver implements Resolve<Observable<any>> {
-    constructor(private _categoryService: CategoryService, private _genericCategoryService: GenericCategoryFlow) { }
+    constructor(private _categoryService: CategoryService, private _genericCategoryService: GenericCategoryFlow, private _genieChatFlow: GenieChatFlow) { }
 
     resolve(activatedRouteSnapshot: ActivatedRouteSnapshot): Observable<any> {
        if (activatedRouteSnapshot.params && activatedRouteSnapshot.params.category) {
            return this._categoryService.categories.pipe(mergeMap(categories => {
                const category = categories.find(category => category.id === activatedRouteSnapshot.params.category);
-               return this._genericCategoryService.createMessageFlowForCategory(category);
+               return this._genieChatFlow.createMessageFlowForCategory(category);
            }), first());
        }
 

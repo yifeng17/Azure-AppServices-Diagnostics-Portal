@@ -7,8 +7,8 @@ export class IMessageFlowProvider {
     GetMessageFlowList(): MessageGroup[] {
         return [];
     }
-
     SubscribeToAdditionalMessageFlowLists(): Observable<MessageGroup[]> {
+
         return this.additionalMessageFlows;
     }
 }

@@ -30,6 +30,7 @@ export class MessageProcessor {
         });
 
         this._messageGroups = messageGroups;
+        console.log("**** message processor injector and groups", this._injector, this._messageGroups);
 
         this.setCurrentKey(this._startingKey);
 

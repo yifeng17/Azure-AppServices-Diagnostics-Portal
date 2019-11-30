@@ -33,6 +33,7 @@ import { DocumentSearchResultsComponent } from './message-flow/document-search-r
 import { SharedV2Module } from '../shared-v2/shared-v2.module';
 import { DiagnosticDataModule } from 'diagnostic-data';
 import { GenericCategoryFlow } from './message-flow/v2-flows/generic-category.flow';
+import { GenieChatFlow } from './message-flow/v2-flows/genie-chat.flow';
 import { AvailabilityPerformanceFlow } from './message-flow/v2-flows/availability-performance.flow';
 import { HealthCheckV3Component } from './message-flow/health-check-v3/health-check-v3.component';
 import { LinuxAvailabilityPerformanceFlow } from './message-flow/v2-flows/linux-availability-performance.flow';
@@ -87,7 +88,8 @@ import { SummaryCardComponent } from './message-flow/summary-card/summary-card.c
         MessageProcessor,
         AvailabilityPerformanceFlow,
         LinuxAvailabilityPerformanceFlow,
-        GenericCategoryFlow
+        GenericCategoryFlow,
+        GenieChatFlow
     ]
 })
 export class SupportBotModule {

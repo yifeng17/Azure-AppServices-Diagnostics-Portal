@@ -14,13 +14,11 @@ import { FeedbackMessage } from '../feedback/feedbackmessageflow';
 import { map } from 'rxjs/operators';
 import { GenericArmConfigService } from '../../../shared/services/generic-arm-config.service';
 import { ResourceService } from '../../../shared-v2/services/resource.service';
-import { WebSitesService } from '../../../resources/web-sites/services/web-sites.service';
-import { AppType } from '../../../shared/models/portal';
 
 
 @Injectable()
 @RegisterMessageFlowWithFactory()
-export class GenericCategoryFlow extends IMessageFlowProvider {
+export class GenieChatFlow extends IMessageFlowProvider {
 
   messageFlowList: MessageGroup[] = [];
 
@@ -64,15 +62,19 @@ export class GenericCategoryFlow extends IMessageFlowProvider {
       const showTiles: string = `show-all-tiles-${category.id}`;
       const feedback: string = `feedback-${category.id}`;
 
-      let serviceName: string = 'App Service Diagnostics';
-      if(this._resourceService.resource.type === 'Microsoft.Web/hostingEnvironments') {
-        serviceName = 'App Service Environment Diagnostics';
-      }
-      else {
-        if(this._resourceService && this._resourceService instanceof WebSitesService && (this._resourceService as WebSitesService).appType === AppType.FunctionApp) {
-          serviceName = 'Azure Functions Diagnostics';
-        }
-      }
+      let serviceName: string = 'App Service Diagnostics'; 
+      let welcomeMessage = "Welcome to App Service Diagnostics. My name is Genie and I am here to help you answer any questions you may have about diagnosing and solving your problems with your app. Please describe the issue of your app.";
+
+      // this.panelStyles = {
+      //     type: PanelType.custom,
+      //     customWidth: "585px",
+      // }
+
+      // let elem = document.createElement('div') as HTMLElement
+      // this.messages.push(new Message {
+
+      // });
+
 
       if (this._resourceService.armResourceConfig
         && this._resourceService.armResourceConfig.homePageText
@@ -82,8 +84,8 @@ export class GenericCategoryFlow extends IMessageFlowProvider {
       }
 
       const welcomeCategory: MessageGroup = new MessageGroup(`welcome-${category.id}`, [], () => mainMenuId);
-      welcomeCategory.messages.push(new TextMessage(`Hello! Welcome to ${serviceName}! My name is Genie and I\'m here to help you diagnose and solve problems.`));
-      welcomeCategory.messages.push(new TextMessage(`Here are some issues related to ${category.name} that I can help with. Please select the tile that best describes your issue.`, MessageSender.System, 500));
+      welcomeCategory.messages.push(new TextMessage(welcomeMessage, MessageSender.System, 200));
+     // welcomeCategory.messages.push(new TextMessage(`Here are some issues related to ${category.name} that I can help with. Please select the tile that best describes your issue.`, MessageSender.System, 500));
 
       const categoryMainMenu: MessageGroup = new MessageGroup(mainMenuId, [], () => feedback);
       categoryMainMenu.messages.push(new CategoryMenuMessage());
