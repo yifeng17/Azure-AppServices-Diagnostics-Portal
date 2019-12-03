@@ -26,13 +26,13 @@ export class GenieChatFlow extends IMessageFlowProvider {
 
   constructor(private _diagnosticApiService: DiagnosticService, private _resourceService: ResourceService, private _genericArmConfigService?: GenericArmConfigService) {
     super();
-    const needMoreHelp: MessageGroup = new MessageGroup('more-help', [], () => 'feedback');
-    needMoreHelp.messages.push(new TextMessage('I need further assistance', MessageSender.User));
-    needMoreHelp.messages.push(new TextMessage('Sorry to hear I could not help you solve your problem', MessageSender.System));
+    const needMoreHelp: MessageGroup = new MessageGroup('genie-more-help', [], () => 'feedback');
+    needMoreHelp.messages.push(new TextMessage('genie-I need further assistance', MessageSender.User));
+    needMoreHelp.messages.push(new TextMessage('genie-Sorry to hear I could not help you solve your problem', MessageSender.System));
 
     const documentSearch: MessageGroup = new MessageGroup('in-chat-search', [], () => 'feedback');
-    documentSearch.messages.push(new TextMessage('I need further assistance.', MessageSender.User));
-    documentSearch.messages.push(new TextMessage('Please describe your problem below, so I can search relevant documentation and tools that may help you.', MessageSender.System));
+    documentSearch.messages.push(new TextMessage('genie-I need further assistance.', MessageSender.User));
+    documentSearch.messages.push(new TextMessage('genie-Please describe your problem below, so I can search relevant documentation and tools that may help you.', MessageSender.System));
     documentSearch.messages.push(new DocumentSearchMessage());
     documentSearch.messages.push(new TextMessage('Was this helpful to finding what you were looking for?', MessageSender.System, 2000));
     documentSearch.messages.push(new ButtonListMessage(this._getButtonListDidYouFindHelpful('more-help', 'I need further assistance'), 'Was this helpful to finding what you were looking for?', 'Availability and Performance'));
@@ -63,7 +63,7 @@ export class GenieChatFlow extends IMessageFlowProvider {
       const feedback: string = `feedback-${category.id}`;
 
       let serviceName: string = 'App Service Diagnostics'; 
-      let welcomeMessage = "Welcome to App Service Diagnostics. My name is Genie and I am here to help you answer any questions you may have about diagnosing and solving your problems with your app. Please describe the issue of your app.";
+      let welcomeMessage = "genie-Welcome to App Service Diagnostics. My name is Genie and I am here to help you answer any questions you may have about diagnosing and solving your problems with your app. Please describe the issue of your app.";
 
       // this.panelStyles = {
       //     type: PanelType.custom,
@@ -89,35 +89,35 @@ export class GenieChatFlow extends IMessageFlowProvider {
 
       const categoryMainMenu: MessageGroup = new MessageGroup(mainMenuId, [], () => feedback);
       categoryMainMenu.messages.push(new CategoryMenuMessage());
-      categoryMainMenu.messages.push(new TextMessage('Okay give me a moment while I analyze your app for any issues related to this tile. Once the detectors load, feel free to click to investigate each topic further.', MessageSender.System, 500));
+      categoryMainMenu.messages.push(new TextMessage('genie-Okay give me a moment while I analyze your app for any issues related to this tile. Once the detectors load, feel free to click to investigate each topic further.', MessageSender.System, 500));
       categoryMainMenu.messages.push(new DetectorSummaryMessage());
-      categoryMainMenu.messages.push(new TextMessage('Did you find what you were looking for?', MessageSender.System, 3000));
+      categoryMainMenu.messages.push(new TextMessage('genie-Did you find what you were looking for?', MessageSender.System, 3000));
       categoryMainMenu.messages.push(new ButtonListMessage(this._getButtonListDidYouFindHelpful(docSearch, 'Search Documentation', showTiles), 'feature', category.name));
-      categoryMainMenu.messages.push(new TextMessage('Yes I found the right information.', MessageSender.User));
-      categoryMainMenu.messages.push(new TextMessage('Great I\'m glad I could be of help!', MessageSender.System));
+      categoryMainMenu.messages.push(new TextMessage('genie-Yes I found the right information.', MessageSender.User));
+      categoryMainMenu.messages.push(new TextMessage('genie-Great I\'m glad I could be of help!', MessageSender.System));
 
       const documentSearch: MessageGroup = new MessageGroup(docSearch, [], () => feedback);
-      documentSearch.messages.push(new TextMessage('Search Documentation.', MessageSender.User));
-      documentSearch.messages.push(new TextMessage('Please describe your problem below, so I can search relevant documentation and tools that may help you.', MessageSender.System));
+      documentSearch.messages.push(new TextMessage('genie-Search Documentation.', MessageSender.User));
+      documentSearch.messages.push(new TextMessage('genie-Please describe your problem below, so I can search relevant documentation and tools that may help you.', MessageSender.System));
       documentSearch.messages.push(new DocumentSearchMessage());
-      documentSearch.messages.push(new TextMessage('Was this helpful to finding what you were looking for?', MessageSender.System, 2000));
+      documentSearch.messages.push(new TextMessage('genie-Was this helpful to finding what you were looking for?', MessageSender.System, 2000));
       documentSearch.messages.push(new ButtonListMessage(this._getButtonListDidYouFindHelpful(moreHelpId, 'I need further assistance', showTiles), 'Was this helpful to finding what you were looking for?', category.name));
-      documentSearch.messages.push(new TextMessage('Yes I found the right information.', MessageSender.User));
-      documentSearch.messages.push(new TextMessage('Great I\'m glad I could be of help!', MessageSender.System));
+      documentSearch.messages.push(new TextMessage('genie-Yes I found the right information.', MessageSender.User));
+      documentSearch.messages.push(new TextMessage('genie-Great I\'m glad I could be of help!', MessageSender.System));
 
       const needMoreHelp: MessageGroup = new MessageGroup(moreHelpId, [], () => feedback);
-      needMoreHelp.messages.push(new TextMessage('I need further assistance', MessageSender.User));
-      needMoreHelp.messages.push(new TextMessage('Sorry to hear I could not help you solve your problem', MessageSender.System));
+      needMoreHelp.messages.push(new TextMessage('genie-I need further assistance', MessageSender.User));
+      needMoreHelp.messages.push(new TextMessage('genie-Sorry to hear I could not help you solve your problem', MessageSender.System));
 
       const feedbackGroup: MessageGroup = new MessageGroup(feedback, [], () => mainMenuId);
-      feedbackGroup.messages.push(new TextMessage('Please help me improve by providing some feedback. What was my most/least helpful feature? What features would you like to see?', MessageSender.System, 500));
+      feedbackGroup.messages.push(new TextMessage('genie-Please help me improve by providing some feedback. What was my most/least helpful feature? What features would you like to see?', MessageSender.System, 500));
       feedbackGroup.messages.push(new FeedbackMessage([], 'Submit and Show Tile Menu', 'Feedback', category.name));
-      feedbackGroup.messages.push(new TextMessage('Thank you!'));
-      feedbackGroup.messages.push(new TextMessage(`Feel free to continue to explore the tools within ${category.name}`));
+      feedbackGroup.messages.push(new TextMessage('genie-Thank you!'));
+      feedbackGroup.messages.push(new TextMessage(`genie-Feel free to continue to explore the tools within ${category.name}`));
 
       const showAllTiles: MessageGroup = new MessageGroup(showTiles, [], () => mainMenuId);
-      showAllTiles.messages.push(new TextMessage('Show Tile Menu.', MessageSender.User));
-      showAllTiles.messages.push(new TextMessage(`Here are all the tiles related to ${category.name}:`, MessageSender.System));
+      showAllTiles.messages.push(new TextMessage('genie-Show Tile Menu.', MessageSender.User));
+      showAllTiles.messages.push(new TextMessage(`genie-Here are all the tiles related to ${category.name}:`, MessageSender.System));
 
       this.messageFlowList.push(welcomeCategory);
       this.messageFlowList.push(categoryMainMenu);

@@ -9,7 +9,7 @@ import { AuthService } from '../../../startup/services/auth.service';
 import { ResourceType } from '../../../shared/models/portal';
 
 @Injectable()
-@RegisterMessageFlowWithFactory()
+//@RegisterMessageFlowWithFactory()
 export class MainMenuMessageFlow extends IMessageFlowProvider {
 
     constructor(private _authService: AuthService) {

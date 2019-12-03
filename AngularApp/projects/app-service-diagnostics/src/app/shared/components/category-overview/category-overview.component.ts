@@ -71,8 +71,8 @@ export class CategoryOverviewComponent implements OnInit {
 
     getMessage(event?: any): void {
         const self = this;
-     //   const message = this._messageProcessor.getNextMessage(event);
-     const message = null;
+        const message = this._messageProcessor.getNextMessage(event);
+   //  const message = null;
         console.log("message in support bot", message);
         if (message) {
             this.messages.push(message);
