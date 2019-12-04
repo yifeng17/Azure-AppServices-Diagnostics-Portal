@@ -42,7 +42,7 @@ export class ResourceRedirectComponent implements OnInit {
               caseSubject = caseSubjectParam.value;
             }
 
-            var referrerParam = info.optionalParameters.find(param => param.key === "Referrer");
+            var referrerParam = info.optionalParameters.find(param => param.key.toLowerCase() === "referrer");
             if (referrerParam){
               path += `/portalReferrerResolver`;
               this._router.navigateByUrl(
