@@ -83,7 +83,6 @@ export class PortalReferrerResolverComponent implements OnInit {
         }
       }
       this._logService.logEvent('IntegratedDiagnostics', {
-        resourceUri: this._resourceService.resource.id,
         referrerInformation: JSON.stringify(referrer),
         targetType: referrerMatch.DetectorType,
         target: referrerMatch.DetectorId
@@ -91,7 +90,6 @@ export class PortalReferrerResolverComponent implements OnInit {
     }
     else {
       this._logService.logEvent('IntegratedDiagnostics', {
-        resourceUri: this._resourceService.resource.id,
         referrerInformation: JSON.stringify(referrer),
         targetType: '',
         target: ''
