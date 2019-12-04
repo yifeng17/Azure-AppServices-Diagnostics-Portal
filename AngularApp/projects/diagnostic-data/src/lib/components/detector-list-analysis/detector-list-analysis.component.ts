@@ -42,7 +42,7 @@ import {GenericSupportTopicService} from '../../services/generic-support-topic.s
 })
 export class DetectorListAnalysisComponent extends DataRenderBaseComponent implements OnInit {
 
-  analysisId: string;
+  @Input() analysisId: string;
   detectorId: string;
   detectorName: string;
   contentHeight: string;
@@ -73,7 +73,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
   loadingAppInsightsQueryData: boolean = true;
   supportDocumentContent: string = "";
   supportDocumentRendered: boolean = false;
-  searchTerm: string = "";
+  @Input() searchTerm: string = "";
   searchId: string = null;
   showPreLoader: boolean = false;
   preLoadingErrorMessage: string = "Some error occurred while fetching diagnostics."
@@ -106,7 +106,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
         this.refresh();
       }
     });
-    
+
     this.startTime = this._detectorControl.startTime;
     this.endTime = this._detectorControl.endTime;
   }
@@ -199,20 +199,42 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
 
   refresh() {
     this._activatedRoute.paramMap.subscribe(params => {
-      this.analysisId = params.get('analysisId');
+      this.analysisId = this.analysisId == undefined ? params.get('analysisId'): this.analysisId;
       this.detectorId = params.get(this.detectorParmName) === null ? "" : params.get(this.detectorParmName);
       this.resetGlobals();
       this.populateSupportTopicDocument();
 
         if (this.analysisId === "searchResultsAnalysis"){
+          console.log("Here get analysis Id", this.analysisId);
           this._activatedRoute.queryParamMap.subscribe(qParams => {
             this.resetGlobals();
-            this.searchTerm = qParams.get('searchTerm') === null ? "" : qParams.get('searchTerm');
+            this.searchTerm = qParams.get('searchTerm') === null ? this.searchTerm : qParams.get('searchTerm');
+            this.isSearchAnalysisView = true;
+            if (!this.supportDocumentRendered){
+              this._supportTopicService.getSelfHelpContentDocument().subscribe(res => {
+                if (res && res.json() && res.json().length>0){
+                  var htmlContent = res.json()[0]["htmlContent"];
+                  // Custom javascript code to remove top header from support document html string
+                  var tmp = document.createElement("DIV");
+                  tmp.innerHTML = htmlContent;
+                  var h2s = tmp.getElementsByTagName("h2");
+                  if (h2s && h2s.length>0){
+                    h2s[0].remove();
+                  }
+
+                  // Set the innter html for support document display
+                  this.supportDocumentContent = tmp.innerHTML;
+                  this.supportDocumentRendered = true;
+                }
+              });
+            }
             this.showAppInsightsSection = false;
             if (this.searchTerm && this.searchTerm.length>1) {
               this.searchId = uuid();
+              console.log("1. starting search task");
               let searchTask = this._diagnosticService.getDetectorsSearch(this.searchTerm).pipe(map((res) => res), catchError(e => of([])));
               let detectorsTask = this._diagnosticService.getDetectors().pipe(map((res)=> res), catchError(e => of([])));
+              console.log("search task and detectors task", searchTask, detectorsTask);
               this.showPreLoader = true;
               observableForkJoin([searchTask, detectorsTask]).subscribe(results => {
                 this.showPreLoader = false;
@@ -245,18 +267,19 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                 this.showPreLoadingError = true;
               });
             }
-          });        
+          });
         }
         else{
+          console.log("Here get analysis Id", this.analysisId);
           // Add application insights analysis data
           this._diagnosticService.getDetector(this.analysisId, this._detectorControl.startTimeString, this._detectorControl.endTimeString)
             .subscribe((response: DetectorResponse) => {
               this.getApplicationInsightsData(response);
             });
-          
+
           this._diagnosticService.getDetectors().subscribe(detectorList => {
             if (detectorList) {
-      
+
               if (this.detectorId !== "") {
                 let currentDetector = detectorList.find(detector => detector.id == this.detectorId)
                 this.detectorName = currentDetector.name;
@@ -270,9 +293,9 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                   'Url': window.location.href
                 };
               }
-      
+
               detectorList.forEach(element => {
-      
+
                 if (element.analysisTypes != null && element.analysisTypes.length > 0) {
                   element.analysisTypes.forEach(analysis => {
                     if (analysis === this.analysisId) {
@@ -294,7 +317,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
     this.detectorMetaData = detectorList.filter(detector => this.detectors.findIndex(d => d.id === detector.id) >= 0);
     this.detectorViewModels = this.detectorMetaData.map(detector => this.getDetectorViewModel(detector));
     this.issueDetectedViewModels = [];
-    
+
     const requests: Observable<any>[] = [];
     if (this.detectorViewModels.length > 0) {
       this.loadingChildDetectors = true;
