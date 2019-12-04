@@ -17,6 +17,9 @@ import {
 import {
     DocumentSearchResultsComponent
 } from '../message-flow/document-search-results/document-search-results.component';
+import {
+    DynamicAnalysisComponent
+} from '../message-flow/dynamic-analysis/dynamic-analysis.component';
 import { DocumentSearchComponent } from '../message-flow/document-search/document-search.component';
 import { FeedbackComponent } from '../message-flow/feedback/feedback.component';
 import { HealthCheckComponent } from '../message-flow/health-check/health-check.component';
@@ -32,7 +35,7 @@ import { HealthCheckV3Component } from '../message-flow/health-check-v3/health-c
     selector: 'dynamic-component',
     entryComponents: [TextMessageComponent, MainMenuComponent, ButtonMessageComponent, HealthCheckComponent, HealthCheckV3Component, FeedbackComponent,
         SolutionsMessageComponent, GraphMessageComponent, ProblemStatementMessageComponent, TalkToAgentMessageComponent, CategoryMenuComponent,
-        DetectorSummaryComponent, DocumentSearchComponent, DocumentSearchResultsComponent],
+        DetectorSummaryComponent, DocumentSearchComponent, DocumentSearchResultsComponent, DynamicAnalysisComponent],
     template: `
     <div #dynamicComponentContainer></div>
   `,
@@ -64,6 +67,8 @@ export class DynamicComponent {
 
         // Create the component using the factory and the injector
         const component = factory.create(injector);
+
+        console.log("Create component", component);
 
         // Insert the component into the dom container
         this.dynamicComponentContainer.insert(component.hostView);

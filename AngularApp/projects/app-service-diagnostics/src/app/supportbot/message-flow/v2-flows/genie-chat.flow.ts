@@ -71,9 +71,9 @@ export class GenieChatFlow extends IMessageFlowProvider {
     let analysisMessages: Message[]  = [];
   //  analysisMessages.push(new CategoryMenuMessage());
     analysisMessages.push(new TextMessage(keyword, MessageSender.User, 500));
-    analysisMessages.push(new TextMessage('Okay give me a moment while I analyze your app for any issues related to this tile. Once the detectors load, feel free to click to investigate each topic further.', MessageSender.System, 500));
+    analysisMessages.push(new TextMessage('Okay give me a moment while I analyze your app for any issues related to this.', MessageSender.System, 500));
 
-    analysisMessages.push(new DynamicAnalysisMessage());
+    analysisMessages.push(new DynamicAnalysisMessage(keyword));
 
    // this.messageFlowList.push(dynamicAnalysisGroup);
     return of(analysisMessages);

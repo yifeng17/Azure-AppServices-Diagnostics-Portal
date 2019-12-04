@@ -42,7 +42,7 @@ import {GenericSupportTopicService} from '../../services/generic-support-topic.s
 })
 export class DetectorListAnalysisComponent extends DataRenderBaseComponent implements OnInit {
 
-  analysisId: string;
+  @Input() analysisId: string;
   detectorId: string;
   detectorName: string;
   contentHeight: string;
@@ -73,7 +73,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
   loadingAppInsightsQueryData: boolean = true;
   supportDocumentContent: string = "";
   supportDocumentRendered: boolean = false;
-  searchTerm: string = "";
+  @Input() searchTerm: string = "";
   searchId: string = null;
   isSearchAnalysisView: boolean = false;
   showPreLoader: boolean = false;
@@ -179,14 +179,15 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
 
   refresh() {
     this._activatedRoute.paramMap.subscribe(params => {
-      this.analysisId = params.get('analysisId');
+      this.analysisId = this.analysisId == undefined ? params.get('analysisId'): this.analysisId;
       this.detectorId = params.get(this.detectorParmName) === null ? "" : params.get(this.detectorParmName);
       this.resetGlobals();
 
         if (this.analysisId === "searchResultsAnalysis"){
+          console.log("Here get analysis Id", this.analysisId);
           this._activatedRoute.queryParamMap.subscribe(qParams => {
             this.resetGlobals();
-            this.searchTerm = qParams.get('searchTerm') === null ? "" : qParams.get('searchTerm');
+            this.searchTerm = qParams.get('searchTerm') === null ? this.searchTerm : qParams.get('searchTerm');
             this.isSearchAnalysisView = true;
             if (!this.supportDocumentRendered){
               this._supportTopicService.getSelfHelpContentDocument().subscribe(res => {
@@ -209,8 +210,10 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
             this.showAppInsightsSection = false;
             if (this.searchTerm && this.searchTerm.length>1) {
               this.searchId = uuid();
+              console.log("1. starting search task");
               let searchTask = this._diagnosticService.getDetectorsSearch(this.searchTerm).pipe(map((res) => res), catchError(e => of([])));
               let detectorsTask = this._diagnosticService.getDetectors().pipe(map((res)=> res), catchError(e => of([])));
+              console.log("search task and detectors task", searchTask, detectorsTask);
               this.showPreLoader = true;
               observableForkJoin([searchTask, detectorsTask]).subscribe(results => {
                 this.showPreLoader = false;
@@ -246,6 +249,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
           });        
         }
         else{
+          console.log("Here get analysis Id", this.analysisId);
           // Add application insights analysis data
           this._diagnosticService.getDetector(this.analysisId, this._detectorControl.startTimeString, this._detectorControl.endTimeString)
             .subscribe((response: DetectorResponse) => {

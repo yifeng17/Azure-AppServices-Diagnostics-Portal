@@ -122,6 +122,27 @@ export const HomeRoutes = RouterModule.forChild([
         }
       },
       {
+        path: 'analysis/:analysisId/search',
+        component: GenericAnalysisComponent,
+        data: {
+          cacheComponent: true
+        },
+        children: [
+          {
+            path: '',
+            component: GenericDetectorComponent,
+            data: {
+              analysisMode: true,
+              cacheComponent: true
+            }
+          }
+        ],
+        resolve: {
+          time: TimeControlResolver,
+          navigationTitle: TabTitleResolver,
+        }
+      },
+      {
         path: 'detectors/:detectorName',
         component: GenericDetectorComponent,
         data: {

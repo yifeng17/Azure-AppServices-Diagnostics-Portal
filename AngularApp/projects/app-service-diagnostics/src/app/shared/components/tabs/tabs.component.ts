@@ -28,7 +28,7 @@ export class TabsComponent implements OnInit {
 
       if (currentRoute.snapshot.data.hasOwnProperty(navigationTitleStr)) {
 
-        let navigationTitle = currentRoute.snapshot.data[navigationTitleStr];
+        let navigationTitle = currentRoute.snapshot.data[navigationTitleStr].toString();
 
         if (navigationTitle.indexOf(':') >= 0) {
           const parameterName = navigationTitle.replace(':', '');

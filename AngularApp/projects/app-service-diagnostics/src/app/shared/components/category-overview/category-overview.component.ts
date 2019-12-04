@@ -38,7 +38,7 @@ export class CategoryOverviewComponent implements OnInit {
     welcomeMessage: string = "";
     panelStyles: any;
     type: PanelType = PanelType.custom;
-    width: string = "585px";
+    width: string = "850px";
 
     // @ViewChild('panelTitle', { static: true }) navigationContentTemplate: TemplateRef<any>;
     // @ViewChild("headerTemplate", { static: true }) headerTemplate: TemplateRef<any>;
@@ -73,8 +73,9 @@ export class CategoryOverviewComponent implements OnInit {
     getMessage(event?: any): void {
         const self = this;
         const message = this._messageProcessor.getNextMessage(event);
-   //  const message = null;
+     //const message = null;
         console.log("message in support bot", message);
+        console.log("this.messages", this.messages);
         if (message) {
             this.messages.push(message);
             console.log("message not empty", message);
@@ -90,7 +91,6 @@ export class CategoryOverviewComponent implements OnInit {
 
             setTimeout(function () {
                 self.showTypingMessage = false;
-                //    self.messages.push(message);
                 this.messages.push(message);
                 console.log("2nd settimeout");
             }, message.messageDelayInMs);
@@ -105,11 +105,7 @@ export class CategoryOverviewComponent implements OnInit {
                 this.messages.push(message);
             });
         });
-
-     //   .push(new TextMessage(event.newValue, MessageSender.User, 100));
-
-    //    this.messages.push(new TextMessage('Ok give me a moment while I analyze your app for any issue related to this.', MessageSender.System));
-    }
+  }
 
     closePanel() {
         this.isOpen = false;

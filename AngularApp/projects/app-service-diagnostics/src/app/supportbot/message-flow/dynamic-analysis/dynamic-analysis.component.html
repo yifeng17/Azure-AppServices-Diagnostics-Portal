@@ -1,5 +1,7 @@
-<div class="detector-summary-container" [class.with-full-report]="showTopLevelFullReport" *ngIf="!loading else loadingMessage">
-    <detector-list-analysis withinDiagnoseAndSolve="true" detectorParmName="detectorName"></detector-list-analysis>
+<!-- *ngIf="!loading else loadingMessage" -->
+<div class="detector-summary-container" [class.with-full-report]="showTopLevelFullReport" >
+    <!-- <detector-list-analysis withinDiagnoseAndSolve="true" detectorParmName="detectorName"></detector-list-analysis> -->
+    <generic-analysis [analysisId]="'searchResultsAnalysis'" [searchTerm]="keyword"></generic-analysis>
     <!-- <div class="full-report" *ngIf="showTopLevelFullReport">
       {{detector.name}}
       <div class="full-report-link" tabindex="0" (keyup.enter)="openFullReport()">

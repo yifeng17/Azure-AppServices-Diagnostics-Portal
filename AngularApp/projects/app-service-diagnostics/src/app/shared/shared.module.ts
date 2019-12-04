@@ -221,7 +221,8 @@ import { SupportBotModule } from '../supportbot/supportbot.module';
         ToggleButtonComponent,
         DaasScaleupComponent,
         TileListComponent,
-        GenericCommsComponent
+        GenericCommsComponent,
+        GenericAnalysisComponent
     ]
 })
 export class SharedModule {
