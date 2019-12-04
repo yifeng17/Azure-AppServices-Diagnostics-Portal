@@ -16,39 +16,24 @@ export class PortalReferrerResolverComponent implements OnInit {
   private portalReferrerToDetectorMap: PortalReferrerMap[];
   public loadingMessage: string;
   public isEvaluating: boolean;
-  public detectorId: string;
 
   constructor(private _authService: AuthService, private _router: Router, private _activatedRoute: ActivatedRoute,
     private _resourceService: ResourceService, private _logService: TelemetryService) {
     this.isEvaluating = true;
     this.loadingMessage = 'Collecting data to analyze your issue...';
 
-    if (this._resourceService instanceof WebSitesService) {
-      this.portalReferrerToDetectorMap = [{
-        ReferrerExtensionName: 'Websites',
-        ReferrerBladeName: 'CertificatesBlade',
-        ReferrerTabName: 'Bindings',
-        DetectorType: DetectorType.Detector,
-        DetectorId: 'configuringsslandcustomdomains'
-      },
-      {
-        ReferrerExtensionName: 'Websites',
-        ReferrerBladeName: 'CustomDomainsAndSSL',
-        ReferrerTabName: '',
-        DetectorType: DetectorType.Detector,
-        DetectorId: 'configuringsslandcustomdomains'
-      },
-      {
-        ReferrerExtensionName: 'Websites',
-        ReferrerBladeName: 'BackupSummaryBlade',
-        ReferrerTabName: '',
-        DetectorType: DetectorType.Detector,
-        DetectorId: 'backupFailures'
-      }];
-    }
+
+    this._resourceService.getIbizaBladeToDetectorMapings().subscribe(mappingArray => {
+      if (mappingArray && mappingArray.length > 0) {
+        this.portalReferrerToDetectorMap = mappingArray;
+      }
+      else {
+        this.portalReferrerToDetectorMap = [];
+      }
+    });
 
     this._authService.getStartupInfo().subscribe(startUpInfo => {
-      var referrerParam = startUpInfo.optionalParameters.find(param => param.key === "Referrer");
+      var referrerParam = startUpInfo.optionalParameters.find(param => param.key.toLowerCase() === "referrer");
       if (referrerParam) {
         this.matchReferrerAndRoute(referrerParam.value);
       }
@@ -65,35 +50,59 @@ export class PortalReferrerResolverComponent implements OnInit {
   matchReferrerAndRoute(referrer: PortalReferrerInfo): void {
     let path = `resource${this._resourceService.resourceIdForRouting}`;
 
-    var referrerMatch = this.portalReferrerToDetectorMap.find(referrerMap =>
-      referrerMap.ReferrerExtensionName.toLowerCase() === referrer.ExtensionName.toLowerCase() &&
-      referrerMap.ReferrerBladeName.toLowerCase() === referrer.BladeName.toLowerCase() &&
-      referrerMap.ReferrerTabName.toLowerCase() === referrer.TabName.toLowerCase()
-    );
+    if (
+      referrer.DetectorType && (referrer.DetectorType.toLowerCase() === DetectorType.Analysis.toLowerCase() || referrer.DetectorType.toLowerCase() === DetectorType.Detector.toLowerCase()) &&
+      referrer.DetectorId && referrer.DetectorId.length > 1
+    ) {
 
+      this._logService.logEvent('IntegratedDiagnostics', {
+        details: 'Redirect decided by Ibiza parameters.',
+        referrerInformation: JSON.stringify(referrer),
+        targetType: referrer.DetectorType,
+        target: referrer.DetectorId
+      });
 
-    if (referrerMatch) {
-      if (referrerMatch.DetectorType === DetectorType.Detector) {
-        path = `${path}/detectors/${referrerMatch.DetectorId}`;
-        this.detectorId = referrerMatch.DetectorId;
+      if (referrer.DetectorType.toLowerCase() === DetectorType.Analysis.toLowerCase()) {
+        path = `${path}/analysis/${referrer.DetectorId}`;
       }
       else {
-        if (referrerMatch.DetectorType === DetectorType.Analysis) {
-          path = `${path}/analysis/${referrerMatch.DetectorId}`;
+        if (referrer.DetectorType.toLowerCase() === DetectorType.Detector.toLowerCase()) {
+          path = `${path}/detectors/${referrer.DetectorId}`;
         }
       }
-      this._logService.logEvent('IntegratedDiagnostics', {
-        referrerInformation: JSON.stringify(referrer),
-        targetType: referrerMatch.DetectorType,
-        target: referrerMatch.DetectorId
-      });
     }
     else {
-      this._logService.logEvent('IntegratedDiagnostics', {
-        referrerInformation: JSON.stringify(referrer),
-        targetType: '',
-        target: ''
-      });
+      var referrerMatch = this.portalReferrerToDetectorMap.find(referrerMap =>
+        referrerMap.ReferrerExtensionName.toLowerCase() === referrer.ExtensionName.toLowerCase() &&
+        referrerMap.ReferrerBladeName.toLowerCase() === referrer.BladeName.toLowerCase() &&
+        referrerMap.ReferrerTabName.toLowerCase() === referrer.TabName.toLowerCase()
+      );
+
+
+      if (referrerMatch) {
+        if (referrerMatch.DetectorType === DetectorType.Detector) {
+          path = `${path}/detectors/${referrerMatch.DetectorId}`;
+        }
+        else {
+          if (referrerMatch.DetectorType === DetectorType.Analysis) {
+            path = `${path}/analysis/${referrerMatch.DetectorId}`;
+          }
+        }
+        this._logService.logEvent('IntegratedDiagnostics', {
+          details: 'Redirect decided by detector map.',
+          referrerInformation: JSON.stringify(referrer),
+          targetType: referrerMatch.DetectorType,
+          target: referrerMatch.DetectorId
+        });
+      }
+      else {
+        this._logService.logEvent('IntegratedDiagnostics', {
+          details: 'Redirecting to home as detector map did not contain a match and Ibiza did not pass redirect parameters.',
+          referrerInformation: JSON.stringify(referrer),
+          targetType: '',
+          target: ''
+        });
+      }
     }
 
     this.isEvaluating = false;
