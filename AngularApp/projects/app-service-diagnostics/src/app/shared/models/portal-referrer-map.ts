@@ -1,7 +1,7 @@
 import { DetectorType } from "diagnostic-data";
 
 export interface PortalReferrerMap {
-    ReferrerExtensionName:string,
+    ReferrerExtensionName: string,
     ReferrerBladeName: string,
     ReferrerTabName: string,
     DetectorType: DetectorType,
@@ -9,7 +9,9 @@ export interface PortalReferrerMap {
 }
 
 export interface PortalReferrerInfo {
-    ExtensionName:string,
-    BladeName:string,
-    TabName:string
+    ExtensionName: string,
+    BladeName: string,
+    TabName: string,
+    DetectorType?: DetectorType,
+    DetectorId?: string
 }
