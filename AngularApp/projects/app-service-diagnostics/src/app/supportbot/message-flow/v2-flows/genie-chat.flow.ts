@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MessageGroup } from '../../models/message-group';
-import { TextMessage, ButtonListMessage } from '../../models/message';
+import { Message, TextMessage, ButtonListMessage } from '../../models/message';
 import { Category } from '../../../shared-v2/models/category';
 import { Observable, of } from 'rxjs';
 import { DetectorMetaData, DiagnosticService } from 'diagnostic-data';
@@ -9,6 +9,7 @@ import { RegisterMessageFlowWithFactory } from '../message-flow.factory';
 import { MessageSender, ButtonActionType } from '../../models/message-enums';
 import { CategoryMenuMessage } from '../category-menu/category-menu.component';
 import { DetectorSummaryMessage } from '../detector-summary/detector-summary.component';
+import { DynamicAnalysisMessage } from '../dynamic-analysis/dynamic-analysis.component';
 import { DocumentSearchMessage } from '../document-search/document-search.component';
 import { FeedbackMessage } from '../feedback/feedbackmessageflow';
 import { map } from 'rxjs/operators';
@@ -26,6 +27,13 @@ export class GenieChatFlow extends IMessageFlowProvider {
 
   constructor(private _diagnosticApiService: DiagnosticService, private _resourceService: ResourceService, private _genericArmConfigService?: GenericArmConfigService) {
     super();
+
+    const needAnalysis: MessageGroup = new MessageGroup('need-analysis', [], () => 'analysis');
+   // needAnalysis.messages.push(new TextMessage('Ok give me a moment while I analyze your app for any issue related to this.', MessageSender.System));
+    // needMoreHelp.messages.push(new TextMessage('genie-I need further assistance', MessageSender.User));
+    // needMoreHelp.messages.push(new TextMessage('genie-Sorry to hear I could not help you solve your problem', MessageSender.System));
+
+
     const needMoreHelp: MessageGroup = new MessageGroup('genie-more-help', [], () => 'feedback');
     needMoreHelp.messages.push(new TextMessage('genie-I need further assistance', MessageSender.User));
     needMoreHelp.messages.push(new TextMessage('genie-Sorry to hear I could not help you solve your problem', MessageSender.System));
@@ -39,13 +47,36 @@ export class GenieChatFlow extends IMessageFlowProvider {
     documentSearch.messages.push(new TextMessage('Yes I found the right information.', MessageSender.User));
     documentSearch.messages.push(new TextMessage('Great I\'m glad I could be of help!', MessageSender.System));
 
-
+    this.messageFlowList.push(needAnalysis);
     this.messageFlowList.push(documentSearch);
     this.messageFlowList.push(needMoreHelp);
   }
 
   GetMessageFlowList(): MessageGroup[] {
     return this.messageFlowList;
+  }
+
+//   triggerSearch(){
+//     if (this.searchTerm && this.searchTerm.length>1) {
+//       this.searchBarFocus = false;
+//       var searchBar = document.getElementById('caseSubmissionFlowSearchBar');
+//       searchBar.blur();
+//       this._routerLocal.navigate([`../../${this.analysisId}/search`], { relativeTo: this._activatedRouteLocal, queryParamsHandling: 'merge', queryParams: {searchTerm: this.searchTerm} });
+//     }
+//   }
+
+
+  createMessageFlowForAnaysis(keyword: string): Observable<Message[]> {
+    //const dynamicAnalysisGroup: MessageGroup = new MessageGroup("dynamic-analysis", [], () => "feedback");
+    let analysisMessages: Message[]  = [];
+  //  analysisMessages.push(new CategoryMenuMessage());
+    analysisMessages.push(new TextMessage(keyword, MessageSender.User, 500));
+    analysisMessages.push(new TextMessage('Okay give me a moment while I analyze your app for any issues related to this tile. Once the detectors load, feel free to click to investigate each topic further.', MessageSender.System, 500));
+
+    analysisMessages.push(new DynamicAnalysisMessage());
+
+   // this.messageFlowList.push(dynamicAnalysisGroup);
+    return of(analysisMessages);
   }
 
   createMessageFlowForCategory(category: Category): Observable<MessageGroup[]> {
@@ -62,7 +93,7 @@ export class GenieChatFlow extends IMessageFlowProvider {
       const showTiles: string = `show-all-tiles-${category.id}`;
       const feedback: string = `feedback-${category.id}`;
 
-      let serviceName: string = 'App Service Diagnostics'; 
+      let serviceName: string = 'App Service Diagnostics';
       let welcomeMessage = "genie-Welcome to App Service Diagnostics. My name is Genie and I am here to help you answer any questions you may have about diagnosing and solving your problems with your app. Please describe the issue of your app.";
 
       // this.panelStyles = {
@@ -83,7 +114,7 @@ export class GenieChatFlow extends IMessageFlowProvider {
         serviceName = this._resourceService.armResourceConfig.homePageText.title;
       }
 
-      const welcomeCategory: MessageGroup = new MessageGroup(`welcome-${category.id}`, [], () => mainMenuId);
+      const welcomeCategory: MessageGroup = new MessageGroup(`welcome`, [], () => mainMenuId);
       welcomeCategory.messages.push(new TextMessage(welcomeMessage, MessageSender.System, 200));
      // welcomeCategory.messages.push(new TextMessage(`Here are some issues related to ${category.name} that I can help with. Please select the tile that best describes your issue.`, MessageSender.System, 500));
 

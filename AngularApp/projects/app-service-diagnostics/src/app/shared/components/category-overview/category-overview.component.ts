@@ -8,6 +8,7 @@ import { MessageProcessor } from '../../../supportbot/message-processor.service'
 import { DynamicComponent } from '../../../supportbot/dynamic-component/dynamic.component';
 import { TextMessageComponent } from '../../../supportbot/common/text-message/text-message.component';
 import { PanelType, IPanelStyles } from 'office-ui-fabric-react';
+import { GenieChatFlow } from '../../../supportbot/message-flow/v2-flows/genie-chat.flow';
 //  import {} from 'office-ui-fabric-core/lib';
 
 //  createInputJsxRenderer, createRenderPropHandler
@@ -43,7 +44,7 @@ export class CategoryOverviewComponent implements OnInit {
     // @ViewChild("headerTemplate", { static: true }) headerTemplate: TemplateRef<any>;
     // @ViewChild('tpl', { static: true }) tpl: TemplateRef<any>;
 
-    constructor(private _activatedRoute: ActivatedRoute, private _messageProcessor: MessageProcessor) {
+    constructor(private _activatedRoute: ActivatedRoute, private _messageProcessor: MessageProcessor, private _genieChatFlow: GenieChatFlow) {
         // this._activatedRoute.paramMap.subscribe(params => {
         //     console.log("category params", params);
         //     this.categoryId = params.get('category');
@@ -99,8 +100,15 @@ export class CategoryOverviewComponent implements OnInit {
     onSearchEnter(event: any): void {
         // this.searchBoxFocus = true;
         console.log("search Event", event);
-        this.messages.push(new TextMessage(event.newValue, MessageSender.User, 100));
-        this.messages.push(new TextMessage('Ok give me a moment while I analyze your app for any issue related to this.', MessageSender.System));
+        this._genieChatFlow.createMessageFlowForAnaysis(event.newValue).subscribe((analysisMessages: Message[]) => {
+            analysisMessages.forEach(message => {
+                this.messages.push(message);
+            });
+        });
+
+     //   .push(new TextMessage(event.newValue, MessageSender.User, 100));
+
+    //    this.messages.push(new TextMessage('Ok give me a moment while I analyze your app for any issue related to this.', MessageSender.System));
     }
 
     closePanel() {
@@ -108,7 +116,7 @@ export class CategoryOverviewComponent implements OnInit {
         console.log("isOpen", this.isOpen);
     }
     ngOnInit() {
-        this.welcomeMessage = "Welcome to App Service Diagnostics. My name is Genie and I am here to help you answer any questions you may have about diagnosing and solving your problems with your app. Please describe the issue of your app.";
+     //   this.welcomeMessage = "Welcome to App Service Diagnostics. My name is Genie and I am here to help you answer any questions you may have about diagnosing and solving your problems with your app. Please describe the issue of your app.";
         this.categoryId = this._activatedRoute.parent.snapshot.params.category;
 
         // this.panelStyles = {
@@ -120,8 +128,9 @@ export class CategoryOverviewComponent implements OnInit {
         // this.messages.push(new Message {
 
         // });
-        this.messages.push(new TextMessage(this.welcomeMessage, MessageSender.System, 200));
+     //   this.messages.push(new TextMessage(this.welcomeMessage, MessageSender.System, 200));
         this.getMessage();
+        // const healthCheckGroup: MessageGroup = new MessageGroup('health-check', [], this._getHealthCheckNextGroupId.bind(this));
         console.log("is Open status", this.isOpen);
 
         console.log("this.messages after init", this.messages);
