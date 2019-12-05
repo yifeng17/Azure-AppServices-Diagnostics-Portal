@@ -18,6 +18,7 @@ export class AppComponent implements OnInit {
      }
 
     constructor(private _router: Router) {
+        console.log("Lauching app component");
     }
 
     ngOnInit() {

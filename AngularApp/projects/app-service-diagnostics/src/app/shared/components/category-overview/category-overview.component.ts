@@ -9,6 +9,7 @@ import { DynamicComponent } from '../../../supportbot/dynamic-component/dynamic.
 import { TextMessageComponent } from '../../../supportbot/common/text-message/text-message.component';
 import { PanelType, IPanelStyles } from 'office-ui-fabric-react';
 import { GenieChatFlow } from '../../../supportbot/message-flow/v2-flows/genie-chat.flow';
+import {Globals} from '../../../globals';
 //  import {} from 'office-ui-fabric-core/lib';
 
 //  createInputJsxRenderer, createRenderPropHandler
@@ -38,17 +39,19 @@ export class CategoryOverviewComponent implements OnInit {
     welcomeMessage: string = "";
     panelStyles: any;
     type: PanelType = PanelType.custom;
-    width: string = "850px";
+    width: string = "1200px";
 
     // @ViewChild('panelTitle', { static: true }) navigationContentTemplate: TemplateRef<any>;
     // @ViewChild("headerTemplate", { static: true }) headerTemplate: TemplateRef<any>;
     // @ViewChild('tpl', { static: true }) tpl: TemplateRef<any>;
 
-    constructor(private _activatedRoute: ActivatedRoute, private _messageProcessor: MessageProcessor, private _genieChatFlow: GenieChatFlow) {
+    constructor(private _activatedRoute: ActivatedRoute, private _messageProcessor: MessageProcessor, private _genieChatFlow: GenieChatFlow, public globals: Globals) {
+        console.log("constructing messages", globals.messages);
         // this._activatedRoute.paramMap.subscribe(params => {
         //     console.log("category params", params);
         //     this.categoryId = params.get('category');
         //   });
+            this.messages = globals.messages;
             this.panelStyles = {
            // type: PanelType.smallFixedNear,
             root: {
@@ -102,8 +105,10 @@ export class CategoryOverviewComponent implements OnInit {
         console.log("search Event", event);
         this._genieChatFlow.createMessageFlowForAnaysis(event.newValue).subscribe((analysisMessages: Message[]) => {
             analysisMessages.forEach(message => {
-                this.messages.push(message);
+                this.globals.messages.push(message);
             });
+
+            console.log("constructing messages onsearch", this.globals.messages);
         });
   }
 
@@ -125,8 +130,13 @@ export class CategoryOverviewComponent implements OnInit {
 
         // });
      //   this.messages.push(new TextMessage(this.welcomeMessage, MessageSender.System, 200));
-        this.getMessage();
-        // const healthCheckGroup: MessageGroup = new MessageGroup('health-check', [], this._getHealthCheckNextGroupId.bind(this));
+        //this.getMessage();
+        console.log("this.globals.messages.length", this.globals.messages.length, this.globals.messages.length === 0);
+        // if (this.globals.messages.length === 0)
+        // {
+        //     this.globals.messages.push(new TextMessage('Welcome to App Service Diagnostics. My name is Genie and I am here to help you answer any questions you may have about diagnosing and solving your problems with your app. Please describe the issue of your app.'));
+        // }
+          // const healthCheckGroup: MessageGroup = new MessageGroup('health-check', [], this._getHealthCheckNextGroupId.bind(this));
         console.log("is Open status", this.isOpen);
 
         console.log("this.messages after init", this.messages);
