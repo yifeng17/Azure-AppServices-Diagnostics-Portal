@@ -146,6 +146,7 @@ export class DetectorViewComponent implements OnInit {
 
       }
     });
+    console.log("local copy and error state", this.detectorDataLocalCopy, this.errorState);
   }
 
   toggleButtonView(feature: string) {

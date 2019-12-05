@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ResourceService } from '../../../shared-v2/services/resource.service';
 import { FeatureNavigationService, TelemetryService, DiagnosticService } from 'diagnostic-data';
 import { AuthService } from '../../../startup/services/auth.service';
+import { SearchAnalysisMode } from 'projects/diagnostic-data/src/lib/models/search-mode';
 
 @Component({
   selector: 'generic-analysis',
@@ -13,9 +14,11 @@ import { AuthService } from '../../../startup/services/auth.service';
 export class GenericAnalysisComponent extends GenericDetectorComponent implements OnInit {
   @Input() analysisId: string = "";
   @Input() searchTerm: string = "";
+  @Input() searchMode: SearchAnalysisMode = SearchAnalysisMode.CaseSubmission;
   detectorId: string = "";
   detectorName: string = "";
-  showSearchBar: boolean = false;
+  @Input() showSearchBar: boolean = undefined;
+  displayDetectorContainer: boolean = true;
   searchBarFocus: boolean = false;
 
   constructor(private _activatedRouteLocal: ActivatedRoute, private _diagnosticServiceLocal: DiagnosticService, _resourceService: ResourceService, _authServiceInstance: AuthService, _telemetryService: TelemetryService,
@@ -30,7 +33,12 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
       this._activatedRouteLocal.queryParamMap.subscribe(qParams => {
         this.searchTerm = qParams.get('searchTerm') === null ? this.searchTerm : qParams.get('searchTerm');
         if (this.analysisId=== "searchResultsAnalysis" && this.searchTerm && this.searchTerm.length>0){
-          this.showSearchBar = true;
+            this.showSearchBar = this.searchMode === SearchAnalysisMode.CaseSubmission ? true : this.showSearchBar;
+            this.displayDetectorContainer = false;
+        }
+        else
+        {
+            this.showSearchBar = false;
         }
 
         console.log("In general Analysis, analysisId and searchTerm", this.analysisId, this.searchTerm);
@@ -71,5 +79,4 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
       this._routerLocal.navigate([`../../../${this.analysisId}`], { relativeTo: this._activatedRouteLocal, queryParamsHandling: 'merge' });
     }
   }
-
 }

@@ -72,8 +72,8 @@
       <!-- *ngIf="messages != undefined && messages.count > 0" -->
       <fab-pivot>
         <fab-pivot-item headerText="Chat" #scrollMe>
-             <div *ngIf="messages != undefined && messages.length > 0">
-            <div class="row animated fadeIn chat-message-container" *ngFor="let item of messages">
+             <div *ngIf="globals.messages != undefined && globals.messages.length > 0" >
+            <div class="row animated fadeIn chat-message-container" *ngFor="let item of globals.messages">
                 <!-- <div *ngIf class="genie-message message-sent-by-system">{{welcomeMessage}}</div> -->
               <dynamic-component [componentData]="item" (onViewUpdate)="scrollToBottom()" (onComplete)="getMessage($event)"></dynamic-component>
             </div>
@@ -93,13 +93,13 @@
           <div></div>
         </fab-pivot-item>
       </fab-pivot>
+    </div>
 
-      <div class="chat-search-box" style="position: absolute; bottom: 19px; left: 37px; right: 37px">
+    <div class="chat-search-box" style="position: absolute; bottom: 19px; left: 37px; right: 37px">
         <!-- <fab-text-field [placeholder]="'Type your question'" [iconProps]="{iconName: 'send'}"></fab-text-field> -->
         <!-- [iconProps]="{iconName: 'send'}" -->
         <fab-search-box [placeholder]="'Type your question'" (onSearch)="onSearchEnter($event)" [iconProps]="{iconName: 'send'}" contentStyle="height:31px;border-radius:15px" ></fab-search-box>
         </div>
-    </div>
     <!-- <span>Chat</span> -->
   </fab-panel>
   <health-check-v3></health-check-v3>

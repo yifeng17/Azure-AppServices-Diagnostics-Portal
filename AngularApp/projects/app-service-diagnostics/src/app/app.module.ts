@@ -34,6 +34,7 @@ import { AppInsightsService } from './shared/services/appinsights/appinsights.se
 import { AppInsightsQueryService } from './../../../diagnostic-data/src/lib/services/appinsights.service';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { AngularReactBrowserModule } from '@angular-react/core';
+import { Globals } from './globals';
 
 @NgModule({
   imports: [
@@ -78,7 +79,8 @@ import { AngularReactBrowserModule } from '@angular-react/core';
       useClass: UnhandledExceptionHandlerService
     },
     { provide: SolutionService, useExisting: GenericSolutionService },
-    { provide: SettingsService, useExisting: PortalSettingsService}
+    { provide: SettingsService, useExisting: PortalSettingsService},
+    Globals
   ],
   bootstrap: [AppComponent]
 })
