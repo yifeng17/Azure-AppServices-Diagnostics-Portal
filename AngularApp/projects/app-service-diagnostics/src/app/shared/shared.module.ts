@@ -92,6 +92,8 @@ import { GenericAnalysisComponent } from './components/generic-analysis/generic-
 import { EventViewerComponent } from './components/daas/event-viewer/event-viewer.component';
 import { FrebViewerComponent } from './components/daas/freb-viewer/freb-viewer.component';
 import { CXPChatService } from './services/cxp-chat.service';
+import { PortalReferrerResolverComponent } from './components/portal-referrer-resolver/portal-referrer-resolver.component';
+import { ConfigureStorageAccountComponent } from './components/daas/configure-storage-account/configure-storage-account.component';
 
 @NgModule({
     declarations: [
@@ -154,7 +156,9 @@ import { CXPChatService } from './services/cxp-chat.service';
         CpuMonitoringSessionsComponent,
         GenericAnalysisComponent,
         EventViewerComponent,
-        FrebViewerComponent
+        FrebViewerComponent,
+        PortalReferrerResolverComponent,
+        ConfigureStorageAccountComponent
     ],
     imports: [
         HttpModule,

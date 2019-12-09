@@ -1,14 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { map, catchError, flatMap } from 'rxjs/operators';
+import { flatMap } from 'rxjs/operators';
 import { Observable, of, forkJoin, ReplaySubject } from 'rxjs';
 import { PortalService } from '../../startup/services/portal.service';
 import { ResourceService } from '../../shared-v2/services/resource.service';
-import { WebSitesService } from '../../resources/web-sites/services/web-sites.service';
-import { AppType, Verbs, LogEntryLevel } from '../models/portal';
+import { Verbs } from '../models/portal';
 import { Guid } from '../utilities/guid';
-import { ObservationsAvailabilityComponent } from '../../availability/observations/observations-availability.component';
-import { TelemetryService, TelemetryEventNames, GenericSupportTopicService } from 'diagnostic-data';
+import { TelemetryService, TelemetryEventNames } from 'diagnostic-data';
 
 @Injectable()
 export class CXPChatService {
@@ -20,7 +17,7 @@ export class CXPChatService {
   public readonly supportPlanType:string = 'Basic';
   public chatLanguage: string = 'en';
 
-  constructor(private _resourceService: ResourceService, private _portalService: PortalService, private _telemetryService: TelemetryService, private _supporTopicService: GenericSupportTopicService) {
+  constructor(private _resourceService: ResourceService, private _portalService: PortalService, private _telemetryService: TelemetryService) {
 
     this.isChatSupported = this._resourceService.isApplicableForLiveChat;
     if(this.isChatSupported) {
