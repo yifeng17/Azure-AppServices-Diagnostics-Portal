@@ -15,7 +15,7 @@ export class ArmResourceConfig {
 
 export interface LiveChatConfig {
 	isApplicableForLiveChat?: boolean;
-	supportTopics?: string[];
+	supportTopicIds?: string[];
 }
 
 export interface GenieConfig {

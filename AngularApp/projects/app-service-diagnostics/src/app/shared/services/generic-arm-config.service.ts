@@ -230,58 +230,58 @@ export class GenericArmConfigService {
           else {
             let currLiveChatConfig: LiveChatConfig = {
               isApplicableForLiveChat: false,
-              supportTopics: []
+              supportTopicIds: []
             }
             if(this.getValue(this.resourceConfig.liveChatConfig.isApplicableForLiveChat, this.overrideConfig.liveChatConfig.isApplicableForLiveChat)) {
               currLiveChatConfig.isApplicableForLiveChat = this.getValue(this.resourceConfig.liveChatConfig.isApplicableForLiveChat, this.overrideConfig.liveChatConfig.isApplicableForLiveChat);
             }
 
             //Process supported support topics for live chat
-            let currMergedSupportTopics:string[] = [];
+            let currMergedSupportTopicIds:string[] = [];
             
-            if(this.overrideConfig.liveChatConfig.supportTopics && this.overrideConfig.liveChatConfig.supportTopics.length > 0 && 
-              (!this.resourceConfig.liveChatConfig.supportTopics 
-                ||  (this.resourceConfig.liveChatConfig.supportTopics && this.resourceConfig.liveChatConfig.supportTopics.length < 1)  
+            if(this.overrideConfig.liveChatConfig.supportTopicIds && this.overrideConfig.liveChatConfig.supportTopicIds.length > 0 && 
+              (!this.resourceConfig.liveChatConfig.supportTopicIds 
+                ||  (this.resourceConfig.liveChatConfig.supportTopicIds && this.resourceConfig.liveChatConfig.supportTopicIds.length < 1)  
               ) 
               ) {
                 //Valid support topics exist only in overrideConfig
-                currMergedSupportTopics = this.overrideConfig.liveChatConfig.supportTopics;
+                currMergedSupportTopicIds = this.overrideConfig.liveChatConfig.supportTopicIds;
             }
             else {
-              if(this.resourceConfig.liveChatConfig.supportTopics && this.resourceConfig.liveChatConfig.supportTopics.length > 0 && 
-                (!this.overrideConfig.liveChatConfig.supportTopics 
-                  ||  (this.overrideConfig.liveChatConfig.supportTopics && this.overrideConfig.liveChatConfig.supportTopics.length < 1)  
+              if(this.resourceConfig.liveChatConfig.supportTopicIds && this.resourceConfig.liveChatConfig.supportTopicIds.length > 0 && 
+                (!this.overrideConfig.liveChatConfig.supportTopicIds 
+                  ||  (this.overrideConfig.liveChatConfig.supportTopicIds && this.overrideConfig.liveChatConfig.supportTopicIds.length < 1)  
                 ) 
                 ) {
                   //Valid support topics exist only in resourceConfig
-                  currMergedSupportTopics = this.resourceConfig.liveChatConfig.supportTopics;
+                  currMergedSupportTopicIds = this.resourceConfig.liveChatConfig.supportTopicIds;
               }
               else {
-                if(this.overrideConfig.liveChatConfig.supportTopics && this.resourceConfig.liveChatConfig.supportTopics && 
-                  this.overrideConfig.liveChatConfig.supportTopics.length > 0 && this.resourceConfig.liveChatConfig.supportTopics.length > 0
+                if(this.overrideConfig.liveChatConfig.supportTopicIds && this.resourceConfig.liveChatConfig.supportTopicIds && 
+                  this.overrideConfig.liveChatConfig.supportTopicIds.length > 0 && this.resourceConfig.liveChatConfig.supportTopicIds.length > 0
                   ) {
                     //Support topics exist in both resourceConfig and overrideConfig, merge them
-                    currMergedSupportTopics = this.overrideConfig.liveChatConfig.supportTopics.concat(this.resourceConfig.liveChatConfig.supportTopics);
+                    currMergedSupportTopicIds = this.overrideConfig.liveChatConfig.supportTopicIds.concat(this.resourceConfig.liveChatConfig.supportTopicIds);
 
                     //Make sure that we have distinct values after merging.
-                    currMergedSupportTopics = currMergedSupportTopics.filter(this.distinctStringValues);
+                    currMergedSupportTopicIds = currMergedSupportTopicIds.filter(this.distinctStringValues);
 
-                    if(currMergedSupportTopics.findIndex((currEntry:string)=> { return currEntry === '*'  }) > -1) {
-                      currMergedSupportTopics = [];
+                    if(currMergedSupportTopicIds.findIndex((currEntry:string)=> { return currEntry === '*'  }) > -1) {
+                      currMergedSupportTopicIds = [];
                       //* means enabled for all support topics. So if we find it, make sure it is the only entry.
                       //This will help with perf later.
-                      currMergedSupportTopics.push('*');
+                      currMergedSupportTopicIds.push('*');
                     }
 
                     //Convert each entry to lowercase
-                    currMergedSupportTopics.filter((value:string, index: number, self: string[]) => {
+                    currMergedSupportTopicIds.filter((value:string, index: number, self: string[]) => {
                       self[index] = self[index].toLowerCase();
                     });
                     
-                } //Else of this means that support topics do not exist in either and it is fine since we already initialize currMergedSupportTopics as an empty array.
+                } //Else of this means that support topics do not exist in either and it is fine since we already initialize currMergedSupportTopicIds as an empty array.
               }
             }
-            currLiveChatConfig.supportTopics = currMergedSupportTopics;
+            currLiveChatConfig.supportTopicIds = currMergedSupportTopicIds;
             currConfig.liveChatConfig = currLiveChatConfig;
           }
         }

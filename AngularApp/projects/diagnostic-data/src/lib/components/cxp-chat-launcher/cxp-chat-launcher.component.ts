@@ -23,14 +23,20 @@ export class CxpChatLauncherComponent implements OnInit {
   }
 
   public toggleChatBubble():void {
+    if(this.isChatBubbleVisible) {
+      this._cxpChatService.logUserActionOnChat('ChatBubbleShown',this.trackingId, this.chatUrl);
+    }
+    else {
+      this._cxpChatService.logUserActionOnChat('ChatBubbleDismissed',this.trackingId, this.chatUrl);
+    }
+    
     this.isChatBubbleVisible=!this.isChatBubbleVisible;
   }
 
-  public showChatBubble(): void {
-    this.isChatBubbleVisible=true;
-  }
-
-  public hideChatBubble():void {
+  public hideChatBubble(isUserInitiated:boolean):void {
+    if(isUserInitiated) {
+      this._cxpChatService.logUserActionOnChat('ChatBubbleCancel',this.trackingId, this.chatUrl);
+    }
     this.isChatBubbleVisible=false;
   }
 
@@ -39,9 +45,9 @@ export class CxpChatLauncherComponent implements OnInit {
       const windowFeatures:string = 'menubar=no,location=no,resizable=no,scrollbars=no,status=no,height=550,width=450';
       window.open(this.chatUrl, '_blank', windowFeatures, false);
 
-      this._cxpChatService.logChatURLOpened(this.trackingId, this.chatUrl);
+      this._cxpChatService.logUserActionOnChat('ChatUrlOpened',this.trackingId, this.chatUrl);
 
-      this.hideChatBubble();
+      this.hideChatBubble(false);
     }
   }
 
