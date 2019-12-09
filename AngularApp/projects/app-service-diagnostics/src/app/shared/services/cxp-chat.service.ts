@@ -202,8 +202,7 @@ export class CXPChatService {
           });
         }
 
-        //return Observable.of('');
-        return Observable.of('https://support.microsoft.com/en-us/contact/chat/123/?disability=false&mode=azuretest&partnerId=azure&authType=DELEGATED&appid=azure-chat&version=1.0.19323.2');
+        return Observable.of('');
       }
     } ));
 
