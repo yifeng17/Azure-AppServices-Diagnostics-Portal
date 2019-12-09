@@ -11,7 +11,7 @@
 	"isSearchEnabled": true,
 	"liveChatConfig": {
 		"isApplicableForLiveChat": false,
-		"supportTopics": []
+		"supportTopicIds": []
 	},
 	"categories": [{
 			"id": "Troubleshooting",
