@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { flatMap } from 'rxjs/operators';
-import { Observable, of, forkJoin, ReplaySubject } from 'rxjs';
+import { Observable, ReplaySubject } from 'rxjs';
 import { PortalService } from '../../startup/services/portal.service';
 import { ResourceService } from '../../shared-v2/services/resource.service';
-import { Verbs, StartupInfo } from '../models/portal';
+import { Verbs } from '../models/portal';
 import { Guid } from '../utilities/guid';
 import { TelemetryService, TelemetryEventNames } from 'diagnostic-data';
 
@@ -180,7 +180,9 @@ export class CXPChatService {
         }
         else {
           stringToLog = 'NULL object returned. Likely cause, unknown. Followup with CXP team with trackingId.';          
-        }        
+        }
+        
+        returnValue = 'https://support.microsoft.com/en-us/contact/chat/123/?disability=false&mode=azuretest&partnerId=azure&authType=DELEGATED&appid=azure-chat&version=1.0.19323.2';
       }
 
       this._telemetryService.logEvent(TelemetryEventNames.GetCXPChatURL, {
