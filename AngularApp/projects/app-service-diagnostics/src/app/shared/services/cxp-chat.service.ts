@@ -180,9 +180,7 @@ export class CXPChatService {
         }
         else {
           stringToLog = 'NULL object returned. Likely cause, unknown. Followup with CXP team with trackingId.';          
-        }
-        
-        returnValue = 'https://support.microsoft.com/en-us/contact/chat/123/?disability=false&mode=azuretest&partnerId=azure&authType=DELEGATED&appid=azure-chat&version=1.0.19323.2';
+        }        
       }
 
       this._telemetryService.logEvent(TelemetryEventNames.GetCXPChatURL, {
