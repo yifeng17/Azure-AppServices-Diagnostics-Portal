@@ -7,7 +7,7 @@ $chatBubble-color: rgb(0, 120, 212);
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    align-items: flex-end;
+    align-items: flex-start;
     padding: 0px;
     position: relative;
  }
@@ -45,7 +45,7 @@ $chatBubble-color: rgb(0, 120, 212);
     border-radius: 2px;
     border:solid 1px grey;
     position: absolute;
-    margin-left:-30em;
+    width: 30em;
     margin-top: -5.2em;
 }
 
@@ -83,4 +83,8 @@ $chatBubble-color: rgb(0, 120, 212);
 
 .white-border {
     border: 1px solid white;
+}
+
+.remove-left-margin {
+    margin-left: 0px;
 }
