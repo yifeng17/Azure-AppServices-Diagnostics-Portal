@@ -3,7 +3,7 @@ import { flatMap } from 'rxjs/operators';
 import { Observable, of, forkJoin, ReplaySubject } from 'rxjs';
 import { PortalService } from '../../startup/services/portal.service';
 import { ResourceService } from '../../shared-v2/services/resource.service';
-import { Verbs } from '../models/portal';
+import { Verbs, StartupInfo } from '../models/portal';
 import { Guid } from '../utilities/guid';
 import { TelemetryService, TelemetryEventNames } from 'diagnostic-data';
 
@@ -52,7 +52,7 @@ export class CXPChatService {
   };
 
   public generateTrackingId() : string {
-    return Guid.newGuid();
+    return Guid.newGuid();    
   }
 
 
@@ -113,33 +113,28 @@ export class CXPChatService {
 
     //Wait for the response from the CXP chat API call.
     return this._portalService.buildChatUrl().pipe(flatMap( (chatUrl) =>{
-
+      let stringToLog = '';
+      let returnValue = '';
       if(chatUrl && chatUrl != '') {
-        this._telemetryService.logEvent(TelemetryEventNames.BuildCXPChatUrl, {
-          "trackingId": trackingIdGuid,
-          "passedInput" : JSON.stringify(input),          
-          "returnValue": chatUrl
-        });
-
-        return Observable.of(chatUrl);
+        stringToLog = chatUrl;
+        returnValue = chatUrl;
       }
       else {
         if(chatUrl === '') {
-          this._telemetryService.logEvent(TelemetryEventNames.BuildCXPChatUrl, {
-            "trackingId": trackingIdGuid,
-            "passedInput" : JSON.stringify(input),          
-            "returnValue": 'Empty URL returned. Likely cause, no engineer available.'
-          });
+          stringToLog = 'Empty URL returned. Likely cause, no engineer available.';          
         }
         else {
-          this._telemetryService.logEvent(TelemetryEventNames.BuildCXPChatUrl, {
-            "trackingId": trackingIdGuid,
-            "passedInput" : JSON.stringify(input),          
-            "returnValue": 'NULL object returned. Likely cause, unknown. Followup with CXP team with trackingId.'
-          });
-        }
-        return Observable.of('');
+          stringToLog = 'NULL object returned. Likely cause, unknown. Followup with CXP team with trackingId.';
+        }      
       }
+
+      this._telemetryService.logEvent(TelemetryEventNames.BuildCXPChatUrl, {
+        "trackingId": trackingIdGuid,
+        "passedInput" : JSON.stringify(input),          
+        "returnValue": stringToLog
+      });
+      return Observable.of(returnValue);
+
     } ));
 
   }
@@ -173,34 +168,30 @@ export class CXPChatService {
 
     //Wait for the response from the CXP chat API call.
     return this._portalService.getChatUrl().pipe(flatMap( (chatUrl) =>{
-
+      let stringToLog = '';
+      let returnValue = '';
       if(chatUrl && chatUrl != '') {
-        this._telemetryService.logEvent(TelemetryEventNames.GetCXPChatURL, {
-          "trackingId": trackingIdGuid,
-          "passedInput" : JSON.stringify(input),          
-          "returnValue": chatUrl
-        });
-
-        return Observable.of(chatUrl);
+        stringToLog = chatUrl;
+        returnValue = chatUrl;
       }
       else {
         if(chatUrl === '') {
-          this._telemetryService.logEvent(TelemetryEventNames.GetCXPChatURL, {
-            "trackingId": trackingIdGuid,
-            "passedInput" : JSON.stringify(input),
-            "returnValue": 'Empty URL returned. Likely cause, no engineer available.'
-          });
+          stringToLog = 'Empty URL returned. Likely cause, no engineer available.';
         }
         else {
-          this._telemetryService.logEvent(TelemetryEventNames.GetCXPChatURL, {
-            "trackingId": trackingIdGuid,
-            "passedInput" : JSON.stringify(input),          
-            "returnValue": 'NULL object returned. Likely cause, unknown. Followup with CXP team with trackingId.'
-          });
+          stringToLog = 'NULL object returned. Likely cause, unknown. Followup with CXP team with trackingId.';          
         }
-
-        return Observable.of('');
+        
+        returnValue = 'https://support.microsoft.com/en-us/contact/chat/123/?disability=false&mode=azuretest&partnerId=azure&authType=DELEGATED&appid=azure-chat&version=1.0.19323.2';
       }
+
+      this._telemetryService.logEvent(TelemetryEventNames.GetCXPChatURL, {
+        "trackingId": trackingIdGuid,
+        "passedInput" : JSON.stringify(input),          
+        "returnValue": stringToLog
+      });
+
+      return Observable.of(returnValue);
     } ));
 
   }
