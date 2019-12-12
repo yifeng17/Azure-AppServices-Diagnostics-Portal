@@ -93,7 +93,6 @@ import { EventViewerComponent } from './components/daas/event-viewer/event-viewe
 import { FrebViewerComponent } from './components/daas/freb-viewer/freb-viewer.component';
 import { PortalReferrerResolverComponent } from './components/portal-referrer-resolver/portal-referrer-resolver.component';
 import { ConfigureStorageAccountComponent } from './components/daas/configure-storage-account/configure-storage-account.component';
-import { CategoryOverviewComponent } from './components/category-overview/category-overview.component';
 import { SupportBotModule } from '../supportbot/supportbot.module';
 // import { DynamicComponent } from '../supportbot/dynamic-component/dynamic.component';
 
@@ -160,8 +159,7 @@ import { SupportBotModule } from '../supportbot/supportbot.module';
         EventViewerComponent,
         FrebViewerComponent,
         PortalReferrerResolverComponent,
-        ConfigureStorageAccountComponent,
-        CategoryOverviewComponent
+        ConfigureStorageAccountComponent
     ],
     imports: [
         HttpClientModule,

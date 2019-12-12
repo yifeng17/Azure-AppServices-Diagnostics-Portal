@@ -91,7 +91,7 @@ import { FabNavModule } from './components/fab-nav/fab-nav.module';
     FormsModule,
     MonacoEditorModule.forRoot(),
     CustomMaterialModule,
-    HighchartsChartModule
+    HighchartsChartModule,
     FabNavModule
   ],
   providers: [

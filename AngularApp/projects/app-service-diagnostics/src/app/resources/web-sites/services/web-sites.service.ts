@@ -9,7 +9,7 @@ import { IDiagnosticProperties } from '../../../shared/models/diagnosticproperti
 import { flatMap } from 'rxjs/operators';
 import { PortalReferrerMap } from '../../../shared/models/portal-referrer-map';
 import { DetectorType } from 'diagnostic-data';
-import {of as observableOf,  Observable, BehaviorSubject } from 'rxjs';
+import { of,  Observable, BehaviorSubject } from 'rxjs';
 
 @Injectable()
 export class WebSitesService extends ResourceService {
@@ -57,23 +57,23 @@ export class WebSitesService extends ResourceService {
                     DetectorId: 'backupFailures'
                 });
             }
-            return Observable.of(bladeToDetectorMap);
+            return of(bladeToDetectorMap);
         }  ));
     }
 
     public getPesId(): Observable<string> {
         return this.warmUpCallFinished.pipe(flatMap(() => {
             if (this.appType == AppType.WebApp && this.platform == OperatingSystem.windows){
-                return observableOf("14748");
+                return of("14748");
             }
             else if (this.appType == AppType.WebApp && this.platform == OperatingSystem.linux){
-                return observableOf("16170");
+                return of("16170");
             }
             else if (this.appType == AppType.FunctionApp){
-                return observableOf("16072");
+                return of("16072");
             }
             else{
-                return observableOf(null);
+                return of(null);
             }
         }));
     }

@@ -143,7 +143,7 @@ export class ResourceHomeComponent implements OnInit {
 
     navigateToCategory(category: CategoryItem) {
         this._telemetryService.logEvent(TelemetryEventNames.CategoryCardClicked, { "category": category.label});
-        this.navigateTo(`../../categories/${category.label}/overview`);
+        this.navigateTo(`../../categories/${category.label}`);
     }
 
     navigateToSupportTopic(supportTopic: SupportTopicItem) {

@@ -159,6 +159,7 @@ export class TimeSeriesGraphComponent extends DataRenderBaseComponent implements
                     .filter(point => this._getSeriesName(point.column, point.counterName) === key)
                     .sort((b, a) => !this.customizeXAxis ? a.timestamp.diff(b.timestamp) : b.timestamp.diff(a.timestamp));
 
+            console.log("current series points", pointsForThisSeries);
             if (!this.customizeXAxis) {
                 let pointToAdd = pointsForThisSeries.pop();
 
@@ -169,6 +170,9 @@ export class TimeSeriesGraphComponent extends DataRenderBaseComponent implements
 
                 for (const d = this.startTime.clone(); d.isBefore(this.endTime); d.add(this.timeGrain)) {
                     let value = this.defaultValue;
+                    console.log("Current iterator", d.clone());
+                    console.log("current point", pointToAdd);
+                    console.log("default value", value);
                     if (pointToAdd && d.isSame(moment.utc(pointToAdd.timestamp))) {
                         value = pointToAdd.value;
                         pointToAdd = pointsForThisSeries.pop();
@@ -230,7 +234,7 @@ export class TimeSeriesGraphComponent extends DataRenderBaseComponent implements
             return moment.duration(1, 'months');
         }
          // 7 days -> 1 month: 1 day
-         if (rangeInHours >= 168) {
+         if (rangeInHours > 168) {
             return moment.duration(1, 'days');
         }
 

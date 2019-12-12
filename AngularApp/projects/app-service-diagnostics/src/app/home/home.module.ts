@@ -23,7 +23,6 @@ import { DiagnosticsSettingsComponent } from './components/diagnostics-settings/
 import { SupportTopicService } from '../shared-v2/services/support-topic.service';
 import { MarkdownModule } from 'ngx-markdown';
 import { PortalReferrerResolverComponent } from '../shared/components/portal-referrer-resolver/portal-referrer-resolver.component';
-import { FabDialogModule, FabButtonModule } from '@angular-react/fabric';
 import { SearchPipe, SearchMatchPipe } from './components/pipes/search.pipe';
 
 import {

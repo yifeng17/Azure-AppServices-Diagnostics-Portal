@@ -297,7 +297,7 @@ export class HomeComponent implements OnInit {
                 let eventProps = {
                     url: this.providerRegisterUrl
                     };
-                    this.loggingService.logEvent("Change Analysis Resource Provider registered",eventProps);
+                    this.kustologgingService.logEvent("Change Analysis Resource Provider registered",eventProps);
                 }, (error: any) => {
                     this.logHTTPError(error, 'registerResourceProvider');
                 });
@@ -372,7 +372,7 @@ export class HomeComponent implements OnInit {
         errorMsg: error.message ? error.message : 'Server Error',
         statusCode: error.status ? error.status : 500
     };
-    this.loggingService.logTrace('HTTP error in ' + methodName, errorLoggingProps);
+    this.kustologgingService.logTrace('HTTP error in ' + methodName, errorLoggingProps);
 }
 }
 
