@@ -1,6 +1,6 @@
 import { Moment } from 'moment';
 import { v4 as uuid } from 'uuid';
-import { Component, OnInit, Input, Inject } from '@angular/core';
+import { Component, OnInit, Input, Inject, EventEmitter, Output } from '@angular/core';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
 import { LoadingStatus } from '../../models/loading';
 import { StatusStyles } from '../../models/styles';
@@ -45,6 +45,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
 
   @Input() analysisId: string;
   @Input() searchMode: SearchAnalysisMode = SearchAnalysisMode.CaseSubmission;
+  @Output() onComplete = new EventEmitter<any>();
   detectorId: string;
   detectorName: string;
   contentHeight: string;
@@ -382,6 +383,11 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
         ++pendingCount;
       }
     });
+
+    if (pendingCount === 0)
+    {
+        this.onComplete.emit();
+    }
     return pendingCount;
   }
 

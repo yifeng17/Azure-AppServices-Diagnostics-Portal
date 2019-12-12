@@ -9,7 +9,6 @@ import { DynamicComponent } from '../../../supportbot/dynamic-component/dynamic.
 import { TextMessageComponent } from '../../../supportbot/common/text-message/text-message.component';
 import { PanelType, IPanelStyles } from 'office-ui-fabric-react';
 import { GenieChatFlow } from '../../../supportbot/message-flow/v2-flows/genie-chat.flow';
-import {Globals} from '../../../globals';
 //  import {} from 'office-ui-fabric-core/lib';
 
 //  createInputJsxRenderer, createRenderPropHandler
@@ -23,8 +22,8 @@ import {Globals} from '../../../globals';
 })
 //extends Renderable
 export class CategoryOverviewComponent implements OnInit {
-
-    @ViewChild('ms-Panel-scrollableContent', { static: false }) myScrollContainer: ElementRef;
+    @ViewChild('scrollMe', { static: false }) myScrollContainer: ElementRef;
+  //  @ViewChild('ms-Panel-scrollableContent', { static: false }) myScrollContainer: ElementRef;
 
     messages: Message[] = [];
     showTypingMessage: boolean;
@@ -36,7 +35,7 @@ export class CategoryOverviewComponent implements OnInit {
     navigationContent: (() => HTMLElement);
     renderFooter: (() => HTMLElement);
     isLightDismiss: boolean = true;
-    welcomeMessage: string = "";
+    welcomeMessage: string = "Welcome to App Service Diagnostics. My name is Genie and I am here to help you answer any questions you may have about diagnosing and solving your problems with your app. Please describe the issue of your app.";
     panelStyles: any;
     type: PanelType = PanelType.custom;
     width: string = "1200px";
@@ -45,13 +44,7 @@ export class CategoryOverviewComponent implements OnInit {
     // @ViewChild("headerTemplate", { static: true }) headerTemplate: TemplateRef<any>;
     // @ViewChild('tpl', { static: true }) tpl: TemplateRef<any>;
 
-    constructor(private _activatedRoute: ActivatedRoute, private _messageProcessor: MessageProcessor, private _genieChatFlow: GenieChatFlow, public globals: Globals) {
-        console.log("constructing messages", globals.messages);
-        // this._activatedRoute.paramMap.subscribe(params => {
-        //     console.log("category params", params);
-        //     this.categoryId = params.get('category');
-        //   });
-            this.messages = globals.messages;
+    constructor(private _activatedRoute: ActivatedRoute, private _messageProcessor: MessageProcessor, private _genieChatFlow: GenieChatFlow) {
             this.panelStyles = {
            // type: PanelType.smallFixedNear,
             root: {
@@ -62,28 +55,25 @@ export class CategoryOverviewComponent implements OnInit {
                           // overflowX: 'hiden',
                       },
          //   customWidth: "585",
-        }
+        };
+        this.chatContainerHeight = 0;
     }
 
     scrollToBottom(event?: any): void {
 
         try {
             this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
-            console.log()
+            console.log("updating scrolling", this.myScrollContainer);
         } catch (err) { }
     }
 
     getMessage(event?: any): void {
         const self = this;
         const message = this._messageProcessor.getNextMessage(event);
-     //const message = null;
-        console.log("message in support bot", message);
-        console.log("this.messages", this.messages);
+
         if (message) {
             this.messages.push(message);
-            console.log("message not empty", message);
             if (message.messageDelayInMs >= 2000) {
-                console.log("1st settimeout");
                 this.showTypingMessage = true;
 
                 // To show the typing message icon, we need to scroll the page to the bottom.
@@ -101,14 +91,12 @@ export class CategoryOverviewComponent implements OnInit {
     }
 
     onSearchEnter(event: any): void {
-        // this.searchBoxFocus = true;
-        console.log("search Event", event);
         this._genieChatFlow.createMessageFlowForAnaysis(event.newValue).subscribe((analysisMessages: Message[]) => {
             analysisMessages.forEach(message => {
-                this.globals.messages.push(message);
+                this.messages.push(message);
             });
 
-            console.log("constructing messages onsearch", this.globals.messages);
+            console.log("constructing messages onsearch", this.messages);
         });
   }
 
@@ -117,98 +105,12 @@ export class CategoryOverviewComponent implements OnInit {
         console.log("isOpen", this.isOpen);
     }
     ngOnInit() {
-     //   this.welcomeMessage = "Welcome to App Service Diagnostics. My name is Genie and I am here to help you answer any questions you may have about diagnosing and solving your problems with your app. Please describe the issue of your app.";
         this.categoryId = this._activatedRoute.parent.snapshot.params.category;
 
-        // this.panelStyles = {
-        //     type: PanelType.custom,
-        //     customWidth: "585px",
-        // }
+        this.messages.push(new TextMessage(this.welcomeMessage, MessageSender.System, 200));
+        this.chatContainerHeight = window.innerHeight - 170;
+        console.log("window height", this.chatContainerHeight);
 
-        // let elem = document.createElement('div') as HTMLElement
-        // this.messages.push(new Message {
-
-        // });
-     //   this.messages.push(new TextMessage(this.welcomeMessage, MessageSender.System, 200));
-        //this.getMessage();
-        console.log("this.globals.messages.length", this.globals.messages.length, this.globals.messages.length === 0);
-        // if (this.globals.messages.length === 0)
-        // {
-        //     this.globals.messages.push(new TextMessage('Welcome to App Service Diagnostics. My name is Genie and I am here to help you answer any questions you may have about diagnosing and solving your problems with your app. Please describe the issue of your app.'));
-        // }
-          // const healthCheckGroup: MessageGroup = new MessageGroup('health-check', [], this._getHealthCheckNextGroupId.bind(this));
-        console.log("is Open status", this.isOpen);
-
-        console.log("this.messages after init", this.messages);
-        // this.navigationContent = useConstCallback((props, defaultRender) => (
-        //     <>
-        //       <SearchBox placeholder="Search here..." styles={searchboxStyles} ariaLabel="Sample search box. Does not actually search anything." />
-        //       {// This custom navigation still renders the close button (defaultRender).
-        //       // If you don't use defaultRender, be sure to provide some other way to close the panel.
-        //       defaultRender!(props)}
-        //     </>
-        //   ));
-
-        // This custom navigation still renders the close button (defaultRender).
-        // If you don't use defaultRender, be sure to provide some other way to close the panel.
-
-
-        // export interface IRenderFunction<P> {
-        //     (props?: P, defaultRender?: (props?: P) => JSX.Element | null): JSX.Element | null;
-        // }
-
-
-        // this.navigationContent = {
-        //     render: defaultProps => {
-        //         (<h1>Hello World</h1>)
-        //         // {
-        //         // ${defaultRender!(props)}
-        //             // <>
-        //     //   </>)
-        //    //   label: defaultProps.label,
-        //     //  onRenderNavigationContent: createInputJsxRenderer()
-        //     },
-        //   };
-
-        // this.navigationContent = {
-        //     getProps: defaultProps => ({
-        //       ...defaultProps,
-        //    //   label: defaultProps.label,
-        //       onRenderNavigationContent: ()=>{
-        //           document.createElement('div') as HTMLElement;
-        //         // (props?: P, defaultRender?: (props?: P) => JSX.Element | null): JSX.Element | null;
-        //       }
-        //     }),
-        //   };
-
-        // this.navigationContent = () => {
-        //   let panelTitleContainer = document.createElement('DIV') as HTMLElement;
-        //   let closeButton = document.createElement('BUTTON') as HTMLElement;
-        //     let panelTitle = document.createElement('SPAN') as HTMLElement;
-        //     closeButton.innerHTML="close";
-        //     closeButton.id = "close";
-        //     // closeButton.addEventListener("click", function(e) {
-
-        //     // })
-        //     // closeButton.onclick = this.closePanel();
-        //     closeButton.style.position='absolute';
-        //     closeButton.style.right = '10px';
-        //     panelTitle.style.position = 'absolute';
-        //     panelTitle.style.left = '25px';
-        //     panelTitle.style.right = '32px';
-        //     panelTitle.style.top = '0px';
-        //     panelTitle.style.height = '27px';
-        //     panelTitle.style.fontFamily = "Segoe UI";
-        //     panelTitle.style.fontSize = "18px";
-        //     panelTitle.style.lineHeight = "24px";
-        //     panelTitle.style.display = "flex";
-        //     panelTitle.style.alignItems = "flex-end";
-        //     panelTitle.innerHTML = "Hi my name is Genie"
-        //     panelTitleContainer.appendChild(panelTitle);
-        //      panelTitleContainer.appendChild(closeButton);
-        //     return panelTitleContainer;
-        //     // (props?: P, defaultRender?: (props?: P) => JSX.Element | null): JSX.Element | null;
-        // };
 
         document.getElementById('close').onclick = () => {
             this.isOpen = false;
@@ -229,7 +131,7 @@ export class CategoryOverviewComponent implements OnInit {
             // panelTitle.style.lineHeight = "24px";
             // panelTitle.style.display = "flex";
             // panelTitle.style.alignItems = "flex-end";
-            panelTitle.innerHTML = "Hi my name is Genie"
+            panelTitle.innerHTML = "Hi my name is Genie";
             return panelTitle;
             // (props?: P, defaultRender?: (props?: P) => JSX.Element | null): JSX.Element | null;
         };

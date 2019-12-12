@@ -69,13 +69,11 @@
       <!-- <button style="position: absolute; right: 10px; display: flex; align-items: flex-end" (click)="isOpen=false">X</button> -->
     </div>
     <div class="panel-content" style="margin-top: 60px; margin-left: -25px;">
-      <!-- *ngIf="messages != undefined && messages.count > 0" -->
       <fab-pivot>
-        <fab-pivot-item headerText="Chat" #scrollMe>
-             <div *ngIf="globals.messages != undefined && globals.messages.length > 0" >
-            <div class="row animated fadeIn chat-message-container" *ngFor="let item of globals.messages">
-                <!-- <div *ngIf class="genie-message message-sent-by-system">{{welcomeMessage}}</div> -->
-              <dynamic-component [componentData]="item" (onViewUpdate)="scrollToBottom()" (onComplete)="getMessage($event)"></dynamic-component>
+        <fab-pivot-item headerText="Chat">
+             <div id="scrollMe" [style.height.px] = "chatContainerHeight" *ngIf="messages != undefined && messages.length > 0" style="overflow-y: auto; height: 800px;" class="ms-Panel-scrollableContent" >
+            <div class="row animated fadeIn chat-message-container" *ngFor="let item of messages">
+              <dynamic-component [componentData]="item"  (onComplete)="getMessage($event); scrollToBottom()"></dynamic-component>
             </div>
           </div>
           <!-- <div class="genie-message message-sent-by-system">{{welcomeMessage}}</div> -->
