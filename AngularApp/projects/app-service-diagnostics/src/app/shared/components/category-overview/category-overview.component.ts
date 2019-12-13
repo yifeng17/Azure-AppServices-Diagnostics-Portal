@@ -22,7 +22,7 @@ import { GenieChatFlow } from '../../../supportbot/message-flow/v2-flows/genie-c
 })
 //extends Renderable
 export class CategoryOverviewComponent implements OnInit {
-    @ViewChild('scrollMe', { static: false }) myScrollContainer: ElementRef;
+    @ViewChild('scrollMe', { static: true }) myScrollContainer: any;
   //  @ViewChild('ms-Panel-scrollableContent', { static: false }) myScrollContainer: ElementRef;
 
     messages: Message[] = [];
@@ -59,15 +59,34 @@ export class CategoryOverviewComponent implements OnInit {
         this.chatContainerHeight = 0;
     }
 
+    ngAfterViewInit() {
+        console.log("Afterview init updating scrolling", this.myScrollContainer);
+      }
+
     scrollToBottom(event?: any): void {
 
         try {
-            this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
             console.log("updating scrolling", this.myScrollContainer);
-        } catch (err) { }
+            console.log("child", this.myScrollContainer.elementRef.nativeElement.childNodes[0]);
+            console.log("1. scrolltop before scrollTop", this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].scrollTop);
+            console.log("2. scroll before scrollheight", this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].scrollHeight);
+            //this.myScrollContainer.elementRef.nativeElement.childNodes[0].scrollTop = this.myScrollContainer.elementRef.nativeElement.childNodes[0].scrollHeight;
+           var height =   this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].nativeElement.scrollHeight;
+            this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].nativeElement.scrollTop = height;
+
+            // if ( this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].scrollTop <  this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].scrollHeight)
+            // {
+            //     this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].scrollTop = this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].scrollHeight;
+            // }
+
+            console.log("3. scrolltop after scrollTop", this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].scrollTop, this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].scrollHeight);
+        } catch (err) {
+            console.log("status scrollToBottom", err);
+        }
     }
 
     getMessage(event?: any): void {
+        console.log("status oncomplete: event", event);
         const self = this;
         const message = this._messageProcessor.getNextMessage(event);
 

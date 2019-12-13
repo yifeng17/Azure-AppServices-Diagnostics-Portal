@@ -70,10 +70,10 @@
     </div>
     <div class="panel-content" style="margin-top: 60px; margin-left: -25px;">
       <fab-pivot>
-        <fab-pivot-item headerText="Chat">
-             <div id="scrollMe" [style.height.px] = "chatContainerHeight" *ngIf="messages != undefined && messages.length > 0" style="overflow-y: auto; height: 800px;" class="ms-Panel-scrollableContent" >
+        <fab-pivot-item headerText="Chat" #scrollMe>
+             <div #scrollMe2 id="scrollme1" [style.height.px] = "chatContainerHeight" *ngIf="messages && messages.length > 0" style="overflow-y: auto;" class="ms-Panel-scrollableContent scroll-bottom" >
             <div class="row animated fadeIn chat-message-container" *ngFor="let item of messages">
-              <dynamic-component [componentData]="item"  (onComplete)="getMessage($event); scrollToBottom()"></dynamic-component>
+              <dynamic-component [componentData]="item"  (onComplete)=" scrollToBottom()"></dynamic-component>
             </div>
           </div>
           <!-- <div class="genie-message message-sent-by-system">{{welcomeMessage}}</div> -->

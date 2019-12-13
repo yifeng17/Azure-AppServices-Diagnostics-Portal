@@ -93,6 +93,7 @@ export class DynamicComponent {
             takeUntil(this.onComplete)
         ).subscribe((response: { status: boolean, data?: any }) => {
             if (response.status === true) {
+                console.log("status from dynamic component", response.data);
                 this.onComplete.emit(response.data);
 
                 this.viewUpdateSubscription.unsubscribe();

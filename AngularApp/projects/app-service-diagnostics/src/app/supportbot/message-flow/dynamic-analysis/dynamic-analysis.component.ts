@@ -30,6 +30,16 @@ export class DynamicAnalysisComponent implements OnInit, AfterViewInit, IChatMes
   ngAfterViewInit() {
     this.onViewUpdate.emit();
   }
+
+  updateStatus(status) {
+      let statusValue = {
+        status: status,
+        data: true
+    };
+
+    console.log("status Value", statusValue);
+    this.onComplete.emit(statusValue);
+  }
 }
 
 export class DynamicAnalysisMessage extends Message {

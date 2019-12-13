@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { GenericDetectorComponent } from '../generic-detector/generic-detector.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ResourceService } from '../../../shared-v2/services/resource.service';
@@ -18,6 +18,8 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
   detectorId: string = "";
   detectorName: string = "";
   @Input() showSearchBar: boolean = undefined;
+  @Output() onComplete = new EventEmitter<any>();
+
   displayDetectorContainer: boolean = true;
   searchBarFocus: boolean = false;
 
@@ -54,6 +56,11 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
         });
       });
     });
+  }
+
+  updateLoadingStatus(status){
+      console.log("status:", status);
+      this.onComplete.emit(status);
   }
 
   triggerSearch(){
