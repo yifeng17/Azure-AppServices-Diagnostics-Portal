@@ -80,6 +80,9 @@ import { AppDependenciesComponent } from './components/app-dependencies/app-depe
 import { HighchartsChartModule } from 'highcharts-angular';
 import { HighchartsGraphComponent } from './components/highcharts-graph/highcharts-graph.component';
 import { FabNavModule } from './components/fab-nav/fab-nav.module';
+import { FabIconModule, FabChoiceGroupModule, FabSearchBoxModule, FabDropdownModule } from '@angular-react/fabric';
+// import { FabSummaryCardComponent } from './components/fab-summary-card/fab-summary-card.component';
+import { SummaryCardsComponent } from './components/summary-cards/summary-cards.component';
 // import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
@@ -92,7 +95,10 @@ import { FabNavModule } from './components/fab-nav/fab-nav.module';
     MonacoEditorModule.forRoot(),
     CustomMaterialModule,
     HighchartsChartModule,
-    FabNavModule
+    FabIconModule,
+    FabChoiceGroupModule,
+    FabSearchBoxModule,
+    FabDropdownModule
   ],
   providers: [
     ClipboardService
@@ -113,7 +119,8 @@ import { FabNavModule } from './components/fab-nav/fab-nav.module';
     DetectorListAnalysisComponent,
     AppDependenciesComponent,
     AppInsightsMarkdownComponent,
-    HighchartsGraphComponent
+    HighchartsGraphComponent,
+    SummaryCardsComponent
   ],
   exports: [
     FormsModule, TimeSeriesGraphComponent, DataTableComponent, DynamicDataComponent, DetectorViewComponent,

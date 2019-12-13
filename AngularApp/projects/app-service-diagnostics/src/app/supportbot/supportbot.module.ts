@@ -63,6 +63,7 @@ import { DynamicAnalysisComponent } from './message-flow/dynamic-analysis/dynami
         HealthCheckV3Component,
         SummaryCardComponent,
         DynamicAnalysisComponent
+
     ],
     imports: [
         SharedModule,

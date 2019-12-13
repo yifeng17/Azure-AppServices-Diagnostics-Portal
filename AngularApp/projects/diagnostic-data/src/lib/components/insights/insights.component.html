@@ -16,10 +16,6 @@
           <div style="display: table;">
             <div style="display: table-row">
               <div style="display: table-cell">
-                <span class="fa insight-expand-icon" [class.fa-angle-right]="hasContent(insight) && !insight.isExpanded"
-                  [class.fa-angle-down]="hasContent(insight) && insight.isExpanded"></span>
-              </div>
-              <div style="display: table-cell">
                 <span class="fa status-icon" [class.fa-exclamation-circle]="insight.status === InsightStatus.Critical"
                   [class.fa-exclamation-triangle]="insight.status === InsightStatus.Warning"
                   [class.fa-check-circle]="insight.status === InsightStatus.Success"
@@ -27,6 +23,10 @@
               </div>
               <div style="display: table-cell;width:100%">
                 {{insight.title}}
+              </div>
+              <div style="display: table-cell" class="pull-right">
+                <span class="fa insight-expand-icon" [class.fa-angle-right]="hasContent(insight) && !insight.isExpanded"
+                  [class.fa-angle-down]="hasContent(insight) && insight.isExpanded"></span>
               </div>
               <!-- <div style="display: table-cell">
                 <div class="pull-right" style="white-space: nowrap">

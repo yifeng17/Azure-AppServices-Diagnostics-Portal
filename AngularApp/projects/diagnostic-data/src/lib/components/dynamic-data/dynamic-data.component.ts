@@ -1,7 +1,7 @@
 import { Moment } from 'moment';
 import { BehaviorSubject } from 'rxjs';
 import {
-    Component, ComponentFactoryResolver, Input, OnInit, ViewChild, ViewContainerRef
+  Component, ComponentFactoryResolver, Input, OnInit, ViewChild, ViewContainerRef
 } from '@angular/core';
 import { DiagnosticData, Rendering, RenderingType } from '../../models/detector';
 import { CardSelectionComponent } from '../card-selection/card-selection.component';
@@ -19,13 +19,14 @@ import { SolutionComponent } from '../solution/solution.component';
 import { GuageControlComponent } from '../guage-control/guage-control.component';
 import { TimeSeriesGraphComponent } from '../time-series-graph/time-series-graph.component';
 import {
-    TimeSeriesInstanceGraphComponent
+  TimeSeriesInstanceGraphComponent
 } from '../time-series-instance-graph/time-series-instance-graph.component';
 import { FormComponent } from '../form/form.component';
-import { CompilationProperties}  from '../../models/compilation-properties';
+import { CompilationProperties } from '../../models/compilation-properties';
 import { ChangeAnalysisOnboardingComponent } from '../changeanalysis-onboarding/changeanalysis-onboarding.component';
 import { ChangesetsViewComponent } from '../changesets-view/changesets-view.component';
-import {AppDependenciesComponent} from '../app-dependencies/app-dependencies.component';
+import { AppDependenciesComponent } from '../app-dependencies/app-dependencies.component';
+import { SummaryCardsComponent } from '../summary-cards/summary-cards.component';
 @Component({
   selector: 'dynamic-data',
   templateUrl: './dynamic-data.component.html',
@@ -34,7 +35,7 @@ import {AppDependenciesComponent} from '../app-dependencies/app-dependencies.com
     TimeSeriesGraphComponent, DataTableComponent, DataSummaryComponent, EmailComponent,
     InsightsComponent, TimeSeriesInstanceGraphComponent, DynamicInsightComponent, MarkdownViewComponent,
     DetectorListComponent, DropdownComponent, CardSelectionComponent, SolutionComponent, GuageControlComponent, FormComponent,
-    ChangeAnalysisOnboardingComponent, ChangesetsViewComponent, AppDependenciesComponent, AppInsightsMarkdownComponent
+    ChangeAnalysisOnboardingComponent, ChangesetsViewComponent, AppDependenciesComponent, AppInsightsMarkdownComponent, SummaryCardsComponent
   ]
 })
 export class DynamicDataComponent implements OnInit {
@@ -52,7 +53,7 @@ export class DynamicDataComponent implements OnInit {
   @Input() executionScript: string;
   @Input() detector: string = '';
   @Input() compilationPackage: CompilationProperties;
-  @Input() isAnalysisView:boolean = false;
+  @Input() isAnalysisView: boolean = false;
   @ViewChild('dynamicDataContainer', { read: ViewContainerRef, static: true }) dynamicDataContainer: ViewContainerRef;
 
   constructor(private componentFactoryResolver: ComponentFactoryResolver) { }
@@ -61,7 +62,6 @@ export class DynamicDataComponent implements OnInit {
     this.dataBehaviorSubject.subscribe((diagnosticData: DiagnosticData) => {
       const component = this._findInputComponent((<Rendering>diagnosticData.renderingProperties).type);
       const componentFactory = this.componentFactoryResolver.resolveComponentFactory(component);
-
       const viewContainerRef = this.dynamicDataContainer;
       viewContainerRef.clear();
 
@@ -117,6 +117,8 @@ export class DynamicDataComponent implements OnInit {
         return AppInsightsMarkdownComponent;
       case RenderingType.DependencyGraph:
         return AppDependenciesComponent;
+      case RenderingType.SummaryCard:
+        return SummaryCardsComponent;
       default:
         return null;
     }

@@ -1,5 +1,4 @@
-import { DetectorControlService, FeatureNavigationService } from 'diagnostic-data';
-import { HttpResponse } from '@angular/common/http';
+import { DetectorControlService, FeatureNavigationService, DetectorResponse } from 'diagnostic-data';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Category } from '../../../shared-v2/models/category';
@@ -15,6 +14,9 @@ import { TelemetryService } from 'diagnostic-data';
 import { PortalKustoTelemetryService } from '../../../shared/services/portal-kusto-telemetry.service';
 import { WebSitesService } from '../../../resources/web-sites/services/web-sites.service';
 import { AppType } from '../../../shared/models/portal';
+import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
+import { DiagnosticService } from 'diagnostic-data';
+import { ISearchBoxProps } from 'office-ui-fabric-react';
 import { FabDropdownComponent } from '@angular-react/fabric';
 // import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
 import {
@@ -42,6 +44,7 @@ export class HomeComponent implements OnInit {
     logEvent(...args: any[]) {
         console.log(args);
     }
+<<<<<<< HEAD
 
     selectedItem?: IDropdownOption;
     options: FabDropdownComponent['options'] = [
@@ -168,8 +171,7 @@ export class HomeComponent implements OnInit {
     this.sampleContent3 = 'Saved...';
   }
 
-
-
+  iconProps: ISearchBoxProps['iconProps'] = {iconName: 'Filter'};
   resourceName: string;
   categories: Category[];
   searchValue = '';
@@ -197,7 +199,7 @@ export class HomeComponent implements OnInit {
 
   constructor(private _resourceService: ResourceService, private _categoryService: CategoryService, private _notificationService: NotificationService, private _router: Router,
     private _detectorControlService: DetectorControlService, private _featureService: FeatureService, private _logger: LoggingV2Service, private _authService: AuthService,
-    private _navigator: FeatureNavigationService, private _activatedRoute: ActivatedRoute, private armService: ArmService, private logService: TelemetryService, private kustologgingService: PortalKustoTelemetryService) {
+    private _navigator: FeatureNavigationService, private _activatedRoute: ActivatedRoute, private armService: ArmService, private logService: TelemetryService, private kustologgingService: PortalKustoTelemetryService, private _diagnosticService: DiagnosticService) {
 
         const i = setInterval(() => {
             this.secondsCounter += 1;
@@ -311,8 +313,10 @@ export class HomeComponent implements OnInit {
         this.logService.logEvent("telemetry service logging", {});
         this.kustologgingService.logEvent("kusto telemetry service logging", {});
 
-        // initializeIcons('https://static2.sharepointonline.com/files/fabric/assets/icons/');
-    }
+
+        initializeIcons('https://static2.sharepointonline.com/files/fabric/assets/icons/');
+
+    };
 
     onSearchBoxFocus(event: any): void {
         this.searchBoxFocus = true;
@@ -340,17 +344,17 @@ export class HomeComponent implements OnInit {
         this.searchResultCount = count;
     }
 
-    onSearchLostFocus() {
-        if (this.searchValue === '') {
-            this.searchResultCount = 0;
-        }
-    }
+    // onSearchLostFocus() {
+    //     if (this.searchValue === '') {
+    //         this.searchResultCount = 0;
+    //     }
+    // }
 
-    onFocusClear() {
-        if (this.searchValue === '') {
-            this.clearSearch();
-        }
-    }
+    // onFocusClear() {
+    //     if (this.searchValue === '') {
+    //         this.clearSearch();
+    //     }
+    // }
 
     private _updateRouteBasedOnAdditionalParameters(route: string, additionalParameters: any): string {
         if (additionalParameters.featurePath) {

@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewChild, TemplateRef, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CategoryService } from '../../../shared-v2/services/category.service';
+import { Category } from '../../../shared-v2/models/category';
 import { InputRendererOptions, JsxRenderFunc, ReactWrapperComponent } from '@angular-react/core';
 import { IPanelHeaderRenderer, IPanelProps } from 'office-ui-fabric-react/lib/Panel';
 import { Message, TextMessage} from '../../../supportbot/models/message';
@@ -25,7 +27,6 @@ import {
 
 import { GenieChatFlow } from '../../../supportbot/message-flow/v2-flows/genie-chat.flow';
 //  import {} from 'office-ui-fabric-core/lib';
-
 //  createInputJsxRenderer, createRenderPropHandler
 
 
@@ -37,36 +38,40 @@ import { GenieChatFlow } from '../../../supportbot/message-flow/v2-flows/genie-c
 })
 //extends Renderable
 export class CategoryOverviewComponent implements OnInit {
+    @ViewChild('ms-Panel-scrollableContent', { static: false }) myScrollContainer1: ElementRef;
     @ViewChild('scrollMe', { static: true }) myScrollContainer: any;
-  //  @ViewChild('ms-Panel-scrollableContent', { static: false }) myScrollContainer: ElementRef;
+        //  @ViewChild('ms-Panel-scrollableContent', { static: false }) myScrollContainer: ElementRef;
+        categoryId: string = "";
+        category: Category;
 
-    messages: Message[] = [];
-    showTypingMessage: boolean;
-    chatContainerHeight: number;
-    categoryId: string = "";
-    isOpen: boolean = false;
-    // navigationContent: InputRendererOptions<IPanelProps>;
-    //  navigationContent: RenderPropContext<IPanelProps>;
-    navigationContent: (() => HTMLElement);
-    renderFooter: (() => HTMLElement);
-    isLightDismiss: boolean = true;
-    welcomeMessage: string = "Welcome to App Service Diagnostics. My name is Genie and I am here to help you answer any questions you may have about diagnosing and solving your problems with your app. Please describe the issue of your app.";
-    panelStyles: any;
-    type: PanelType = PanelType.custom;
-    width: string = "1200px";
 
-    selectedItem?: IDropdownOption;
-    timeDivider: DropdownMenuItemType = DropdownMenuItemType.Divider;
-    options: FabDropdownComponent['options'] = [
-      { key: 'A', text: 'Option a' },
-      { key: 'B', text: 'Option b' },
-      { key: 'C', text: 'Option c' },
-      { key: 'D', text: 'Option d' },
-      { key: 'divider_1', text: '-', itemType: DropdownMenuItemType.Divider },
-      { key: 'E', text: 'Option e' },
-      { key: 'F', text: 'Option f' },
-      { key: 'G', text: 'Option g' },
-    ];
+        messages: Message[] = [];
+        showTypingMessage: boolean;
+        chatContainerHeight: number;
+        isOpen: boolean = false;
+        // navigationContent: InputRendererOptions<IPanelProps>;
+        //  navigationContent: RenderPropContext<IPanelProps>;
+        navigationContent: (() => HTMLElement);
+        renderFooter: (() => HTMLElement);
+        isLightDismiss: boolean = true;
+        welcomeMessage: string = "Welcome to App Service Diagnostics. My name is Genie and I am here to help you answer any questions you may have about diagnosing and solving your problems with your app. Please describe the issue of your app.";
+        panelStyles: any;
+        type: PanelType = PanelType.custom;
+        width: string = "1200px";
+
+        selectedItem?: IDropdownOption;
+        timeDivider: DropdownMenuItemType = DropdownMenuItemType.Divider;
+        options: FabDropdownComponent['options'] = [
+          { key: 'A', text: 'Option a' },
+          { key: 'B', text: 'Option b' },
+          { key: 'C', text: 'Option c' },
+          { key: 'D', text: 'Option d' },
+          { key: 'divider_1', text: '-', itemType: DropdownMenuItemType.Divider },
+          { key: 'E', text: 'Option e' },
+          { key: 'F', text: 'Option f' },
+          { key: 'G', text: 'Option g' },
+        ];
+
 
     // @ViewChild('panelTitle', { static: true }) navigationContentTemplate: TemplateRef<any>;
     // @ViewChild("headerTemplate", { static: true }) headerTemplate: TemplateRef<any>;
@@ -128,14 +133,9 @@ export class CategoryOverviewComponent implements OnInit {
                   //  this.scrollToBottom();
                 }, 200);
             }
-
-            setTimeout(function () {
-                self.showTypingMessage = false;
-                this.messages.push(message);
-                console.log("2nd settimeout");
-            }, message.messageDelayInMs);
         }
     }
+
 
     onSearchEnter(event: any): void {
         this._genieChatFlow.createMessageFlowForAnaysis(event.newValue).subscribe((analysisMessages: Message[]) => {
@@ -208,5 +208,4 @@ export class CategoryOverviewComponent implements OnInit {
         console.log("routes", this._activatedRoute.parent);
         console.log("categoryId", this.categoryId);
     }
-
 }

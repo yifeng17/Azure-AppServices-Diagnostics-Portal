@@ -14,7 +14,7 @@ export class DetectorContainerComponent implements OnInit {
 
   detectorResponse: DetectorResponse = null;
   error: any;
-  hideDetectorControl: boolean = false;
+  @Input() hideDetectorControl: boolean = false;
 
    detectorName: string;
 
@@ -26,7 +26,6 @@ export class DetectorContainerComponent implements OnInit {
 
   @Input() analysisMode:boolean = false;
   @Input() isAnalysisView:boolean = false;
-  @Output() onUpdateInsightCount:EventEmitter<number> = new EventEmitter<number>();
   constructor(private _route: ActivatedRoute, private _diagnosticService: DiagnosticService,
     public detectorControlService: DetectorControlService) { }
 
@@ -57,7 +56,6 @@ export class DetectorContainerComponent implements OnInit {
       .subscribe((response: DetectorResponse) => {
         this.shouldHideTimePicker(response);
         this.detectorResponse = response;
-        this.countInsight(response);
       }, (error: any) => {
         this.error = error;
       });
@@ -67,20 +65,7 @@ export class DetectorContainerComponent implements OnInit {
   shouldHideTimePicker(response: DetectorResponse) {
     if (response && response.dataset && response.dataset.length > 0) {
       const cardRenderingIndex = response.dataset.findIndex(data => data.renderingProperties.type == RenderingType.Cards);
-      this.hideDetectorControl = cardRenderingIndex >= 0;
+      this.hideDetectorControl = cardRenderingIndex >= 0 || this.hideDetectorControl;
     }
-  }
-
-  countInsight(detectorResponse:DetectorResponse):number {
-    let count = 0;
-    if (detectorResponse !== null) {
-      detectorResponse.dataset.forEach( diagData => {
-        if (diagData.renderingProperties.type === RenderingType.Insights) {
-          count++;
-        }
-      })
-    }
-    this.onUpdateInsightCount.emit(count);
-    return count;
   }
 }

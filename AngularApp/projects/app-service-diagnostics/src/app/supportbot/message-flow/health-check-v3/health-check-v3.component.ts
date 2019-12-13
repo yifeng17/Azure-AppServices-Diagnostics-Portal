@@ -7,7 +7,6 @@ import { SiteService } from 'projects/app-service-diagnostics/src/app/shared/ser
 import { HealthStatus, LoadingStatus, DiagnosticService, DetectorControlService, DetectorResponse, Insight, InsightUtils } from 'diagnostic-data';
 import { IChatMessageComponent } from '../../interfaces/ichatmessagecomponent';
 import { IChoiceGroupOption } from 'office-ui-fabric-react';
-import { Summary } from '../summary-card/summary-card.component';
 
 @Component({
   selector: 'health-check-v3',
@@ -36,9 +35,6 @@ export class HealthCheckV3Component implements OnInit, AfterViewInit, IChatMessa
   currentSite: Site;
   options:IChoiceGroupOption[] = [];
   showChoiceGroup: boolean = false;
-  summaries: Summary[] = [];
-  showInsightNumber:boolean;
-  insightNumber:number = 0;
   constructor(private _route: ActivatedRoute, private _diagnosticService: DiagnosticService, public detectorControlService: DetectorControlService, private _logger: BotLoggingService, private _siteService: SiteService,
     private _router: Router) {
     this.showLoadingMessage = true;
@@ -95,31 +91,6 @@ export class HealthCheckV3Component implements OnInit, AfterViewInit, IChatMessa
         this.options.push(optionItem);
       })
     });
-
-    this.summaries.push(new Summary(
-      HealthStatus.Info,
-      "Request and errors",
-      "25",
-      "HTTP errors"
-    ));
-    this.summaries.push(new Summary(
-      HealthStatus.Critical,
-      "App performance",
-      "715.5 ms",
-      "Avg. response time"
-    ));
-    this.summaries.push(new Summary(
-      HealthStatus.Critical,
-      "High CPU Performance",
-      "65%",
-      "% CPU usage"
-    ));
-    this.summaries.push(new Summary(
-      HealthStatus.Success,
-      "Memory analysis",
-      "100 MB",
-      "Avg. private bytes"
-    ));
   }
 
   ngOnInit(): void {
@@ -185,10 +156,5 @@ export class HealthCheckV3Component implements OnInit, AfterViewInit, IChatMessa
   setCategoryIndex(event:any) {
     const categoryIndex = event.option.key;
     this.selectedCategoryIndex = categoryIndex;
-  }
-
-  updateInsightCount(count:number) {
-    this.showInsightNumber = count > 0;
-    this.insightNumber = count;
   }
 }

@@ -1,8 +1,5 @@
 <div>
   <div class="animated fadeIn panel with-nav-tabs width-90">
-    <div style="margin-bottom: 20px; display: flex;justify-content: space-around;">
-      <summary-card *ngFor="let summary of summaries" [summary]="summary"></summary-card>
-    </div>
     <div class="panel-heading"
       style="padding:0;position: relative;display: flex; justify-content: space-between; font-size: 15px;">
       <!-- <ul class="nav nav-tabs"> -->
@@ -32,13 +29,13 @@
         defaultSelectedKey="0">
       </fab-choice-group>
     </div>
-    <div *ngIf="showInsightNumber" style="height: 32px;">
+    <!-- <div *ngIf="showInsightNumber" style="height: 32px;">
       <p style="background-color: #f0f6ff;font-size: 13px;margin:13px 0px">
         <span class="fa fa-info-circle" style="color: #015CDA;margin: 0px 5px;"></span>
         <span>You have {{ insightNumber }} new {{ insightNumber > 1 ? 'insights' : 'insight'}}</span>
         <i class="fa fa-times pull-right" (click)="showInsightNumber = false" ></i>
       </p>
-    </div>
+    </div> -->
     <div class="panel-body" style="background-color:rgba(226, 245, 255, 0.15)">
       <div *ngIf="healthCheckpoints[selectedCategoryIndex].loadingStatus === 0" class="loading-container">
         <status-icon [size]="30" [loading]="LoadingStatus.Loading"></status-icon>
