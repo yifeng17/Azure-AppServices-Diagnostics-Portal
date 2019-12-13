@@ -18,17 +18,133 @@
   <input type="text" placeholder="{{column.name}}" (keyup)="updateFilter($event, column.prop)" />
 </ng-template>
 <div class="category-container">
+  <fab-command-bar style="margin-left: -30px; margin-top: -25px">
+    <items>
+      <fab-command-bar-item key="askGenie" text="Ask Genie" [iconProps]="{ iconName: 'Help' }" [disabled]="runDisabled" (click)="isOpen=!isOpen"
+        data-track-type="run"></fab-command-bar-item>
+      <fab-command-bar-item key="timePicker" text="Time" [iconProps]="{ iconName: 'Clock' }"
+        [disabled]="runDisabled" (click)="showCalendar = !showCalendar">
+        <contextual-menu-item key="Last1Hour" text="Last 1 Hour" [iconProps]="{ iconName: 'History' }"></contextual-menu-item>
+        <contextual-menu-item key="Last6Hours" text="Last 6 Hours" [iconProps]="{ iconName: 'History' }"></contextual-menu-item>
+        <contextual-menu-item key="Last12Hours" text="Last 12 Hours" [iconProps]="{ iconName: 'History' }"></contextual-menu-item>
+        <contextual-menu-item key="Last24Hours" text="Last 24 Hours" [iconProps]="{ iconName: 'History' }"></contextual-menu-item>
+        <contextual-menu-item key="timeDivider" itemType= "timerDivider" ></contextual-menu-item>
+        <contextual-menu-item key="startTime" text="Start Time" [iconProps]="{ iconName: 'DateTime' }"></contextual-menu-item>
+        <contextual-menu-item key="endTime" text="End Time" [iconProps]="{ iconName: 'DateTime' }"></contextual-menu-item>
+      </fab-command-bar-item>
+      <fab-command-bar-item key="refresh" text="Refresh" [iconProps]="{ iconName: 'Refresh' }"
+        (click)="refresh()"></fab-command-bar-item>
+      <fab-command-bar-item key="sendFeedback" text="Feedback" [iconProps]="{ iconName: 'Emoji2' }"
+        (click)="onNewClicked()"></fab-command-bar-item>
+
+
+      <!-- <fab-command-bar-item key="copy" text="Copy" [iconProps]="{ iconName: 'Copy' }" (click)="onCopyClicked()">
+        <contextual-menu-item key="item1" text="Item1" data-track-type="copy1 > item1"></contextual-menu-item>
+        <contextual-menu-item key="item2" text="Item2" data-track-type="copy1 > item2"></contextual-menu-item>
+      </fab-command-bar-item> -->
+      <!-- <fab-command-bar-item key="copy" text="Copy Report" [iconProps]="{ iconName: 'Copy' }" (click)="onCopyClicked()">
+      </fab-command-bar-item>
+      <fab-command-bar-item key="copy3" text="Copy3" [iconProps]="{ iconName: 'Copy' }" (click)="onCopyClicked()">
+      </fab-command-bar-item>
+      <fab-command-bar-item key="copy4" text="Copy4" [iconProps]="{ iconName: 'Copy' }" (click)="onCopyClicked()">
+      </fab-command-bar-item>
+      <fab-command-bar-item key="copy5" text="Copy5" [iconProps]="{ iconName: 'Copy' }" (click)="onCopyClicked()">
+      </fab-command-bar-item>
+      <fab-command-bar-item key="copy6" text="Copy6" [iconProps]="{ iconName: 'Copy' }" (click)="onCopyClicked()">
+      </fab-command-bar-item>
+      <fab-command-bar-item key="copy7" text="Copy7" [iconProps]="{ iconName: 'Copy' }" (click)="onCopyClicked()">
+      </fab-command-bar-item>
+      <fab-command-bar-item key="copy8" text="Copy8" [iconProps]="{ iconName: 'Copy' }" (click)="onCopyClicked()">
+      </fab-command-bar-item>
+      <fab-command-bar-item key="copy9" text="Copy9" [iconProps]="{ iconName: 'Copy' }" (click)="onCopyClicked()">
+      </fab-command-bar-item>
+      <fab-command-bar-item key="custom" text="custom text" (click)="onCopyClicked()">
+        <render>
+          <ng-template let-item="item"> </ng-template>
+        </render>
+
+
+              <render-icon>
+                <ng-template let-contextualMenuItemProps="contextualMenuItemProps">
+                  <div>custom icon</div>
+                </ng-template>
+              </render-icon>
+
+      </fab-command-bar-item>
+      <fab-command-bar-item *ngIf="runDisabled" key="sometimesVisible" text="woosh"></fab-command-bar-item> -->
+    </items>
+
+     <!-- <far-items>
+          <fab-command-bar-item key="help" text="Help" [iconProps]="{ iconName: 'Help' }"></fab-command-bar-item>
+          <fab-command-bar-item
+            key="full-screen"
+            [iconOnly]="true"
+            [iconProps]="{ iconName: fullScreenIcon }"
+            (click)="toggleFullScreen()"
+          ></fab-command-bar-item>
+        </far-items> -->
+  </fab-command-bar>
+
+  <!-- <span (click)="showCalendar = !showCalendar">
+      <span style="margin-right: 5px;">Label: All</span>
+      <fab-icon iconName="Filter" contentStyle="color: #0078D7;"></fab-icon>
+    </span> -->
+    <fab-choice-group *ngIf="showCalendar"
+    style="position: absolute;
+            top: 20px;
+            right: 0px ;
+            background: #FFFFFF;
+            padding: 8px;
+            color: #323130;
+            font-size: 14px;" label="Label" [options]="options" (onChange)="setCategoryIndex($event)"
+      defaultSelectedKey="0">
+    </fab-choice-group>
+
+  <fab-calendar  *ngIf="showCalendar" (onSelectDate)="onSelectDate($event)"
+  style="position: absolute;
+            top: 20px;
+            right: 0px ;
+            background: #FFFFFF;
+            padding: 8px;
+            color: #323130;
+            font-size: 14px;"
+  >
+      <fab-calendar-strings
+        [months]="[
+          'January',
+          'Fabruary',
+          'March',
+          'April',
+          'May',
+          'June',
+          'July',
+          'August',
+          'September',
+          'October',
+          'November',
+          'December'
+        ]"
+        [shortMonths]="['Jan', 'Fab', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']"
+        [days]="['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']"
+        [shortDays]="['S', 'M', 'T', 'W', 'T', 'F', 'S']"
+        goToToday="Go to last 24h"
+        weekNumberFormatString="Week number {0}"
+      ></fab-calendar-strings>
+    </fab-calendar>
+
   <div>
-    <h3 class="category-title">Availability and performance</h3>
-    <p class="category-description">Explore this overview to discover any application or platform issues that may affect your app's high availability. You
+    <p class="category-title" style="font-size: 18px;line-height: 22px;font-weight: 600;font-family: 'Segoe UI';">Availability and performance</p>
+    <p class="category-description">Explore this overview to discover any application or platform issues that may affect
+      your app's high availability. You
       can also drill down on an area by selecting a topic in the side navigation</p>
   </div>
 
-  <div style="margin: 15px 0px" (click)="isOpen=!isOpen">
+  <!-- <div style="margin: 15px 0px" (click)="isOpen=!isOpen">
     <img src="../../../../assets/img/genie.svg">
     <span>Ask Genie</span>
     <span class="fa status-icon fa-info-circle" style="margin-left: 5px;"></span>
-  </div>
+  </div> -->
+
 
   <div class="search-box">
     <fab-search-box placeholder="Search"></fab-search-box>
@@ -41,8 +157,8 @@
   <!-- (onDismiss)="isOpen=!isOpen" -->
   <!-- width: 585px -->
   <!-- " [styles]="panelStyles"" -->
-  <fab-panel [isOpen]="isOpen" [type]="type" [customWidth]="width" [isHiddenOnDismiss]="true" [isLightDismiss]="true" [hasCloseButton]="false"
-    [closeButtonAriaLabel]="'close'" >
+  <fab-panel [isOpen]="isOpen" [type]="type" [customWidth]="width" [isHiddenOnDismiss]="true" [isLightDismiss]="true"
+    [hasCloseButton]="false" [closeButtonAriaLabel]="'close'">
 
     <!-- closeButton.style.position='absolute';
     closeButton.style.right = '10px';
@@ -60,8 +176,12 @@
 
     <!-- style="position: absolute;" -->
     <div style="margin-bottom: 10px">
-      <div style="position: absolute; left:25px; right: 32px; top:0px; height: 32px; font-family: 'segoe UI'; font-size: 18px; line-height: 24px; font-weight: 600;display: flex; align-items: flex-end">Hi my name is genie</div>
-      <div style="color:#605E5C; position: absolute; left:25px; right: 32px; top:35px; height: 19px; font-family: 'segoe UI'; font-size: 10px; line-height: 14px; display: block">Help bot</div>
+      <div
+        style="position: absolute; left:25px; right: 32px; top:0px; height: 32px; font-family: 'segoe UI'; font-size: 18px; line-height: 24px; font-weight: 600;display: flex; align-items: flex-end">
+        Hi my name is genie</div>
+      <div
+        style="color:#605E5C; position: absolute; left:25px; right: 32px; top:35px; height: 19px; font-family: 'segoe UI'; font-size: 10px; line-height: 14px; display: block">
+        Help bot</div>
       <div style="position: absolute; top:10px; right: 10px; display: flex; align-items: flex-end; cursor: pointer;">
         <i id="close" class="ms-Icon ms-Icon--Cancel" (click)="closePanel()" aria-hidden="true"></i>
         <!-- <fab-icon iconName="Cancel" style="float:right" (onClick)="closePanel()"></fab-icon> -->
@@ -71,9 +191,10 @@
     <div class="panel-content" style="margin-top: 60px; margin-left: -25px;">
       <fab-pivot>
         <fab-pivot-item headerText="Chat" #scrollMe>
-             <div #scrollMe2 id="scrollme1" [style.height.px] = "chatContainerHeight" *ngIf="messages && messages.length > 0" style="overflow-y: auto;" class="ms-Panel-scrollableContent scroll-bottom" >
+          <div #scrollMe2 id="scrollme1" [style.height.px]="chatContainerHeight" *ngIf="messages && messages.length > 0"
+            style="overflow-y: auto;" class="ms-Panel-scrollableContent scroll-bottom">
             <div class="row animated fadeIn chat-message-container" *ngFor="let item of messages">
-              <dynamic-component [componentData]="item"  (onComplete)=" scrollToBottom()"></dynamic-component>
+              <dynamic-component [componentData]="item" (onComplete)=" scrollToBottom()"></dynamic-component>
             </div>
           </div>
           <!-- <div class="genie-message message-sent-by-system">{{welcomeMessage}}</div> -->
@@ -94,10 +215,11 @@
     </div>
 
     <div class="chat-search-box" style="position: absolute; bottom: 19px; left: 37px; right: 37px">
-        <!-- <fab-text-field [placeholder]="'Type your question'" [iconProps]="{iconName: 'send'}"></fab-text-field> -->
-        <!-- [iconProps]="{iconName: 'send'}" -->
-        <fab-search-box [placeholder]="'Type your question'" (onSearch)="onSearchEnter($event)" [iconProps]="{iconName: 'send'}" contentStyle="height:31px;border-radius:15px" ></fab-search-box>
-        </div>
+      <!-- <fab-text-field [placeholder]="'Type your question'" [iconProps]="{iconName: 'send'}"></fab-text-field> -->
+      <!-- [iconProps]="{iconName: 'send'}" -->
+      <fab-search-box [placeholder]="'Type your question'" (onSearch)="onSearchEnter($event)"
+        [iconProps]="{iconName: 'send'}" contentStyle="height:31px;border-radius:15px"></fab-search-box>
+    </div>
     <!-- <span>Chat</span> -->
   </fab-panel>
   <health-check-v3></health-check-v3>

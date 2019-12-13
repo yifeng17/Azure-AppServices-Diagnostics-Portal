@@ -7,7 +7,22 @@ import { MessageSender, ButtonActionType } from '../../../supportbot/models/mess
 import { MessageProcessor } from '../../../supportbot/message-processor.service';
 import { DynamicComponent } from '../../../supportbot/dynamic-component/dynamic.component';
 import { TextMessageComponent } from '../../../supportbot/common/text-message/text-message.component';
-import { PanelType, IPanelStyles } from 'office-ui-fabric-react';
+import { FabDropdownComponent } from '@angular-react/fabric';
+
+import {
+    PanelType,
+    IPanelStyles,
+    ICalendarStrings,
+    IContextualMenuProps,
+    ISelection,
+    Selection,
+    DropdownMenuItemType,
+    IDropdownOption,
+    ICheckboxProps,
+    IPersonaProps,
+    IPeoplePickerProps
+} from 'office-ui-fabric-react';
+
 import { GenieChatFlow } from '../../../supportbot/message-flow/v2-flows/genie-chat.flow';
 //  import {} from 'office-ui-fabric-core/lib';
 
@@ -39,6 +54,19 @@ export class CategoryOverviewComponent implements OnInit {
     panelStyles: any;
     type: PanelType = PanelType.custom;
     width: string = "1200px";
+
+    selectedItem?: IDropdownOption;
+    timeDivider: DropdownMenuItemType = DropdownMenuItemType.Divider;
+    options: FabDropdownComponent['options'] = [
+      { key: 'A', text: 'Option a' },
+      { key: 'B', text: 'Option b' },
+      { key: 'C', text: 'Option c' },
+      { key: 'D', text: 'Option d' },
+      { key: 'divider_1', text: '-', itemType: DropdownMenuItemType.Divider },
+      { key: 'E', text: 'Option e' },
+      { key: 'F', text: 'Option f' },
+      { key: 'G', text: 'Option g' },
+    ];
 
     // @ViewChild('panelTitle', { static: true }) navigationContentTemplate: TemplateRef<any>;
     // @ViewChild("headerTemplate", { static: true }) headerTemplate: TemplateRef<any>;
