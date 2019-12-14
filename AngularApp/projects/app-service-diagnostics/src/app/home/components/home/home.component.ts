@@ -18,6 +18,7 @@ import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
 import { DiagnosticService } from 'diagnostic-data';
 import { ISearchBoxProps } from 'office-ui-fabric-react';
 import { FabDropdownComponent } from '@angular-react/fabric';
+import { HttpResponse } from '@angular/common/http';
 // import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
 import {
     ICalendarStrings,
@@ -44,7 +45,6 @@ export class HomeComponent implements OnInit {
     logEvent(...args: any[]) {
         console.log(args);
     }
-<<<<<<< HEAD
 
     selectedItem?: IDropdownOption;
     options: FabDropdownComponent['options'] = [

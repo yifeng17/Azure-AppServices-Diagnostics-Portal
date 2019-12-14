@@ -77,7 +77,7 @@ export class CategoryOverviewComponent implements OnInit {
     // @ViewChild("headerTemplate", { static: true }) headerTemplate: TemplateRef<any>;
     // @ViewChild('tpl', { static: true }) tpl: TemplateRef<any>;
 
-    constructor(private _activatedRoute: ActivatedRoute, private _messageProcessor: MessageProcessor, private _genieChatFlow: GenieChatFlow) {
+    constructor(private _activatedRoute: ActivatedRoute, private _messageProcessor: MessageProcessor, private _genieChatFlow: GenieChatFlow, private _router: Router, private _categoryService: CategoryService) {
             this.panelStyles = {
            // type: PanelType.smallFixedNear,
             root: {
@@ -154,9 +154,14 @@ export class CategoryOverviewComponent implements OnInit {
     ngOnInit() {
         this.categoryId = this._activatedRoute.parent.snapshot.params.category;
 
+        this._categoryService.categories.subscribe(categorys => {
+            this.category = categorys.find(category => this.categoryId === category.id);
+          });
+
+          console.log("categoryId", this.categoryId);
         this.messages.push(new TextMessage(this.welcomeMessage, MessageSender.System, 200));
         this.chatContainerHeight = window.innerHeight - 170;
-        console.log("window height", this.chatContainerHeight);
+
 
 
         document.getElementById('close').onclick = () => {

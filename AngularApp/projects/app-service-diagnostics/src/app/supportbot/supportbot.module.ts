@@ -38,7 +38,6 @@ import { AvailabilityPerformanceFlow } from './message-flow/v2-flows/availabilit
 import { HealthCheckV3Component } from './message-flow/health-check-v3/health-check-v3.component';
 import { LinuxAvailabilityPerformanceFlow } from './message-flow/v2-flows/linux-availability-performance.flow';
 import { FabIconModule,FabChoiceGroupModule } from '@angular-react/fabric';
-import { SummaryCardComponent } from './message-flow/summary-card/summary-card.component';
 import { DynamicAnalysisComponent } from './message-flow/dynamic-analysis/dynamic-analysis.component';
 
 @NgModule({
@@ -61,9 +60,7 @@ import { DynamicAnalysisComponent } from './message-flow/dynamic-analysis/dynami
         DocumentSearchComponent,
         DocumentSearchResultsComponent,
         HealthCheckV3Component,
-        SummaryCardComponent,
         DynamicAnalysisComponent
-
     ],
     imports: [
         SharedModule,
