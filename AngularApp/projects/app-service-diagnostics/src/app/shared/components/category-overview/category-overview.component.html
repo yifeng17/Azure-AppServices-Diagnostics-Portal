@@ -17,7 +17,22 @@
         (click)="refresh()"></fab-command-bar-item>
       <fab-command-bar-item key="sendFeedback" text="Feedback" [iconProps]="{ iconName: 'Emoji2' }"
         (click)="onNewClicked()"></fab-command-bar-item>
+        <fab-command-bar-item key="search" text="Search" [iconProps]="{ iconName: 'Search' }"
+        (click)="onNewClicked()">
+        <span class="ms-SearchBox-text">Search</span> 
+      </fab-command-bar-item>
+      <fab-command-bar-item key="custom" text="custom text" (click)="onCopyClicked()">
+        <render>
+          <ng-template let-item="item"> </ng-template>
+        </render>
+              <render-icon>
+                <ng-template let-contextualMenuItemProps="contextualMenuItemProps">
+                  <div>custom icon</div>
+                </ng-template>
+              </render-icon>
 
+      </fab-command-bar-item>
+      <fab-command-bar-item *ngIf="runDisabled" key="sometimesVisible" text="woosh"></fab-command-bar-item>
 
       <!-- <fab-command-bar-item key="copy" text="Copy" [iconProps]="{ iconName: 'Copy' }" (click)="onCopyClicked()">
         <contextual-menu-item key="item1" text="Item1" data-track-type="copy1 > item1"></contextual-menu-item>
@@ -118,11 +133,6 @@
     <p class="category-description">{{category.description}}</p>
   </div>
 
-  <!-- <div style="margin: 15px 0px" (click)="isOpen=!isOpen">
-    <img src="../../../../assets/img/genie.svg">
-    <span>Ask Genie</span>
-    <span class="fa status-icon fa-info-circle" style="margin-left: 5px;"></span>
-  </div> -->
 
 
   <div class="search-box" style="margin-bottom: 25px;">
@@ -179,11 +189,11 @@
     <!-- <span>Chat</span> -->
   </fab-panel>
   <!-- <health-check-v3></health-check-v3> -->
-  <p style="font-size: 12px;">Are you looking for something else?</p>
+  <!-- <p style="font-size: 12px;">Are you looking for something else?</p>
   <div class="search-box">
     <fab-search-box placeholder="Search"></fab-search-box>
+  </div> -->
   <div style="margin-left: -20px;">
     <detector-container [detector]="categoryId" [hideDetectorControl]="true"></detector-container>
-  </div>
   </div>
 </div>
