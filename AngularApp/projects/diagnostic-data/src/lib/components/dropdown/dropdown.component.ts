@@ -28,6 +28,7 @@ export class DropdownComponent extends DataRenderBaseComponent {
   options:IDropdownOption[] = [];
   dropdownPostion: DropdownPosition = DropdownPosition.FloatRight;
   dropdownType: DropdownType = DropdownType.Legacy;
+  fabDropdownWidth:number;
   Type = DropdownType;
   Position = DropdownPosition;
   private keyDataMapping: Map<string, DiagnosticData[]>;
@@ -78,6 +79,7 @@ export class DropdownComponent extends DataRenderBaseComponent {
     this.keys.forEach(k => {
       this.options.push({ key : k, text : k }); 
     });
+    this.fabDropdownWidth = this.calculateFabWidth(this.options);
   }
 
   selectKey(key: string) {
@@ -88,5 +90,14 @@ export class DropdownComponent extends DataRenderBaseComponent {
   selectFabricKey(key: {option: IDropdownOption}) {
     this.selectedKey = key.option.text;
     this.selectedData = this.keyDataMapping.get(this.selectedKey);
+  }
+
+  calculateFabWidth(options:IDropdownOption[]):number {
+    //one char 10px  
+    let length = 0;  
+    options.forEach(option => {
+      length = Math.max(length,option.text.length);
+    });
+    return length * 10;
   }
 }

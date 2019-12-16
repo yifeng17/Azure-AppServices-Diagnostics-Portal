@@ -43,7 +43,7 @@
     <div style="display: flex">
       <label>{{label}}:</label>
       <fab-dropdown [options]="options" (onChange)="selectFabricKey($event)" [defaultSelectedKey]="selectedKey"
-        contentStyle="margin-top: -5px; margin-left: 5px"></fab-dropdown>
+        contentStyle="margin-top: -5px; margin-left: 5px;width:{{fabDropdownWidth}}px;"></fab-dropdown>
     </div>
   </div>
   <div class="fabric-body-container">
