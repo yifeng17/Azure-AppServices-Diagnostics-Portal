@@ -1,10 +1,8 @@
-<div class="category-container">
-  <fab-command-bar style="margin-left: -30px; margin-top: -25px">
+<fab-command-bar style="width:100%">
     <items>
-      <fab-command-bar-item key="askGenie" text="Ask Genie" [iconProps]="{ iconName: 'Help' }" [disabled]="runDisabled" (click)="isOpen=!isOpen"
+      <fab-command-bar-item key="askGenie" text="Ask Genie" [iconProps]="{ iconName: 'Help' }" (click)="isOpen=!isOpen"
         data-track-type="run"></fab-command-bar-item>
-      <fab-command-bar-item key="timePicker" text="Time" [iconProps]="{ iconName: 'Clock' }"
-        [disabled]="runDisabled" (click)="showCalendar = !showCalendar">
+      <fab-command-bar-item key="timePicker" text="Time" [iconProps]="{ iconName: 'Clock' }" (click)="showCalendar = !showCalendar">
         <contextual-menu-item key="Last1Hour" text="Last 1 Hour" [iconProps]="{ iconName: 'History' }"></contextual-menu-item>
         <contextual-menu-item key="Last6Hours" text="Last 6 Hours" [iconProps]="{ iconName: 'History' }"></contextual-menu-item>
         <contextual-menu-item key="Last12Hours" text="Last 12 Hours" [iconProps]="{ iconName: 'History' }"></contextual-menu-item>
@@ -16,10 +14,10 @@
       <fab-command-bar-item key="refresh" text="Refresh" [iconProps]="{ iconName: 'Refresh' }"
         (click)="refresh()"></fab-command-bar-item>
       <fab-command-bar-item key="sendFeedback" text="Feedback" [iconProps]="{ iconName: 'Emoji2' }"
-        (click)="onNewClicked()"></fab-command-bar-item>
+        (click)="sendFeedback()"></fab-command-bar-item>
         <fab-command-bar-item key="search" text="Search" [iconProps]="{ iconName: 'Search' }"
-        (click)="onNewClicked()">
-        <span class="ms-SearchBox-text">Search</span> 
+        (click)="showSearch()">
+        <span class="ms-SearchBox-text">Search</span>
       </fab-command-bar-item>
       <fab-command-bar-item key="custom" text="custom text" (click)="onCopyClicked()">
         <render>
@@ -32,7 +30,7 @@
               </render-icon>
 
       </fab-command-bar-item>
-      <fab-command-bar-item *ngIf="runDisabled" key="sometimesVisible" text="woosh"></fab-command-bar-item>
+      <!-- <fab-command-bar-item *ngIf="runDisabled" key="sometimesVisible" text="woosh"></fab-command-bar-item> -->
 
       <!-- <fab-command-bar-item key="copy" text="Copy" [iconProps]="{ iconName: 'Copy' }" (click)="onCopyClicked()">
         <contextual-menu-item key="item1" text="Item1" data-track-type="copy1 > item1"></contextual-menu-item>
@@ -70,7 +68,7 @@
       <fab-command-bar-item *ngIf="runDisabled" key="sometimesVisible" text="woosh"></fab-command-bar-item> -->
     </items>
 
-     <!-- <far-items>
+     <far-items>
           <fab-command-bar-item key="help" text="Help" [iconProps]="{ iconName: 'Help' }"></fab-command-bar-item>
           <fab-command-bar-item
             key="full-screen"
@@ -78,8 +76,9 @@
             [iconProps]="{ iconName: fullScreenIcon }"
             (click)="toggleFullScreen()"
           ></fab-command-bar-item>
-        </far-items> -->
+        </far-items>
   </fab-command-bar>
+<div class="category-container" style="width:100%">
 
   <!-- <span (click)="showCalendar = !showCalendar">
       <span style="margin-right: 5px;">Label: All</span>
@@ -159,7 +158,7 @@
         <fab-pivot-item headerText="Chat" #scrollMe>
           <div #scrollMe2 id="scrollme1" [style.height.px]="chatContainerHeight" *ngIf="messages && messages.length > 0"
             style="overflow-y: auto;" class="ms-Panel-scrollableContent scroll-bottom">
-            <div class="row animated fadeIn chat-message-container" *ngFor="let item of messages">
+            <div class="row animated fadeIn chat-message-container" *ngFor="let item of messages" style="margin-left:0px">
               <dynamic-component [componentData]="item" (onComplete)=" scrollToBottom()"></dynamic-component>
             </div>
           </div>

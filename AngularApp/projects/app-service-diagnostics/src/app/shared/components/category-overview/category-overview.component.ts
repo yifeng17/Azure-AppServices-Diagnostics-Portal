@@ -43,7 +43,7 @@ export class CategoryOverviewComponent implements OnInit {
         //  @ViewChild('ms-Panel-scrollableContent', { static: false }) myScrollContainer: ElementRef;
         categoryId: string = "";
         category: Category;
-
+        showCalendar: boolean = false;
 
         messages: Message[] = [];
         showTypingMessage: boolean;
@@ -96,14 +96,22 @@ export class CategoryOverviewComponent implements OnInit {
         console.log("Afterview init updating scrolling", this.myScrollContainer);
       }
 
+    sendFeedback() {
+
+    }
+
+    showSearch() {
+
+    }
+
+    onCopyClicked() {
+
+    }
+
     scrollToBottom(event?: any): void {
 
         try {
-            console.log("updating scrolling", this.myScrollContainer);
-            console.log("child", this.myScrollContainer.elementRef.nativeElement.childNodes[0]);
-            console.log("1. scrolltop before scrollTop", this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].scrollTop);
-            console.log("2. scroll before scrollheight", this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].scrollHeight);
-            //this.myScrollContainer.elementRef.nativeElement.childNodes[0].scrollTop = this.myScrollContainer.elementRef.nativeElement.childNodes[0].scrollHeight;
+          //this.myScrollContainer.elementRef.nativeElement.childNodes[0].scrollTop = this.myScrollContainer.elementRef.nativeElement.childNodes[0].scrollHeight;
            var height =   this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].scrollHeight;
             this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].scrollTop = height;
 

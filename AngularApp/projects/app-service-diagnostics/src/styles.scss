@@ -91,10 +91,12 @@
 /* highchart container configuration */
 .highcharts-container {
     overflow: visible !important;
+    width:100%!important;
   }
 
 .highcharts-container svg {
     overflow: visible !important;
+    width:100%!important;
 }
 
 highcharts-chart {

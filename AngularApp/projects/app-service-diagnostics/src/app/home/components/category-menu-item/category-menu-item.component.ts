@@ -23,6 +23,7 @@ export class CategoryMenuItemComponent implements OnInit {
 
     hasChildren: boolean;
     matchesSearchTerm: boolean = true;
+    imagePlaceHolder: string = '../../../../assets/img/detectors/default.png';
 
     //private _searchPipe: SearchPipe
     constructor() { }
