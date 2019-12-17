@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { GenericDetectorComponent } from '../generic-detector/generic-detector.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ResourceService } from '../../../shared-v2/services/resource.service';
-import { FeatureNavigationService, TelemetryService, DiagnosticService } from 'diagnostic-data';
+import { FeatureNavigationService, TelemetryService, DiagnosticService, DownTime } from 'diagnostic-data';
 import { AuthService } from '../../../startup/services/auth.service';
+import { DetectorListAnalysisComponent } from 'diagnostic-data';
 
 @Component({
   selector: 'generic-analysis',
@@ -18,10 +19,18 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
   searchTerm: string = "";
   showSearchBar: boolean = false;
   searchBarFocus: boolean = false;
+  downTime: DownTime;
+
+  @ViewChild('detectorListAnalysis') detectorListAnalysis: DetectorListAnalysisComponent
 
   constructor(private _activatedRouteLocal: ActivatedRoute, private _diagnosticServiceLocal: DiagnosticService, _resourceService: ResourceService, _authServiceInstance: AuthService, _telemetryService: TelemetryService,
     _navigator: FeatureNavigationService, private _routerLocal: Router) {
     super(_activatedRouteLocal, _diagnosticServiceLocal, _resourceService, _authServiceInstance, _telemetryService, _navigator, _routerLocal);
+  }
+
+  ondownTimeChanged(event: DownTime) {
+    this.downTime = event;
+    this.detectorListAnalysis.downTime = event;
   }
 
   ngOnInit() {

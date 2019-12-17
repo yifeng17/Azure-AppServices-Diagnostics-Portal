@@ -38,7 +38,7 @@ export class DetectorControlComponent implements OnInit {
       if(this.detectorControlService.detectorQueryParamsString != "") {
         routeParams['detectorQueryParams'] = this.detectorControlService.detectorQueryParamsString;
       }
-      this._router.navigate([], { queryParams: routeParams, relativeTo: this._activatedRoute });
+      this._router.navigate([], { queryParams: routeParams,queryParamsHandling: 'merge', relativeTo: this._activatedRoute });
 
     });
   }

@@ -112,6 +112,7 @@ import { HighchartsGraphComponent } from './components/highcharts-graph/highchar
     AppInsightsMarkdownComponent,
     HighchartsGraphComponent
   ],
+  entryComponents: [DetectorListAnalysisComponent],
   exports: [
     FormsModule, TimeSeriesGraphComponent, DataTableComponent, DynamicDataComponent, DetectorViewComponent,
     DataSummaryComponent, LoaderViewComponent, StatusIconComponent, DetectorControlComponent,

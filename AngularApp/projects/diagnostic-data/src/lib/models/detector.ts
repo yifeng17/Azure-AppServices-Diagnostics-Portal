@@ -1,3 +1,4 @@
+import * as momentNs from 'moment';
 
 export interface ArmObject {
     id: string;
@@ -102,7 +103,8 @@ export enum RenderingType {
     ChangeAnalysisOnboarding,
     ChangesView,
     ApplicationInsightsView,
-    DependencyGraph
+    DependencyGraph,
+    DownTime
 }
 
 export enum TimeSeriesType {
@@ -192,4 +194,11 @@ export interface RecommendedUtterance {
 interface SampleUtterance {
   text: string;
   links: string[];
+}
+
+export class DownTime {
+    StartTime: momentNs.Moment;
+    EndTime: momentNs.Moment;
+    downTimeLabel: string;
+    isSelected: boolean;
 }

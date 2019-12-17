@@ -53,6 +53,12 @@
   <markdown *ngIf="supportDocumentContent.length>0" #markdownDiv [data]="supportDocumentContent"></markdown>
 </data-container>
 
+<select class ="downtime-select" [(ngModel)]="selectedDownTime" *ngIf="isAnalysisView && downTimes.length > 0" (change)="onDownTimeChange()">
+  <option *ngFor = "let downtime of downTimes" [ngValue]="downtime">
+    {{ getDowntimeLabel(downtime) }}
+  </option>
+</select>
+
 <loader-view style="margin-top:300px" *ngIf="!detectorDataLocalCopy && !errorState" message="Loading Detector..."></loader-view>
 
 <ng-container *ngIf="!detectorDataLocalCopy && errorState">

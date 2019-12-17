@@ -1,8 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { DiagnosticService } from '../../services/diagnostic.service';
 import { DetectorControlService } from '../../services/detector-control.service';
 import { ActivatedRoute } from '@angular/router';
-import { DetectorResponse, RenderingType } from '../../models/detector';
+import { DetectorResponse, RenderingType, DownTime } from '../../models/detector';
 import { BehaviorSubject } from 'rxjs';
 
 @Component({
@@ -15,8 +15,7 @@ export class DetectorContainerComponent implements OnInit {
   detectorResponse: DetectorResponse = null;
   error: any;
   hideDetectorControl: boolean = false;
-
-   detectorName: string;
+  detectorName: string;
 
   @Input() detectorSubject: BehaviorSubject<string> = new BehaviorSubject<string>(null);
 
@@ -24,8 +23,9 @@ export class DetectorContainerComponent implements OnInit {
     this.detectorSubject.next(detector);
   }
 
-  @Input() analysisMode:boolean = false;
-  @Input() isAnalysisView:boolean = false;
+  @Input() analysisMode: boolean = false;
+  @Input() isAnalysisView: boolean = false;
+  @Output() downTimeChanged: EventEmitter<DownTime> = new EventEmitter<DownTime>();
 
   constructor(private _route: ActivatedRoute, private _diagnosticService: DiagnosticService,
     public detectorControlService: DetectorControlService) { }
@@ -52,14 +52,41 @@ export class DetectorContainerComponent implements OnInit {
   }
 
   getDetectorResponse() {
-    this._diagnosticService.getDetector(this.detectorName, this.detectorControlService.startTimeString, this.detectorControlService.endTimeString,
-      this.detectorControlService.shouldRefresh,  this.detectorControlService.isInternalView)
-      .subscribe((response: DetectorResponse) => {
-        this.shouldHideTimePicker(response);
-        this.detectorResponse = response;
-      }, (error: any) => {
-        this.error = error;
+    let startTime = this.detectorControlService.startTimeString;
+    let endTime = this.detectorControlService.endTimeString;
+
+    if (this.analysisMode) {
+      this._route.queryParams.subscribe(params => {
+        var startTimeChildDetector: string = params['startTimeChildDetector'];
+        var endTimeChildDetector: string = params['endTimeChildDetector'];
+
+        if (startTimeChildDetector == null) {
+          startTimeChildDetector = startTime;
+        }
+        if (endTimeChildDetector == null) {
+          endTimeChildDetector = endTime;
+        }
+        this._diagnosticService.getDetector(this.detectorName, startTimeChildDetector, endTimeChildDetector,
+          this.detectorControlService.shouldRefresh, this.detectorControlService.isInternalView)
+          .subscribe((response: DetectorResponse) => {
+            this.shouldHideTimePicker(response);
+            this.detectorResponse = response;
+          }, (error: any) => {
+            this.error = error;
+          });
       });
+
+    } else {
+      this._diagnosticService.getDetector(this.detectorName, startTime, endTime,
+        this.detectorControlService.shouldRefresh, this.detectorControlService.isInternalView)
+        .subscribe((response: DetectorResponse) => {
+          this.shouldHideTimePicker(response);
+          this.detectorResponse = response;
+        }, (error: any) => {
+          this.error = error;
+        });
+    }
+
   }
 
   // TODO: Right now this is hardcoded to hide for cards, but make this configurable from backend
@@ -68,6 +95,10 @@ export class DetectorContainerComponent implements OnInit {
       const cardRenderingIndex = response.dataset.findIndex(data => data.renderingProperties.type == RenderingType.Cards);
       this.hideDetectorControl = cardRenderingIndex >= 0;
     }
+  }
+
+  ondownTimeChanged(event: DownTime) {
+    this.downTimeChanged.emit(event);
   }
 
 }

@@ -1,9 +1,9 @@
 <div style="margin-left:20px">
   <comm-alert></comm-alert>
-  <detector-container [detector]="analysisId" [isAnalysisView]="true"></detector-container>
+  <detector-container [detector]="analysisId" [isAnalysisView]="true" (downTimeChanged)="ondownTimeChanged($event)"></detector-container>
 </div>
 
-<detector-list-analysis detectorParmName="detector"></detector-list-analysis>
+<detector-list-analysis #detectorListAnalysis detectorParmName="detector"></detector-list-analysis>
 
 <div style="margin-left:20px" class="tab-container" [hidden]="detectorId === ''">
   <div style="margin-left:20px;margin-bottom: 10px">
