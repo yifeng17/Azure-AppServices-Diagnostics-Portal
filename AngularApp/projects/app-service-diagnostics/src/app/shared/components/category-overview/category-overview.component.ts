@@ -100,6 +100,10 @@ export class CategoryOverviewComponent implements OnInit {
 
     }
 
+    refresh() {
+
+    }
+
     showSearch() {
 
     }

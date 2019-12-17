@@ -60,7 +60,7 @@
 
               <render-icon>
                 <ng-template let-contextualMenuItemProps="contextualMenuItemProps">
-                  <div>custom icon</div>
+                  <div>custom icon</div>\
                 </ng-template>
               </render-icon>
 
@@ -73,8 +73,8 @@
           <fab-command-bar-item
             key="full-screen"
             [iconOnly]="true"
-            [iconProps]="{ iconName: fullScreenIcon }"
-            (click)="toggleFullScreen()"
+            [iconProps]="{ iconName: 'fullScreenIcon' }"
+            (click)="refresh()"
           ></fab-command-bar-item>
         </far-items>
   </fab-command-bar>
