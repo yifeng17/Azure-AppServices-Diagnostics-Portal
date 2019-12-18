@@ -10,6 +10,7 @@ import { MessageProcessor } from '../../../supportbot/message-processor.service'
 import { DynamicComponent } from '../../../supportbot/dynamic-component/dynamic.component';
 import { TextMessageComponent } from '../../../supportbot/common/text-message/text-message.component';
 import { FabDropdownComponent } from '@angular-react/fabric';
+import { addMonths, addYears } from 'office-ui-fabric-react/lib/utilities/dateMath/DateMath';
 
 import {
     PanelType,
@@ -29,6 +30,7 @@ import { GenieChatFlow } from '../../../supportbot/message-flow/v2-flows/genie-c
 //  import {} from 'office-ui-fabric-core/lib';
 //  createInputJsxRenderer, createRenderPropHandler
 
+const suffix = ' cm';
 
 @Component({
     selector: 'category-overview',
@@ -37,6 +39,7 @@ import { GenieChatFlow } from '../../../supportbot/message-flow/v2-flows/genie-c
     ]
 })
 //extends Renderable
+
 export class CategoryOverviewComponent implements OnInit {
     @ViewChild('ms-Panel-scrollableContent', { static: false }) myScrollContainer1: ElementRef;
     @ViewChild('scrollMe', { static: true }) myScrollContainer: any;
@@ -71,6 +74,99 @@ export class CategoryOverviewComponent implements OnInit {
           { key: 'F', text: 'Option f' },
           { key: 'G', text: 'Option g' },
         ];
+
+
+        // commandbar related
+        dates: ICalendarStrings = {
+            months: [
+              'January',
+              'February',
+              'March',
+              'April',
+              'May',
+              'June',
+              'July',
+              'August',
+              'September',
+              'October',
+              'November',
+              'December',
+            ],
+
+            shortMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+
+            days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+
+            shortDays: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
+
+            goToToday: 'Go to today',
+            weekNumberFormatString: 'Week number {0}',
+          };
+
+          today: Date = new Date(Date.now());
+          maxDate: Date = this.today;
+       //   minDate: Date = (new Date(Date.now())).add(-30).days();
+       //   maxDate: Date = new Date(Date.now()-)
+
+           minDate: Date = addMonths(this.today, -1);
+
+
+        startClock: string = "00:00";
+
+
+
+           onIncrement(value: string): string | void {
+            value = this._removeSuffix(value, suffix);
+
+            if (+value >= 13) {
+              return value + suffix;
+            }
+
+            return String(+value + 2) + suffix;
+          }
+
+          getErrorMessageOnTextField(value: string): string {
+            console.log("****getErrorMessageOnTextField", value);
+            var values = value.split(":");
+            var errorMessage = "";
+            if (!(values.length > 1 && +values[0] <= 24 && +values[1] <= 59))
+            {
+                errorMessage = `Invalid start time`;
+                console.log("***errormessage", +values[0], +values[1]);
+            }
+            return errorMessage;
+          }
+
+          onDecrement(value: string): string | void {
+            value = this._removeSuffix(value, suffix);
+
+            if (+value <= 3) {
+              return value + suffix;
+            }
+            return String(+value - 2) + suffix;
+          }
+
+          onValidate(value: string, event: Event): string | void {
+            value = this._removeSuffix(value, suffix);
+            if (value.trim().length === 0 || isNaN(+value)) {
+              return '0' + suffix;
+            }
+
+            return String(value) + suffix;
+          }
+
+          private _hasSuffix(value: string, suffix: string): Boolean {
+            const subString = value.substr(value.length - suffix.length);
+            return subString === suffix;
+          }
+
+          private _removeSuffix(value: string, suffix: string): string {
+            if (!this._hasSuffix(value, suffix)) {
+              return value;
+            }
+
+            return value.substr(0, value.length - suffix.length);
+          }
 
 
     // @ViewChild('panelTitle', { static: true }) navigationContentTemplate: TemplateRef<any>;

@@ -1,42 +1,54 @@
 <fab-command-bar style="width:100%">
-    <items>
-      <fab-command-bar-item key="askGenie" text="Ask Genie" [iconProps]="{ iconName: 'Help' }" (click)="isOpen=!isOpen"
-        data-track-type="run"></fab-command-bar-item>
-      <fab-command-bar-item key="timePicker" text="Time" [iconProps]="{ iconName: 'Clock' }" (click)="showCalendar = !showCalendar">
-        <contextual-menu-item key="Last1Hour" text="Last 1 Hour" [iconProps]="{ iconName: 'History' }"></contextual-menu-item>
-        <contextual-menu-item key="Last6Hours" text="Last 6 Hours" [iconProps]="{ iconName: 'History' }"></contextual-menu-item>
-        <contextual-menu-item key="Last12Hours" text="Last 12 Hours" [iconProps]="{ iconName: 'History' }"></contextual-menu-item>
-        <contextual-menu-item key="Last24Hours" text="Last 24 Hours" [iconProps]="{ iconName: 'History' }"></contextual-menu-item>
-        <contextual-menu-item key="timeDivider" itemType= "timerDivider" ></contextual-menu-item>
-        <contextual-menu-item key="startTime" text="Start Time" [iconProps]="{ iconName: 'DateTime' }"></contextual-menu-item>
-        <contextual-menu-item key="endTime" text="End Time" [iconProps]="{ iconName: 'DateTime' }"></contextual-menu-item>
-      </fab-command-bar-item>
-      <fab-command-bar-item key="refresh" text="Refresh" [iconProps]="{ iconName: 'Refresh' }"
-        (click)="refresh()"></fab-command-bar-item>
-      <fab-command-bar-item key="sendFeedback" text="Feedback" [iconProps]="{ iconName: 'Emoji2' }"
-        (click)="sendFeedback()"></fab-command-bar-item>
-        <fab-command-bar-item key="search" text="Search" [iconProps]="{ iconName: 'Search' }"
-        (click)="showSearch()">
-        <span class="ms-SearchBox-text">Search</span>
-      </fab-command-bar-item>
-      <fab-command-bar-item key="custom" text="custom text" (click)="onCopyClicked()">
-        <render>
-          <ng-template let-item="item"> </ng-template>
-        </render>
-              <render-icon>
-                <ng-template let-contextualMenuItemProps="contextualMenuItemProps">
-                  <div>custom icon</div>
-                </ng-template>
-              </render-icon>
+  <items>
+    <fab-command-bar-item key="askGenie" text="Ask Genie" [iconProps]="{ iconName: 'Help' }" (click)="isOpen=!isOpen"
+      data-track-type="run"></fab-command-bar-item>
+    <fab-command-bar-item key="timePicker" text="Time" [iconProps]="{ iconName: 'Clock' }"
+      (click)="showCalendar = !showCalendar">
+      <contextual-menu-item key="Last1Hour" text="Last 1 Hour" [iconProps]="{ iconName: 'History' }">
+      </contextual-menu-item>
+      <contextual-menu-item key="Last6Hours" text="Last 6 Hours" [iconProps]="{ iconName: 'History' }">
+      </contextual-menu-item>
+      <contextual-menu-item key="Last12Hours" text="Last 12 Hours" [iconProps]="{ iconName: 'History' }">
+      </contextual-menu-item>
+      <contextual-menu-item key="Last24Hours" text="Last 24 Hours" [iconProps]="{ iconName: 'History' }">
+      </contextual-menu-item>
+      <contextual-menu-item key="custom" text="Custom" [iconProps]="{ iconName: 'History' }">
+        </contextual-menu-item>
+      <contextual-menu-item key="timeDivider" itemType="timerDivider"></contextual-menu-item>
+      <contextual-menu-item key="startTime" text="Start Time" [iconProps]="{ iconName: 'DateTime' }">
+      </contextual-menu-item>
+      <contextual-menu-item key="endTime" text="End Time" [iconProps]="{ iconName: 'DateTime' }"></contextual-menu-item>
+    </fab-command-bar-item>
+    <fab-command-bar-item key="refresh" text="Refresh" [iconProps]="{ iconName: 'Refresh' }" (click)="refresh()">
+    </fab-command-bar-item>
+    <fab-command-bar-item key="sendFeedback" text="Feedback" [iconProps]="{ iconName: 'Emoji2' }"
+      (click)="sendFeedback()"></fab-command-bar-item>
+    <fab-command-bar-item key="search" text="Search" [iconProps]="{ iconName: 'Search' }" (click)="showSearch()">
+      <span class="ms-SearchBox-text">Search</span>
+    </fab-command-bar-item>
+    <fab-command-bar-item key="custom" text="custom text" (click)="onCopyClicked()">
+      <render>
+        <ng-template let-item="item">
+          <div style="padding-top:3px!important;">
+            <fab-search-box placeholder="Search"></fab-search-box>
+          </div>
+        </ng-template>
+      </render>
+      <render-icon>
+        <ng-template let-contextualMenuItemProps="contextualMenuItemProps">
+          <div>custom icon</div>
+        </ng-template>
+      </render-icon>
 
-      </fab-command-bar-item>
-      <!-- <fab-command-bar-item *ngIf="runDisabled" key="sometimesVisible" text="woosh"></fab-command-bar-item> -->
+    </fab-command-bar-item>
 
-      <!-- <fab-command-bar-item key="copy" text="Copy" [iconProps]="{ iconName: 'Copy' }" (click)="onCopyClicked()">
+    <!-- <fab-command-bar-item *ngIf="runDisabled" key="sometimesVisible" text="woosh"></fab-command-bar-item> -->
+
+    <!-- <fab-command-bar-item key="copy" text="Copy" [iconProps]="{ iconName: 'Copy' }" (click)="onCopyClicked()">
         <contextual-menu-item key="item1" text="Item1" data-track-type="copy1 > item1"></contextual-menu-item>
         <contextual-menu-item key="item2" text="Item2" data-track-type="copy1 > item2"></contextual-menu-item>
       </fab-command-bar-item> -->
-      <!-- <fab-command-bar-item key="copy" text="Copy Report" [iconProps]="{ iconName: 'Copy' }" (click)="onCopyClicked()">
+    <!-- <fab-command-bar-item key="copy" text="Copy Report" [iconProps]="{ iconName: 'Copy' }" (click)="onCopyClicked()">
       </fab-command-bar-item>
       <fab-command-bar-item key="copy3" text="Copy3" [iconProps]="{ iconName: 'Copy' }" (click)="onCopyClicked()">
       </fab-command-bar-item>
@@ -66,46 +78,70 @@
 
       </fab-command-bar-item>
       <fab-command-bar-item *ngIf="runDisabled" key="sometimesVisible" text="woosh"></fab-command-bar-item> -->
-    </items>
+  </items>
 
-     <far-items>
-          <fab-command-bar-item key="help" text="Help" [iconProps]="{ iconName: 'Help' }"></fab-command-bar-item>
-          <fab-command-bar-item
-            key="full-screen"
-            [iconOnly]="true"
-            [iconProps]="{ iconName: 'fullScreenIcon' }"
-            (click)="refresh()"
-          ></fab-command-bar-item>
-        </far-items>
-  </fab-command-bar>
+              <!-- [minDate]="minDate"
+            [maxDate="maxDate"
+            placeholder="Select a date..."
+            ariaLabel="Select a date"
+            allowTextInput="true" -->
+
+  <far-items>
+    <fab-command-bar-item key="custom" text="custom text" (click)="onCopyClicked()">
+      <render>
+        <ng-template let-item="item">
+          <div style="padding-top:3px!important;">
+            <fab-date-picker
+            [strings]="dates"
+            [minDate]="minDate"
+            [maxDate]="maxDate"
+            placeholder="Select a date..."
+            ariaLabel="Select start date"
+            allowTextInput="true"
+            showMonthPickerAsOverlay="true"
+            >
+            </fab-date-picker>
+          <fab-masked-text-field maxLength="10" [(value)]="startClock" [iconProps]="{iconName: 'Clock'}" [mask]="'99:99'" [maskChar]="'-'" [validateOnFocusOut]="true" [getErrorMessage]="getErrorMessageOnTextField"></fab-masked-text-field>
+            <!-- <fab-spin-button
+            label="my label"
+            [value]="7 + ' cm'"
+            [validate]="onValidate"
+            [increment]="onIncrement"
+            [decrement]="onDecrement"
+          ></fab-spin-button> -->
+          </div>
+        </ng-template>
+      </render>
+    </fab-command-bar-item>
+    <fab-command-bar-item key="help" text="Help" [iconProps]="{ iconName: 'Help' }"></fab-command-bar-item>
+    <fab-command-bar-item key="full-screen" [iconOnly]="true" [iconProps]="{ iconName: 'fullScreenIcon' }"
+      (click)="refresh()"></fab-command-bar-item>
+  </far-items>
+</fab-command-bar>
 <div class="category-container" style="width:100%">
 
   <!-- <span (click)="showCalendar = !showCalendar">
       <span style="margin-right: 5px;">Label: All</span>
       <fab-icon iconName="Filter" contentStyle="color: #0078D7;"></fab-icon>
     </span> -->
-    <fab-choice-group *ngIf="showCalendar"
-    style="position: absolute;
+  <fab-choice-group *ngIf="showCalendar" style="position: absolute;
             top: 20px;
             right: 0px ;
             background: #FFFFFF;
             padding: 8px;
             color: #323130;
             font-size: 14px;" label="Label" [options]="options" (onChange)="setCategoryIndex($event)"
-      defaultSelectedKey="0">
-    </fab-choice-group>
+    defaultSelectedKey="0">
+  </fab-choice-group>
 
-  <fab-calendar  *ngIf="showCalendar" (onSelectDate)="onSelectDate($event)"
-  style="position: absolute;
+  <fab-calendar *ngIf="showCalendar" (onSelectDate)="onSelectDate($event)" style="position: absolute;
             top: 20px;
             right: 0px ;
             background: #FFFFFF;
             padding: 8px;
             color: #323130;
-            font-size: 14px;"
-  >
-      <fab-calendar-strings
-        [months]="[
+            font-size: 14px;">
+    <fab-calendar-strings [months]="[
           'January',
           'Fabruary',
           'March',
@@ -118,14 +154,11 @@
           'October',
           'November',
           'December'
-        ]"
-        [shortMonths]="['Jan', 'Fab', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']"
-        [days]="['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']"
-        [shortDays]="['S', 'M', 'T', 'W', 'T', 'F', 'S']"
-        goToToday="Go to last 24h"
-        weekNumberFormatString="Week number {0}"
-      ></fab-calendar-strings>
-    </fab-calendar>
+        ]" [shortMonths]="['Jan', 'Fab', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']"
+      [days]="['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']"
+      [shortDays]="['S', 'M', 'T', 'W', 'T', 'F', 'S']" goToToday="Go to last 24h"
+      weekNumberFormatString="Week number {0}"></fab-calendar-strings>
+  </fab-calendar>
 
   <div>
     <h3 class="category-title">{{category.name}}</h3>
@@ -158,17 +191,11 @@
         <fab-pivot-item headerText="Chat" #scrollMe>
           <div #scrollMe2 id="scrollme1" [style.height.px]="chatContainerHeight" *ngIf="messages && messages.length > 0"
             style="overflow-y: auto;" class="ms-Panel-scrollableContent scroll-bottom">
-            <div class="row animated fadeIn chat-message-container" *ngFor="let item of messages" style="margin-left:0px">
+            <div class="row animated fadeIn chat-message-container" *ngFor="let item of messages"
+              style="margin-left:0px">
               <dynamic-component [componentData]="item" (onComplete)=" scrollToBottom()"></dynamic-component>
             </div>
           </div>
-          <!-- <div class="genie-message message-sent-by-system">{{welcomeMessage}}</div> -->
-          <!-- <div *ngIf="messages != undefined && messages.length > 0">
-            <div class="row animated fadeIn chat-message-container" *ngFor="let item of messages">
-              <span>hahaha</span>
-              <dynamic-component [componentData]="item" (onViewUpdate)="scrollToBottom()" (onComplete)="getMessage($event)"></dynamic-component>
-            </div>
-          </div> -->
         </fab-pivot-item>
         <fab-pivot-item headerText="Insights">
           <div></div>
