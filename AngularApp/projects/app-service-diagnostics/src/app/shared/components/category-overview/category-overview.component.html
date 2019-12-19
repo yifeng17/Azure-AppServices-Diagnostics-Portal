@@ -2,22 +2,22 @@
   <items>
     <fab-command-bar-item key="askGenie" text="Ask Genie" [iconProps]="{ iconName: 'Help' }" (click)="isOpen=!isOpen"
       data-track-type="run"></fab-command-bar-item>
-    <fab-command-bar-item key="timePicker" text="Time" [iconProps]="{ iconName: 'Clock' }"
+    <fab-command-bar-item key="timePicker" [text]="time" [iconProps]="{ iconName: 'Clock' }"
       (click)="showCalendar = !showCalendar">
-      <contextual-menu-item key="Last1Hour" text="Last 1 Hour" [iconProps]="{ iconName: 'History' }">
+      <contextual-menu-item key="Last1Hour" text="Last 1 Hour" [iconProps]="{ iconName: 'RadioBtnOff' }">
       </contextual-menu-item>
-      <contextual-menu-item key="Last6Hours" text="Last 6 Hours" [iconProps]="{ iconName: 'History' }">
+      <contextual-menu-item key="Last6Hours" text="Last 6 Hours" [iconProps]="{ iconName: 'RadioBtnOff' }">
       </contextual-menu-item>
-      <contextual-menu-item key="Last12Hours" text="Last 12 Hours" [iconProps]="{ iconName: 'History' }">
+      <contextual-menu-item key="Last12Hours" text="Last 12 Hours" [iconProps]="{ iconName: 'RadioBtnOff' }">
       </contextual-menu-item>
-      <contextual-menu-item key="Last24Hours" text="Last 24 Hours" [iconProps]="{ iconName: 'History' }">
+      <contextual-menu-item key="Last24Hours" text="Last 24 Hours" [iconProps]="{ iconName: 'RadioBtnOn' }">
       </contextual-menu-item>
-      <contextual-menu-item key="custom" text="Custom" [iconProps]="{ iconName: 'History' }">
-        </contextual-menu-item>
-      <contextual-menu-item key="timeDivider" itemType="timerDivider"></contextual-menu-item>
+      <contextual-menu-item key="custom" text="Custom" [iconProps]="{ iconName: customIcon }" (click)="setText()">
+      </contextual-menu-item>
+      <contextual-menu-item *ngIf="customizeTime" key="timeDivider" itemType="timerDivider"></contextual-menu-item>
       <contextual-menu-item key="startTime" text="Start Time" [iconProps]="{ iconName: 'DateTime' }">
       </contextual-menu-item>
-      <contextual-menu-item key="endTime" text="End Time" [iconProps]="{ iconName: 'DateTime' }"></contextual-menu-item>
+      <contextual-menu-item *ngIf="customizeTime" key="endTime" text="End Time" [iconProps]="{ iconName: 'DateTime' }"></contextual-menu-item>
     </fab-command-bar-item>
     <fab-command-bar-item key="refresh" text="Refresh" [iconProps]="{ iconName: 'Refresh' }" (click)="refresh()">
     </fab-command-bar-item>
@@ -87,6 +87,57 @@
             allowTextInput="true" -->
 
   <far-items>
+      <fab-command-bar-item key="custom" text="custom text" (click)="onCopyClicked()">
+          <render>
+            <ng-template let-item="item">
+              <div style="padding-top:3px!important;">
+
+              <fab-dropdown
+              [label]="'test label'"
+              [selectedKey]="selectedItem && selectedItem.key"
+              [selectedKey]="Last24H"
+              [options]="options"
+              [placeholder]="'Last 24h'"
+              (onChange)="logEvent('dropdown change', $event)"
+              (onFocus)="logEvent('dropdown focus', $event)"
+              (onBlur)="logEvent('dropdown blur', $event)"
+              ></fab-dropdown>
+
+              <fab-dropdown
+  contentStyle="width: 300px;"
+  [placeholder]="'Select one'"
+  [defaultSelectedKey]="'A'"
+  (onChange)="logEvent('dropdown change', $event)"
+>
+  <options>
+    <fab-dropdown-option optionKey="A" text="See option A"  [data]="{ iconProps: {iconName: 'DateTime' }}" ></fab-dropdown-option>
+    <fab-dropdown-option optionKey="B" text="See option B"></fab-dropdown-option>
+    <fab-dropdown-option optionKey="C" text="See option Cindy"></fab-dropdown-option>
+  </options>
+</fab-dropdown>
+
+                <fab-date-picker
+                [strings]="dates"
+                [minDate]="minDate"
+                [maxDate]="maxDate"
+                placeholder="Select a date..."
+                ariaLabel="Select start date"
+                allowTextInput="true"
+                showMonthPickerAsOverlay="true"
+                >
+                </fab-date-picker>
+              <fab-masked-text-field maxLength="10" [(value)]="startClock" [iconProps]="{iconName: 'Clock'}" [mask]="'99:99'" [maskChar]="'-'" [validateOnFocusOut]="true" [getErrorMessage]="getErrorMessageOnTextField"></fab-masked-text-field>
+                <!-- <fab-spin-button
+                label="my label"
+                [value]="7 + ' cm'"
+                [validate]="onValidate"
+                [increment]="onIncrement"
+                [decrement]="onDecrement"
+              ></fab-spin-button> -->
+              </div>
+            </ng-template>
+          </render>
+        </fab-command-bar-item>
     <fab-command-bar-item key="custom" text="custom text" (click)="onCopyClicked()">
       <render>
         <ng-template let-item="item">

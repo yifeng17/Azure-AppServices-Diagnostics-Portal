@@ -65,18 +65,31 @@ export class CategoryOverviewComponent implements OnInit {
         selectedItem?: IDropdownOption;
         timeDivider: DropdownMenuItemType = DropdownMenuItemType.Divider;
         options: FabDropdownComponent['options'] = [
-          { key: 'A', text: 'Option a' },
-          { key: 'B', text: 'Option b' },
-          { key: 'C', text: 'Option c' },
-          { key: 'D', text: 'Option d' },
+          { key: 'Last1Hour', text: 'Last 1 Hour',  data: {  iconProps: {iconName: 'CaretRight'}, }},
+          { key: 'Last6Hours', text: 'Last 6 Hours' , data: {icon: "RadioButtonOff"}},
+          { key: 'Last12Hour', text: 'Last 12 Hours' , data: {icon: "RadioButtonOff"}},
+          { key: 'Last24Hours', text: 'Last 24 Hours' , data: {icon: "RadioButtonOff"}},
           { key: 'divider_1', text: '-', itemType: DropdownMenuItemType.Divider },
-          { key: 'E', text: 'Option e' },
-          { key: 'F', text: 'Option f' },
-          { key: 'G', text: 'Option g' },
+          { key: 'Custom', text: 'Custom' , data: {icon: "RadioButtonOff"}}
         ];
 
+        logEvent(...args: any[]) {
+            console.log(args);
+            if (args.length > 1 && args[1].option != undefined && args[1].option.key === "Custom") {
+                this.options.push({ key: 'StartTime', text: 'Start Time' });
+                this.options.push({ key: 'EndTime', text: 'End Time' });
+            }
+        }
 
         // commandbar related
+        customizeTime: boolean = false;
+        customIcon: string = "RadioBtnOff";
+        time: string = "default time";
+        setText() {
+            this.time = "Setting the time";
+            this.customizeTime = true;
+            this.customIcon = "RadioBtnOn";
+        }
         dates: ICalendarStrings = {
             months: [
               'January',
