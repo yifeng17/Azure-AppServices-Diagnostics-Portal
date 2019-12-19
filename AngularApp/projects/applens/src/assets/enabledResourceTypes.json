@@ -176,5 +176,25 @@
             "pesId": "15614",
             "staticSelfHelpContent": ""
         }
+        {
+            "service": "ResourceService",
+            "resourceType": "Microsoft.Storage/storageAccounts",
+            "templateFileName": "StorageAccount",
+            "imgSrc": "assets/img/StorageAccount.png",
+            "versionPrefix": "",
+            "azureCommImpactedServicesList": "StorageAccounts",	
+            "pesId": "15127",
+            "staticSelfHelpContent": ""
+        }
+        {
+            "service": "ResourceService",
+            "resourceType": "Microsoft.ClassicStorage/storageAccounts",
+            "templateFileName": "ClassicStorageAccount",
+            "imgSrc": "assets/img/ClassicStorageAccount.png",
+            "versionPrefix": "",
+            "azureCommImpactedServicesList": "ClassicStorageAccounts",
+            "pesId": "15128",
+            "staticSelfHelpContent": ""
+        }
     ]
 }
