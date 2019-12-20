@@ -16,7 +16,7 @@ import { TabTitleResolver } from '../shared/resolvers/tab-name.resolver';
 import { SupportTopicRedirectComponent } from './components/support-topic-redirect/support-topic-redirect.component';
 import { TimeControlResolver } from './resolvers/time-control.resolver';
 import { ContentService } from '../shared-v2/services/content.service';
-import { FabNavModule, DiagnosticDataModule } from 'diagnostic-data';
+import { FabNavModule, DiagnosticDataModule, FabContextualMenuModule } from 'diagnostic-data';
 import { GenericAnalysisComponent } from '../shared/components/generic-analysis/generic-analysis.component';
 import { CategoryOverviewComponent } from '../shared/components/category-overview/category-overview.component';
 import { DiagnosticsSettingsComponent } from './components/diagnostics-settings/diagnostics-settings.component';
@@ -388,6 +388,7 @@ export const HomeRoutes = RouterModule.forChild([
     FabTagPickerModule,
     FabProgressIndicatorModule,
     FabNavModule,
+    FabContextualMenuModule,
     MarkdownModule.forRoot()
   ],
   declarations: [HomeComponent, CategoryChatComponent, CategoryTileComponent, SearchResultsComponent, SupportTopicRedirectComponent, DiagnosticsSettingsComponent, CategoryOverviewComponent, CategoryNavComponent, CategoryMenuItemComponent, SearchPipe, SearchMatchPipe, SectionDividerComponent],

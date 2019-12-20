@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, TemplateRef, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef, ElementRef, Renderer2 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CategoryService } from '../../../shared-v2/services/category.service';
 import { Category } from '../../../shared-v2/models/category';
@@ -43,6 +43,14 @@ const suffix = ' cm';
 export class CategoryOverviewComponent implements OnInit {
     @ViewChild('ms-Panel-scrollableContent', { static: false }) myScrollContainer1: ElementRef;
     @ViewChild('scrollMe', { static: true }) myScrollContainer: any;
+    @ViewChild('timepicker', { static: true }) timepicker: any;
+    // @ViewChild(MarkdownComponent, {static: false})
+    // public set markdown(v: MarkdownComponent) {
+    //     this.markdownDiv = v;
+    //     if (this.markdownDiv) {
+    //       this.listenObj = this.renderer.listen(this.markdownDiv.element.nativeElement, 'click', (evt) => this._interceptorService.interceptLinkClick(evt, this.router, this.detector, this.telemetryService));
+    //     }
+    //   }
         //  @ViewChild('ms-Panel-scrollableContent', { static: false }) myScrollContainer: ElementRef;
         categoryId: string = "";
         category: Category;
@@ -73,22 +81,99 @@ export class CategoryOverviewComponent implements OnInit {
           { key: 'Custom', text: 'Custom' , data: {icon: "RadioButtonOff"}}
         ];
 
+        showChoices: boolean = false;
+        choiceGroupOptions: any=[
+            { key: 'Last1Hour', text: 'Last 1 Hour',  data: {  iconProps: {iconName: 'CaretRight'}, }},
+            { key: 'Last6Hours', text: 'Last 6 Hours' , data: {icon: "RadioButtonOff"}},
+            { key: 'Last12Hour', text: 'Last 12 Hours' , data: {icon: "RadioButtonOff"}}];
+        
+        // {[
+        //     {
+        //       key: 'A',
+        //       text: 'Option A'
+        //     },
+        //     {
+        //       key: 'B',
+        //       text: 'Option B'
+        //     },
+        //     {
+        //       key: 'C',
+        //       text: 'Option C',
+        //       disabled: true
+        //     },
+        //     {
+        //       key: 'D',
+        //       text: 'Option D'
+        //     }
+
         logEvent(...args: any[]) {
             console.log(args);
             if (args.length > 1 && args[1].option != undefined && args[1].option.key === "Custom") {
+                this.dropdownStyles.isOpen = true;
                 this.options.push({ key: 'StartTime', text: 'Start Time' });
                 this.options.push({ key: 'EndTime', text: 'End Time' });
             }
         }
 
         // commandbar related
+        listenObj: any;
+        dropdownOpen: boolean = true;
         customizeTime: boolean = false;
         customIcon: string = "RadioBtnOff";
         time: string = "default time";
-        setText() {
+
+        itemProps1:Partial<IContextualMenuProps> = {
+            onItemClick: (ev, item) => {
+              console.log(`${item.text} clicked`);
+              return false;
+            }
+        };
+
+
+        dropdownStyles = {
+            // type: PanelType.smallFixedNear,
+             isOpen: false
+          //   customWidth: "585",
+         };
+
+        renderCheckboxLabel: any = {
+            getProps: defaultProps => ({
+              item: defaultProps["item"],
+              dismissMenu: false
+            }),
+        };
+
+          
+        onMouseOverEventHandler(event: any){
+            console.log("event from mouse over", event);
+            event.preventDefault();
+        }
+
+        onClickEventHandler(event: any) {
+            console.log("event from onclick", event);
+            event.preventDefault();
+        }
+
+        setText(event: any) {
             this.time = "Setting the time";
             this.customizeTime = true;
             this.customIcon = "RadioBtnOn";
+
+       //     console.log("item", item);
+        //     console.log("event", event, event.item.onClick);
+        //    // event.preventDefault();
+        //     event.item.onClick = ((e) => {
+        //         e.preventDefault();
+        //     });
+
+            console.log("time picker", this.timepicker);
+            var x = document.getElementsByClassName("ms-Callout-container");
+            console.log("Callout picker", x[0], x[0]);
+            
+          //  x[0].style.display = "block";
+            //console.log("Callout picker", x[0], x[0].style.display);
+            //event.preventDefault();
+              
         }
         dates: ICalendarStrings = {
             months: [
@@ -202,6 +287,12 @@ export class CategoryOverviewComponent implements OnInit {
     }
 
     ngAfterViewInit() {
+        var x = document.getElementById("custom");
+        console.log("x", x);
+        x.addEventListener("click", function(event){
+          // console.log("I am clicking");
+          event.preventDefault()
+        });
         console.log("Afterview init updating scrolling", this.myScrollContainer);
       }
 
@@ -210,7 +301,7 @@ export class CategoryOverviewComponent implements OnInit {
     }
 
     refresh() {
-
+        this.showChoices = !this.showChoices;
     }
 
     showSearch() {
@@ -273,6 +364,12 @@ export class CategoryOverviewComponent implements OnInit {
         console.log("isOpen", this.isOpen);
     }
     ngOnInit() {
+        // document.getElementById("custom").addEventListener("click", function(event){
+        //     // console.log("I am clicking");
+        //     event.preventDefault()
+        //   });
+        
+
         this.categoryId = this._activatedRoute.parent.snapshot.params.category;
 
         this._categoryService.categories.subscribe(categorys => {
