@@ -1,16 +1,24 @@
-<fab-command-bar style="width:100%">
+<fab-command-bar styles="commandbarStyles">
   <items>
+      <fab-command-bar-item key="custom1" text="custom text" (click)="onCopyClicked()">
+          <render>
+            <ng-template let-item="item">
+              <div style="padding-top:3px!important;">
+                <fab-search-box placeholder="Search"></fab-search-box>
+              </div>
+            </ng-template>
+          </render>
+          <render-icon>
+            <ng-template let-contextualMenuItemProps="contextualMenuItemProps">
+              <div>custom icon</div>
+            </ng-template>
+          </render-icon>
+
+        </fab-command-bar-item>
     <fab-command-bar-item key="askGenie" text="Ask Genie" [iconProps]="{ iconName: 'Help' }" (click)="isOpen=!isOpen"
       data-track-type="run"></fab-command-bar-item>
-    <fab-command-bar-item #timepicker key="timePicker" [text]="time" [iconProps]="{ iconName: 'Clock' }"
+    <!-- <fab-command-bar-item #timepicker key="timePicker" [text]="time" [iconProps]="{ iconName: 'Clock' }"
       (click)="showCalendar = !showCalendar">
-      <!-- <render>
-        <ng-template let-item="item1">
-          <div style="padding-top:3px!important;">
-            <fab-search-box placeholder="Search"></fab-search-box>
-          </div>
-        </ng-template>
-      </render> -->
       <contextual-menu-item key="Last1Hour" text="Last 1 Hour" [iconProps]="{ iconName: 'RadioBtnOff' }">
       </contextual-menu-item>
       <contextual-menu-item key="Last6Hours" text="Last 6 Hours" [iconProps]="{ iconName: 'RadioBtnOff' }">
@@ -19,63 +27,33 @@
       </contextual-menu-item>
       <contextual-menu-item key="Last24Hours" text="Last 24 Hours" [iconProps]="{ iconName: 'RadioBtnOn' }">
       </contextual-menu-item>
-      <!-- (click)="setText($event)" -->
-      <contextual-menu-item #custom key="custom" text="Custom" [iconProps]="{ iconName: customIcon }" [itemProps]="itemProps1" (onMouseOver)="onMouseOverEventHandler($event)" (onClick)="onClickEventHandler($event)" (click)="setText($event, $item)" >
+      <contextual-menu-item #custom key="custom" text="Custom" [iconProps]="{ iconName: customIcon }"
+        [itemProps]="itemProps1" (onMouseOver)="onMouseOverEventHandler($event)" (onClick)="onClickEventHandler($event)"
+        (click)="setText($event)">
         <contextual-menu-item key="item-2-1" text="Start Time">
-            <fab-date-picker
-            [strings]="dates"
-            [minDate]="minDate"
-            [maxDate]="maxDate"
-            placeholder="Select a date..."
-            ariaLabel="Select start date"
-            allowTextInput="true"
-            showMonthPickerAsOverlay="true"
-            >
-            </fab-date-picker>
-          <fab-masked-text-field maxLength="10" [(value)]="startClock" [iconProps]="{iconName: 'Clock'}" [mask]="'99:99'" [maskChar]="'-'" [validateOnFocusOut]="true" [getErrorMessage]="getErrorMessageOnTextField"></fab-masked-text-field>
+          <fab-date-picker [strings]="dates" [minDate]="minDate" [maxDate]="maxDate" placeholder="Select a date..."
+            ariaLabel="Select start date" allowTextInput="true" showMonthPickerAsOverlay="true">
+          </fab-date-picker>
+          <fab-masked-text-field maxLength="10" [(value)]="startClock" [iconProps]="{iconName: 'Clock'}"
+            [mask]="'99:99'" [maskChar]="'-'" [validateOnFocusOut]="true"
+            [getErrorMessage]="getErrorMessageOnTextField"></fab-masked-text-field>
         </contextual-menu-item>
-    <contextual-menu-item key="item-2-2" text="End Time"></contextual-menu-item>
+        <contextual-menu-item key="item-2-2" text="End Time"></contextual-menu-item>
       </contextual-menu-item>
       <contextual-menu-item *ngIf="customizeTime" key="timeDivider" itemType="timerDivider"></contextual-menu-item>
-      <contextual-menu-item *ngIf="customizeTime" key="startTime" text="Start Time" [iconProps]="{ iconName: 'DateTime' }">
+      <contextual-menu-item *ngIf="customizeTime" key="startTime" text="Start Time"
+        [iconProps]="{ iconName: 'DateTime' }">
       </contextual-menu-item>
-      <contextual-menu-item *ngIf="customizeTime" key="endTime" text="End Time" [iconProps]="{ iconName: 'DateTime' }"></contextual-menu-item>
-    </fab-command-bar-item>
-    <fab-command-bar-item key="refresh" text="Refresh" [iconProps]="{ iconName: 'Refresh' }" (click)="refresh()">
-    <render>
-      <ng-template>
-        <fab-default-button text="Refresh" (onClick)="showChoices =!showChoices">
-        <fab-callout [hidden]="showChoices">
-        <fab-choice-group
-        [options]="choiceGroupOptions"
-        [styles]="dropdownStyles"
-        [selectedKey]="selectedItem && selectedItem.key"
-        ></fab-choice-group>
-      </fab-callout>
-    </fab-default-button>
-      </ng-template>
-    </render>
-    </fab-command-bar-item>
+      <contextual-menu-item *ngIf="customizeTime" key="endTime" text="End Time" [iconProps]="{ iconName: 'DateTime' }">
+      </contextual-menu-item>
+    </fab-command-bar-item> -->
+    <fab-command-bar-item key="refresh1" text="Refresh" [iconProps]="{ iconName: 'Refresh' }"
+    (click)="sendFeedback()"></fab-command-bar-item>
     <fab-command-bar-item key="sendFeedback" text="Feedback" [iconProps]="{ iconName: 'Emoji2' }"
       (click)="sendFeedback()"></fab-command-bar-item>
-    <fab-command-bar-item key="search" text="Search" [iconProps]="{ iconName: 'Search' }" (click)="showSearch()">
+    <!-- <fab-command-bar-item key="search" text="Search" [iconProps]="{ iconName: 'Search' }" (click)="showSearch()">
       <span class="ms-SearchBox-text">Search</span>
-    </fab-command-bar-item>
-    <fab-command-bar-item key="custom1" text="custom text" (click)="onCopyClicked()">
-      <render>
-        <ng-template let-item="item">
-          <div style="padding-top:3px!important;">
-            <fab-search-box placeholder="Search"></fab-search-box>
-          </div>
-        </ng-template>
-      </render>
-      <render-icon>
-        <ng-template let-contextualMenuItemProps="contextualMenuItemProps">
-          <div>custom icon</div>
-        </ng-template>
-      </render-icon>
-
-    </fab-command-bar-item>
+    </fab-command-bar-item> -->
 
     <!-- <fab-command-bar-item *ngIf="runDisabled" key="sometimesVisible" text="woosh"></fab-command-bar-item> -->
 
@@ -115,18 +93,17 @@
       <fab-command-bar-item *ngIf="runDisabled" key="sometimesVisible" text="woosh"></fab-command-bar-item> -->
   </items>
 
-              <!-- [minDate]="minDate"
+  <!-- [minDate]="minDate"
             [maxDate="maxDate"
             placeholder="Select a date..."
             ariaLabel="Select a date"
             allowTextInput="true" -->
 
   <far-items>
-      <fab-command-bar-item key="custom2" text="custom text" (click)="onCopyClicked()">
+    <!--  <fab-command-bar-item key="custom2" text="custom text" (click)="onCopyClicked()">
           <render>
             <ng-template let-item="item">
               <div style="padding-top:3px!important;">
-
               <fab-dropdown
               [styles]="dropdownStyles"
               [label]="'test label'"
@@ -151,7 +128,6 @@
     <fab-dropdown-option optionKey="C" text="See option Cindy"></fab-dropdown-option>
   </options>
 </fab-dropdown>
-
                 <fab-date-picker
                 [strings]="dates"
                 [minDate]="minDate"
@@ -163,18 +139,11 @@
                 >
                 </fab-date-picker>
               <fab-masked-text-field maxLength="10" [(value)]="startClock" [iconProps]="{iconName: 'Clock'}" [mask]="'99:99'" [maskChar]="'-'" [validateOnFocusOut]="true" [getErrorMessage]="getErrorMessageOnTextField"></fab-masked-text-field>
-                <!-- <fab-spin-button
-                label="my label"
-                [value]="7 + ' cm'"
-                [validate]="onValidate"
-                [increment]="onIncrement"
-                [decrement]="onDecrement"
-              ></fab-spin-button> -->
               </div>
             </ng-template>
           </render>
-        </fab-command-bar-item>
-    <fab-command-bar-item key="custom3" text="custom text" (click)="onCopyClicked()">
+        </fab-command-bar-item> -->
+    <!-- <fab-command-bar-item key="custom3" text="custom text" (click)="onCopyClicked()">
       <render>
         <ng-template let-item="item">
           <div style="padding-top:3px!important;">
@@ -189,28 +158,60 @@
             >
             </fab-date-picker>
           <fab-masked-text-field maxLength="10" [(value)]="startClock" [iconProps]="{iconName: 'Clock'}" [mask]="'99:99'" [maskChar]="'-'" [validateOnFocusOut]="true" [getErrorMessage]="getErrorMessageOnTextField"></fab-masked-text-field>
-            <!-- <fab-spin-button
-            label="my label"
-            [value]="7 + ' cm'"
-            [validate]="onValidate"
-            [increment]="onIncrement"
-            [decrement]="onDecrement"
-          ></fab-spin-button> -->
           </div>
         </ng-template>
       </render>
+    </fab-command-bar-item> -->
+    <!-- <fab-command-bar-item key="help" text="Help" [iconProps]="{ iconName: 'Help' }"></fab-command-bar-item> -->
+    <fab-command-bar-item key="timepicker" [text]="time" [iconProps]="{ iconName: 'Clock' }" (click)="showChoices =!showChoices">
+      <!-- <render>
+        <ng-template>
+          <fab-default-button text="time" [iconProps]="{ iconName: 'Clock' }" (onClick)="showChoices =!showChoices">
+            </fab-default-button>
+        </ng-template>
+      </render> -->
     </fab-command-bar-item>
-    <fab-command-bar-item key="help" text="Help" [iconProps]="{ iconName: 'Help' }"></fab-command-bar-item>
-    <fab-command-bar-item key="full-screen" [iconOnly]="true" [iconProps]="{ iconName: 'fullScreenIcon' }"
-      (click)="refresh()"></fab-command-bar-item>
+    <!-- <fab-command-bar-item key="full-screen" [iconOnly]="true" [iconProps]="{ iconName: 'fullScreenIcon' }"
+      (click)="refresh()"></fab-command-bar-item> -->
   </far-items>
 </fab-command-bar>
-<div class="category-container" style="width:100%">
+<fab-message-bar *ngIf="openMessageBar"
+[messageBarType]="messageBarType"
+[isMultiline]="false"
+(onDismiss)="openMessageBar=!openMessageBar"
+>
+You can always click "Ask Genie" to get back chat window.
+</fab-message-bar>
+<fab-callout [hidden]="!showChoices" [directionalHint]="'5'" [gapSpace]="'30'" [styles]="calloutStyles">
+  <!-- <div>Time range</div>
+  [selectedKey]="selectedItem && selectedItem.key" -->
+    <fab-choice-group [options]="choiceGroupOptions" defaultSelectedKey="'Last24Hours'">
+    </fab-choice-group>
+    <div *ngIf="showTimerPicker" class="row">
+      <div style="padding:15px">Start Time       </div>
+      <fab-date-picker class="col-md-8" [strings]="dates" [minDate]="minDate" [maxDate]="maxDate"
+        placeholder="Select a date..." ariaLabel="Select start date" allowTextInput="true"
+        showMonthPickerAsOverlay="true">
+      </fab-date-picker>
+      <fab-masked-text-field class="col-md-4" maxLength="6" [(value)]="endClock"
+        [iconProps]="{iconName: 'Clock'}" [mask]="'99:99'" [maskChar]="'-'" [validateOnFocusOut]="true"
+        [getErrorMessage]="getErrorMessageOnTextField"></fab-masked-text-field>
 
-  <!-- <span (click)="showCalendar = !showCalendar">
-      <span style="margin-right: 5px;">Label: All</span>
-      <fab-icon iconName="Filter" contentStyle="color: #0078D7;"></fab-icon>
-    </span> -->
+        <div style="padding:15px; margin-top:30px">End Time  </div>
+        <fab-date-picker class="col-md-8" [strings]="dates" [minDate]="minDate" [maxDate]="maxDate"
+          placeholder="Select a date..." ariaLabel="Select end date" allowTextInput="true"
+          showMonthPickerAsOverlay="true">
+        </fab-date-picker>
+        <fab-masked-text-field class="col-md-4" maxLength="6" [(value)]="startClock"
+          [iconProps]="{iconName: 'Clock'}" [mask]="'99:99'" [maskChar]="'-'" [validateOnFocusOut]="true"
+          [getErrorMessage]="getErrorMessageOnTextField"></fab-masked-text-field>
+    </div>
+    <div style="padding:15px 0px">
+    <fab-primary-button style="margin-right:10px" text="Apply" (onClick)="applyTimeRange()"></fab-primary-button>
+    <fab-default-button text="Cancel" (onClick)="cancelTimeRange()"></fab-default-button>
+  </div>
+  </fab-callout>
+<div class="category-container" style="width:100%">
   <fab-choice-group *ngIf="showCalendar" style="position: absolute;
             top: 20px;
             right: 0px ;
@@ -252,11 +253,9 @@
     <p class="category-description">{{category.description}}</p>
   </div>
 
-
-
-  <div class="search-box" style="margin-bottom: 25px;">
+  <!-- <div class="search-box" style="margin-bottom: 25px;">
     <fab-search-box placeholder="Search"></fab-search-box>
-  </div>
+  </div> -->
 
   <fab-panel [isOpen]="isOpen" [type]="type" [customWidth]="width" [isHiddenOnDismiss]="true" [isLightDismiss]="true"
     [hasCloseButton]="false" [closeButtonAriaLabel]="'close'">
@@ -271,7 +270,6 @@
         <i id="close" class="ms-Icon ms-Icon--Cancel" (click)="closePanel()" aria-hidden="true"></i>
         <!-- <fab-icon iconName="Cancel" style="float:right" (onClick)="closePanel()"></fab-icon> -->
       </div>
-      <!-- <button style="position: absolute; right: 10px; display: flex; align-items: flex-end" (click)="isOpen=false">X</button> -->
     </div>
     <div class="panel-content" style="margin-top: 60px; margin-left: -25px;">
       <fab-pivot>

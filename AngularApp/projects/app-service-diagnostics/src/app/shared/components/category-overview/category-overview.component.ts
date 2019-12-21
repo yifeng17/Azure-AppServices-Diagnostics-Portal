@@ -10,7 +10,8 @@ import { MessageProcessor } from '../../../supportbot/message-processor.service'
 import { DynamicComponent } from '../../../supportbot/dynamic-component/dynamic.component';
 import { TextMessageComponent } from '../../../supportbot/common/text-message/text-message.component';
 import { FabDropdownComponent } from '@angular-react/fabric';
-import { addMonths, addYears } from 'office-ui-fabric-react/lib/utilities/dateMath/DateMath';
+import { addMonths, addYears, addDays, addWeeks } from 'office-ui-fabric-react/lib/utilities/dateMath/DateMath';
+import { mergeStyleSets, hiddenContentStyle , MessageBarType}from 'office-ui-fabric-react';
 
 import {
     PanelType,
@@ -69,6 +70,7 @@ export class CategoryOverviewComponent implements OnInit {
         panelStyles: any;
         type: PanelType = PanelType.custom;
         width: string = "1200px";
+        internalTime: string = "";
 
         selectedItem?: IDropdownOption;
         timeDivider: DropdownMenuItemType = DropdownMenuItemType.Divider;
@@ -76,35 +78,47 @@ export class CategoryOverviewComponent implements OnInit {
           { key: 'Last1Hour', text: 'Last 1 Hour',  data: {  iconProps: {iconName: 'CaretRight'}, }},
           { key: 'Last6Hours', text: 'Last 6 Hours' , data: {icon: "RadioButtonOff"}},
           { key: 'Last12Hour', text: 'Last 12 Hours' , data: {icon: "RadioButtonOff"}},
-          { key: 'Last24Hours', text: 'Last 24 Hours' , data: {icon: "RadioButtonOff"}},
+          { key: 'Last24Hours1', text: 'Last 24 Hours' , data: {icon: "RadioButtonOff"}},
           { key: 'divider_1', text: '-', itemType: DropdownMenuItemType.Divider },
           { key: 'Custom', text: 'Custom' , data: {icon: "RadioButtonOff"}}
         ];
 
         showChoices: boolean = false;
+        showTimerPicker: boolean = false;
         choiceGroupOptions: any=[
-            { key: 'Last1Hour', text: 'Last 1 Hour',  data: {  iconProps: {iconName: 'CaretRight'}, }},
-            { key: 'Last6Hours', text: 'Last 6 Hours' , data: {icon: "RadioButtonOff"}},
-            { key: 'Last12Hour', text: 'Last 12 Hours' , data: {icon: "RadioButtonOff"}}];
-        
-        // {[
-        //     {
-        //       key: 'A',
-        //       text: 'Option A'
-        //     },
-        //     {
-        //       key: 'B',
-        //       text: 'Option B'
-        //     },
-        //     {
-        //       key: 'C',
-        //       text: 'Option C',
-        //       disabled: true
-        //     },
-        //     {
-        //       key: 'D',
-        //       text: 'Option D'
-        //     }
+            { key: 'Last1Hour', text: 'Last 1 Hour',  onClick: ()=>{this.setTime("Last 1 Hour"); this.showTimerPicker = false}},
+            { key: 'Last6Hours', text: 'Last 6 Hours' , onClick: ()=>{this.setTime("Last 6 Hours");this.showTimerPicker = false}},
+            { key: 'Last12Hour', text: 'Last 12 Hours' , onClick: ()=>{this.setTime("Last 12 Hours"); this.showTimerPicker = false}},
+            { key: 'Last24Hours', text: 'Last 24 Hours' , onClick: ()=>{this.setTime("Last 24 Hours");this.showTimerPicker = false}},
+            { key: 'Custom', text: 'Custom' , onClick: ()=>{this.showTimerPicker = true}},
+        ];
+
+        setTime(x: string){
+            this.internalTime = x;
+        }
+
+        setTimewithClock(x: number){
+            this.startClock = `${this.endHour-x}:${this.startMinutes}`;
+            this.internalTime = `${this.startDate} ${this.startClock} - ${this.endDate} ${this.endClock} `;
+        }
+
+        calloutStyles: any = {
+            overflowY: "hidden",
+            right:20,
+            top: 50,
+            padding: 10
+        };
+
+        applyTimeRange() {
+            this.time = "Time Range: " + this.internalTime;
+            this.showChoices = !this.showChoices;
+        }
+
+        cancelTimeRange() {
+            this.showChoices = !this.showChoices;
+        }
+
+
 
         logEvent(...args: any[]) {
             console.log(args);
@@ -116,11 +130,16 @@ export class CategoryOverviewComponent implements OnInit {
         }
 
         // commandbar related
+        commandbarStyles= {
+            // type: PanelType.smallFixedNear,
+            backgroundColor: "white"
+          //   customWidth: "585",
+         };
         listenObj: any;
         dropdownOpen: boolean = true;
         customizeTime: boolean = false;
         customIcon: string = "RadioBtnOff";
-        time: string = "default time";
+        time: string = "Time Range: Last 24 Hours"
 
         itemProps1:Partial<IContextualMenuProps> = {
             onItemClick: (ev, item) => {
@@ -143,7 +162,7 @@ export class CategoryOverviewComponent implements OnInit {
             }),
         };
 
-          
+
         onMouseOverEventHandler(event: any){
             console.log("event from mouse over", event);
             event.preventDefault();
@@ -169,11 +188,11 @@ export class CategoryOverviewComponent implements OnInit {
             console.log("time picker", this.timepicker);
             var x = document.getElementsByClassName("ms-Callout-container");
             console.log("Callout picker", x[0], x[0]);
-            
+
           //  x[0].style.display = "block";
             //console.log("Callout picker", x[0], x[0].style.display);
             //event.preventDefault();
-              
+
         }
         dates: ICalendarStrings = {
             months: [
@@ -203,16 +222,22 @@ export class CategoryOverviewComponent implements OnInit {
 
           today: Date = new Date(Date.now());
           maxDate: Date = this.today;
+          endHour: any = this.today.getHours();
+          endMinutes: any = this.today.getMinutes();
+          startHour: any = this.today.getHours();
+          startMinutes: any = this.today.getMinutes();
+          startDate: any = addDays(this.today, -1).toISOString().split('T')[0];
+          endDate: any = this.today.toISOString().split('T')[0];
        //   minDate: Date = (new Date(Date.now())).add(-30).days();
        //   maxDate: Date = new Date(Date.now()-)
 
            minDate: Date = addMonths(this.today, -1);
 
 
-        startClock: string = "00:00";
+        startClock: string = `${this.startHour}:${this.startMinutes}`;
+        endClock: string = `${this.endHour}:${this.endMinutes}`;
 
-
-
+        messageBarType: MessageBarType = MessageBarType.warning;
            onIncrement(value: string): string | void {
             value = this._removeSuffix(value, suffix);
 
@@ -224,13 +249,11 @@ export class CategoryOverviewComponent implements OnInit {
           }
 
           getErrorMessageOnTextField(value: string): string {
-            console.log("****getErrorMessageOnTextField", value);
             var values = value.split(":");
             var errorMessage = "";
             if (!(values.length > 1 && +values[0] <= 24 && +values[1] <= 59))
             {
-                errorMessage = `Invalid start time`;
-                console.log("***errormessage", +values[0], +values[1]);
+                errorMessage = `Invalid time`;
             }
             return errorMessage;
           }
@@ -359,7 +382,9 @@ export class CategoryOverviewComponent implements OnInit {
         });
   }
 
+  openMessageBar: boolean = false;
     closePanel() {
+        this.openMessageBar = true;
         this.isOpen = false;
         console.log("isOpen", this.isOpen);
     }
@@ -368,7 +393,7 @@ export class CategoryOverviewComponent implements OnInit {
         //     // console.log("I am clicking");
         //     event.preventDefault()
         //   });
-        
+
 
         this.categoryId = this._activatedRoute.parent.snapshot.params.category;
 

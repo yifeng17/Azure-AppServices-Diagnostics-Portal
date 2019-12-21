@@ -16,8 +16,6 @@ export * from './lib/services/settings.service';
 export * from './lib/config/diagnostic-data-config';
 export * from './lib/diagnostic-data.module';
 export * from './lib/components/fab-nav/fab-nav.module';
-export * from './lib/components/components/contextual-menu/contextual-menu.module';
-export * from './lib/components/components/contextual-menu/directives/contextual-menu-item.directive';
 
 
 export * from './lib/models/detector';
