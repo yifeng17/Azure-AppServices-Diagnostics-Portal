@@ -1,4 +1,4 @@
-<fab-command-bar styles="commandbarStyles">
+<fab-command-bar contentStyle="border-bottom:1px solid gray;font-weight:12px" contentClass="fab-command-bar-class">
   <items>
       <fab-command-bar-item key="custom1" text="custom text" (click)="onCopyClicked()">
           <render>
@@ -163,7 +163,7 @@
       </render>
     </fab-command-bar-item> -->
     <!-- <fab-command-bar-item key="help" text="Help" [iconProps]="{ iconName: 'Help' }"></fab-command-bar-item> -->
-    <fab-command-bar-item key="timepicker" [text]="time" [iconProps]="{ iconName: 'Clock' }" (click)="showChoices =!showChoices">
+    <fab-command-bar-item key="timepicker" [text]="time" [iconProps]="{ iconName: 'ChevronDown' }" (click)="showChoices =!showChoices">
       <!-- <render>
         <ng-template>
           <fab-default-button text="time" [iconProps]="{ iconName: 'Clock' }" (onClick)="showChoices =!showChoices">
@@ -175,6 +175,8 @@
       (click)="refresh()"></fab-command-bar-item> -->
   </far-items>
 </fab-command-bar>
+
+
 <fab-message-bar *ngIf="openMessageBar"
 [messageBarType]="messageBarType"
 [isMultiline]="false"

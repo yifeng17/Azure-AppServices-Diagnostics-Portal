@@ -11,7 +11,7 @@ import { DynamicComponent } from '../../../supportbot/dynamic-component/dynamic.
 import { TextMessageComponent } from '../../../supportbot/common/text-message/text-message.component';
 import { FabDropdownComponent } from '@angular-react/fabric';
 import { addMonths, addYears, addDays, addWeeks } from 'office-ui-fabric-react/lib/utilities/dateMath/DateMath';
-import { mergeStyleSets, hiddenContentStyle , MessageBarType}from 'office-ui-fabric-react';
+import { mergeStyleSets, hiddenContentStyle , MessageBarType, FontSizes}from 'office-ui-fabric-react';
 
 import {
     PanelType,
@@ -110,7 +110,7 @@ export class CategoryOverviewComponent implements OnInit {
         };
 
         applyTimeRange() {
-            this.time = "Time Range: " + this.internalTime;
+            this.time = "Time Range (" + this.internalTime+")";
             this.showChoices = !this.showChoices;
         }
 
@@ -132,14 +132,15 @@ export class CategoryOverviewComponent implements OnInit {
         // commandbar related
         commandbarStyles= {
             // type: PanelType.smallFixedNear,
-            backgroundColor: "white"
+            backgroundColor: "blue"
           //   customWidth: "585",
+
          };
         listenObj: any;
         dropdownOpen: boolean = true;
         customizeTime: boolean = false;
         customIcon: string = "RadioBtnOff";
-        time: string = "Time Range: Last 24 Hours"
+        time: string = "Time Range (Last 24 Hours)"
 
         itemProps1:Partial<IContextualMenuProps> = {
             onItemClick: (ev, item) => {
