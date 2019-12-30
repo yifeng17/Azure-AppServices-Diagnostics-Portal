@@ -5,7 +5,7 @@
         <i class="fa" *ngIf="menuItem.icon" [ngClass]="menuItem.icon"></i>
         <img class="category-icon" style="width:30px!important; padding-right:10px" [src]="menuItem.icon" onerror="this.src=imagePlaceHolder" />
 
-        <span class="menu-label" style="font-size: 13px!important" [innerHtml]="menuItem.label | searchmatch:searchValueLocal"></span>
+        <span class="menu-label" style="font-size: 13px!important;" [innerHtml]="truncatedLable | searchmatch:searchValueLocal"></span>
     </div>
     <div class="menu-item-children">
         <!-- [searchValue]="searchValueLocal"  -->

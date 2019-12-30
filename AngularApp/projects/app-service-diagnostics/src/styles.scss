@@ -141,11 +141,24 @@ fab-command-bar .ms-SearchBox {
     background-color: rgba(85, 179, 255, 0.1);
 }
 
-.fab-command-bar {
+fab-command-bar {
     border-bottom: 1px solid rgb(204, 204, 204)!important;
     font-size: 12px!important;
     height: 34px;
 }
+
+
+.fab-command-bar-class {
+    border-bottom: 1px solid rgb(204, 204, 204)!important;
+    font-size: 12px!important;
+    height: 34px;
+}
+
+
+.fab-command-bar-class .ms-CommandBar {
+    height: 33px;
+}
+
 
 
 

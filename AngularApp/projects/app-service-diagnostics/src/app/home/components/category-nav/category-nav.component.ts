@@ -157,7 +157,7 @@ export class CategoryNavComponent implements OnInit {
             });
 
             this._diagnosticApiService.getDetectors().subscribe(detectors => {
-                detectors.forEach(detector => {
+                detectors.forEach((detector, index) => {
                     if (detector.category === this.category.name) {
                         if ((detector.category && detector.category.length > 0) ||
                             (detector.description && detector.description.length > 0)) {
@@ -178,7 +178,8 @@ export class CategoryNavComponent implements OnInit {
                             };
 
                          //   let icon = `${this.imageRootPath}/${detector.name}.svg`;
-                           let icon = `${this.imageRootPath}/${detector.name}.png`;
+                         let imageIndex = index%4;
+                           let icon = `${this.imageRootPath}/${imageIndex}.png`;
                             let menuItem = new CollapsibleMenuItem(detector.name, onClick, isSelected, icon);
 
                             this.detectorList.push(menuItem);

@@ -1,7 +1,8 @@
 @import "../../../../styles/main.scss";
 
 .category-container{
-    margin: 25px 30px 25px 0px;
+    margin: 1px 30px 25px 0px;
+    padding: 25px 0px 0px 30px;
     width:100%;
     padding-left:30px;
 }
@@ -60,10 +61,6 @@
     overflow-y: hidden;
 }
 
-.fab-command-bar-class {
-    border-bottom: 1px solid rgb(204, 204, 204)!important;
-    font-size: 12px!important;
-    height: 34px;
-}
+
 
 
