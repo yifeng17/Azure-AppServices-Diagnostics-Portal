@@ -1,22 +1,23 @@
+<div>
+<div class="col-md col-ms col-lg" style="width:98%; display: inline-block;">
 <fab-command-bar contentStyle="border-bottom:1px solid gray;font-weight:12px" contentClass="fab-command-bar-class">
   <items>
-      <fab-command-bar-item key="custom1" text="custom text" (click)="onCopyClicked()">
-          <render>
-            <ng-template let-item="item">
-              <div style="padding-top:1px!important;">
-                <fab-search-box placeholder="Search"></fab-search-box>
-              </div>
-            </ng-template>
-          </render>
-          <render-icon>
-            <ng-template let-contextualMenuItemProps="contextualMenuItemProps">
-              <div>custom icon</div>
-            </ng-template>
-          </render-icon>
+    <fab-command-bar-item key="custom1" text="custom text" (click)="onCopyClicked()">
+      <render>
+        <ng-template let-item="item">
+          <div style="padding-top:1px!important;">
+            <fab-search-box placeholder="Search"></fab-search-box>
+          </div>
+        </ng-template>
+      </render>
+      <render-icon>
+        <ng-template let-contextualMenuItemProps="contextualMenuItemProps">
+          <div>custom icon</div>
+        </ng-template>
+      </render-icon>
 
-        </fab-command-bar-item>
-    <fab-command-bar-item key="askGenie" text="Ask Genie" [iconProps]="{ iconName: 'Help' }" (click)="isOpen=!isOpen"
-      data-track-type="run"></fab-command-bar-item>
+    </fab-command-bar-item>
+    <fab-command-bar-item key="askGenie" text="Ask Genie" [iconProps]="{ iconName: 'Help' }" (click)="toggleOpenState()" data-track-type="run"></fab-command-bar-item>
     <!-- <fab-command-bar-item #timepicker key="timePicker" [text]="time" [iconProps]="{ iconName: 'Clock' }"
       (click)="showCalendar = !showCalendar">
       <contextual-menu-item key="Last1Hour" text="Last 1 Hour" [iconProps]="{ iconName: 'RadioBtnOff' }">
@@ -47,10 +48,8 @@
       <contextual-menu-item *ngIf="customizeTime" key="endTime" text="End Time" [iconProps]="{ iconName: 'DateTime' }">
       </contextual-menu-item>
     </fab-command-bar-item> -->
-    <fab-command-bar-item key="refresh1" text="Refresh" [iconProps]="{ iconName: 'Refresh' }"
-    (click)="sendFeedback()"></fab-command-bar-item>
-    <fab-command-bar-item key="sendFeedback" text="Feedback" [iconProps]="{ iconName: 'Emoji2' }"
-      (click)="sendFeedback()"></fab-command-bar-item>
+    <fab-command-bar-item key="refresh1" text="Refresh" [iconProps]="{ iconName: 'Refresh' }" (click)="sendFeedback()"></fab-command-bar-item>
+    <fab-command-bar-item key="sendFeedback" text="Feedback" [iconProps]="{ iconName: 'Emoji2' }" (click)="sendFeedback()"></fab-command-bar-item>
     <!-- <fab-command-bar-item key="search" text="Search" [iconProps]="{ iconName: 'Search' }" (click)="showSearch()">
       <span class="ms-SearchBox-text">Search</span>
     </fab-command-bar-item> -->
@@ -177,79 +176,67 @@
 </fab-command-bar>
 
 
-<fab-message-bar *ngIf="openMessageBar"
-[messageBarType]="messageBarType"
-[isMultiline]="false"
-(onDismiss)="openMessageBar=!openMessageBar"
->
-You can always click "Ask Genie" to get back chat window.
+<fab-message-bar *ngIf="openMessageBar" [messageBarType]="messageBarType" [isMultiline]="false" (onDismiss)="openMessageBar=!openMessageBar">
+  You can always click "Ask Genie" to get back chat window.
 </fab-message-bar>
 <fab-callout [hidden]="!showChoices" [directionalHint]="'5'" [gapSpace]="'30'" [styles]="calloutStyles">
   <!-- <div>Time range</div>
   [selectedKey]="selectedItem && selectedItem.key" -->
-    <fab-choice-group [options]="choiceGroupOptions" defaultSelectedKey="'Last24Hours'">
-    </fab-choice-group>
-    <div *ngIf="showTimerPicker" class="row">
-      <div style="padding:15px">Start Time       </div>
-      <fab-date-picker class="col-md-8" [strings]="dates" [minDate]="minDate" [maxDate]="maxDate"
-        placeholder="Select a date..." ariaLabel="Select start date" allowTextInput="true"
-        showMonthPickerAsOverlay="true">
-      </fab-date-picker>
-      <fab-masked-text-field class="col-md-4" maxLength="6" [(value)]="endClock"
-        [iconProps]="{iconName: 'Clock'}" [mask]="'99:99'" [maskChar]="'-'" [validateOnFocusOut]="true"
-        [getErrorMessage]="getErrorMessageOnTextField"></fab-masked-text-field>
+  <fab-choice-group [options]="choiceGroupOptions" defaultSelectedKey="'Last24Hours'">
+  </fab-choice-group>
+  <div *ngIf="showTimerPicker" class="row">
+    <div style="padding:15px">Start Time </div>
+    <fab-date-picker class="col-md-8" [strings]="dates" [minDate]="minDate" [maxDate]="maxDate" placeholder="Select a date..."
+      ariaLabel="Select start date" allowTextInput="true" showMonthPickerAsOverlay="true">
+    </fab-date-picker>
+    <fab-masked-text-field class="col-md-4" maxLength="6" [(value)]="endClock" [iconProps]="{iconName: 'Clock'}" [mask]="'99:99'"
+      [maskChar]="'-'" [validateOnFocusOut]="true" [getErrorMessage]="getErrorMessageOnTextField"></fab-masked-text-field>
 
-        <div style="padding:15px; margin-top:30px">End Time  </div>
-        <fab-date-picker class="col-md-8" [strings]="dates" [minDate]="minDate" [maxDate]="maxDate"
-          placeholder="Select a date..." ariaLabel="Select end date" allowTextInput="true"
-          showMonthPickerAsOverlay="true">
-        </fab-date-picker>
-        <fab-masked-text-field class="col-md-4" maxLength="6" [(value)]="startClock"
-          [iconProps]="{iconName: 'Clock'}" [mask]="'99:99'" [maskChar]="'-'" [validateOnFocusOut]="true"
-          [getErrorMessage]="getErrorMessageOnTextField"></fab-masked-text-field>
-    </div>
-    <div style="padding:15px 0px">
+    <div style="padding:15px; margin-top:30px">End Time </div>
+    <fab-date-picker class="col-md-8" [strings]="dates" [minDate]="minDate" [maxDate]="maxDate" placeholder="Select a date..."
+      ariaLabel="Select end date" allowTextInput="true" showMonthPickerAsOverlay="true">
+    </fab-date-picker>
+    <fab-masked-text-field class="col-md-4" maxLength="6" [(value)]="startClock" [iconProps]="{iconName: 'Clock'}" [mask]="'99:99'"
+      [maskChar]="'-'" [validateOnFocusOut]="true" [getErrorMessage]="getErrorMessageOnTextField"></fab-masked-text-field>
+  </div>
+  <div style="padding:15px 0px">
     <fab-primary-button style="margin-right:10px" text="Apply" (onClick)="applyTimeRange()"></fab-primary-button>
     <fab-default-button text="Cancel" (onClick)="cancelTimeRange()"></fab-default-button>
   </div>
-  </fab-callout>
+</fab-callout>
+<fab-choice-group *ngIf="showCalendar" style="position: absolute;
+top: 20px;
+right: 0px ;
+background: #FFFFFF;
+padding: 8px;
+color: #323130;
+font-size: 14px;" label="Label" [options]="options" (onChange)="setCategoryIndex($event)" defaultSelectedKey="0">
+</fab-choice-group>
+
+<fab-calendar *ngIf="showCalendar" (onSelectDate)="onSelectDate($event)" style="position: absolute;
+top: 20px;
+right: 0px ;
+background: #FFFFFF;
+padding: 8px;
+color: #323130;
+font-size: 14px;">
+  <fab-calendar-strings [months]="[
+'January',
+'Fabruary',
+'March',
+'April',
+'May',
+'June',
+'July',
+'August',
+'September',
+'October',
+'November',
+'December'
+]" [shortMonths]="['Jan', 'Fab', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']" [days]="['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']"
+    [shortDays]="['S', 'M', 'T', 'W', 'T', 'F', 'S']" goToToday="Go to last 24h" weekNumberFormatString="Week number {0}"></fab-calendar-strings>
+</fab-calendar>
 <div class="category-container" style="width:100%">
-  <fab-choice-group *ngIf="showCalendar" style="position: absolute;
-            top: 20px;
-            right: 0px ;
-            background: #FFFFFF;
-            padding: 8px;
-            color: #323130;
-            font-size: 14px;" label="Label" [options]="options" (onChange)="setCategoryIndex($event)"
-    defaultSelectedKey="0">
-  </fab-choice-group>
-
-  <fab-calendar *ngIf="showCalendar" (onSelectDate)="onSelectDate($event)" style="position: absolute;
-            top: 20px;
-            right: 0px ;
-            background: #FFFFFF;
-            padding: 8px;
-            color: #323130;
-            font-size: 14px;">
-    <fab-calendar-strings [months]="[
-          'January',
-          'Fabruary',
-          'March',
-          'April',
-          'May',
-          'June',
-          'July',
-          'August',
-          'September',
-          'October',
-          'November',
-          'December'
-        ]" [shortMonths]="['Jan', 'Fab', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']"
-      [days]="['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']"
-      [shortDays]="['S', 'M', 'T', 'W', 'T', 'F', 'S']" goToToday="Go to last 24h"
-      weekNumberFormatString="Week number {0}"></fab-calendar-strings>
-  </fab-calendar>
-
   <div>
     <h3 class="category-title">{{category.name}}</h3>
     <p class="category-description">{{category.description}}</p>
@@ -259,54 +246,64 @@ You can always click "Ask Genie" to get back chat window.
     <fab-search-box placeholder="Search"></fab-search-box>
   </div> -->
 
-  <fab-panel [isOpen]="isOpen" [type]="type" [customWidth]="width" [isHiddenOnDismiss]="true" [isLightDismiss]="true"
-    [hasCloseButton]="false" [closeButtonAriaLabel]="'close'">
-    <div style="margin-bottom: 10px">
-      <div
-        style="position: absolute; left:25px; right: 32px; top:0px; height: 32px; font-family: 'segoe UI'; font-size: 18px; line-height: 24px; font-weight: 600;display: flex; align-items: flex-end">
-        Hi my name is genie</div>
-      <div
-        style="color:#605E5C; position: absolute; left:25px; right: 32px; top:35px; height: 19px; font-family: 'segoe UI'; font-size: 10px; line-height: 14px; display: block">
-        Help bot</div>
-      <div style="position: absolute; top:10px; right: 10px; display: flex; align-items: flex-end; cursor: pointer;">
-        <i id="close" class="ms-Icon ms-Icon--Cancel" (click)="closePanel()" aria-hidden="true"></i>
-        <!-- <fab-icon iconName="Cancel" style="float:right" (onClick)="closePanel()"></fab-icon> -->
-      </div>
-    </div>
-    <div class="panel-content" style="margin-top: 60px; margin-left: -25px;">
-      <fab-pivot>
-        <fab-pivot-item headerText="Chat" #scrollMe>
-          <div #scrollMe2 id="scrollme1" [style.height.px]="chatContainerHeight" *ngIf="messages && messages.length > 0"
-            style="overflow-y: auto;" class="ms-Panel-scrollableContent scroll-bottom">
-            <div class="row animated fadeIn chat-message-container" *ngFor="let item of messages"
-              style="margin-left:0px">
-              <dynamic-component [componentData]="item" (onComplete)=" scrollToBottom()"></dynamic-component>
-            </div>
-          </div>
-        </fab-pivot-item>
-        <fab-pivot-item headerText="Insights">
-          <div></div>
-        </fab-pivot-item>
-        <fab-pivot-item headerText="History">
-          <div></div>
-        </fab-pivot-item>
-      </fab-pivot>
-    </div>
+  <!-- [isOpen]="isOpen" -->
+  <fab-panel [isOpen]="isOpen" [type]="type" [customWidth]="width" [isHiddenOnDismiss]="true" [isLightDismiss]="true" [hasCloseButton]="false"
+    [closeButtonAriaLabel]="'close'">
+    <div class="row">
+      <!-- <div style="width:5%; margin-top:10px">
+        <fab-icon iconName="DoubleChevronLeftMed" (click)="closePanel()"></fab-icon>
+      </div> -->
+      <div>
+        <div style="margin-bottom: 10px">
+          <div style="position: absolute; left:25px; right: 32px; top:0px; height: 32px; font-family: 'segoe UI'; font-size: 18px; line-height: 24px; font-weight: 600;display: flex; align-items: flex-end">
+            Hi my name is genie</div>
+          <div style="color:#605E5C; position: absolute; left:25px; right: 32px; top:35px; height: 19px; font-family: 'segoe UI'; font-size: 10px; line-height: 14px; display: block">
+            Help bot</div>
+          <div style="position: absolute; top:10px; right: 10px; display: flex; align-items: flex-end; cursor: pointer;">
+            <!-- <i id="close" class="ms-Icon ms-Icon--Cancel" (click)="closePanel()" aria-hidden="true"></i> -->
+            <i class="fa fa-angle-double-right close-button" (click)="closePanel()"></i>
 
-    <div class="chat-search-box" style="position: absolute; bottom: 19px; left: 37px; right: 37px">
-      <!-- <fab-text-field [placeholder]="'Type your question'" [iconProps]="{iconName: 'send'}"></fab-text-field> -->
-      <!-- [iconProps]="{iconName: 'send'}" -->
-      <fab-search-box [placeholder]="'Type your question'" (onSearch)="onSearchEnter($event)"
-        [iconProps]="{iconName: 'send'}" contentStyle="height:31px;border-radius:15px"></fab-search-box>
+            <!-- <fab-icon iconName="Cancel" style="float:right" (onClick)="closePanel()"></fab-icon> -->
+          </div>
+        </div>
+        <div class="panel-content" style="margin-top: 60px;">
+          <fab-pivot>
+            <fab-pivot-item headerText="Chat" #scrollMe>
+              <!-- <div class="col-md col-sm col-lg" style=" float: left; height: 100%; border-right:1px solid #cccccc; "  (click)="openPanel()">
+                  <i class="fa fa-angle-double-left" style="margin: 5px;font-size:13px;" (click)="closePanel()"></i>
+                </div> -->
+              <div #scrollMe2 id="scrollme1" [style.height.px]="chatContainerHeight" *ngIf="messages && messages.length > 0" style="overflow-y: auto; display: inline-block"
+                class="ms-Panel-scrollableContent scroll-bottom">
+                <div class="row animated fadeIn chat-message-container" *ngFor="let item of messages" style="margin-left:0px">
+                  <dynamic-component [componentData]="item" (onComplete)=" scrollToBottom()"></dynamic-component>
+                </div>
+              </div>
+            </fab-pivot-item>
+            <fab-pivot-item headerText="Insights">
+              <div></div>
+            </fab-pivot-item>
+            <fab-pivot-item headerText="History">
+              <div></div>
+            </fab-pivot-item>
+          </fab-pivot>
+        </div>
+
+        <div class="chat-search-box" style="position: absolute; bottom: 19px; left: 37px; right: 37px">
+          <!-- <fab-text-field [placeholder]="'Type your question'" [iconProps]="{iconName: 'send'}"></fab-text-field> -->
+          <!-- [iconProps]="{iconName: 'send'}" -->
+          <fab-search-box [placeholder]="'Type your question'" (onSearch)="onSearchEnter($event)" [iconProps]="{iconName: 'send'}"
+            contentStyle="height:31px;border-radius:15px"></fab-search-box>
+        </div>
+      </div>
     </div>
     <!-- <span>Chat</span> -->
   </fab-panel>
-  <!-- <health-check-v3></health-check-v3> -->
-  <!-- <p style="font-size: 12px;">Are you looking for something else?</p>
-  <div class="search-box">
-    <fab-search-box placeholder="Search"></fab-search-box>
-  </div> -->
   <div style="margin-left: -20px;">
     <detector-container [detector]="categoryId" [hideDetectorControl]="true"></detector-container>
   </div>
+</div>
+</div>
+<div class="col-md col-sm col-lg" class="collapse-button" style=" float: right; height: 100vh; border-left:1px solid #cccccc; "  (click)="openPanel()">
+  <i class="fa fa-angle-double-left" style="margin: 5px;font-size:13px;" (click)="closePanel()"></i>
+</div>
 </div>
