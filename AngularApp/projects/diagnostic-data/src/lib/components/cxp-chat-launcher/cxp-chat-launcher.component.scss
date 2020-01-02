@@ -3,24 +3,34 @@
 
 $chatBubble-color: rgb(0, 120, 212);
 
- .cxpChat-Container  {
+.chatBubble {
+    position: fixed;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-    align-items: flex-start;
-    padding: 0px;
-    position: relative;
- }
+    justify-content: center;
+    background: ghostwhite;
+    width:5em;
+    height:5em;
+    bottom:10px;
+    left:10px;
+    text-align: center;
+    box-shadow: 0 0 15px #00214B;
+    border-radius:50%;
+    cursor: pointer;
+    background-color: $chatBubble-color;
+}
 
- .cxpChat-cellContainer {
-    display: flex;
-    align-items: center;     
- }
+.chatIcon {
+    font-size:1.7em;
+    color: ghostwhite;
+}
 
  .arrow-bottom  {
     width: 2.5%;
     height: 0;
-    z-index: 100;     
+    position:fixed;
+    bottom:5.9em;
+    left:2.5em;
  }
 
  .arrow-bottom::before {
@@ -43,10 +53,10 @@ $chatBubble-color: rgb(0, 120, 212);
     padding: 5px;
     z-index:99;
     border-radius: 2px;
-    border:solid 1px grey;
-    position: absolute;
-    width: 30em;
-    margin-top: -5.2em;
+    border:solid 1px $chatBubble-color;
+    position: fixed;
+    left:2.4em;
+    bottom:6.1em;
 }
 
 
@@ -60,7 +70,7 @@ $chatBubble-color: rgb(0, 120, 212);
 
 .cxpChat-actionBtnContainer {
     display: flex;
-    justify-content: space-evenly;
+    justify-content: space-around;
     margin-bottom: 10px;
 }
 
@@ -83,8 +93,4 @@ $chatBubble-color: rgb(0, 120, 212);
 
 .white-border {
     border: 1px solid white;
-}
-
-.remove-left-margin {
-    margin-left: 0px;
 }

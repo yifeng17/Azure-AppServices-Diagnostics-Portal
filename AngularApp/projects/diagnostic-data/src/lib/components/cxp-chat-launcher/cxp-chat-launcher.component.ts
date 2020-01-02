@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Renderer2 } from '@angular/core';
 import { CXPChatService } from 'projects/app-service-diagnostics/src/app/shared/services/cxp-chat.service';
 
 @Component({
@@ -10,42 +10,56 @@ export class CxpChatLauncherComponent implements OnInit {
 
   @Input() trackingId: string;
   @Input() chatUrl: string;
-  public isChatBubbleVisible: boolean = false;
+  public showChatConfDialog: boolean = false;
 
-  constructor(private _cxpChatService:CXPChatService) {
+  @ViewChild('chatComponentContainer') chatComponentContainer;
+
+  constructor(private _cxpChatService: CXPChatService, private renderer: Renderer2) {
   }
 
-  ngOnInit() {    
+  ngOnInit() {
+    this.renderer.listen('window', 'click', (e: Event) => {
+      /**
+       * Only run when the current chat component is not clicked
+       * If we don't check this, all clicks (even on the chat component div) gets into this section.
+       * As a  result we will never see the confirmation box open       
+       */
+
+      if (!this.chatComponentContainer.nativeElement.contains(e.target)) {
+        this.showChatConfDialog = false;
+      }
+    });
   }
 
-  public isComponentInitialized():boolean {
+  public isComponentInitialized(): boolean {
     return this.chatUrl && this.chatUrl != '' && this.trackingId && this.trackingId != '';
   }
 
-  public toggleChatBubble():void {
-    if(this.isChatBubbleVisible) {
-      this._cxpChatService.logUserActionOnChat('ChatBubbleShown',this.trackingId, this.chatUrl);
+  public toggleChatBubble(): void {
+
+    if (this.showChatConfDialog) {
+      this._cxpChatService.logUserActionOnChat('ChatBubbleShown', this.trackingId, this.chatUrl);
     }
     else {
-      this._cxpChatService.logUserActionOnChat('ChatBubbleDismissed',this.trackingId, this.chatUrl);
+      this._cxpChatService.logUserActionOnChat('ChatBubbleDismissed', this.trackingId, this.chatUrl);
     }
-    
-    this.isChatBubbleVisible=!this.isChatBubbleVisible;
+
+    this.showChatConfDialog = !this.showChatConfDialog;
   }
 
-  public hideChatBubble(isUserInitiated:boolean):void {
-    if(isUserInitiated) {
-      this._cxpChatService.logUserActionOnChat('ChatBubbleCancel',this.trackingId, this.chatUrl);
+  public hideChatBubble(isUserInitiated: boolean): void {
+    if (isUserInitiated) {
+      this._cxpChatService.logUserActionOnChat('ChatBubbleCancel', this.trackingId, this.chatUrl);
     }
-    this.isChatBubbleVisible=false;
+    this.showChatConfDialog = false;
   }
 
-  public openChatPopup():void {
-    if(this.chatUrl != '') {      
-      const windowFeatures:string = 'menubar=no,location=no,resizable=no,scrollbars=no,status=no,height=550,width=450';
+  public openChatPopup(): void {
+    if (this.chatUrl != '') {
+      const windowFeatures: string = 'menubar=no,location=no,resizable=no,scrollbars=no,status=no,height=550,width=450';
       window.open(this.chatUrl, '_blank', windowFeatures, false);
 
-      this._cxpChatService.logUserActionOnChat('ChatUrlOpened',this.trackingId, this.chatUrl);
+      this._cxpChatService.logUserActionOnChat('ChatUrlOpened', this.trackingId, this.chatUrl);
 
       this.hideChatBubble(false);
     }
