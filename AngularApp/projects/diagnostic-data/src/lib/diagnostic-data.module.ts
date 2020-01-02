@@ -81,7 +81,8 @@ import { HighchartsChartModule } from 'highcharts-angular';
 import { HighchartsGraphComponent } from './components/highcharts-graph/highcharts-graph.component';
 import { CXPChatService } from 'projects/app-service-diagnostics/src/app/shared/services/cxp-chat.service';
 import { CxpChatLauncherComponent } from './components/cxp-chat-launcher/cxp-chat-launcher.component';
-
+import { AppInsightsEnablementComponent } from './components/app-insights-enablement/app-insights-enablement.component';
+import { ConnectAppInsightsComponent } from './components/connect-app-insights/connect-app-insights.component';
 
 @NgModule({
   imports: [
@@ -114,7 +115,9 @@ import { CxpChatLauncherComponent } from './components/cxp-chat-launcher/cxp-cha
     AppDependenciesComponent,
     AppInsightsMarkdownComponent,
     HighchartsGraphComponent,
-    CxpChatLauncherComponent
+    CxpChatLauncherComponent,
+    AppInsightsEnablementComponent,
+    ConnectAppInsightsComponent
   ],
   exports: [
     FormsModule, TimeSeriesGraphComponent, DataTableComponent, DynamicDataComponent, DetectorViewComponent,
@@ -126,7 +129,9 @@ import { CxpChatLauncherComponent } from './components/cxp-chat-launcher/cxp-cha
     ChangesViewComponent,
     DetectorListAnalysisComponent,
     AppInsightsMarkdownComponent,
-    CxpChatLauncherComponent
+    CxpChatLauncherComponent,
+    AppInsightsEnablementComponent,
+    ConnectAppInsightsComponent
   ],
 })
 export class DiagnosticDataModule {
