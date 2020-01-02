@@ -58,7 +58,7 @@ export class CategoryOverviewComponent implements OnInit {
     messages: Message[] = [];
     showTypingMessage: boolean;
     chatContainerHeight: number;
-    isOpen: boolean = false;
+    openPanel: boolean = false;
     // navigationContent: InputRendererOptions<IPanelProps>;
     //  navigationContent: RenderPropContext<IPanelProps>;
     navigationContent: (() => HTMLElement);
@@ -67,8 +67,7 @@ export class CategoryOverviewComponent implements OnInit {
     welcomeMessage: string = "Welcome to App Service Diagnostics. My name is Genie and I am here to help you answer any questions you may have about diagnosing and solving your problems with your app. Please describe the issue of your app.";
     panelStyles: any;
     type: PanelType = PanelType.custom;
-    width: string = "1200px";
-    collapseWidth: string ="60px";
+
 
 
 
@@ -223,19 +222,19 @@ export class CategoryOverviewComponent implements OnInit {
     }
 
     openMessageBar: boolean = false;
-    closePanel() {
-        this.isOpen = false;
-        console.log("close panel, isOpen:", this.isOpen);
+    closeGeniePanel() {
+        this.openPanel = false;
+        console.log("close panel, isOpen:", this.openPanel);
     }
 
     toggleOpenState() {
-        this.isOpen = !this.isOpen;
-        console.log("toggle panel, isOpen:", this.isOpen);
+        this.openPanel = !this.openPanel;
+        console.log("toggle panel, isOpen:", this.openPanel);
     }
 
-    openPanel() {
-        this.isOpen = true;
-        console.log("open panel, isOpen:", this.isOpen);
+    openGeniePanel() {
+        this.openPanel = true;
+        console.log("open panel, isOpen:", this.openPanel);
     }
 
     ngOnInit() {
@@ -258,8 +257,8 @@ export class CategoryOverviewComponent implements OnInit {
 
 
         document.getElementById('close').onclick = () => {
-            this.isOpen = false;
-            console.log("this.isOpen", this.isOpen);
+            this.openPanel = false;
+            console.log("this.isOpen", this.openPanel);
         }
 
 

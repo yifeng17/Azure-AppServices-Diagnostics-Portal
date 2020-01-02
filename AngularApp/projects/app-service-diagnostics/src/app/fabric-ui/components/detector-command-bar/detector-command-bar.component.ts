@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, TemplateRef, ElementRef, Renderer2 } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, TemplateRef, ElementRef, Renderer2 } from '@angular/core';
 import { addMonths, addYears, addDays, addWeeks } from 'office-ui-fabric-react/lib/utilities/dateMath/DateMath';
 import { FabDropdownComponent } from '@angular-react/fabric';
 import { mergeStyleSets, hiddenContentStyle, MessageBarType, FontSizes } from 'office-ui-fabric-react';
@@ -24,6 +24,11 @@ import {
 })
 export class DetectorCommandBarComponent implements OnInit {
   @ViewChild('timepicker', { static: true }) timepicker: any;
+  @Input() openPanel: boolean = false;
+
+  // Genie panel
+  width: string = "1200px";
+  collapseWidth: string ="60px";
 
   internalTime: string = "";
   showCalendar: boolean = false;
@@ -41,12 +46,12 @@ export class DetectorCommandBarComponent implements OnInit {
 
   dropdownStyles = {
     // type: PanelType.smallFixedNear,
-    isOpen: false
+    openPanel: false
     //   customWidth: "585",
 };
 
 
-isOpen: boolean = false;
+
   showChoices: boolean = false;
   showTimerPicker: boolean = false;
   calloutStyles: any = {
@@ -67,7 +72,7 @@ isOpen: boolean = false;
   logEvent(...args: any[]) {
     console.log(args);
     if (args.length > 1 && args[1].option != undefined && args[1].option.key === "Custom") {
-      this.dropdownStyles.isOpen = true;
+      this.dropdownStyles.openPanel = true;
       this.options.push({ key: 'StartTime', text: 'Start Time' });
       this.options.push({ key: 'EndTime', text: 'End Time' });
     }
@@ -116,8 +121,13 @@ isOpen: boolean = false;
   }
 
   toggleOpenState() {
-    this.isOpen = !this.isOpen;
-    console.log("toggle panel, isOpen:", this.isOpen);
+    this.openPanel = !this.openPanel;
+    console.log("toggle panel, isOpen:", this.openPanel);
+}
+
+closeGeniePanel() {
+    this.openPanel = false;
+    console.log("close panel, isOpen:", this.openPanel);
 }
 
   sendFeedback() {

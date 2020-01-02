@@ -1,75 +1,24 @@
 <div>
-<div class="col-md col-ms col-lg" style="width:98%; display: inline-block;">
-<detector-command-bar></detector-command-bar>
-<div class="category-container" style="width:100%">
-  <div>
-    <h3 class="category-title">{{category.name}}</h3>
-    <p class="category-description">{{category.description}}</p>
-  </div>
+  <div class="col-md col-ms col-lg" style="width:98%; display: inline-block;">
+    <detector-command-bar [openPanel]="openPanel"></detector-command-bar>
+    <div class="category-container" style="width:100%">
+      <div>
+        <h3 class="category-title">{{category.name}}</h3>
+        <p class="category-description">{{category.description}}</p>
+      </div>
 
-  <!-- <div class="search-box" style="margin-bottom: 25px;">
+      <!-- <div class="search-box" style="margin-bottom: 25px;">
     <fab-search-box placeholder="Search"></fab-search-box>
   </div> -->
 
-  <!-- [isOpen]="isOpen" -->
-  <fab-panel [isOpen]="isOpen" [type]="type" [customWidth]="width" [isHiddenOnDismiss]="true" [isLightDismiss]="true" [hasCloseButton]="false"
-    [closeButtonAriaLabel]="'close'">
-    <div class="row">
-      <!-- <div style="width:5%; margin-top:10px">
-        <fab-icon iconName="DoubleChevronLeftMed" (click)="closePanel()"></fab-icon>
-      </div> -->
-      <div>
-        <div style="margin-bottom: 10px">
-          <div style="position: absolute; left:25px; right: 32px; top:0px; height: 32px; font-family: 'segoe UI'; font-size: 18px; line-height: 24px; font-weight: 600;display: flex; align-items: flex-end">
-            Hi my name is genie</div>
-          <div style="color:#605E5C; position: absolute; left:25px; right: 32px; top:35px; height: 19px; font-family: 'segoe UI'; font-size: 10px; line-height: 14px; display: block">
-            Help bot</div>
-          <div style="position: absolute; top:10px; right: 10px; display: flex; align-items: flex-end; cursor: pointer;">
-            <!-- <i id="close" class="ms-Icon ms-Icon--Cancel" (click)="closePanel()" aria-hidden="true"></i> -->
-            <i class="fa fa-angle-double-right close-button" (click)="closePanel()"></i>
-
-            <!-- <fab-icon iconName="Cancel" style="float:right" (onClick)="closePanel()"></fab-icon> -->
-          </div>
-        </div>
-        <div class="panel-content" style="margin-top: 60px;">
-          <fab-pivot>
-            <fab-pivot-item headerText="Chat" #scrollMe>
-              <!-- <div class="col-md col-sm col-lg" style=" float: left; height: 100%; border-right:1px solid #cccccc; "  (click)="openPanel()">
-                  <i class="fa fa-angle-double-left" style="margin: 5px;font-size:13px;" (click)="closePanel()"></i>
-                </div> -->
-              <div #scrollMe2 id="scrollme1" [style.height.px]="chatContainerHeight" *ngIf="messages && messages.length > 0" style="overflow-y: auto; display: inline-block; height: 78vh;"
-                class="ms-Panel-scrollableContent scroll-bottom">
-                <div class="row animated fadeIn chat-message-container" *ngFor="let item of messages" style="margin-left:0px">
-                    <!-- " Remove this functionality because we want the critical info to be shown to the customers-->
-                  <dynamic-component [componentData]="item" (onComplete)="scrollToBottom()"></dynamic-component>
-                </div>
-              </div>
-            </fab-pivot-item>
-            <fab-pivot-item headerText="Insights">
-              <div></div>
-            </fab-pivot-item>
-            <fab-pivot-item headerText="History">
-              <div></div>
-            </fab-pivot-item>
-          </fab-pivot>
-        </div>
-
-        <div class="chat-search-box" style="position: absolute; bottom: 19px; left: 37px; right: 37px">
-          <!-- <fab-text-field [placeholder]="'Type your question'" [iconProps]="{iconName: 'send'}"></fab-text-field> -->
-          <!-- [iconProps]="{iconName: 'send'}" -->
-          <fab-search-box [placeholder]="'Type your question'" (onSearch)="onSearchEnter($event)" [iconProps]="{iconName: 'send'}"
-            contentStyle="height:31px;border-radius:15px"></fab-search-box>
-        </div>
+      <!-- [isOpen]="isOpen" -->
+      <div style="margin-left: -20px;">
+        <detector-container [detector]="categoryId" [hideDetectorControl]="true"></detector-container>
       </div>
     </div>
-    <!-- <span>Chat</span> -->
-  </fab-panel>
-  <div style="margin-left: -20px;">
-    <detector-container [detector]="categoryId" [hideDetectorControl]="true"></detector-container>
   </div>
-</div>
-</div>
-<div class="col-md col-sm col-lg" class="collapse-button" style=" float: right; height: 100vh; border-left:1px solid #cccccc; "  (click)="openPanel()">
-  <i class="fa fa-angle-double-left" style="margin: 5px;font-size:13px;" (click)="closePanel()"></i>
-</div>
+  <div class="col-md col-sm col-lg" class="collapse-button"
+    style=" float: right; height: 100vh; border-left:1px solid #cccccc; " (click)="openGeniePanel()">
+    <i class="fa fa-angle-double-left" style="margin: 5px;font-size:13px;" (click)="closeGeniePanel()"></i>
+  </div>
 </div>
