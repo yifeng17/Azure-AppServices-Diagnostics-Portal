@@ -64,15 +64,22 @@ export class GeniePanelComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log("init genie with openPanel", this.globals.openGeniePanel);
-    this.messages.push(new TextMessage(this.welcomeMessage, MessageSender.System, 200));
+    console.log("init genie with openPanel", this.globals);
+
+
+    // Pop messages from globals messages:
+    this.messages = this.globals.messages;
+    if (this.globals.messages.length === 0)
+    {
+        this.globals.messages.push(new TextMessage(this.welcomeMessage, MessageSender.System, 200));
+    }
     this.chatContainerHeight = window.innerHeight - 170;
 
     this.renderFooter = () => {
         // let panelTitle =  document.createElement('fab-search-box') as HTMLElement;
         let panelTitle = document.createElement('div') as HTMLElement;
         //  panelTitle.placeholder = 'Type your question';
-        // panelTitle.style.left = '25px';
+        // panelTitle.style.left = '25px';f
         // panelTitle.style.right = '32px';
         // panelTitle.style.top = '0px';
         // panelTitle.style.height = '27px';
@@ -95,11 +102,16 @@ export class GeniePanelComponent implements OnInit {
 
   onSearchEnter(event: any): void {
     this._genieChatFlow.createMessageFlowForAnaysis(event.newValue).subscribe((analysisMessages: Message[]) => {
+        console.log("**** analysis messsages", analysisMessages);
         analysisMessages.forEach(message => {
-            this.messages.push(message);
+            // message.component.oncomplete === true &&
+            if (this.globals.messages.indexOf(message) < 0)
+            {
+                this.globals.messages.push(message);
+            }
         });
 
-        console.log("constructing messages onsearch", this.messages);
+        console.log("constructing messages onsearch", this.globals.messages);
     });
 }
 
@@ -123,22 +135,22 @@ scrollToBottom(event?: any): void {
 }
 
 
-getMessage(event?: any): void {
-    console.log("status oncomplete: event", event);
-    const self = this;
-    const message = this._messageProcessor.getNextMessage(event);
+// getMessage(event?: any): void {
+//     console.log("status oncomplete: event", event);
+//     const self = this;
+//     const message = this._messageProcessor.getNextMessage(event);
 
-    if (message) {
-        this.messages.push(message);
-        if (message.messageDelayInMs >= 2000) {
-            this.showTypingMessage = true;
+//     if (message) {
+//         this.messages.push(message);
+//         if (message.messageDelayInMs >= 2000) {
+//             this.showTypingMessage = true;
 
-            // To show the typing message icon, we need to scroll the page to the bottom.
-            setTimeout(() => {
-                //  this.scrollToBottom();
-            }, 200);
-        }
-    }
-}
+//             // To show the typing message icon, we need to scroll the page to the bottom.
+//             setTimeout(() => {
+//                 //  this.scrollToBottom();
+//             }, 200);
+//         }
+//     }
+// }
 
 }

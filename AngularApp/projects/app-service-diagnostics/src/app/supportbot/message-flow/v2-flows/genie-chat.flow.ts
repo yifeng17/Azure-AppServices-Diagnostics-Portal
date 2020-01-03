@@ -25,6 +25,7 @@ export class GenieChatFlow extends IMessageFlowProvider {
 
   categoriesCreated: Category[] = [];
 
+
   constructor(private _diagnosticApiService: DiagnosticService, private _resourceService: ResourceService, private _genericArmConfigService?: GenericArmConfigService) {
     super();
 

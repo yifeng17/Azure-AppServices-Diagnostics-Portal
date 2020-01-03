@@ -28,10 +28,10 @@
           <i class="fa fa-angle-double-left" style="margin: 5px;font-size:13px;" (click)="closePanel()"></i>
         </div> -->
           <div #scrollMe2 id="scrollme1" [style.height.px]="chatContainerHeight"
-            *ngIf="messages && messages.length > 0"
+            *ngIf="globals.messages && globals.messages.length > 0"
             style="overflow-y: auto; display: inline-block; height: 78vh;"
             class="ms-Panel-scrollableContent scroll-bottom">
-            <div class="row animated fadeIn chat-message-container" *ngFor="let item of messages"
+            <div class="row animated fadeIn chat-message-container" *ngFor="let item of globals.messages"
               style="margin-left:0px">
               <!-- " Remove this functionality because we want the critical info to be shown to the customers-->
               <dynamic-component [componentData]="item" (onComplete)="scrollToBottom()"></dynamic-component>

@@ -24,6 +24,8 @@ export class DynamicAnalysisComponent implements OnInit, AfterViewInit, IChatMes
     this.searchMode = SearchAnalysisMode.Genie;
     this.keyword = this.injector.get('keyword');
     console.log("***Dynamic analysis keyword", this.keyword);
+
+
    // this._routerLocal.navigate([`../analysis/searchResultsAnalysis/search`], { relativeTo: this._activatedRouteLocal, queryParamsHandling: 'merge', queryParams: {searchTerm: this.keyword} });
   }
 
@@ -39,6 +41,7 @@ export class DynamicAnalysisComponent implements OnInit, AfterViewInit, IChatMes
 
     console.log("status Value", statusValue);
     this.onComplete.emit(statusValue);
+
   }
 }
 
