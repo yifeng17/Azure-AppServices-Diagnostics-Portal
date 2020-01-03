@@ -1,0 +1,31 @@
+<div style="margin:25px 0px;" role="search" class="search-result-container">
+  <div class="search-box" #fabSearchBox (blur)="onClearHandler()">
+    <fab-search-box id="fabSearchBox" tabindex="0" type="search" placeholder="Search" [value]="searchValue"
+      (onChange)="updateSearchValue($event)" (onFocus)="onSearchBoxFocus()" (onBlur)="onBlurHandler()" 
+      (onEscape)="clearSrarchWithKey()" 
+      aria-controls="search-results">
+    </fab-search-box>
+  </div>
+
+  <div class="result-container" *ngIf="showSearchResults">
+    <div class="result-group">
+      <div class="result-item" *ngFor="let feature of features" (mousedown)="navigateToFeature(feature)" (keyup.enter)="navigateToFeature(feature)" tabindex="0">
+        <div style="display: flex;flex-direction: row;align-items: center;justify-content: start;">
+          <div class="feature-icon">
+            <div class="feature-icon-circle" [style.background-color]="feature.featureType.color">
+              <i class="fa" [ngClass]="feature.featureType.icon"></i>
+            </div>
+          </div>
+          <div class="feature-title">{{feature.name}}</div>
+        </div>
+        <div class="feature-category">
+          {{feature.category}}
+        </div>
+      </div>
+    </div>
+    <div *ngIf="inputAriaLabel != ''">
+      <hr>
+      <div class="result-count">{{inputAriaLabel}}</div>
+    </div>
+  </div>
+</div>
