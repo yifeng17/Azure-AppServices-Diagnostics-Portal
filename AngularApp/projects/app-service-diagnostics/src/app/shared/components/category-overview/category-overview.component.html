@@ -84,16 +84,6 @@
       <span style="margin-right: 5px;">Label: All</span>
       <fab-icon iconName="Filter" contentStyle="color: #0078D7;"></fab-icon>
     </span> -->
-    <fab-choice-group *ngIf="showCalendar"
-    style="position: absolute;
-            top: 20px;
-            right: 0px ;
-            background: #FFFFFF;
-            padding: 8px;
-            color: #323130;
-            font-size: 14px;" label="Label" [options]="options" (onChange)="setCategoryIndex($event)"
-      defaultSelectedKey="0">
-    </fab-choice-group>
 
   <fab-calendar  *ngIf="showCalendar" (onSelectDate)="onSelectDate($event)"
   style="position: absolute;
@@ -132,11 +122,6 @@
     <p class="category-description">{{category.description}}</p>
   </div>
 
-
-
-  <div class="search-box" style="margin-bottom: 25px;">
-    <fab-search-box placeholder="Search"></fab-search-box>
-  </div>
 
   <fab-panel [isOpen]="isOpen" [type]="type" [customWidth]="width" [isHiddenOnDismiss]="true" [isLightDismiss]="true"
     [hasCloseButton]="false" [closeButtonAriaLabel]="'close'">
@@ -192,7 +177,7 @@
   <div class="search-box">
     <fab-search-box placeholder="Search"></fab-search-box>
   </div> -->
-  <div style="margin-left: -20px;">
+  <div style="margin-left: -20px;margin-top: 50px;">
     <detector-container [detector]="categoryId" [hideDetectorControl]="true"></detector-container>
   </div>
 </div>
