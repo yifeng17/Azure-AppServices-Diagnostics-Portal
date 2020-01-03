@@ -18,8 +18,10 @@ import { TimeControlResolver } from './resolvers/time-control.resolver';
 import { ContentService } from '../shared-v2/services/content.service';
 import { FabNavModule, DiagnosticDataModule } from 'diagnostic-data';
 import { GenericAnalysisComponent } from '../shared/components/generic-analysis/generic-analysis.component';
+import { CategorySummaryComponent } from '../fabric-ui/components/category-summary/category-summary.component';
 import { CategoryOverviewComponent } from '../fabric-ui/components/category-overview/category-overview.component';
 import { DetectorCommandBarComponent } from '../fabric-ui/components/detector-command-bar/detector-command-bar.component';
+import { GeniePanelComponent } from '../fabric-ui/components/genie-panel/genie-panel.component';
 import { DiagnosticsSettingsComponent } from './components/diagnostics-settings/diagnostics-settings.component';
 import { SupportTopicService } from '../shared-v2/services/support-topic.service';
 import { MarkdownModule } from 'ngx-markdown';
@@ -82,7 +84,7 @@ export const HomeRoutes = RouterModule.forChild([
   },
   {
     path: 'categories/:category',
-    component: CategoryChatComponent,
+    component: CategorySummaryComponent,
     data: {
       cacheComponent: true
     },
@@ -393,7 +395,7 @@ export const HomeRoutes = RouterModule.forChild([
     FabContextualMenuModule,
     MarkdownModule.forRoot()
   ],
-  declarations: [HomeComponent, CategoryChatComponent, CategoryTileComponent, SearchResultsComponent, SupportTopicRedirectComponent, DiagnosticsSettingsComponent, CategoryOverviewComponent, DetectorCommandBarComponent,CategoryNavComponent, CategoryMenuItemComponent, SearchPipe, SearchMatchPipe, SectionDividerComponent],
+  declarations: [HomeComponent, CategoryChatComponent, CategoryTileComponent, SearchResultsComponent, SupportTopicRedirectComponent, DiagnosticsSettingsComponent, CategorySummaryComponent, CategoryOverviewComponent, DetectorCommandBarComponent, GeniePanelComponent, CategoryNavComponent, CategoryMenuItemComponent, SearchPipe, SearchMatchPipe, SectionDividerComponent],
   providers: [CategoryTabResolver, CategoryChatResolver, TimeControlResolver,
     { provide: GenericSupportTopicService, useExisting: SupportTopicService}
   ]

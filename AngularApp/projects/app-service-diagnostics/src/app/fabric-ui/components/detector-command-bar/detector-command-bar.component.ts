@@ -1,7 +1,6 @@
-import { Component, OnInit, ViewChild, Input, TemplateRef, ElementRef, Renderer2 } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, Output, TemplateRef, ElementRef, Renderer2, EventEmitter } from '@angular/core';
 import { addMonths, addYears, addDays, addWeeks } from 'office-ui-fabric-react/lib/utilities/dateMath/DateMath';
 import { FabDropdownComponent } from '@angular-react/fabric';
-import { mergeStyleSets, hiddenContentStyle, MessageBarType, FontSizes } from 'office-ui-fabric-react';
 
 import {
   PanelType,
@@ -16,6 +15,7 @@ import {
   IPersonaProps,
   IPeoplePickerProps
 } from 'office-ui-fabric-react';
+import { Globals } from '../../../globals';
 
 @Component({
   selector: 'detector-command-bar',
@@ -25,10 +25,7 @@ import {
 export class DetectorCommandBarComponent implements OnInit {
   @ViewChild('timepicker', { static: true }) timepicker: any;
   @Input() openPanel: boolean = false;
-
-  // Genie panel
-  width: string = "1200px";
-  collapseWidth: string ="60px";
+  @Output() openPanelChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   internalTime: string = "";
   showCalendar: boolean = false;
@@ -121,14 +118,12 @@ export class DetectorCommandBarComponent implements OnInit {
   }
 
   toggleOpenState() {
+    this.globals.openGeniePanel = !this.globals.openGeniePanel;
     this.openPanel = !this.openPanel;
-    console.log("toggle panel, isOpen:", this.openPanel);
+    this.openPanelChange.emit(this.openPanel);
+    console.log("toggle panel, isOpen:", this.globals.openGeniePanel);
 }
 
-closeGeniePanel() {
-    this.openPanel = false;
-    console.log("close panel, isOpen:", this.openPanel);
-}
 
   sendFeedback() {
 
@@ -208,9 +203,10 @@ closeGeniePanel() {
   }
 
 
-  constructor() { }
+  constructor(private globals: Globals) { }
 
   ngOnInit() {
+    console.log("Init commandbar with OpenPanel", this.openPanel);
   }
 
 }

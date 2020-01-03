@@ -56,8 +56,11 @@ export class CategoryNavComponent implements OnInit {
             preserveFragment: true,
             relativeTo: this._activatedRoute
         };
-        this._route.navigate(path.split('/'), navigationExtras);
+        var pathSegments = path.split('/');
+        let segments: string[] = [path];
+        this._route.navigate(segments, navigationExtras);
         console.log("this._route", this._route);
+        console.log("activatedRoute", this._activatedRoute);
     }
 
 
@@ -76,45 +79,13 @@ export class CategoryNavComponent implements OnInit {
     //       isSelected: null,
     //       icon: null
     //     }];
-    createNew: CollapsibleMenuItem[] = [
-        {
-            label: 'Your Detectors',
-            onClick: () => {
-                this.navigateTo('create');
-            },
-            expanded: false,
-            subItems: null,
-            isSelected: null,
-            icon: null
-        },
-        {
-            label: 'New Detector',
-            onClick: () => {
-                this.navigateTo('create');
-            },
-            expanded: false,
-            subItems: null,
-            isSelected: null,
-            icon: null
-        },
-        {
-            label: 'New Gist',
-            onClick: () => {
-                this.navigateTo('createGist');
-            },
-            expanded: false,
-            subItems: null,
-            isSelected: null,
-            icon: null
-        }
-    ];
 
 
     private getCurrentRoutePath() {
         this.currentRoutePath = this._activatedRoute.firstChild.snapshot.url.map(urlSegment => urlSegment.path);
       }
     ngOnInit() {
-
+    console.log("init category-nav");
     this._route.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(event => {
         this.getCurrentRoutePath();
       });
