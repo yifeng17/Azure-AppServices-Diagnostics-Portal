@@ -93,8 +93,8 @@ export class FeatureService {
     searchValue = searchValue.toLowerCase();
     return this._features.filter(feature => {
       return feature.name.toLowerCase().indexOf(searchValue) != -1
-        || (feature.category && feature.category.toLowerCase().indexOf(searchValue) != -1)
-        || (feature.description && feature.description.toLowerCase().indexOf(searchValue) != -1);
+        || (feature.category && feature.category.toLowerCase().indexOf(searchValue) != -1);
+        // || (feature.description && feature.description.toLowerCase().indexOf(searchValue) != -1);
     });
   }
 }
