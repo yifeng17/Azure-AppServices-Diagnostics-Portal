@@ -53,7 +53,7 @@
   <markdown *ngIf="supportDocumentContent.length>0" #markdownDiv [data]="supportDocumentContent"></markdown>
 </data-container>
 
-<loader-view style="margin-top:300px" *ngIf="!detectorDataLocalCopy && !errorState" message="Loading Detector..."></loader-view>
+<loader-view style="margin-top:300px" *ngIf="!detectorDataLocalCopy && !errorState" [message]="isCategoryOverview? 'Loading Category...' : 'Loading Detector...'"></loader-view>
 
 <ng-container *ngIf="!detectorDataLocalCopy && errorState">
   Error: <span class="critical-color" *ngIf="errorState.error">{{errorState.error}}</span><span class="critical-color" *ngIf="!errorState.error">Unknown error occurred.</span>

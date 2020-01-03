@@ -76,6 +76,7 @@ export class DetectorViewComponent implements OnInit {
   @Input() analysisMode: boolean = false;
   @Input() isAnalysisView: boolean = false;
   @Input() hideDetectorHeader: boolean = false;
+  @Input() isCategoryOverview:boolean = false;
   feedbackButtonLabel: string = 'Send Feedback';
 
   constructor(@Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig, private telemetryService: TelemetryService,
