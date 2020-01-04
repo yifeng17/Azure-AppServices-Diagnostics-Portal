@@ -33,7 +33,7 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
 
   ngOnInit() {
     if (this.isPublic) {
-      this.renderCXPChatButton();
+      //this.renderCXPChatButton();
     }
     this._activatedRouteLocal.paramMap.subscribe(params => {
       this.analysisId = params.get('analysisId');
@@ -82,10 +82,10 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
   }
 
   showChatButton():boolean {
-    return this.isPublic && this.cxpChatTrackingId != '' && this.cxpChatUrl != '';
+    return true;//this.isPublic && this.cxpChatTrackingId != '' && this.cxpChatUrl != '';
   }
 
-  renderCXPChatButton(){    
+  /*renderCXPChatButton(){    
     if(this.cxpChatTrackingId === '' && this.cxpChatUrl === '') {
       if(this._supportTopicService && this._cxpChatService && this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId)) {        
           this.cxpChatTrackingId = this._cxpChatService.generateTrackingId();
@@ -96,6 +96,6 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
           });               
       }
     }
-  }
+  }*/
 
 }

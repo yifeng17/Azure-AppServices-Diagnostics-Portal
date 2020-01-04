@@ -114,7 +114,7 @@ export class DetectorViewComponent implements OnInit {
           this.populateSupportTopicDocument();
           if(this.isPublic && !this.isAnalysisView && data.metadata.type === DetectorType.Detector) {
             //Since the analysis view is already showing the chat button, no need to show the chat button on the detector (csx) implementing the analysis view.
-            this.renderCXPChatButton();
+            //this.renderCXPChatButton();
           }          
         }
 
@@ -257,11 +257,12 @@ export class DetectorViewComponent implements OnInit {
   }
 
   showChatButton():boolean {
-    return this.isPublic && !this.isAnalysisView && this.cxpChatTrackingId != '' && this.cxpChatUrl != '';
+    return true;
+    //return this.isPublic && !this.isAnalysisView && this.cxpChatTrackingId != '' && this.cxpChatUrl != '';
   }
 
 
-  renderCXPChatButton(){
+  /*renderCXPChatButton(){
     if(this.cxpChatTrackingId === '' && this.cxpChatUrl === '') {
       if(this._supportTopicService && this._cxpChatService && this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId)) {        
           this.cxpChatTrackingId = this._cxpChatService.generateTrackingId();
@@ -272,7 +273,7 @@ export class DetectorViewComponent implements OnInit {
           });               
       }
     }
-  }
+  }*/
 
   populateSupportTopicDocument(){
     if (!this.supportDocumentRendered){

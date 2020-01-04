@@ -32,24 +32,25 @@ export class CxpChatLauncherComponent implements OnInit {
   }
 
   public isComponentInitialized(): boolean {
-    return this.chatUrl && this.chatUrl != '' && this.trackingId && this.trackingId != '';
+    return true;//this.chatUrl && this.chatUrl != '' && this.trackingId && this.trackingId != '';
   }
 
   public toggleChatBubble(): void {
-
-    if (this.showChatConfDialog) {
+    console.log('------------------------------');
+    console.log(this._cxpChatService.testMe());
+    /*if (this.showChatConfDialog) {
       this._cxpChatService.logUserActionOnChat('ChatBubbleShown', this.trackingId, this.chatUrl);
     }
     else {
       this._cxpChatService.logUserActionOnChat('ChatBubbleDismissed', this.trackingId, this.chatUrl);
-    }
+    }*/
 
     this.showChatConfDialog = !this.showChatConfDialog;
   }
 
   public hideChatBubble(isUserInitiated: boolean): void {
     if (isUserInitiated) {
-      this._cxpChatService.logUserActionOnChat('ChatBubbleCancel', this.trackingId, this.chatUrl);
+      //this._cxpChatService.logUserActionOnChat('ChatBubbleCancel', this.trackingId, this.chatUrl);
     }
     this.showChatConfDialog = false;
   }
@@ -59,7 +60,7 @@ export class CxpChatLauncherComponent implements OnInit {
       const windowFeatures: string = 'menubar=no,location=no,resizable=no,scrollbars=no,status=no,height=550,width=450';
       window.open(this.chatUrl, '_blank', windowFeatures, false);
 
-      this._cxpChatService.logUserActionOnChat('ChatUrlOpened', this.trackingId, this.chatUrl);
+      //this._cxpChatService.logUserActionOnChat('ChatUrlOpened', this.trackingId, this.chatUrl);
 
       this.hideChatBubble(false);
     }
