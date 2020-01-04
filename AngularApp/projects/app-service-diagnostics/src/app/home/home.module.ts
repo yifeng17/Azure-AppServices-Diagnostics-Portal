@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { SharedModule } from '../shared/shared.module';
 import { RouterModule } from '@angular/router';
 import { SharedV2Module } from '../shared-v2/shared-v2.module';
-import { GenericSupportTopicService} from 'diagnostic-data';
+import { GenericSupportTopicService } from 'diagnostic-data';
 import { HomeComponent } from './components/home/home.component';
 import { CategoryChatComponent } from './components/category-chat/category-chat.component';
 import { CategoryTileComponent } from './components/category-tile/category-tile.component';
@@ -26,47 +26,48 @@ import { PortalReferrerResolverComponent } from '../shared/components/portal-ref
 import { SearchPipe, SearchMatchPipe } from './components/pipes/search.pipe';
 
 import {
-    FabBreadcrumbModule,
-    FabButtonModule,
-    FabCalendarModule,
-    FabCalloutModule,
-    FabCheckboxModule,
-    FabChoiceGroupModule,
-    FabComboBoxModule,
-    FabCommandBarModule,
-    FabDatePickerModule,
-    FabDetailsListModule,
-    FabDialogModule,
-    FabDividerModule,
-    FabFabricModule,
-    FabDropdownModule,
-    FabGroupModule,
-    FabGroupedListModule,
-    FabHoverCardModule,
-    FabIconModule,
-    FabImageModule,
-    FabLinkModule,
-    FabMarqueeSelectionModule,
-    FabMessageBarModule,
-    FabModalModule,
-    FabPanelModule,
-    FabPersonaModule,
-    FabPivotModule,
-    FabSearchBoxModule,
-    FabShimmerModule,
-    FabSliderModule,
-    FabSpinnerModule,
-    FabToggleModule,
-    FabTooltipModule,
-    FabSpinButtonModule,
-    FabTextFieldModule,
-    FabPeoplePickerModule,
-    FabTagPickerModule,
-    FabProgressIndicatorModule,
-  } from '@angular-react/fabric';
+  FabBreadcrumbModule,
+  FabButtonModule,
+  FabCalendarModule,
+  FabCalloutModule,
+  FabCheckboxModule,
+  FabChoiceGroupModule,
+  FabComboBoxModule,
+  FabCommandBarModule,
+  FabDatePickerModule,
+  FabDetailsListModule,
+  FabDialogModule,
+  FabDividerModule,
+  FabFabricModule,
+  FabDropdownModule,
+  FabGroupModule,
+  FabGroupedListModule,
+  FabHoverCardModule,
+  FabIconModule,
+  FabImageModule,
+  FabLinkModule,
+  FabMarqueeSelectionModule,
+  FabMessageBarModule,
+  FabModalModule,
+  FabPanelModule,
+  FabPersonaModule,
+  FabPivotModule,
+  FabSearchBoxModule,
+  FabShimmerModule,
+  FabSliderModule,
+  FabSpinnerModule,
+  FabToggleModule,
+  FabTooltipModule,
+  FabSpinButtonModule,
+  FabTextFieldModule,
+  FabPeoplePickerModule,
+  FabTagPickerModule,
+  FabProgressIndicatorModule,
+} from '@angular-react/fabric';
 import { CategoryNavComponent } from './components/category-nav/category-nav.component';
 import { CategoryMenuItemComponent } from './components/category-menu-item/category-menu-item.component';
 import { SectionDividerComponent } from './components/section-divider/section-divider.component';
+import { FabricSearchResultsComponent } from './fabric-search-results/fabric-search-results.component';
 
 export const HomeRoutes = RouterModule.forChild([
   {
@@ -89,9 +90,9 @@ export const HomeRoutes = RouterModule.forChild([
         path: 'overview',
         component: CategoryOverviewComponent,
         data: {
-            cacheComponent: true,
-            navigationTitle: CategoryTabResolver,
-            messageList: CategoryChatResolver
+          cacheComponent: true,
+          navigationTitle: CategoryTabResolver,
+          messageList: CategoryChatResolver
         },
       },
       {
@@ -99,7 +100,7 @@ export const HomeRoutes = RouterModule.forChild([
         redirectTo: 'overview',
         pathMatch: 'full',
         data: {
-            cacheComponent: true
+          cacheComponent: true
         },
       },
       {
@@ -390,9 +391,9 @@ export const HomeRoutes = RouterModule.forChild([
     FabNavModule,
     MarkdownModule.forRoot()
   ],
-  declarations: [HomeComponent, CategoryChatComponent, CategoryTileComponent, SearchResultsComponent, SupportTopicRedirectComponent, DiagnosticsSettingsComponent, CategoryOverviewComponent, CategoryNavComponent, CategoryMenuItemComponent, SearchPipe, SearchMatchPipe, SectionDividerComponent],
+  declarations: [HomeComponent, CategoryChatComponent, CategoryTileComponent, SearchResultsComponent, SupportTopicRedirectComponent, DiagnosticsSettingsComponent, CategoryOverviewComponent, CategoryNavComponent, CategoryMenuItemComponent, SearchPipe, SearchMatchPipe, SectionDividerComponent, FabricSearchResultsComponent],
   providers: [CategoryTabResolver, CategoryChatResolver, TimeControlResolver,
-    { provide: GenericSupportTopicService, useExisting: SupportTopicService}
+    { provide: GenericSupportTopicService, useExisting: SupportTopicService }
   ]
 })
 export class HomeModule { }
