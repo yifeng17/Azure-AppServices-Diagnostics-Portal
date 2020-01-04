@@ -1,5 +1,5 @@
 import {
-    CommsService, DiagnosticDataModule, DiagnosticService, DiagnosticSiteService,
+    CXPChatService, CommsService, DiagnosticDataModule, DiagnosticService, DiagnosticSiteService,
     PUBLIC_DEV_CONFIGURATION, PUBLIC_PROD_CONFIGURATION, SolutionService, SettingsService, BackendCtrlQueryService
 } from 'diagnostic-data';
 import { SiteService } from 'projects/app-service-diagnostics/src/app/shared/services/site.service';
@@ -23,6 +23,7 @@ import {
 import { TestInputComponent } from './shared/components/test-input/test-input.component';
 import { GenericApiService } from './shared/services/generic-api.service';
 import { GenericCommsService } from './shared/services/generic-comms.service';
+import { CXPChatCallerService } from './shared/services/cxp-chat-caller.service';
 import { GenericSolutionService } from './shared/services/generic-solution.service';
 import { LocalBackendService } from './shared/services/local-backend.service';
 import { PortalKustoTelemetryService } from './shared/services/portal-kusto-telemetry.service';
@@ -71,6 +72,7 @@ import { BackendCtrlService } from './shared/services/backend-ctrl.service';
       useFactory: (_localBackendService: LocalBackendService, _genericApiService: GenericApiService) => environment.useApplensBackend ? _localBackendService : _genericApiService,
       deps: [LocalBackendService, GenericApiService] },
     { provide: CommsService, useExisting: GenericCommsService },
+    { provide: CXPChatService, useExisting: CXPChatCallerService },
     { provide: AppInsightsQueryService, useExisting: AppInsightsService },
     { provide: DiagnosticSiteService, useExisting: SiteService },
     {

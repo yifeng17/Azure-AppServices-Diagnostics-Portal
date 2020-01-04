@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewChild, Renderer2 } from '@angular/core';
-import { CXPChatService } from 'projects/app-service-diagnostics/src/app/shared/services/cxp-chat.service';
+import { CXPChatService } from '../../services/cxp-chat.service';
 
 @Component({
   selector: 'cxp-chat-launcher',

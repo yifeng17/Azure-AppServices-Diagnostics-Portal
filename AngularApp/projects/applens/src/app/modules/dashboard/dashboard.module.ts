@@ -51,7 +51,6 @@ import { SearchResultsComponent } from './search-results/search-results.componen
 import { Sort } from '../../shared/pipes/sort.pipe';
 import { SearchService } from './services/search.service';
 import { HighchartsChartModule } from 'highcharts-angular';
-import { CXPChatService } from 'projects/app-service-diagnostics/src/app/shared/services/cxp-chat.service';
 
 @Injectable()
 export class InitResolver implements Resolve<Observable<boolean>>{
@@ -259,8 +258,7 @@ export const DashboardModuleRoutes: ModuleWithProviders = RouterModule.forChild(
         { provide: GenericSupportTopicService, useExisting: ApplensSupportTopicService},
         { provide: CommsService, useExisting: ApplensCommsService },
         { provide: DiagnosticSiteService, useExisting: ResourceService },
-        { provide: SolutionService, useExisting: GenericSolutionService },
-        CXPChatService
+        { provide: SolutionService, useExisting: GenericSolutionService }
     ],
     declarations: [DashboardComponent, SideNavComponent, ResourceMenuItemComponent, ResourceHomeComponent, OnboardingFlowComponent, SearchTermAdditionComponent,
         SearchMenuPipe, TabDataComponent, TabDevelopComponent, TabCommonComponent, TabDataSourcesComponent, TabMonitoringComponent,

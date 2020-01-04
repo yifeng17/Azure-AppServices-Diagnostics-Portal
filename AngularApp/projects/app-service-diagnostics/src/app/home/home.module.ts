@@ -21,7 +21,7 @@ import { GenericAnalysisComponent } from '../shared/components/generic-analysis/
 import { DiagnosticsSettingsComponent } from './components/diagnostics-settings/diagnostics-settings.component';
 import { SupportTopicService } from '../shared-v2/services/support-topic.service';
 import { MarkdownModule } from 'ngx-markdown';
-import { CXPChatService } from '../shared/services/cxp-chat.service';
+import { CXPChatService } from 'diagnostic-data' ;//'../shared/services/cxp-chat.service';
 import { PortalReferrerResolverComponent } from '../shared/components/portal-referrer-resolver/portal-referrer-resolver.component';
 
 export const HomeRoutes = RouterModule.forChild([

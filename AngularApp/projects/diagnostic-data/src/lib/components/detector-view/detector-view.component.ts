@@ -9,7 +9,7 @@ import { TelemetryEventNames } from '../../services/telemetry/telemetry.common';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { CompilationProperties} from '../../models/compilation-properties';
 import {GenericSupportTopicService} from '../../services/generic-support-topic.service';
-import { CXPChatService } from 'projects/app-service-diagnostics/src/app/shared/services/cxp-chat.service';
+import { CXPChatService } from '../../services/cxp-chat.service'
 @Component({
   selector: 'detector-view',
   templateUrl: './detector-view.component.html',

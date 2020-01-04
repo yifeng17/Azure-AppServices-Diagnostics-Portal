@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ResourceService } from '../../../shared-v2/services/resource.service';
 import { FeatureNavigationService, TelemetryService, DiagnosticService, DiagnosticDataConfig, DIAGNOSTIC_DATA_CONFIG } from 'diagnostic-data';
 import { AuthService } from '../../../startup/services/auth.service';
-import { CXPChatService } from '../../services/cxp-chat.service';
+import { CXPChatService } from 'diagnostic-data' ;//'../../services/cxp-chat.service';
 import {GenericSupportTopicService} from '../../../../../../diagnostic-data/src/lib/services/generic-support-topic.service';
 
 @Component({

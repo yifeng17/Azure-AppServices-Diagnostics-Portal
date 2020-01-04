@@ -5,6 +5,7 @@
 export * from './lib/services/diagnostic.service';
 export * from './lib/services/generic-support-topic.service';
 export * from './lib/services/comms.service';
+export * from './lib/services/cxp-chat.service';
 export * from './lib/services/telemetry/telemetry.service';
 export * from './lib/services/detector-control.service';
 export * from './lib/services/telemetry/telemetry.common';

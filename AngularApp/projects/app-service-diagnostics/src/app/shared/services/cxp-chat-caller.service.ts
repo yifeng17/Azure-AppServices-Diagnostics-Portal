@@ -7,8 +7,10 @@ import { Verbs } from '../models/portal';
 import { Guid } from '../utilities/guid';
 import { TelemetryService, TelemetryEventNames } from 'diagnostic-data';
 
-@Injectable()
-export class CXPChatService {
+@Injectable( {
+  providedIn: 'root'
+})
+export class CXPChatCallerService {
   public isChatSupported: boolean;
   private supportedSupportTopicIds: string[];
   public pesId: string = '';
@@ -18,7 +20,8 @@ export class CXPChatService {
   public chatLanguage: string = 'en';
 
   constructor(private _resourceService: ResourceService, private _portalService: PortalService, private _telemetryService: TelemetryService) {
-
+console.log('----------------------------------');
+console.log('ChatCaller instantiated.');
     this.isChatSupported = this._resourceService.isApplicableForLiveChat;
     if (this.isChatSupported) {
       this.supportedSupportTopicIds = this._resourceService.liveChatEnabledSupportTopicIds;
@@ -49,7 +52,7 @@ export class CXPChatService {
 
       return returnValue;
     }
-  };
+  }
 
   public generateTrackingId(): string {
     return Guid.newGuid();
@@ -146,6 +149,7 @@ export class CXPChatService {
    * @returns Chat URL string. This can be an empty string if no agents are available or if the queue is not found. Always handle for empty string.
    */
   public getChatURL(supportTopicId: string, trackingIdGuid: string): Observable<string> {
+    return Observable.of('https://support.microsoft.com/en-us/contact/chat/123/?disability=false&mode=azuretest&partnerId=azure&authType=DELEGATED&appid=azure-chat&version=1.0.19323.2');
     let input = {
       tagName: this.cxpChatTagName,
       eligibilityParams: {

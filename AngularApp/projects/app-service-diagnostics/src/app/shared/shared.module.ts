@@ -91,7 +91,7 @@ import { CpuMonitoringSessionsComponent } from './components/daas/cpu-monitoring
 import { GenericAnalysisComponent } from './components/generic-analysis/generic-analysis.component';
 import { EventViewerComponent } from './components/daas/event-viewer/event-viewer.component';
 import { FrebViewerComponent } from './components/daas/freb-viewer/freb-viewer.component';
-import { CXPChatService } from './services/cxp-chat.service';
+import { CXPChatCallerService } from './services/cxp-chat-caller.service';
 import { PortalReferrerResolverComponent } from './components/portal-referrer-resolver/portal-referrer-resolver.component';
 import { ConfigureStorageAccountComponent } from './components/daas/configure-storage-account/configure-storage-account.component';
 
@@ -232,7 +232,7 @@ export class SharedModule {
                 WindowService,
                 ArmService,
                 GenericArmConfigService,
-                CXPChatService,
+                CXPChatCallerService,
                 UriElementsService,
                 PortalActionService,
                 SiteService,

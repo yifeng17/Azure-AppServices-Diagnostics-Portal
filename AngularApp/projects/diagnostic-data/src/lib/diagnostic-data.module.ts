@@ -79,7 +79,7 @@ import { DetectorListAnalysisComponent } from './components/detector-list-analys
 import { AppDependenciesComponent } from './components/app-dependencies/app-dependencies.component';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { HighchartsGraphComponent } from './components/highcharts-graph/highcharts-graph.component';
-import { CXPChatService } from 'projects/app-service-diagnostics/src/app/shared/services/cxp-chat.service';
+import { CXPChatService } from './services/cxp-chat.service';
 import { CxpChatLauncherComponent } from './components/cxp-chat-launcher/cxp-chat-launcher.component';
 import { AppInsightsEnablementComponent } from './components/app-insights-enablement/app-insights-enablement.component';
 import { ConnectAppInsightsComponent } from './components/connect-app-insights/connect-app-insights.component';
