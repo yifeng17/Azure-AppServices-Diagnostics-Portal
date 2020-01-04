@@ -84,10 +84,10 @@ React refresh bug test
     </section>
     <section class="content">
         <div class="col-md col-ms col-lg" style="width:98%; display: inline-block;">
-            <detector-command-bar></detector-command-bar>
+            <detector-command-bar (openPanel)="setFocusOnCallpsibleButton()"></detector-command-bar>
             <router-outlet></router-outlet>
           </div>
-          <div class="col-md col-sm col-lg" class="collapse-button"
+          <div id="collapse-genie-button"class="col-md col-sm col-lg" class="collapsible-button"
             style=" float: right; height: 100vh; border-left:1px solid #cccccc; " (click)="openGeniePanel()">
             <i class="fa fa-angle-double-left" style="margin: 5px;font-size:13px;"></i>
           </div>

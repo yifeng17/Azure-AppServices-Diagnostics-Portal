@@ -48,6 +48,11 @@ export class CategorySummaryComponent implements OnInit {
     selectedCategoryIndex = "1";
 
     openPanel: boolean = false;
+
+    setFocusOnCallpsibleButton() {
+        console.log("collapse-genie-button", document.getElementById("collapse-genie-button"));
+        document.getElementById("collapse-genie-button").focus();
+    }
     closeGeniePanel() {
         this.globals.openGeniePanel = false;
         this.openPanel = false;
