@@ -62,7 +62,7 @@ import { Globals } from './globals';
     HighchartsChartModule
   ],
   declarations: [
-    AppComponent
+    AppComponent,
   ],
   providers: [
     CustomReuseStrategy,

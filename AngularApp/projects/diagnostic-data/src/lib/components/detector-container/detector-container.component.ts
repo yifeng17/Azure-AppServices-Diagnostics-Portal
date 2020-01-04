@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { DiagnosticService } from '../../services/diagnostic.service';
 import { DetectorControlService } from '../../services/detector-control.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { DetectorResponse, RenderingType } from '../../models/detector';
 import { BehaviorSubject } from 'rxjs';
 
@@ -15,6 +15,7 @@ export class DetectorContainerComponent implements OnInit {
   detectorResponse: DetectorResponse = null;
   error: any;
   @Input() hideDetectorControl: boolean = false;
+  hideTimerPicker: boolean = false;
 
    detectorName: string;
 
@@ -27,10 +28,12 @@ export class DetectorContainerComponent implements OnInit {
   @Input() analysisMode:boolean = false;
   @Input() isAnalysisView:boolean = false;
   isCategoryOverview:boolean = false;
-  constructor(private _activatedRoute: ActivatedRoute, private _diagnosticService: DiagnosticService,
+
+  constructor(private _route: ActivatedRoute, private _diagnosticService: DiagnosticService,
     public detectorControlService: DetectorControlService) { }
 
   ngOnInit() {
+    this.hideTimerPicker= this.hideDetectorControl || this._route.snapshot.parent.url.findIndex((x: UrlSegment) => x.path === "categories") > -1;
     this.detectorControlService.update.subscribe(isValidUpdate => {
       if (isValidUpdate && this.detectorName) {
         this.refresh();
@@ -44,7 +47,7 @@ export class DetectorContainerComponent implements OnInit {
       }
     });
 
-    const component:any = this._activatedRoute.component; 
+    const component:any = this._route.component; 
     if (component && component.name) {
       this.isCategoryOverview = component.name === "CategoryOverviewComponent";
     }

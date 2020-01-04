@@ -1,8 +1,8 @@
-import { FeatureService } from "../../shared-v2/services/feature.service";
-import { LoggingV2Service } from "../../shared-v2/services/logging-v2.service";
-import { NotificationService } from "../../shared-v2/services/notification.service";
-import { Feature } from "../../shared-v2/models/features";
 import { Component, HostListener } from "@angular/core";
+import { Feature } from "../../../shared-v2/models/features";
+import { FeatureService } from "../../../shared-v2/services/feature.service";
+import { LoggingV2Service } from "../../../shared-v2/services/logging-v2.service";
+import { NotificationService } from "../../../shared-v2/services/notification.service";
 
 enum BlurType {
   //click other place to close panel

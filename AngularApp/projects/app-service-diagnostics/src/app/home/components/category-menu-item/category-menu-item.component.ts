@@ -21,6 +21,7 @@ export class CategoryMenuItemComponent implements OnInit {
 
     children: CollapsibleMenuItem[];
 
+    truncatedLable: string = "";
     hasChildren: boolean;
     matchesSearchTerm: boolean = true;
     imagePlaceHolder: string = '../../../../assets/img/detectors/default.png';
@@ -31,7 +32,7 @@ export class CategoryMenuItemComponent implements OnInit {
     ngOnInit() {
       this.children = this.menuItem.subItems;
       this.hasChildren = this.menuItem.subItems && this.menuItem.subItems.length > 0;
-
+      this.truncatedLable = this.menuItem.label.length > 24 ? this.menuItem.label.substr(0, 24)+".." : this.menuItem.label ;
       // this._searchValueSubject.subscribe(searchValue => {
       //   this.searchValueLocal = searchValue;
       //   this.menuItem.expanded = searchValue != undefined;

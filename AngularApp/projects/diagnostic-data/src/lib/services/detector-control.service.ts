@@ -191,8 +191,8 @@ export class DetectorControlService {
         endTime = moment.utc().subtract(16,'minutes');
       }
       else {
-        endTime = moment.utc(end);
-      }
+    endTime = moment.utc(end);
+    }
 
       startTime = endTime.clone().subtract(1, 'days');
     } else {

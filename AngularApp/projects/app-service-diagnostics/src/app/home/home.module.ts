@@ -18,7 +18,10 @@ import { TimeControlResolver } from './resolvers/time-control.resolver';
 import { ContentService } from '../shared-v2/services/content.service';
 import { FabNavModule, DiagnosticDataModule } from 'diagnostic-data';
 import { GenericAnalysisComponent } from '../shared/components/generic-analysis/generic-analysis.component';
-import { CategoryOverviewComponent } from '../shared/components/category-overview/category-overview.component';
+import { CategorySummaryComponent } from '../fabric-ui/components/category-summary/category-summary.component';
+import { CategoryOverviewComponent } from '../fabric-ui/components/category-overview/category-overview.component';
+import { DetectorCommandBarComponent } from '../fabric-ui/components/detector-command-bar/detector-command-bar.component';
+import { GeniePanelComponent } from '../fabric-ui/components/genie-panel/genie-panel.component';
 import { DiagnosticsSettingsComponent } from './components/diagnostics-settings/diagnostics-settings.component';
 import { SupportTopicService } from '../shared-v2/services/support-topic.service';
 import { MarkdownModule } from 'ngx-markdown';
@@ -63,11 +66,13 @@ import {
   FabPeoplePickerModule,
   FabTagPickerModule,
   FabProgressIndicatorModule,
+  FabContextualMenuModule
 } from '@angular-react/fabric';
 import { CategoryNavComponent } from './components/category-nav/category-nav.component';
 import { CategoryMenuItemComponent } from './components/category-menu-item/category-menu-item.component';
 import { SectionDividerComponent } from './components/section-divider/section-divider.component';
-import { FabricSearchResultsComponent } from './fabric-search-results/fabric-search-results.component';
+import { FabricSearchResultsComponent } from '../fabric-ui/components/fabric-search-results/fabric-search-results.component';
+
 
 export const HomeRoutes = RouterModule.forChild([
   {
@@ -81,7 +86,7 @@ export const HomeRoutes = RouterModule.forChild([
   },
   {
     path: 'categories/:category',
-    component: CategoryChatComponent,
+    component: CategorySummaryComponent,
     data: {
       cacheComponent: true
     },
@@ -389,9 +394,10 @@ export const HomeRoutes = RouterModule.forChild([
     FabTagPickerModule,
     FabProgressIndicatorModule,
     FabNavModule,
+    FabContextualMenuModule,
     MarkdownModule.forRoot()
   ],
-  declarations: [HomeComponent, CategoryChatComponent, CategoryTileComponent, SearchResultsComponent, SupportTopicRedirectComponent, DiagnosticsSettingsComponent, CategoryOverviewComponent, CategoryNavComponent, CategoryMenuItemComponent, SearchPipe, SearchMatchPipe, SectionDividerComponent, FabricSearchResultsComponent],
+  declarations: [HomeComponent, CategoryChatComponent, CategoryTileComponent, SearchResultsComponent, SupportTopicRedirectComponent, DiagnosticsSettingsComponent, CategorySummaryComponent, CategoryOverviewComponent, DetectorCommandBarComponent, GeniePanelComponent, CategoryNavComponent, CategoryMenuItemComponent, SearchPipe, SearchMatchPipe, SectionDividerComponent, FabricSearchResultsComponent],
   providers: [CategoryTabResolver, CategoryChatResolver, TimeControlResolver,
     { provide: GenericSupportTopicService, useExisting: SupportTopicService }
   ]

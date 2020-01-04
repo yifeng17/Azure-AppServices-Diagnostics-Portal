@@ -15,7 +15,7 @@
           </span>
         </div>
       </section>
-      <div *ngIf="!insideDetectorList">
+      <div *ngIf="!insideDetectorList && !hideDetectorControl">
         <div style="margin-top:10px">
           <button (click)="toggleButtonView(Feedback)" class="custom-button custom-button-align-left detector-button-list">
             <span> {{feedbackButtonLabel}}</span>
