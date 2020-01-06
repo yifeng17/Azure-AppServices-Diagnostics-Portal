@@ -39,6 +39,7 @@ import { HealthCheckV3Component } from './message-flow/health-check-v3/health-ch
 import { LinuxAvailabilityPerformanceFlow } from './message-flow/v2-flows/linux-availability-performance.flow';
 import { FabIconModule,FabChoiceGroupModule } from '@angular-react/fabric';
 import { DynamicAnalysisComponent } from './message-flow/dynamic-analysis/dynamic-analysis.component';
+import { DynamicAnalysisResultsComponent } from './message-flow/dynamic-analysis-results/dynamic-analysis-results.component';
 
 @NgModule({
     declarations: [
@@ -60,7 +61,8 @@ import { DynamicAnalysisComponent } from './message-flow/dynamic-analysis/dynami
         DocumentSearchComponent,
         DocumentSearchResultsComponent,
         HealthCheckV3Component,
-        DynamicAnalysisComponent
+        DynamicAnalysisComponent,
+        DynamicAnalysisResultsComponent
     ],
     imports: [
         SharedModule,

@@ -3,6 +3,8 @@ import { Message, TextMessage, ButtonListMessage } from '../../models/message';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IChatMessageComponent } from '../../interfaces/ichatmessagecomponent';
 import { SearchAnalysisMode } from 'projects/diagnostic-data/src/lib/models/search-mode';
+import { v4 as uuid } from 'uuid';
+import { GenieChatFlow } from '../../../supportbot/message-flow/v2-flows/genie-chat.flow';
 
 @Component({
   selector: 'dynamic-analysis',
@@ -17,7 +19,7 @@ export class DynamicAnalysisComponent implements OnInit, AfterViewInit, IChatMes
   loading: boolean = true;
   searchMode: SearchAnalysisMode = SearchAnalysisMode.Genie;
 
-  constructor(private _routerLocal: Router, private _activatedRouteLocal: ActivatedRoute, private injector: Injector) { }
+  constructor(private _routerLocal: Router, private _activatedRouteLocal: ActivatedRoute, private injector: Injector, private _genieChatFlow: GenieChatFlow) { }
 
   keyword: string = "";
   ngOnInit() {
@@ -33,15 +35,18 @@ export class DynamicAnalysisComponent implements OnInit, AfterViewInit, IChatMes
     this.onViewUpdate.emit();
   }
 
-  updateStatus(status) {
+  updateStatus(dataOutput) {
+    console.log("status Value before", dataOutput);
       let statusValue = {
-        status: status,
+        status: dataOutput.status,
+        outputData: dataOutput.data,
         data: true
     };
 
     console.log("status Value", statusValue);
+    this._genieChatFlow.createMessageFlowForAnaysisResult(statusValue.outputData);
     this.onComplete.emit(statusValue);
-
+    console.log("****lalalastatus Value", statusValue);
   }
 }
 

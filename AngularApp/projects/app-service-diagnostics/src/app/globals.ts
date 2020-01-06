@@ -4,4 +4,5 @@ import { Injectable } from '@angular/core';
 export class Globals {
   messages: any[] = [];
   openGeniePanel: boolean = false;
+  messagesData: { [id: string]: any } = {};
 }

@@ -15,7 +15,8 @@ import { FeedbackMessage } from '../feedback/feedbackmessageflow';
 import { map } from 'rxjs/operators';
 import { GenericArmConfigService } from '../../../shared/services/generic-arm-config.service';
 import { ResourceService } from '../../../shared-v2/services/resource.service';
-
+import { DynamicAnalysisResultsComponent, DynamicAnalysisResultsMessage } from '../dynamic-analysis-results/dynamic-analysis-results.component';
+import { Globals } from '../../../globals';
 
 @Injectable()
 @RegisterMessageFlowWithFactory()
@@ -26,7 +27,7 @@ export class GenieChatFlow extends IMessageFlowProvider {
   categoriesCreated: Category[] = [];
 
 
-  constructor(private _diagnosticApiService: DiagnosticService, private _resourceService: ResourceService, private _genericArmConfigService?: GenericArmConfigService) {
+  constructor(private _diagnosticApiService: DiagnosticService, private _resourceService: ResourceService, public globals: Globals, private _genericArmConfigService?: GenericArmConfigService) {
     super();
 
     const needAnalysis: MessageGroup = new MessageGroup('need-analysis', [], () => 'analysis');
@@ -67,18 +68,45 @@ export class GenieChatFlow extends IMessageFlowProvider {
 //   }
 
 
+  createMessageFlowForAnaysisResult(data: any): any {
+    console.log("1.****messages", data);
+    this.globals.messages.push(new DynamicAnalysisResultsMessage(data));
+    console.log("****messages", this.globals.messages);
+    //const dynamicAnalysisGroup: MessageGroup = new MessageGroup("dynamic-analysis", [], () => "feedback");
+  //   let analysisMessages: Message[]  = [];
+  // //  analysisMessages.push(new CategoryMenuMessage());
+  //   analysisMessages.push(new TextMessage(keyword, MessageSender.User, 500));
+  //   analysisMessages.push(new TextMessage('Okay give me a moment while I analyze your app for any issues related to this.', MessageSender.System, 500));
+
+  //   let analysisMessage = new DynamicAnalysisMessage(keyword);
+  //   analysisMessages.push(new DynamicAnalysisMessage(keyword));
+
+  //  // this.messageFlowList.push(dynamicAnalysisGroup);
+  //   return of(analysisMessages);
+  }
+
+  
   createMessageFlowForAnaysis(keyword: string): Observable<Message[]> {
     //const dynamicAnalysisGroup: MessageGroup = new MessageGroup("dynamic-analysis", [], () => "feedback");
     let analysisMessages: Message[]  = [];
   //  analysisMessages.push(new CategoryMenuMessage());
-    analysisMessages.push(new TextMessage(keyword, MessageSender.User, 500));
-    analysisMessages.push(new TextMessage('Okay give me a moment while I analyze your app for any issues related to this.', MessageSender.System, 500));
+    let keywordTextMessage = new TextMessage(keyword, MessageSender.User, 500);
+    let systemResponseTextMessage = new TextMessage('Okay give me a moment while I analyze your app for any issues related to this.', MessageSender.System, 500);
+    analysisMessages.push(keywordTextMessage);
+    analysisMessages.push(systemResponseTextMessage);
+    this.globals.messages.push(keywordTextMessage);
+    this.globals.messages.push(systemResponseTextMessage);
+    console.log("1. push two text message", keywordTextMessage, systemResponseTextMessage);
 
+   // let dynamicAnalysisMessage = new DynamicAnalysisMessage(keyword);
     analysisMessages.push(new DynamicAnalysisMessage(keyword));
+    console.log("2. after push dynamicmessage", analysisMessages);
+
 
    // this.messageFlowList.push(dynamicAnalysisGroup);
     return of(analysisMessages);
   }
+
 
   createMessageFlowForCategory(category: Category): Observable<MessageGroup[]> {
     if (!category.createFlowForCategory || this.categoriesCreated.indexOf(category) >= 0) { return of([]); }

@@ -1,0 +1,6 @@
+<!-- *ngIf="!loading else loadingMessage" -->
+<div class="detector-summary-container" [class.with-full-report]="false">
+  hahaha
+  <detector-list-analysis withinDiagnoseAndSolve="true" [analysisId]="'searchResultsAnalysis'"
+    [renderingOnlyMode]="true" [detectorViewModelsData]="inputData.data" [searchMode]="searchMode" (onComplete)="updateStatus($event)"></detector-list-analysis>
+</div>
