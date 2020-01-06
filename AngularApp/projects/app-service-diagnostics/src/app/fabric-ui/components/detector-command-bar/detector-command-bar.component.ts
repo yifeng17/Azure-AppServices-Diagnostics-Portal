@@ -16,11 +16,21 @@ import {
   IPeoplePickerProps
 } from 'office-ui-fabric-react';
 import { Globals } from '../../../globals';
+import { trigger, state, transition, animate, style } from '@angular/animations';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'detector-command-bar',
   templateUrl: './detector-command-bar.component.html',
-  styleUrls: ['./detector-command-bar.component.scss']
+  styleUrls: ['./detector-command-bar.component.scss'],
+  animations: [
+    trigger('expand', [
+      state('hidden', style({ height: '0px' })),
+      state('shown', style({ height: '*' })),
+      transition('* => *', animate('.25s')),
+      transition('void => *', animate(0))
+    ])
+  ]
 })
 export class DetectorCommandBarComponent implements OnInit {
   @ViewChild('timepicker', { static: true }) timepicker: any;
@@ -32,6 +42,8 @@ export class DetectorCommandBarComponent implements OnInit {
   showTypingMessage: boolean;
   selectedItem?: IDropdownOption;
   timeDivider: DropdownMenuItemType = DropdownMenuItemType.Divider;
+  showFeedback: boolean = false;
+  ratingEventProperties: { [name: string]: string };
   options: FabDropdownComponent['options'] = [
     { key: 'Last1Hour', text: 'Last 1 Hour', data: { iconProps: { iconName: 'CaretRight' }, } },
     { key: 'Last6Hours', text: 'Last 6 Hours', data: { icon: "RadioButtonOff" } },
@@ -45,7 +57,7 @@ export class DetectorCommandBarComponent implements OnInit {
     // type: PanelType.smallFixedNear,
     openPanel: false
     //   customWidth: "585",
-};
+  };
 
 
 
@@ -56,7 +68,7 @@ export class DetectorCommandBarComponent implements OnInit {
     right: 20,
     top: 50,
     padding: 10
-};
+  };
 
   choiceGroupOptions: any = [
     { key: 'Last1Hour', text: 'Last 1 Hour', onClick: () => { this.setTime("Last 1 Hour"); this.showTimerPicker = false } },
@@ -122,15 +134,15 @@ export class DetectorCommandBarComponent implements OnInit {
     this.openPanel = !this.openPanel;
     this.openPanelChange.emit(this.openPanel);
     console.log("toggle panel, isOpen:", this.globals.openGeniePanel);
-}
+  }
 
 
   sendFeedback() {
-
+    this.showFeedback = !this.showFeedback
   }
 
   refresh() {
-      this.showChoices = !this.showChoices;
+    this.showChoices = !this.showChoices;
   }
 
   showSearch() {
@@ -203,10 +215,30 @@ export class DetectorCommandBarComponent implements OnInit {
   }
 
 
-  constructor(private globals: Globals) { }
+  constructor(private globals: Globals, private activatedRoute: ActivatedRoute) { }
 
   ngOnInit() {
     console.log("Init commandbar with OpenPanel", this.openPanel);
+  }
+
+  feedbackFormChange(change: boolean) {
+    this.showFeedback = false;
+  }
+
+  //check detectorName after everytime refresh detector-container
+  //If it is detector then get detectorId, else get categoryId
+  ngAfterViewChecked() {
+    let detectorName = "";
+    if (this.activatedRoute.firstChild.snapshot.params["detectorName"] !== undefined) {
+      detectorName = this.activatedRoute.firstChild.snapshot.params["detectorName"];
+    } else {
+      detectorName = this.activatedRoute.snapshot.params["category"];
+    }
+    this.ratingEventProperties = {
+      'DetectorId': detectorName,
+      'Url': window.location.href
+    };
+    console.log(detectorName);
   }
 
 }

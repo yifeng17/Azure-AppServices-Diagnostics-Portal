@@ -132,7 +132,8 @@ import { SummaryCardsComponent } from './components/summary-cards/summary-cards.
     ChangesViewComponent,
     DetectorListAnalysisComponent,
     AppInsightsMarkdownComponent,
-    FabNavModule
+    FabNavModule,
+    FeedbackComponent
   ],
 })
 export class DiagnosticDataModule {
