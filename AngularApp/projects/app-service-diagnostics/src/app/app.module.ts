@@ -1,5 +1,5 @@
 import {
-    CXPChatService, CommsService, DiagnosticDataModule, DiagnosticService, DiagnosticSiteService,
+    CommsService, DiagnosticDataModule, DiagnosticService, DiagnosticSiteService,
     PUBLIC_DEV_CONFIGURATION, PUBLIC_PROD_CONFIGURATION, SolutionService, SettingsService, BackendCtrlQueryService
 } from 'diagnostic-data';
 import { SiteService } from 'projects/app-service-diagnostics/src/app/shared/services/site.service';
