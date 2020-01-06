@@ -46,6 +46,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
   @Input() searchMode: SearchAnalysisMode = SearchAnalysisMode.CaseSubmission;
   @Input() renderingOnlyMode: boolean = false;
   @Input() detectorViewModelsData: any;
+  @Input() targetedScore: number = 0;
   @Output() onComplete = new EventEmitter<any>();
   detectorViewModels: any[];
   detectorId: string;
@@ -286,6 +287,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
               var detectorList = results[1];
               if (detectorList) {
                 searchResults.forEach(result => {
+                    console.log("score:", result.score);
                   if (result.type === DetectorType.Detector) {
                     this.insertInDetectorArray({ name: result.name, id: result.id, score: result.score });
                   }
@@ -302,6 +304,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                   }
                 });
                 this.startDetectorRendering(detectorList);
+                console.log("search result", searchResults, this.detectors);
               }
             },
               (err) => {
@@ -414,6 +417,16 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
       this.childDetectorsEventProperties['ChildDetectorsList'] = JSON.stringify(childDetectorData);
       this.logEvent(TelemetryEventNames.ChildDetectorsSummary, this.childDetectorsEventProperties);
     });
+
+    if (requests.length === 0) {
+        let dataOutput = {};
+        dataOutput["status"] = true;
+        dataOutput["data"] = {
+          'detectors': []
+        };
+
+        this.onComplete.emit(dataOutput);
+    }
   }
 
   getChildrenOfAnalysis(analysisId, detectorList) {
@@ -421,7 +434,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
   }
 
   insertInDetectorArray(detectorItem) {
-    if (this.detectors.findIndex(x => x.id === detectorItem.id) < 0) {
+    if (this.detectors.findIndex(x => x.id === detectorItem.id) < 0 && detectorItem.score >= this.targetedScore) {
       this.detectors.push(detectorItem);
     }
   }

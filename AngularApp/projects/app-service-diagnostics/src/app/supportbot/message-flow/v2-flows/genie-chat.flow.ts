@@ -26,6 +26,8 @@ export class GenieChatFlow extends IMessageFlowProvider {
 
   categoriesCreated: Category[] = [];
 
+  targetedScore: number = 0.5;
+
 
   constructor(private _diagnosticApiService: DiagnosticService, private _resourceService: ResourceService, public globals: Globals, private _genericArmConfigService?: GenericArmConfigService) {
     super();
@@ -68,10 +70,37 @@ export class GenieChatFlow extends IMessageFlowProvider {
 //   }
 
 
-  createMessageFlowForAnaysisResult(data: any): any {
+  createMessageFlowForAnaysisResult(data: any, noSearchResult: boolean = false): any {
     console.log("1.****messages", data);
-    this.globals.messages.push(new DynamicAnalysisResultsMessage(data));
-    console.log("****messages", this.globals.messages);
+    // this.globals.messages.push(new DynamicAnalysisResultsMessage(data));
+     console.log("****messages", this.globals.messages);
+     const moreHelpId: string = `more-help-WindowsAvailabilityAndPerformance`;
+     const showTiles: string = `show-all-tiles-WindowsAvailabilityAndPerformance`;
+     const feedback: string = `feedback-WindowsAvailabilityAndPerformance`;
+
+
+    //   if (noSearchResult)
+    //   {
+    //     this.globals.messages.push(new TextMessage('Sorry we are not able to find any result based on your questions.', MessageSender.System));
+    //     this.globals.messages.push(new TextMessage('genie-Search Documentation.', MessageSender.User));
+    //   }
+    //   else
+    //   {
+    //     this.globals.messages.push(new TextMessage('Does this information help you solve the issue?', MessageSender.System));
+    //    // this.globals.messages.push(new TextMessage('Was this helpful to finding what you were looking for?', MessageSender.System, 2000));
+    //     this.globals.messages.push(new ButtonListMessage(this._getButtonListDidYouFindHelpfulinNewGenie(moreHelpId, 'I need further assistance'), 'Was this helpful to finding what you were looking for?', "WindowsAvailabilityAndPerformance"));
+    // }
+
+
+
+    // this.globals.messages.push(new TextMessage('genie-Search Documentation.', MessageSender.User));
+    // this.globals.messages.push(new TextMessage('genie-Please describe your problem below, so I can search relevant documentation and tools that may help you.', MessageSender.System));
+    // this.globals.messages.push(new DocumentSearchMessage());
+    // this.globals.messages.push(new TextMessage('genie-Was this helpful to finding what you were looking for?', MessageSender.System, 2000));
+    // // this.globals.messages.push(new ButtonListMessage(this._getButtonListDidYouFindHelpful(moreHelpId, 'I need further assistance', showTiles), 'Was this helpful to finding what you were looking for?', category.name));
+    // this.globals.messages.push(new TextMessage('genie-Yes I found the right information.', MessageSender.User));
+    // this.globals.messages.push(new TextMessage('genie-Great I\'m glad I could be of help!', MessageSender.System));
+
     //const dynamicAnalysisGroup: MessageGroup = new MessageGroup("dynamic-analysis", [], () => "feedback");
   //   let analysisMessages: Message[]  = [];
   // //  analysisMessages.push(new CategoryMenuMessage());
@@ -85,7 +114,7 @@ export class GenieChatFlow extends IMessageFlowProvider {
   //   return of(analysisMessages);
   }
 
-  
+
   createMessageFlowForAnaysis(keyword: string): Observable<Message[]> {
     //const dynamicAnalysisGroup: MessageGroup = new MessageGroup("dynamic-analysis", [], () => "feedback");
     let analysisMessages: Message[]  = [];
@@ -94,14 +123,13 @@ export class GenieChatFlow extends IMessageFlowProvider {
     let systemResponseTextMessage = new TextMessage('Okay give me a moment while I analyze your app for any issues related to this.', MessageSender.System, 500);
     analysisMessages.push(keywordTextMessage);
     analysisMessages.push(systemResponseTextMessage);
-    this.globals.messages.push(keywordTextMessage);
-    this.globals.messages.push(systemResponseTextMessage);
+    // this.globals.messages.push(keywordTextMessage);
+    // this.globals.messages.push(systemResponseTextMessage);
     console.log("1. push two text message", keywordTextMessage, systemResponseTextMessage);
 
    // let dynamicAnalysisMessage = new DynamicAnalysisMessage(keyword);
-    analysisMessages.push(new DynamicAnalysisMessage(keyword));
+    analysisMessages.push(new DynamicAnalysisMessage(keyword, this.targetedScore));
     console.log("2. after push dynamicmessage", analysisMessages);
-
 
    // this.messageFlowList.push(dynamicAnalysisGroup);
     return of(analysisMessages);
@@ -222,6 +250,21 @@ export class GenieChatFlow extends IMessageFlowProvider {
         next_key: mainMenuId
       });
     }
+
+    return buttons;
+  }
+
+  private _getButtonListDidYouFindHelpfulinNewGenie(furtherAssistance: string, furtherAssistanceString: string, mainMenuId?: string): any {
+    const buttons = [{
+      title: 'Yes',
+      type: ButtonActionType.GetFeedback,
+      next_key: ''
+    },
+    {
+      title: 'No',
+      type: ButtonActionType.GetFeedback,
+      next_key: furtherAssistance
+    }];
 
     return buttons;
   }

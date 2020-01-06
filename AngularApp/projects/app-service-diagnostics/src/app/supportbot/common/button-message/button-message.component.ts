@@ -3,8 +3,11 @@ import { CommonModule } from '@angular/common';
 
 import { IChatMessageComponent } from '../../interfaces/ichatmessagecomponent';
 import { BotLoggingService } from '../../../shared/services/logging/bot.logging.service';
-import { ButtonActionType } from '../../models/message-enums';
+import { ButtonActionType, MessageSender } from '../../models/message-enums';
 import { CategoryChatStateService } from '../../../shared-v2/services/category-chat-state.service';
+import { Globals } from '../../../globals';
+import { TextMessage } from '../../models/message';
+import { FeedbackMessage } from '../../message-flow/feedback/feedbackmessageflow';
 
 @Component({
     templateUrl: 'button-message.component.html'
@@ -19,7 +22,7 @@ export class ButtonMessageComponent implements OnInit, AfterViewInit, IChatMessa
     @Output() onViewUpdate = new EventEmitter();
     @Output() onComplete = new EventEmitter<{ status: boolean, data?: any }>();
 
-    constructor(protected injector: Injector, protected _logger: BotLoggingService, @Optional() protected _chatState?: CategoryChatStateService) {
+    constructor(protected injector: Injector, protected _logger: BotLoggingService,protected globals: Globals, @Optional() protected _chatState?: CategoryChatStateService) {
     }
 
     ngOnInit(): void {
@@ -46,6 +49,24 @@ export class ButtonMessageComponent implements OnInit, AfterViewInit, IChatMessa
     onClick(item: any) {
         this.showComponent = false;
         this._logger.LogClickEvent(item.title, this.context, this.category);
+
+        if (item.type === ButtonActionType.GetFeedback)
+        {
+            console.log("Feedback button onclick", item);
+            if (item.title.toLowerCase() === "yes")
+            {
+                console.log("Feedback button yes onclick", item);
+                 this.globals.messages.push(new TextMessage('Great to hear! From 1 to 5 stars, how helpful was this?', MessageSender.System, 500));
+                // this.globals.messages.push(new FeedbackMessage([], 'Submit and Show Tile Menu', 'Feedback', "Availbiliy and Performance"));
+             }
+            else
+            {
+                console.log("Feedback button no onclick", item);
+                 this.globals.messages.push(new TextMessage('Sorry to hear! Could you let us know how we can improve?', MessageSender.System, 500));
+            //     this.globals.messages.push(new FeedbackMessage([], 'Submit and Show Tile Menu', 'Feedback', "Availbiliy and Performance"));
+            // }
+        }
         this.onComplete.emit({ status: true, data: item });
     }
+}
 }

@@ -1,7 +1,7 @@
 <!-- *ngIf="!loading else loadingMessage" -->
 <div class="detector-summary-container" [class.with-full-report]="false" >
     <!-- <detector-list-analysis withinDiagnoseAndSolve="true" detectorParmName="detectorName"></detector-list-analysis> -->
-    <generic-analysis [analysisId]="'searchResultsAnalysis'" [searchTerm]="keyword" [searchMode]="searchMode" (onComplete)="updateStatus($event)"></generic-analysis>
+    <generic-analysis [analysisId]="'searchResultsAnalysis'" [targetedScore]="targetedScore" [searchTerm]="keyword" [searchMode]="searchMode" (onComplete)="updateStatus($event)"></generic-analysis>
     <!-- <div class="full-report" *ngIf="showTopLevelFullReport">
       {{detector.name}}
       <div class="full-report-link" tabindex="0" (keyup.enter)="openFullReport()">
@@ -15,7 +15,20 @@
       <div class="status-bar-title">{{model.name}}</div>
       <div class="align-content-center"><i class="fa fa-chevron-right"></i></div>
     </div> -->
+    <div *ngIf="noSearchResult === false">
+        <span>Does this information help you solve the issue?</span>
+        <button class="feedback-button" (click)="addHelpfulFeedback()">Yes</button>
+        <button class="feedback-button" (click)="addNotHelpfulFeedback()">No</button>
+      </div>
+    <div *ngIf="noSearchResult === true">
+        <span>Sorry we are not able to find any result based on your questions.</span>
+      </div>
   </div>
+  <div *ngIf="showFeedback">
+      <div tabindex="0" class="message-sent-by-system" style="margin-top:10px; margin-bottom:10px">{{feedbackText}}
+      </div>
+  </div>
+
 
   <!-- <ng-template #loadingMessage>
       <loading-message></loading-message>

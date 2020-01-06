@@ -4,7 +4,7 @@
   <fab-dialog [hidden]="dialogHidden" (onDismiss)="toggleDialog()" key="d2" title="Fabric [React] Dialog" subText="Use Fabric React components inside Applens">
     Click Count: {{ counter }}
     <fab-dialog-footer>
-      <fab-primary-button (onClick)="incrementCounter()" text='Save' contentStyle="margin-right:10px;"></fab-primary-button>
+      <fab-primary-button (onClick)="incrementCounter()" text='Save' style="margin-right:10px;"></fab-primary-button>
       <fab-default-button (onClick)="toggleDialog()" text='Cancel'></fab-default-button>
     </fab-dialog-footer>
   </fab-dialog>
@@ -60,7 +60,7 @@
             </div>
           </div>
           <div class="form-group go-form">
-            <fab-primary-button 
+            <fab-primary-button
                 [disabled]="!(resourceName && resourceName.length > 0)" type="Submit" text='Go'>
             </fab-primary-button>
             <!-- <fab-primary-button (onClick)="toggleDialog()" text='Go'></fab-primary-button> -->

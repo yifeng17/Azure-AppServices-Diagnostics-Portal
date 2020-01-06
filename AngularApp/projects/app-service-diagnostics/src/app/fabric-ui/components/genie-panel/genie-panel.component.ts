@@ -73,10 +73,13 @@ export class GeniePanelComponent implements OnInit {
         this.globals.messages.push(new TextMessage(this.welcomeMessage, MessageSender.System, 200));
     }
 
-    this.globals.messages.forEach((message) => {
-        let m = message;
-        this.messages.push(m);
-    })
+  //  this.messages = this.globals.messages;
+
+    // this.globals.messages.forEach((message) => {
+    //     let m = message;
+    //     this.messages.push(m);
+    //     console.log("init genie with messages", this.messages);
+    // })
 
     //this.messages = this.globals.messages;
     this.chatContainerHeight = window.innerHeight - 170;
@@ -111,9 +114,9 @@ export class GeniePanelComponent implements OnInit {
         console.log("**** analysis messsages", analysisMessages);
         analysisMessages.forEach(message => {
             // message.component.oncomplete === true &&
-            if (this.messages.indexOf(message) < 0)
+            if (this.globals.messages.indexOf(message) < 0)
             {
-                this.messages.push(message);
+                this.globals.messages.push(message);
             }
         });
 

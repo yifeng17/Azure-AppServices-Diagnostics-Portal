@@ -5,5 +5,6 @@ export enum MessageSender {
 
 export enum ButtonActionType {
     Continue = 0,
-    SwitchToOtherMessageGroup = 1
+    SwitchToOtherMessageGroup = 1,
+    GetFeedback = 2
 }

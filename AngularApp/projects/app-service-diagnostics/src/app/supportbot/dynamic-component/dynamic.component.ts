@@ -99,7 +99,6 @@ export class DynamicComponent {
             if (response.status === true) {
                 console.log("status from dynamic component", response.data);
                 this.onComplete.emit(response.data);
-
                 this.viewUpdateSubscription.unsubscribe();
 
                 // Throw ObjectUnsubscribed error if these subjects are still used

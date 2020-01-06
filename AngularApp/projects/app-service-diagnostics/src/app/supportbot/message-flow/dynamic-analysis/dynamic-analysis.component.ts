@@ -22,11 +22,15 @@ export class DynamicAnalysisComponent implements OnInit, AfterViewInit, IChatMes
   constructor(private _routerLocal: Router, private _activatedRouteLocal: ActivatedRoute, private injector: Injector, private _genieChatFlow: GenieChatFlow) { }
 
   keyword: string = "";
+  targetedScore: number = 0;
+  noSearchResult: boolean = undefined;
+  showFeedback: boolean = undefined;
+  feedbackText: string = "";
   ngOnInit() {
     this.searchMode = SearchAnalysisMode.Genie;
     this.keyword = this.injector.get('keyword');
+    this.targetedScore = this.injector.get('targetedScore');
     console.log("***Dynamic analysis keyword", this.keyword);
-
 
    // this._routerLocal.navigate([`../analysis/searchResultsAnalysis/search`], { relativeTo: this._activatedRouteLocal, queryParamsHandling: 'merge', queryParams: {searchTerm: this.keyword} });
   }
@@ -43,17 +47,38 @@ export class DynamicAnalysisComponent implements OnInit, AfterViewInit, IChatMes
         data: true
     };
 
+    if (dataOutput.data == undefined || dataOutput.data.detectors == undefined || dataOutput.data.detectors.length === 0)
+    {
+        this.noSearchResult = true;
+    }
+    else
+    {
+        this.noSearchResult = false;
+    }
+
     console.log("status Value", statusValue);
-    this._genieChatFlow.createMessageFlowForAnaysisResult(statusValue.outputData);
+    this._genieChatFlow.createMessageFlowForAnaysisResult(statusValue.outputData, this.noSearchResult);
     this.onComplete.emit(statusValue);
+
     console.log("****lalalastatus Value", statusValue);
+  }
+
+  addHelpfulFeedback() {
+    this.feedbackText = 'Great to hear! From 1 to 5 stars, how helpful was this?';
+    this.showFeedback = true;
+  }
+
+  addNotHelpfulFeedback() {
+    this.feedbackText = 'Sorry to hear! Could you let us know how we can improve?';
+    this.showFeedback = true;
   }
 }
 
 export class DynamicAnalysisMessage extends Message {
-    constructor(keyword: string = "", messageDelayInMs: number = 1000) {
+    constructor(keyword: string = "", targetedScore: number = 0, messageDelayInMs: number = 1000) {
       super(DynamicAnalysisComponent, {
-        keyword: keyword
+        keyword: keyword,
+        targetedScore: targetedScore,
       }, messageDelayInMs);
     }
 }
