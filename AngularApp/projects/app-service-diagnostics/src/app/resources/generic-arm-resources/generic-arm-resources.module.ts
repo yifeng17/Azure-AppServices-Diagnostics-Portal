@@ -10,6 +10,7 @@ import { FeatureService } from '../../shared-v2/services/feature.service';
 import { LoggingV2Service } from '../../shared-v2/services/logging-v2.service';
 import { LiveChatService } from '../../shared-v2/services/livechat.service';
 import { SupportTopicService } from '../../shared-v2/services/support-topic.service';
+import { CXPChatCallerService } from '../../shared-v2/services/cxp-chat-caller.service';
 
 const ResourceRoutes = RouterModule.forChild([
   {
@@ -33,6 +34,7 @@ const ResourceRoutes = RouterModule.forChild([
     FeatureService,    
     LoggingV2Service,
     LiveChatService,
+    CXPChatCallerService,
     ResourceService,
     CategoryService,
     SupportTopicService,

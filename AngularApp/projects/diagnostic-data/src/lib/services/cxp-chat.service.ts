@@ -7,8 +7,6 @@ import { Observable, ReplaySubject } from 'rxjs';
 export class CXPChatService {
   
   constructor() {
-    console.log('====================================================');
-    console.log('CXPChatService created.');
   }
 
   public isSupportTopicEnabledForLiveChat(supportTopicIdToCheck: string): boolean {
@@ -46,7 +44,6 @@ export class CXPChatService {
    * @returns Chat URL string. This can be an empty string if no agents are available or if the queue is not found. Always handle for empty string.
    */
   public getChatURL(supportTopicId: string, trackingIdGuid: string): Observable<string> {
-    console.log('====================================================Get CHat url from CXPChatService');
     return null;
   }
 

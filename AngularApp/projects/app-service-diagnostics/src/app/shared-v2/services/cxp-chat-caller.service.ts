@@ -2,14 +2,12 @@ import { Injectable } from '@angular/core';
 import { flatMap } from 'rxjs/operators';
 import { Observable, ReplaySubject } from 'rxjs';
 import { PortalService } from '../../startup/services/portal.service';
-import { ResourceService } from '../../shared-v2/services/resource.service';
-import { Verbs } from '../models/portal';
-import { Guid } from '../utilities/guid';
+import { ResourceService } from './resource.service' ;
+import { Verbs } from '../../shared/models/portal'
+import { Guid } from '../../shared/utilities/guid';
 import { TelemetryService, TelemetryEventNames } from 'diagnostic-data';
 
-@Injectable( {
-  providedIn: 'root'
-})
+@Injectable()
 export class CXPChatCallerService {
   public isChatSupported: boolean;
   private supportedSupportTopicIds: string[];
@@ -18,10 +16,10 @@ export class CXPChatCallerService {
   public readonly applensUserAgentForCXPChat: string = 'applensDiagnostics';
   public readonly supportPlanType: string = 'Basic';
   public chatLanguage: string = 'en';
+  
+  
 
-  constructor(private _resourceService: ResourceService, private _portalService: PortalService, private _telemetryService: TelemetryService) {
-console.log('----------------------------------');
-console.log('ChatCaller instantiated.');
+  constructor(private _portalService: PortalService, private _telemetryService: TelemetryService, private _resourceService?: ResourceService) {
     this.isChatSupported = this._resourceService.isApplicableForLiveChat;
     if (this.isChatSupported) {
       this.supportedSupportTopicIds = this._resourceService.liveChatEnabledSupportTopicIds;
@@ -149,7 +147,7 @@ console.log('ChatCaller instantiated.');
    * @returns Chat URL string. This can be an empty string if no agents are available or if the queue is not found. Always handle for empty string.
    */
   public getChatURL(supportTopicId: string, trackingIdGuid: string): Observable<string> {
-    return Observable.of('https://support.microsoft.com/en-us/contact/chat/123/?disability=false&mode=azuretest&partnerId=azure&authType=DELEGATED&appid=azure-chat&version=1.0.19323.2');
+    //return Observable.of('https://support.microsoft.com/en-us/contact/chat/123/?disability=false&mode=azuretest&partnerId=azure&authType=DELEGATED&appid=azure-chat&version=1.0.19323.2');
     let input = {
       tagName: this.cxpChatTagName,
       eligibilityParams: {

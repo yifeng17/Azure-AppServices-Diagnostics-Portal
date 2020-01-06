@@ -1,7 +1,14 @@
 <div #chatComponentContainer *ngIf="isComponentInitialized()">
   <div class="cxpChat-ConfContainer" *ngIf="showChatConfDialog">
     <div class="cxpChat-ConfText">
-      A Microsoft Support engineer will engage with you to help answer your questions.<br>
+      <div>
+        <img src="assets/img/jen.jpg" class="agentImage">
+        <span class="agentName"> Jen </span>
+      </div>
+      <hr>
+      <div>
+        A Microsoft Support engineer will engage with you to help answer your questions.
+      </div>
     </div>
     <div class="cxpChat-actionBtnContainer">
       <input class="custom-button inactive-button white-border" (click)="hideChatBubble(true)" type="button"

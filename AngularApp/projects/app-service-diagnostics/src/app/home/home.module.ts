@@ -23,6 +23,7 @@ import { SupportTopicService } from '../shared-v2/services/support-topic.service
 import { MarkdownModule } from 'ngx-markdown';
 import { CXPChatService } from 'diagnostic-data' ;//'../shared/services/cxp-chat.service';
 import { PortalReferrerResolverComponent } from '../shared/components/portal-referrer-resolver/portal-referrer-resolver.component';
+import { CXPChatCallerService } from '../shared-v2/services/cxp-chat-caller.service';
 
 export const HomeRoutes = RouterModule.forChild([
   {
@@ -195,7 +196,8 @@ export const HomeRoutes = RouterModule.forChild([
   ],
   declarations: [HomeComponent, CategoryChatComponent, CategoryTileComponent, SearchResultsComponent, SupportTopicRedirectComponent, DiagnosticsSettingsComponent],
   providers: [CategoryTabResolver, CategoryChatResolver, TimeControlResolver,
-    { provide: GenericSupportTopicService, useExisting: SupportTopicService}, CXPChatService
+    { provide: GenericSupportTopicService, useExisting: SupportTopicService}, 
+    { provide: CXPChatService, useExisting: CXPChatCallerService},
   ]
 })
 export class HomeModule { }
