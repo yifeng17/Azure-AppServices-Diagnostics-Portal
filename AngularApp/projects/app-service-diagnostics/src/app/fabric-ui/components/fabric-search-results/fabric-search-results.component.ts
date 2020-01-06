@@ -42,7 +42,7 @@ export class FabricSearchResultsComponent {
     if ((ele.tagName === "DIV" && ele.className.indexOf("ms-SearchBox-clearButton") > -1) ||
         (ele.tagName === "BUTTON" && ele.className.indexOf("ms-Button--icon") > -1) ||
         (ele.tagName === "DIV" && ele.className.indexOf("ms-Button-flexContainer") > -1) ||
-        (ele.tagName === "I" && ele.className.indexOf("icon-68") > -1)) {
+        (ele.tagName === "I" && ele.className.indexOf("ms-Button--icon") > -1)) {
       this.clickSearchBox = BlurType.None;
     } else {
       this.clickSearchBox = BlurType.Blur;
