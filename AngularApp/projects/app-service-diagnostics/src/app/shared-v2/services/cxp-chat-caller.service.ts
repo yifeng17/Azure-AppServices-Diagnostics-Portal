@@ -147,7 +147,6 @@ export class CXPChatCallerService {
    * @returns Chat URL string. This can be an empty string if no agents are available or if the queue is not found. Always handle for empty string.
    */
   public getChatURL(supportTopicId: string, trackingIdGuid: string): Observable<string> {
-    //return Observable.of('https://support.microsoft.com/en-us/contact/chat/123/?disability=false&mode=azuretest&partnerId=azure&authType=DELEGATED&appid=azure-chat&version=1.0.19323.2');
     let input = {
       tagName: this.cxpChatTagName,
       eligibilityParams: {
