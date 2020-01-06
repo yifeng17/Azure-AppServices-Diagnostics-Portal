@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ResourceService } from '../../../shared-v2/services/resource.service';
 import { FeatureNavigationService, TelemetryService, DiagnosticService, DiagnosticDataConfig, DIAGNOSTIC_DATA_CONFIG } from 'diagnostic-data';
 import { AuthService } from '../../../startup/services/auth.service';
-import { CXPChatService } from 'diagnostic-data' ;//'../../services/cxp-chat.service';
+//import { CXPChatService } from 'diagnostic-data' ;//'../../services/cxp-chat.service';
 import {GenericSupportTopicService} from '../../../../../../diagnostic-data/src/lib/services/generic-support-topic.service';
 
 @Component({
@@ -25,7 +25,7 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
   cxpChatUrl: string = ''; 
 
   constructor(private _activatedRouteLocal: ActivatedRoute, private _diagnosticServiceLocal: DiagnosticService, _resourceService: ResourceService, _authServiceInstance: AuthService, _telemetryService: TelemetryService,
-    _navigator: FeatureNavigationService, private _routerLocal: Router, private _supportTopicService:GenericSupportTopicService, private _cxpChatService:CXPChatService,
+    _navigator: FeatureNavigationService, private _routerLocal: Router, private _supportTopicService:GenericSupportTopicService,
     @Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig) {
     super(_activatedRouteLocal, _diagnosticServiceLocal, _resourceService, _authServiceInstance, _telemetryService, _navigator, _routerLocal);
     this.isPublic = config && config.isPublic;

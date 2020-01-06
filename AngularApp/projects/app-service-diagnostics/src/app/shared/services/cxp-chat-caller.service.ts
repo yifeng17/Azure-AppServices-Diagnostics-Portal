@@ -7,9 +7,7 @@ import { Verbs } from '../models/portal';
 import { Guid } from '../utilities/guid';
 import { TelemetryService, TelemetryEventNames } from 'diagnostic-data';
 
-@Injectable( {
-  providedIn: 'root'
-})
+@Injectable()
 export class CXPChatCallerService {
   public isChatSupported: boolean;
   private supportedSupportTopicIds: string[];
@@ -19,10 +17,10 @@ export class CXPChatCallerService {
   public readonly supportPlanType: string = 'Basic';
   public chatLanguage: string = 'en';
 
-  constructor(private _resourceService: ResourceService, private _portalService: PortalService, private _telemetryService: TelemetryService) {
+  constructor(/*private _resourceService: ResourceService,*/ private _portalService: PortalService, private _telemetryService: TelemetryService) {
 console.log('----------------------------------');
 console.log('ChatCaller instantiated.');
-    this.isChatSupported = this._resourceService.isApplicableForLiveChat;
+    /*this.isChatSupported = this._resourceService.isApplicableForLiveChat;
     if (this.isChatSupported) {
       this.supportedSupportTopicIds = this._resourceService.liveChatEnabledSupportTopicIds;
     }
@@ -30,7 +28,7 @@ console.log('ChatCaller instantiated.');
 
     this._resourceService.getPesId().subscribe(pesId => {
       this.pesId = pesId;
-    });
+    });*/
   }
   public testMe(): string {
     return 'Hello world.';
