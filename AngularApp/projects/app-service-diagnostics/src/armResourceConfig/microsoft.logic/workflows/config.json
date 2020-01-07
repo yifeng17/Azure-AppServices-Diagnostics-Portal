@@ -9,7 +9,10 @@
 	"azureServiceName": "Logic Apps",
 	"armApiVersion": "2016-06-01",
 	"isSearchEnabled": true,
-	"isApplicableForLiveChat": false,
+	"liveChatConfig": {
+		"isApplicableForLiveChat": false,
+		"supportTopicIds": []
+	},
 	"categories": [{
 			"id": "Diagnostics",
 			"name": "Diagnostics",

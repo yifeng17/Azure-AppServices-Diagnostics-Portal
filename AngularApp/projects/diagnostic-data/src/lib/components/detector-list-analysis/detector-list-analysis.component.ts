@@ -21,6 +21,7 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 import { AppInsightQueryMetadata, AppInsightData, BladeInfo } from '../../models/app-insights';
 import { GenericSupportTopicService } from '../../services/generic-support-topic.service';
 
+
 @Component({
     selector: 'detector-list-analysis',
     templateUrl: './detector-list-analysis.component.html',

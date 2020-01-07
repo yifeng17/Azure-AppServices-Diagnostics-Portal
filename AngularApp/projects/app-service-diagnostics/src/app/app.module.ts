@@ -70,7 +70,7 @@ import { BackendCtrlService } from './shared/services/backend-ctrl.service';
     { provide: DiagnosticService,
       useFactory: (_localBackendService: LocalBackendService, _genericApiService: GenericApiService) => environment.useApplensBackend ? _localBackendService : _genericApiService,
       deps: [LocalBackendService, GenericApiService] },
-    { provide: CommsService, useExisting: GenericCommsService },
+    { provide: CommsService, useExisting: GenericCommsService },    
     { provide: AppInsightsQueryService, useExisting: AppInsightsService },
     { provide: DiagnosticSiteService, useExisting: SiteService },
     {

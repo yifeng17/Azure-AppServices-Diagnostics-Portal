@@ -79,6 +79,8 @@ import { DetectorListAnalysisComponent } from './components/detector-list-analys
 import { AppDependenciesComponent } from './components/app-dependencies/app-dependencies.component';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { HighchartsGraphComponent } from './components/highcharts-graph/highcharts-graph.component';
+import { CXPChatService } from './services/cxp-chat.service';
+import { CxpChatLauncherComponent } from './components/cxp-chat-launcher/cxp-chat-launcher.component';
 import { AppInsightsEnablementComponent } from './components/app-insights-enablement/app-insights-enablement.component';
 import { ConnectAppInsightsComponent } from './components/connect-app-insights/connect-app-insights.component';
 import {DetectorSearchComponent} from './components/detector-search/detector-search.component';
@@ -114,6 +116,7 @@ import {DetectorSearchComponent} from './components/detector-search/detector-sea
     AppDependenciesComponent,
     AppInsightsMarkdownComponent,
     HighchartsGraphComponent,
+    CxpChatLauncherComponent,
     AppInsightsEnablementComponent,
     ConnectAppInsightsComponent
   ],
@@ -127,6 +130,7 @@ import {DetectorSearchComponent} from './components/detector-search/detector-sea
     ChangesViewComponent,
     DetectorListAnalysisComponent,
     AppInsightsMarkdownComponent,
+    CxpChatLauncherComponent,
     AppInsightsEnablementComponent,
     ConnectAppInsightsComponent
   ],
@@ -139,6 +143,7 @@ export class DiagnosticDataModule {
         DiagnosticService,
         GenericSupportTopicService,
         { provide: DIAGNOSTIC_DATA_CONFIG, useValue: config },
+        CXPChatService,
         KustoTelemetryService,
         AppInsightsTelemetryService,
         TelemetryService,

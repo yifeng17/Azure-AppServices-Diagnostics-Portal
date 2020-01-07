@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ArmResourceConfig, ResourceDescriptor, ResourceDescriptorGroups } from '../models/arm/armResourceConfig'
+import { ArmResourceConfig, ResourceDescriptor, ResourceDescriptorGroups, LiveChatConfig } from '../models/arm/armResourceConfig'
 import { HttpClient } from '@angular/common/http';
 import { map, catchError } from 'rxjs/operators';
 import { Category } from "../../shared-v2/models/category";
@@ -121,6 +121,10 @@ export class GenericArmConfigService {
     return null;
   }
 
+  public distinctStringValues(value:string, index: number, self: string[]): boolean {
+    return self.indexOf(value) === index;
+  }
+
 
   constructor(private _http: HttpClient) { }
 
@@ -215,9 +219,71 @@ export class GenericArmConfigService {
           currConfig.pesId = this.getValue(this.resourceConfig.pesId, this.overrideConfig.pesId);
         }
 
-        //currConfig.isApplicableForLiveChat
-        if (this.getValue(this.resourceConfig.isApplicableForLiveChat, this.overrideConfig.isApplicableForLiveChat) != null) {
-          currConfig.isApplicableForLiveChat = this.getValue(this.resourceConfig.isApplicableForLiveChat, this.overrideConfig.isApplicableForLiveChat);
+        //currConfig.liveChatConfig
+        if(this.overrideConfig.liveChatConfig && !this.resourceConfig.liveChatConfig) {
+          currConfig.liveChatConfig = this.overrideConfig.liveChatConfig;
+        }
+        else {
+          if(!this.overrideConfig.liveChatConfig && this.resourceConfig.liveChatConfig) {
+            currConfig.liveChatConfig = this.resourceConfig.liveChatConfig;
+          }
+          else {
+            let currLiveChatConfig: LiveChatConfig = {
+              isApplicableForLiveChat: false,
+              supportTopicIds: []
+            }
+            if(this.getValue(this.resourceConfig.liveChatConfig.isApplicableForLiveChat, this.overrideConfig.liveChatConfig.isApplicableForLiveChat)) {
+              currLiveChatConfig.isApplicableForLiveChat = this.getValue(this.resourceConfig.liveChatConfig.isApplicableForLiveChat, this.overrideConfig.liveChatConfig.isApplicableForLiveChat);
+            }
+
+            //Process supported support topics for live chat
+            let currMergedSupportTopicIds:string[] = [];
+            
+            if(this.overrideConfig.liveChatConfig.supportTopicIds && this.overrideConfig.liveChatConfig.supportTopicIds.length > 0 && 
+              (!this.resourceConfig.liveChatConfig.supportTopicIds 
+                ||  (this.resourceConfig.liveChatConfig.supportTopicIds && this.resourceConfig.liveChatConfig.supportTopicIds.length < 1)  
+              ) 
+              ) {
+                //Valid support topics exist only in overrideConfig
+                currMergedSupportTopicIds = this.overrideConfig.liveChatConfig.supportTopicIds;
+            }
+            else {
+              if(this.resourceConfig.liveChatConfig.supportTopicIds && this.resourceConfig.liveChatConfig.supportTopicIds.length > 0 && 
+                (!this.overrideConfig.liveChatConfig.supportTopicIds 
+                  ||  (this.overrideConfig.liveChatConfig.supportTopicIds && this.overrideConfig.liveChatConfig.supportTopicIds.length < 1)  
+                ) 
+                ) {
+                  //Valid support topics exist only in resourceConfig
+                  currMergedSupportTopicIds = this.resourceConfig.liveChatConfig.supportTopicIds;
+              }
+              else {
+                if(this.overrideConfig.liveChatConfig.supportTopicIds && this.resourceConfig.liveChatConfig.supportTopicIds && 
+                  this.overrideConfig.liveChatConfig.supportTopicIds.length > 0 && this.resourceConfig.liveChatConfig.supportTopicIds.length > 0
+                  ) {
+                    //Support topics exist in both resourceConfig and overrideConfig, merge them
+                    currMergedSupportTopicIds = this.overrideConfig.liveChatConfig.supportTopicIds.concat(this.resourceConfig.liveChatConfig.supportTopicIds);
+
+                    //Make sure that we have distinct values after merging.
+                    currMergedSupportTopicIds = currMergedSupportTopicIds.filter(this.distinctStringValues);
+
+                    if(currMergedSupportTopicIds.findIndex((currEntry:string)=> { return currEntry === '*'  }) > -1) {
+                      currMergedSupportTopicIds = [];
+                      //* means enabled for all support topics. So if we find it, make sure it is the only entry.
+                      //This will help with perf later.
+                      currMergedSupportTopicIds.push('*');
+                    }
+
+                    //Convert each entry to lowercase
+                    currMergedSupportTopicIds.filter((value:string, index: number, self: string[]) => {
+                      self[index] = self[index].toLowerCase();
+                    });
+                    
+                } //Else of this means that support topics do not exist in either and it is fine since we already initialize currMergedSupportTopicIds as an empty array.
+              }
+            }
+            currLiveChatConfig.supportTopicIds = currMergedSupportTopicIds;
+            currConfig.liveChatConfig = currLiveChatConfig;
+          }
         }
 
         //currConfig.categories

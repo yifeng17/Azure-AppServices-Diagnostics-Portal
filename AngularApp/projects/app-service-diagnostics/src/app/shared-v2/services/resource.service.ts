@@ -86,8 +86,8 @@ export class ResourceService {
   public get isApplicableForLiveChat(): boolean {
     if (this._genericArmConfigService) {
       let currConfig: ArmResourceConfig = this._genericArmConfigService.getArmResourceConfig(this.resource.id);
-      if (typeof currConfig.isApplicableForLiveChat == 'boolean') {
-        return currConfig.isApplicableForLiveChat;
+      if ( currConfig.liveChatConfig && typeof currConfig.liveChatConfig.isApplicableForLiveChat == 'boolean') {
+        return currConfig.liveChatConfig.isApplicableForLiveChat;
       }
       else {
         return false;
@@ -95,6 +95,25 @@ export class ResourceService {
     }
     else {
       return false;
+    }
+  }
+
+  public get liveChatEnabledSupportTopicIds():string[] {
+    if(this._genericArmConfigService) {
+      let currConfig: ArmResourceConfig = this._genericArmConfigService.getArmResourceConfig(this.resource.id);
+      if(this.isApplicableForLiveChat === true) {
+        if ( currConfig.liveChatConfig && currConfig.liveChatConfig.supportTopicIds
+          &&  currConfig.liveChatConfig.supportTopicIds instanceof Array  
+          && currConfig.liveChatConfig.supportTopicIds.length > 0 ) {
+          return currConfig.liveChatConfig.supportTopicIds;
+        }
+        else {
+          return [];
+        }
+      }
+      else {
+        return [];
+      }
     }
   }
 
