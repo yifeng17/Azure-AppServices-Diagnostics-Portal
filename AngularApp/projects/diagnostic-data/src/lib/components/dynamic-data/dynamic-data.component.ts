@@ -27,6 +27,7 @@ import { ChangeAnalysisOnboardingComponent } from '../changeanalysis-onboarding/
 import { ChangesetsViewComponent } from '../changesets-view/changesets-view.component';
 import {AppDependenciesComponent} from '../app-dependencies/app-dependencies.component';
 import { ConnectAppInsightsComponent } from '../connect-app-insights/connect-app-insights.component';
+import { DetectorSearchComponent } from '../detector-search/detector-search.component';
 @Component({
   selector: 'dynamic-data',
   templateUrl: './dynamic-data.component.html',
@@ -35,7 +36,7 @@ import { ConnectAppInsightsComponent } from '../connect-app-insights/connect-app
     TimeSeriesGraphComponent, DataTableComponent, DataSummaryComponent, EmailComponent,
     InsightsComponent, TimeSeriesInstanceGraphComponent, DynamicInsightComponent, MarkdownViewComponent,
     DetectorListComponent, DropdownComponent, CardSelectionComponent, SolutionComponent, GuageControlComponent, FormComponent,
-    ChangeAnalysisOnboardingComponent, ChangesetsViewComponent, AppDependenciesComponent, AppInsightsMarkdownComponent, ConnectAppInsightsComponent
+      ChangeAnalysisOnboardingComponent, ChangesetsViewComponent, AppDependenciesComponent, AppInsightsMarkdownComponent, ConnectAppInsightsComponent, DetectorSearchComponent
   ]
 })
 export class DynamicDataComponent implements OnInit {
@@ -62,7 +63,7 @@ export class DynamicDataComponent implements OnInit {
     this.dataBehaviorSubject.subscribe((diagnosticData: DiagnosticData) => {
       const component = this._findInputComponent((<Rendering>diagnosticData.renderingProperties).type);
       const componentFactory = this.componentFactoryResolver.resolveComponentFactory(component);
-
+      
       const viewContainerRef = this.dynamicDataContainer;
       viewContainerRef.clear();
 
@@ -118,6 +119,8 @@ export class DynamicDataComponent implements OnInit {
         return AppInsightsMarkdownComponent;
       case RenderingType.DependencyGraph:
         return AppDependenciesComponent;
+      case RenderingType.SearchComponent:
+        return DetectorSearchComponent;
       case RenderingType.AppInsightEnablement:
         return ConnectAppInsightsComponent;
       default:

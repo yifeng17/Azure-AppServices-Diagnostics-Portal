@@ -81,6 +81,7 @@ import { HighchartsChartModule } from 'highcharts-angular';
 import { HighchartsGraphComponent } from './components/highcharts-graph/highcharts-graph.component';
 import { AppInsightsEnablementComponent } from './components/app-insights-enablement/app-insights-enablement.component';
 import { ConnectAppInsightsComponent } from './components/connect-app-insights/connect-app-insights.component';
+import {DetectorSearchComponent} from './components/detector-search/detector-search.component';
 
 @NgModule({
   imports: [
@@ -98,7 +99,7 @@ import { ConnectAppInsightsComponent } from './components/connect-app-insights/c
   ],
   declarations: [
     Nvd3GraphComponent, TimeSeriesGraphComponent, DataTableComponent, DynamicDataComponent,
-    DataRenderBaseComponent, DataContainerComponent, TimeSeriesInstanceGraphComponent, DetectorViewComponent,
+    DataRenderBaseComponent, DataContainerComponent, TimeSeriesInstanceGraphComponent, DetectorViewComponent, DetectorSearchComponent,
     DataSummaryComponent, EmailComponent, InsightsComponent, LoaderViewComponent, DynamicInsightComponent,
     MarkdownViewComponent, DetectorListComponent, DetectorOrderPipe, StarRatingComponent, StarRatingFeedbackComponent,
     DropdownComponent, StatusIconComponent, DetectorControlComponent, DetectorContainerComponent, InternalPipe,
@@ -117,7 +118,7 @@ import { ConnectAppInsightsComponent } from './components/connect-app-insights/c
     ConnectAppInsightsComponent
   ],
   exports: [
-    FormsModule, TimeSeriesGraphComponent, DataTableComponent, DynamicDataComponent, DetectorViewComponent,
+    FormsModule, TimeSeriesGraphComponent, DataTableComponent, DynamicDataComponent, DetectorViewComponent, DetectorSearchComponent,
     DataSummaryComponent, LoaderViewComponent, StatusIconComponent, DetectorControlComponent,
     DetectorContainerComponent, InternalPipe, CommAlertComponent, GuageControlComponent, SolutionComponent,
     FormComponent, VerticalDisplayListComponent, VerticalDisplayListItemComponent, SolutionTypeTagComponent, DataContainerComponent,
