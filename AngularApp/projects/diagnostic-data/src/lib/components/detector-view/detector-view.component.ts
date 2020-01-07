@@ -3,7 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
-import { DetectorResponse, Rendering, RenderingType, DetectorType } from '../../models/detector';
+import { DetectorResponse, Rendering, RenderingType, DetectorMetaData, DetectorType, DiagnosticData } from '../../models/detector';
 import { DetectorControlService } from '../../services/detector-control.service';
 import { TelemetryEventNames } from '../../services/telemetry/telemetry.common';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
@@ -100,6 +100,10 @@ export class DetectorViewComponent implements OnInit {
 
   protected loadDetector() {
     this.detectorResponseSubject.subscribe((data: DetectorResponse) => {
+      let metadata: DetectorMetaData = data? data.metadata: null;
+      if (metadata && (metadata.type == DetectorType.Analysis)){
+        data.dataset = data.dataset.filter((ds: DiagnosticData) => (ds.renderingProperties.type !== RenderingType.SearchComponent));
+      }
       this.detectorDataLocalCopy = data;
       if (data) {
         this.detectorEventProperties = {
