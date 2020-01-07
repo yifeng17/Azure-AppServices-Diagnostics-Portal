@@ -27,9 +27,26 @@
   <div *ngIf="showFeedback">
       <div tabindex="0" class="message-sent-by-system" style="margin-top:10px; margin-bottom:10px">{{feedbackText}}
       </div>
+      <div style="height:0px;overflow-y: hidden">
+          <!-- <feedback [showFeedbackForm]="'shown'" (showFeedbackFormChange)="toggleButtonView(Feedback)" [source]="'appanalysis'" [ratingEventProperties]="ratingEventProperties"></feedback>
+ -->
+        </div>
+  </div>
+
+  <div *ngIf="showDocumentSearchResult&&content">
+      <div class="article-container">
+        <div class="article" *ngFor="let article of content" (click)="openArticle(article)" tabindex="0" (keyup.enter)="openArticle(article)">
+          <a>{{article.title}}
+            <i class="fa fa-external-link"></i>
+          </a>
+          <div class="article-link">{{getLink(article.link)}}</div>
+          {{article.description}}
+        </div>
+      </div>
   </div>
 
 
   <!-- <ng-template #loadingMessage>
       <loading-message></loading-message>
   </ng-template> -->
+

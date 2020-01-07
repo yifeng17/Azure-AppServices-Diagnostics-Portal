@@ -23,7 +23,7 @@ export class DynamicAnalysisService {
   ];
 
   private ocpApimKeyBehaviorSubject: BehaviorSubject<string> = new BehaviorSubject<string>('');
-  private ocpApimKey: string = '';
+  private ocpApimKey: string = '225eeab6c54e469189e3b6a1b5d00c1a';
 
   constructor(private _http: HttpClient, private _resourceService: ResourceService, private _backendApi: BackendCtrlService) {
 
@@ -47,6 +47,7 @@ export class DynamicAnalysisService {
     const searchSuffix = this._resourceService.searchSuffix;
     const query = encodeURIComponent(`${questionString} AND ${searchSuffix}`);
     const url = `https://api.cognitive.microsoft.com/bing/v7.0/search?q='${query}'&count=${resultsCount}`;
+
 
     return this.ocpApimKeyBehaviorSubject.pipe(
       mergeMap((key:string)=>{
