@@ -130,7 +130,7 @@ export class CXPChatCallerService {
       }
 
       this._telemetryService.logEvent(TelemetryEventNames.BuildCXPChatUrl, {
-        "trackingId": trackingIdGuid,
+        "cxpChatTrackingId": trackingIdGuid,
         "passedInput": JSON.stringify(input),
         "returnValue": stringToLog
       });
@@ -185,7 +185,7 @@ export class CXPChatCallerService {
       }
 
       this._telemetryService.logEvent(TelemetryEventNames.GetCXPChatURL, {
-        "trackingId": trackingIdGuid,
+        "cxpChatTrackingId": trackingIdGuid,
         "passedInput": JSON.stringify(input),
         "returnValue": stringToLog
       });
@@ -201,7 +201,7 @@ export class CXPChatCallerService {
  */
   public logUserActionOnChat(userAction: string, trackingIdGuid: string, chatUrl: string): void {
     let notificationMessage = {
-      "trackingId": trackingIdGuid,
+      "cxpChatTrackingId": trackingIdGuid,
       "userAction": userAction,
       "chatUrl": chatUrl
     };
