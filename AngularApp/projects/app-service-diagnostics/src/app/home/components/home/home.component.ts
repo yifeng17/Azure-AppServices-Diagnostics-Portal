@@ -1,5 +1,5 @@
 import { DetectorControlService, FeatureNavigationService, DetectorResponse } from 'diagnostic-data';
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, Output, EventEmitter } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Category } from '../../../shared-v2/models/category';
 import { CategoryService } from '../../../shared-v2/services/category.service';
@@ -35,6 +35,7 @@ import {
 // import { FabPeoplePickerComponent } from '@angular-react/fabric/public-api';
 import { from } from 'rxjs';
 import { PortalActionService } from '../../../shared/services/portal-action.service';
+import { Globals } from '../../../globals';
 
 
 @Component({
@@ -174,7 +175,6 @@ export class HomeComponent implements OnInit {
   iconProps: ISearchBoxProps['iconProps'] = { iconName: 'Filter' };
   resourceName: string;
   categories: Category[];
-  searchValue = '';
   searchBoxFocus: boolean;
   searchLogTimout: any;
   event: any;
@@ -183,6 +183,8 @@ export class HomeComponent implements OnInit {
   homePageText: HomePageText;
   searchPlaceHolder: string;
   providerRegisterUrl: string;
+  openPanel:boolean = false;
+  @Output() openPanelChange: EventEmitter<boolean> = new EventEmitter<boolean>();
   // get inputAriaLabel(): string {
   //   return this.searchValue !== '' ?
   //     `${this.searchResultCount} Result` + (this.searchResultCount !== 1 ? 's' : '') :
@@ -199,7 +201,7 @@ export class HomeComponent implements OnInit {
 
   constructor(private _resourceService: ResourceService, private _categoryService: CategoryService, private _notificationService: NotificationService, private _router: Router,
     private _detectorControlService: DetectorControlService, private _featureService: FeatureService, private _logger: LoggingV2Service, private _authService: AuthService,
-    private _navigator: FeatureNavigationService, private _activatedRoute: ActivatedRoute, private armService: ArmService, private logService: TelemetryService, private kustologgingService: PortalKustoTelemetryService, private _diagnosticService: DiagnosticService, private _portalService: PortalActionService) {
+    private _navigator: FeatureNavigationService, private _activatedRoute: ActivatedRoute, private armService: ArmService, private logService: TelemetryService, private kustologgingService: PortalKustoTelemetryService, private _diagnosticService: DiagnosticService, private _portalService: PortalActionService,private globals:Globals) {
 
     const i = setInterval(() => {
       this.secondsCounter += 1;
@@ -386,6 +388,11 @@ export class HomeComponent implements OnInit {
     if(category) {
       this._portalService.openBladeDiagnoseCategoryBlade(category.id);
     }
+  }
+
+  openGeniePanel() {
+    this.globals.openGeniePanel = true;
+    console.log(this.globals.openGeniePanel);
   }
 }
 
