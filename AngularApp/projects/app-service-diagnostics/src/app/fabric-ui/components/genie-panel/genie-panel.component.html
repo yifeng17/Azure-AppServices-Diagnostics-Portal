@@ -13,11 +13,14 @@
       <div
         style="color:#605E5C; position: absolute; left:25px; right: 32px; top:35px; height: 19px; font-family: 'segoe UI'; font-size: 10px; line-height: 14px; display: block">
         Help bot</div>
-      <div
-        style="position: absolute; top:10px; right: 10px; display: flex; align-items: flex-end; cursor: pointer;">
+      <div style="position: absolute; top:10px; right: 10px; align-items: flex-end; cursor: pointer; " class="button-container">
         <!-- <i id="close" class="ms-Icon ms-Icon--Cancel" (click)="closePanel()" aria-hidden="true"></i> -->
-        <i class="fa fa-angle-double-right close-button" (click)="closeGeniePanel()"></i>
-
+        <div>
+        <i class="fa fa-lg fa-angle-double-right close-button"  (click)="closeGeniePanel()"></i>
+      </div>
+        <div class="button-container">
+        <span class="tooltiptext" style="margin-left: -30px;">Collapse</span>
+      </div>
         <!-- <fab-icon iconName="Cancel" style="float:right" (onClick)="closePanel()"></fab-icon> -->
       </div>
     </div>
@@ -34,7 +37,8 @@
             <div class="row animated fadeIn chat-message-container" *ngFor="let item of globals.messages"
               style="margin-left:0px">
               <!-- " Remove this functionality because we want the critical info to be shown to the customers-->
-              <dynamic-component [componentData]="item" (onComplete)="scrollToBottom()"></dynamic-component>
+              <!-- (onComplete)="scrollToBottom()" not consistent scrolling if this is put there-->
+              <dynamic-component [componentData]="item" (onViewUpdate)="updateView($event)" (onComplete)="updateStatus($event)" ></dynamic-component>
             </div>
           </div>
         </fab-pivot-item>

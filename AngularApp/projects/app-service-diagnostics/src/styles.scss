@@ -137,8 +137,8 @@ fab-command-bar .ms-SearchBox {
     background-color: white!important;
 }
 
-.ms-Button--commandBar :hover {
-    background-color: rgba(85, 179, 255, 0.1);
+.ms-Button--commandBar:hover {
+    background-color: rgba(85, 179, 255, 0.1)!important;
 }
 
 fab-command-bar {
@@ -158,7 +158,6 @@ fab-command-bar {
 .fab-command-bar-class .ms-CommandBar {
     height: 33px;
 }
-
 
 
 

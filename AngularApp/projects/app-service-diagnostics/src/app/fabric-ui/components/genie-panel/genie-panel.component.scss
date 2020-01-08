@@ -1,0 +1,22 @@
+.close-button {
+    padding: 5px;
+}
+
+.close-button:hover {
+    color: #0272ca;
+}
+
+
+.button-container .tooltiptext {
+    visibility: hidden;
+    position: relative;
+    border: 1px solid black;
+    padding: 3px;
+    background: #dddddd1a;
+    font-size: 12px;
+  }
+
+  .button-container:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+  }

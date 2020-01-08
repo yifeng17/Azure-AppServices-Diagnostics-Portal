@@ -138,6 +138,20 @@
     outline-color: #00bcf2;;
   }
 
+  .button-container .tooltiptext {
+    visibility: hidden;
+    position: relative;
+    border: 1px solid black;
+    padding: 3px;
+    background: #dddddd1a;
+    font-size: 12px;
+  }
+
+  .button-container:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+  }
+
 
 // .content-wrapper.white-background, .content-wrapper.gray-background {
 //     min-height: calc(100vh - 95px);
