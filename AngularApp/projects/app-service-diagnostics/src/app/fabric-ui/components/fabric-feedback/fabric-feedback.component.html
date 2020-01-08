@@ -1,0 +1,34 @@
+<fab-panel [isOpen]="globals.openFeedback" [type]="type" [customWidth]="'355px'" [isHiddenOnDismiss]="true"
+  [isLightDismiss]="true" [hasCloseButton]="true" [closeButtonAriaLabel]="'close'" (onDismissed)="dismissedHandler()">
+  <div [ngStyle]="{'display':submitted === false ? 'block': 'none'}">
+    <p>Send us feedback</p>
+    <p>Thank you for taking the time to give us feedback.</p>
+    <p>If you need help,please contact support</p>
+    <p>Are you satisfied with your experience?</p>
+    <div style="display: flex; font-size: 25px;">
+      <div *ngFor="let feedbackIcon of feedbackIcons;let i = index" (click)="setRating(i)"
+        [ngClass]="{'selected-icon':rating - 1 === i}" style="padding: 5px;">
+        <fab-icon [iconName]="feedbackIcon"></fab-icon>
+      </div>
+    </div>
+    <textarea [(ngModel)]="feedbackText" placeholder="Tell us about your experience..." tabindex="0" rows="7"
+      cols="40"></textarea>
+    <div style="position: absolute;bottom: 10px;left:10px">
+      <fab-primary-button (onClick)="submitFeedback()">Submit feddback</fab-primary-button>
+    </div>
+  </div>
+
+  <div [ngStyle]="{'display':submitted === true ? 'block': 'none'}">
+    <p>Thank you for your feedback</p>
+    <div *ngIf="rating >= 3">
+      <p>Share your experience with App Service Diagnostic !</p>
+      <button>Tweet</button>
+    </div>
+
+    <div *ngIf="rating < 3">
+      <p>Get Help from Genie to answer your questions on diagnosting problem of your application.</p>
+      <!-- <button (click)="openGenieHandler()">Ask Genie</button> -->
+    </div>
+  </div>
+  <button (click)="openGenieHandler()">Ask Genie</button>
+</fab-panel>
