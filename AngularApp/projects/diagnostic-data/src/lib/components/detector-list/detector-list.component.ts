@@ -95,10 +95,10 @@ export class DetectorListComponent extends DataRenderBaseComponent {
       let queryString = null;
       if(additionalParams) {
           let contextToPass = <Object>JSON.parse(additionalParams);
-          queryString = '?';
+          queryString = '';
           for(var key in contextToPass) {
               if(contextToPass.hasOwnProperty(key)) {
-                queryString += `${key}=${contextToPass[key]}`;
+                queryString += `&${key}=${contextToPass[key]}`;
               }
           }
       }
@@ -111,7 +111,7 @@ export class DetectorListComponent extends DataRenderBaseComponent {
       statusIcon: null,
       expanded: false,
       response: null,
-      request: this._diagnosticService.getDetector(detector.id, this._detectorControl.startTimeString, this._detectorControl.endTimeString)
+      request: this._diagnosticService.getDetector(detector.id, this._detectorControl.startTimeString, this._detectorControl.endTimeString, this._detectorControl.shouldRefresh, this._detectorControl.isInternalView, queryString)
     };
   }
 
