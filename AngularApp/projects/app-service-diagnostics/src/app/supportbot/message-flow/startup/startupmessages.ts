@@ -5,7 +5,7 @@ import { MessageGroup } from '../../models/message-group';
 import { RegisterMessageFlowWithFactory } from '../message-flow.factory';
 
 @Injectable()
-@RegisterMessageFlowWithFactory()
+// @RegisterMessageFlowWithFactory()
 export class StartupMessages extends IMessageFlowProvider {
 
     public GetMessageFlowList(): MessageGroup[] {

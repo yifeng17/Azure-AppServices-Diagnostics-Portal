@@ -6,7 +6,7 @@
 
 
 <div [ngClass]="{'animated bounceOutLeft': showComponent === false}" *ngIf="showComponent">
-    <button *ngFor="let item of buttonList; let i = index" type="button" class="custom-button bot-button" style="margin-right:20px;min-width:30px" (click)="onClick(item)">
+    <button *ngFor="let item of buttonList; let i = index" type="button" [ngClass]="{'custom-button bot-button': button !== ButtonActionType.GetFeedback, 'feedback-button': button === ButtonActionType.GetFeedback}"   style="margin-right:20px;min-width:30px" (click)="onClick(item)">
         {{item.title}}
     </button>
 </div>

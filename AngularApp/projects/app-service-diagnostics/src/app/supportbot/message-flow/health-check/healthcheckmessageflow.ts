@@ -11,7 +11,7 @@ import { BotLoggingService } from '../../../shared/services/logging/bot.logging.
 import { MessageSender, ButtonActionType } from '../../models/message-enums';
 
 @Injectable()
-@RegisterMessageFlowWithFactory()
+// @RegisterMessageFlowWithFactory()
 export class HealthCheckMessageFlow extends IMessageFlowProvider {
 
     constructor(private _appAnalysisService: AppAnalysisService, private _cpuAnalysisChatFlow: CpuAnalysisChatFlow, private _logger: BotLoggingService) {

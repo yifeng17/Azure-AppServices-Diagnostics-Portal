@@ -6,6 +6,7 @@ import { MessageProcessor } from '../../../supportbot/message-processor.service'
 import { mergeStyleSets, hiddenContentStyle, MessageBarType, FontSizes } from 'office-ui-fabric-react';
 import { DynamicComponent } from '../../../supportbot/dynamic-component/dynamic.component';
 import { TextMessageComponent } from '../../../supportbot/common/text-message/text-message.component';
+import { LoadingMessageComponent } from '../../../supportbot/common/loading-message/loading-message.component';
 
 import {
     PanelType,
@@ -54,25 +55,24 @@ export class GeniePanelComponent implements OnInit {
         this.panelStyles = {
             // type: PanelType.smallFixedNear,
             root: {
-                // position: 'fixed',
                 width: 585,
-                // boxSizing: 'border-box',
-                // overflowY: 'auto',
-                // overflowX: 'hiden',
             },
-            //   customWidth: "585",
         };
+        this.chatContainerHeight = 0;
+        this.messages = [];
+        this.showTypingMessage = false;
         this.chatContainerHeight = 0;
     }
 
     ngOnInit() {
         console.log("init genie with openPanel", this.globals);
 
-
         // Pop messages from globals messages:
         if (this.globals.messages.length === 0) {
             this.globals.messages.push(new TextMessage(this.welcomeMessage, MessageSender.System, 200));
         }
+
+        this.getMessage();
 
         //  this.messages = this.globals.messages;
 
@@ -104,6 +104,11 @@ export class GeniePanelComponent implements OnInit {
         };
     }
 
+    getHistoryMessage(): void {
+        this.messages = JSON.parse(JSON.stringify(this.globals.messages))
+      //  this.messages = {...this.globals.messages};
+    }
+
     ngOnDestroy() {
         if (this.scrollListener) {
           clearInterval(this.scrollListener);
@@ -125,6 +130,7 @@ export class GeniePanelComponent implements OnInit {
         this.loading = false;
      //   clearInterval(this.scrollListener);
         this.scrollListener = undefined;
+        this.getMessage(event);
     }
 
     scrollToBottom(event?: any): void {
@@ -150,19 +156,23 @@ export class GeniePanelComponent implements OnInit {
     }
 
     onSearchEnter(event: any): void {
-        this._genieChatFlow.createMessageFlowForAnaysis(event.newValue).subscribe((analysisMessages: Message[]) => {
+        // Push messages to the current object, also wait for the complete status, and push the object to globa message component
+        let analysisMessageGroupId = event.newValue+ (new Date()).toUTCString();
+        this._genieChatFlow.createMessageFlowForAnaysis(event.newValue, analysisMessageGroupId).subscribe((analysisMessages: Message[]) => {
             console.log("**** analysis messsages", analysisMessages);
             analysisMessages.forEach(message => {
                 // message.component.oncomplete === true &&
-                if (this.globals.messages.indexOf(message) < 0) {
-                    this.globals.messages.push(message);
-                }
+                // if (this.globals.messages.indexOf(message) < 0) {
+                //     this.globals.messages.push(message);
+                // }
+               // this.messages.push(message);
             });
 
             console.log("constructing messages onsearch", this.globals.messages, this.messages);
         });
-
-        this.scrollToBottom();
+        this._messageProcessor.setCurrentKey(analysisMessageGroupId);
+        this.getMessage();
+      //  this.scrollToBottom();
         //setTimeout(() => this.scrollToBottom(), 500);
 
       //  this.scrollListener = setInterval(() => this.scrollToBottom(), 1000);
@@ -213,23 +223,22 @@ export class GeniePanelComponent implements OnInit {
         }
     }
 
+    getMessage(event?: any): void {
+        console.log("status oncomplete: event", event);
+        const self = this;
+        const message = this._messageProcessor.getNextMessage(event);
 
-    // getMessage(event?: any): void {
-    //     console.log("status oncomplete: event", event);
-    //     const self = this;
-    //     const message = this._messageProcessor.getNextMessage(event);
+        if (message) {
+            this.messages.push(message);
+            if (message.messageDelayInMs >= 400) {
+                this.showTypingMessage = true;
 
-    //     if (message) {
-    //         this.messages.push(message);
-    //         if (message.messageDelayInMs >= 2000) {
-    //             this.showTypingMessage = true;
-
-    //             // To show the typing message icon, we need to scroll the page to the bottom.
-    //             setTimeout(() => {
-    //                 //  this.scrollToBottom();
-    //             }, 200);
-    //         }
-    //     }
-    // }
+                // To show the typing message icon, we need to scroll the page to the bottom.
+                setTimeout(() => {
+                    //  this.scrollToBottom();
+                }, 200);
+            }
+        }
+    }
 
 }

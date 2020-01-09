@@ -53,6 +53,15 @@
     }
 }
 
+.feedback-button{
+    width: 30px;
+    height: 30px;
+    margin:5px;
+    padding:3px;
+    border-radius: 20%;
+    border: 1px solid;
+}
+
 .button-block{
     display: block;
 }
@@ -65,7 +74,7 @@
         &:hover{
             background-color: lighten($primary-color-dark, 10%);
         }
-    
+
         &:active{
             background-color: darken($primary-color-dark, 10%)
         }
@@ -75,7 +84,7 @@
             color: lighten($disabled-color-dark, 20%);
         }
     }
-    
+
     .custom-button-invert{
         border: 1px solid $primary-color-dark;
         background-color: $body-bg-color-dark;
@@ -85,7 +94,7 @@
             color: lighten($primary-color-dark, 10%);
             border-color: lighten($primary-color-dark, 10%);
         }
-    
+
         &:active{
             color: darken($primary-color-dark, 10%);
             border-color: darken($primary-color-dark, 10%);

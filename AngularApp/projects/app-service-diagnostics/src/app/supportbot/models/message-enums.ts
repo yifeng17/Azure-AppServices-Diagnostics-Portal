@@ -3,6 +3,12 @@ export enum MessageSender {
     User = 1
 }
 
+export enum MessageType {
+    Dialogue = 0,
+    Feedback = 1
+}
+
+
 export enum ButtonActionType {
     Continue = 0,
     SwitchToOtherMessageGroup = 1,

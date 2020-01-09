@@ -15,7 +15,7 @@ import { LiveChatService } from '../../../shared-v2/services/livechat.service';
 //TODO: THIS IS NO LONGER REGISTERED ANYWHERE
 // Need to migrate this
 @Injectable()
-@RegisterMessageFlowWithFactory()
+// @RegisterMessageFlowWithFactory()
 export class TalkToAgentMessageFlow extends IMessageFlowProvider {
 
     public isApplicable: boolean;

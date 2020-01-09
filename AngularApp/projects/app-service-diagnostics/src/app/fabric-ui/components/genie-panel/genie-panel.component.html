@@ -30,16 +30,20 @@
           <!-- <div class="col-md col-sm col-lg" style=" float: left; height: 100%; border-right:1px solid #cccccc; "  (click)="openPanel()">
           <i class="fa fa-angle-double-left" style="margin: 5px;font-size:13px;" (click)="closePanel()"></i>
         </div> -->
+
           <div #scrollMe2 id="scrollme1" [style.height.px]="chatContainerHeight"
-           *ngIf="globals.messages && globals.messages.length > 0"
+           *ngIf="messages && messages.length > 0"
             style="overflow-y: auto; display: inline-block; height: 78vh;"
             class="ms-Panel-scrollableContent scroll-bottom">
-            <div class="row animated fadeIn chat-message-container" *ngFor="let item of globals.messages"
+            <div class="row animated fadeIn chat-message-container" *ngFor="let item of messages"
               style="margin-left:0px">
               <!-- " Remove this functionality because we want the critical info to be shown to the customers-->
               <!-- (onComplete)="scrollToBottom()" not consistent scrolling if this is put there-->
               <dynamic-component [componentData]="item" (onViewUpdate)="updateView($event)" (onComplete)="updateStatus($event)" ></dynamic-component>
             </div>
+            <!-- <div class="row animated fadeIn chat-message-container" [hidden]="!showTypingMessage" style="margin-top:10px">
+              <loading-message></loading-message>
+          </div> -->
           </div>
         </fab-pivot-item>
         <fab-pivot-item headerText="Insights">

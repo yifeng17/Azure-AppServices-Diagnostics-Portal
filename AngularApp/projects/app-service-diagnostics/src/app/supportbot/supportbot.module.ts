@@ -79,7 +79,8 @@ import { DynamicAnalysisResultsComponent } from './message-flow/dynamic-analysis
         CategoryMenuComponent,
         DetectorSummaryComponent,
         HealthCheckV3Component,
-        DynamicComponent
+        DynamicComponent,
+        LoadingMessageComponent
     ],
     providers: [
         StartupMessages,

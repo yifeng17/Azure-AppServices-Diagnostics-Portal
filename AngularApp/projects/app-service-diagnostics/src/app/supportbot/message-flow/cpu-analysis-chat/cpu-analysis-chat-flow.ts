@@ -18,7 +18,7 @@ import { ResourceType } from '../../../shared/models/portal';
 
 
 @Injectable()
-@RegisterMessageFlowWithFactory()
+// @RegisterMessageFlowWithFactory()
 export class CpuAnalysisChatFlow extends IMessageFlowProvider {
 
     private cpuDetectorResponseSubject: BehaviorSubject<IDetectorResponse> = new BehaviorSubject(null);

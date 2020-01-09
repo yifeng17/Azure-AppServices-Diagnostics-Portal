@@ -9,13 +9,13 @@ import { ButtonActionType } from './models/message-enums';
 export class MessageProcessor {
     private _messageFlowProviders: IMessageFlowProvider[];
     private _messageGroups: MessageGroup[] = [];
-    private _startingKey: string = 'startup';
+    private _startingKey: string = 'welcome';
     private _currentKey: string;
     private _currentMessageGroup: MessageGroup;
     private _currentMessageIterator: number;
 
     constructor(private _injector: Injector) {
-        //this._messageGroups = MessageFlowFactory.getMessageGroups();
+        this._messageGroups = MessageFlowFactory.getMessageGroups();
 
         this._messageFlowProviders = MessageFlowFactory.getMessageFlowProviders().map(provider => {
             return this._injector.get(provider);
@@ -25,13 +25,11 @@ export class MessageProcessor {
         this._messageFlowProviders.forEach(provider => {
             messageGroups = messageGroups.concat(provider.GetMessageFlowList());
             provider.SubscribeToAdditionalMessageFlowLists().subscribe(newMessageGroups => {
-                this._messageGroups.concat(newMessageGroups);
+                this._messageGroups = this._messageGroups.concat(newMessageGroups);
             });
         });
 
         this._messageGroups = messageGroups;
-        console.log("**** message processor injector and groups", this._injector, this._messageGroups);
-
         this.setCurrentKey(this._startingKey);
 
         // this._currentKey = this._startingKey;

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { TextMessageComponent } from '../common/text-message/text-message.component';
 import { ButtonMessageComponent } from '../common/button-message/button-message.component';
-import { MessageSender, ButtonActionType } from './message-enums';
+import { MessageSender, ButtonActionType, MessageType } from './message-enums';
 
 export abstract class Message {
     constructor(public component: any, public parameters: any, public messageDelayInMs: number = 100) {
@@ -9,11 +9,12 @@ export abstract class Message {
 }
 
 export class TextMessage extends Message {
-    constructor(message: string, sender: MessageSender = MessageSender.System, messageDelayInMs: number = MessageSender.User ? 0 : 1000, focus: boolean = false) {
+    constructor(message: string, sender: MessageSender = MessageSender.System, messageDelayInMs: number = MessageSender.User ? 0 : 1000, focus: boolean = false, type:MessageType =  MessageType.Dialogue) {
         super(TextMessageComponent, {
             message: message,
             sender: sender,
-            focus: focus
+            focus: focus,
+            messagetype: MessageType
         }, messageDelayInMs);
     }
 }

@@ -19,7 +19,7 @@ import { AppType } from '../../../shared/models/portal';
 
 
 @Injectable()
-@RegisterMessageFlowWithFactory()
+// @RegisterMessageFlowWithFactory()
 export class GenericCategoryFlow extends IMessageFlowProvider {
 
   messageFlowList: MessageGroup[] = [];

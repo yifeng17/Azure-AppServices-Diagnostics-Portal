@@ -7,7 +7,7 @@ import { FeedbackComponent } from './feedback.component';
 import { MessageSender, ButtonActionType } from '../../models/message-enums';
 
 @Injectable()
-@RegisterMessageFlowWithFactory()
+// @RegisterMessageFlowWithFactory()
 export class FeedbackMessageFlow extends IMessageFlowProvider {
 
     GetMessageFlowList(): MessageGroup[] {

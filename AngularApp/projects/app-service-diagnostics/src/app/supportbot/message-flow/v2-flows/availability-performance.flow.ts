@@ -8,7 +8,7 @@ import { CategoryMenuMessage } from '../category-menu/category-menu.component';
 import { HealthCheckMessage } from '../health-check/healthcheckmessageflow';
 
 @Injectable()
-@RegisterMessageFlowWithFactory()
+// @RegisterMessageFlowWithFactory()
 export class AvailabilityPerformanceFlow extends IMessageFlowProvider {
 
     GetMessageFlowList(): MessageGroup[] {
