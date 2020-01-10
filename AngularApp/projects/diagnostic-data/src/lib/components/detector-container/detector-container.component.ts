@@ -52,8 +52,16 @@ export class DetectorContainerComponent implements OnInit {
   }
 
   getDetectorResponse() {
+      let allRouteQueryParams = this._route.snapshot.queryParams;
+      let additionalQueryString = '';
+      let knownQueryParams = ['startTime', 'endTime'];
+      Object.keys(allRouteQueryParams).forEach(key => {
+        if(knownQueryParams.indexOf(key) < 0) {
+            additionalQueryString += `&${key}=${encodeURIComponent(allRouteQueryParams[key])}`;
+        }
+      });
     this._diagnosticService.getDetector(this.detectorName, this.detectorControlService.startTimeString, this.detectorControlService.endTimeString,
-      this.detectorControlService.shouldRefresh,  this.detectorControlService.isInternalView)
+      this.detectorControlService.shouldRefresh,  this.detectorControlService.isInternalView, additionalQueryString)
       .subscribe((response: DetectorResponse) => {
         this.shouldHideTimePicker(response);
         this.detectorResponse = response;

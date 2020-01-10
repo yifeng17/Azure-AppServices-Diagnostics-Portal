@@ -24,7 +24,7 @@ export class DetectorControlComponent implements OnInit {
     this.timeDiffError = '';
     if(this.detectorControlService.timeRangeDefaulted){
       this.timeDiffError = this.detectorControlService.timeRangeErrorString;
-    } 
+    }
     this.detectorControlService.update.subscribe(validUpdate => {
       if (validUpdate) {
         this.startTime = this.detectorControlService.startTimeString;
@@ -42,7 +42,7 @@ export class DetectorControlComponent implements OnInit {
         routeParams['searchTerm'] = this._activatedRoute.snapshot.queryParams['searchTerm'];
       }
 
-      this._router.navigate([], { queryParams: routeParams, relativeTo: this._activatedRoute });
+      this._router.navigate([], { queryParams: routeParams, queryParamsHandling: 'merge', relativeTo: this._activatedRoute });
 
     });
   }
@@ -50,7 +50,7 @@ export class DetectorControlComponent implements OnInit {
   setManualDate() {
     this.timeDiffError = this.detectorControlService.getTimeDurationError(this.startTime, this.endTime);
     if(this.timeDiffError === ''){
-      this.detectorControlService.setCustomStartEnd(this.startTime, this.endTime);     
+      this.detectorControlService.setCustomStartEnd(this.startTime, this.endTime);
     }
   }
 }

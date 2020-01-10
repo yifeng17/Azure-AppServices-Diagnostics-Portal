@@ -98,7 +98,7 @@ export class DetectorListComponent extends DataRenderBaseComponent {
           queryString = '';
           for(var key in contextToPass) {
               if(contextToPass.hasOwnProperty(key)) {
-                queryString += `&${key}=${contextToPass[key]}`;
+                queryString += `&${key}=${encodeURIComponent(contextToPass[key])}`;
               }
           }
       }
