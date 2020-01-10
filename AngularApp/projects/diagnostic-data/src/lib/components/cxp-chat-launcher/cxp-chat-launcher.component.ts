@@ -10,15 +10,25 @@ export class CxpChatLauncherComponent implements OnInit {
 
   @Input() trackingId: string;
   @Input() chatUrl: string;
+  public chatConfDialogOpenedAtleastOnce = false;
   public showChatConfDialog: boolean = false;
   public firstTimeCheck: boolean = true;
 
   @ViewChild('chatComponentContainer') chatComponentContainer;
+  
 
   constructor(private _cxpChatService: CXPChatService, private renderer: Renderer2) {
   }
 
+  
   ngOnInit() {
+    window.setTimeout(()=> {
+      if(!this.chatConfDialogOpenedAtleastOnce && !this.showChatConfDialog) {
+        this.showChatConfDialog = true;
+        this.chatConfDialogOpenedAtleastOnce = true;
+        this._cxpChatService.logUserActionOnChat('ChatConfDialogShownBySystem', '', '');
+      }      
+    }, 10000);
     this.renderer.listen('window', 'click', (e: Event) => {
       /**
        * Only run when the current chat component is not clicked
@@ -55,6 +65,7 @@ export class CxpChatLauncherComponent implements OnInit {
   public toggleChatConfDialog(): void {
     this.showChatConfDialog = !this.showChatConfDialog;
     if (this.showChatConfDialog) {
+      this.chatConfDialogOpenedAtleastOnce = true;
       this._cxpChatService.logUserActionOnChat('ChatConfDialogShown', this.trackingId, this.chatUrl);
     }
     else {
