@@ -11,7 +11,7 @@
       </div>
     </div>
     <div class="cxpChat-actionBtnContainer">
-      <input class="custom-button inactive-button white-border" (click)="hideChatBubble(true)" type="button"
+      <input class="custom-button inactive-button white-border" (click)="hideChatConfDialog(true, 'CancelButton')" type="button"
         value="Maybe later" />
       <input class="custom-button default-button white-border" (click)="openChatPopup()" type="button"
         value="Confirm & Start!" />
@@ -20,7 +20,7 @@
 
   <div *ngIf="showChatConfDialog" class="arrow-bottom"></div>
 
-  <div class='chatBubble' (click)="toggleChatBubble()">
+  <div class='chatBubble' (click)="toggleChatConfDialog()">
     <i class="fa fa-comments chatIcon" aria-hidden="true"></i>
   </div>
 </div>

@@ -47,11 +47,22 @@ export class CXPChatService {
     return null;
   }
 
+  public notifyChatOpened() {    
+  }
+
   /**
  * @param userAction Which button did the user click on
  * @param trackingIdGuid  Guid used for tracking. This is the trackingId for which the Chat was initiated.
  * @param chatUrl  The chat URL that is being opened.
  */
   public logUserActionOnChat(userAction: string, trackingIdGuid: string, chatUrl: string): void {
-	  }
+  }
+    
+
+  /**
+   * @param checkType Which button did the user click on
+   * @param checkOutcome  Guid used for tracking. This is the trackingId for which the Chat was initiated.
+   */
+  public logChatEligibilityCheck(checkType: string, checkOutcome: string): void {    
+  }
 }
