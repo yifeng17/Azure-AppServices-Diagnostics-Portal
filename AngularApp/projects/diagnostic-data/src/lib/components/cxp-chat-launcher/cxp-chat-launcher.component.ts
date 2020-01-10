@@ -26,7 +26,7 @@ export class CxpChatLauncherComponent implements OnInit {
       if(!this.chatConfDialogOpenedAtleastOnce && !this.showChatConfDialog) {
         this.showChatConfDialog = true;
         this.chatConfDialogOpenedAtleastOnce = true;
-        this._cxpChatService.logUserActionOnChat('ChatConfDialogShownBySystem', '', '');
+        this._cxpChatService.logUserActionOnChat('ChatConfDialogShownBySystem', this.trackingId, this.chatUrl);
       }      
     }, 10000);
     this.renderer.listen('window', 'click', (e: Event) => {
