@@ -75,7 +75,7 @@ export class DashboardComponent implements OnDestroy {
       }
 
 
-      this._router.navigate([], { queryParams: routeParams, queryParamsHandling: 'merge' relativeTo: this._activatedRoute });
+      this._router.navigate([], { queryParams: routeParams, queryParamsHandling: 'merge', relativeTo: this._activatedRoute });
     }
 
     if((this.showUserInformation = environment.adal.enabled)){
