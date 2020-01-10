@@ -10,14 +10,25 @@ export class CxpChatLauncherComponent implements OnInit {
 
   @Input() trackingId: string;
   @Input() chatUrl: string;
+  public chatConfDialogOpenedAtleastOnce = false;
   public showChatConfDialog: boolean = false;
+  public firstTimeCheck: boolean = true;
 
   @ViewChild('chatComponentContainer') chatComponentContainer;
+  
 
   constructor(private _cxpChatService: CXPChatService, private renderer: Renderer2) {
   }
 
+  
   ngOnInit() {
+    window.setTimeout(()=> {
+      if(!this.chatConfDialogOpenedAtleastOnce && !this.showChatConfDialog) {
+        this.showChatConfDialog = true;
+        this.chatConfDialogOpenedAtleastOnce = true;
+        this._cxpChatService.logUserActionOnChat('ChatConfDialogShownBySystem', this.trackingId, this.chatUrl);
+      }      
+    }, 10000);
     this.renderer.listen('window', 'click', (e: Event) => {
       /**
        * Only run when the current chat component is not clicked
@@ -26,30 +37,45 @@ export class CxpChatLauncherComponent implements OnInit {
        */
 
       if (!this.chatComponentContainer.nativeElement.contains(e.target)) {
-        this.showChatConfDialog = false;
+        if(this.showChatConfDialog) {
+          this.hideChatConfDialog(true, 'ClickOutsideComponent');
+        }
       }
     });
   }
 
   public isComponentInitialized(): boolean {
-    return this.chatUrl && this.chatUrl != '' && this.trackingId && this.trackingId != '';
-  }
+    let initializedTestResult:boolean = this.chatUrl && this.chatUrl != '' && this.trackingId && this.trackingId != '';
 
-  public toggleChatBubble(): void {
-
-    if (this.showChatConfDialog) {
+    //Have to check for first time due to the way our components are structured.
+    //This gets called multiple times for each detector, specifically for child detectors that are collapsed and then expanded later.
+    //This will also avoid telemetry noise.
+    if(!initializedTestResult && this.firstTimeCheck) {      
+      this._cxpChatService.logUserActionOnChat('ChatBubbleNotShown', this.trackingId, this.chatUrl);
+    }
+    else if(initializedTestResult && this.firstTimeCheck) {
       this._cxpChatService.logUserActionOnChat('ChatBubbleShown', this.trackingId, this.chatUrl);
     }
-    else {
-      this._cxpChatService.logUserActionOnChat('ChatBubbleDismissed', this.trackingId, this.chatUrl);
-    }
+    this.firstTimeCheck = false;
 
-    this.showChatConfDialog = !this.showChatConfDialog;
+    //Always return false right now since we are merely collecting telemetry. Remove '&& false' below once we are ready to go live.
+    return  initializedTestResult && false;
   }
 
-  public hideChatBubble(isUserInitiated: boolean): void {
+  public toggleChatConfDialog(): void {
+    this.showChatConfDialog = !this.showChatConfDialog;
+    if (this.showChatConfDialog) {
+      this.chatConfDialogOpenedAtleastOnce = true;
+      this._cxpChatService.logUserActionOnChat('ChatConfDialogShown', this.trackingId, this.chatUrl);
+    }
+    else {
+      this._cxpChatService.logUserActionOnChat('ChatConfDialogDismissed', this.trackingId, this.chatUrl);
+    }
+  }
+
+  public hideChatConfDialog(isUserInitiated: boolean, source:string): void {
     if (isUserInitiated) {
-      this._cxpChatService.logUserActionOnChat('ChatBubbleCancel', this.trackingId, this.chatUrl);
+      this._cxpChatService.logUserActionOnChat(`ChatConfDialogCancelFrom${source.replace(' ','')}`, this.trackingId, this.chatUrl);
     }
     this.showChatConfDialog = false;
   }
@@ -61,7 +87,7 @@ export class CxpChatLauncherComponent implements OnInit {
 
       this._cxpChatService.logUserActionOnChat('ChatUrlOpened', this.trackingId, this.chatUrl);
 
-      this.hideChatBubble(false);
+      this.hideChatConfDialog(false,'AutohideAfterChatLaunch');
     }
   }
 

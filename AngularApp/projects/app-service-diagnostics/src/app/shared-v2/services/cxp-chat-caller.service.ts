@@ -33,10 +33,13 @@ export class CXPChatCallerService {
 
   public isSupportTopicEnabledForLiveChat(supportTopicIdToCheck: string): boolean {
     if (!this.isChatSupported) {
+      this.logChatEligibilityCheck('CXPChatEnabled', 'false');
       return false;
     }
+    this.logChatEligibilityCheck('CXPChatEnabled', 'true');
 
     if (this.supportedSupportTopicIds.length === 1 && this.supportedSupportTopicIds[0] === '*') {
+      this.logChatEligibilityCheck('SupportTopicEnabledForCXPChat', `${supportTopicIdToCheck} is enabled.`);
       return true;
     }
     else {
@@ -47,6 +50,8 @@ export class CXPChatCallerService {
         returnValue = (supportTopicIdToCheck === currValue || currValue === '*');
         return returnValue;
       });
+
+      this.logChatEligibilityCheck('SupportTopicEnabledForCXPChat', `${supportTopicIdToCheck} is ${!returnValue? 'not ': ''}enabled.`);
 
       return returnValue;
     }
@@ -189,9 +194,15 @@ export class CXPChatCallerService {
         "passedInput": JSON.stringify(input),
         "returnValue": stringToLog
       });
-
       return Observable.of(returnValue);
     }));
+  }
+
+
+  public notifyChatOpened() {
+    //When CXP API is ready to receive a message from us on chat opened, update this function and call their API with the correct contract in the Ibiza project SCIFrameBlade _notifyChatOpened method
+    let chatOpenedNotificationContract = {};
+    this._portalService.postMessage(Verbs.notifyChatOpened, JSON.stringify(chatOpenedNotificationContract) );
   }
 
   /**
@@ -206,9 +217,19 @@ export class CXPChatCallerService {
       "chatUrl": chatUrl
     };
 
-    this._telemetryService.logEvent(TelemetryEventNames.CXPChatURLOpened, notificationMessage);
+    this._telemetryService.logEvent(TelemetryEventNames.CXPChatUserAction, notificationMessage);
+  }
 
-    //When CXP API is ready to receive a message from us on chat opened, uncomment this line and call their API in the Ibiza project SCIFrameBlade _notifyChatOpened method
-    //this._portalService.postMessage(Verbs.notifyChatOpened, JSON.stringify(notificationMessage) );
+  /**
+   * @param checkType Which button did the user click on
+   * @param checkOutcome  Guid used for tracking. This is the trackingId for which the Chat was initiated.
+   */
+  public logChatEligibilityCheck(checkType: string, checkOutcome: string): void {
+    let notificationMessage = {
+      "checkType": checkType,
+      "checkOutcome": checkOutcome
+    };
+
+    this._telemetryService.logEvent(TelemetryEventNames.CXPChatEligibilityCheck, notificationMessage);
   }
 }
