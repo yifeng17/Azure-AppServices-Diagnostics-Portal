@@ -8,6 +8,7 @@ import { StartupMessages } from './message-flow/startup/startupmessages';
 import { MainMenuMessageFlow } from './message-flow/main-menu/mainmenumessageflow';
 import { HealthCheckMessageFlow } from './message-flow/health-check/healthcheckmessageflow';
 import { FeedbackMessageFlow } from './message-flow/feedback/feedbackmessageflow';
+import { Geniefeedbackmessageflow } from './message-flow/genie-feedback/geniefeedbackmessageflow';
 import { MessageProcessor } from './message-processor.service';
 
 import { HomepageComponent } from './homepage/homepage.component';
@@ -15,11 +16,13 @@ import { SupportBotComponent } from './support-bot.component';
 import { DynamicComponent } from './dynamic-component/dynamic.component';
 import { TextMessageComponent } from './common/text-message/text-message.component';
 import { ButtonMessageComponent } from './common/button-message/button-message.component';
+import { FeedbackButtonMessageComponent } from './common/feedback-button-message/feedback-button-message.component';
 import { LoadingMessageComponent } from './common/loading-message/loading-message.component';
 import { MainMenuComponent } from './message-flow/main-menu/main-menu.component';
 import { HealthCheckComponent } from './message-flow/health-check/health-check.component';
 import { TalkToAgentMessageComponent } from './message-flow/talk-to-agent/talk-to-agent-message.component';
 import { FeedbackComponent } from './message-flow/feedback/feedback.component';
+import { GenieFeedbackComponent } from './message-flow/genie-feedback/genie-feedback.component'
 import { SolutionsMessageComponent } from './common/solutions-message/solutions-message.component';
 import { GraphMessageComponent } from './common/graph-message/graph-message.component';
 import { CpuAnalysisChatFlow } from './message-flow/cpu-analysis-chat/cpu-analysis-chat-flow';
@@ -50,9 +53,11 @@ import { DynamicAnalysisResultsComponent } from './message-flow/dynamic-analysis
         LoadingMessageComponent,
         MainMenuComponent,
         ButtonMessageComponent,
+        FeedbackButtonMessageComponent,
         HealthCheckComponent,
         TalkToAgentMessageComponent,
         FeedbackComponent,
+        GenieFeedbackComponent,
         SolutionsMessageComponent,
         GraphMessageComponent,
         ProblemStatementMessageComponent,

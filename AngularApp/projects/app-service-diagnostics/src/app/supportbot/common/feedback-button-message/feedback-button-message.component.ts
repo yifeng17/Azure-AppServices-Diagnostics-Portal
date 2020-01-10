@@ -8,12 +8,14 @@ import { CategoryChatStateService } from '../../../shared-v2/services/category-c
 import { Globals } from '../../../globals';
 import { TextMessage } from '../../models/message';
 import { FeedbackMessage } from '../../message-flow/feedback/feedbackmessageflow';
+import { MessageProcessor } from '../../message-processor.service';
 
 @Component({
-    templateUrl: 'button-message.component.html'
+    templateUrl: 'feedback-button-message.component.html'
 })
-export class ButtonMessageComponent implements OnInit, AfterViewInit, IChatMessageComponent {
+export class FeedbackButtonMessageComponent implements OnInit, AfterViewInit, IChatMessageComponent {
 
+    buttonListTitle: string="";
     buttonList: { title: string, type: ButtonActionType, next_key: string }[] = [];
     showComponent: boolean = true;
     isFeedbackButtonGroup: boolean = false;
@@ -23,10 +25,11 @@ export class ButtonMessageComponent implements OnInit, AfterViewInit, IChatMessa
     @Output() onViewUpdate = new EventEmitter();
     @Output() onComplete = new EventEmitter<{ status: boolean, data?: any }>();
 
-    constructor(protected injector: Injector, protected _logger: BotLoggingService,protected globals: Globals, @Optional() protected _chatState?: CategoryChatStateService) {
+    constructor(protected _messageProcessor: MessageProcessor, protected injector: Injector, protected _logger: BotLoggingService,protected globals: Globals, @Optional() protected _chatState?: CategoryChatStateService) {
     }
 
     ngOnInit(): void {
+        this.buttonListTitle = this.injector.get('buttonListTitle');
         const buttons = <{ title: string, type: ButtonActionType, next_key: string }[]>this.injector.get('buttonList', []);
         buttons.forEach(button => {
             if (button.type === ButtonActionType.GetFeedback)
@@ -61,12 +64,11 @@ export class ButtonMessageComponent implements OnInit, AfterViewInit, IChatMessa
             console.log("Feedback button onclick", item);
             if (item.title.toLowerCase() === "yes")
             {
-                console.log("Feedback button yes onclick", item);
-                 this.globals.messages.push(new TextMessage('Great to hear! From 1 to 5 stars, how helpful was this?', MessageSender.System, 500));
-                // this.globals.messages.push(new FeedbackMessage([], 'Submit and Show Tile Menu', 'Feedback', "Availbiliy and Performance"));
+              this._messageProcessor.setCurrentKey('feedback-helpful');
              }
             else
             {
+                this._messageProcessor.setCurrentKey('feedback-not-helpful');
                 console.log("Feedback button no onclick", item);
                  this.globals.messages.push(new TextMessage('Sorry to hear! Could you let us know how we can improve?', MessageSender.System, 500));
             //     this.globals.messages.push(new FeedbackMessage([], 'Submit and Show Tile Menu', 'Feedback', "Availbiliy and Performance"));

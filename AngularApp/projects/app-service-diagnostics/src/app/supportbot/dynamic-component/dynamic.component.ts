@@ -4,6 +4,7 @@ import {
     ViewContainerRef
 } from '@angular/core';
 import { ButtonMessageComponent } from '../common/button-message/button-message.component';
+import { FeedbackButtonMessageComponent } from '../common/feedback-button-message/feedback-button-message.component';
 import { GraphMessageComponent } from '../common/graph-message/graph-message.component';
 import {
     ProblemStatementMessageComponent
@@ -25,6 +26,7 @@ import {
 } from '../message-flow/dynamic-analysis-results/dynamic-analysis-results.component';
 import { DocumentSearchComponent } from '../message-flow/document-search/document-search.component';
 import { FeedbackComponent } from '../message-flow/feedback/feedback.component';
+import { GenieFeedbackComponent } from '../message-flow/genie-feedback/genie-feedback.component';
 import { HealthCheckComponent } from '../message-flow/health-check/health-check.component';
 import { MainMenuComponent } from '../message-flow/main-menu/main-menu.component';
 import {
@@ -36,8 +38,8 @@ import { HealthCheckV3Component } from '../message-flow/health-check-v3/health-c
 
 @Component({
     selector: 'dynamic-component',
-    entryComponents: [TextMessageComponent, MainMenuComponent, ButtonMessageComponent, HealthCheckComponent, HealthCheckV3Component, FeedbackComponent,
-        SolutionsMessageComponent, GraphMessageComponent, ProblemStatementMessageComponent, TalkToAgentMessageComponent, CategoryMenuComponent,
+    entryComponents: [TextMessageComponent, MainMenuComponent, ButtonMessageComponent, FeedbackButtonMessageComponent, HealthCheckComponent, HealthCheckV3Component, FeedbackComponent,
+        GenieFeedbackComponent, SolutionsMessageComponent, GraphMessageComponent, ProblemStatementMessageComponent, TalkToAgentMessageComponent, CategoryMenuComponent,
         DetectorSummaryComponent, DocumentSearchComponent, DocumentSearchResultsComponent, DynamicAnalysisComponent, DynamicAnalysisResultsComponent],
     template: `
     <div #dynamicComponentContainer></div>

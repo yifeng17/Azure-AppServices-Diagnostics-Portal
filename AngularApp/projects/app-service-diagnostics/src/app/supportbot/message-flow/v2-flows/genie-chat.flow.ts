@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MessageGroup } from '../../models/message-group';
-import { Message, TextMessage, ButtonListMessage } from '../../models/message';
+import { Message, TextMessage, ButtonListMessage, FeedbackButtonListMessage } from '../../models/message';
 import { Category } from '../../../shared-v2/models/category';
 import { Observable, of } from 'rxjs';
 import { DetectorMetaData, DiagnosticService } from 'diagnostic-data';
@@ -12,11 +12,14 @@ import { DetectorSummaryMessage } from '../detector-summary/detector-summary.com
 import { DynamicAnalysisMessage } from '../dynamic-analysis/dynamic-analysis.component';
 import { DocumentSearchMessage } from '../document-search/document-search.component';
 import { FeedbackMessage } from '../feedback/feedbackmessageflow';
+import { GenieFeedbackMessage } from '../genie-feedback/geniefeedbackmessageflow'
 import { map } from 'rxjs/operators';
 import { GenericArmConfigService } from '../../../shared/services/generic-arm-config.service';
 import { ResourceService } from '../../../shared-v2/services/resource.service';
 import { DynamicAnalysisResultsComponent, DynamicAnalysisResultsMessage } from '../dynamic-analysis-results/dynamic-analysis-results.component';
 import { Globals } from '../../../globals';
+import { FeedbackComponent } from 'dist/diagnostic-data/lib/components/feedback/feedback.component';
+import { KustoTelemetryService } from 'dist/diagnostic-data/lib/services/telemetry/kusto-telemetry.service';
 
 @Injectable()
 @RegisterMessageFlowWithFactory()
@@ -45,17 +48,34 @@ export class GenieChatFlow extends IMessageFlowProvider {
    // welcomeMessageGroup.messages.push(new TextMessage('genie-Sorry to hear I could not help you solve your problem', MessageSender.System));
 
     const feedbackMessageGroup: MessageGroup = new MessageGroup('feedback', [], () => '');
-    feedbackMessageGroup.messages.push(new TextMessage('Did this information help you solve the issue?', MessageSender.System, 2000, false, MessageType.Feedback));
+  //  feedbackMessageGroup.messages.push(new TextMessage('Did this information help you solve the issue?', MessageSender.System, 2000, false, MessageType.Feedback));
     //documentSearch.messages.push(new TextMessage('genie-Please describe your problem below, so I can search relevant documentation and tools that may help you.', MessageSender.System));
    // documentSearch.messages.push(new DocumentSearchMessage());
    // documentSearch.messages.push(new TextMessage('Was this helpful to finding what you were looking for?', MessageSender.System, 2000));
-   feedbackMessageGroup.messages.push(new ButtonListMessage(this._getButtonListDidYouFindHelpfulinNewGenie('more-help', 'I need further assistance'), 'Was this helpful to finding what you were looking for?', 'Availability and Performance'));
+   feedbackMessageGroup.messages.push(new FeedbackButtonListMessage('Did this information help you solve the issue?',this._getButtonListDidYouFindHelpfulinNewGenie('more-help', 'I need further assistance'), 'Availability and Performance'));
+   const helpfulGroup: MessageGroup = new MessageGroup('feedback-helpful', [], () => 'feedback-textbox');
+   helpfulGroup.messages.push(new TextMessage('Yes', MessageSender.User, 200));
+   helpfulGroup.messages.push(new TextMessage('Good to hear! From 1 to 5 stars, how helpful was this?', MessageSender.System, 500));
+   helpfulGroup.messages.push(new GenieFeedbackMessage([], 'Submit', 'Feedback', 'Support Home'));
+   helpfulGroup.messages.push(new TextMessage('Thank you!'));
+
+
+   const notHelpfulGroup: MessageGroup = new MessageGroup('feedback-not-helpful', [], () => 'feedback-textbox');
+   notHelpfulGroup.messages.push(new TextMessage('No', MessageSender.User, 200));
+   notHelpfulGroup.messages.push(new TextMessage('Sorry to hear! Can you let us know how we can improve?', MessageSender.System, 500));
+   notHelpfulGroup.messages.push(new GenieFeedbackMessage([], 'Submit', 'Feedback', 'Support Home'));
+   notHelpfulGroup.messages.push(new TextMessage('Thank you!'));
+   const feedbackText: MessageGroup = new MessageGroup('feedback-textbox', [], () => '');
+
     // documentSearch.messages.push(new TextMessage('Yes I found the right information.', MessageSender.User));
     // documentSearch.messages.push(new TextMessage('Great I\'m glad I could be of help!', MessageSender.System));
 
     // this.messageFlowList.push(needAnalysis);
     this.messageFlowList.push(welcomeMessageGroup);
     this.messageFlowList.push(feedbackMessageGroup);
+    this.messageFlowList.push(helpfulGroup);
+    this.messageFlowList.push(notHelpfulGroup);
+    this.messageFlowList.push(feedbackText);
   }
 
   GetMessageFlowList(): MessageGroup[] {
@@ -79,41 +99,6 @@ export class GenieChatFlow extends IMessageFlowProvider {
      const moreHelpId: string = `more-help-WindowsAvailabilityAndPerformance`;
      const showTiles: string = `show-all-tiles-WindowsAvailabilityAndPerformance`;
      const feedback: string = `feedback-WindowsAvailabilityAndPerformance`;
-
-
-    //   if (noSearchResult)
-    //   {
-    //     this.globals.messages.push(new TextMessage('Sorry we are not able to find any result based on your questions.', MessageSender.System));
-    //     this.globals.messages.push(new TextMessage('genie-Search Documentation.', MessageSender.User));
-    //   }
-    //   else
-    //   {
-    //     this.globals.messages.push(new TextMessage('Does this information help you solve the issue?', MessageSender.System));
-    //    // this.globals.messages.push(new TextMessage('Was this helpful to finding what you were looking for?', MessageSender.System, 2000));
-    //     this.globals.messages.push(new ButtonListMessage(this._getButtonListDidYouFindHelpfulinNewGenie(moreHelpId, 'I need further assistance'), 'Was this helpful to finding what you were looking for?', "WindowsAvailabilityAndPerformance"));
-    // }
-
-
-
-    // this.globals.messages.push(new TextMessage('genie-Search Documentation.', MessageSender.User));
-    // this.globals.messages.push(new TextMessage('genie-Please describe your problem below, so I can search relevant documentation and tools that may help you.', MessageSender.System));
-    // this.globals.messages.push(new DocumentSearchMessage());
-    // this.globals.messages.push(new TextMessage('genie-Was this helpful to finding what you were looking for?', MessageSender.System, 2000));
-    // // this.globals.messages.push(new ButtonListMessage(this._getButtonListDidYouFindHelpful(moreHelpId, 'I need further assistance', showTiles), 'Was this helpful to finding what you were looking for?', category.name));
-    // this.globals.messages.push(new TextMessage('genie-Yes I found the right information.', MessageSender.User));
-    // this.globals.messages.push(new TextMessage('genie-Great I\'m glad I could be of help!', MessageSender.System));
-
-    //const dynamicAnalysisGroup: MessageGroup = new MessageGroup("dynamic-analysis", [], () => "feedback");
-  //   let analysisMessages: Message[]  = [];
-  // //  analysisMessages.push(new CategoryMenuMessage());
-  //   analysisMessages.push(new TextMessage(keyword, MessageSender.User, 500));
-  //   analysisMessages.push(new TextMessage('Okay give me a moment while I analyze your app for any issues related to this.', MessageSender.System, 500));
-
-  //   let analysisMessage = new DynamicAnalysisMessage(keyword);
-  //   analysisMessages.push(new DynamicAnalysisMessage(keyword));
-
-  //  // this.messageFlowList.push(dynamicAnalysisGroup);
-  //   return of(analysisMessages);
   }
 
 
@@ -133,10 +118,6 @@ export class GenieChatFlow extends IMessageFlowProvider {
     this.additionalMessageFlows.next(additionalMessageGroup);
     //this.messageFlowList.push(analysisMessageGroup);
 
-    // analysisMessages.push(keywordTextMessage);
-   // analysisMessages.push(systemResponseTextMessage);
-    // this.globals.messages.push(keywordTextMessage);
-    // this.globals.messages.push(systemResponseTextMessage);
     console.log("1. push two text message", keywordTextMessage, systemResponseTextMessage);
   //  analysisMessages.push(new DynamicAnalysisMessage(keyword, this.targetedScore));
     console.log("2. after push dynamicmessage", analysisMessages);

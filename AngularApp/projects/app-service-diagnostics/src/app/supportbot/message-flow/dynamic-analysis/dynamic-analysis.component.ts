@@ -115,7 +115,7 @@ export class DynamicAnalysisComponent implements OnInit, AfterViewInit, IChatMes
             data: true
         };
 
-        if (dataOutput.data == undefined || dataOutput.data.detectors == undefined || dataOutput.data.detectors.length === 0|| this.content == undefined || this.content.length == 0) {
+        if ((dataOutput.data == undefined || dataOutput.data.detectors == undefined || dataOutput.data.detectors.length === 0) && (this.content == undefined || this.content.length == 0)) {
             this.noSearchResult = true;
         }
         else {
