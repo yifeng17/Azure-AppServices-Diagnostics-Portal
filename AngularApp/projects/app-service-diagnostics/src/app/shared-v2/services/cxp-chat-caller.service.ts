@@ -194,7 +194,6 @@ export class CXPChatCallerService {
         "passedInput": JSON.stringify(input),
         "returnValue": stringToLog
       });
-      
       return Observable.of(returnValue);
     }));
   }
