@@ -72,6 +72,8 @@ import { CategoryNavComponent } from './components/category-nav/category-nav.com
 import { CategoryMenuItemComponent } from './components/category-menu-item/category-menu-item.component';
 import { SectionDividerComponent } from './components/section-divider/section-divider.component';
 import { FabricSearchResultsComponent } from '../fabric-ui/components/fabric-search-results/fabric-search-results.component';
+import { FabricFeedbackComponent } from '../fabric-ui/components/fabric-feedback/fabric-feedback.component';
+import { FabricFeedbackContainerComponent } from '../fabric-ui/components/fabric-feedback-container/fabric-feedback-container.component';
 
 
 export const HomeRoutes = RouterModule.forChild([
@@ -397,7 +399,7 @@ export const HomeRoutes = RouterModule.forChild([
     FabContextualMenuModule,
     MarkdownModule.forRoot()
   ],
-  declarations: [HomeComponent, CategoryChatComponent, CategoryTileComponent, SearchResultsComponent, SupportTopicRedirectComponent, DiagnosticsSettingsComponent, CategorySummaryComponent, CategoryOverviewComponent, DetectorCommandBarComponent, GeniePanelComponent, CategoryNavComponent, CategoryMenuItemComponent, SearchPipe, SearchMatchPipe, SectionDividerComponent, FabricSearchResultsComponent],
+  declarations: [HomeComponent, CategoryChatComponent, CategoryTileComponent, SearchResultsComponent, SupportTopicRedirectComponent, DiagnosticsSettingsComponent, CategorySummaryComponent, CategoryOverviewComponent, DetectorCommandBarComponent, GeniePanelComponent, CategoryNavComponent, CategoryMenuItemComponent, SearchPipe, SearchMatchPipe, SectionDividerComponent, FabricSearchResultsComponent,FabricFeedbackComponent,FabricFeedbackContainerComponent],
   providers: [CategoryTabResolver, CategoryChatResolver, TimeControlResolver,
     { provide: GenericSupportTopicService, useExisting: SupportTopicService }
   ]
