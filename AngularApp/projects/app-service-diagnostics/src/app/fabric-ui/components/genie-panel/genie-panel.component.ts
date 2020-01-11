@@ -229,15 +229,19 @@ export class GeniePanelComponent implements OnInit {
         const message = this._messageProcessor.getNextMessage(event);
 
         if (message) {
-            this.messages.push(message);
-            if (message.messageDelayInMs >= 400) {
+            if (message.messageDelayInMs >= 2000) {
                 this.showTypingMessage = true;
 
                 // To show the typing message icon, we need to scroll the page to the bottom.
                 setTimeout(() => {
-                    //  this.scrollToBottom();
+                      this.scrollToBottom();
                 }, 200);
             }
+
+            setTimeout(function () {
+                self.showTypingMessage = false;
+                self.messages.push(message);
+            }, message.messageDelayInMs);
         }
     }
 

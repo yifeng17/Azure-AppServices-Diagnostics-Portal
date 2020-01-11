@@ -16,6 +16,7 @@ import {
   IPeoplePickerProps
 } from 'office-ui-fabric-react';
 import { Globals } from '../../../globals';
+import { DetectorControlService } from 'diagnostic-data';
 
 @Component({
   selector: 'detector-command-bar',
@@ -133,6 +134,11 @@ export class DetectorCommandBarComponent implements OnInit {
       this.showChoices = !this.showChoices;
   }
 
+  refreshPage() {
+    this.detectorControlService.refresh();
+}
+
+
   showSearch() {
 
   }
@@ -179,6 +185,9 @@ export class DetectorCommandBarComponent implements OnInit {
   //   maxDate: Date = new Date(Date.now()-)
 
   minDate: Date = addMonths(this.today, -1);
+  startTime: string;
+  endTime: string;
+
 
 
   startClock: string = `${this.startHour}:${this.startMinutes}`;
@@ -191,11 +200,13 @@ export class DetectorCommandBarComponent implements OnInit {
   setTimewithClock(x: number) {
     this.startClock = `${this.endHour - x}:${this.startMinutes}`;
     this.internalTime = `${this.startDate} ${this.startClock} - ${this.endDate} ${this.endClock} `;
-  }
+
+}
 
   applyTimeRange() {
     this.time = "Time Range (" + this.internalTime + ")";
     this.showChoices = !this.showChoices;
+    this.refreshPage();
   }
 
   cancelTimeRange() {
@@ -203,7 +214,7 @@ export class DetectorCommandBarComponent implements OnInit {
   }
 
 
-  constructor(private globals: Globals) { }
+  constructor(private globals: Globals, public detectorControlService: DetectorControlService) { }
 
   ngOnInit() {
     console.log("Init commandbar with OpenPanel", this.openPanel);

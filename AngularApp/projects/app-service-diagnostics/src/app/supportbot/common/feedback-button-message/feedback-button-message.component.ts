@@ -6,7 +6,6 @@ import { BotLoggingService } from '../../../shared/services/logging/bot.logging.
 import { ButtonActionType, MessageSender } from '../../models/message-enums';
 import { CategoryChatStateService } from '../../../shared-v2/services/category-chat-state.service';
 import { Globals } from '../../../globals';
-import { TextMessage } from '../../models/message';
 import { FeedbackMessage } from '../../message-flow/feedback/feedbackmessageflow';
 import { MessageProcessor } from '../../message-processor.service';
 
@@ -70,7 +69,7 @@ export class FeedbackButtonMessageComponent implements OnInit, AfterViewInit, IC
             {
                 this._messageProcessor.setCurrentKey('feedback-not-helpful');
                 console.log("Feedback button no onclick", item);
-                 this.globals.messages.push(new TextMessage('Sorry to hear! Could you let us know how we can improve?', MessageSender.System, 500));
+               //  this.globals.messages.push(new TextMessage('Sorry to hear! Could you let us know how we can improve?', MessageSender.System, 500));
             //     this.globals.messages.push(new FeedbackMessage([], 'Submit and Show Tile Menu', 'Feedback', "Availbiliy and Performance"));
             // }
         }

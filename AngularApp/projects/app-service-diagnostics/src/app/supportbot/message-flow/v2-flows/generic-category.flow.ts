@@ -87,7 +87,7 @@ export class GenericCategoryFlow extends IMessageFlowProvider {
 
       const categoryMainMenu: MessageGroup = new MessageGroup(mainMenuId, [], () => feedback);
       categoryMainMenu.messages.push(new CategoryMenuMessage());
-      categoryMainMenu.messages.push(new TextMessage('Okay give me a moment while I analyze your app for any issues related to this tile. Once the detectors load, feel free to click to investigate each topic further.', MessageSender.System, 500));
+      categoryMainMenu.messages.push(new TextMessage('Okay give me a moment while I analyze your app for any issues related to this tile. Once the detectors load, feel free to click to investigate each topic further.', MessageSender.System, 300));
       categoryMainMenu.messages.push(new DetectorSummaryMessage());
       categoryMainMenu.messages.push(new TextMessage('Did you find what you were looking for?', MessageSender.System, 3000));
       categoryMainMenu.messages.push(new ButtonListMessage(this._getButtonListDidYouFindHelpful(docSearch, 'Search Documentation', showTiles), 'feature', category.name));

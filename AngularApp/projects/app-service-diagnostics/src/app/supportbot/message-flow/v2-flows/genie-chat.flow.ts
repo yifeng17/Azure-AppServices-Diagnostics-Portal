@@ -20,6 +20,7 @@ import { DynamicAnalysisResultsComponent, DynamicAnalysisResultsMessage } from '
 import { Globals } from '../../../globals';
 import { FeedbackComponent } from 'dist/diagnostic-data/lib/components/feedback/feedback.component';
 import { KustoTelemetryService } from 'dist/diagnostic-data/lib/services/telemetry/kusto-telemetry.service';
+// import { MessageProcessor } from '../../message-processor.service';
 
 @Injectable()
 @RegisterMessageFlowWithFactory()
@@ -31,8 +32,8 @@ export class GenieChatFlow extends IMessageFlowProvider {
 
   targetedScore: number = 0.5;
 
-
-  constructor(private _diagnosticApiService: DiagnosticService, private _resourceService: ResourceService, public globals: Globals, private _genericArmConfigService?: GenericArmConfigService) {
+//   private _messageProcessor: MessageProcessor,
+  constructor( private _diagnosticApiService: DiagnosticService, private _resourceService: ResourceService, public globals: Globals, private _genericArmConfigService?: GenericArmConfigService) {
     super();
 
     const needAnalysis: MessageGroup = new MessageGroup('need-analysis', [], () => 'analysis');
@@ -55,16 +56,16 @@ export class GenieChatFlow extends IMessageFlowProvider {
    feedbackMessageGroup.messages.push(new FeedbackButtonListMessage('Did this information help you solve the issue?',this._getButtonListDidYouFindHelpfulinNewGenie('more-help', 'I need further assistance'), 'Availability and Performance'));
    const helpfulGroup: MessageGroup = new MessageGroup('feedback-helpful', [], () => 'feedback-textbox');
    helpfulGroup.messages.push(new TextMessage('Yes', MessageSender.User, 200));
-   helpfulGroup.messages.push(new TextMessage('Good to hear! From 1 to 5 stars, how helpful was this?', MessageSender.System, 500));
+   helpfulGroup.messages.push(new TextMessage('Good to hear! Could you let us know how helpful was this?', MessageSender.System, 500));
    helpfulGroup.messages.push(new GenieFeedbackMessage([], 'Submit', 'Feedback', 'Support Home'));
-   helpfulGroup.messages.push(new TextMessage('Thank you!'));
+   helpfulGroup.messages.push(new TextMessage('Thank you for your feedback! What else can I help you with today? Type in your question below.'));
 
 
    const notHelpfulGroup: MessageGroup = new MessageGroup('feedback-not-helpful', [], () => 'feedback-textbox');
    notHelpfulGroup.messages.push(new TextMessage('No', MessageSender.User, 200));
-   notHelpfulGroup.messages.push(new TextMessage('Sorry to hear! Can you let us know how we can improve?', MessageSender.System, 500));
+   notHelpfulGroup.messages.push(new TextMessage('Sorry to hear! Could you let us know how we can improve?', MessageSender.System, 500));
    notHelpfulGroup.messages.push(new GenieFeedbackMessage([], 'Submit', 'Feedback', 'Support Home'));
-   notHelpfulGroup.messages.push(new TextMessage('Thank you!'));
+   notHelpfulGroup.messages.push(new TextMessage('Thank you for your feedback! Could you help describe your issue again so we can further assist you?'));
    const feedbackText: MessageGroup = new MessageGroup('feedback-textbox', [], () => '');
 
     // documentSearch.messages.push(new TextMessage('Yes I found the right information.', MessageSender.User));
@@ -109,7 +110,7 @@ export class GenieChatFlow extends IMessageFlowProvider {
     let keywordTextMessage = new TextMessage(keyword, MessageSender.User, 500);
     let systemResponseTextMessage = new TextMessage('Okay give me a moment while I analyze your app for any issues related to this.', MessageSender.System, 500);
     let dynamicAnalysisMessage = new DynamicAnalysisMessage(keyword);
-    const analysisMessageGroup: MessageGroup = new MessageGroup(`${messageGroupId}`, [], () => 'feedback');
+    const analysisMessageGroup: MessageGroup = new MessageGroup(`${messageGroupId}`, [], () => '');
     analysisMessageGroup.messages.push(keywordTextMessage);
     analysisMessageGroup.messages.push(systemResponseTextMessage);
     analysisMessageGroup.messages.push(dynamicAnalysisMessage);
@@ -207,6 +208,10 @@ export class GenieChatFlow extends IMessageFlowProvider {
       return messageGroupList;
     }, this));
   }
+
+//   public setCurrentKey(messageGroupKey: string):any {
+//      this._messageProcessor.setCurrentKey(messageGroupKey);
+//   }
 
   private _getButtonListForMoreHelpSearchResponse(mainMenuId: string): any {
     return [{

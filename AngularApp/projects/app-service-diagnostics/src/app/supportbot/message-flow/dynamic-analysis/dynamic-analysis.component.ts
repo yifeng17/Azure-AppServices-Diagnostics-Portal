@@ -5,7 +5,6 @@ import { IChatMessageComponent } from '../../interfaces/ichatmessagecomponent';
 import { SearchAnalysisMode } from 'projects/diagnostic-data/src/lib/models/search-mode';
 // import { FeedbackComponent } from 'diagnostic-data';
 import { v4 as uuid } from 'uuid';
-import { GenieChatFlow } from '../../../supportbot/message-flow/v2-flows/genie-chat.flow';
 import { from } from 'rxjs';
 import { ContentService } from '../../../shared-v2/services/content.service';
 import { CategoryChatStateService } from '../../../shared-v2/services/category-chat-state.service';
@@ -30,7 +29,7 @@ export class DynamicAnalysisComponent implements OnInit, AfterViewInit, IChatMes
     searchMode: SearchAnalysisMode = SearchAnalysisMode.Genie;
     viewUpdated: boolean = false;
 
-    constructor(private _routerLocal: Router, private _activatedRouteLocal: ActivatedRoute, private injector: Injector, private _genieChatFlow: GenieChatFlow, private _contentService: ContentService, private _chatState: CategoryChatStateService, private _logger: LoggingV2Service) { }
+    constructor(private _routerLocal: Router, private _activatedRouteLocal: ActivatedRoute, private injector: Injector, private _contentService: ContentService, private _chatState: CategoryChatStateService, private _logger: LoggingV2Service) { }
 
 
     noSearchResult: boolean = undefined;
@@ -108,13 +107,8 @@ export class DynamicAnalysisComponent implements OnInit, AfterViewInit, IChatMes
 
     updateStatus(dataOutput) {
         console.log("status Value before", dataOutput);
-        let statusValue = {
-            status: dataOutput.status,
-            outputData: dataOutput.data,
-     //       documentSearchResult: this.content,
-            data: true
-        };
 
+        let nextKey = "";
         if ((dataOutput.data == undefined || dataOutput.data.detectors == undefined || dataOutput.data.detectors.length === 0) && (this.content == undefined || this.content.length == 0)) {
             this.noSearchResult = true;
         }
@@ -123,10 +117,21 @@ export class DynamicAnalysisComponent implements OnInit, AfterViewInit, IChatMes
             if (dataOutput.data.successfulViewModels != undefined && dataOutput.data.issueDetectedViewModels != undefined && dataOutput.data.successfulViewModels.length + dataOutput.data.issueDetectedViewModels.length < 7) {
                 this.showDocumentSearchResult = true;
             }
+            nextKey = "feedback";
         }
 
+        let statusValue = {
+            status: dataOutput.status,
+     //       documentSearchResult: this.content,
+            data: {
+                hasResult: !this.noSearchResult,
+                next_key: nextKey,
+                outputData: dataOutput.data
+            }
+        };
+
         console.log("status Value", statusValue);
-        this._genieChatFlow.createMessageFlowForAnaysisResult(statusValue.outputData, this.noSearchResult);
+        // this._genieChatFlow.createMessageFlowForAnaysisResult(statusValue.outputData, this.noSearchResult);
 
         this.onComplete.emit(statusValue);
 

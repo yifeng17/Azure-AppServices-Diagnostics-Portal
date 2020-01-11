@@ -9,7 +9,7 @@ import { DiagnosticService } from '../../services/diagnostic.service';
 import { TelemetryEventNames } from '../../services/telemetry/telemetry.common';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { Solution } from '../solution/solution';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { forkJoin as observableForkJoin, Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { DetectorResponse, DetectorMetaData, HealthStatus, DetectorType } from '../../models/detector';
@@ -531,17 +531,33 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
 
         if (this.analysisId === "searchResultsAnalysis" && this.searchTerm && this.searchTerm.length > 0) {
           this.logEvent(TelemetryEventNames.SearchResultClicked, { searchId: this.searchId, detectorId: detectorId, rank: 0, title: clickDetectorEventProperties.ChildDetectorName, status: clickDetectorEventProperties.Status, ts: Math.floor((new Date()).getTime() / 1000).toString() });
-          console.log("detectorlist current router", this._router);
+          console.log("detectorlist current router", this._activatedRoute, this._router);
           // This router is different for genie and case submission flow
-          this._router.navigate([`../analysis/${this.analysisId}/search/detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true, queryParams: { searchTerm: this.searchTerm } });
-        }
+        //  this._router.navigate([`../analysis/${this.analysisId}/search/detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true, queryParams: { searchTerm: this.searchTerm } });
+          this._router.navigate([`../detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true, queryParams: { searchTerm: this.searchTerm } });
+     //   this.navigateTo([`../detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true, queryParams: { searchTerm: this.searchTerm } });
+    //  this._activatedRoute.
+    //  this._router.navigateByUrl(`resource/${resourceId}/legacy/diagnostics/availability/analysis`);
+    }
         else {
           this._router.navigate([`../../analysis/${this.analysisId}/detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true });
         }
       }
     }
-
   }
+
+  navigateTo(path: string) {
+    let navigationExtras: NavigationExtras = {
+        queryParamsHandling: 'preserve',
+        preserveFragment: true,
+        relativeTo: this._activatedRoute
+    };
+    var pathSegments = path.split('/');
+    let segments: string[] = [path];
+    this._router.navigate(segments, navigationExtras);
+    console.log("this._route", this._router);
+    console.log("activatedRoute", this._activatedRoute);
+}
 
   startLoadingMessage(): void {
     let self = this;

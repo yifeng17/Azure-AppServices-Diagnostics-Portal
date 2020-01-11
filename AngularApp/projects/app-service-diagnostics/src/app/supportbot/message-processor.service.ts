@@ -63,6 +63,15 @@ export class MessageProcessor {
                 this._currentMessageGroup = this._getMessageGroupByKey(this._currentKey);
             }
         }
+        else if (event && event.hasOwnProperty('hasResult') && event.hasOwnProperty('next_key')) {
+            if (event['next_key'] !== "") {
+                this._currentMessageIterator = 0;
+                this._currentKey = event['next_key'];
+
+                this._currentMessageGroup = this._getMessageGroupByKey(this._currentKey);
+            }
+        }
+
 
         if (this._currentMessageIterator >= this._currentMessageGroup.messages.length) {
             if (this._currentMessageGroup.next_key === undefined) {

@@ -27,13 +27,13 @@ import { SolutionsMessageComponent } from './common/solutions-message/solutions-
 import { GraphMessageComponent } from './common/graph-message/graph-message.component';
 import { CpuAnalysisChatFlow } from './message-flow/cpu-analysis-chat/cpu-analysis-chat-flow';
 import { ProblemStatementMessageComponent } from './common/problem-statement-message/problem-statement-message.component';
-
 import { AppInsightsSettingsComponent } from '../availability/app-insights/app-insights-settings.component';
 import { CategoryMenuComponent } from './message-flow/category-menu/category-menu.component';
 import { DetectorSummaryComponent } from './message-flow/detector-summary/detector-summary.component';
 import { DocumentSearchComponent } from './message-flow/document-search/document-search.component';
 import { DocumentSearchResultsComponent } from './message-flow/document-search-results/document-search-results.component';
 import { SharedV2Module } from '../shared-v2/shared-v2.module';
+// import { HomeModule } from '../home/home.module';
 import { DiagnosticDataModule } from 'diagnostic-data';
 import { GenericCategoryFlow } from './message-flow/v2-flows/generic-category.flow';
 import { GenieChatFlow } from './message-flow/v2-flows/genie-chat.flow';
@@ -67,13 +67,14 @@ import { DynamicAnalysisResultsComponent } from './message-flow/dynamic-analysis
         DocumentSearchResultsComponent,
         HealthCheckV3Component,
         DynamicAnalysisComponent,
-        DynamicAnalysisResultsComponent
+        DynamicAnalysisResultsComponent,
     ],
     imports: [
         SharedModule,
         AvailabilityModule,
         SolutionsModule,
         SharedV2Module,
+        // HomeModule,
         DiagnosticDataModule,
         FabIconModule,
         FabChoiceGroupModule,

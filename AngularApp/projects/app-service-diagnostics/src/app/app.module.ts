@@ -35,6 +35,8 @@ import { AppInsightsQueryService } from './../../../diagnostic-data/src/lib/serv
 import { HighchartsChartModule } from 'highcharts-angular';
 import { AngularReactBrowserModule } from '@angular-react/core';
 import { Globals } from './globals';
+import { FabricFeedbackComponent } from './fabric-ui/components/fabric-feedback/fabric-feedback.component';
+import { FabricFeedbackContainerComponent } from './fabric-ui/components/fabric-feedback-container/fabric-feedback-container.component';
 
 @NgModule({
   imports: [
@@ -59,11 +61,17 @@ import { Globals } from './globals';
       }
     ]),
     CustomMaterialModule,
-    HighchartsChartModule
+    HighchartsChartModule,
   ],
   declarations: [
     AppComponent,
+    FabricFeedbackComponent,
+    FabricFeedbackContainerComponent
   ],
+//   exports: [
+//     FabricFeedbackComponent,
+//     FabricFeedbackContainerComponent
+//   ],
   providers: [
     CustomReuseStrategy,
     { provide: KustoTelemetryService, useExisting: PortalKustoTelemetryService },

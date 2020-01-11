@@ -59,19 +59,6 @@ export class ButtonMessageComponent implements OnInit, AfterViewInit, IChatMessa
         if (item.type === ButtonActionType.GetFeedback)
         {
             console.log("Feedback button onclick", item);
-            if (item.title.toLowerCase() === "yes")
-            {
-                console.log("Feedback button yes onclick", item);
-                 this.globals.messages.push(new TextMessage('Great to hear! From 1 to 5 stars, how helpful was this?', MessageSender.System, 500));
-                // this.globals.messages.push(new FeedbackMessage([], 'Submit and Show Tile Menu', 'Feedback', "Availbiliy and Performance"));
-             }
-            else
-            {
-                console.log("Feedback button no onclick", item);
-                 this.globals.messages.push(new TextMessage('Sorry to hear! Could you let us know how we can improve?', MessageSender.System, 500));
-            //     this.globals.messages.push(new FeedbackMessage([], 'Submit and Show Tile Menu', 'Feedback', "Availbiliy and Performance"));
-            // }
-        }
         this.onComplete.emit({ status: true, data: item });
     }
 }
