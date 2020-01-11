@@ -182,6 +182,7 @@ export interface DynamicInsightRendering extends Rendering {
 
 export interface DetectorListRendering extends Rendering {
     detectorIds: string[];
+    additionalParams?: string;
 }
 
 export interface MarkdownRendering extends Rendering {

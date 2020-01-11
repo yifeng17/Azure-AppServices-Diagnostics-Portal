@@ -73,7 +73,9 @@ export class DashboardComponent implements OnDestroy {
         this._searchService.searchTerm = this._activatedRoute.snapshot.queryParams['searchTerm'];
         routeParams['searchTerm'] = this._activatedRoute.snapshot.queryParams['searchTerm'];
       }
-      this._router.navigate([], { queryParams: routeParams, relativeTo: this._activatedRoute });
+
+
+      this._router.navigate([], { queryParams: routeParams, queryParamsHandling: 'merge', relativeTo: this._activatedRoute });
     }
 
     if((this.showUserInformation = environment.adal.enabled)){
@@ -82,7 +84,7 @@ export class DashboardComponent implements OnDestroy {
       this._diagnosticService.getUserPhoto(this.userId).subscribe(image => {
         this.userPhotoSource = image;
       });
-  
+
       this._diagnosticService.getUserInfo(this.userId).subscribe((userInfo: UserInfo) => {
         this.userName = userInfo.givenName;
         this.displayName = userInfo.displayName;
