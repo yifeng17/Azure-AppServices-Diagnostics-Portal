@@ -285,6 +285,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
               var searchResults: DetectorMetaData[] = results[0];
               this.logEvent(TelemetryEventNames.SearchQueryResults, { searchId: this.searchId, query: this.searchTerm, results: JSON.stringify(searchResults.map((det: DetectorMetaData) => new Object({ id: det.id, score: det.score }))), ts: Math.floor((new Date()).getTime() / 1000).toString() });
               var detectorList = results[1];
+              console.log("search result and detectors result", searchResults, detectorList);
               if (detectorList) {
                 searchResults.forEach(result => {
                     console.log("score:", result.score);
@@ -534,7 +535,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
           console.log("detectorlist current router", this._activatedRoute, this._router);
           // This router is different for genie and case submission flow
         //  this._router.navigate([`../analysis/${this.analysisId}/search/detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true, queryParams: { searchTerm: this.searchTerm } });
-          this._router.navigate([`../detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true, queryParams: { searchTerm: this.searchTerm } });
+          this._router.navigate([`../../categories/ConfigurationAndManagement/detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true, queryParams: { searchTerm: this.searchTerm } });
      //   this.navigateTo([`../detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true, queryParams: { searchTerm: this.searchTerm } });
     //  this._activatedRoute.
     //  this._router.navigateByUrl(`resource/${resourceId}/legacy/diagnostics/availability/analysis`);

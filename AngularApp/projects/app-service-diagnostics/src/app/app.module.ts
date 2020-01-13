@@ -59,7 +59,9 @@ import { FabricFeedbackContainerComponent } from './fabric-ui/components/fabric-
         path: 'resource',
         loadChildren: './resources/resources.module#ResourcesModule'
       }
-    ]),
+    ],
+    // { enableTracing: true }
+    ),
     CustomMaterialModule,
     HighchartsChartModule,
   ],

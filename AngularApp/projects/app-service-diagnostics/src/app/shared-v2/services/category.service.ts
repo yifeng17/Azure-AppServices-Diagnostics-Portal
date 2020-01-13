@@ -28,6 +28,7 @@ export class CategoryService {
 
   protected _addCategories(categories: Category[]) {
     this._categories = this._categories.concat(categories);
+    console.log("in categories service, get categories", this._categories);
     this.categories.next(this._categories);
   }
 }

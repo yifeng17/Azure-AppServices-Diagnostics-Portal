@@ -56,9 +56,7 @@ export class ResourceRedirectComponent implements OnInit {
           // To Open the right category page
           if (info.optionalParameters)
           {
-            console.log("category Id param before");
             var categoryIdParam = info.optionalParameters.find(param => param.key === "categoryId");
-            console.log("category Id param after", categoryIdParam);
 
             if (categoryIdParam)
             {
