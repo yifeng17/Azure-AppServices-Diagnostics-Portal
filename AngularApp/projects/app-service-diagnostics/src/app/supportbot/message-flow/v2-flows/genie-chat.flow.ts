@@ -83,16 +83,6 @@ export class GenieChatFlow extends IMessageFlowProvider {
     return this.messageFlowList;
   }
 
-//   triggerSearch(){
-//     if (this.searchTerm && this.searchTerm.length>1) {
-//       this.searchBarFocus = false;
-//       var searchBar = document.getElementById('caseSubmissionFlowSearchBar');
-//       searchBar.blur();
-//       this._routerLocal.navigate([`../../${this.analysisId}/search`], { relativeTo: this._activatedRouteLocal, queryParamsHandling: 'merge', queryParams: {searchTerm: this.searchTerm} });
-//     }
-//   }
-
-
   createMessageFlowForAnaysisResult(data: any, noSearchResult: boolean = false): any {
     console.log("1.****messages", data);
     // this.globals.messages.push(new DynamicAnalysisResultsMessage(data));
@@ -101,7 +91,6 @@ export class GenieChatFlow extends IMessageFlowProvider {
      const showTiles: string = `show-all-tiles-WindowsAvailabilityAndPerformance`;
      const feedback: string = `feedback-WindowsAvailabilityAndPerformance`;
   }
-
 
   createMessageFlowForAnaysis(keyword: string, messageGroupId: string): Observable<Message[]> {
     //const dynamicAnalysisGroup: MessageGroup = new MessageGroup("dynamic-analysis", [], () => "feedback");

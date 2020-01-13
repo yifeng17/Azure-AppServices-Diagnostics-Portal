@@ -65,6 +65,7 @@ export class GeniePanelComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.globals.openGeniePanel = false;
         console.log("init genie with openPanel", this.globals);
 
         // Pop messages from globals messages:
@@ -244,5 +245,4 @@ export class GeniePanelComponent implements OnInit {
             }, message.messageDelayInMs);
         }
     }
-
 }

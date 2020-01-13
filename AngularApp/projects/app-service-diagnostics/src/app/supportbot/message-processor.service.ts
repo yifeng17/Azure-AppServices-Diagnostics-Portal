@@ -53,7 +53,6 @@ export class MessageProcessor {
     }
 
     public getNextMessage(event: any): Message {
-
         if (event && event.hasOwnProperty('type') && event.hasOwnProperty('next_key')) {
             if (event['type'] === ButtonActionType.SwitchToOtherMessageGroup) {
 
@@ -71,7 +70,6 @@ export class MessageProcessor {
                 this._currentMessageGroup = this._getMessageGroupByKey(this._currentKey);
             }
         }
-
 
         if (this._currentMessageIterator >= this._currentMessageGroup.messages.length) {
             if (this._currentMessageGroup.next_key === undefined) {

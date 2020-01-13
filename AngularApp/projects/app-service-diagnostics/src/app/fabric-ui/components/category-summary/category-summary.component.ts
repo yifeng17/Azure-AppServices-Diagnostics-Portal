@@ -89,7 +89,13 @@ export class CategorySummaryComponent implements OnInit {
     ngOnInit() {
         console.log("init ngsummary");
         this.categoryService.categories.subscribe(categories => {
-            this.category = categories.find(category => category.id === this._activatedRoute.snapshot.params.category);
+            let categoryName = decodeURIComponent(this._activatedRoute.snapshot.params.category);
+            console.log("categoryName before decode and after", this._activatedRoute.snapshot.params.category, categoryName);
+            if (categories)
+            {
+                console.log("all the categories", categories);
+            }
+            this.category = categories.find(category => category.id === this._activatedRoute.snapshot.params.category || category.name.replace(/\s/g, '') === categoryName);
             this._chatState.category = this.category;
             this.categoryName = this.category.name;
 
