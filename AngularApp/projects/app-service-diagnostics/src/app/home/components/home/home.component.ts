@@ -19,6 +19,8 @@ import { DiagnosticService } from 'diagnostic-data';
 import { ISearchBoxProps } from 'office-ui-fabric-react';
 import { FabDropdownComponent } from '@angular-react/fabric';
 import { HttpResponse } from '@angular/common/http';
+import { FabSearchBoxComponent } from '@angular-react/fabric';
+// import { FabSearchBoxModule } from '@angular-react/fabric';
 // import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
 import {
     ICalendarStrings,

@@ -9,7 +9,8 @@ import { BotLoggingService } from '../../../shared/services/logging/bot.logging.
 import { MessageSender, ButtonActionType } from '../../models/message-enums';
 import { ButtonMessageComponent } from '../../common/button-message/button-message.component';
 import { CategoryChatStateService } from '../../../shared-v2/services/category-chat-state.service';
-import { Globals } from '../../../globals';
+ import { Globals } from '../../../globals';
+//import { Globals } from 'dist/diagnostic-data/lib/services/genie.service';
 
 @Component({
     templateUrl: 'feedback.component.html'

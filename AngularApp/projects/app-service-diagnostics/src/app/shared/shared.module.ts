@@ -28,7 +28,7 @@ import { StepWizardComponent } from './components/step-wizard/step-wizard.compon
 import { DaasSessionsComponent, DateTimeDiffPipe } from './components/daas-sessions/daas-sessions.component';
 import { WindowService } from '../startup/services/window.service';
 import { ArmService } from './services/arm.service';
-import {GenericArmConfigService} from './services/generic-arm-config.service';
+import { GenericArmConfigService } from './services/generic-arm-config.service';
 import { UriElementsService } from './services/urielements.service';
 import { PortalActionService } from './services/portal-action.service';
 import { SiteService } from './services/site.service';
@@ -93,9 +93,57 @@ import { EventViewerComponent } from './components/daas/event-viewer/event-viewe
 import { FrebViewerComponent } from './components/daas/freb-viewer/freb-viewer.component';
 import { PortalReferrerResolverComponent } from './components/portal-referrer-resolver/portal-referrer-resolver.component';
 import { ConfigureStorageAccountComponent } from './components/daas/configure-storage-account/configure-storage-account.component';
-import { SupportBotModule } from '../supportbot/supportbot.module';
+// import { SupportBotModule } from '../supportbot/supportbot.module';
 import { GeniePanelComponent } from '../fabric-ui/components/genie-panel/genie-panel.component';
-// import { DynamicComponent } from '../supportbot/dynamic-component/dynamic.component';
+import { FabNavModule } from 'diagnostic-data';
+import {
+    FabBreadcrumbModule,
+    FabButtonModule,
+    FabCalendarModule,
+    FabCalloutModule,
+    FabCheckboxModule,
+    FabChoiceGroupModule,
+    FabComboBoxModule,
+    FabCommandBarModule,
+    FabDatePickerModule,
+    FabDetailsListModule,
+    FabDialogModule,
+    FabDividerModule,
+    FabFabricModule,
+    FabDropdownModule,
+    FabGroupModule,
+    FabGroupedListModule,
+    FabHoverCardModule,
+    FabIconModule,
+    FabImageModule,
+    FabLinkModule,
+    FabMarqueeSelectionModule,
+    FabMessageBarModule,
+    FabModalModule,
+    FabPanelModule,
+    FabPersonaModule,
+    FabPivotModule,
+    FabSearchBoxModule,
+    FabShimmerModule,
+    FabSliderModule,
+    FabSpinnerModule,
+    FabToggleModule,
+    FabTooltipModule,
+    FabSpinButtonModule,
+    FabTextFieldModule,
+    FabPeoplePickerModule,
+    FabTagPickerModule,
+    FabProgressIndicatorModule,
+    FabContextualMenuModule
+} from '@angular-react/fabric';
+import { DynamicComponent } from '../supportbot/dynamic-component/dynamic.component';
+import { CategorySummaryComponent } from '../fabric-ui/components/category-summary/category-summary.component';
+import { CategoryOverviewComponent } from '../fabric-ui/components/category-overview/category-overview.component';
+import { CategoryNavComponent } from '../home/components/category-nav/category-nav.component';
+import { SectionDividerComponent } from '../home/components/section-divider/section-divider.component';
+import { DetectorCommandBarComponent } from '../fabric-ui/components/detector-command-bar/detector-command-bar.component';
+import { CategoryMenuItemComponent } from '../home/components/category-menu-item/category-menu-item.component';
+import { SearchPipe, SearchMatchPipe } from '../home/components/pipes/search.pipe';
 
 @NgModule({
     declarations: [
@@ -161,9 +209,19 @@ import { GeniePanelComponent } from '../fabric-ui/components/genie-panel/genie-p
         FrebViewerComponent,
         PortalReferrerResolverComponent,
         ConfigureStorageAccountComponent,
-        GeniePanelComponent
+        GeniePanelComponent,
+        DynamicComponent,
+        CategorySummaryComponent,
+        CategoryOverviewComponent,
+        CategoryNavComponent,
+        DetectorCommandBarComponent,
+        SectionDividerComponent,
+        CategoryMenuItemComponent,
+        SearchPipe,
+        SearchMatchPipe
     ],
     imports: [
+        // SupportBotModule,
         HttpClientModule,
         CommonModule,
         StartupModule,
@@ -171,7 +229,45 @@ import { GeniePanelComponent } from '../fabric-ui/components/genie-panel/genie-p
         RouterModule,
         DiagnosticDataModule,
         Ng5SliderModule,
-        // DynamicComponent
+        FabFabricModule,
+        FabIconModule,
+        FabButtonModule,
+        FabDialogModule,
+        FabImageModule,
+        FabDropdownModule,
+        FabPanelModule,
+        FabCommandBarModule,
+        FabBreadcrumbModule,
+        FabCalloutModule,
+        FabCheckboxModule,
+        FabChoiceGroupModule,
+        FabComboBoxModule,
+        FabGroupedListModule,
+        FabDatePickerModule,
+        FabDividerModule,
+        FabSpinnerModule,
+        FabToggleModule,
+        FabPersonaModule,
+        FabPivotModule,
+        FabLinkModule,
+        FabMessageBarModule,
+        FabHoverCardModule,
+        FabModalModule,
+        FabTooltipModule,
+        FabShimmerModule,
+        FabSliderModule,
+        FabSearchBoxModule,
+        FabCalendarModule,
+        FabDetailsListModule,
+        FabGroupModule,
+        FabMarqueeSelectionModule,
+        FabSpinButtonModule,
+        FabTextFieldModule,
+        FabPeoplePickerModule,
+        FabTagPickerModule,
+        FabProgressIndicatorModule,
+        FabNavModule,
+        FabContextualMenuModule,
     ],
     exports: [
         CommonModule,
@@ -227,7 +323,14 @@ import { GeniePanelComponent } from '../fabric-ui/components/genie-panel/genie-p
         TileListComponent,
         GenericCommsComponent,
         GenericAnalysisComponent,
-        GeniePanelComponent
+        GeniePanelComponent,
+        DynamicComponent,
+        CategorySummaryComponent,
+        CategoryOverviewComponent,
+        CategoryNavComponent,
+        DetectorCommandBarComponent,
+        SectionDividerComponent,
+        CategoryMenuItemComponent
     ]
 })
 export class SharedModule {

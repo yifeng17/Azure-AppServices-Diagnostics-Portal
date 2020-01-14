@@ -20,8 +20,9 @@ import {
     IPersonaProps,
     IPeoplePickerProps
 } from 'office-ui-fabric-react';
-import { Globals } from '../../../globals';
-
+ import { Globals } from '../../../globals';
+//import { Globals } from 'diagnostic-data';
+//import { Globals } from 'dist/diagnostic-data/lib/services/genie.service';
 //  import {} from 'office-ui-fabric-core/lib';
 //  createInputJsxRenderer, createRenderPropHandler
 

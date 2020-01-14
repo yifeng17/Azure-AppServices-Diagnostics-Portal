@@ -14,7 +14,8 @@ import { AuthService } from '../../../startup/services/auth.service';
 import { DiagnosticService, DetectorMetaData, DetectorType } from 'diagnostic-data';
 import { filter } from 'rxjs/operators';
 import { PortalActionService } from '../../../shared/services/portal-action.service';
-import { Globals } from '../../../globals';
+ import { Globals } from '../../../globals';
+// import { Globals } from 'dist/diagnostic-data/lib/services/genie.service';
 
 @Component({
     selector: 'category-summary',

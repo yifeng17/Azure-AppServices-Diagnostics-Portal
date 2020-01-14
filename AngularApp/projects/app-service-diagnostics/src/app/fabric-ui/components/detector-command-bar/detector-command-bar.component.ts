@@ -15,7 +15,8 @@ import {
   IPersonaProps,
   IPeoplePickerProps
 } from 'office-ui-fabric-react';
-import { Globals } from '../../../globals';
+ import { Globals } from '../../../globals';
+// import { Globals } from 'dist/diagnostic-data/lib/services/genie.service';
 import { DetectorControlService } from 'diagnostic-data';
 
 @Component({

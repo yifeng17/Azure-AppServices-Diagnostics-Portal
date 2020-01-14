@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, OnDestroy } from '@angular/core';
 import { GenieChatFlow } from '../../../supportbot/message-flow/v2-flows/genie-chat.flow';
 import { Message, TextMessage } from '../../../supportbot/models/message';
 import { MessageSender, ButtonActionType } from '../../../supportbot/models/message-enums';
@@ -7,6 +7,7 @@ import { mergeStyleSets, hiddenContentStyle, MessageBarType, FontSizes } from 'o
 import { DynamicComponent } from '../../../supportbot/dynamic-component/dynamic.component';
 import { TextMessageComponent } from '../../../supportbot/common/text-message/text-message.component';
 import { LoadingMessageComponent } from '../../../supportbot/common/loading-message/loading-message.component';
+import { Router, NavigationEnd } from '@angular/router';
 
 import {
     PanelType,
@@ -21,7 +22,8 @@ import {
     IPersonaProps,
     IPeoplePickerProps
 } from 'office-ui-fabric-react';
-import { Globals } from '../../../globals';
+ import { Globals } from '../../../globals';
+//import { Globals } from 'dist/diagnostic-data/lib/services/genie.service';
 
 
 @Component({
@@ -29,10 +31,10 @@ import { Globals } from '../../../globals';
     templateUrl: './genie-panel.component.html',
     styleUrls: ['./genie-panel.component.scss']
 })
-export class GeniePanelComponent implements OnInit {
+export class GeniePanelComponent implements OnInit, OnDestroy{
     @ViewChild('scrollMe', { static: true }) myScrollContainer: any;
-    @Input() openPanel: boolean = false;
-    @Output() openPanelChange: EventEmitter<boolean> = new EventEmitter<boolean>();
+    // @Input() openPanel: boolean = false;
+    // @Output() openPanelChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
     // Genie panel
     type: PanelType = PanelType.custom;
@@ -51,7 +53,7 @@ export class GeniePanelComponent implements OnInit {
     scrollListener: any;
 
     // messageBarType: MessageBarType = MessageBarType.warning;
-    constructor(private _genieChatFlow: GenieChatFlow, private _messageProcessor: MessageProcessor, public globals: Globals) {
+    constructor(private _route: Router, private _genieChatFlow: GenieChatFlow, private _messageProcessor: MessageProcessor, public globals: Globals) {
         this.panelStyles = {
             // type: PanelType.smallFixedNear,
             root: {
@@ -62,8 +64,20 @@ export class GeniePanelComponent implements OnInit {
         this.messages = [];
         this.showTypingMessage = false;
         this.chatContainerHeight = 0;
+
+               this._route.events.subscribe((evt) => {
+                if (evt instanceof NavigationEnd) {
+                   // trick the Router into believing it's last link wasn't previously loaded
+
+                   console.log("evt", evt, this.globals.openGeniePanel);
+                   this.globals.openGeniePanel = false;
+                }
+            });
     }
 
+    // ngOnDestroy() {
+    //     console.log("Genie destroyed");
+    // }
     ngOnInit() {
         this.globals.openGeniePanel = false;
         console.log("init genie with openPanel", this.globals);
@@ -111,14 +125,12 @@ export class GeniePanelComponent implements OnInit {
     }
 
     ngOnDestroy() {
-        if (this.scrollListener) {
-          clearInterval(this.scrollListener);
-        }
+        console.log("Genie destroyed");
       }
 
     closeGeniePanel() {
         this.globals.openGeniePanel = false;
-        this.openPanelChange.emit(this.openPanel);
+        // this.openPanelChange.emit(this.openPanel);
         console.log("close panel, isOpen:", this.globals.openGeniePanel);
     }
 

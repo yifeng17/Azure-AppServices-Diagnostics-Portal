@@ -1,7 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { PanelType } from 'office-ui-fabric-react';
 import { TelemetryService, TelemetryEventNames } from 'diagnostic-data';
-import { Globals } from '../../../globals';
+ import { Globals } from '../../../globals';
+// import { Globals } from 'dist/diagnostic-data/lib/services/genie.service';
 import { Subject } from 'rxjs';
 
 @Component({

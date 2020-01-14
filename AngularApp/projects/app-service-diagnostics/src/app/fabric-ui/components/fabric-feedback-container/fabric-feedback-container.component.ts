@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { TelemetryService, TelemetryEventNames } from 'diagnostic-data';
-import { Globals } from '../../../globals';
+ import { Globals } from '../../../globals';
+//import { Globals } from 'dist/diagnostic-data/lib/services/genie.service';
 import { Observable } from 'rxjs';
 
 @Component({

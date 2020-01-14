@@ -21,6 +21,8 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 import { AppInsightQueryMetadata, AppInsightData, BladeInfo } from '../../models/app-insights';
 import { GenericSupportTopicService } from '../../services/generic-support-topic.service';
 import { SearchAnalysisMode } from '../../models/search-mode';
+//  import { GenieService } from '../../../../../app-service-diagnostics/';
+import { GenieGlobals } from '../../services/genie.service';
 
 @Component({
   selector: 'detector-list-analysis',
@@ -87,7 +89,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
   constructor(private _activatedRoute: ActivatedRoute, private _router: Router,
     private _diagnosticService: DiagnosticService, private _detectorControl: DetectorControlService,
     protected telemetryService: TelemetryService, public _appInsightsService: AppInsightsQueryService,
-    private _supportTopicService: GenericSupportTopicService,
+    private _supportTopicService: GenericSupportTopicService, protected _globals: GenieGlobals,
     @Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig) {
     super(telemetryService);
     this.isPublic = config && config.isPublic;
@@ -538,14 +540,15 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
         if (this.analysisId === "searchResultsAnalysis" && this.searchTerm && this.searchTerm.length > 0) {
           this.logEvent(TelemetryEventNames.SearchResultClicked, { searchId: this.searchId, detectorId: detectorId, rank: 0, title: clickDetectorEventProperties.ChildDetectorName, status: clickDetectorEventProperties.Status, ts: Math.floor((new Date()).getTime() / 1000).toString() });
           console.log("detectorlist current router", this._activatedRoute, this._router);
-          
+
           let dest = `../../categories/${categoryName}/detectors/${detectorId}`;
        //   let dest = `../../categories/ConfigurationAndManagement/detectors/${detectorId}`;
           console.log("navigate to", dest);
           // This router is different for genie and case submission flow
         //  this._router.navigate([`../analysis/${this.analysisId}/search/detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true, queryParams: { searchTerm: this.searchTerm } });
-       // ConfigurationAndManagement  
+       // ConfigurationAndManagement
       //navigate to ../../categories/ConfigurationandManagement/detectors/swap
+      this._globals.openGeniePanel = false;
         this._router.navigate([`${dest}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true, queryParams: { searchTerm: this.searchTerm } });
      //   this.navigateTo([`../detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true, queryParams: { searchTerm: this.searchTerm } });
     //  this._activatedRoute.

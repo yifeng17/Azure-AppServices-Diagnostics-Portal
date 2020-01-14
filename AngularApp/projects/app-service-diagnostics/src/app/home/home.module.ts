@@ -32,7 +32,19 @@ import { CategoryMenuItemComponent } from './components/category-menu-item/categ
 import { SectionDividerComponent } from './components/section-divider/section-divider.component';
 // import { FabricFeedbackComponent } from '../fabric-ui/components/fabric-feedback/fabric-feedback.component';
 // import { FabricFeedbackContainerComponent } from '../fabric-ui/components/fabric-feedback-container/fabric-feedback-container.component';
-
+import { FabSearchBoxModule,
+// FabShimmerModule,
+// FabSliderModule,
+// FabSpinnerModule,
+// FabToggleModule,
+// FabTooltipModule,
+// FabSpinButtonModule,
+// FabTextFieldModule,
+// FabPeoplePickerModule,
+// FabTagPickerModule,
+// FabProgressIndicatorModule,
+// FabContextualMenuModule
+} from '@angular-react/fabric';
 export const HomeRoutes = RouterModule.forChild([
   {
     path: '',
@@ -315,9 +327,10 @@ export const HomeRoutes = RouterModule.forChild([
     HomeRoutes,
     SupportBotModule,
     FormsModule,
-    MarkdownModule.forRoot()
+    MarkdownModule.forRoot(),
+    FabSearchBoxModule
   ],
-  declarations: [HomeComponent, CategoryChatComponent, CategoryTileComponent, SearchResultsComponent, SupportTopicRedirectComponent, DiagnosticsSettingsComponent, CategorySummaryComponent, CategoryOverviewComponent, DetectorCommandBarComponent, CategoryNavComponent, CategoryMenuItemComponent, SearchPipe, SearchMatchPipe, SectionDividerComponent],
+  declarations: [HomeComponent, CategoryChatComponent, CategoryTileComponent, SearchResultsComponent, SupportTopicRedirectComponent, DiagnosticsSettingsComponent],
   providers: [CategoryTabResolver, CategoryChatResolver, TimeControlResolver,
     { provide: GenericSupportTopicService, useExisting: SupportTopicService }
   ],

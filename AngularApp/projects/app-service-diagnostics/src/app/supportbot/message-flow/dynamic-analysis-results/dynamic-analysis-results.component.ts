@@ -38,13 +38,12 @@ export class DynamicAnalysisResultsComponent implements OnInit, AfterViewInit, I
   }
 
   updateStatus($event) {
-   console.log("update status"); 
+   console.log("update status");
   }
 
   openArticle(link) {
     window.open(link, '_blank');
   }
-
 }
 
 export class DynamicAnalysisResultsMessage extends Message {
