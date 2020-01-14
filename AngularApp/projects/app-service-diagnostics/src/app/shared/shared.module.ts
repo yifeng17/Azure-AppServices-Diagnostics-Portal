@@ -94,6 +94,7 @@ import { FrebViewerComponent } from './components/daas/freb-viewer/freb-viewer.c
 import { PortalReferrerResolverComponent } from './components/portal-referrer-resolver/portal-referrer-resolver.component';
 import { ConfigureStorageAccountComponent } from './components/daas/configure-storage-account/configure-storage-account.component';
 import { SupportBotModule } from '../supportbot/supportbot.module';
+import { GeniePanelComponent } from '../fabric-ui/components/genie-panel/genie-panel.component';
 // import { DynamicComponent } from '../supportbot/dynamic-component/dynamic.component';
 
 @NgModule({
@@ -159,7 +160,8 @@ import { SupportBotModule } from '../supportbot/supportbot.module';
         EventViewerComponent,
         FrebViewerComponent,
         PortalReferrerResolverComponent,
-        ConfigureStorageAccountComponent
+        ConfigureStorageAccountComponent,
+        GeniePanelComponent
     ],
     imports: [
         HttpClientModule,
@@ -224,7 +226,8 @@ import { SupportBotModule } from '../supportbot/supportbot.module';
         DaasScaleupComponent,
         TileListComponent,
         GenericCommsComponent,
-        GenericAnalysisComponent
+        GenericAnalysisComponent,
+        GeniePanelComponent
     ]
 })
 export class SharedModule {

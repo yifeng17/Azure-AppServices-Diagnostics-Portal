@@ -12,8 +12,10 @@ export class CategoryTabResolver implements Resolve<Observable<string>> {
 
     resolve(activatedRouteSnapshot: ActivatedRouteSnapshot): Observable<string> {
        if (activatedRouteSnapshot.params && activatedRouteSnapshot.params.category) {
+         //  let decodedCategoryName = decodeURIComponent(activatedRouteSnapshot.params.category);
+         let decodedCategoryName = activatedRouteSnapshot.params.category.toLowerCase();
            return this._categoryService.categories.pipe(map(categories => {
-               return categories.find(category => category.id === activatedRouteSnapshot.params.category).name;
+               return categories.find(category => category.id.toLowerCase() === activatedRouteSnapshot.params.category.toLowerCase() || category.name.replace(/\s/g, '').toLowerCase() === decodedCategoryName).name;
             }), first());
        }
 
@@ -27,8 +29,13 @@ export class CategoryChatResolver implements Resolve<Observable<any>> {
 
     resolve(activatedRouteSnapshot: ActivatedRouteSnapshot): Observable<any> {
        if (activatedRouteSnapshot.params && activatedRouteSnapshot.params.category) {
+       // let decodedCategoryName = decodeURIComponent(activatedRouteSnapshot.params.category);
+       let decodedCategoryName = activatedRouteSnapshot.params.category.toLowerCase();
            return this._categoryService.categories.pipe(mergeMap(categories => {
-               const category = categories.find(category => category.id === activatedRouteSnapshot.params.category);
+               console.log("category", activatedRouteSnapshot.params.category);
+               console.log("categories", categories);
+               const category = categories.find(category => category.id.toLowerCase() === activatedRouteSnapshot.params.category.toLowerCase() || category.name.replace(/\s/g, '').toLowerCase() === decodedCategoryName);
+               console.log("finding category", category);
                return this._genieChatFlow.createMessageFlowForCategory(category);
            }), first());
        }

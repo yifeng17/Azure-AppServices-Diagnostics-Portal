@@ -18,8 +18,8 @@ import { GenericArmConfigService } from '../../../shared/services/generic-arm-co
 import { ResourceService } from '../../../shared-v2/services/resource.service';
 import { DynamicAnalysisResultsComponent, DynamicAnalysisResultsMessage } from '../dynamic-analysis-results/dynamic-analysis-results.component';
 import { Globals } from '../../../globals';
-import { FeedbackComponent } from 'dist/diagnostic-data/lib/components/feedback/feedback.component';
-import { KustoTelemetryService } from 'dist/diagnostic-data/lib/services/telemetry/kusto-telemetry.service';
+// import { FeedbackComponent } from 'dist/diagnostic-data/lib/components/feedback/feedback.component';
+// import { KustoTelemetryService } from 'dist/diagnostic-data/lib/services/telemetry/kusto-telemetry.service';
 // import { MessageProcessor } from '../../message-processor.service';
 
 @Injectable()

@@ -93,7 +93,9 @@ export class CategoryNavComponent implements OnInit {
 
 
         this.categoryService.categories.subscribe(categories => {
-            this.category = categories.find(category => category.id === this._activatedRoute.snapshot.params.category);
+          //  let decodedCategoryName = decodeURIComponent(this._activatedRoute.snapshot.params.category);
+          let decodedCategoryName = this._activatedRoute.snapshot.params.category.toLowerCase();
+            this.category = categories.find(category => category.id.toLowerCase() === this._activatedRoute.snapshot.params.category.toLowerCase() || category.name.replace(/\s/g, '').toLowerCase() == decodedCategoryName);
             this._chatState.category = this.category;
             this.categoryName = this.category.name;
 

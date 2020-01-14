@@ -538,10 +538,15 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
         if (this.analysisId === "searchResultsAnalysis" && this.searchTerm && this.searchTerm.length > 0) {
           this.logEvent(TelemetryEventNames.SearchResultClicked, { searchId: this.searchId, detectorId: detectorId, rank: 0, title: clickDetectorEventProperties.ChildDetectorName, status: clickDetectorEventProperties.Status, ts: Math.floor((new Date()).getTime() / 1000).toString() });
           console.log("detectorlist current router", this._activatedRoute, this._router);
-          console.log("navigate to", `../../categories/${categoryName}/detectors/${detectorId}`);
+          
+          let dest = `../../categories/${categoryName}/detectors/${detectorId}`;
+       //   let dest = `../../categories/ConfigurationAndManagement/detectors/${detectorId}`;
+          console.log("navigate to", dest);
           // This router is different for genie and case submission flow
         //  this._router.navigate([`../analysis/${this.analysisId}/search/detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true, queryParams: { searchTerm: this.searchTerm } });
-          this._router.navigate([`../../categories/${categoryName}/detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true, queryParams: { searchTerm: this.searchTerm } });
+       // ConfigurationAndManagement  
+      //navigate to ../../categories/ConfigurationandManagement/detectors/swap
+        this._router.navigate([`${dest}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true, queryParams: { searchTerm: this.searchTerm } });
      //   this.navigateTo([`../detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true, queryParams: { searchTerm: this.searchTerm } });
     //  this._activatedRoute.
     //  this._router.navigateByUrl(`resource/${resourceId}/legacy/diagnostics/availability/analysis`);

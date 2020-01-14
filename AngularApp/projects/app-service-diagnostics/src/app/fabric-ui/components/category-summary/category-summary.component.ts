@@ -88,130 +88,24 @@ export class CategorySummaryComponent implements OnInit {
 
     ngOnInit() {
         console.log("init ngsummary");
+        this.globals.openGeniePanel = false;
         this.categoryService.categories.subscribe(categories => {
-            let categoryName = decodeURIComponent(this._activatedRoute.snapshot.params.category);
-            console.log("categoryName before decode and after", this._activatedRoute.snapshot.params.category, categoryName);
+         //   let decodedCategoryName = decodeURIComponent(this._activatedRoute.snapshot.params.category);
+         let decodedCategoryName = this._activatedRoute.snapshot.params.category.toLowerCase();
+            console.log("categoryName before decode and after", this._activatedRoute.snapshot.params.category, decodedCategoryName);
             if (categories)
             {
                 console.log("all the categories", categories);
             }
-            this.category = categories.find(category => category.id === this._activatedRoute.snapshot.params.category || category.name.replace(/\s/g, '') === categoryName);
+            //|| category.name.replace(/\s/g, '') === categoryName
+            this.category = categories.find(category => category.id.toLowerCase() === this._activatedRoute.snapshot.params.category.toLowerCase() ||  category.name.replace(/\s/g, '').toLowerCase() === decodedCategoryName);
+            console.log("finding category in category summary", this.category);
             this._chatState.category = this.category;
             this.categoryName = this.category.name;
 
             this.resourceName = this._activatedRoute.snapshot.params.resourcename;
             this._portalActionService.updateDiagnoseCategoryBladeTitle(`${this.resourceName} - ` + this.categoryName);
         });
-
-
-        //     this._authService.getStartupInfo().subscribe(startupInfo => {
-        //         this.resourceId = startupInfo.resourceId;
-        //         console.log("****** resourceId");
-        //         this.baseUrl = `resource${this.resourceId}/categories/${this.category.id}/`;
-        //         this.groups = [{
-        //             links: [{
-        //                 name: 'Overview',
-        //                 key: 'overview',
-        //                 icon: 'globe',
-        //                 onClick: (e) => {
-        //                     e.preventDefault();
-        //                  //   this._route.navigateByUrl(`resource${this.resourceId}/categories/${this.category.id}/`);
-        //                 //    this._route.navigate([`resource${this.resourceId}/categories/${this.category.id}/`]);
-        //                     this._route.navigate([`./overview`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge' });
-        //                 },
-        //             }]
-        //         },
-        //         {
-        //             name: 'Diagnostic Reports',
-        //             key: 'diagnosticreport',
-        //             isExpanded: true,
-        //             // onClick: (e) => {
-        //             //     e.preventDefault();
-        //             //    // this._route.navigateByUrl(`resource${this.resourceId}/categories/${this.category.id}/`);
-        //             //     this._route.navigate([`resource${this.resourceId}/categories/${this.category.id}/`]);
-        //             // },
-        //             links: []
-        //         },
-        //         ];
-        //     });
-
-        //     this.features = this._featureService.getFeaturesForCategory(this._chatState.category);
-        //     this._diagnosticApiService.getDetectors().subscribe(detectors => {
-        //         detectors.forEach(detector => {
-        //             if (detector.category === this.category.name) {
-        //                 if ((detector.category && detector.category.length > 0) ||
-        //                     (detector.description && detector.description.length > 0)) {
-        //                     if (detector.type === DetectorType.Detector) {
-        //                         this.groups[1].links.push({
-        //                             name: detector.name,
-        //                             key: detector.id,
-        //                             icon: 'stackedlinechart',
-        //                             //   url: `resource${this.resourceId}/categories/${this.category.id}/detectors/${detector.id}`,
-        //                             //   forceAnchor: true,
-        //                             onClick: (e) => {
-        //                                 console.log("clicked event", detector.name);
-        //                                 e.preventDefault();
-        //                                 console.log("Route before", this._route);
-        //                                       this.navigateTo(`detectors/${detector.id}`);
-        //                                       console.log("Route After", this._route);
-        //                                 // this._route.navigateByUrl(`resource${this.resourceId}/categories/${this.category.id}/detectors/${detector.id}`);
-        //                                 //    this.navigateTo('analysis/tcpconnections');
-        //                             },
-        //                             expandAriaLabel: detector.name,
-        //                             collapseAriaLabel: detector.name,
-        //                         });
-        //                     } else {
-        //                         this.groups[1].links.push({
-        //                             name: detector.name,
-        //                             key: detector.id,
-        //                             icon: 'reportadd',
-        //                             //   url: `resource${this.resourceId}/categories/${this.category.id}/analysis/${detector.id}`,
-        //                             //   forceAnchor: true,
-        //                             onClick: (e) => {
-        //                                 e.preventDefault();
-        //                                 this.selectedKey = detector.id;
-        //                                 //     feature.clickAction();
-        //                              //  this._route.navigateByUrl(`resource${this.resourceId}/analysis/${detector.id}`);
-        //                                 this._route.navigateByUrl(`resource${this.resourceId}/categories/${this.category.id}/analysis/${detector.id}`);
-        //                                 //   this.navigateTo(`analysis/${detector.id}`);
-        //                                 //    this.navigateTo('analysis/tcpconnections');
-        //                             },
-        //                             expandAriaLabel: detector.name,
-        //                             collapseAriaLabel: detector.name,
-        //                         });
-        //                     }
-        //                 }
-        //             }
-        //         });
-        //     });
-
-        //     this.styles = {
-        //         root: {
-        //             position: 'fixed',
-        //             width: 264,
-        //             boxSizing: 'border-box',
-        //             overflowY: 'auto',
-        //             overflowX: 'hiden',
-        //         },
-
-        //         link: {
-        //             fontSize: 13,
-        //             color: "#000"
-        //         },
-        //         chevronIcon: {
-        //         display: 'none'
-        //         },
-        //         chevronButton: {
-        //             marginTop: -20,
-        //             paddingLeft: 10,
-        //             fontSize: 12,
-        //             fontWeight: 600
-        //         },
-        //         navItem: {
-
-        //         }
-        //     };
-        // });
     }
 
     private getCurrentRoutePath() {
