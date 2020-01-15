@@ -1,5 +1,5 @@
 import { DetectorControlService, FeatureNavigationService, DetectorResponse } from 'diagnostic-data';
-import { Component, OnInit, HostListener, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Category } from '../../../shared-v2/models/category';
 import { CategoryService } from '../../../shared-v2/services/category.service';
@@ -183,8 +183,6 @@ export class HomeComponent implements OnInit {
   homePageText: HomePageText;
   searchPlaceHolder: string;
   providerRegisterUrl: string;
-  openPanel:boolean = false;
-  @Output() openPanelChange: EventEmitter<boolean> = new EventEmitter<boolean>();
   // get inputAriaLabel(): string {
   //   return this.searchValue !== '' ?
   //     `${this.searchResultCount} Result` + (this.searchResultCount !== 1 ? 's' : '') :
@@ -286,6 +284,7 @@ export class HomeComponent implements OnInit {
       }
     });
     this.subscriptionId = this._activatedRoute.snapshot.params['subscriptionid'];
+    // this.globals.removeMsgFromLocalStorage();
   }
 
   ngOnInit() {
