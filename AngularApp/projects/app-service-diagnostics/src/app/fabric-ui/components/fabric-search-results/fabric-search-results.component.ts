@@ -3,6 +3,7 @@ import { Feature } from "../../../shared-v2/models/features";
 import { FeatureService } from "../../../shared-v2/services/feature.service";
 import { LoggingV2Service } from "../../../shared-v2/services/logging-v2.service";
 import { NotificationService } from "../../../shared-v2/services/notification.service";
+import { Globals } from "../../../globals";
 
 enum BlurType {
   //click other place to close panel
@@ -24,15 +25,15 @@ export class FabricSearchResultsComponent {
   showSearchResults: boolean;
   clickSearchBox: BlurType = BlurType.Blur;
   //Only ture when press ESC and no word in search box,collapse search result.
-  isEscape:boolean = false;
+  isEscape: boolean = false;
   get inputAriaLabel(): string {
     const resultCount = this.features.length;
     if (this.searchValue === "") {
       return "";
-    } else if (resultCount > 1) {
-      return `${resultCount} Results`;
+    } else if (resultCount >= 1) {
+      return resultCount > 1 ? `${resultCount} Results` : `${resultCount} Result`;
     } else {
-      return `${resultCount} Result`;
+      return `No results were found.`;
     }
   }
 
@@ -40,9 +41,9 @@ export class FabricSearchResultsComponent {
   onClick(ele: HTMLElement) {
     //If is cross icon in search box
     if ((ele.tagName === "DIV" && ele.className.indexOf("ms-SearchBox-clearButton") > -1) ||
-        (ele.tagName === "BUTTON" && ele.className.indexOf("ms-Button--icon") > -1) ||
-        (ele.tagName === "DIV" && ele.className.indexOf("ms-Button-flexContainer") > -1) ||
-        (ele.tagName === "I" && ele.className.indexOf("ms-Button--icon") > -1)) {
+      (ele.tagName === "BUTTON" && ele.className.indexOf("ms-Button--icon") > -1) ||
+      (ele.tagName === "DIV" && ele.className.indexOf("ms-Button-flexContainer") > -1) ||
+      (ele.tagName === "I" && ele.className.indexOf("ms-Button-icon") > -1)) {
       this.clickSearchBox = BlurType.None;
     } else {
       this.clickSearchBox = BlurType.Blur;
@@ -66,7 +67,7 @@ export class FabricSearchResultsComponent {
 
 
   constructor(public featureService: FeatureService, private _logger: LoggingV2Service,
-    private _notificationService: NotificationService) {
+    private _notificationService: NotificationService,private globals:Globals) {
     // this.features = this.featureService.getFeatures(this.searchValue);
   }
 
@@ -98,6 +99,7 @@ export class FabricSearchResultsComponent {
     }, 5000);
     this.features = this.featureService.getFeatures(this.searchValue);
     this.isEscape = false;
+    console.log("Update Search Value");
   }
 
   onSearchBoxFocus() {
@@ -105,8 +107,10 @@ export class FabricSearchResultsComponent {
     this.features = this.featureService.getFeatures(this.searchValue);
 
     //Disable AutoComplete
-    const input: any = document.getElementById("SearchBox1");
+    //get element which type is input,class has ms-SearchBox-field,placeholder=Search
+    const input: any = document.querySelector("input.ms-SearchBox-field[placeholder=Search]");
     input.autocomplete = "off";
+    console.log("Foucs Search Box");
   }
 
   clearSearch() {
@@ -114,7 +118,7 @@ export class FabricSearchResultsComponent {
     this.features = this.featureService.getFeatures(this.searchValue);
   }
 
-  clearSrarchWithKey() {
+  clearSearchWithKey() {
     //only true when trigger ESC
     this.isEscape = this.searchValue === "";
   }
@@ -124,6 +128,7 @@ export class FabricSearchResultsComponent {
       case BlurType.Blur:
         this.clearSearch();
         this.showSearchResults = false;
+        console.log("Update Search Value");
         break;
       case BlurType.None:
         this.clickSearchBox = BlurType.Blur;
@@ -131,5 +136,10 @@ export class FabricSearchResultsComponent {
       default:
         break;
     }
+  }
+  openGeniePanel() {
+    console.log("ask,genie");
+    this.isEscape = true;
+    this.globals.openGeniePanel = true;
   }
 }
