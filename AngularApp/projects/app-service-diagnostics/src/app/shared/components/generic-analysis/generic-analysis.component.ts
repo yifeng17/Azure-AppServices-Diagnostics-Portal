@@ -58,9 +58,9 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
     });
   }
 
-  updateLoadingStatus(status){
-      console.log("status:", status);
-      this.onComplete.emit(status);
+  updateLoadingStatus(dataOutput){
+      console.log("status:", dataOutput.status);
+      this.onComplete.emit(dataOutput);
   }
 
   triggerSearch(){

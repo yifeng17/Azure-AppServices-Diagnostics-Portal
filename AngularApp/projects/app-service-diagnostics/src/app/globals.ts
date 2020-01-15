@@ -21,6 +21,7 @@ import { ActivatedRoute } from '@angular/router';
 @Injectable()
 export class Globals {
   messages: Message[] = [];
+  messagesData: { [id: string]: any } = {};
   set openGeniePanel(value: boolean) {
     //if set openFeedback to true,update messages and open genie 
     if (value) {
@@ -138,4 +139,5 @@ export class Globals {
     }
     return detectorName;
   }
+  
 }

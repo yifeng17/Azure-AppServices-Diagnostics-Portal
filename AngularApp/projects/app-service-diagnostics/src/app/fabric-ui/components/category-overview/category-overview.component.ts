@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, TemplateRef, ElementRef, Renderer2 } from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef, ElementRef, Renderer2, SimpleChanges } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CategoryService } from '../../../shared-v2/services/category.service';
 import { Category } from '../../../shared-v2/models/category';
@@ -57,12 +57,10 @@ export class CategoryOverviewComponent implements OnInit {
 
 
     onMouseOverEventHandler(event: any) {
-        console.log("event from mouse over", event);
         event.preventDefault();
     }
 
     onClickEventHandler(event: any) {
-        console.log("event from onclick", event);
         event.preventDefault();
     }
 

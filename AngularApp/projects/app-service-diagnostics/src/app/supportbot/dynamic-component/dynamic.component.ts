@@ -20,6 +20,9 @@ import {
 import {
     DynamicAnalysisComponent
 } from '../message-flow/dynamic-analysis/dynamic-analysis.component';
+import {
+    DynamicAnalysisResultsComponent
+} from '../message-flow/dynamic-analysis-results/dynamic-analysis-results.component';
 import { DocumentSearchComponent } from '../message-flow/document-search/document-search.component';
 import { FeedbackComponent } from '../message-flow/feedback/feedback.component';
 import { HealthCheckComponent } from '../message-flow/health-check/health-check.component';
@@ -35,7 +38,7 @@ import { HealthCheckV3Component } from '../message-flow/health-check-v3/health-c
     selector: 'dynamic-component',
     entryComponents: [TextMessageComponent, MainMenuComponent, ButtonMessageComponent, HealthCheckComponent, HealthCheckV3Component, FeedbackComponent,
         SolutionsMessageComponent, GraphMessageComponent, ProblemStatementMessageComponent, TalkToAgentMessageComponent, CategoryMenuComponent,
-        DetectorSummaryComponent, DocumentSearchComponent, DocumentSearchResultsComponent, DynamicAnalysisComponent],
+        DetectorSummaryComponent, DocumentSearchComponent, DocumentSearchResultsComponent, DynamicAnalysisComponent, DynamicAnalysisResultsComponent],
     template: `
     <div #dynamicComponentContainer></div>
   `,
@@ -72,6 +75,7 @@ export class DynamicComponent {
 
         // Insert the component into the dom container
         this.dynamicComponentContainer.insert(component.hostView);
+        console.log("*****hostview", component.hostView);
 
         // Destroy the old component
         if (this.currentComponent) {

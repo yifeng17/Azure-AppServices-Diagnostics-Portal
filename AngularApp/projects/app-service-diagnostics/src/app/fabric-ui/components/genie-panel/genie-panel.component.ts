@@ -68,11 +68,17 @@ export class GeniePanelComponent implements OnInit {
 
 
     // Pop messages from globals messages:
-    this.messages = this.globals.messages;
     if (this.globals.messages.length === 0)
     {
         this.globals.messages.push(new TextMessage(this.welcomeMessage, MessageSender.System, 200));
     }
+
+    this.globals.messages.forEach((message) => {
+        let m = message;
+        this.messages.push(m);
+    })
+
+    //this.messages = this.globals.messages;
     this.chatContainerHeight = window.innerHeight - 170;
 
     this.renderFooter = () => {
@@ -105,13 +111,13 @@ export class GeniePanelComponent implements OnInit {
         console.log("**** analysis messsages", analysisMessages);
         analysisMessages.forEach(message => {
             // message.component.oncomplete === true &&
-            if (this.globals.messages.indexOf(message) < 0)
+            if (this.messages.indexOf(message) < 0)
             {
-                this.globals.messages.push(message);
+                this.messages.push(message);
             }
         });
 
-        console.log("constructing messages onsearch", this.globals.messages);
+        console.log("constructing messages onsearch", this.globals.messages, this.messages);
     });
 }
 
@@ -129,9 +135,9 @@ scrollToBottom(event?: any): void {
         //     this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].scrollTop = this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].scrollHeight;
         // }
 
-        console.log("3. scrolltop after scrollTop", this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].scrollTop, this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].scrollHeight);
+//        console.log("3. scrolltop after scrollTop", this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].scrollTop, this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].scrollHeight);
     } catch (err) {
-        console.log("status scrollToBottom", err);
+     //   console.log("status scrollToBottom", err);
     }
 }
 

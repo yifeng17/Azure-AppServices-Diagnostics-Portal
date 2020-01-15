@@ -128,6 +128,17 @@
     color: #605E5C;;
   }
 
+  .collapsible-button:hover {
+    background-color: #f3f2f1;
+  }
+
+  .collapsible-button {
+    outline-style: dashed;
+    outline-width: 1px;
+    outline-color: #00bcf2;;
+  }
+
+
 // .content-wrapper.white-background, .content-wrapper.gray-background {
 //     min-height: calc(100vh - 95px);
 //     height: 100%;

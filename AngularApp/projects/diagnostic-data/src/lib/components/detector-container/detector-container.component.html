@@ -1,5 +1,4 @@
 <detector-control *ngIf="!hideDetectorControl && !hideTimerPicker && detectorResponse && !analysisMode"></detector-control>
-<!-- [ngClass]="{'hide-timer-picker': hideTimerPicker, 'with-timer-picker': !hideTimerPicker}" -->
 <div [ngStyle]="{'padding-top': hideTimerPicker? '10px': '0px'}" style="padding-left: 20px; padding-right: 20px"  >
   <detector-view [analysisMode]="analysisMode" [isAnalysisView]="isAnalysisView" [detectorResponse]="detectorResponse" [error]="error" [startTime]="detectorControlService.startTime" [endTime]="detectorControlService.endTime"
    [developmentMode]="false" [detector]="detectorName" [hideDetectorHeader]="hideDetectorControl"
