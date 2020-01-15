@@ -10,11 +10,59 @@ import { ConnectionDiagnoserToolComponent } from '../shared/components/tools/con
 import { AutohealingComponent } from '../auto-healing/autohealing.component';
 import { NetworkTraceToolComponent } from '../shared/components/tools/network-trace-tool/network-trace-tool.component';
 import { DaasMainComponent } from '../shared/components/daas-main/daas-main.component';
-import { Route } from '@angular/router';
+import { Route, Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Router, ActivatedRoute } from '@angular/router';
 import { AutohealingDetectorComponent } from '../availability/detector-view/detectors/autohealing-detector/autohealing-detector.component';
 import { CpuMonitoringToolComponent } from '../shared/components/tools/cpu-monitoring-tool/cpu-monitoring-tool.component';
 import { EventViewerComponent } from '../shared/components/daas/event-viewer/event-viewer.component';
 import { FrebViewerComponent } from '../shared/components/daas/freb-viewer/freb-viewer.component';
+import { Injectable, Component } from '@angular/core';
+import { Observable, of } from 'rxjs';
+import { PortalActionService } from '../shared/services/portal-action.service';
+
+@Injectable()
+export class MetricsPerInstanceAppsResolver implements Resolve<Observable<boolean>> {
+    constructor(private _portalActionService:PortalActionService,private _router:Router,private _activatedRoute:ActivatedRoute) {}
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot):Observable<boolean>{
+        console.log("open new blade for mdm");
+        console.log(route,state);
+        this._portalActionService.openMdmMetricsV3Blade();
+        this._router.navigate([`../../categories/DiagnosticTools`],{relativeTo: this._activatedRoute});
+        return of(true);
+    }
+}
+
+@Injectable()
+export class MetricsPerInstanceAppServicePlanResolver implements Resolve<Observable<boolean>> {
+    constructor(private _portalActionService:PortalActionService,private _router:Router,private _activatedRoute:ActivatedRoute) {}
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot):Observable<boolean>{
+        console.log("open new blade for mdm");
+        this._portalActionService.openMdmMetricsV3Blade(this._portalActionService.currentSite.properties.serverFarmId);
+        this._router.navigate([`../../categories/DiagnosticTools`],{relativeTo: this._activatedRoute});
+        return of(true);
+    }
+}
+
+@Injectable()
+export class AdvanceApplicationRestartResolver implements Resolve<Observable<boolean>> {
+    constructor(private _portalActionService:PortalActionService,private _router:Router,private _activatedRoute:ActivatedRoute) {}
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot):Observable<boolean>{
+        console.log("open new blade for mdm");
+        this._portalActionService.openBladeAdvancedAppRestartBladeForCurrentSite();
+        this._router.navigate([`../../categories/DiagnosticTools`],{relativeTo: this._activatedRoute});
+        return of(true);
+    }
+}
+
+@Injectable()
+export class SecurityScanningResolver implements Resolve<Observable<boolean>> {
+    constructor(private _portalActionService:PortalActionService,private _router:Router,private _activatedRoute:ActivatedRoute) {}
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot):Observable<boolean>{
+        console.log("open new blade for mdm");
+        this._portalActionService.openTifoilSecurityBlade();
+        this._router.navigate([`../../categories/DiagnosticTools`],{relativeTo: this._activatedRoute});
+        return of(true);
+    }
+}
 
 export const DiagnosticToolsRoutes: Route[] = [
     // CLR Profiling Tool
@@ -143,4 +191,34 @@ export const DiagnosticToolsRoutes: Route[] = [
             cacheComponent: true
         }
     },
+    //Metrics per Instance (Apps)
+    {
+        path:'metricsperinstance',
+        resolve: {
+            reroute:MetricsPerInstanceAppsResolver
+        },
+    },
+    //Metrics per Instance (App Service Plan)
+    {
+        path:'metricsperinstanceappserviceplan',
+        resolve: {
+            reroute:MetricsPerInstanceAppServicePlanResolver
+        },
+    },
+    //Advanced Application Restart
+    {
+        path:'applicationrestart',
+        resolve: {
+            reroute:AdvanceApplicationRestartResolver
+        },
+    },
+    //Security Scanning
+    {
+        path:'securityscanning',
+        resolve: {
+            reroute:SecurityScanningResolver
+        },
+    },
 ];
+
+
