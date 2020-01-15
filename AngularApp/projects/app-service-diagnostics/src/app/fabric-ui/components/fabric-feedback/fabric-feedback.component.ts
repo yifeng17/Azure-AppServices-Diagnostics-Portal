@@ -10,7 +10,6 @@ import { Subject } from 'rxjs';
   styleUrls: ['./fabric-feedback.component.scss']
 })
 export class FabricFeedbackComponent {
-  @Input() ratingEventProperties: any;
   type: PanelType = PanelType.custom;
   dismissSubject: Subject<void> = new Subject<void>();
 

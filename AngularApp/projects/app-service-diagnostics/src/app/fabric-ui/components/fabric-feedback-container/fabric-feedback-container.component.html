@@ -31,7 +31,7 @@
     <textarea [(ngModel)]="feedbackText" placeholder="Tell us about your experience..." tabindex="0" rows="7"
       cols="40"></textarea>
     <div class="feedback-submit">
-      <fab-primary-button (onClick)="submitFeedback()">Submit feddback</fab-primary-button>
+      <fab-primary-button (onClick)="submitFeedback()" [disabled]="rating == 0">Submit feddback</fab-primary-button>
     </div>
   </div>
 
@@ -39,7 +39,7 @@
     <p>Thank you for your feedback</p>
     <div *ngIf="rating >= 3">
       <p>Share your experience with App Service Diagnostic !</p>
-      <button>Tweet</button>
+      <!-- <button>Tweet</button> -->
     </div>
 
     <div *ngIf="rating < 3">

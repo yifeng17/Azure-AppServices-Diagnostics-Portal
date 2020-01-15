@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { TelemetryService, TelemetryEventNames } from 'diagnostic-data';
 import { Globals } from '../../../globals';
 import { Observable } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'fabric-feedback-container',
@@ -9,8 +10,8 @@ import { Observable } from 'rxjs';
   styleUrls: ['./fabric-feedback-container.component.scss']
 })
 export class FabricFeedbackContainerComponent implements OnInit {
-  @Input() ratingEventProperties: any;
   @Input() dimissObservable: Observable<void>;
+  ratingEventProperties: any;
   feedbackText: string = "";
   feedbackIcons: string[] = ["EmojiDisappointed", "Sad", "EmojiNeutral", "Emoji2", "Emoji"];
   submitted: boolean = false;
@@ -25,8 +26,12 @@ export class FabricFeedbackContainerComponent implements OnInit {
       Rating: String(this.rating),
       Feedback: this.feedbackText
     };
+    const detectorName = this.globals.getDetectorName();
+    this.ratingEventProperties = {
+      'DetectorId': detectorName,
+      'Url': window.location.href
+    };
     this.logEvent(TelemetryEventNames.StarRatingSubmitted, eventProps);
-    console.log(this.rating);
     this.submitted = true;
   }
 
@@ -53,8 +58,7 @@ export class FabricFeedbackContainerComponent implements OnInit {
       this.rating = 0;
       this.feedbackText = "";
       this.submitted = false;
-      console.log("FabricFeedbackContainerComponent");
+      console.log("reset feedback statement");
     });
   }
-
 }
