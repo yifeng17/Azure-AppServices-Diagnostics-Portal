@@ -6,25 +6,30 @@ import { ContentService } from './content.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../startup/services/auth.service';
 import { LoggingV2Service } from './logging-v2.service';
-import { OperatingSystem } from '../../shared/models/site';
-import { AppType } from '../../shared/models/portal';
+import { SiteService } from '../../shared/services/site.service';
+import { CategoryService } from '../../shared-v2/services/category.service';
+import { PortalActionService } from '../../shared/services/portal-action.service';
+import { StartupInfo } from '../../shared/models/portal';
 
 @Injectable()
 export class FeatureService {
 
-  public detectors: DetectorMetaData[];
+  private _detectors: DetectorMetaData[];
 
   protected _features: Feature[] = [];
   protected _featureDisplayOrder = [];
-
+  private categories: Category[] = [];
   constructor(protected _diagnosticApiService: DiagnosticService, protected _contentService: ContentService, protected _router: Router, protected _authService: AuthService,
-    protected _logger: LoggingV2Service) {
-
+    protected _logger: LoggingV2Service, protected _siteService: SiteService, protected _categoryService: CategoryService, protected _activatedRoute: ActivatedRoute,protected _portalActionService:PortalActionService) {
+    this._categoryService.categories.subscribe(categories => this.categories = categories);
     this._authService.getStartupInfo().subscribe(startupInfo => {
       this._diagnosticApiService.getDetectors().subscribe(detectors => {
+        this._detectors = detectors;
+        console.log("detectors in feature services", detectors);
         detectors.forEach(detector => {
           if ((detector.category && detector.category.length > 0) ||
             (detector.description && detector.description.length > 0)) {
+            const categoryId = this.getCategoryIdByCategoryName(detector.category);
             if (detector.type === DetectorType.Detector) {
               this._features.push(<Feature>{
                 id: detector.id,
@@ -33,7 +38,7 @@ export class FeatureService {
                 featureType: FeatureTypes.Detector,
                 name: detector.name,
                 clickAction: this._createFeatureAction(detector.name, detector.category, () => {
-                  this._router.navigateByUrl(`resource${startupInfo.resourceId}/detectors/${detector.id}`);
+                  this.navigatTo(startupInfo,categoryId,detector.id,DetectorType.Detector);
                 })
               });
             } else {
@@ -44,13 +49,13 @@ export class FeatureService {
                 featureType: FeatureTypes.Detector,
                 name: detector.name,
                 clickAction: this._createFeatureAction(detector.name, detector.category, () => {
-                  this._router.navigateByUrl(`resource${startupInfo.resourceId}/analysis/${detector.id}`);
+                  this.navigatTo(startupInfo,categoryId,detector.id,DetectorType.Analysis);
                 })
               });
             }
           }
         });
-
+        console.log("all features",this._features);
         this.sortFeatures();
       });
 
@@ -94,7 +99,49 @@ export class FeatureService {
     return this._features.filter(feature => {
       return feature.name.toLowerCase().indexOf(searchValue) != -1
         || (feature.category && feature.category.toLowerCase().indexOf(searchValue) != -1);
-        // || (feature.description && feature.description.toLowerCase().indexOf(searchValue) != -1);
+      // || (feature.description && feature.description.toLowerCase().indexOf(searchValue) != -1);
     });
+  }
+  getCategoryIdByhDetectorId(detectorId: string): string {
+    const detector = this._detectors.find(detector => detector.id === detectorId);
+    return this.getCategoryIdByCategoryName(detector.category);
+  }
+
+  private getCategoryIdByCategoryName(name: string): string {
+    let categoryId: string;
+    const currentCategoryId = this._activatedRoute.root.firstChild.firstChild.firstChild.firstChild.snapshot.params["category"];
+    if (name && this.categories.find(category => category.name === name)) {
+      const category = this.categories.find(category => category.name === name);
+      categoryId = category.id;
+    }
+    //In home page,no categoryId in router,return category as availability&perf 
+    else if (!currentCategoryId){
+      const category = this.categories.find(category => category.name === "Availability and Performance");
+      categoryId = category.id;
+    }
+    //In category-overview page and uncategoried detector,return current categoryId  
+    else {
+      categoryId = currentCategoryId;
+    }
+    console.log("category in feature service",this.categories,name,categoryId,currentCategoryId);
+    return categoryId;
+
+  }
+
+  private navigatTo(startupInfo:StartupInfo,category:string,detector:string,type:DetectorType) {
+    const isCategory = !!this._activatedRoute.root.firstChild.firstChild.firstChild.firstChild.snapshot.params["category"];
+    //If it's in category overview page
+    if (isCategory) {
+      if (type === DetectorType.Detector) {
+        this._router.navigateByUrl(`resource${startupInfo.resourceId}/categories/${category}/detectors/${detector}`);
+      } else if (type === DetectorType.Analysis) {
+        this._router.navigateByUrl(`resource${startupInfo.resourceId}/categories/${category}/analysis/${detector}`);
+      }
+      
+    }
+    //If it's in Home page,open new category page
+    else {
+      this._portalActionService.openBladeDiagnoseDetectorId(category,detector,type);
+    }
   }
 }

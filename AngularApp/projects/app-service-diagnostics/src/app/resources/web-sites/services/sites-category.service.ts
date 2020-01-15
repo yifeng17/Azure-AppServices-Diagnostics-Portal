@@ -159,8 +159,4 @@ export class SitesCategoryService extends CategoryService {
     };
   }
 
-  public findCategoryIdByName(name:string,operationSystem:OperatingSystem,appType:AppType):string {
-    const results = this._sitesCategories.find(category => category.item.name === name && category.appType === appType && category.platform === operationSystem);
-    return results[0].item.id;
-  } 
 }

@@ -5,6 +5,7 @@ import { WindowService } from '../../../startup/services/window.service';
 import { environment } from '../../../../environments/environment';
 import { StartupInfo } from '../../models/portal';
 import { DemoSubscriptions } from '../../../betaSubscriptions';
+import { DetectorType } from 'diagnostic-data';
 
 
 @Component({
@@ -24,7 +25,7 @@ export class ResourceRedirectComponent implements OnInit {
     this._authService.getStartupInfo()
       .subscribe(info => {
         if (info && info.resourceId && info.token) {
-            console.log("startupinfo", info);
+          console.log("startupinfo", info);
 
           // Uncomment to enable only for internal subs
           //let split = info.resourceId.split('/');
@@ -38,35 +39,54 @@ export class ResourceRedirectComponent implements OnInit {
           let path = 'resource/' + info.resourceId.toLowerCase();
           var caseSubject = null;
           var categoryId = null;
-          if (info.optionalParameters){
+          if (info.optionalParameters) {
             var caseSubjectParam = info.optionalParameters.find(param => param.key === "caseSubject");
-            if (caseSubjectParam){
+            if (caseSubjectParam) {
               caseSubject = caseSubjectParam.value;
             }
 
             var referrerParam = info.optionalParameters.find(param => param.key.toLowerCase() === "referrer");
-            if (referrerParam){
+            if (referrerParam) {
               path += `/portalReferrerResolver`;
               this._router.navigateByUrl(
                 this._router.createUrlTree([path])
-                );
+              );
             }
           }
 
           // To Open the right category page
-          if (info.optionalParameters)
-          {
+          if (info.optionalParameters && !!info.optionalParameters.find(para => para.key === "detectorId")) {
+            let categoryIdParam = info.optionalParameters.find(param => param.key === "categoryId");
+            let detectorTypeParam = info.optionalParameters.find(param => param.key === "detectorType");
+            let detectorIdParam = info.optionalParameters.find(param => param.key === "detectorId");
+            console.log("category,detector,type param after", categoryIdParam,detectorIdParam,detectorTypeParam);
+            if (categoryIdParam) {
+              let categoryId = categoryIdParam.value;
+              path += `/categories/${categoryId}`;
+              if (detectorIdParam && detectorTypeParam) {
+                if (detectorTypeParam.value === DetectorType.Detector) {
+                  path += `/detectors/${detectorIdParam.value}`;
+                } else if (detectorTypeParam.value === DetectorType.Analysis) {
+                  path += `/analysis/${detectorIdParam.value}`;
+                }
+              }
+              
+              this._router.navigateByUrl(
+                this._router.createUrlTree([path], navigationExtras)
+              );
+            }
+          }
+          else if (info.optionalParameters) {
             console.log("category Id param before");
             var categoryIdParam = info.optionalParameters.find(param => param.key === "categoryId");
             console.log("category Id param after", categoryIdParam);
 
-            if (categoryIdParam)
-            {
-                var categoryId = categoryIdParam.value;
-                path += `/categories/${categoryId}`;
-                this._router.navigateByUrl(
-                    this._router.createUrlTree([path], navigationExtras)
-                  );
+            if (categoryIdParam) {
+              var categoryId = categoryIdParam.value;
+              path += `/categories/${categoryId}`;
+              this._router.navigateByUrl(
+                this._router.createUrlTree([path], navigationExtras)
+              );
             }
           }
 

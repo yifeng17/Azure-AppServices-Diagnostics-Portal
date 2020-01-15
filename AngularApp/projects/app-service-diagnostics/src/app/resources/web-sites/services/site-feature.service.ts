@@ -14,6 +14,8 @@ import { PortalActionService } from '../../../shared/services/portal-action.serv
 import { WebSitesService } from './web-sites.service';
 import { WebSiteFilter } from '../pipes/site-filter.pipe';
 import { LoggingV2Service } from '../../../shared-v2/services/logging-v2.service';
+import { SiteService } from '../../../shared/services/site.service';
+import { CategoryService } from '../../../shared-v2/services/category.service';
 
 @Injectable()
 export class SiteFeatureService extends FeatureService {
@@ -24,9 +26,9 @@ export class SiteFeatureService extends FeatureService {
   public premiumTools: SiteFilteredItem<Feature>[];
 
   constructor(protected _diagnosticApiService: DiagnosticService, protected _resourceService: WebSitesService, protected _contentService: ContentService, protected _router: Router,
-    protected _authService: AuthService, private _portalActionService: PortalActionService, private _websiteFilter: WebSiteFilter, protected _logger: LoggingV2Service) {
+    protected _authService: AuthService, protected _portalActionService: PortalActionService, private _websiteFilter: WebSiteFilter, protected _logger: LoggingV2Service,protected _siteService: SiteService,protected _categoryService:CategoryService,protected _activedRoute:ActivatedRoute) {
 
-    super(_diagnosticApiService, _contentService, _router, _authService, _logger);
+    super(_diagnosticApiService, _contentService, _router, _authService, _logger,_siteService,_categoryService,_activedRoute,_portalActionService);
 
     this._featureDisplayOrder = [{
         category: "Availability and Performance",
@@ -353,7 +355,7 @@ export class SiteFeatureService extends FeatureService {
       },
     ];
 
-    this.supportTools = [
+    this.supportTools = [ 
       {
         appType: AppType.WebApp,
         platform: OperatingSystem.windows,
