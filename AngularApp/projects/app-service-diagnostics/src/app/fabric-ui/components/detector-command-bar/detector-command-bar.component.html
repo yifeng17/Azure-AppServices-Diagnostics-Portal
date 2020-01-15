@@ -4,7 +4,8 @@
       <render>
         <ng-template let-item="item">
           <div style="padding-top:1px!important;">
-            <fab-search-box placeholder="Search"></fab-search-box>
+            <!-- <fab-search-box placeholder="Search"></fab-search-box> -->
+            <fabric-search-results></fabric-search-results>
           </div>
         </ng-template>
       </render>
@@ -235,6 +236,7 @@ font-size: 14px;">
     [shortDays]="['S', 'M', 'T', 'W', 'T', 'F', 'S']" goToToday="Go to last 24h" weekNumberFormatString="Week number {0}"></fab-calendar-strings>
 </fab-calendar>
 <genie-panel [(openPanel)]="openPanel"></genie-panel>
-<div style="height:0px;overflow-y: hidden" [@expand]="showFeedback ? 'shown' : 'hidden'">
+<fabric-feedback></fabric-feedback>
+<!-- <div style="padding-left: 10px;height:0px;overflow-y: hidden" [@expand]="showFeedback ? 'shown' : 'hidden'">
   <feedback *ngIf="showFeedback" [showFeedbackForm]="true" (showFeedbackFormChange)=feedbackFormChange($event) [ratingEventProperties]="ratingEventProperties"></feedback>
-</div>
+</div> -->

@@ -22,15 +22,7 @@ import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'detector-command-bar',
   templateUrl: './detector-command-bar.component.html',
-  styleUrls: ['./detector-command-bar.component.scss'],
-  animations: [
-    trigger('expand', [
-      state('hidden', style({ height: '0px' })),
-      state('shown', style({ height: '*' })),
-      transition('* => *', animate('.25s')),
-      transition('void => *', animate(0))
-    ])
-  ]
+  styleUrls: ['./detector-command-bar.component.scss']
 })
 export class DetectorCommandBarComponent implements OnInit {
   @ViewChild('timepicker', { static: true }) timepicker: any;
@@ -42,7 +34,6 @@ export class DetectorCommandBarComponent implements OnInit {
   showTypingMessage: boolean;
   selectedItem?: IDropdownOption;
   timeDivider: DropdownMenuItemType = DropdownMenuItemType.Divider;
-  showFeedback: boolean = false;
   ratingEventProperties: { [name: string]: string };
   options: FabDropdownComponent['options'] = [
     { key: 'Last1Hour', text: 'Last 1 Hour', data: { iconProps: { iconName: 'CaretRight' }, } },
@@ -138,7 +129,7 @@ export class DetectorCommandBarComponent implements OnInit {
 
 
   sendFeedback() {
-    this.showFeedback = !this.showFeedback
+    this.globals.openFeedback = !this.globals.openFeedback;
   }
 
   refresh() {
@@ -220,25 +211,4 @@ export class DetectorCommandBarComponent implements OnInit {
   ngOnInit() {
     console.log("Init commandbar with OpenPanel", this.openPanel);
   }
-
-  feedbackFormChange(change: boolean) {
-    this.showFeedback = false;
-  }
-
-  //check detectorName after everytime refresh detector-container
-  //If it is detector then get detectorId, else get categoryId
-  ngAfterViewChecked() {
-    let detectorName = "";
-    if (this.activatedRoute.firstChild.snapshot.params["detectorName"] !== undefined) {
-      detectorName = this.activatedRoute.firstChild.snapshot.params["detectorName"];
-    } else {
-      detectorName = this.activatedRoute.snapshot.params["category"];
-    }
-    this.ratingEventProperties = {
-      'DetectorId': detectorName,
-      'Url': window.location.href
-    };
-    console.log(detectorName);
-  }
-
 }
