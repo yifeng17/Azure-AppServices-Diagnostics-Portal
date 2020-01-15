@@ -120,6 +120,7 @@ scrollToBottom(event?: any): void {
 
     try {
         //this.myScrollContainer.elementRef.nativeElement.childNodes[0].scrollTop = this.myScrollContainer.elementRef.nativeElement.childNodes[0].scrollHeight;
+        console.log(this.myScrollContainer);
         var height = this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].scrollHeight;
         this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].scrollTop = height;
 
