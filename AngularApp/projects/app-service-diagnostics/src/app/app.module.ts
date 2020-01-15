@@ -31,6 +31,7 @@ import { LocalBackendService } from './shared/services/local-backend.service';
 import { PortalKustoTelemetryService } from './shared/services/portal-kusto-telemetry.service';
 import { SharedModule } from './shared/shared.module';
 import { ResourceService } from './shared-v2/services/resource.service';
+import { WebSitesService } from './resources/web-sites/services/web-sites.service';
 import { ContentService } from './shared-v2/services/content.service';
 import { CategoryChatStateService } from './shared-v2/services/category-chat-state.service';
 // import { HomeModule } from './home/home.module';
@@ -50,6 +51,7 @@ import { FeatureService } from './shared-v2/services/feature.service';
 import { LoggingV2Service } from './shared-v2/services/logging-v2.service';
 import { LiveChatService } from './shared-v2/services/livechat.service';
 import { SupportTopicService } from './shared-v2/services/support-topic.service';
+import { ResourceResolver } from './home/resolvers/resource.resolver';
 // import {
 //   FabBreadcrumbModule,
 //   FabButtonModule,
@@ -150,7 +152,8 @@ import { SupportTopicService } from './shared-v2/services/support-topic.service'
       },
       {
         path: 'resource',
-        loadChildren: './resources/resources.module#ResourcesModule'
+        loadChildren: './resources/resources.module#ResourcesModule',
+        resolve: { data: ResourceResolver }
       }
     ],
     { enableTracing: true }
@@ -186,14 +189,15 @@ import { SupportTopicService } from './shared-v2/services/support-topic.service'
      {provide: GenieGlobals, useExisting: Globals},
     // GenieGlobals,
     // Globals,
-    ResourceService,
+    { provide: ResourceService, useExisting: WebSitesService},
     CategoryChatStateService,
     ContentService,
     CategoryService,
     FeatureService,
     LoggingV2Service,
     LiveChatService,
-    SupportTopicService
+    SupportTopicService,
+    ResourceResolver
   ],
   bootstrap: [AppComponent]
 })

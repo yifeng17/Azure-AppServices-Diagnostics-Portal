@@ -23,7 +23,7 @@ export class GenericDetectorComponent implements OnDestroy {
   constructor(private _activatedRoute: ActivatedRoute, private _diagnosticService: DiagnosticService, private _resourceService: ResourceService, private _authServiceInstance: AuthService, private _telemetryService: TelemetryService,
     private _navigator: FeatureNavigationService, private _router: Router) {
 
-    console.log("Loading detector component:", this.detector);
+    //console.log("Loading detector component:", this.detector);
     if (this._activatedRoute.snapshot.params['analysisId'] != null) {
       this.analysisDetector = this._activatedRoute.snapshot.params['analysisId'];
       if (this._activatedRoute.snapshot.params['detectorName'] != null) {

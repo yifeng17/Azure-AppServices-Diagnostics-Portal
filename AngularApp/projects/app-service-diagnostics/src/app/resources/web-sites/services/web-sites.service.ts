@@ -11,7 +11,7 @@ import { PortalReferrerMap } from '../../../shared/models/portal-referrer-map';
 import { DetectorType } from 'diagnostic-data';
 import { of,  Observable, BehaviorSubject } from 'rxjs';
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class WebSitesService extends ResourceService {
 
     private _resourceGroup: string;

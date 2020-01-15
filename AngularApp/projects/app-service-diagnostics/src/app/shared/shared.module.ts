@@ -331,7 +331,8 @@ import { SearchPipe, SearchMatchPipe } from '../home/components/pipes/search.pip
         DetectorCommandBarComponent,
         SectionDividerComponent,
         CategoryMenuItemComponent
-    ]
+    ],
+    entryComponents: [GenericAnalysisComponent, GenericDetectorComponent]
 })
 export class SharedModule {
     static forRoot(): ModuleWithProviders {

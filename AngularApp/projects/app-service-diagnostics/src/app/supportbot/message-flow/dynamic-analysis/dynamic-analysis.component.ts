@@ -18,6 +18,7 @@ import { LoggingV2Service } from '../../../shared-v2/services/logging-v2.service
 export class DynamicAnalysisComponent implements OnInit, AfterViewInit, IChatMessageComponent {
 
     @Input() keyword: string = "";
+    @Input() resourceId: string="";
     @Input() targetedScore: number = 0;
     @Input() documentResultCount: string = "3";
     @Output() onViewUpdate = new EventEmitter();
@@ -44,15 +45,16 @@ export class DynamicAnalysisComponent implements OnInit, AfterViewInit, IChatMes
     ngOnInit() {
         this.searchMode = SearchAnalysisMode.Genie;
         this.keyword = this.injector.get('keyword');
+        this.resourceId = this.injector.get('resourceId');
         this.targetedScore = this.injector.get('targetedScore');
         this.ratingEventProperties = {
             'DetectorId': "id",
             'Url': window.location.href
         };
 
-        console.log("***Dynamic analysis keyword", this.keyword);
+        console.log("***Dynamic analysis keyword and resourceId", this.keyword, this.resourceId);
 
-        this._logger.LogChatSearch(this.keyword, this._chatState.category.name);
+       // this._logger.LogChatSearch(this.keyword, this._chatState.category.name);
         this._contentService.searchWeb(this.keyword, this.documentResultCount).subscribe(searchResults => {
             if (searchResults && searchResults.webPages && searchResults.webPages.value && searchResults.webPages.value.length > 0) {
                 this.hasDocumentSearchResult = true;
@@ -77,8 +79,8 @@ export class DynamicAnalysisComponent implements OnInit, AfterViewInit, IChatMes
 
                 // }
 
-                console.log("content result", this.content);
-                console.log("starting scroll 1");
+                // console.log("content result", this.content);
+                // console.log("starting scroll 1");
             }
         });
 
@@ -89,8 +91,8 @@ export class DynamicAnalysisComponent implements OnInit, AfterViewInit, IChatMes
   openArticle(article: any) {
       console.log("article", article);
     window.open(article.link, '_blank');
-      console.log("this._chatState.category.name", this._chatState.category.name);
-    this._logger.LogChatSearchSelection(this.keyword, this._chatState.category.name, article.title, article.link, 'content');
+     // console.log("this._chatState.category.name", this._chatState.category.name);
+  //  this._logger.LogChatSearchSelection(this.keyword, this._chatState.category.name, article.title, article.link, 'content');
   }
 
   getLink(link: string) {
@@ -150,9 +152,10 @@ export class DynamicAnalysisComponent implements OnInit, AfterViewInit, IChatMes
 }
 
 export class DynamicAnalysisMessage extends Message {
-    constructor(keyword: string = "", targetedScore: number = 0, messageDelayInMs: number = 1000) {
+    constructor(keyword: string = "", resourceId:string="", targetedScore: number = 0, messageDelayInMs: number = 1000) {
         super(DynamicAnalysisComponent, {
             keyword: keyword,
+            resourceId: resourceId,
             targetedScore: targetedScore,
         }, messageDelayInMs);
     }

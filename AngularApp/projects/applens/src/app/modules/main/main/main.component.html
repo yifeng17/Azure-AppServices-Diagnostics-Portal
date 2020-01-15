@@ -4,7 +4,8 @@
   <fab-dialog [hidden]="dialogHidden" (onDismiss)="toggleDialog()" key="d2" title="Fabric [React] Dialog" subText="Use Fabric React components inside Applens">
     Click Count: {{ counter }}
     <fab-dialog-footer>
-      <fab-primary-button (onClick)="incrementCounter()" text='Save' style="margin-right:10px;"></fab-primary-button>
+        <!-- style="margin-right:10px;" -->
+      <fab-primary-button (onClick)="incrementCounter()" text='Save' ></fab-primary-button>
       <fab-default-button (onClick)="toggleDialog()" text='Cancel'></fab-default-button>
     </fab-dialog-footer>
   </fab-dialog>

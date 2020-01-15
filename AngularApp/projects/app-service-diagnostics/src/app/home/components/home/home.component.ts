@@ -20,6 +20,7 @@ import { ISearchBoxProps } from 'office-ui-fabric-react';
 import { FabDropdownComponent } from '@angular-react/fabric';
 import { HttpResponse } from '@angular/common/http';
 import { FabSearchBoxComponent } from '@angular-react/fabric';
+import { Globals } from '../../../globals';
 // import { FabSearchBoxModule } from '@angular-react/fabric';
 // import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
 import {
@@ -199,7 +200,7 @@ export class HomeComponent implements OnInit {
         return ((window.location != window.parent.location) ? document.referrer : document.location.href).includes("azure.com");
     }
 
-    constructor(private _resourceService: ResourceService, private _categoryService: CategoryService, private _notificationService: NotificationService, private _router: Router,
+    constructor(public _globals: Globals, private _resourceService: ResourceService, private _categoryService: CategoryService, private _notificationService: NotificationService, private _router: Router,
         private _detectorControlService: DetectorControlService, private _featureService: FeatureService, private _logger: LoggingV2Service, private _authService: AuthService,
         private _navigator: FeatureNavigationService, private _activatedRoute: ActivatedRoute, private armService: ArmService, private logService: TelemetryService, private kustologgingService: PortalKustoTelemetryService, private _diagnosticService: DiagnosticService) {
 

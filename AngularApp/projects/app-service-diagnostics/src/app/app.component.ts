@@ -1,6 +1,7 @@
 import { Component, OnInit, isDevMode } from '@angular/core';
 import { Router } from '@angular/router';
 import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
+import { WebSitesService } from './resources/web-sites/services/web-sites.service';
 
 
 @Component({
@@ -10,6 +11,7 @@ import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
 export class AppComponent implements OnInit {
 
     private _newVersionEnabled = true;
+    //public resourceId: string="";
 
     public get newVersionEnabled() { return this._newVersionEnabled; }
 
@@ -17,8 +19,10 @@ export class AppComponent implements OnInit {
         this._newVersionEnabled = value;
      }
 
-    constructor(private _router: Router) {
+    constructor(private _router: Router, private _resourceService: WebSitesService) {
         console.log("Lauching app component");
+       // this.resourceId = this._resourceService.resource.id;
+    //    console.log("Lauching app component with resourceId", this.resourceId);
     }
 
     ngOnInit() {

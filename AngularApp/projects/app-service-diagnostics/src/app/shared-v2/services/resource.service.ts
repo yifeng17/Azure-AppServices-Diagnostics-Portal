@@ -67,6 +67,7 @@ export class ResourceService {
 
   public get azureServiceName(): string {
     if (this._genericArmConfigService) {
+      console.log("have genericarm", this._genericArmConfigService);
       let currConfig: ArmResourceConfig = this._genericArmConfigService.getArmResourceConfig(this.resource.id);
       if (currConfig.azureServiceName) {
         return currConfig.azureServiceName;

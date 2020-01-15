@@ -48,6 +48,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
   @Input() searchMode: SearchAnalysisMode = SearchAnalysisMode.CaseSubmission;
   @Input() renderingOnlyMode: boolean = false;
   @Input() detectorViewModelsData: any;
+  @Input() resourceId: string="";
   @Input() targetedScore: number = 0;
   @Output() onComplete = new EventEmitter<any>();
   detectorViewModels: any[];
@@ -113,6 +114,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
       this.startRenderingFromInput();
     }
     else {
+      console.log("waiting for update from detector control", this._detectorControl);
       this._detectorControl.update.subscribe(isValidUpdate => {
         if (isValidUpdate) {
           this.refresh();
@@ -246,7 +248,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
       this.analysisId = this.analysisId == undefined ? params.get('analysisId') : this.analysisId;
       this.detectorId = params.get(this.detectorParmName) === null ? "" : params.get(this.detectorParmName);
       this.resetGlobals();
-      this.populateSupportTopicDocument();
+      // this.populateSupportTopicDocument();
 
       if (this.analysisId === "searchResultsAnalysis") {
         console.log("Here get analysis Id", this.analysisId);
@@ -255,7 +257,9 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
           // this.isSearchAnalysisView = true;
           //  this.isSearchAnalysisView = this.searchMode === SearchAnalysisMode.Genie ? false : true;
           this.searchTerm = qParams.get('searchTerm') === null ? this.searchTerm : qParams.get('searchTerm');
-          if (!this.supportDocumentRendered) {
+          // this is a workaround to get genie on home page work
+          //   this.supportDocumentRendered = true;
+          if (this.searchMode !== SearchAnalysisMode.Genie && !this.supportDocumentRendered) {
             this._supportTopicService.getSelfHelpContentDocument().subscribe(res => {
               if (res && res.json() && res.json().length > 0) {
                 var htmlContent = res.json()[0]["htmlContent"];
@@ -290,7 +294,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
               console.log("search result and detectors result", searchResults, detectorList);
               if (detectorList) {
                 searchResults.forEach(result => {
-                    console.log("score:", result.score);
+                  console.log("score:", result.score);
                   if (result.type === DetectorType.Detector) {
                     this.insertInDetectorArray({ name: result.name, id: result.id, score: result.score });
                   }
@@ -422,13 +426,13 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
     });
 
     if (requests.length === 0) {
-        let dataOutput = {};
-        dataOutput["status"] = true;
-        dataOutput["data"] = {
-          'detectors': []
-        };
+      let dataOutput = {};
+      dataOutput["status"] = true;
+      dataOutput["data"] = {
+        'detectors': []
+      };
 
-        this.onComplete.emit(dataOutput);
+      this.onComplete.emit(dataOutput);
     }
   }
 
@@ -522,8 +526,8 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
       let detectorId = viewModel.model.metadata.id;
       console.log("viewmodel", viewModel);
       console.log("viewmodel", viewModel.model.metadata.category);
-    //  let categoryName = encodeURIComponent(viewModel.model.metadata.category);
-    let categoryName = viewModel.model.metadata.category.replace(/\s/g, '');
+      //  let categoryName = encodeURIComponent(viewModel.model.metadata.category);
+      let categoryName = viewModel.model.metadata.category.replace(/\s/g, '');
       console.log("after encode", categoryName);
       if (detectorId !== "") {
 
@@ -539,22 +543,22 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
 
         if (this.analysisId === "searchResultsAnalysis" && this.searchTerm && this.searchTerm.length > 0) {
           this.logEvent(TelemetryEventNames.SearchResultClicked, { searchId: this.searchId, detectorId: detectorId, rank: 0, title: clickDetectorEventProperties.ChildDetectorName, status: clickDetectorEventProperties.Status, ts: Math.floor((new Date()).getTime() / 1000).toString() });
-          console.log("detectorlist current router", this._activatedRoute, this._router);
+          console.log("detectorlist current router", this._activatedRoute, this._router, this.resourceId);
 
-          let dest = `../../categories/${categoryName}/detectors/${detectorId}`;
-       //   let dest = `../../categories/ConfigurationAndManagement/detectors/${detectorId}`;
+          let dest = `resource/${this.resourceId}/categories/${categoryName}/detectors/${detectorId}`;
+          //   let dest = `../../categories/ConfigurationAndManagement/detectors/${detectorId}`;
           console.log("navigate to", dest);
           // This router is different for genie and case submission flow
-        //  this._router.navigate([`../analysis/${this.analysisId}/search/detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true, queryParams: { searchTerm: this.searchTerm } });
-       // ConfigurationAndManagement
-      //navigate to ../../categories/ConfigurationandManagement/detectors/swap
-      this._globals.openGeniePanel = false;
-      console.log("close panel", this._globals);
-        this._router.navigate([`${dest}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true, queryParams: { searchTerm: this.searchTerm } });
-     //   this.navigateTo([`../detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true, queryParams: { searchTerm: this.searchTerm } });
-    //  this._activatedRoute.
-    //  this._router.navigateByUrl(`resource/${resourceId}/legacy/diagnostics/availability/analysis`);
-    }
+          //  this._router.navigate([`../analysis/${this.analysisId}/search/detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true, queryParams: { searchTerm: this.searchTerm } });
+          // ConfigurationAndManagement
+          //navigate to ../../categories/ConfigurationandManagement/detectors/swap
+          this._globals.openGeniePanel = false;
+          console.log("close panel and openGeniePanel", this._globals);
+          this._router.navigate([`${dest}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true, queryParams: { searchTerm: this.searchTerm } });
+          //   this.navigateTo([`../detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true, queryParams: { searchTerm: this.searchTerm } });
+          //  this._activatedRoute.
+          //  this._router.navigateByUrl(`resource/${resourceId}/legacy/diagnostics/availability/analysis`);
+        }
         else {
           this._router.navigate([`../../analysis/${this.analysisId}/detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true });
         }
@@ -564,16 +568,16 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
 
   navigateTo(path: string) {
     let navigationExtras: NavigationExtras = {
-        queryParamsHandling: 'preserve',
-        preserveFragment: true,
-        relativeTo: this._activatedRoute
+      queryParamsHandling: 'preserve',
+      preserveFragment: true,
+      relativeTo: this._activatedRoute
     };
     var pathSegments = path.split('/');
     let segments: string[] = [path];
     this._router.navigate(segments, navigationExtras);
     console.log("this._route", this._router);
     console.log("activatedRoute", this._activatedRoute);
-}
+  }
 
   startLoadingMessage(): void {
     let self = this;

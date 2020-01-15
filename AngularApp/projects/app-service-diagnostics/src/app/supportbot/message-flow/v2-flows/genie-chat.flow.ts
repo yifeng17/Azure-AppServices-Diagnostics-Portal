@@ -93,13 +93,13 @@ export class GenieChatFlow extends IMessageFlowProvider {
      const feedback: string = `feedback-WindowsAvailabilityAndPerformance`;
   }
 
-  createMessageFlowForAnaysis(keyword: string, messageGroupId: string): Observable<Message[]> {
+  createMessageFlowForAnaysis(keyword: string, messageGroupId: string, resourceId: string=""): Observable<Message[]> {
     //const dynamicAnalysisGroup: MessageGroup = new MessageGroup("dynamic-analysis", [], () => "feedback");
     let analysisMessages: Message[]  = [];
   //  analysisMessages.push(new CategoryMenuMessage());
     let keywordTextMessage = new TextMessage(keyword, MessageSender.User, 500);
     let systemResponseTextMessage = new TextMessage('Okay give me a moment while I analyze your app for any issues related to this.', MessageSender.System, 500);
-    let dynamicAnalysisMessage = new DynamicAnalysisMessage(keyword);
+    let dynamicAnalysisMessage = new DynamicAnalysisMessage(keyword, resourceId);
     const analysisMessageGroup: MessageGroup = new MessageGroup(`${messageGroupId}`, [], () => '');
     analysisMessageGroup.messages.push(keywordTextMessage);
     analysisMessageGroup.messages.push(systemResponseTextMessage);

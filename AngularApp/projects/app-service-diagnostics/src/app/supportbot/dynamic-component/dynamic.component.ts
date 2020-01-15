@@ -53,7 +53,7 @@ export class DynamicComponent {
     @Output() onViewUpdate = new EventEmitter<any>();
     @Output() onComplete = new EventEmitter<any>();
     viewUpdateSubscription: Subscription;
-
+    
     @Input() set componentData(message: Message) {
         if (!message) {
             return;

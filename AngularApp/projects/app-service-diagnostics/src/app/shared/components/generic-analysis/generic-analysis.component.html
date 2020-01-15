@@ -7,7 +7,7 @@
       <i class="fa fa-exclamation icon-err" [style.display]="searchTerm?.trim().length>0 && searchTerm?.trim().length<2? '': 'none'" title="At least 2 characters"></i>
     </div>
 </div>
-<detector-list-analysis withinDiagnoseAndSolve="true" detectorParmName="detectorName" [targetedScore]="targetedScore" [analysisId]="analysisId" [searchTerm]="searchTerm" [searchMode]="searchMode" (onComplete)="updateLoadingStatus($event)"></detector-list-analysis>
+<detector-list-analysis withinDiagnoseAndSolve="true" detectorParmName="detectorName"[resourceId]="resourceId" [targetedScore]="targetedScore" [analysisId]="analysisId" [searchTerm]="searchTerm" [searchMode]="searchMode" (onComplete)="updateLoadingStatus($event)"></detector-list-analysis>
 
 <div [hidden]="detectorId === ''">
   <div>

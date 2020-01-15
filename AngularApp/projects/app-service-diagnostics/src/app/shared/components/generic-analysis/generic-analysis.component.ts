@@ -15,6 +15,7 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
   @Input() analysisId: string = "";
   @Input() searchTerm: string = "";
   @Input() searchMode: SearchAnalysisMode = SearchAnalysisMode.CaseSubmission;
+  @Input() resourceId: string="";
   @Input() targetedScore: number = 0;
   detectorId: string = "";
   detectorName: string = "";

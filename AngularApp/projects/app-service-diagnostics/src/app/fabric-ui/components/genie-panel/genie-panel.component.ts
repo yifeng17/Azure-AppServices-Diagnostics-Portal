@@ -8,6 +8,7 @@ import { DynamicComponent } from '../../../supportbot/dynamic-component/dynamic.
 import { TextMessageComponent } from '../../../supportbot/common/text-message/text-message.component';
 import { LoadingMessageComponent } from '../../../supportbot/common/loading-message/loading-message.component';
 import { Router, NavigationEnd } from '@angular/router';
+import { WebSitesService } from '../../../resources/web-sites/services/web-sites.service';
 
 import {
     PanelType,
@@ -33,7 +34,7 @@ import { GenieGlobals } from 'diagnostic-data';
 })
 export class GeniePanelComponent implements OnInit, OnDestroy{
     @ViewChild('scrollMe', { static: true }) myScrollContainer: any;
-    // @Input() openPanel: boolean = false;
+    @Input() resourceId: string = "";
     // @Output() openPanelChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
     // Genie panel
@@ -53,13 +54,14 @@ export class GeniePanelComponent implements OnInit, OnDestroy{
     scrollListener: any;
 
     // messageBarType: MessageBarType = MessageBarType.warning;
-    constructor(private _route: Router, private _genieChatFlow: GenieChatFlow, private _messageProcessor: MessageProcessor, public globals: GenieGlobals) {
+    constructor(private _resourceService: WebSitesService, private _route: Router, private _genieChatFlow: GenieChatFlow, private _messageProcessor: MessageProcessor, public globals: GenieGlobals) {
         this.panelStyles = {
             // type: PanelType.smallFixedNear,
             root: {
                 width: 585,
             },
         };
+        this.resourceId = this._resourceService.resource.id;
         this.chatContainerHeight = 0;
         this.messages = [];
         this.showTypingMessage = false;
@@ -69,7 +71,7 @@ export class GeniePanelComponent implements OnInit, OnDestroy{
                 if (evt instanceof NavigationEnd) {
                    // trick the Router into believing it's last link wasn't previously loaded
 
-                   console.log("evt", evt, this.globals.openGeniePanel);
+                   console.log("evt with openGeniePanel", evt, this.globals.openGeniePanel);
                    this.globals.openGeniePanel = false;
                 }
             });
@@ -80,7 +82,7 @@ export class GeniePanelComponent implements OnInit, OnDestroy{
     // }
     ngOnInit() {
         this.globals.openGeniePanel = false;
-        console.log("init genie with openPanel", this.globals);
+        console.log("init genie with openGeniePanel", this.globals);
 
         // Pop messages from globals messages:
         if (this.globals.messages.length === 0) {
@@ -171,7 +173,7 @@ export class GeniePanelComponent implements OnInit, OnDestroy{
     onSearchEnter(event: any): void {
         // Push messages to the current object, also wait for the complete status, and push the object to globa message component
         let analysisMessageGroupId = event.newValue+ (new Date()).toUTCString();
-        this._genieChatFlow.createMessageFlowForAnaysis(event.newValue, analysisMessageGroupId).subscribe((analysisMessages: Message[]) => {
+        this._genieChatFlow.createMessageFlowForAnaysis(event.newValue, analysisMessageGroupId, this.resourceId).subscribe((analysisMessages: Message[]) => {
             console.log("**** analysis messsages", analysisMessages);
             analysisMessages.forEach(message => {
                 // message.component.oncomplete === true &&

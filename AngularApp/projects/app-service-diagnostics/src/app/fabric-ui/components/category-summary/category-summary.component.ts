@@ -89,7 +89,7 @@ export class CategorySummaryComponent implements OnInit {
 
     ngOnInit() {
         console.log("init ngsummary");
-        this.globals.openGeniePanel = false;
+       // this.globals.openGeniePanel = false;
         this.categoryService.categories.subscribe(categories => {
          //   let decodedCategoryName = decodeURIComponent(this._activatedRoute.snapshot.params.category);
          let decodedCategoryName = this._activatedRoute.snapshot.params.category.toLowerCase();
