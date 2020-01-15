@@ -23,7 +23,7 @@ import {
     IPeoplePickerProps
 } from 'office-ui-fabric-react';
  import { Globals } from '../../../globals';
-//import { Globals } from 'dist/diagnostic-data/lib/services/genie.service';
+import { GenieGlobals } from 'diagnostic-data';
 
 
 @Component({
@@ -53,7 +53,7 @@ export class GeniePanelComponent implements OnInit, OnDestroy{
     scrollListener: any;
 
     // messageBarType: MessageBarType = MessageBarType.warning;
-    constructor(private _route: Router, private _genieChatFlow: GenieChatFlow, private _messageProcessor: MessageProcessor, public globals: Globals) {
+    constructor(private _route: Router, private _genieChatFlow: GenieChatFlow, private _messageProcessor: MessageProcessor, public globals: GenieGlobals) {
         this.panelStyles = {
             // type: PanelType.smallFixedNear,
             root: {

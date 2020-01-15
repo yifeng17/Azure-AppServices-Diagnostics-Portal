@@ -549,6 +549,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
        // ConfigurationAndManagement
       //navigate to ../../categories/ConfigurationandManagement/detectors/swap
       this._globals.openGeniePanel = false;
+      console.log("close panel", this._globals);
         this._router.navigate([`${dest}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true, queryParams: { searchTerm: this.searchTerm } });
      //   this.navigateTo([`../detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true, queryParams: { searchTerm: this.searchTerm } });
     //  this._activatedRoute.

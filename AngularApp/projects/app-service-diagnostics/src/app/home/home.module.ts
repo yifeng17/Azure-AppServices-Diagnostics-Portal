@@ -68,7 +68,7 @@ export const HomeRoutes = RouterModule.forChild([
         data: {
           cacheComponent: true,
              navigationTitle: CategoryTabResolver,
-             messageList: CategoryChatResolver
+          //   messageList: CategoryChatResolver
         },
       },
       {
@@ -177,7 +177,7 @@ export const HomeRoutes = RouterModule.forChild([
     ],
     resolve: {
       navigationTitle: CategoryTabResolver,
-      messageList: CategoryChatResolver
+     // messageList: CategoryChatResolver
     }
   },
   {

@@ -1,6 +1,6 @@
 import {
     CommsService, DiagnosticDataModule, DiagnosticService, DiagnosticSiteService,
-    PUBLIC_DEV_CONFIGURATION, PUBLIC_PROD_CONFIGURATION, SolutionService, SettingsService
+    PUBLIC_DEV_CONFIGURATION, PUBLIC_PROD_CONFIGURATION, SolutionService, SettingsService, GenieGlobals
 } from 'diagnostic-data';
 import { SiteService } from 'projects/app-service-diagnostics/src/app/shared/services/site.service';
 import { HttpClientModule } from '@angular/common/http';
@@ -11,9 +11,9 @@ import { RouteReuseStrategy, RouterModule } from '@angular/router';
 import {
     KustoTelemetryService
 } from '../../../diagnostic-data/src/lib/services/telemetry/kusto-telemetry.service';
-import {
-    GenieGlobals
-} from '../../../diagnostic-data/src/lib/services/genie.service';
+// import {
+//     GenieGlobals
+// } from '../../../diagnostic-data/src/lib/services/genie.service';
 import {
     UnhandledExceptionHandlerService
 } from '../../../diagnostic-data/src/lib/services/unhandled-exception-handler.service';
@@ -153,7 +153,7 @@ import { SupportTopicService } from './shared-v2/services/support-topic.service'
         loadChildren: './resources/resources.module#ResourcesModule'
       }
     ],
-    //  { enableTracing: true }
+    { enableTracing: true }
     ),
     CustomMaterialModule,
     HighchartsChartModule,
@@ -183,8 +183,9 @@ import { SupportTopicService } from './shared-v2/services/support-topic.service'
     },
     { provide: SolutionService, useExisting: GenericSolutionService },
     { provide: SettingsService, useExisting: PortalSettingsService},
-    {provide: GenieGlobals, useExisting: Globals},
-     Globals,
+     {provide: GenieGlobals, useExisting: Globals},
+    // GenieGlobals,
+    // Globals,
     ResourceService,
     CategoryChatStateService,
     ContentService,
