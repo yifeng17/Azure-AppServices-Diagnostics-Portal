@@ -52,6 +52,8 @@ import { LoggingV2Service } from './shared-v2/services/logging-v2.service';
 import { LiveChatService } from './shared-v2/services/livechat.service';
 import { SupportTopicService } from './shared-v2/services/support-topic.service';
 import { ResourceResolver } from './home/resolvers/resource.resolver';
+import { ResourcesModule } from './resources/resources.module';
+import { WebSitesModule } from './resources/web-sites/web-sites.module';
 // import {
 //   FabBreadcrumbModule,
 //   FabButtonModule,
@@ -97,6 +99,8 @@ import { ResourceResolver } from './home/resolvers/resource.resolver';
   imports: [
     AngularReactBrowserModule,
     HttpClientModule,
+    ResourcesModule,
+    WebSitesModule,
     SharedModule.forRoot(),
     // HomeModule,
     // FabFabricModule,
@@ -144,16 +148,23 @@ import { ResourceResolver } from './home/resolvers/resource.resolver';
     RouterModule.forRoot([
       {
         path: 'test',
-        component: TestInputComponent
+        component: TestInputComponent,
+        // resolve: { data: ResourceResolver }
       },
       {
         path: 'resourceRedirect',
-        component: ResourceRedirectComponent
+        component: ResourceRedirectComponent,
+        // resolve: { data: ResourceResolver }
       },
+    //   {
+    //     path: 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/providers/microsoft.web/sites/:resourcename',
+    //     loadChildren: './web-sites/web-sites.module#WebSitesModule'
+    //   },
       {
         path: 'resource',
-        loadChildren: './resources/resources.module#ResourcesModule',
-        resolve: { data: ResourceResolver }
+         loadChildren: './resources/resources.module#ResourcesModule',
+       // loadChildren: () => ResourcesModule,
+        // resolve: { data: ResourceResolver }
       }
     ],
     { enableTracing: true }

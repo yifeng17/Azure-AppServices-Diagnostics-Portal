@@ -23,8 +23,10 @@ import {
     IPersonaProps,
     IPeoplePickerProps
 } from 'office-ui-fabric-react';
- import { Globals } from '../../../globals';
+import { Globals } from '../../../globals';
 import { GenieGlobals } from 'diagnostic-data';
+import { AuthService } from '../../../startup/services/auth.service';
+import { StartupInfo } from '../../../shared/models/portal';
 
 
 @Component({
@@ -32,7 +34,7 @@ import { GenieGlobals } from 'diagnostic-data';
     templateUrl: './genie-panel.component.html',
     styleUrls: ['./genie-panel.component.scss']
 })
-export class GeniePanelComponent implements OnInit, OnDestroy{
+export class GeniePanelComponent implements OnInit, OnDestroy {
     @ViewChild('scrollMe', { static: true }) myScrollContainer: any;
     @Input() resourceId: string = "";
     // @Output() openPanelChange: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -54,27 +56,30 @@ export class GeniePanelComponent implements OnInit, OnDestroy{
     scrollListener: any;
 
     // messageBarType: MessageBarType = MessageBarType.warning;
-    constructor(private _resourceService: WebSitesService, private _route: Router, private _genieChatFlow: GenieChatFlow, private _messageProcessor: MessageProcessor, public globals: GenieGlobals) {
+    constructor(private _resourceService: WebSitesService, private _authService: AuthService, private _route: Router, private _genieChatFlow: GenieChatFlow, private _messageProcessor: MessageProcessor, public globals: GenieGlobals) {
         this.panelStyles = {
             // type: PanelType.smallFixedNear,
             root: {
                 width: 585,
             },
         };
-        this.resourceId = this._resourceService.resource.id;
+        // this._authService.getStartupInfo().subscribe((startupInfo: StartupInfo) =>
+        //     this.resourceId = startupInfo.resourceId);
+
+        // this.resourceId = this._resourceService.resource.id;
         this.chatContainerHeight = 0;
         this.messages = [];
         this.showTypingMessage = false;
         this.chatContainerHeight = 0;
 
-               this._route.events.subscribe((evt) => {
-                if (evt instanceof NavigationEnd) {
-                   // trick the Router into believing it's last link wasn't previously loaded
+        this._route.events.subscribe((evt) => {
+            if (evt instanceof NavigationEnd) {
+                // trick the Router into believing it's last link wasn't previously loaded
 
-                   console.log("evt with openGeniePanel", evt, this.globals.openGeniePanel);
-                   this.globals.openGeniePanel = false;
-                }
-            });
+                console.log("evt with openGeniePanel", evt, this.globals.openGeniePanel);
+                this.globals.openGeniePanel = false;
+            }
+        });
     }
 
     // ngOnDestroy() {
@@ -123,12 +128,12 @@ export class GeniePanelComponent implements OnInit, OnDestroy{
 
     getHistoryMessage(): void {
         this.messages = JSON.parse(JSON.stringify(this.globals.messages))
-      //  this.messages = {...this.globals.messages};
+        //  this.messages = {...this.globals.messages};
     }
 
     ngOnDestroy() {
         console.log("Genie destroyed");
-      }
+    }
 
     closeGeniePanel() {
         this.globals.openGeniePanel = false;
@@ -136,14 +141,14 @@ export class GeniePanelComponent implements OnInit, OnDestroy{
         console.log("close panel, isOpen:", this.globals.openGeniePanel);
     }
 
-    updateView(event?: any):void {
+    updateView(event?: any): void {
         this.scrollToBottom();
     }
 
     updateStatus(event?: any): void {
-       //    this.scrollToBottom();
+        //    this.scrollToBottom();
         this.loading = false;
-     //   clearInterval(this.scrollListener);
+        //   clearInterval(this.scrollListener);
         this.scrollListener = undefined;
         this.getMessage(event);
     }
@@ -172,7 +177,7 @@ export class GeniePanelComponent implements OnInit, OnDestroy{
 
     onSearchEnter(event: any): void {
         // Push messages to the current object, also wait for the complete status, and push the object to globa message component
-        let analysisMessageGroupId = event.newValue+ (new Date()).toUTCString();
+        let analysisMessageGroupId = event.newValue + (new Date()).toUTCString();
         this._genieChatFlow.createMessageFlowForAnaysis(event.newValue, analysisMessageGroupId, this.resourceId).subscribe((analysisMessages: Message[]) => {
             console.log("**** analysis messsages", analysisMessages);
             analysisMessages.forEach(message => {
@@ -180,17 +185,17 @@ export class GeniePanelComponent implements OnInit, OnDestroy{
                 // if (this.globals.messages.indexOf(message) < 0) {
                 //     this.globals.messages.push(message);
                 // }
-               // this.messages.push(message);
+                // this.messages.push(message);
             });
 
             console.log("constructing messages onsearch", this.globals.messages, this.messages);
         });
         this._messageProcessor.setCurrentKey(analysisMessageGroupId);
         this.getMessage();
-      //  this.scrollToBottom();
+        //  this.scrollToBottom();
         //setTimeout(() => this.scrollToBottom(), 500);
 
-      //  this.scrollListener = setInterval(() => this.scrollToBottom(), 1000);
+        //  this.scrollListener = setInterval(() => this.scrollToBottom(), 1000);
         //  setInterval(()=> {
         //      if (this.loading)
         //      {
@@ -249,7 +254,7 @@ export class GeniePanelComponent implements OnInit, OnDestroy{
 
                 // To show the typing message icon, we need to scroll the page to the bottom.
                 setTimeout(() => {
-                      this.scrollToBottom();
+                    this.scrollToBottom();
                 }, 200);
             }
 

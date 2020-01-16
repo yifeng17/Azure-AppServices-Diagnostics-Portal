@@ -9,10 +9,10 @@ const ResourceRoutes = RouterModule.forChild([
     path: 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/providers/microsoft.web/sites/:resourcename',
     loadChildren: './web-sites/web-sites.module#WebSitesModule'
   },
-//   {
-//     path: 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/providers/microsoft.web/sites/:resourcename/:siteSuffix',
-//     loadChildren: './web-sites/web-sites.module#WebSitesModule'
-//   },
+  {
+    path: 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/providers/microsoft.web/sites/:resourcename/:siteSuffix',
+    loadChildren: './web-sites/web-sites.module#WebSitesModule'
+  },
 //   {
 //     path: 'subscriptions/:subscriptionid/resourcegroups/:resourcegroup/providers/microsoft.web/sites/:resourcename/categories/:categoryid/analysis/:analysisid',
 //     loadChildren: './web-sites/web-sites.module#WebSitesModule'

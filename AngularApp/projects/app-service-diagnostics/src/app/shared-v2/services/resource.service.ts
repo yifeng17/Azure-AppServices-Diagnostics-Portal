@@ -9,7 +9,7 @@ import { ArmResourceConfig, ResourceDescriptor, ResourceDescriptorGroups } from 
 import { GenericArmConfigService } from '../../shared/services/generic-arm-config.service';
 import { PortalReferrerMap } from '../../shared/models/portal-referrer-map';
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ResourceService {
 
   protected _subscription: string;

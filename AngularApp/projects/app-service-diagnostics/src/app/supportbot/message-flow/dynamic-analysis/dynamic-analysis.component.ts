@@ -134,10 +134,14 @@ export class DynamicAnalysisComponent implements OnInit, AfterViewInit, IChatMes
 
         console.log("status Value", statusValue);
         // this._genieChatFlow.createMessageFlowForAnaysisResult(statusValue.outputData, this.noSearchResult);
-
-        this.onComplete.emit(statusValue);
+        console.log("Current route", this._routerLocal.url, this._activatedRouteLocal);
+        this._activatedRouteLocal.url.subscribe((url)=>{
+            console.log("activated route url", url);
+        });
 
         console.log("****lalalastatus Value", statusValue);
+        this.onComplete.emit(statusValue);
+
     }
 
     addHelpfulFeedback() {

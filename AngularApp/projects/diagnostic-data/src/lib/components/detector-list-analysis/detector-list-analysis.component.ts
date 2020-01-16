@@ -527,7 +527,18 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
       console.log("viewmodel", viewModel);
       console.log("viewmodel", viewModel.model.metadata.category);
       //  let categoryName = encodeURIComponent(viewModel.model.metadata.category);
-      let categoryName = viewModel.model.metadata.category.replace(/\s/g, '');
+      let categoryName = "";
+
+      if (viewModel.model.metadata.category)
+      {
+        categoryName = viewModel.model.metadata.category.replace(/\s/g, '');
+      }
+      else
+      {
+        categoryName = this._router.url.split('/')[11];
+        console.log("uncatgorized category name", categoryName);
+      }
+
       console.log("after encode", categoryName);
       if (detectorId !== "") {
 
@@ -543,18 +554,24 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
 
         if (this.analysisId === "searchResultsAnalysis" && this.searchTerm && this.searchTerm.length > 0) {
           this.logEvent(TelemetryEventNames.SearchResultClicked, { searchId: this.searchId, detectorId: detectorId, rank: 0, title: clickDetectorEventProperties.ChildDetectorName, status: clickDetectorEventProperties.Status, ts: Math.floor((new Date()).getTime() / 1000).toString() });
-          console.log("detectorlist current router", this._activatedRoute, this._router, this.resourceId);
+          console.log("detectorlist current router",  this._router.url, this.resourceId);
 
-          let dest = `resource/${this.resourceId}/categories/${categoryName}/detectors/${detectorId}`;
-          //   let dest = `../../categories/ConfigurationAndManagement/detectors/${detectorId}`;
-          console.log("navigate to", dest);
+          let dest1 = `resource${this.resourceId}/categories/${categoryName}/detectors/${detectorId}`;
+        //     let dest = `../../categories/ConfigurationAndManagement/detectors/${detectorId}`;
+          //let dest = `../../categories/${categoryName}/detectors/${detectorId}`;
+          console.log("navigate to", dest1);
+
           // This router is different for genie and case submission flow
           //  this._router.navigate([`../analysis/${this.analysisId}/search/detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true, queryParams: { searchTerm: this.searchTerm } });
           // ConfigurationAndManagement
           //navigate to ../../categories/ConfigurationandManagement/detectors/swap
           this._globals.openGeniePanel = false;
           console.log("close panel and openGeniePanel", this._globals);
-          this._router.navigate([`${dest}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true, queryParams: { searchTerm: this.searchTerm } });
+          //this._router.navigateByUrl(`${dest1}`).then(()=>{ console.log("navigated");});
+            //this._router.navigate([dest1]);
+            this.customRedirectTo(dest1);
+
+      //    this._router.navigate([`${dest}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true, queryParams: { searchTerm: this.searchTerm } });
           //   this.navigateTo([`../detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true, queryParams: { searchTerm: this.searchTerm } });
           //  this._activatedRoute.
           //  this._router.navigateByUrl(`resource/${resourceId}/legacy/diagnostics/availability/analysis`);
@@ -565,6 +582,21 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
       }
     }
   }
+
+  customRedirectTo(uri:string){
+    // this._router.routeReuseStrategy.shouldReuseRoute = function(){
+    //     return false;
+    //  }
+
+
+    this._router.navigateByUrl(uri).then(()=>
+    {
+        console.log("navigated in customRedirect");
+        // this._router.navigate([uri]);
+      //  this._router.
+    }
+    );
+ }
 
   navigateTo(path: string) {
     let navigationExtras: NavigationExtras = {

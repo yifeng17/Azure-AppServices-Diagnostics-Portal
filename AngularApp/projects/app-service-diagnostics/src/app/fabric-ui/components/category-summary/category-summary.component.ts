@@ -1,6 +1,6 @@
 import { Component, OnInit, Injector } from '@angular/core';
 import { MessageProcessor } from '../../../supportbot/message-processor.service';
-import { ActivatedRoute, Router, NavigationExtras, NavigationEnd, Scroll } from '@angular/router';
+import { ActivatedRoute, Router, NavigationExtras, NavigationEnd, Scroll, ChildActivationEnd } from '@angular/router';
 import { CategoryService } from '../../../shared-v2/services/category.service';
 import { Category } from '../../../shared-v2/models/category';
 import { CategoryChatStateService } from '../../../shared-v2/services/category-chat-state.service';
@@ -12,7 +12,7 @@ import { Tile } from '../../../shared/components/tile-list/tile-list.component';
 import { Feature } from '../../../shared-v2/models/features';
 import { AuthService } from '../../../startup/services/auth.service';
 import { DiagnosticService, DetectorMetaData, DetectorType } from 'diagnostic-data';
-import { filter } from 'rxjs/operators';
+import { filter, tap } from 'rxjs/operators';
 import { PortalActionService } from '../../../shared/services/portal-action.service';
  import { Globals } from '../../../globals';
 // import { Globals } from 'dist/diagnostic-data/lib/services/genie.service';
@@ -107,6 +107,15 @@ export class CategorySummaryComponent implements OnInit {
             this.resourceName = this._activatedRoute.snapshot.params.resourcename;
             this._portalActionService.updateDiagnoseCategoryBladeTitle(`${this.resourceName} - ` + this.categoryName);
         });
+
+        this._route.events.subscribe((evt) => {
+            if (evt instanceof NavigationEnd) {
+                // trick the Router into believing it's last link wasn't previously loaded
+
+                console.log("evt with categorySmmary", evt, this._activatedRoute, this._route);
+                this._route.navigateByUrl(evt.url);
+            }
+        });
     }
 
     private getCurrentRoutePath() {
@@ -119,6 +128,7 @@ export class CategorySummaryComponent implements OnInit {
             preserveFragment: true,
             relativeTo: this._activatedRoute
         };
+        console.log("Navigateto path", path);
         this._route.navigate(path.split('/'), navigationExtras);
         console.log("this._route", this._route);
     }

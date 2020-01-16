@@ -11,6 +11,12 @@
 
           <collapsible-menu-item *ngFor="let detector of detectorList" [menuItem]="detector" [class.selected]="isSelecte"></collapsible-menu-item>
         </section-divider>
+        <section-divider *ngIf="hasUncategorizedDetectors" [label]="'Uncategorized'" [initiallySelected]="false" [collapsible]="false" [routePath]="'overview'"
+        (click)="collapsible = !collapsible">
+        <!-- <i class="fa fa-book fa-fw menu-icon menu-icon-documentation" aria-hidden="true"></i> -->
+
+        <collapsible-menu-item *ngFor="let detector of detectorList" [menuItem]="detector" [class.selected]="isSelecte"></collapsible-menu-item>
+      </section-divider>
       </div>
     </div>
   </section>

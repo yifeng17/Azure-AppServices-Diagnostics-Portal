@@ -42,6 +42,7 @@ export class CategoryNavComponent implements OnInit {
 
     styles: any;
     collapsible: any = false;
+    hasUncategorizedDetectors: boolean = false;
 
     isSelected(detectorId: string) {
         console.log("router url", this._route.url, detectorId);
@@ -58,8 +59,10 @@ export class CategoryNavComponent implements OnInit {
         };
         var pathSegments = path.split('/');
         let segments: string[] = [path];
-        this._route.navigate(segments, navigationExtras);
-        console.log("this._route", this._route);
+        this._route.navigate(segments, navigationExtras).then(()=>{
+            console.log("navigated");
+        });
+        console.log("this._route", this._route.url);
         console.log("activatedRoute", this._activatedRoute);
     }
 
@@ -85,12 +88,11 @@ export class CategoryNavComponent implements OnInit {
         this.currentRoutePath = this._activatedRoute.firstChild.snapshot.url.map(urlSegment => urlSegment.path);
       }
     ngOnInit() {
+    this.hasUncategorizedDetectors = false;
     console.log("init category-nav");
     this._route.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(event => {
         this.getCurrentRoutePath();
       });
-
-
 
         this.categoryService.categories.subscribe(categories => {
           //  let decodedCategoryName = decodeURIComponent(this._activatedRoute.snapshot.params.category);
@@ -108,7 +110,7 @@ export class CategoryNavComponent implements OnInit {
                         key: 'overview',
                         icon: 'globe',
                         onClick: (e) => {
-                            e.preventDefault();
+                            // e.preventDefault();
                             //   this._route.navigateByUrl(`resource${this.resourceId}/categories/${this.category.id}/`);
                             //    this._route.navigate([`resource${this.resourceId}/categories/${this.category.id}/`]);
                             this._route.navigate([`./overview`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge' });

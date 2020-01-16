@@ -18,6 +18,9 @@ import { GenericArmConfigService } from '../../../shared/services/generic-arm-co
 import { ResourceService } from '../../../shared-v2/services/resource.service';
 import { DynamicAnalysisResultsComponent, DynamicAnalysisResultsMessage } from '../dynamic-analysis-results/dynamic-analysis-results.component';
  import { Globals } from '../../../globals';
+import { Router, ActivatedRoute } from '@angular/router';
+import { AuthService } from '../../../startup/services/auth.service';
+import { StartupInfo } from '../../../shared/models/portal';
 // import { Globals } from 'dist/diagnostic-data/lib/services/genie.service';
 // import { FeedbackComponent } from 'dist/diagnostic-data/lib/components/feedback/feedback.component';
 // import { KustoTelemetryService } from 'dist/diagnostic-data/lib/services/telemetry/kusto-telemetry.service';
@@ -28,14 +31,20 @@ import { DynamicAnalysisResultsComponent, DynamicAnalysisResultsMessage } from '
 export class GenieChatFlow extends IMessageFlowProvider {
 
   messageFlowList: MessageGroup[] = [];
-
+  resourceId: string="";
   categoriesCreated: Category[] = [];
 
   targetedScore: number = 0.5;
 
 //   private _messageProcessor: MessageProcessor,
-  constructor( private _diagnosticApiService: DiagnosticService, private _resourceService: ResourceService, public globals: Globals, private _genericArmConfigService?: GenericArmConfigService) {
+  constructor(private _router: Router, private _authService: AuthService, private _activatedRoute: ActivatedRoute, private _diagnosticApiService: DiagnosticService, private _resourceService: ResourceService, public globals: Globals, private _genericArmConfigService?: GenericArmConfigService) {
     super();
+    // this._authService.getStartupInfo().subscribe((startupInfo: StartupInfo) => {
+    //     // For now, only showing alert in case submission
+    //     this.resourceId = startupInfo.resourceId;
+    //     console.log("Lauching genie chat flow with resourceId", this.resourceId);
+    //   //  this.autoExpand = (startupInfo.supportTopicId && startupInfo.supportTopicId != '');
+    //   });
 
     const needAnalysis: MessageGroup = new MessageGroup('need-analysis', [], () => 'analysis');
    // needAnalysis.messages.push(new TextMessage('Ok give me a moment while I analyze your app for any issue related to this.', MessageSender.System));
@@ -94,12 +103,22 @@ export class GenieChatFlow extends IMessageFlowProvider {
   }
 
   createMessageFlowForAnaysis(keyword: string, messageGroupId: string, resourceId: string=""): Observable<Message[]> {
+    this._authService.getStartupInfo().subscribe((startupInfo: StartupInfo) => {
+        // For now, only showing alert in case submission
+        this.resourceId = startupInfo.resourceId;
+        console.log("Lauching genie chat flow with resourceId", this.resourceId);
+      //  this.autoExpand = (startupInfo.supportTopicId && startupInfo.supportTopicId != '');
+      });
     //const dynamicAnalysisGroup: MessageGroup = new MessageGroup("dynamic-analysis", [], () => "feedback");
     let analysisMessages: Message[]  = [];
   //  analysisMessages.push(new CategoryMenuMessage());
     let keywordTextMessage = new TextMessage(keyword, MessageSender.User, 500);
     let systemResponseTextMessage = new TextMessage('Okay give me a moment while I analyze your app for any issues related to this.', MessageSender.System, 500);
+    resourceId = this.resourceId;
+   // console.log("resourceId:", resourceId);
+   console.log("Router", this._router.url, this._activatedRoute.firstChild);
     let dynamicAnalysisMessage = new DynamicAnalysisMessage(keyword, resourceId);
+
     const analysisMessageGroup: MessageGroup = new MessageGroup(`${messageGroupId}`, [], () => '');
     analysisMessageGroup.messages.push(keywordTextMessage);
     analysisMessageGroup.messages.push(systemResponseTextMessage);

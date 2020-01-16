@@ -2,6 +2,9 @@ import { Component, OnInit, isDevMode } from '@angular/core';
 import { Router } from '@angular/router';
 import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
 import { WebSitesService } from './resources/web-sites/services/web-sites.service';
+import { AuthService } from './startup/services/auth.service';
+import { StartupInfo } from './shared/models/portal';
+
 
 
 @Component({
@@ -19,10 +22,17 @@ export class AppComponent implements OnInit {
         this._newVersionEnabled = value;
      }
 
-    constructor(private _router: Router, private _resourceService: WebSitesService) {
+    constructor(private _authService: AuthService, private _router: Router, private _resourceService: WebSitesService) {
         console.log("Lauching app component");
        // this.resourceId = this._resourceService.resource.id;
-    //    console.log("Lauching app component with resourceId", this.resourceId);
+     //   console.log("Lauching app component with resourceId", this._resourceService);
+     this._authService.getStartupInfo().subscribe((startupInfo: StartupInfo) => {
+        // For now, only showing alert in case submission
+        let resourceId = startupInfo.resourceId;
+        console.log("Lauching app component with resourceId", resourceId);
+      //  this.autoExpand = (startupInfo.supportTopicId && startupInfo.supportTopicId != '');
+      });
+
     }
 
     ngOnInit() {
