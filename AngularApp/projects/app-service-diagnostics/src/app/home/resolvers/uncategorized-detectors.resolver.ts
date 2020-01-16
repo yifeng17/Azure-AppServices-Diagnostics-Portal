@@ -14,6 +14,11 @@ export class UncategorizedDetectorsResolver implements Resolve<Observable<boolea
         console.log("resolve url", activatedRouteSnapshot, activatedRouteSnapshot.parent);
         console.log("resolve url1", activatedRouteSnapshot.parent.url.filter(x => x.path !== 'new' && x.path !== 'categories').join('/'));
      //   return this._resourceService.registerResource(activatedRouteSnapshot.parent.url.filter(x => x.path !== 'new' && x.path !== 'categories').join('/'));
+        let detectorId = activatedRouteSnapshot.params["detectorName"];
+        let categoryId = activatedRouteSnapshot.parent.params["category"];
+        this._detectorCategorization.addDetectorToCategory(detectorId, categoryId);
+        console.log("add detectorId to categoryId", detectorId, categoryId, this._detectorCategorization.detectorCategories);
+
         return of(true);
     }
 }

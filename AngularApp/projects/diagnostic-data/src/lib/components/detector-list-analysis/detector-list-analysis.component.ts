@@ -254,7 +254,6 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
 
     refresh() {
         console.log("calling refresh", this.searchTerm, this.searchMode);
-
         if (this.analysisId === "searchResultsAnalysis" && this.searchMode === SearchAnalysisMode.Genie && this.searchTerm && this.searchTerm.length > 1) {
             this.detectorId = "";
             this.showAppInsightsSection = false;
@@ -449,10 +448,11 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                         } else {
                             let insight = this.getDetectorInsight(this.detectorViewModels[index]);
                             let successViewModel = { model: this.detectorViewModels[index], insightTitle: insight.title, insightDescription: insight.description };
-                            if (!this.successfulViewModels.find((viewM) => { viewM.insightTitle === successViewModel.insightTitle })) {
-                                console.log("successfulviewmodels push", this.successfulViewModels, successViewModel);
-                                this.successfulViewModels.push(successViewModel);
-                            }
+                            // if (!this.successfulViewModels.find((viewM) => { viewM.insightTitle === successViewModel.insightTitle })) {
+                            //     console.log("successfulviewmodels push", this.successfulViewModels, successViewModel);
+                            //     this.successfulViewModels.push(successViewModel);
+                            // }
+                            this.successfulViewModels.push(successViewModel);
                         }
                     }
 
