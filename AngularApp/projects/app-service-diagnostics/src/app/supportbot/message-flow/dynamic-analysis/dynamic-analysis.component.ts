@@ -141,7 +141,6 @@ export class DynamicAnalysisComponent implements OnInit, AfterViewInit, IChatMes
 
         console.log("****lalalastatus Value", statusValue);
         this.onComplete.emit(statusValue);
-
     }
 
     addHelpfulFeedback() {

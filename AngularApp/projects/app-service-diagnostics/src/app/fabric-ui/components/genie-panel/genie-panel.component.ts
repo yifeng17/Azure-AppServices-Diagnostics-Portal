@@ -63,23 +63,10 @@ export class GeniePanelComponent implements OnInit, OnDestroy {
                 width: 585,
             },
         };
-        // this._authService.getStartupInfo().subscribe((startupInfo: StartupInfo) =>
-        //     this.resourceId = startupInfo.resourceId);
-
-        // this.resourceId = this._resourceService.resource.id;
         this.chatContainerHeight = 0;
         this.messages = [];
         this.showTypingMessage = false;
         this.chatContainerHeight = 0;
-
-        this._route.events.subscribe((evt) => {
-            if (evt instanceof NavigationEnd) {
-                // trick the Router into believing it's last link wasn't previously loaded
-
-                console.log("evt with openGeniePanel", evt, this.globals.openGeniePanel);
-                this.globals.openGeniePanel = false;
-            }
-        });
     }
 
     // ngOnDestroy() {
@@ -90,9 +77,9 @@ export class GeniePanelComponent implements OnInit, OnDestroy {
         console.log("init genie with openGeniePanel", this.globals);
 
         // Pop messages from globals messages:
-        if (this.globals.messages.length === 0) {
-            this.globals.messages.push(new TextMessage(this.welcomeMessage, MessageSender.System, 200));
-        }
+        // if (this.globals.messages.length === 0) {
+        //     this.globals.messages.push(new TextMessage(this.welcomeMessage, MessageSender.System, 200));
+        // }
 
         this.getMessage();
 

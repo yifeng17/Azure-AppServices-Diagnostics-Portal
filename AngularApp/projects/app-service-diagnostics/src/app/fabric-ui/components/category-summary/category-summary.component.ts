@@ -108,14 +108,14 @@ export class CategorySummaryComponent implements OnInit {
             this._portalActionService.updateDiagnoseCategoryBladeTitle(`${this.resourceName} - ` + this.categoryName);
         });
 
-        this._route.events.subscribe((evt) => {
-            if (evt instanceof NavigationEnd) {
-                // trick the Router into believing it's last link wasn't previously loaded
+        // this._route.events.subscribe((evt) => {
+        //     if (evt instanceof NavigationEnd) {
+        //         // trick the Router into believing it's last link wasn't previously loaded
 
-                console.log("evt with categorySmmary", evt, this._activatedRoute, this._route);
-                this._route.navigateByUrl(evt.url);
-            }
-        });
+        //         console.log("evt with categorySmmary", evt, this._activatedRoute, this._route);
+        //         this._route.navigateByUrl(evt.url);
+        //     }
+        // });
     }
 
     private getCurrentRoutePath() {
