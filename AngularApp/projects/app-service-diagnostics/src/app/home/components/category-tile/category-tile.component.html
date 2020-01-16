@@ -10,10 +10,13 @@
     <h2 class="category-title">{{category.name}}</h2>
     <p class="category-description">{{category.description}}</p>
     <div>
-    <span class="keyword-label">Keywords</span>
+    <span class="keyword-label">Keywords:</span>
     <div class="keywords">
-          <div class="keyword" [style.border-color]="category.color" *ngFor="let keyword of category.keywords">
+          <!-- <div class="keyword"  *ngFor="let keyword of category.keywords">
             {{keyword}}
+          </div> -->
+          <div class="keyword">
+            {{keywords}}
           </div>
         </div>
     </div>
