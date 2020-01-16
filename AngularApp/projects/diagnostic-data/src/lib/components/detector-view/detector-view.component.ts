@@ -267,13 +267,23 @@ export class DetectorViewComponent implements OnInit {
 
   renderCXPChatButton(){
     if(this.cxpChatTrackingId === '' && this.cxpChatUrl === '') {
-      if(this._supportTopicService && this._cxpChatService && this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId)) {        
+      if(this._supportTopicService && this._cxpChatService && this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId)) {
           this.cxpChatTrackingId = this._cxpChatService.generateTrackingId();
           this._cxpChatService.getChatURL(this._supportTopicService.supportTopicId, this.cxpChatTrackingId).subscribe((chatApiResponse:any)=>{
             if (chatApiResponse && chatApiResponse != '') {
               this.cxpChatUrl = chatApiResponse;
             }
           });               
+      }
+      else {
+        var checkOutcome = {
+          _supportTopicServiceObj: !!this._supportTopicService,
+          supportTopicId: (!!this._supportTopicService)? this._supportTopicService.supportTopicId : '_supportTopicService is NULL',
+          _cxpChatService: !!this._cxpChatService,
+          isSupportTopicEnabledForLiveChat:  (!!this._supportTopicService && !!this._cxpChatService)? this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId): null
+        };
+
+        this._cxpChatService.logChatEligibilityCheck('Call to CXP Chat API skipped', JSON.stringify(checkOutcome));
       }
     }
   }
