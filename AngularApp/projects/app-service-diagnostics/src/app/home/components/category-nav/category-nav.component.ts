@@ -15,6 +15,7 @@ import { DiagnosticService, DetectorMetaData, DetectorType, DetectorResponse } f
 import { filter } from 'rxjs/operators';
 import { CollapsibleMenuItem, CategoryMenuItemComponent } from '../category-menu-item/category-menu-item.component';
 import { DetectorCategorizationService } from '../../../shared/services/detector-categorized.service';
+import { SiteFeatureService } from '../../../resources/web-sites/services/site-feature.service';
 
 @Component({
     selector: 'category-nav',
@@ -36,6 +37,8 @@ export class CategoryNavComponent implements OnInit {
     baseUrl = "";
     selectedId = "";
     groups: any;
+    isDiagnosticTools: boolean = false;
+    categoryId: string="";
 
     initialSelectedKey: INavProps["initialSelectedKey"] = "overview";
     selectedKey: INavProps["initialSelectedKey"];
@@ -67,7 +70,7 @@ export class CategoryNavComponent implements OnInit {
     }
 
 
-    constructor(protected _diagnosticApiService: DiagnosticService, private _route: Router, private _injector: Injector, private _activatedRoute: ActivatedRoute, private categoryService: CategoryService,
+    constructor(public siteFeatureService: SiteFeatureService, protected _diagnosticApiService: DiagnosticService, private _route: Router, private _injector: Injector, private _activatedRoute: ActivatedRoute, private categoryService: CategoryService,
         private _chatState: CategoryChatStateService, private _genericApiService: GenericApiService
         , private _featureService: FeatureService, protected _authService: AuthService, public _detectorCategorization: DetectorCategorizationService) { }
 
@@ -75,6 +78,10 @@ export class CategoryNavComponent implements OnInit {
     detectorList: CollapsibleMenuItem[] = [];
     orphanDetectorList: CollapsibleMenuItem[] = [];
     orphanDetectorList1: CollapsibleMenuItem[] = [];
+    proactiveTools: CollapsibleMenuItem[] = [];
+    dignosticTools: CollapsibleMenuItem[] = [];
+    supportTools: CollapsibleMenuItem[] = [];
+    premiumTools: CollapsibleMenuItem[] = [];
     // [
     //     {
     //       label: 'Diagnostic Report',
@@ -103,6 +110,87 @@ export class CategoryNavComponent implements OnInit {
             this.category = categories.find(category => category.id.toLowerCase() === this._activatedRoute.snapshot.params.category.toLowerCase() || category.name.replace(/\s/g, '').toLowerCase() == decodedCategoryName);
             this._chatState.category = this.category;
             this.categoryName = this.category.name;
+            this.categoryId = this.category.id;
+            this.isDiagnosticTools = this.category.id === "DiagnosticTools";
+            if (this.isDiagnosticTools)
+            {
+                this.siteFeatureService.proactiveTools.forEach((tool)=>{
+                    let routePath: any = "detectors";
+                    // if (detector.type === DetectorType.Analysis) {
+                    //     routePath = "analysis";
+                    // }
+                    // let onClick = () => {
+                    //                       this.navigateTo(`${routePath}/${detector.id}`);
+                    // };
+                    let onClick1 = tool.item.clickAction;
+                    let itemName = tool.item.name;
+
+                    let isSelected = () => {
+                        return this._route.url.includes("proactive");
+                    };
+
+                    //   let icon = `${this.imageRootPath}/${detector.name}.svg`;
+                    let imageIndex = 0;
+                    let icon = `${this.imageRootPath}/${imageIndex}.png`;
+                    let menuItem = new CollapsibleMenuItem(itemName, onClick1, isSelected, icon);
+
+                    this.proactiveTools.push(menuItem);
+                });
+
+                this.siteFeatureService.diagnosticTools.forEach((tool)=>{
+                    let routePath: any = "detectors";
+                    let onClick1 = tool.item.clickAction;
+                    let itemName = tool.item.name;
+
+                    let isSelected = () => {
+                        return this._route.url.includes("diagnostic");
+                    };
+
+                    //   let icon = `${this.imageRootPath}/${detector.name}.svg`;
+                    let imageIndex = 1;
+                    let icon = `${this.imageRootPath}/${imageIndex}.png`;
+                    let menuItem = new CollapsibleMenuItem(itemName, onClick1, isSelected, icon);
+
+                    this.dignosticTools.push(menuItem);
+                });
+
+                this.siteFeatureService.supportTools.forEach((tool)=>{
+                    let routePath: any = "detectors";
+                    let onClick1 = tool.item.clickAction;
+                    let itemName = tool.item.name;
+
+                    let isSelected = () => {
+                        return this._route.url.includes("support");
+                    };
+
+                    //   let icon = `${this.imageRootPath}/${detector.name}.svg`;
+                    let imageIndex = 2;
+                    let icon = `${this.imageRootPath}/${imageIndex}.png`;
+                    let menuItem = new CollapsibleMenuItem(itemName, onClick1, isSelected, icon);
+
+                    this.supportTools.push(menuItem);
+                });
+
+
+                this.siteFeatureService.premiumTools.forEach((tool)=>{
+                    let routePath: any = "detectors";
+                    let onClick1 = tool.item.clickAction;
+                    let itemName = tool.item.name;
+
+                    let isSelected = () => {
+                        return this._route.url.includes("premium");
+                    };
+
+                    //   let icon = `${this.imageRootPath}/${detector.name}.svg`;
+                    let imageIndex = 3;
+                    let icon = `${this.imageRootPath}/${imageIndex}.png`;
+                    let menuItem = new CollapsibleMenuItem(itemName, onClick1, isSelected, icon);
+
+                    this.premiumTools.push(menuItem);
+                });
+
+            }
+
             this.orphanDetectorList = this._detectorCategorization.detectorlistCategories[this.category.id];
 
             this._authService.getStartupInfo().subscribe(startupInfo => {

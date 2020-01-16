@@ -5,15 +5,31 @@
         <!-- <section-divider [label]="'Overview'" [initiallyExpanded]="false" [collapsible]="false"
           (click)="collapsible = !collapsible">
         </section-divider> -->
-        <section-divider [label]="'Overview'" [initiallySelected]="false" [collapsible]="false" [routePath]="'overview'"
+        <section-divider *ngIf="!isDiagnosticTools" [label]="'Overview'" [initiallySelected]="false" [collapsible]="false" [routePath]="'overview'"
           (click)="collapsible = !collapsible">
           <!-- <i class="fa fa-book fa-fw menu-icon menu-icon-documentation" aria-hidden="true"></i> -->
 
           <collapsible-menu-item *ngFor="let detector of detectorList" [menuItem]="detector" [class.selected]="isSelected"></collapsible-menu-item>
         </section-divider>
-        <section-divider *ngIf="orphanDetectorList.length>0" [label]="'Uncategorized'" [initiallySelected]="false" [collapsible]="false" [routePath]="'overview'"
+        <section-divider *ngIf="!isDiagnosticTools&&orphanDetectorList.length>0" [label]="'Uncategorized'" [initiallySelected]="false" [collapsible]="false" [routePath]="'overview'"
         (click)="collapsible = !collapsible">
-        <collapsible-menu-item *ngFor="let orphanDetector of orphanDetectorList" [menuItem]="orphanDetector" [class.selected]="isSelecte"></collapsible-menu-item>
+        <collapsible-menu-item *ngFor="let orphanDetector of orphanDetectorList" [menuItem]="orphanDetector" [class.selected]="isSelected"></collapsible-menu-item>
+      </section-divider>
+      <section-divider *ngIf="isDiagnosticTools&&proactiveTools.length>0" [label]="'Proactive Tools'" [initiallySelected]="false" [collapsible]="false" [routePath]="'overview'"
+        (click)="collapsible = !collapsible">
+        <collapsible-menu-item *ngFor="let item of proactiveTools" [menuItem]="item" [class.selected]="isSelected"></collapsible-menu-item>
+      </section-divider>
+      <section-divider *ngIf="isDiagnosticTools&&dignosticTools.length>0" [label]="'Diagnostic Tools'" [initiallySelected]="false" [collapsible]="false" [routePath]="'overview'"
+        (click)="collapsible = !collapsible">
+        <collapsible-menu-item *ngFor="let item of dignosticTools" [menuItem]="item" [class.selected]="isSelected"></collapsible-menu-item>
+      </section-divider>
+      <section-divider *ngIf="isDiagnosticTools&&supportTools.length>0" [label]="'Support Tools'" [initiallySelected]="false" [collapsible]="false" [routePath]="'overview'"
+        (click)="collapsible = !collapsible">
+        <collapsible-menu-item *ngFor="let item of supportTools" [menuItem]="item" [class.selected]="isSelected"></collapsible-menu-item>
+      </section-divider>
+      <section-divider *ngIf="isDiagnosticTools&&premiumTools.length>0" [label]="'Premium Tools'" [initiallySelected]="false" [collapsible]="false" [routePath]="'overview'"
+        (click)="collapsible = !collapsible">
+        <collapsible-menu-item *ngFor="let item of premiumTools" [menuItem]="item" [class.selected]="isSelected"></collapsible-menu-item>
       </section-divider>
       </div>
     </div>
