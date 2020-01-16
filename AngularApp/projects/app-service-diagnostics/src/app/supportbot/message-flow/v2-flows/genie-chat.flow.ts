@@ -107,7 +107,6 @@ export class GenieChatFlow extends IMessageFlowProvider {
         // For now, only showing alert in case submission
         this.resourceId = startupInfo.resourceId;
         console.log("Lauching genie chat flow with resourceId", this.resourceId);
-      //  this.autoExpand = (startupInfo.supportTopicId && startupInfo.supportTopicId != '');
       });
     //const dynamicAnalysisGroup: MessageGroup = new MessageGroup("dynamic-analysis", [], () => "feedback");
     let analysisMessages: Message[]  = [];

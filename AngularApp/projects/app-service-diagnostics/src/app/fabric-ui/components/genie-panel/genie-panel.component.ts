@@ -163,10 +163,10 @@ export class GeniePanelComponent implements OnInit, OnDestroy {
     scrollToBottom(event?: any): void {
         try {
             console.log("scrolltobottom", this.myScrollContainer.elementRef.nativeElement.childNodes[0]);
-            console.log("height", height, this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].scrollTop, this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].height);
+      //      console.log("height", height, this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].scrollTop, this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].height);
             //this.myScrollContainer.elementRef.nativeElement.childNodes[0].scrollTop = this.myScrollContainer.elementRef.nativeElement.childNodes[0].scrollHeight;
-            var height = this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].scrollHeight;
-            this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].scrollTop = height;
+            var height = this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[1].scrollHeight;
+            this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[1].scrollTop = height;
             //   this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].scrollTop +=  this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].height;
 
 
@@ -178,7 +178,7 @@ export class GeniePanelComponent implements OnInit, OnDestroy {
 
             //        console.log("3. scrolltop after scrollTop", this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].scrollTop, this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].scrollHeight);
         } catch (err) {
-            //   console.log("status scrollToBottom", err);
+               console.log("status scrollToBottom", err);
         }
     }
 
