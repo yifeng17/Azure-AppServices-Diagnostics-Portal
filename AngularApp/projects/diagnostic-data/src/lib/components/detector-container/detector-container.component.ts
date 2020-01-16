@@ -27,6 +27,7 @@ export class DetectorContainerComponent implements OnInit {
 
   @Input() analysisMode:boolean = false;
   @Input() isAnalysisView:boolean = false;
+  isCategoryOverview:boolean = false;
 
   constructor(private _route: ActivatedRoute, private _diagnosticService: DiagnosticService,
     public detectorControlService: DetectorControlService) { }
@@ -45,6 +46,11 @@ export class DetectorContainerComponent implements OnInit {
         this.refresh();
       }
     });
+
+    const component:any = this._route.component; 
+    if (component && component.name) {
+      this.isCategoryOverview = component.name === "CategoryOverviewComponent";
+    }
   }
 
   refresh() {

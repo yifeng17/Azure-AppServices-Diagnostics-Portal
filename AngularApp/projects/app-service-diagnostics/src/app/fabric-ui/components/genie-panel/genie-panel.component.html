@@ -32,7 +32,6 @@
         </div> -->
 
           <div #scrollMe2 id="scrollme1" [style.height.px]="chatContainerHeight"
-           *ngIf="messages && messages.length > 0"
             style="overflow-y: auto; display: inline-block; height: 78vh;"
             class="ms-Panel-scrollableContent scroll-bottom">
             <div class="row animated fadeIn chat-message-container" *ngFor="let item of messages"

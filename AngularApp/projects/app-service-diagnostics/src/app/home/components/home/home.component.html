@@ -1,26 +1,16 @@
 <div class="main-area">
-    <div class="home-content">
-        <h2 tabindex="0" class="home-title">{{homePageText.title}}</h2>
-        <p  tabindex="0" class="home-description">{{homePageText.description}}</p>
-        <p class="home-description">If you would like to look at the health check then <a (click)="_globals.openGeniePanel=true">click here.</a>You can also ask chatbot <a>Genie</a> any questions you may have</p>
-    </div>
-    <div class="home-container">
-      <div style="margin:25px 0px;" (keyup.escape)="clearSearch()" role="search">
-        <div class="search-box">
+  <div class="home-content">
+    <h2 tabindex="0" class="home-title">{{homePageText.title}}</h2>
+    <p tabindex="0" class="home-description">{{homePageText.description}}</p>
+    <p class="home-description">If you would like to look at the health check then <a (click)="openAvaAndPerf()">click here.</a>You can also ask
+      chatbot <a (click)="openGeniePanel()">Genie</a> any questions you may have</p>
+  </div>
+  <div class="home-container">
+    <!-- <div style="margin:25px 0px;" (keyup.escape)="clearSearch()" role="search">
+      <div class="search-box">
         <fab-search-box tabindex="0" type="search" placeholder="Search" [value]="searchValue"
-          (onChange)="updateSearchValue($event)" (onFocus)="onSearchBoxFocus($event)" (onBlur)="clearSearch()" iconProps="iconProps"
+          (onChange)="updateSearchValue($event)" (onFocus)="onSearchBoxFocus($event)" iconProps="iconProps"
           aria-controls="search-results"></fab-search-box>
-        </div>
-        <div role="status">
-          <p style="margin-top: 7px;" *ngIf="inputAriaLabel">{{inputAriaLabel}}</p>
-        </div>
-        <div id="search-results" role="region" aria-live="polite">
-          <ng-container *ngIf="searchBoxFocus">
-            <search-results [searchValue]="searchValue" (resultCount)="onResultCount($event)"
-              (keyup.escape)="clearSearch()">
-            </search-results>
-          </ng-container>
-        </div>
       </div>
       <div role="status">
         <p style="margin-top: 7px;" *ngIf="inputAriaLabel">{{inputAriaLabel}}</p>
@@ -32,13 +22,18 @@
           </search-results>
         </ng-container>
       </div>
-    </div>
-    <div *ngIf="categories" class="category-container">
-      <div *ngFor="let category of categories" style="display: inline-block;padding: 20px 40px 20px 0px" class="col-md-4">
-        <category-tile [category]="category"></category-tile>
-      </div>
-    </div>
-    <div class="privacy-statement" tabindex="0">
-      <a href="https://azure.microsoft.com/en-us/support/legal/?amp%3Bclcid=0x9" target="_blank">Privacy</a>
+    </div> -->
+    <div style="margin:25px 0px;">
+      <fabric-search-results></fabric-search-results>
     </div>
   </div>
+  <div *ngIf="categories" class="category-container">
+    <div *ngFor="let category of categories" style="display: inline-block;padding: 20px 40px 20px 0px" class="col-md-4">
+      <category-tile [category]="category"></category-tile>
+    </div>
+  </div>
+  <div class="privacy-statement" tabindex="0">
+    <a href="https://azure.microsoft.com/en-us/support/legal/?amp%3Bclcid=0x9" target="_blank">Privacy</a>
+  </div>
+  <genie-panel></genie-panel>
+</div>

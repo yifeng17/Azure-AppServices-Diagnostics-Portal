@@ -5,6 +5,8 @@ import { FeatureNavigationService } from '../../services/feature-navigation.serv
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
+import { FeatureService } from 'projects/app-service-diagnostics/src/app/shared-v2/services/feature.service';
+import { AuthService } from 'projects/app-service-diagnostics/src/app/startup/services/auth.service';
 
 export interface SummaryCard {
   title: string,
@@ -31,9 +33,12 @@ export class SummaryCardsComponent extends DataRenderBaseComponent {
   SummaryStatus = HealthStatus;
   isPublic: boolean;
   clickable:boolean[];
-  constructor(protected _telemetryService: TelemetryService, private _activatedRoute: ActivatedRoute, private _router: Router, @Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig, private _navigator: FeatureNavigationService) {
+  private resourceId:string;
+  constructor(protected _telemetryService: TelemetryService, private _activatedRoute: ActivatedRoute, private _router: Router, @Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig, private _navigator: FeatureNavigationService,private _featureService:FeatureService,private _authService:AuthService) {
     super(_telemetryService);
     this.isPublic = config && config.isPublic;
+    this._authService.getStartupInfo().subscribe(startupInfo => this.resourceId = startupInfo.resourceId);
+    console.log("summary card",this._featureService);
   }
 
   protected processData(data: DiagnosticData) {
@@ -78,7 +83,7 @@ export class SummaryCardsComponent extends DataRenderBaseComponent {
   onClickCard(card: SummaryCard): void {
     switch (card.actionType) {
       case ActionType.Detector:
-        this.navigateToDetector(card);
+        this.navigate(card);
         break;
       case ActionType.None:
         break;
@@ -87,13 +92,14 @@ export class SummaryCardsComponent extends DataRenderBaseComponent {
     }
   }
 
-  navigateToDetector(card: SummaryCard): void {
+  navigate(card: SummaryCard): void {
     if (this.isPublic) {
-      //In Category OverView Page of external UI
-      this._router.navigate([`../../../detectors/${card.link}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge' });
+      const category = this._featureService.getCategoryIdByhDetectorId(card.link);
+      console.log("summary card link",category);
+      this._router.navigateByUrl(`resource${this.resourceId}/categories/${category}/detectors/${card.link}`);
+      
     } else {
       this._navigator.NavigateToDetector(this._activatedRoute.snapshot.params['detector'], card.link);
     }
   }
-
 }

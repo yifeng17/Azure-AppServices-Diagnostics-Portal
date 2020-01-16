@@ -1,8 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { PanelType } from 'office-ui-fabric-react';
 import { TelemetryService, TelemetryEventNames } from 'diagnostic-data';
- import { Globals } from '../../../globals';
-// import { Globals } from 'dist/diagnostic-data/lib/services/genie.service';
+import { Globals } from '../../../globals';
 import { Subject } from 'rxjs';
 
 @Component({
@@ -11,7 +10,6 @@ import { Subject } from 'rxjs';
   styleUrls: ['./fabric-feedback.component.scss']
 })
 export class FabricFeedbackComponent {
-  @Input() ratingEventProperties: any;
   type: PanelType = PanelType.custom;
   dismissSubject: Subject<void> = new Subject<void>();
 

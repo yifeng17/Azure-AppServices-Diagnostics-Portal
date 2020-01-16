@@ -44,8 +44,8 @@ import { HighchartsChartModule } from 'highcharts-angular';
 import { AngularReactBrowserModule } from '@angular-react/core';
 import { Globals } from './globals';
 // import { FabNavModule } from 'diagnostic-data';
-import { FabricFeedbackComponent } from './fabric-ui/components/fabric-feedback/fabric-feedback.component';
-import { FabricFeedbackContainerComponent } from './fabric-ui/components/fabric-feedback-container/fabric-feedback-container.component';
+// import { FabricFeedbackComponent } from './fabric-ui/components/fabric-feedback/fabric-feedback.component';
+// import { FabricFeedbackContainerComponent } from './fabric-ui/components/fabric-feedback-container/fabric-feedback-container.component';
 import { CategoryService } from './shared-v2/services/category.service';
 import { FeatureService } from './shared-v2/services/feature.service';
 import { LoggingV2Service } from './shared-v2/services/logging-v2.service';
@@ -174,8 +174,8 @@ import { WebSitesModule } from './resources/web-sites/web-sites.module';
   ],
   declarations: [
     AppComponent,
-    FabricFeedbackComponent,
-    FabricFeedbackContainerComponent
+    // FabricFeedbackComponent,
+    // FabricFeedbackContainerComponent
   ],
 //   exports: [
 //     FabricFeedbackComponent,

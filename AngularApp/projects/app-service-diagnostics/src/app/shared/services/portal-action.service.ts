@@ -8,6 +8,7 @@ import { PortalService } from '../../startup/services/portal.service';
 import { ArmService } from './arm.service';
 import { AuthService } from '../../startup/services/auth.service';
 import { mergeMap, filter } from 'rxjs/operators';
+import { DetectorType } from 'diagnostic-data';
 
 @Injectable()
 export class PortalActionService {
@@ -38,6 +39,32 @@ export class PortalActionService {
                 optionalParameters: [{
                     key: "categoryId",
                     value: category
+                }]
+            }
+        };
+
+        this._portalService.openBlade(bladeInfo, 'troubleshoot');
+    }
+
+    public openBladeDiagnoseDetectorId(category: string, detector: string, type: DetectorType = DetectorType.Detector) {
+        const bladeInfo = {
+            title: category,
+            detailBlade: 'SCIFrameBlade',
+            extension: 'WebsitesExtension',
+            detailBladeInputs: {
+                id: this.currentSite.id,
+                categoryId: category,
+                optionalParameters: [{
+                    key: "categoryId",
+                    value: category
+                },
+                {
+                    key: "detectorId",
+                    value: detector
+                },
+                {
+                    key: "detectorType",
+                    value: type
                 }]
             }
         };

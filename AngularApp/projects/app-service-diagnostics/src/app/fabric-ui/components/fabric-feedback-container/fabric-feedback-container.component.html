@@ -1,8 +1,15 @@
-<!-- <div>
+<div>
   <div [ngStyle]="{'display':submitted === false ? 'block': 'none'}">
     <h3>Send us feedback</h3>
     <p>Thank you for taking the time to give us feedback.</p>
-
+    <!-- <div class="feedback-info">
+      <div style="vertical-align: middle;">
+        <span class="feedback-info-icon">
+          <fab-icon iconName="InfoSolid"></fab-icon>
+        </span>
+        <span>If you need help,please contact support</span>
+      </div>
+    </div> -->
 
     <div style="display:inline-flex">
       <svg class="svg-icon" viewBox="0 0 6 6" role="presentation" focusable="false"
@@ -24,7 +31,7 @@
     <textarea [(ngModel)]="feedbackText" placeholder="Tell us about your experience..." tabindex="0" rows="7"
       cols="40"></textarea>
     <div class="feedback-submit">
-      <fab-primary-button (onClick)="submitFeedback()">Submit feddback</fab-primary-button>
+      <fab-primary-button (onClick)="submitFeedback()" [disabled]="rating == 0">Submit feddback</fab-primary-button>
     </div>
   </div>
 
@@ -32,7 +39,7 @@
     <p>Thank you for your feedback</p>
     <div *ngIf="rating >= 3">
       <p>Share your experience with App Service Diagnostic !</p>
-      <button>Tweet</button>
+      <!-- <button>Tweet</button> -->
     </div>
 
     <div *ngIf="rating < 3">
@@ -40,4 +47,4 @@
       <div (click)="openGenieHandler()" class="feedback-btn">Ask Genie</div>
     </div>
   </div>
-</div> -->
+</div>

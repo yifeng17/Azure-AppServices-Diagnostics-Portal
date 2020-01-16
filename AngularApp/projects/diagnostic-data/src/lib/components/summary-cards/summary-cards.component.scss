@@ -4,7 +4,8 @@
     box-sizing: border-box;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 2px;
-    max-width: 168px;
+    //width can be percent to responsive 
+    max-width: 250px;
     // height: 90px;
     flex: 1;
     margin: 8px 16px 8px 0px;

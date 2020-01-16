@@ -27,11 +27,13 @@ import { SupportTopicService } from '../shared-v2/services/support-topic.service
 import { MarkdownModule } from 'ngx-markdown';
 import { PortalReferrerResolverComponent } from '../shared/components/portal-referrer-resolver/portal-referrer-resolver.component';
 import { SearchPipe, SearchMatchPipe } from './components/pipes/search.pipe';
+
 import { CategoryNavComponent } from './components/category-nav/category-nav.component';
 import { CategoryMenuItemComponent } from './components/category-menu-item/category-menu-item.component';
 import { SectionDividerComponent } from './components/section-divider/section-divider.component';
-// import { FabricFeedbackComponent } from '../fabric-ui/components/fabric-feedback/fabric-feedback.component';
-// import { FabricFeedbackContainerComponent } from '../fabric-ui/components/fabric-feedback-container/fabric-feedback-container.component';
+import { FabricSearchResultsComponent } from '../fabric-ui/components/fabric-search-results/fabric-search-results.component';
+import { FabricFeedbackComponent } from '../fabric-ui/components/fabric-feedback/fabric-feedback.component';
+import { FabricFeedbackContainerComponent } from '../fabric-ui/components/fabric-feedback-container/fabric-feedback-container.component';
 import {
     FabSearchBoxModule,
     // FabShimmerModule,
@@ -48,6 +50,7 @@ import {
 } from '@angular-react/fabric';
 import { UncategorizedDetectorsResolver } from './resolvers/uncategorized-detectors.resolver';
 import { DetectorCategorizationService } from '../shared/services/detector-categorized.service';
+
 export const HomeRoutes = RouterModule.forChild([
     {
         path: '',
@@ -62,7 +65,7 @@ export const HomeRoutes = RouterModule.forChild([
         path: 'categories/:category',
         component: CategorySummaryComponent,
         data: {
-            cacheComponent: true
+          cacheComponent: true
         },
         children: [
             {
@@ -335,6 +338,7 @@ export const HomeRoutes = RouterModule.forChild([
         FabSearchBoxModule
     ],
     declarations: [HomeComponent, CategoryChatComponent, CategoryTileComponent, SearchResultsComponent, SupportTopicRedirectComponent, DiagnosticsSettingsComponent],
+    // ,FabricFeedbackComponent,FabricFeedbackContainerComponent
     providers: [CategoryTabResolver, CategoryChatResolver, TimeControlResolver, UncategorizedDetectorsResolver, DetectorCategorizationService,
         { provide: GenericSupportTopicService, useExisting: SupportTopicService }
     ],
