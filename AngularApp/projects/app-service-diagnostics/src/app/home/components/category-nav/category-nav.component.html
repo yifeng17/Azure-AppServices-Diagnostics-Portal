@@ -11,10 +11,6 @@
 
           <collapsible-menu-item *ngFor="let detector of detectorList" [menuItem]="detector" [class.selected]="isSelected"></collapsible-menu-item>
         </section-divider>
-        <section-divider *ngIf="!isDiagnosticTools&&orphanDetectorList.length>0" [label]="'Uncategorized'" [initiallySelected]="false" [collapsible]="false" [routePath]="'overview'"
-        (click)="collapsible = !collapsible">
-        <collapsible-menu-item *ngFor="let orphanDetector of orphanDetectorList" [menuItem]="orphanDetector" [class.selected]="isSelected"></collapsible-menu-item>
-      </section-divider>
       <section-divider *ngIf="isDiagnosticTools&&proactiveTools.length>0" [label]="'Proactive Tools'" [initiallySelected]="false" [collapsible]="false" [routePath]="'overview'"
         (click)="collapsible = !collapsible">
         <collapsible-menu-item *ngFor="let item of proactiveTools" [menuItem]="item" [class.selected]="isSelected"></collapsible-menu-item>
@@ -30,6 +26,10 @@
       <section-divider *ngIf="isDiagnosticTools&&premiumTools.length>0" [label]="'Premium Tools'" [initiallySelected]="false" [collapsible]="false" [routePath]="'overview'"
         (click)="collapsible = !collapsible">
         <collapsible-menu-item *ngFor="let item of premiumTools" [menuItem]="item" [class.selected]="isSelected"></collapsible-menu-item>
+      </section-divider>
+      <section-divider *ngIf="orphanDetectorList.length>0" [label]="'Uncategorized'" [initiallySelected]="false" [collapsible]="false" [routePath]="'overview'"
+        (click)="collapsible = !collapsible">
+        <collapsible-menu-item *ngFor="let orphanDetector of orphanDetectorList" [menuItem]="orphanDetector" [class.selected]="isSelected"></collapsible-menu-item>
       </section-divider>
       </div>
     </div>

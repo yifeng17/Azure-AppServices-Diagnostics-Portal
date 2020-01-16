@@ -1,8 +1,8 @@
 <div role="search" class="search-result-container">
   <div class="search-box">
     <fab-search-box id="fabSearchBox" tabindex="0" type="search" placeholder="Search" [value]="searchValue"
-      (onChange)="updateSearchValue($event)" (onFocus)="onSearchBoxFocus()" (onBlur)="onBlurHandler()" 
-      (onEscape)="clearSearchWithKey()" 
+      (onChange)="updateSearchValue($event)" (onFocus)="onSearchBoxFocus()" (onBlur)="onBlurHandler()"
+      (onEscape)="clearSearchWithKey()"
       aria-controls="search-results">
     </fab-search-box>
   </div>
@@ -25,7 +25,7 @@
     </div>
     <div *ngIf="inputAriaLabel != ''">
       <hr>
-      <div class="result-count">
+      <div class="result-count" style="padding-bottom: 8px;">
         {{inputAriaLabel}}
         <span *ngIf="features.length === 0" tabindex="0" (mousedown)="openGeniePanel()">Ask chatbot <a>Genie</a></span>
       </div>

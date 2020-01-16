@@ -40,6 +40,7 @@ export class GeniePanelComponent implements OnInit, OnDestroy {
     // @Output() openPanelChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
     // Genie panel
+    searchValue: string="";
     type: PanelType = PanelType.custom;
     messages: Message[] = [];
     showTypingMessage: boolean;
@@ -186,6 +187,7 @@ export class GeniePanelComponent implements OnInit, OnDestroy {
         });
         this._messageProcessor.setCurrentKey(analysisMessageGroupId);
         this.getMessage();
+        this.searchValue="";
         //  this.scrollToBottom();
         //setTimeout(() => this.scrollToBottom(), 500);
 

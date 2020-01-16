@@ -179,6 +179,7 @@
 <!-- <fab-message-bar *ngIf="openMessageBar" [messageBarType]="messageBarType" [isMultiline]="false" (onDismiss)="openMessageBar=!openMessageBar">
   You can always click "Ask Genie" to get back chat window.
 </fab-message-bar> -->
+<div class="timepicker">
 <fab-callout [hidden]="!showChoices" [directionalHint]="'5'" [gapSpace]="'30'" [styles]="calloutStyles">
   <!-- <div>Time range</div>
   [selectedKey]="selectedItem && selectedItem.key" -->
@@ -205,6 +206,7 @@
     <fab-default-button text="Cancel" (onClick)="cancelTimeRange()"></fab-default-button>
   </div>
 </fab-callout>
+</div>
 <fab-choice-group *ngIf="showCalendar" style="position: absolute;
 top: 20px;
 right: 0px ;
