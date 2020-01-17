@@ -39,6 +39,7 @@ export class Globals {
   }
   private _openGeniePanel:boolean = false;
   openFeedback: boolean = false;
+  openTimePicker: boolean = false;
   private localStorageKey: string = "genieChat";
 
   constructor(private activatedRoute: ActivatedRoute){

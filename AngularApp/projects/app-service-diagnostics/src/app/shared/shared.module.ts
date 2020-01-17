@@ -147,6 +147,8 @@ import { FabricFeedbackContainerComponent } from '../fabric-ui/components/fabric
 import { FabricSearchResultsComponent } from '../fabric-ui/components/fabric-search-results/fabric-search-results.component';
 import { CategoryMenuItemComponent } from '../home/components/category-menu-item/category-menu-item.component';
 import { SearchPipe, SearchMatchPipe } from '../home/components/pipes/search.pipe';
+import { DetectorTimePickerComponent } from '../fabric-ui/components/detector-time-picker/detector-time-picker.component';
+
 
 @NgModule({
     declarations: [
@@ -223,6 +225,7 @@ import { SearchPipe, SearchMatchPipe } from '../home/components/pipes/search.pip
         FabricFeedbackContainerComponent,
         SectionDividerComponent,
         CategoryMenuItemComponent,
+        DetectorTimePickerComponent,
         SearchPipe,
         SearchMatchPipe
     ],

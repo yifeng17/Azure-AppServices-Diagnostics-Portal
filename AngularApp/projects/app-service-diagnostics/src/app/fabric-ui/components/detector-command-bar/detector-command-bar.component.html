@@ -162,7 +162,7 @@
       </render>
     </fab-command-bar-item> -->
     <!-- <fab-command-bar-item key="help" text="Help" [iconProps]="{ iconName: 'Help' }"></fab-command-bar-item> -->
-    <fab-command-bar-item key="timepicker" [text]="time" [iconProps]="{ iconName: 'ChevronDown' }" (click)="showChoices =!showChoices">
+    <fab-command-bar-item key="timepicker" [text]="time" [iconProps]="{ iconName: 'ChevronDown' }" (click)="toggleOpenTimePicker()">
       <!-- <render>
         <ng-template>
           <fab-default-button text="time" [iconProps]="{ iconName: 'Clock' }" (onClick)="showChoices =!showChoices">
@@ -179,66 +179,7 @@
 <!-- <fab-message-bar *ngIf="openMessageBar" [messageBarType]="messageBarType" [isMultiline]="false" (onDismiss)="openMessageBar=!openMessageBar">
   You can always click "Ask Genie" to get back chat window.
 </fab-message-bar> -->
-<div class="timepicker">
-<fab-callout [hidden]="!showChoices" [directionalHint]="'5'" [gapSpace]="'30'" [styles]="calloutStyles">
-  <!-- <div>Time range</div>
-  [selectedKey]="selectedItem && selectedItem.key" -->
-  <fab-choice-group [options]="choiceGroupOptions" [defaultSelectedKey]="'Last24Hours'">
-  </fab-choice-group>
-  <div *ngIf="showTimerPicker" class="row">
-    <div style="padding:15px">Start Time </div>
-    <fab-date-picker class="col-md-8" [strings]="dates" [minDate]="minDate" [maxDate]="maxDate" placeholder="Select a date..."
-      ariaLabel="Select start date" allowTextInput="true" showMonthPickerAsOverlay="true" (onSelectDate)="onSelectStartDateHandler($event)">
-    </fab-date-picker>
-    <fab-masked-text-field class="col-md-4" maxLength="6" [(value)]="startClock" [iconProps]="{iconName: 'Clock'}" [mask]="'99:99'"
-      [maskChar]="'-'" [validateOnFocusOut]="true" [getErrorMessage]="getErrorMessageOnTextField"></fab-masked-text-field>
-
-    <div style="padding:15px; margin-top:30px">End Time </div>
-    <fab-date-picker class="col-md-8" [strings]="dates" [minDate]="minDate" [maxDate]="maxDate" placeholder="Select a date..."
-      ariaLabel="Select end date" allowTextInput="true" showMonthPickerAsOverlay="true" (onSelectDate)="onSelectEndDateHandler($event)">
-    </fab-date-picker>
-    <fab-masked-text-field class="col-md-4" maxLength="6" [(value)]="endClock" [iconProps]="{iconName: 'Clock'}" [mask]="'99:99'"
-      [maskChar]="'-'" [validateOnFocusOut]="true" [getErrorMessage]="getErrorMessageOnTextField"></fab-masked-text-field>
-  </div>
-  <div *ngIf="timeDiffError != '' && isCustom" style="color:red;">{{timeDiffError}}</div>
-  <div style="padding:15px 0px">
-    <fab-primary-button contentStyle="margin-right:10px" text="Apply" (onClick)="applyTimeRange()"></fab-primary-button>
-    <fab-default-button text="Cancel" (onClick)="cancelTimeRange()"></fab-default-button>
-  </div>
-</fab-callout>
-</div>
-<fab-choice-group *ngIf="showCalendar" style="position: absolute;
-top: 20px;
-right: 0px ;
-background: #FFFFFF;
-padding: 8px;
-color: #323130;
-font-size: 14px;" label="Label" [options]="options" (onChange)="setCategoryIndex($event)" defaultSelectedKey="0">
-</fab-choice-group>
-
-<fab-calendar *ngIf="showCalendar" (onSelectDate)="onSelectDate($event)" style="position: absolute;
-top: 20px;
-right: 0px ;
-background: #FFFFFF;
-padding: 8px;
-color: #323130;
-font-size: 14px;">
-  <fab-calendar-strings [months]="[
-'January',
-'Fabruary',
-'March',
-'April',
-'May',
-'June',
-'July',
-'August',
-'September',
-'October',
-'November',
-'December'
-]" [shortMonths]="['Jan', 'Fab', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']" [days]="['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']"
-    [shortDays]="['S', 'M', 'T', 'W', 'T', 'F', 'S']" goToToday="Go to last 24h" weekNumberFormatString="Week number {0}"></fab-calendar-strings>
-</fab-calendar>
+<detector-time-picker [showChoices]="showChoices" (updateTimerMessage)="updateMessage($event)"></detector-time-picker>
 <fabric-feedback></fabric-feedback>
 <!-- <div style="padding-left: 10px;height:0px;overflow-y: hidden" [@expand]="showFeedback ? 'shown' : 'hidden'">
   <feedback *ngIf="showFeedback" [showFeedbackForm]="true" (showFeedbackFormChange)=feedbackFormChange($event) [ratingEventProperties]="ratingEventProperties"></feedback>
