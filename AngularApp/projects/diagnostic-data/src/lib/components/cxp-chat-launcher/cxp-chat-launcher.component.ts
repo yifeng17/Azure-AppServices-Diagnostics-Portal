@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, Renderer2 } from '@angular/core';
+import { Component, OnInit, Input} from '@angular/core';
 import { CXPChatService } from '../../services/cxp-chat.service';
 
 @Component({
@@ -14,10 +14,7 @@ export class CxpChatLauncherComponent implements OnInit {
   public showChatConfDialog: boolean = false;
   public firstTimeCheck: boolean = true;
 
-  @ViewChild('chatComponentContainer') chatComponentContainer;
-  
-
-  constructor(private _cxpChatService: CXPChatService, private renderer: Renderer2) {
+  constructor(private _cxpChatService: CXPChatService) {
   }
 
   
@@ -29,19 +26,6 @@ export class CxpChatLauncherComponent implements OnInit {
         this._cxpChatService.logUserActionOnChat('ChatConfDialogShownBySystem', this.trackingId, this.chatUrl);
       }      
     }, 10000);
-    this.renderer.listen('window', 'click', (e: Event) => {
-      /**
-       * Only run when the current chat component is not clicked
-       * If we don't check this, all clicks (even on the chat component div) gets into this section.
-       * As a  result we will never see the confirmation box open       
-       */
-
-      if (!this.chatComponentContainer.nativeElement.contains(e.target)) {
-        if(this.showChatConfDialog) {
-          this.hideChatConfDialog(true, 'ClickOutsideComponent');
-        }
-      }
-    });
   }
 
   public isComponentInitialized(): boolean {
@@ -84,12 +68,8 @@ export class CxpChatLauncherComponent implements OnInit {
     if (this.chatUrl != '') {
       const windowFeatures: string = 'menubar=no,location=no,resizable=no,scrollbars=no,status=no,height=550,width=450';
       window.open(this.chatUrl, '_blank', windowFeatures, false);
-
       this._cxpChatService.logUserActionOnChat('ChatUrlOpened', this.trackingId, this.chatUrl);
-
       this.hideChatConfDialog(false,'AutohideAfterChatLaunch');
     }
   }
-
-
 }
