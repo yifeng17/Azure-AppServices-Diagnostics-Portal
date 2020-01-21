@@ -152,7 +152,6 @@ export class DashboardComponent implements OnDestroy {
     if (this.keys.indexOf('VnetName') == -1)
     {
       this._observerService.getSiteRequestDetails(this.resource.SiteName, this.resource.StampName).subscribe(siteInfo => {
-        console.log('siteInfo: sitename = ' + siteInfo.siteName);
         this.resource['VnetName'] = siteInfo.details.vnetname;
         this.keys.push('VnetName');
 
