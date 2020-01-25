@@ -43,6 +43,7 @@ export interface ResourceServiceInputs {
     pesId: string;
     staticSelfHelpContent: string;
     altIcons?: { [path: string]: string };
+    searchSuffix: string;
 }
 
 export const RESOURCE_SERVICE_INPUTS = new InjectionToken<ResourceServiceInputs>('ResourceServiceInputs');
@@ -56,5 +57,6 @@ export const DEFAULT_RESOURCE_SERVICE_INPUTS: ResourceServiceInputs = {
     armResource: null,
     azureCommImpactedServicesList: '',
     pesId: '',
-    staticSelfHelpContent: ''
+    staticSelfHelpContent: '',
+    searchSuffix: 'AZURE'
 };
