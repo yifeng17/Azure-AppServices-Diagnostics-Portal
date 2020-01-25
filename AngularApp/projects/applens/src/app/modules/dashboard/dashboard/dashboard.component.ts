@@ -109,6 +109,10 @@ export class DashboardComponent implements OnDestroy {
             this._diagnosticApiService.GeomasterServiceAddress = this.resource["GeomasterServiceAddress"];
             this._diagnosticApiService.Location = this.resource["WebSpace"];
             this.observerLink = "https://wawsobserver.azurewebsites.windows.net/sites/"+ this.resource.SiteName;
+
+            if (resource['IsXenon']) {
+                this.resourceService.imgSrc = this.resourceService.altIcons['Xenon'];
+            }
         }
 
         this.keys = Object.keys(this.resource);
@@ -183,4 +187,3 @@ export class FormatResourceNamePipe implements PipeTransform {
         return displayedResourceName;
     }
 }
-
