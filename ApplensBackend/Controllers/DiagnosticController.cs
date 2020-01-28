@@ -172,7 +172,7 @@ namespace AppLensV3.Controllers
             var authorization = Request.Headers["Authorization"].ToString();
             string userId = string.Empty;
 
-            if (string.IsNullOrWhiteSpace(authorization))
+            if (!string.IsNullOrWhiteSpace(authorization))
             {
                 string accessToken = authorization.Split(" ")[1];
                 var token = new JwtSecurityToken(accessToken);
