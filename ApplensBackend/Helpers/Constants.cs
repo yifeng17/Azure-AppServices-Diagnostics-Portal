@@ -60,6 +60,7 @@ namespace AppLensV3.Helpers
         public const string PathQueryHeader = "x-ms-path-query";
         public const string MethodHeader = "x-ms-method";
         public const string EmailRecipientsHeader = "x-ms-emailRecipients";
+        public const string ModifiedByHeader = "x-ms-modifiedBy";
         public const string InternalClientHeader = "x-ms-internal-client";
         public const string InternalViewHeader = "x-ms-internal-view";
         public const string ScriptEtagHeader = "diag-script-etag";
