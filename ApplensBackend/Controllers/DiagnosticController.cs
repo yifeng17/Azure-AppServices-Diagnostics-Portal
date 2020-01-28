@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -168,11 +169,25 @@ namespace AppLensV3.Controllers
 
         private InvokeHeaders ProcessInvokeHeaders()
         {
+            var authorization = Request.Headers["Authorization"].ToString();
+            string userId = string.Empty;
+
+            if (string.IsNullOrWhiteSpace(authorization))
+            {
+                string accessToken = authorization.Split(" ")[1];
+                var token = new JwtSecurityToken(accessToken);
+                object upn;
+                if (token.Payload.TryGetValue("upn", out upn))
+                {
+                    userId = upn.ToString().Replace("@microsoft.com", string.Empty);
+                }
+            }
+
             var path = GetHeaderOrDefault(Request.Headers, PathQueryHeader);
             var method = GetHeaderOrDefault(Request.Headers, MethodHeader, HttpMethod.Get.Method);
             var rawDetectorAuthors = GetHeaderOrDefault(Request.Headers, EmailRecipientsHeader);
             var detectorAuthors = rawDetectorAuthors.Split(new char[] { ' ', ',', ';', ':' }, StringSplitOptions.RemoveEmptyEntries);
-            var modifiedBy = GetHeaderOrDefault(Request.Headers, ModifiedByHeader);
+            var modifiedBy = GetHeaderOrDefault(Request.Headers, ModifiedByHeader, userId);
             bool.TryParse(GetHeaderOrDefault(Request.Headers, InternalClientHeader, true.ToString()), out var internalClient);
             bool.TryParse(GetHeaderOrDefault(Request.Headers, InternalViewHeader, true.ToString()), out var internalView);
 
