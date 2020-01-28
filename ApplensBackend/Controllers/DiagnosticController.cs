@@ -39,6 +39,7 @@ namespace AppLensV3.Controllers
             public string Path { get; set; }
             public string Method { get; set; }
             public IEnumerable<string> DetectorAuthors { get; set; }
+            public string ModifiedBy { get; set; }
             public bool InternalClient { get; set; }
             public bool InternalView { get; set; }
         }
@@ -144,7 +145,7 @@ namespace AppLensV3.Controllers
 
             if (invokeHeaders.Path.EndsWith("/diagnostics/publish", StringComparison.OrdinalIgnoreCase) && detectorAuthorEmails.Count > 0 && Env.IsProduction())
             {
-                EmailNotificationService.SendPublishingAlert(invokeHeaders.DetectorAuthors.Last(), detectorId, applensLink, detectorAuthorEmails);
+                EmailNotificationService.SendPublishingAlert(invokeHeaders.ModifiedBy, detectorId, applensLink, detectorAuthorEmails);
             }
 
             return Ok(JsonConvert.DeserializeObject(await responseTask));
@@ -171,7 +172,7 @@ namespace AppLensV3.Controllers
             var method = GetHeaderOrDefault(Request.Headers, MethodHeader, HttpMethod.Get.Method);
             var rawDetectorAuthors = GetHeaderOrDefault(Request.Headers, EmailRecipientsHeader);
             var detectorAuthors = rawDetectorAuthors.Split(new char[] { ' ', ',', ';', ':' }, StringSplitOptions.RemoveEmptyEntries);
-
+            var modifiedBy = GetHeaderOrDefault(Request.Headers, ModifiedByHeader);
             bool.TryParse(GetHeaderOrDefault(Request.Headers, InternalClientHeader, true.ToString()), out var internalClient);
             bool.TryParse(GetHeaderOrDefault(Request.Headers, InternalViewHeader, true.ToString()), out var internalView);
 
@@ -181,7 +182,8 @@ namespace AppLensV3.Controllers
                 Method = method,
                 DetectorAuthors = detectorAuthors,
                 InternalClient = internalClient,
-                InternalView = internalView
+                InternalView = internalView,
+                ModifiedBy = modifiedBy
             };
         }
     }

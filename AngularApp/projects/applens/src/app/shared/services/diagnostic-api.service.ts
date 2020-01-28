@@ -1,6 +1,6 @@
 import { AdalService } from 'adal-angular4';
 import { DetectorMetaData, DetectorResponse, QueryResponse } from 'diagnostic-data';
-import {map, retry} from 'rxjs/operators';
+import { map, retry } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -134,17 +134,14 @@ export class DiagnosticApiService {
       path += "&detectorUtterances=" + additionalParams.detectorUtterances;
     }
 
-    return this.invoke<QueryResponse<DetectorResponse>>(path, HttpMethod.POST, body, false, undefined, undefined, undefined,
-      undefined, additionalParams);
+    return this._getCompilerResponseInternal(path, body, additionalParams);
   }
 
   public getSystemCompilerResponse(resourceId: string, body: any, detectorId: string = '', dataSource: string = '',
     timeRange: string = '', additionalParams?: any): Observable<QueryResponse<DetectorResponse>> {
     let invokerParameters = this._getSystemInvokerParameters(dataSource, timeRange);
     let path = `/${resourceId}/detectors/${detectorId}/statisticsQuery?${invokerParameters}`;
-
-    return this.invoke<QueryResponse<DetectorResponse>>(path, HttpMethod.POST, body, false, undefined, undefined, undefined,
-      undefined, additionalParams);
+    return this._getCompilerResponseInternal(path, body, additionalParams);
   }
 
   public getLocalDevelopmentResponse(detectorId: string, version: string, resourceId: string, body: any,
@@ -161,8 +158,12 @@ export class DiagnosticApiService {
 
   public publishPackage(resourceId: string, emailRecipients: string, packageToPublish: Package): Observable<any> {
     let path = `${resourceId}/diagnostics/publish`;
-
-    return this.invoke<any>(path, HttpMethod.POST, packageToPublish, false, true, true, true, emailRecipients);
+    var modifiedByAlias = this._adalService.userInfo.profile ? this._adalService.userInfo.profile.upn : 'user';
+    modifiedByAlias = modifiedByAlias.replace('@microsoft.com', '');
+    let additionalHeaders = new Map<string, string>();
+    additionalHeaders.set('x-ms-modifiedBy', modifiedByAlias);
+    additionalHeaders.set('x-ms-emailRecipients', emailRecipients);
+    return this.invoke<any>(path, HttpMethod.POST, packageToPublish, false, true, true, true, false, additionalHeaders);
   }
 
   public getChangelist(id: string): Observable<any> {
@@ -208,28 +209,24 @@ export class DiagnosticApiService {
   }
 
   public invoke<T>(path: string, method: HttpMethod = HttpMethod.GET, body: any = {}, useCache: boolean = true,
-    invalidateCache: boolean = false, internalClient: boolean = true, internalView: boolean = true, emailRecipients: string = "",
-    additionalParams?: any): Observable<T> {
+    invalidateCache: boolean = false, internalClient: boolean = true, internalView: boolean = true, getFullResponse?: boolean,
+    additionalHeaders?: Map<string, string>): Observable<T> {
     let url = `${this.diagnosticApi}api/invoke`
     let request: Observable<any>;
 
-    if (additionalParams && additionalParams.getFullResponse) {
+    if (getFullResponse) {
       request = this._httpClient.post<T>(url, body, {
-        headers: this._getHeaders(path, method, internalClient, internalView, emailRecipients, additionalParams),
+        headers: this._getHeaders(path, method, internalClient, internalView, additionalHeaders),
         observe: 'response'
       });
     } else {
       request = this._httpClient.post<T>(url, body, {
-        headers: this._getHeaders(path, method, internalClient, internalView, emailRecipients, additionalParams)
+        headers: this._getHeaders(path, method, internalClient, internalView, additionalHeaders)
       });
     }
 
     let keyPostfix = internalClient === true ? "-true" : "-false";
     return useCache ? this._cacheService.get(this.getCacheKey(method, path + keyPostfix), request, invalidateCache) : request;
-  }
-
-  private getCacheKey(method: HttpMethod, path: string) {
-    return `${HttpMethod[method]}-${path}`;
   }
 
   public get<T>(path: string, invalidateCache: boolean = false): Observable<T> {
@@ -241,24 +238,23 @@ export class DiagnosticApiService {
     return this._cacheService.get(path, request, invalidateCache);
   }
 
-  private _getHeaders(path?: string, method?: HttpMethod, internalClient: boolean = true, internalView: boolean = true, emailRecipients: string = "",
-    additionalParams?: any): HttpHeaders {
+  private getCacheKey(method: HttpMethod, path: string) {
+    return `${HttpMethod[method]}-${path}`;
+  }
+
+  private _getHeaders(path?: string, method?: HttpMethod, internalClient: boolean = true, internalView: boolean = true, additionalHeaders?: Map<string, string>): HttpHeaders {
     let headers = new HttpHeaders();
     headers = headers.set('Content-Type', 'application/json');
     headers = headers.set('Accept', 'application/json');
     headers = headers.set('x-ms-internal-client', String(internalClient));
     headers = headers.set('x-ms-internal-view', String(internalView));
 
-    if (environment.adal.enabled){
+    if (environment.adal.enabled) {
       headers = headers.set('Authorization', `Bearer ${this._adalService.userInfo.token}`)
     }
 
     if (this.GeomasterServiceAddress)
-    headers = headers.set("x-ms-geomaster-hostname", this.GeomasterServiceAddress);
-
-    if (emailRecipients !== "") {
-      headers = headers.set('x-ms-emailRecipients', emailRecipients);
-    }
+      headers = headers.set("x-ms-geomaster-hostname", this.GeomasterServiceAddress);
 
     if (path) {
       headers = headers.set('x-ms-path-query', path);
@@ -268,16 +264,16 @@ export class DiagnosticApiService {
       headers = headers.set('x-ms-method', HttpMethod[method]);
     }
 
-    if (additionalParams && additionalParams.scriptETag) {
-      headers = headers.set('diag-script-etag', additionalParams.scriptETag);
-    }
-
-    if (additionalParams && additionalParams.assemblyName) {
-      headers = headers.set('diag-assembly-name', encodeURI(additionalParams.assemblyName));
-    }
-
-    if(this.Location){
+    if (this.Location) {
       headers = headers.set('x-ms-location', this.Location);
+    }
+
+    if (additionalHeaders) {
+      additionalHeaders.forEach((headerVal: string, headerKey: string) => {
+        if (headerVal.length > 0 && headerKey.length > 0) {
+          headers = headers.set(headerKey, headerVal);
+        }
+      });
     }
 
     return headers;
@@ -289,5 +285,20 @@ export class DiagnosticApiService {
 
   private _getSystemInvokerParameters(systemDataSource: string, timeRange: string) {
     return `&dataSource=${systemDataSource}&timeRange=${timeRange}`;
+  }
+
+  private _getCompilerResponseInternal(path: string, body: any, additionalParams?: any): Observable<QueryResponse<DetectorResponse>> {
+
+    let additionalHeaders = new Map<string, string>();
+    if (additionalParams && additionalParams.scriptETag) {
+      additionalHeaders = additionalHeaders.set('diag-script-etag', additionalParams.scriptETag);
+    }
+
+    if (additionalParams && additionalParams.assemblyName) {
+      additionalHeaders = additionalHeaders.set('diag-assembly-name', encodeURI(additionalParams.assemblyName));
+    }
+
+    return this.invoke<QueryResponse<DetectorResponse>>(path, HttpMethod.POST, body, false, undefined, undefined, undefined,
+      additionalParams.getFullResponse, additionalHeaders);
   }
 }
