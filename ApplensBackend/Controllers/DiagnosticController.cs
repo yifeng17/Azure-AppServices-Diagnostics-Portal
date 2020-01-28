@@ -31,6 +31,7 @@ namespace AppLensV3.Controllers
     [Authorize(Policy = "ApplensAccess")]
     public class DiagnosticController : Controller
     {
+        IConfiguration config;
         private readonly string[] blackListedAscRegions;
         private readonly string diagAscHeaderValue;
 
@@ -57,6 +58,7 @@ namespace AppLensV3.Controllers
             EmailNotificationService = emailNotificationService;
             blackListedAscRegions = configuration.GetValue<string>("BlackListedAscRegions", string.Empty).Replace(" ", string.Empty).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             diagAscHeaderValue = configuration.GetValue<string>("DiagAscHeaderValue");
+            this.config = configuration;
         }
 
         private IDiagnosticClientService DiagnosticClient { get; }
@@ -69,6 +71,15 @@ namespace AppLensV3.Controllers
         public IActionResult Ping()
         {
             return new OkResult();
+        }
+
+        [HttpGet("appsettings/{name}")]
+        public IActionResult GetAppSettingValue(string name){
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return BadRequest("App setting name is empty");
+            }
+            return Ok(config[name]);
         }
 
         private static string TryGetHeader(HttpRequest request, string headerName, string defaultValue = "") =>
@@ -177,7 +188,11 @@ namespace AppLensV3.Controllers
             var method = GetHeaderOrDefault(Request.Headers, MethodHeader, HttpMethod.Get.Method);
             var rawDetectorAuthors = GetHeaderOrDefault(Request.Headers, EmailRecipientsHeader);
             var detectorAuthors = rawDetectorAuthors.Split(new char[] { ' ', ',', ';', ':' }, StringSplitOptions.RemoveEmptyEntries);
+<<<<<<< HEAD
             var modifiedBy = GetHeaderOrDefault(Request.Headers, ModifiedByHeader, userId);
+=======
+            var modifiedBy = GetHeaderOrDefault(Request.Headers, ModifiedByHeader);
+>>>>>>> master
             bool.TryParse(GetHeaderOrDefault(Request.Headers, InternalClientHeader, true.ToString()), out var internalClient);
             bool.TryParse(GetHeaderOrDefault(Request.Headers, InternalViewHeader, true.ToString()), out var internalView);
 

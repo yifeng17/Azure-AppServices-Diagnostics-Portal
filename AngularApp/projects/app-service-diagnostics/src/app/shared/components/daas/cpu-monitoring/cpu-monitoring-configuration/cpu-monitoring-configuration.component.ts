@@ -125,7 +125,7 @@ export class CpuMonitoringConfigurationComponent implements OnInit, OnChanges {
     monitoringSession.Mode = SessionMode.CollectAndKill;
     monitoringSession.MaxActions = 2;
     monitoringSession.ThresholdSeconds = 30;
-    monitoringSession.MaximumNumberOfHours = 24 * 7;
+    monitoringSession.MaximumNumberOfHours = 24 * 14;
     this.mode = monitoringSession.Mode;
     this.modeDescription = this.modeDescriptions.find(x => x.Mode == this.mode).Description;
     this.selectMode(this.mode);
@@ -164,6 +164,10 @@ export class CpuMonitoringConfigurationComponent implements OnInit, OnChanges {
     }
 
     this.ruleSummary += ` Monitoring will stop automatically after <b>${this.monitoringSession.MaximumNumberOfHours > 24 ? (this.getValueRounded(this.monitoringSession.MaximumNumberOfHours / 24)) + " days" : this.monitoringSession.MaximumNumberOfHours + " hours"}</b>.`;
+
+    if (this.monitoringSession.MonitorScmProcesses){
+      this.ruleSummary += " The worker process for the kudu site and the webjobs under this app will also be monitored."
+    }
   }
 
   saveCpuMonitoring() {
@@ -177,6 +181,7 @@ export class CpuMonitoringConfigurationComponent implements OnInit, OnChanges {
       newSession.ThresholdSeconds = this.monitoringSession.ThresholdSeconds;
       newSession.CpuThreshold = this.monitoringSession.CpuThreshold;
       newSession.MaximumNumberOfHours = this.monitoringSession.MaximumNumberOfHours;
+      newSession.MonitorScmProcesses = this.monitoringSession.MonitorScmProcesses;
 
       this._daasService.submitMonitoringSession(this.siteToBeDiagnosed, newSession).subscribe(
         result => {

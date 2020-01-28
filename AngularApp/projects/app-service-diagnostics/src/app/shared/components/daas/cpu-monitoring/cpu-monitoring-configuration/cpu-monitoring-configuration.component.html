@@ -162,6 +162,26 @@
         </div>
       </div>
 
+      <div class="row input-row">
+        <div class="col-sm-6">
+          <div class="media">
+            <div class="media-left media-middle">
+              <i class="media-object fa fa-cogs tile-icon"></i>
+            </div>
+            <div class="media-body">
+              <div class="media-heading label-header">Monitor Web job processes</div>
+              Enable this to monitor the process for Kudu site and webjobs
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-5">
+          <div *ngIf="editMode" class="custom-slider">
+            <toggle-button ToggleText="" [(selected)]="monitoringSession.MonitorScmProcesses" (selectedChange)="updateRuleSummary()"></toggle-button>
+          </div>
+          <div *ngIf="!editMode" class="readonly-mode">{{ monitoringSession.MonitorScmProcesses }}</div>
+        </div>
+      </div>
+
       <div class="row">
         <div class="summary-title">Rule Configuration</div>
         <div class="col-sm-9 summary-box" [innerHTML]="ruleSummary">
