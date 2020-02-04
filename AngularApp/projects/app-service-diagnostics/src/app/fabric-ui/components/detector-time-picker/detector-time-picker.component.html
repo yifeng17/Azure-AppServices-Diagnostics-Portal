@@ -1,10 +1,10 @@
 <div class="timepicker">
-  <fab-callout [hidden]="!globals.openTimePicker" [directionalHint]="'5'" [gapSpace]="'30'" [styles]="calloutStyles">
+  <fab-callout [hidden]="!globals.openTimePicker" [directionalHint]="'5'" [gapSpace]="'30'">
     <!-- <div>Time range</div>
     [selectedKey]="selectedItem && selectedItem.key" -->
     <fab-choice-group [options]="choiceGroupOptions" [defaultSelectedKey]="'Last24Hours'">
     </fab-choice-group>
-    <div *ngIf="showTimerPicker" class="row">
+    <div *ngIf="showTimePicker" class="row">
       <div style="padding:15px">Start Time </div>
       <fab-date-picker class="col-md-8" [strings]="dates" [minDate]="minDate" [maxDate]="maxDate"
         placeholder="Select a date..." ariaLabel="Select start date" allowTextInput="true"
@@ -24,7 +24,7 @@
         [mask]="'99:99'" [maskChar]="'-'" [validateOnFocusOut]="true" [getErrorMessage]="getErrorMessageOnTextField">
       </fab-masked-text-field>
     </div>
-    <div *ngIf="timeDiffError != '' && isCustom" style="color:red;">{{timeDiffError}}</div>
+    <div *ngIf="timeDiffError != ''" style="color:red;">{{timeDiffError}}</div>
     <div style="padding:15px 0px">
       <fab-primary-button contentStyle="margin-right:10px" text="Apply" (onClick)="applyTimeRange()">
       </fab-primary-button>

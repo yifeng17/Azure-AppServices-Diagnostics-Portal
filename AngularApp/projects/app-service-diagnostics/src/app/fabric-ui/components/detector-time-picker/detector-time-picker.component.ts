@@ -11,25 +11,22 @@ import { Globals } from '../../../globals';
   styleUrls: ['./detector-time-picker.component.scss']
 })
 export class DetectorTimePickerComponent implements OnInit {
-  @Input() showChoices: boolean = false;
   @Output() updateTimerMessage: EventEmitter<string> = new EventEmitter<string>();
   internalTime: string = "";
   showCalendar: boolean = false;
-  showTimerPicker: boolean = false;
+  showTimePicker: boolean = false;
 
-  //today should current UTC time
+  
   today: Date = new Date(Date.now());
-  maxDate: Date = this.today;
-  minDate: Date = addMonths(this.today, -1);
+  maxDate: Date = this.convertUTCToLocalDate(this.today);
+  minDate: Date = this.convertUTCToLocalDate(addMonths(this.today, -1));
 
   set time(value: string) {
-    console.log("time picker title", value);
     this.updateTimerMessage.next(value);
-    // this.time = value;
   };
   startDate: Date;
   endDate: Date;
-  isCustom: boolean = false;
+  // isCustom: boolean = false;
   //set Last xx hours
   hourDiff: number = 24;
 
@@ -40,11 +37,11 @@ export class DetectorTimePickerComponent implements OnInit {
   formatDate: IDatePickerProps['formatDate'] = (date) => { return this.convertDateToString(date, false) };
 
   choiceGroupOptions: IChoiceGroupOption[] = [
-    { key: 'Last1Hour', text: 'Last 1 Hour', onClick: () => { this.setTime(1); this.showTimerPicker = false } },
-    { key: 'Last6Hours', text: 'Last 6 Hours', onClick: () => { this.setTime(6); this.showTimerPicker = false } },
-    { key: 'Last12Hour', text: 'Last 12 Hours', onClick: () => { this.setTime(12); this.showTimerPicker = false } },
-    { key: 'Last24Hours', text: 'Last 24 Hours', onClick: () => { this.setTime(24); this.showTimerPicker = false } },
-    { key: 'Custom', text: 'Custom', onClick: () => { this.showTimerPicker = true; this.isCustom = true; this.timeDiffError = ""; this.prefillCustom() } },
+    { key: 'Last1Hour', text: 'Last 1 Hour', onClick: () => { this.setTime(1) } },
+    { key: 'Last6Hours', text: 'Last 6 Hours', onClick: () => { this.setTime(6) } },
+    { key: 'Last12Hour', text: 'Last 12 Hours', onClick: () => { this.setTime(12) } },
+    { key: 'Last24Hours', text: 'Last 24 Hours', onClick: () => { this.setTime(24) } },
+    { key: 'Custom', text: 'Custom', onClick: () => { this.selectCustom() } },
   ];
 
   dates: ICalendarStrings = {
@@ -85,7 +82,7 @@ export class DetectorTimePickerComponent implements OnInit {
     const startDateWithTime = this.convertDateToString(startTime);
     const endDateWithTime = this.convertDateToString(endTime);
     this.internalTime = `${startDateWithTime} to ${endDateWithTime}`;
-    this.time = "Time Range (" + this.internalTime + ")";
+    this.time = "UTC Time Range (" + this.internalTime + ")";
 
     this.timeDiffError = '';
     if (this.detectorControlService.timeRangeDefaulted) {
@@ -112,7 +109,8 @@ export class DetectorTimePickerComponent implements OnInit {
   }
 
   setTime(hourDiff: number) {
-    this.isCustom = false;
+    // this.isCustom = false;
+    this.showTimePicker = false;
     this.hourDiff = hourDiff;
   }
 
@@ -127,7 +125,7 @@ export class DetectorTimePickerComponent implements OnInit {
     let startDateWithTime: string;
     let endDateWithTime: string;
 
-    if (this.isCustom) {
+    if (this.showTimePicker) {
       startDateWithTime = this.convertDateToString(this.convertLocalDateToUTC(this.startDate, this.startClock));
       endDateWithTime = this.convertDateToString(this.convertLocalDateToUTC(this.endDate, this.endClock));
     } else {
@@ -150,34 +148,65 @@ export class DetectorTimePickerComponent implements OnInit {
 
   onSelectStartDateHandler(e: { date: Date }) {
     this.startDate = e.date;
-    this.isCustom = true;
+    // this.isCustom = true;
   }
   onSelectEndDateHandler(e: { date: Date }) {
     this.endDate = e.date;
-    this.isCustom = true;
+    // this.isCustom = true;
   }
 
+  //Use year-month-date in calender and time hh-mm in input
   private convertLocalDateToUTC(date: Date, time: string): Date {
     const hour = Number.parseInt(time.split(":")[0]);
     const minute = Number.parseInt(time.split(":")[1]);
     return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), hour, minute));
   }
 
+  //convert ISO string(UTC time) to LocalDate with same year,month,date...
+  //Maybe have better way to implement
+  private convertUTCToLocalDate(date: Date): Date {
+    const s = date.toISOString();
+    const year = Number.parseInt(s.substring(0, 4));
+    //month:0 - 11
+    const month = Number.parseInt(s.substring(5, 7)) - 1;
+    const day = Number.parseInt(s.substring(8, 10));
+    const hour = Number.parseInt(s.substring(11, 13));
+    const minute = Number.parseInt(s.substring(14, 16));
+    // const second = Number.parseInt(s.substring(17,19));
+
+    return new Date(year, month, day, hour, minute);
+  }
+
+
+  //have bug, it will convert date direct to UTC time string
+  //should stay with local time
   private convertDateToString(date: Date, withHours: boolean = true): string {
-    const moment = momentNs.utc(date.toISOString());
-    const stringFormat: string = withHours ? 'YYYY-MM-DD HH:mm' : 'YYYY-MM-DD';
-    return moment.format(stringFormat);
+    // const moment = momentNs.utc(date.getTime());
+    // const stringFormat: string = withHours ? 'YYYY-MM-DD HH:mm' : 'YYYY-MM-DD';
+    // return moment.format(stringFormat);
+
+    // const year = date.getFullYear();
+    // const month = date.getMonth() + 1;
+    // const day = date.getDate();
+    // const 
+    return "";
+
   }
 
   //when click LastXX hours,prefill into custom input
   //shoould be UTC time
-  prefillCustom() {
-    this.startDate = new Date(this.today.getTime() - this.hourDiff * 60 * 60 * 1000);
-    this.endDate = this.today;
-    // const currentUTCTime = new Date();
+  selectCustom() {
+    this.showTimePicker = true;
+    this.timeDiffError = "";
 
+    const end = new Date();
+    const start = new Date(end.getTime() - this.hourDiff *  60 * 60 * 1000);
+    this.startDate = this.convertUTCToLocalDate(start);
+    this.endDate = this.convertUTCToLocalDate(end);
 
-    this.startClock = `${this.startDate.getHours()}:${this.startDate.getMinutes()}`;
-    this.endClock = `${this.endDate.getHours()}:${this.endDate.getMinutes()}`;
+    //startDate and endDate contains current hour and minute info
+    //only need hh:mm
+    this.startClock = this.convertDateToString(this.startDate).substring(11,16);
+    this.endClock = this.convertDateToString(this.endDate).substring(11,16);
   }
 }

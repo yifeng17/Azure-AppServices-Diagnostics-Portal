@@ -179,7 +179,7 @@
 <!-- <fab-message-bar *ngIf="openMessageBar" [messageBarType]="messageBarType" [isMultiline]="false" (onDismiss)="openMessageBar=!openMessageBar">
   You can always click "Ask Genie" to get back chat window.
 </fab-message-bar> -->
-<detector-time-picker [showChoices]="showChoices" (updateTimerMessage)="updateMessage($event)"></detector-time-picker>
+<detector-time-picker (updateTimerMessage)="updateMessage($event)"></detector-time-picker>
 <fabric-feedback></fabric-feedback>
 <!-- <div style="padding-left: 10px;height:0px;overflow-y: hidden" [@expand]="showFeedback ? 'shown' : 'hidden'">
   <feedback *ngIf="showFeedback" [showFeedbackForm]="true" (showFeedbackFormChange)=feedbackFormChange($event) [ratingEventProperties]="ratingEventProperties"></feedback>
