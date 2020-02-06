@@ -238,8 +238,8 @@ export class DetectorCommandBarComponent implements OnInit {
   isCustom: boolean = false;
   //set Last xx hours
   hourDiff: number = 24;
-  startClock: string = `${this.startHour}:${this.startMinutes}`;
-  endClock: string = `${this.endHour}:${this.endMinutes}`;
+  startClock: string = `00:00`;
+  endClock: string = `00:00`;
 
   setTime(hourDiff: number) {
     this.isCustom = false;

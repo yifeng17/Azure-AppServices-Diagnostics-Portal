@@ -186,14 +186,14 @@
   <fab-choice-group [options]="choiceGroupOptions" [defaultSelectedKey]="'Last24Hours'">
   </fab-choice-group>
   <div *ngIf="showTimerPicker" class="row">
-    <div style="padding:15px">Start Time </div>
+    <div style="padding:15px">Start Time (UTC) </div>
     <fab-date-picker class="col-md-8" [strings]="dates" [minDate]="minDate" [maxDate]="maxDate" placeholder="Select a date..."
       ariaLabel="Select start date" allowTextInput="true" showMonthPickerAsOverlay="true" (onSelectDate)="onSelectStartDateHandler($event)">
     </fab-date-picker>
     <fab-masked-text-field class="col-md-4" maxLength="6" [(value)]="startClock" [iconProps]="{iconName: 'Clock'}" [mask]="'99:99'"
       [maskChar]="'-'" [validateOnFocusOut]="true" [getErrorMessage]="getErrorMessageOnTextField"></fab-masked-text-field>
 
-    <div style="padding:15px; margin-top:30px">End Time </div>
+    <div style="padding:15px; margin-top:30px">End Time (UTC)</div>
     <fab-date-picker class="col-md-8" [strings]="dates" [minDate]="minDate" [maxDate]="maxDate" placeholder="Select a date..."
       ariaLabel="Select end date" allowTextInput="true" showMonthPickerAsOverlay="true" (onSelectDate)="onSelectEndDateHandler($event)">
     </fab-date-picker>
