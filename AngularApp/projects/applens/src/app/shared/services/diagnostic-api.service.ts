@@ -2,7 +2,7 @@ import { AdalService } from 'adal-angular4';
 import { DetectorMetaData, DetectorResponse, QueryResponse } from 'diagnostic-data';
 import { map, retry } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { HttpMethod } from '../models/http';
@@ -92,7 +92,7 @@ export class DiagnosticApiService {
 
   public requestTemporaryAccess(): Observable<any> {
     let url: string = `${this.diagnosticApi}temporaryAccess/requestAccess`;
-    let request = this._httpClient.get(url, {
+    let request = this._httpClient.post(url, {}, {
       headers: this._getHeaders()
     });
     return request;
@@ -238,6 +238,16 @@ export class DiagnosticApiService {
     return this._cacheService.get(path, request, invalidateCache);
   }
 
+  public hasApplensAccess(): Observable<any> {
+    let url = `${this.diagnosticApi}api/ping`;
+    let request = this._httpClient.get<HttpResponse<Object>>(url, {
+      headers: this._getHeaders(),
+      observe: 'response'
+    });
+
+    return request;
+  }
+
   private getCacheKey(method: HttpMethod, path: string) {
     return `${HttpMethod[method]}-${path}`;
   }
@@ -257,7 +267,7 @@ export class DiagnosticApiService {
       headers = headers.set("x-ms-geomaster-hostname", this.GeomasterServiceAddress);
 
     if (path) {
-      headers = headers.set('x-ms-path-query', path);
+      headers = headers.set('x-ms-path-query', encodeURI(path));
     }
 
     if (method) {
@@ -265,7 +275,7 @@ export class DiagnosticApiService {
     }
 
     if (this.Location) {
-      headers = headers.set('x-ms-location', this.Location);
+      headers = headers.set('x-ms-location', encodeURI(this.Location));
     }
 
     if (additionalHeaders) {

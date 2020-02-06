@@ -46,7 +46,15 @@ export class TabDataSourcesComponent {
     else {
       this.detector = this._route.parent.snapshot.params['detector'];
     }
-    this._diagnosticApiService.getDetector(this.detector, this._detectorControlService.startTimeString, this._detectorControlService.endTimeString)
+    let allRouteQueryParams = this._route.snapshot.queryParams;
+    let additionalQueryString = '';
+    let knownQueryParams = ['startTime', 'endTime'];
+    Object.keys(allRouteQueryParams).forEach(key => {
+      if(knownQueryParams.indexOf(key) < 0) {
+          additionalQueryString += `&${key}=${encodeURIComponent(allRouteQueryParams[key])}`;
+      }
+    });
+    this._diagnosticApiService.getDetector(this.detector, this._detectorControlService.startTimeString, this._detectorControlService.endTimeString, this._detectorControlService.shouldRefresh, this._detectorControlService.isInternalView, additionalQueryString)
       .subscribe((response: DetectorResponse) => {
         this.loadingDetector = false;
         this.detectorResponse = response;
