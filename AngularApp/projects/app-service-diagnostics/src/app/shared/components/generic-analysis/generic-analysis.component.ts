@@ -35,6 +35,17 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
     if (this.isPublic) {
       this.renderCXPChatButton();
     }
+    else {
+      var checkOutcome = {
+        _supportTopicServiceObj: !!this._supportTopicService,
+        supportTopicId: (!!this._supportTopicService)? this._supportTopicService.supportTopicId : '_supportTopicService is NULL',
+        _cxpChatService: !!this._cxpChatService,
+        isSupportTopicEnabledForLiveChat:  (!!this._supportTopicService && !!this._cxpChatService)? this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId): null,
+        isPublic: false
+      };
+
+      this._cxpChatService.logChatEligibilityCheck('Call to CXP Chat API skipped. Config is not Public.', JSON.stringify(checkOutcome));
+    }    
     this._activatedRouteLocal.paramMap.subscribe(params => {
       this.analysisId = params.get('analysisId');
       this.detectorId = params.get('detectorName') === null ? "" : params.get('detectorName');
@@ -100,7 +111,8 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
           _supportTopicServiceObj: !!this._supportTopicService,
           supportTopicId: (!!this._supportTopicService)? this._supportTopicService.supportTopicId : '_supportTopicService is NULL',
           _cxpChatService: !!this._cxpChatService,
-          isSupportTopicEnabledForLiveChat:  (!!this._supportTopicService && !!this._cxpChatService)? this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId): null
+          isSupportTopicEnabledForLiveChat:  (!!this._supportTopicService && !!this._cxpChatService)? this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId): null,
+          isPublic: true
         };
 
         this._cxpChatService.logChatEligibilityCheck('Call to CXP Chat API skipped', JSON.stringify(checkOutcome));
