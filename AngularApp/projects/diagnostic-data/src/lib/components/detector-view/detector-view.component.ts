@@ -119,7 +119,31 @@ export class DetectorViewComponent implements OnInit {
           if(this.isPublic && !this.isAnalysisView && data.metadata.type === DetectorType.Detector) {
             //Since the analysis view is already showing the chat button, no need to show the chat button on the detector (csx) implementing the analysis view.
             this.renderCXPChatButton();
+          }
+          else {
+                var checkOutcome = {
+                  _supportTopicServiceObj: !!this._supportTopicService,
+                  supportTopicId: (!!this._supportTopicService)? this._supportTopicService.supportTopicId : '_supportTopicService is NULL',
+                  _cxpChatService: !!this._cxpChatService,
+                  isSupportTopicEnabledForLiveChat:  (!!this._supportTopicService && !!this._cxpChatService)? this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId): null,
+                  isPublic: !!this.isPublic,
+                  isAnalysisView: !!this.isAnalysisView,
+                  DetectorMetadata: data.metadata
+                };
+                this._cxpChatService.logChatEligibilityCheck('Call to CXP Chat API skipped for analysis', JSON.stringify(checkOutcome));            
           }          
+        }
+        else {
+                    var checkOutcome = {
+            _supportTopicServiceObj: !!this._supportTopicService,
+            supportTopicId: (!!this._supportTopicService)? this._supportTopicService.supportTopicId : '_supportTopicService is NULL',
+            _cxpChatService: !!this._cxpChatService,
+            isSupportTopicEnabledForLiveChat:  (!!this._supportTopicService && !!this._cxpChatService)? this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId): null,
+            isPublic: !!this.isPublic,
+            isAnalysisView: !!this.isAnalysisView,
+            DetectorMetadata: data.metadata
+          };          
+          this._cxpChatService.logChatEligibilityCheck('Call to CXP Chat API skipped. Detector does not match support Topic', JSON.stringify(checkOutcome));   
         }
 
         this.ratingEventProperties = {
