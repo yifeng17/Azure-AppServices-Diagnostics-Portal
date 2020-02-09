@@ -150,6 +150,14 @@ export class GeniePanelComponent implements OnInit, OnDestroy {
 
     scrollToBottom(event?: any): void {
         try {
+            this.myScrollContainer.nativeElement.childNodes[0].scrollTop = this.myScrollContainer.nativeElement.childNodes[0].scrollHeight;
+        } catch (err) { 
+            console.log("scrolltobottom error", err);
+        }
+    }
+
+    scrollToBottom1(event?: any): void {
+        try {
             console.log("scrolltobottom", this.myScrollContainer.elementRef.nativeElement.childNodes[0]);
       //      console.log("height", height, this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].scrollTop, this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].height);
             //this.myScrollContainer.elementRef.nativeElement.childNodes[0].scrollTop = this.myScrollContainer.elementRef.nativeElement.childNodes[0].scrollHeight;
@@ -171,9 +179,12 @@ export class GeniePanelComponent implements OnInit, OnDestroy {
     }
 
     onSearchEnter(event: any): void {
+        console.log("search event", event);
         // Push messages to the current object, also wait for the complete status, and push the object to globa message component
         let analysisMessageGroupId = event.newValue + (new Date()).toUTCString();
-        this._genieChatFlow.createMessageFlowForAnaysis(event.newValue, analysisMessageGroupId, this.resourceId).subscribe((analysisMessages: Message[]) => {
+        let inputValue = (<HTMLInputElement>document.getElementById("genieChatBox")).value;
+        // event.newValue
+        this._genieChatFlow.createMessageFlowForAnaysis(inputValue, analysisMessageGroupId, this.resourceId).subscribe((analysisMessages: Message[]) => {
             console.log("**** analysis messsages", analysisMessages);
             analysisMessages.forEach(message => {
                 // message.component.oncomplete === true &&
@@ -187,6 +198,7 @@ export class GeniePanelComponent implements OnInit, OnDestroy {
         });
         this._messageProcessor.setCurrentKey(analysisMessageGroupId);
         this.getMessage();
+        (<HTMLInputElement>document.getElementById("genieChatBox")).value = "";
         this.searchValue="";
         //  this.scrollToBottom();
         //setTimeout(() => this.scrollToBottom(), 500);

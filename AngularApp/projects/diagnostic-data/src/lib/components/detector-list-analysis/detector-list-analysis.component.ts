@@ -111,7 +111,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
 
     ngOnInit() {
         if (this.renderingOnlyMode && this.detectorViewModelsData) {
-            this.startRenderingFromInput();
+          //  this.startRenderingFromInput();
         }
         else {
             if (this.analysisId === "searchResultsAnalysis" && this.searchTerm && this.searchTerm.length > 0) {
@@ -434,7 +434,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
             this.startLoadingMessage();
         }
         this.detectorViewModels.forEach((metaData, index) => {
-            console.log("detectorViewModels", this.detectorViewModels, metaData, index);
+         //   console.log("detectorViewModels", this.detectorViewModels, metaData, index);
             requests.push((<Observable<DetectorResponse>>metaData.request).pipe(
                 map((response: DetectorResponse) => {
                     this.detectorViewModels[index] = this.updateDetectorViewModelSuccess(metaData, response);
@@ -481,8 +481,9 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                     'issueDetectedViewModels': this.issueDetectedViewModels
                 };
 
+                console.log("emitting data 1", dataOutput);
                 this.onComplete.emit(dataOutput);
-            }, 0);
+            }, 10);
 
             this.childDetectorsEventProperties['ChildDetectorsList'] = JSON.stringify(childDetectorData);
             this.logEvent(TelemetryEventNames.ChildDetectorsSummary, this.childDetectorsEventProperties);
@@ -495,6 +496,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                 'detectors': []
             };
 
+            console.log("emitting data 2", dataOutput);
             this.onComplete.emit(dataOutput);
         }
     }
@@ -510,6 +512,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
     }
     getPendingDetectorCount(): number {
         let pendingCount = 0;
+       // console.log("detectorviewmodels", this.detectorViewModels);
         this.detectorViewModels.forEach((metaData, index) => {
             if (this.detectorViewModels[index].loadingStatus == LoadingStatus.Loading) {
                 ++pendingCount;

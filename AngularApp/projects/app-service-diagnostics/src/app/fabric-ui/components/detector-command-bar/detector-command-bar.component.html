@@ -180,7 +180,8 @@
   You can always click "Ask Genie" to get back chat window.
 </fab-message-bar> -->
 <div class="timepicker">
-<fab-callout [hidden]="!showChoices" [directionalHint]="'5'" [gapSpace]="'30'" [styles]="calloutStyles">
+<!-- <fab-callout [hidden]="!showChoices" [directionalHint]="'5'" [gapSpace]="'30'" [styles]="calloutStyles"> -->
+    <div class="time-picker-container" *ngIf="showChoices">
   <!-- <div>Time range</div>
   [selectedKey]="selectedItem && selectedItem.key" -->
   <fab-choice-group [options]="choiceGroupOptions" [defaultSelectedKey]="'Last24Hours'">
@@ -205,7 +206,8 @@
     <fab-primary-button contentStyle="margin-right:10px" text="Apply" (onClick)="applyTimeRange()"></fab-primary-button>
     <fab-default-button text="Cancel" (onClick)="cancelTimeRange()"></fab-default-button>
   </div>
-</fab-callout>
+</div>
+<!-- </fab-callout> -->
 </div>
 <fab-choice-group *ngIf="showCalendar" style="position: absolute;
 top: 20px;
