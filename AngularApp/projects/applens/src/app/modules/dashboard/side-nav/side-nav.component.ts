@@ -90,6 +90,20 @@ export class SideNavComponent implements OnInit {
   }
   ];
 
+  configuration: CollapsibleMenuItem[] = [
+      {
+          label: 'Kusto Mapping',
+          onClick: () => {
+            this.navigateTo('kustoConfig');
+          },
+          id: "",
+          expanded: false,
+          subItems: null,
+          isSelected: null,
+          icon: null
+      }
+  ];
+
   ngOnInit() {
     this.initializeDetectors();
 

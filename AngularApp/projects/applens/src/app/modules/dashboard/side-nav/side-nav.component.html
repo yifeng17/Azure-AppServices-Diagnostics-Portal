@@ -26,6 +26,10 @@
           <collapsible-menu-item *ngFor="let gist of gists" [searchValue]="searchValue" [menuItem]="gist"></collapsible-menu-item>
           <i *ngIf="!gists || gists.length === 0" class="fa fa-spinner fa-spin fa-3x fa-fw loading-menu"></i>
         </section-divider>
+        <section-divider [label]="'Configuration'" [initiallyExpanded]="false">
+          <i class="fa fa-wrench fa-fw menu-icon menu-icon-detectors" aria-hidden="true"></i>
+          <collapsible-menu-item *ngFor="let setting of configuration" [menuItem]="setting"></collapsible-menu-item>
+        </section-divider>
       </menu-scroll>
     </collapsible-menu>
   </section>

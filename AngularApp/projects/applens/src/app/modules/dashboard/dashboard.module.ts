@@ -52,6 +52,7 @@ import { SearchResultsComponent } from './search-results/search-results.componen
 import { Sort } from '../../shared/pipes/sort.pipe';
 import { SearchService } from './services/search.service';
 import { HighchartsChartModule } from 'highcharts-angular';
+import { ConfigurationComponent } from './configuration/configuration.component';
 
 @Injectable()
 export class InitResolver implements Resolve<Observable<boolean>>{
@@ -222,6 +223,10 @@ export const DashboardModuleRoutes: ModuleWithProviders = RouterModule.forChild(
             {
               path: 'search',
               component: SearchResultsComponent
+            },
+            {
+                path: 'kustoConfig',
+                component: ConfigurationComponent
             }
         ]
     },
@@ -267,6 +272,6 @@ export const DashboardModuleRoutes: ModuleWithProviders = RouterModule.forChild(
         SearchMenuPipe, TabDataComponent, TabDevelopComponent, TabCommonComponent, TabDataSourcesComponent, TabMonitoringComponent,
         TabMonitoringDevelopComponent, TabAnalyticsDevelopComponent, TabAnalyticsDashboardComponent, GistComponent, TabGistCommonComponent,
         TabGistDevelopComponent, TabChangelistComponent, GistChangelistComponent, TabAnalysisComponent, CategoryPageComponent, SupportTopicPageComponent,
-        SelfHelpContentComponent, UserProfileComponent, FormatResourceNamePipe, Sort, SearchResultsComponent]
+        SelfHelpContentComponent, UserProfileComponent, FormatResourceNamePipe, Sort, SearchResultsComponent, ConfigurationComponent]
 })
 export class DashboardModule { }
