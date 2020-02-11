@@ -52,7 +52,9 @@ export class FeedbackButtonMessageComponent implements OnInit, AfterViewInit, IC
     }
 
     ngAfterViewInit(): void {
-        this.onViewUpdate.emit();
+        let updateData = { status: true, data: "view-loaded" };
+        console.log("emit updateData", updateData);
+        this.onViewUpdate.emit(updateData);
     }
 
     onClick(item: any) {

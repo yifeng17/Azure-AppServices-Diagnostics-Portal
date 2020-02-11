@@ -115,7 +115,7 @@ export class GenieChatFlow extends IMessageFlowProvider {
     let systemResponseTextMessage = new TextMessage('Okay give me a moment while I analyze your app for any issues related to this.', MessageSender.System, 500);
     resourceId = this.resourceId;
    // console.log("resourceId:", resourceId);
-   console.log("Router", this._router.url, this._activatedRoute.firstChild);
+   // console.log("Router", this._router.url, this._activatedRoute.firstChild);
     let dynamicAnalysisMessage = new DynamicAnalysisMessage(keyword, resourceId);
 
     const analysisMessageGroup: MessageGroup = new MessageGroup(`${messageGroupId}`, [], () => '');

@@ -155,7 +155,7 @@ export class DynamicAnalysisComponent implements OnInit, AfterViewInit, IChatMes
 }
 
 export class DynamicAnalysisMessage extends Message {
-    constructor(keyword: string = "", resourceId:string="", targetedScore: number = 0, messageDelayInMs: number = 1000) {
+    constructor(keyword: string = "", resourceId:string="", targetedScore: number = 0, messageDelayInMs: number = 0) {
         super(DynamicAnalysisComponent, {
             keyword: keyword,
             resourceId: resourceId,

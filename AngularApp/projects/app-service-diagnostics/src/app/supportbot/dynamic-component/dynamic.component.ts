@@ -88,7 +88,7 @@ export class DynamicComponent {
 
         // Subscribe to view Update event from Messages and emit out View Update Event
         this.viewUpdateSubscription = this.currentComponent.instance.onViewUpdate.subscribe((response: any) => {
-            this.onViewUpdate.emit();
+            this.onViewUpdate.emit(response);
         });
 
         // Subscribe to Complete events from Messages

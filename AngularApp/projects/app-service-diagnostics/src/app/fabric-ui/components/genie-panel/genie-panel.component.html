@@ -28,7 +28,7 @@
           <i class="fa fa-angle-double-left" style="margin: 5px;font-size:13px;" (click)="closePanel()"></i>
         </div> -->
 
-        <div #scrollMe2 id="scrollme1" [style.height.px]="chatContainerHeight" style="overflow-y: auto; display: inline-block; height: 78vh;"
+        <div [style.height.px]="chatContainerHeight" style="overflow-y: auto; display: inline-block; height: 78vh;"
           class="ms-Panel-scrollableContent scroll-bottom">
           <div class="row animated fadeIn chat-message-container" *ngFor="let item of messages" style="margin-left:0px">
             <!-- " Remove this functionality because we want the critical info to be shown to the customers-->
@@ -61,7 +61,7 @@
               <i data-icon-name="send" role="presentation" aria-hidden="true" class="ms-SearchBox-icon icon-72"></i>
             </div> -->
             <input id="genieChatBox" class="genie-search-box" (keydown.enter)="onSearchEnter($event)" placeholder="Type your question" aria-label="Type your question">
-            <span (click)="onSearchEnter($event)" tabindex="0" aria-label="Send Message"><i class="fa fa-paper-plane search-box-icon"></i></span>
+            <span (click)="onSearchEnter($event)" (keydown.enter)="onSearchEnter($event)" tabindex="0" aria-label="Send Message"><i class="fa fa-paper-plane search-box-icon"></i></span>
             <!-- </div>
         </div> -->
 
