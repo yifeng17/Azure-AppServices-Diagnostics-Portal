@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { NgxSmartModalService } from 'ngx-smart-modal';
+import { ApplensDiagnosticService } from '../services/applens-diagnostic.service';
+import { GithubApiService } from '../../../shared/services/github-api.service';
+
 @Component({
   selector: 'configuration',
   templateUrl: './configuration.component.html',
@@ -11,7 +14,8 @@ export class ConfigurationComponent implements OnInit {
     showAlert:boolean;
     alertClass: string;
     alertMessage: string;
-  constructor(public ngxSmartModalService: NgxSmartModalService) {
+    
+  constructor(public ngxSmartModalService: NgxSmartModalService, private _diagnosticService: ApplensDiagnosticService, private githubService: GithubApiService) {
     this.editorOptions = {
         theme: 'vs',
         language: 'json',
@@ -27,11 +31,16 @@ export class ConfigurationComponent implements OnInit {
   }
 
   ngOnInit() {
-      // read existing json or schematic json here
-      let sample = {
-        'public': 'wawscus'
-      };
-      this.code = JSON.stringify(sample);
+      this._diagnosticService.getKustoMappings().subscribe(resp => {
+        this.code = JSON.stringify(resp, null, 2);
+      }, (error: any) => {
+        console.log(error);
+        var kustoMappingsTemplate = this.githubService.getTemplateWithExtension("Kusto_Mapping", "json").subscribe(resp => {
+          this.code = resp;
+        }, (error: any) => {
+          this.showAlertBox("alert-danger", "Failed to get kusto mapping template. Please try again after some time.");
+        });
+      });
   }
 
   confirmSave()  {
@@ -39,8 +48,11 @@ export class ConfigurationComponent implements OnInit {
   }
 
   saveConfig() {
-      // call API to save config and close modal
-      // call showAlertBox based on success vs failure
+      this._diagnosticService.createOrUpdateKustoMappings(this.code).subscribe(resp => {
+        this.showAlertBox("alert-success", "Kusto mappings saved successfully.");
+      }, (error: any) => {
+        this.showAlertBox("alert-danger", "Saving kusto mappings failed. Please try again after some time.");
+      });
   }
 
   private showAlertBox(alertClass: string, message: string) {
