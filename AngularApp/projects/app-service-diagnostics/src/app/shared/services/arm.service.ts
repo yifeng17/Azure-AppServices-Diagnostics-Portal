@@ -71,8 +71,6 @@ export class ArmService {
             }
             else if(browserUrl.includes("azure.us")){
                 armUrl = this.usGovernmentAzureArmUrl;
-            } else if(browserUrl.includes("azure.cn")) {
-                armUrl = this.chinaAzureArmUrl;
             } else if(browserUrl.includes("azure.de")) {
                 armUrl = this.blackforestAzureArmUrl;
             }
