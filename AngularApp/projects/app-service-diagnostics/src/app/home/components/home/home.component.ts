@@ -86,9 +86,7 @@ export class HomeComponent implements OnInit {
       }
     }
 
-    if (this.armService.isPublicAzure == false
-      && this._resourceService.parseResourceUri(this._resourceService.resourceIdForRouting).provider.toLowerCase() == 'microsoft.containerservice'
-      ){
+    if (this.isAKSOnNationalCloud){
         
       this.homePageText = {
         title:'Azure Kubernetes Service Diagnostics',
@@ -150,6 +148,11 @@ export class HomeComponent implements OnInit {
             this._categoryService.filterCategoriesForSub();
         }
     }
+  }
+
+  public get isAKSOnNationalCloud() : boolean {
+    return this.armService.isNationalCloud 
+    && this._resourceService.parseResourceUri(this._resourceService.resourceIdForRouting).provider.toLowerCase() == 'microsoft.containerservice';
   }
 
   onSearchBoxFocus(event: any): void {
