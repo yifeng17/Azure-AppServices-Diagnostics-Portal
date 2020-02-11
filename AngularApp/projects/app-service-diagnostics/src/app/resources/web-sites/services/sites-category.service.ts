@@ -7,6 +7,7 @@ import { AppType } from '../../../shared/models/portal';
 import { SiteFilteredItem } from '../models/site-filter';
 import { Sku } from '../../../shared/models/server-farm';
 import { WebSitesService } from './web-sites.service';
+import { ArmService } from '../../../shared/services/arm.service';
 
 @Injectable()
 export class SitesCategoryService extends CategoryService {
@@ -111,29 +112,33 @@ export class SitesCategoryService extends CategoryService {
         createFlowForCategory: true,
         chatEnabled: false
       }
-    },
-    //Separate tile for Navigator for Windows Web App
-    {
-        appType: AppType.WebApp,
-        platform: OperatingSystem.windows,
-        stack: '',
-        sku: Sku.All,
-        hostingEnvironmentKind: HostingEnvironmentKind.All,
-        item: {
-            id: 'navigator',
-            name: 'Navigator (Preview)',
-            description: 'Are you having issues after making changes on your app and its dependencies? Review Navigator to investigate the recent changes in your app and dependencies.',
-            keywords: ['Dependency Map', 'Changes', 'Dependency', 'Change Analysis'],
-            color: 'rgb(255, 217, 119)',
-            createFlowForCategory: false,
-            chatEnabled: false,
-            overridePath: `resource${this._resourceService.resourceIdForRouting}/detectors/navigator`
-        }
     }
   ];
 
-  constructor(private _resourceService: WebSitesService, private _websiteFilter: WebSiteFilter) {
+  constructor(private _resourceService: WebSitesService, private _websiteFilter: WebSiteFilter, private _armService: ArmService) {
     super();
+    if(this._armService.isPublicAzure) {
+      //Separate tile for Navigator for Windows Web App only when the site is on publicx Azure.
+      this._sitesCategories.push(
+        {
+          appType: AppType.WebApp,
+          platform: OperatingSystem.windows,
+          stack: '',
+          sku: Sku.All,
+          hostingEnvironmentKind: HostingEnvironmentKind.All,
+          item: {
+              id: 'navigator',
+              name: 'Navigator (Preview)',
+              description: 'Are you having issues after making changes on your app and its dependencies? Review Navigator to investigate the recent changes in your app and dependencies.',
+              keywords: ['Dependency Map', 'Changes', 'Dependency', 'Change Analysis'],
+              color: 'rgb(255, 217, 119)',
+              createFlowForCategory: false,
+              chatEnabled: false,
+              overridePath: `resource${this._resourceService.resourceIdForRouting}/detectors/navigator`
+          }
+      }
+      );      
+    }
     this._sitesCategories.push(this._getDiagnosticToolsCategory(this._resourceService.resourceIdForRouting));
     this._addCategories(
       this._websiteFilter.transform(this._sitesCategories)
