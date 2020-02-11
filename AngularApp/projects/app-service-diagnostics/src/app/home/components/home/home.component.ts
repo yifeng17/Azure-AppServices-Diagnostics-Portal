@@ -39,14 +39,6 @@ export class HomeComponent implements OnInit {
       '';
   }
 
-  get isIE_Browser(): boolean {
-    return  /msie\s|trident\//i.test(window.navigator.userAgent);
-  }
-
-  get isPublicAzure(): boolean {
-    return ((window.location != window.parent.location) ? document.referrer : document.location.href).includes("azure.com");
-  }
-
   constructor(private _resourceService: ResourceService, private _categoryService: CategoryService, private _notificationService: NotificationService, private _router: Router,
     private _detectorControlService: DetectorControlService, private _featureService: FeatureService, private _logger: LoggingV2Service, private _authService: AuthService,
     private _navigator: FeatureNavigationService, private _activatedRoute: ActivatedRoute, private armService: ArmService,private loggingService:PortalKustoTelemetryService,
@@ -94,7 +86,10 @@ export class HomeComponent implements OnInit {
       }
     }
 
-    if (this.isPublicAzure == false && this.isIE_Browser == false){
+    if (this.armService.isPublicAzure == false
+      && this._resourceService.parseResourceUri(this._resourceService.resourceIdForRouting).provider.toLowerCase() == 'microsoft.containerservice'
+      ){
+        
       this.homePageText = {
         title:'Azure Kubernetes Service Diagnostics',
         description: 'Explore ways to diagnose and troubleshoot the common problems of your cluster from CRUD operations to connection problems. Click on any of the documents below to start troubleshooting.',
