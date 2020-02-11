@@ -14,7 +14,7 @@ export class ConfigurationComponent implements OnInit {
     showAlert:boolean;
     alertClass: string;
     alertMessage: string;
-    
+
   constructor(public ngxSmartModalService: NgxSmartModalService, private _diagnosticService: ApplensDiagnosticService, private githubService: GithubApiService) {
     this.editorOptions = {
         theme: 'vs',
@@ -49,8 +49,10 @@ export class ConfigurationComponent implements OnInit {
 
   saveConfig() {
       this._diagnosticService.createOrUpdateKustoMappings(this.code).subscribe(resp => {
+        this.ngxSmartModalService.getModal('saveModal').close();
         this.showAlertBox("alert-success", "Kusto mappings saved successfully.");
       }, (error: any) => {
+        this.ngxSmartModalService.getModal('saveModal').close();
         this.showAlertBox("alert-danger", "Saving kusto mappings failed. Please try again after some time.");
       });
   }
