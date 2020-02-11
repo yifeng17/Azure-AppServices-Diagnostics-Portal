@@ -71,6 +71,10 @@ export class ArmService {
             }
             else if(browserUrl.includes("azure.us")){
                 armUrl = this.usGovernmentAzureArmUrl;
+            } else if(browserUrl.includes("azure.cn")) {
+                armUrl = this.chinaAzureArmUrl;
+            } else if(browserUrl.includes("azure.de")) {
+                armUrl = this.blackforestAzureArmUrl;
             }
 
             return armUrl;
@@ -112,7 +116,9 @@ export class ArmService {
         additionalHeaders.set('x-ms-subscription-location-placementid', subscriptionLocation);
         // When x-ms-diagversion is set to 1, the requests will be sent to DiagnosticRole.
         //If the value is set to other than 1 or if the header is not present at all, requests will go to runtimehost
-        additionalHeaders.set('x-ms-diagversion', this.diagRoleVersion);
+        if(!this.isNationalCloud) {
+            additionalHeaders.set('x-ms-diagversion', this.diagRoleVersion);
+        }
         const request = this._http.get<ResponseMessageEnvelope<T>>(url, {
             headers: this.getHeaders(null, additionalHeaders)
         }).pipe(
