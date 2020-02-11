@@ -322,7 +322,9 @@ export class ArmService {
         let additionalHeaders = new Map<string, string>();
         // When x-ms-diagversion is set to 1, the requests will be sent to DiagnosticRole.
         //If the value is set to other than 1 or if the header is not present at all, requests will go to runtimehost
-        additionalHeaders.set('x-ms-diagversion', this.diagRoleVersion);
+        if(!this.isNationalCloud) {
+            additionalHeaders.set('x-ms-diagversion', this.diagRoleVersion);
+        }
         const request = this._http.get(url, { headers: this.getHeaders(null, additionalHeaders) }).pipe(
             map<ResponseMessageCollectionEnvelope<ResponseMessageEnvelope<T>>, ResponseMessageEnvelope<T>[]>(r => r.value),
             catchError(this.handleError)
