@@ -11,6 +11,7 @@ export interface StartupInfo {
     sessionId: string;
     resourceId: string;
     featureUri?:  string;
+    armEndpoint?: string;
     source?:  string;
     pesId?: string;
     supportTopicId?:  string;

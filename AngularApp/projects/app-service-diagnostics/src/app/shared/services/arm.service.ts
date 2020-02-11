@@ -9,6 +9,7 @@ import { CacheService } from './cache.service';
 import { catchError, retry, map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { GenericArmConfigService } from './generic-arm-config.service';
+import { StartupInfo } from '../models/portal';
 
 
 @Injectable()
@@ -21,23 +22,59 @@ export class ArmService {
     private readonly publicAzureArmUrl = 'https://management.azure.com';
     private readonly chinaAzureArmUrl = 'https://management.chinacloudapi.cn';
     private readonly usGovernmentAzureArmUrl = 'https://management.usgovcloudapi.net';
+    private readonly blackforestAzureArmUrl = 'https://management.microsoftazure.de';
+    private readonly usnatAzureArmUrl = 'https://management.azure.eaglex.ic.gov';
     private readonly diagRoleVersion = '1';
-    constructor(private _http: HttpClient, private _authService: AuthService, private _cache: CacheService, private _genericArmConfigService?: GenericArmConfigService) {
+    private armEndpoint:string = '';
+    constructor(private _http: HttpClient, private _authService: AuthService, private _cache: CacheService, private _genericArmConfigService?: GenericArmConfigService ) {
+        this._authService.getStartupInfo().subscribe((startupInfo: StartupInfo) => {
+            if(!!startupInfo.armEndpoint && startupInfo.armEndpoint !='' && startupInfo.armEndpoint.length > 1) {
+                this.armEndpoint = startupInfo.armEndpoint ;
+            }
+        });
+    }
 
+    get isPublicAzure():boolean {
+        return this.armUrl === this.publicAzureArmUrl;
+    }
+
+    get isFairfax(): boolean {
+        return this.armUrl === this.usGovernmentAzureArmUrl;
+    }
+
+    get isBlackforest(): boolean {
+        return this.armUrl === this.blackforestAzureArmUrl;
+    }
+
+    get isMooncake(): boolean {
+        return this.armUrl ===  this.chinaAzureArmUrl;
+    }
+
+    get isUsnat(): boolean {
+        return this.armUrl ===  this.usnatAzureArmUrl;
+    }
+
+    get isNationalCloud(): boolean {
+        return this.isMooncake || this.isFairfax || this.isBlackforest || this.isUsnat;
     }
 
     get armUrl(): string {
-        let browserUrl = (window.location != window.parent.location) ? document.referrer : document.location.href;
-        let armUrl = this.publicAzureArmUrl;
-
-        if (browserUrl.includes("azure.cn")){
-            armUrl = this.chinaAzureArmUrl;
+        if(this.armEndpoint !='' && this.armEndpoint.length > 1 ) {
+            return  this.armEndpoint;
         }
-        else if(browserUrl.includes("azure.us")){
-            armUrl = this.usGovernmentAzureArmUrl;
-        }
+        else {
+            let browserUrl = (window.location != window.parent.location) ? document.referrer : document.location.href;
+            let armUrl = this.publicAzureArmUrl;
 
-        return armUrl;
+            if (browserUrl.includes("azure.cn")){
+                armUrl = this.chinaAzureArmUrl;
+            }
+            else if(browserUrl.includes("azure.us")){
+                armUrl = this.usGovernmentAzureArmUrl;
+            }
+
+            return armUrl;
+        }        
     }
 
     getApiVersion(resourceUri: string, apiVersion?: string): string {
