@@ -131,7 +131,8 @@ export class CategoryNavComponent implements OnInit {
 
                     //   let icon = `${this.imageRootPath}/${detector.name}.svg`;
                     let imageIndex = 0;
-                    let icon = `${this.imageRootPath}/${imageIndex}.png`;
+                    // let icon = `${this.imageRootPath}/${imageIndex}.png`;
+                    let icon = `${this.imageRootPath}/${itemName}.svg`;
                     let menuItem = new CollapsibleMenuItem(itemName, onClick1, isSelected, icon);
 
                     this.proactiveTools.push(menuItem);
@@ -146,9 +147,9 @@ export class CategoryNavComponent implements OnInit {
                         return this._route.url.includes("diagnostic");
                     };
 
-                    //   let icon = `${this.imageRootPath}/${detector.name}.svg`;
-                    let imageIndex = 1;
-                    let icon = `${this.imageRootPath}/${imageIndex}.png`;
+                    let icon = `${this.imageRootPath}/${itemName}.svg`;
+                    // let imageIndex = 1;
+                    // let icon = `${this.imageRootPath}/${imageIndex}.png`;
                     let menuItem = new CollapsibleMenuItem(itemName, onClick1, isSelected, icon);
 
                     this.dignosticTools.push(menuItem);
@@ -163,9 +164,9 @@ export class CategoryNavComponent implements OnInit {
                         return this._route.url.includes("support");
                     };
 
-                    //   let icon = `${this.imageRootPath}/${detector.name}.svg`;
-                    let imageIndex = 2;
-                    let icon = `${this.imageRootPath}/${imageIndex}.png`;
+                    let icon = `${this.imageRootPath}/${itemName}.svg`;
+                    // let imageIndex = 2;
+                    // let icon = `${this.imageRootPath}/${imageIndex}.png`;
                     let menuItem = new CollapsibleMenuItem(itemName, onClick1, isSelected, icon);
 
                     this.supportTools.push(menuItem);
@@ -181,9 +182,9 @@ export class CategoryNavComponent implements OnInit {
                         return this._route.url.includes("premium");
                     };
 
-                    //   let icon = `${this.imageRootPath}/${detector.name}.svg`;
-                    let imageIndex = 3;
-                    let icon = `${this.imageRootPath}/${imageIndex}.png`;
+                    let icon = `${this.imageRootPath}/${itemName}.svg`;
+                    // let imageIndex = 3;
+                    // let icon = `${this.imageRootPath}/${imageIndex}.png`;
                     let menuItem = new CollapsibleMenuItem(itemName, onClick1, isSelected, icon);
 
                     this.premiumTools.push(menuItem);
@@ -245,9 +246,9 @@ export class CategoryNavComponent implements OnInit {
                                 return this._route.url.includes(detector.id);
                             };
 
-                            //   let icon = `${this.imageRootPath}/${detector.name}.svg`;
-                            let imageIndex = index % 4;
-                            let icon = `${this.imageRootPath}/${imageIndex}.png`;
+                            let icon = `${this.imageRootPath}/${detector.name}.svg`;
+                            // let imageIndex = index % 4;
+                            // let icon = `${this.imageRootPath}/${imageIndex}.png`;
                             let menuItem = new CollapsibleMenuItem(detector.name, onClick, isSelected, icon);
 
                             this.detectorList.push(menuItem);
@@ -278,8 +279,9 @@ export class CategoryNavComponent implements OnInit {
                             let isSelected = () => {
                                 return this._route.url.includes(item.id);
                             };
-                            let imageIndex = 2;
-                            let icon = `${this.imageRootPath}/${imageIndex}.png`;
+                            let icon = `${this.imageRootPath}/${item.name}.svg`;
+                            // let imageIndex = 2;
+                            // let icon = `${this.imageRootPath}/${imageIndex}.png`;
                             let onClick = () => {
                                 //   this._telemetryService.logEvent(TelemetryEventNames.SideNavigationItemClicked, { "elementId": element.id });
                                 this.navigateTo(`${routePath}/${item.id}`);

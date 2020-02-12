@@ -24,7 +24,8 @@ export class CategoryMenuItemComponent implements OnInit {
     truncatedLable: string = "";
     hasChildren: boolean;
     matchesSearchTerm: boolean = true;
-    imagePlaceHolder: string = '../../../../assets/img/detectors/default.png';
+    // imagePlaceHolder: string = '../../../../assets/img/detectors/default.png';
+    imagePlaceHolder: string = '../../../../assets/img/detectors/default.svg';
 
     //private _searchPipe: SearchPipe
     constructor() { }
@@ -64,6 +65,10 @@ export class CategoryMenuItemComponent implements OnInit {
 
     getFontSize() {
         return (14 - this.level) + 'px';
+    }
+
+    imgErrorHandler(event:any) {
+      event.target.src = '../../../../assets/img/detectors/default.svg';
     }
   }
 

@@ -2,8 +2,8 @@
     <div class="menu-item" type="button" (click)="handleClick()" [class.selected]="isSelected()" [style.padding-left]="getPadding()" [style.font-size]="getFontSize()">
         <i class="fa expand-icon" *ngIf=" menuItem.subItems && menuItem.subItems.length > 0" [class.fa-caret-right]="!menuItem.expanded"
             [class.fa-caret-down]="menuItem.expanded"></i>
-        <i class="fa" *ngIf="menuItem.icon" [ngClass]="menuItem.icon"></i>
-        <img class="category-icon" style="width:30px!important; padding-right:10px" [src]="menuItem.icon" onerror="this.src=imagePlaceHolder" />
+        <!-- <i class="fa" *ngIf="menuItem.icon" [ngClass]="menuItem.icon"></i> -->
+        <img class="category-icon" style="width:30px!important; padding-right:10px" [src]="menuItem.icon" (error)="imgErrorHandler($event)" />
 
         <span class="menu-label" style="font-size: 13px!important;" [innerHtml]="truncatedLable | searchmatch:searchValueLocal"></span>
     </div>
