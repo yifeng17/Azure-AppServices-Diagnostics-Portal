@@ -101,7 +101,11 @@ namespace AppLensV3.Controllers
                 return BadRequest($"Missing {PathQueryHeader} header");
             }
 
-            var detectorId = body?["id"] != null ? body["id"].ToString() : string.Empty;
+            string detectorId = null;
+            if (body?.GetType() != typeof(JArray))
+            {
+                detectorId = body?["id"] != null ? body["id"].ToString() : string.Empty;
+            }
 
             string applensLink = "https://applens.azurewebsites.net/" + invokeHeaders.Path.Replace("resourcegroup", "resourceGroup").Replace("diagnostics/publish", string.Empty) + "detectors/" + detectorId;
 

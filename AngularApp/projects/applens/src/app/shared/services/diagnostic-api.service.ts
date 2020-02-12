@@ -208,6 +208,16 @@ export class DiagnosticApiService {
     });
   }
 
+  public createOrUpdateKustoMappings(resourceId: string, body: string) : Observable<any> {
+    let path = `${resourceId}/configurations/kustoclustermappings`;
+    return this.invoke<string>(path, HttpMethod.POST, body);
+  }
+
+  public getKustoMappings(resourceId: string) : Observable<any> {
+    let path = `${resourceId}/configurations/kustoclustermappings`;
+    return this.invoke<string>(path, HttpMethod.GET);
+  }
+
   public invoke<T>(path: string, method: HttpMethod = HttpMethod.GET, body: any = {}, useCache: boolean = true,
     invalidateCache: boolean = false, internalClient: boolean = true, internalView: boolean = true, getFullResponse?: boolean,
     additionalHeaders?: Map<string, string>): Observable<T> {

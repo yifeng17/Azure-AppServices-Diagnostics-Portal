@@ -46,6 +46,19 @@ namespace AppLensV3.Controllers
         }
 
         /// <summary>
+        /// Get template.
+        /// </summary>
+        /// <param name="name">File name.</param>
+        /// <param name="fileExtension">File extension.</param>
+        /// <returns>Task for getting template.</returns>
+        [HttpGet("template/{name}/{fileExtension}")]
+        public async Task<IActionResult> GetTemplate(string name, string fileExtension)
+        {
+            string content = await GithubService.GetRawFile(GithubConstants.TemplatePath.Replace("{filename}", name).Replace("csx", fileExtension));
+            return Ok(content);
+        }
+
+        /// <summary>
         /// Get isSearchEnabled for product id.
         /// </summary>
         /// <param name="productId">The productId.</param>

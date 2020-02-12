@@ -137,4 +137,12 @@ export class ApplensDiagnosticService {
       pkg
     );
   }
+
+  createOrUpdateKustoMappings(body: string) : Observable<any> {
+    return this._diagnosticApi.createOrUpdateKustoMappings(this._resourceService.getCurrentResourceId(true), body);
+  }
+
+  getKustoMappings() : Observable<any> {
+    return this._diagnosticApi.getKustoMappings(this._resourceService.getCurrentResourceId(true));
+  }
 }
