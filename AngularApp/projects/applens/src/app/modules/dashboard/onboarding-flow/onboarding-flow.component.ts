@@ -79,6 +79,7 @@ export class OnboardingFlowComponent implements OnInit {
   compilationPackage: CompilationProperties;
 
   initialized = false;
+  codeLoaded: boolean = false;
 
   private publishingPackage: Package;
   private userName: string;
@@ -491,6 +492,7 @@ export class OnboardingFlowComponent implements OnInit {
     }
 
     forkJoin(detectorFile, configuration, this.diagnosticApiService.getGists()).subscribe(res => {
+      this.codeLoaded = true;
       this.code = res[0];
       if (res[1] !== null) {
         this.gists = Object.keys(this.configuration['dependencies']);
