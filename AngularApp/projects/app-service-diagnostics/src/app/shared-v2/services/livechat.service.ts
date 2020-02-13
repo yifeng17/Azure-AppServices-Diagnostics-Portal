@@ -38,7 +38,6 @@ export class LiveChatService {
                                     if(subscriptionProperties) {
                                         let locationPlacementId = subscriptionProperties['locationPlacementId'];
                                         if(locationPlacementId.toLowerCase() !== 'geos_2020-01-01') {
-                                            //Not a Jedi subscription
                                             setTimeout(() => {
                                                 this.startChat(status.freshToken, false, '', LiveChatSettings.DemoModeForCaseSubmission, 'ltr');
                                             }, LiveChatSettings.InactivityTimeoutInMs);
@@ -56,7 +55,6 @@ export class LiveChatService {
                                             }));
                                         }
                                         else {
-                                            //Do not show freshchat for Jedi subscriptions.
                                             this.logger.LogLiveChatWidgetSkipped('Jedi subscription');
                                         }
                                     }
