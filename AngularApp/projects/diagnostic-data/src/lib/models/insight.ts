@@ -92,4 +92,6 @@ export class DynamicInsight extends InsightBase {
     description: string;
     innerDiagnosticData: DiagnosticData;
     expanded: boolean;
+    isRated: boolean = false;
+    isHelpful: boolean = false;
 }

@@ -4,6 +4,7 @@ import { DiagnosticData, DynamicInsightRendering, HealthStatus } from '../../mod
 import { DynamicInsight } from '../../models/insight';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
+import { TelemetryEventNames } from '../../services/telemetry/telemetry.common';
 
 @Component({
   selector: 'dynamic-insight',
@@ -44,5 +45,31 @@ export class DynamicInsightComponent extends DataRenderBaseComponent {
         table: this.diagnosticData.table
       }
     };
+  }
+
+  toggleInsightExpanded(insight: DynamicInsight) {
+    insight.expanded = !insight.expanded;
+  }
+
+  logInsightClickEvent(insightName: string, isExpanded: boolean, status: string) {
+    const eventProps: { [name: string]: string } = {
+      'Title': insightName,
+      'IsExpanded': String(isExpanded),
+      'Status': status
+    };
+
+    this.logEvent(TelemetryEventNames.InsightTitleClicked, eventProps);
+  }
+
+  setInsightComment(insight: any, isHelpful: boolean) {
+    if (!insight.isRated) {
+      const eventProps: { [name: string]: string } = {
+        'Title': insight.title,
+        'IsHelpful': String(isHelpful)
+      }
+      insight.isRated = true;
+      insight.isHelpful = isHelpful;
+      this.logEvent(TelemetryEventNames.InsightRated, eventProps);
+    }
   }
 }
