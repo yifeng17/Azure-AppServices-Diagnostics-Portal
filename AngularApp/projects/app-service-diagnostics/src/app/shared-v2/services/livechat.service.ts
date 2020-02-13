@@ -55,7 +55,7 @@ export class LiveChatService {
                                             }));
                                         }
                                         else {
-                                            this.logger.LogLiveChatWidgetSkipped('Jedi subscription');
+                                            this.logger.LogLiveChatWidgetSkipped('Non public subscription');
                                         }
                                     }
                                 });
