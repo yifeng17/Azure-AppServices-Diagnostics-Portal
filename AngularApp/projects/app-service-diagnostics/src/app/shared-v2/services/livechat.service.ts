@@ -9,7 +9,8 @@ import { ResourceService } from './resource.service';
 import { ArmResource } from '../models/arm';
 import { StartupInfo } from '../../shared/models/portal';
 import { BackendCtrlService } from '../../shared/services/backend-ctrl.service';
-import { HttpHeaders } from '@angular/common/http';
+import { HttpHeaders, HttpResponse } from '@angular/common/http';
+import { SubscriptionPropertiesService } from '../../shared/services/subscription-properties.service';
 
 @Injectable()
 export class LiveChatService {
@@ -21,7 +22,7 @@ export class LiveChatService {
     private chatStatus: ChatStatus;
 
     constructor(private windowService: WindowService, private authService: AuthService, private _resourceService: ResourceService, private armService: ArmService,
-        private logger: BotLoggingService, private _backendApi: BackendCtrlService) {
+        private logger: BotLoggingService, private _backendApi: BackendCtrlService, private subscriptionPropertiesService: SubscriptionPropertiesService) {
 
         const window = this.windowService.window;
 
@@ -32,27 +33,34 @@ export class LiveChatService {
                         this._backendApi.get<ChatStatus>(`api/chat/${this._resourceService.azureServiceName}/${startupInfo.supportTopicId}/status`).subscribe((status: ChatStatus) => {
                             this.chatStatus = status;
                             if (this.isChatApplicable(startupInfo, this._resourceService.azureServiceName)) {
+                                this.subscriptionPropertiesService.getSubscriptionProperties(this._resourceService.subscriptionId).subscribe((response : HttpResponse<{}>) => {
+                                    let subscriptionProperties = response.body['subscriptionPolicies'];
+                                    if(subscriptionProperties) {
+                                        let locationPlacementId = subscriptionProperties['locationPlacementId'];
+                                        if(locationPlacementId.toLowerCase() !== 'geos_2020-01-01') {
+                                            //Not a Jedi subscription
+                                            setTimeout(() => {
+                                                this.startChat(status.freshToken, false, '', LiveChatSettings.DemoModeForCaseSubmission, 'ltr');
+                                            }, LiveChatSettings.InactivityTimeoutInMs);
 
-                                setTimeout(() => {
-
-                                    this.startChat(status.freshToken, false, '', LiveChatSettings.DemoModeForCaseSubmission, 'ltr');
-
-                                }, LiveChatSettings.InactivityTimeoutInMs);
-
-                                window.fcWidget.on('widget:loaded', ((resp) => {
-
-                                    if (window.fcWidget.isOpen() != true) {
-                                        setTimeout(() => {
-                                            // Raise an event for trigger message campaign
-                                            window.fcWidget.track('supportCaseSubmission', {
-                                                supportTopicId: startupInfo.supportTopicId,
-                                                product: this._resourceService.azureServiceName
-                                            });
-
-                                        }, 1000);
+                                            window.fcWidget.on('widget:loaded', ((resp) => {
+                                                if (window.fcWidget.isOpen() != true) {
+                                                    setTimeout(() => {
+                                                        // Raise an event for trigger message campaign
+                                                        window.fcWidget.track('supportCaseSubmission', {
+                                                            supportTopicId: startupInfo.supportTopicId,
+                                                            product: this._resourceService.azureServiceName
+                                                        });
+                                                    }, 1000);
+                                                }
+                                            }));
+                                        }
+                                        else {
+                                            //Do not show freshchat for Jedi subscriptions.
+                                            this.logger.LogLiveChatWidgetSkipped('Jedi subscription');
+                                        }
                                     }
-
-                                }));
+                                });
                             }
                         });
                     }
