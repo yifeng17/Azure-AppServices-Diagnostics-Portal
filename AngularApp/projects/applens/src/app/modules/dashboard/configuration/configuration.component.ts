@@ -37,8 +37,9 @@ export class ConfigurationComponent implements OnInit {
         this.code = JSON.stringify(resp, null, 2);
       }, (error: any) => {
         console.log(error);
-        var kustoMappingsTemplate = this.githubService.getTemplateWithExtension("Kusto_Mapping", "json").subscribe(resp => {
+          var kustoMappingsTemplate = this.githubService.getTemplateWithExtension("Kusto_Mapping", "json").subscribe(resp => {
           this.code = resp;
+          this.codeLoaded = true;
         }, (error: any) => {
           this.showAlertBox("alert-danger", "Failed to get kusto mapping template. Please try again after some time.");
         });
