@@ -216,6 +216,10 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                 this.isSearchEmbedded = true;
                 this.showSuccessfulChecks = false;
             }
+            else{
+                this.isSearchEmbedded = false;
+                this.showSuccessfulChecks = true;
+            }
         });
     }
 
@@ -401,7 +405,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
         this.loadingMessages = [];
         this.successfulViewModels = [];
         this.showWebSearch = false;
-
+        this.isSearchEmbedded = false;
     }
 
     getDetectorInsight(viewModel: any): any {
