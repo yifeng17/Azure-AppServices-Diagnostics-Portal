@@ -125,4 +125,8 @@ export class DataTableComponent extends DataRenderBaseComponent implements After
 
   }
 
+  onInputClicked(event: any) {
+    event.stopPropagation();
+  }
+
 }

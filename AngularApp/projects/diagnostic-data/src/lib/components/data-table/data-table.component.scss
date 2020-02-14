@@ -35,7 +35,16 @@
     white-space: pre-wrap;
 }
 
-.column-header {
-    float: left;
-    width: 90%;
+:host ::ng-deep .ngx-datatable {
+    .sortable .sort-btn:before {
+        font-family: data-table;
+        padding-left: 1em;
+        content: "c";
+    }
+    .sortable .sort-btn.datatable-icon-down:before {
+        content: "f";
+    }
+    .sortable .sort-btn.datatable-icon-up:before {
+        content: "e";
+    }
 }
