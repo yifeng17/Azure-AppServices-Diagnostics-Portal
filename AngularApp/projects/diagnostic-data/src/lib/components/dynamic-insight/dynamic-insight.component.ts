@@ -51,6 +51,7 @@ export class DynamicInsightComponent extends DataRenderBaseComponent {
 
   toggleInsightExpanded(insight: DynamicInsight) {
     insight.isExpanded = !insight.isExpanded;
+    this.logInsightClickEvent(insight.title, insight.isExpanded, HealthStatus[insight.status]);
   }
 
   logInsightClickEvent(insightName: string, isExpanded: boolean, status: string) {
