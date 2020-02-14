@@ -39,16 +39,18 @@ export class DynamicInsightComponent extends DataRenderBaseComponent {
       title: this.renderingProperties.title,
       description: this._markdownService.compile(this.renderingProperties.description),
       status: this.renderingProperties.status,
-      expanded: this.renderingProperties.expanded != undefined? this.renderingProperties.expanded : true,
+      isExpanded: this.renderingProperties.expanded != undefined? this.renderingProperties.expanded : true,
       innerDiagnosticData: <DiagnosticData>{
         renderingProperties: this.renderingProperties.innerRendering,
         table: this.diagnosticData.table
-      }
+      },
+      isRated: false,
+      isHelpful: false
     };
   }
 
   toggleInsightExpanded(insight: DynamicInsight) {
-    insight.expanded = !insight.expanded;
+    insight.isExpanded = !insight.isExpanded;
   }
 
   logInsightClickEvent(insightName: string, isExpanded: boolean, status: string) {

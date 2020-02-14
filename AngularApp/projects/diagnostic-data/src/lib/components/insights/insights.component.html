@@ -38,7 +38,7 @@
                         [ngStyle]="{'color':insight.isRated && insight.isHelpful ? 'green': 'gray'}"></i>
                     </a>
                     <div class="tooltip ">
-                      <p>Helpful</p>
+                      Helpful
                     </div>
                   </div>
                   <div style=" display: inline-block;" [ngClass]="{'con-tooltip bottom':!insight.isRated}"
@@ -49,8 +49,8 @@
                         class="fa fa-thumbs-o-down fa-lg"
                         [ngStyle]="{'color':insight.isRated && !insight.isHelpful ? 'red': 'gray'}"></i>
                     </a>
-                    <div class="tooltip ">
-                      <p>Not Helpful</p>
+                    <div class="tooltip">
+                      Not Helpful
                     </div>
                   </div>
                 </div>

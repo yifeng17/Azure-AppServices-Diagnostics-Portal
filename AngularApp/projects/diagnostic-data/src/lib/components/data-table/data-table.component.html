@@ -1,21 +1,35 @@
 <data-container [title]="renderingProperties.title" [description]="renderingProperties.description">
   <ng-container
     *ngIf="!renderingProperties.groupByColumnName && !(renderingProperties.groupByColumnName === ''); else groupedTable">
-    <ngx-datatable #myTable class="bootstrap with-shadow" [columnMode]="'force'" [limit]="rowLimit" [headerHeight]="30"
-      [rowHeight]="'auto'" [selected]="selected" [ngStyle]="currentStyles">
+    <ngx-datatable #myTable class="bootstrap with-shadow"
+      [columnMode]="'force'"
+      [limit]="rowLimit"
+      [headerHeight]="72"
+      [rowHeight]="35"
+      [footerHeight]="0"
+      [selected]="selected"
+      [ngStyle]="currentStyles">
     </ngx-datatable>
     <div *ngIf="renderingProperties.descriptionColumnName && selected.length > 0">
-      <pre class="description-text">{{ getValue()}}</pre>
+      <pre class="description-text">{{ getValue() }}</pre>
     </div>
   </ng-container>
   <ng-template #headerTemplate let-column="column" let-sort="sortFn">
-    <div (click)="sort()">{{ column.name }}</div>
-    <input type="text" placeholder="{{column.name}}" (keyup)="updateFilter($event, column.prop)" />
+    <input type="text" (keyup)="updateFilter($event, column.prop)" />
+    <br />
+    <span class="column-header" (click)="sort()">{{ column.name }}</span>
   </ng-template>
 
   <ng-template #groupedTable>
-    <ngx-datatable #myTable class="bootstrap with-shadow" [rows]="rows" [columns]="columns" [columnMode]="'force'"
-      [limit]="rowLimit" [headerHeight]="30" [rowHeight]="'auto'" [groupRowsBy]="renderingProperties.groupByColumnName"
+    <ngx-datatable #myTable class="bootstrap with-shadow"
+      [rows]="rows"
+      [columns]="columns"
+      [columnMode]="'force'"
+      [limit]="rowLimit"
+      [headerHeight]="72"
+      [rowHeight]="35"
+      [footerHeight]="0"
+      [groupRowsBy]="renderingProperties.groupByColumnName"
       [groupExpansionDefault]="false">
       <ngx-datatable-group-header [rowHeight]="50" #myGroupHeader>
         <ng-template let-group="group" let-expanded="expanded" ngx-datatable-group-header-template>

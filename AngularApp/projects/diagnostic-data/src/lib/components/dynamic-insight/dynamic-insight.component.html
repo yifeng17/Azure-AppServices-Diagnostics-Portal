@@ -8,8 +8,8 @@
       <div style="display: table;">
         <div style="display: table-row">
           <div style="display: table-cell">
-            <span class="fa insight-expand-icon" [class.fa-angle-right]="insight.innerDiagnosticData && !insight.expanded"
-              [class.fa-angle-down]="insight.innerDiagnosticData && insight.expanded"></span>
+            <span class="fa insight-expand-icon" [class.fa-angle-right]="insight.innerDiagnosticData && !insight.isExpanded"
+              [class.fa-angle-down]="insight.innerDiagnosticData && insight.isExpanded"></span>
           </div>
           <div style="display: table-cell">
             <span class="fa status-icon" [class.fa-exclamation-circle]="insight.status === InsightStatus.Critical"
@@ -31,7 +31,7 @@
                     [ngStyle]="{'color':insight.isRated && insight.isHelpful ? 'green': 'gray'}"></i>
                 </a>
                 <div class="tooltip ">
-                  <p>Helpful</p>
+                  Helpful
                 </div>
               </div>
               <div style=" display: inline-block;" [ngClass]="{'con-tooltip bottom':!insight.isRated}"
@@ -43,7 +43,7 @@
                     [ngStyle]="{'color':insight.isRated && !insight.isHelpful ? 'red': 'gray'}"></i>
                 </a>
                 <div class="tooltip ">
-                  <p>Not Helpful</p>
+                  Not Helpful
                 </div>
               </div>
             </div>
@@ -53,7 +53,7 @@
     </h5>
   </div>
 
-  <div class="panel-body" *ngIf="insight.expanded">
+  <div class="panel-body" *ngIf="insight.isExpanded">
     <div *ngIf="insight.description" [innerHtml]="insight.description"></div>
     <dynamic-data [diagnosticData]="insight.innerDiagnosticData" [startTime]="startTime" [endTime]="endTime">
     </dynamic-data>

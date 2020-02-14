@@ -2,6 +2,7 @@
   background-color: lightgray !important;
   color:black !important;
 }
+
 .group-header {
   padding: 5px;
   cursor: pointer;
@@ -26,10 +27,15 @@
 
 .description-text{
     margin-top: 5px;
-    padding:5px;
-    height:150px;
+    padding: 5px;
+    height: 150px;
     max-height: 150px;
     overflow-y: scroll;
     border-radius: 0px;
     white-space: pre-wrap;
+}
+
+.column-header {
+    float: left;
+    width: 90%;
 }
