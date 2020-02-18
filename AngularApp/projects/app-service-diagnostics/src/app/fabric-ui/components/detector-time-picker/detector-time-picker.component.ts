@@ -170,8 +170,6 @@ export class DetectorTimePickerComponent implements OnInit {
 
   //Use year-month-date in calender and time hh-mm as input
   private convertLocalDateToUTCWithTimeString(date: Date, time: string): string {
-    // const hour = Number.parseInt(time.split(":")[0]);
-    // const minute = Number.parseInt(time.split(":")[1]);
     //replace hour and minute within formatted UTC string
     const year = date.getFullYear().toString();
     const month = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}`:`${date.getMonth() + 1}`;

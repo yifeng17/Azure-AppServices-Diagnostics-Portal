@@ -65,6 +65,32 @@ export class SecurityScanningResolver implements Resolve<Observable<boolean>> {
 }
 
 export const DiagnosticToolsRoutes: Route[] = [
+    // {
+    //     path: 'categories/:category',
+    //     component: CategorySummaryComponent,
+    //     data: {
+    //       cacheComponent: true
+    //     },
+    //     children: [
+    //         {
+    //             path: 'overview',
+    //             component: CategoryOverviewComponent,
+    //             data: {
+    //                 cacheComponent: true,
+    //                 navigationTitle: CategoryTabResolver,
+    //                 //   messageList: CategoryChatResolver
+    //             },
+    //         },
+    //         {
+    //             path: '',
+    //             redirectTo: 'overview',
+    //             pathMatch: 'full',
+    //             data: {
+    //                 cacheComponent: true
+    //             },
+    //         },
+    //     ]
+    // },
     // CLR Profiling Tool
     {
         path: 'profiler',

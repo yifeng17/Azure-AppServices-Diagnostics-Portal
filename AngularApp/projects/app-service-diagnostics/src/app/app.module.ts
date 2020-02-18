@@ -167,7 +167,7 @@ import { WebSitesModule } from './resources/web-sites/web-sites.module';
         // resolve: { data: ResourceResolver }
       }
     ],
-    { enableTracing: true }
+    // { enableTracing: true }
     ),
     CustomMaterialModule,
     HighchartsChartModule,

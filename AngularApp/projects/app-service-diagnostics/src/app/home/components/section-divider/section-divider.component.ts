@@ -41,7 +41,6 @@ export class SectionDividerComponent implements OnInit {
     {
         return false;
     }
-
   }
 
   sectionHeaderClick() {

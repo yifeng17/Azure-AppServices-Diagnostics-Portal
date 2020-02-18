@@ -54,7 +54,8 @@ export class GeniePanelComponent implements OnInit, OnDestroy {
     welcomeMessage: string = "Welcome to App Service Diagnostics. My name is Genie and I am here to help you answer any questions you may have about diagnosing and solving your problems with your app. Please describe the issue of your app.";
     panelStyles: any;
     width: string = "1200px";
-    scrollListener: any;
+    disableChat: boolean = false;
+   // scrollListener: any;
 
     // messageBarType: MessageBarType = MessageBarType.warning;
     constructor(private _resourceService: WebSitesService, private _authService: AuthService, private _route: Router, private _genieChatFlow: GenieChatFlow, private _messageProcessor: MessageProcessor, public globals: GenieGlobals) {
@@ -138,17 +139,29 @@ export class GeniePanelComponent implements OnInit, OnDestroy {
 
     updateView(event?: any): void {
         this.scrollToBottom();
+        if (event && event.hasOwnProperty('data') && event['data'] === "view-loaded" ) {
+            (<HTMLInputElement>document.getElementById("genieChatBox")).disabled = false;
+        }
     }
 
     updateStatus(event?: any): void {
         //    this.scrollToBottom();
         this.loading = false;
         //   clearInterval(this.scrollListener);
-        this.scrollListener = undefined;
+       // this.scrollListener = undefined;
         this.getMessage(event);
+        this.disableChat = false;
     }
 
     scrollToBottom(event?: any): void {
+        try {
+            this.myScrollContainer.nativeElement.childNodes[0].scrollTop = this.myScrollContainer.nativeElement.childNodes[0].scrollHeight;
+        } catch (err) { 
+            console.log("scrolltobottom error", err);
+        }
+    }
+
+    scrollToBottom1(event?: any): void {
         try {
             console.log("scrolltobottom", this.myScrollContainer.elementRef.nativeElement.childNodes[0]);
       //      console.log("height", height, this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].scrollTop, this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].height);
@@ -171,9 +184,12 @@ export class GeniePanelComponent implements OnInit, OnDestroy {
     }
 
     onSearchEnter(event: any): void {
+        console.log("search event", event);
         // Push messages to the current object, also wait for the complete status, and push the object to globa message component
-        let analysisMessageGroupId = event.newValue + (new Date()).toUTCString();
-        this._genieChatFlow.createMessageFlowForAnaysis(event.newValue, analysisMessageGroupId, this.resourceId).subscribe((analysisMessages: Message[]) => {
+        let inputValue = (<HTMLInputElement>document.getElementById("genieChatBox")).value;
+        let analysisMessageGroupId = inputValue + (new Date()).toUTCString();
+        // event.newValue
+        this._genieChatFlow.createMessageFlowForAnaysis(inputValue, analysisMessageGroupId, this.resourceId).subscribe((analysisMessages: Message[]) => {
             console.log("**** analysis messsages", analysisMessages);
             analysisMessages.forEach(message => {
                 // message.component.oncomplete === true &&
@@ -187,6 +203,9 @@ export class GeniePanelComponent implements OnInit, OnDestroy {
         });
         this._messageProcessor.setCurrentKey(analysisMessageGroupId);
         this.getMessage();
+        (<HTMLInputElement>document.getElementById("genieChatBox")).value = "";
+        (<HTMLInputElement>document.getElementById("genieChatBox")).disabled = true;
+        this.disableChat = true;
         this.searchValue="";
         //  this.scrollToBottom();
         //setTimeout(() => this.scrollToBottom(), 500);
@@ -222,7 +241,6 @@ export class GeniePanelComponent implements OnInit, OnDestroy {
 
 
     scrollToTop(event?: any): void {
-
         try {
             //this.myScrollContainer.elementRef.nativeElement.childNodes[0].scrollTop = this.myScrollContainer.elementRef.nativeElement.childNodes[0].scrollHeight;
             var height = this.myScrollContainer.elementRef.nativeElement.childNodes[0].childNodes[2].scrollHeight;

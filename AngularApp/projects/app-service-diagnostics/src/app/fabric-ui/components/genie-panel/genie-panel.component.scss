@@ -20,3 +20,36 @@
     visibility: visible;
     opacity: 1;
   }
+  
+
+  .search-box-container {
+    position: absolute;
+    width: 100%;
+    height: 68px;
+    // left: 781px;
+    // top: 700px;
+    
+    background: #F8F8F8;
+    /* Light Theme / Drop Shadow - Level 1 */
+    
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    bottom: 0px; left: 0px; right: 37px
+  }
+
+  .genie-search-box {
+    height: 31px; 
+    border-radius: 15px; 
+    width:85%; 
+    margin: 2%;
+    border: 1px gray!important;
+    text-indent: 15px;
+    padding-right:30px;
+  }
+
+  .search-box-icon {
+    margin-left:-50px;
+  }
+
+  .search-box-icon:hover {
+    color:#0272ca;
+  }

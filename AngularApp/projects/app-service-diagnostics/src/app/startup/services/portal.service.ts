@@ -109,6 +109,7 @@ export class PortalService {
             this.sessionId = info.sessionId;
             this.startupInfoObservable.next(info);
         } else if (methodName === Verbs.sendAppInsightsResource) {
+            console.log("aiResourceData", data);
             const aiResource = data;
             this.appInsightsResourceObservable.next(aiResource);
         }
