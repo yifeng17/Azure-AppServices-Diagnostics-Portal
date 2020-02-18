@@ -12,8 +12,9 @@
       <div class="result-item" *ngFor="let feature of features" (mousedown)="navigateToFeature(feature)" (keyup.enter)="navigateToFeature(feature)" tabindex="0">
         <div style="display: flex;flex-direction: row;align-items: center;justify-content: start;">
           <div class="feature-icon">
-            <div class="feature-icon-circle" [style.background-color]="feature.featureType.color">
-              <i class="fa" [ngClass]="feature.featureType.icon"></i>
+            <div>
+              <!-- <i *ngIf="!checkImageExist(feature.name)" class="fa" [ngClass]="feature.featureType.icon"></i> -->
+              <img style="height: 20px;width: 20px;" [src]="getImageUrl(feature.name)" alt="" (error)="imgErrorHandler($event)">
             </div>
           </div>
           <div class="feature-title">{{feature.name}}</div>

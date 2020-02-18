@@ -142,4 +142,14 @@ export class FabricSearchResultsComponent {
     this.isEscape = true;
     this.globals.openGeniePanel = true;
   }
+
+
+  getImageUrl(name:string) {
+    return `../../../../assets/img/detectors/${name}.svg`;
+  }
+
+  //No detector image, load default image
+  imgErrorHandler(event:any) {
+    event.target.src = "../../../../assets/img/detectors/default.svg";
+  }
 }
