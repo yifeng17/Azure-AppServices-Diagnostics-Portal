@@ -377,16 +377,20 @@ private logHTTPError(error: any, methodName: string): void {
   this.kustologgingService.logTrace('HTTP error in ' + methodName, errorLoggingProps);
 }
 
-openAvaAndPerf() {
-    const category = this.categories.find(category => category.name === "Availability and Performance");
-    if(category) {
-      this._portalService.openBladeDiagnoseCategoryBlade(category.id);
+  openAvaAndPerf() {
+      const category = this.categories.find(category => category.name === "Availability and Performance");
+      if(category) {
+        this._portalService.openBladeDiagnoseCategoryBlade(category.id);
+      }
     }
-  }
 
   openGeniePanel() {
     this.globals.openGeniePanel = true;
     console.log(this.globals.openGeniePanel);
+  }
+
+  openTest() {
+    this._router.navigateByUrl("/test");
   }
 }
 
