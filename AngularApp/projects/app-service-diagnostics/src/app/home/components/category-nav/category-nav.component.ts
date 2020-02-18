@@ -126,7 +126,8 @@ export class CategoryNavComponent implements OnInit {
                     let itemName = tool.item.name;
 
                     let isSelected = () => {
-                        return this._route.url.includes("proactive");
+                      //  return this._route.url.includes("proactive");
+                      return this._route.url.includes(tool.item.id);
                     };
 
                     //   let icon = `${this.imageRootPath}/${detector.name}.svg`;
@@ -143,7 +144,8 @@ export class CategoryNavComponent implements OnInit {
                     let itemName = tool.item.name;
 
                     let isSelected = () => {
-                        return this._route.url.includes("diagnostic");
+                       // return this._route.url.includes("diagnostic");
+                        return this._route.url.includes(tool.item.id);
                     };
 
                     //   let icon = `${this.imageRootPath}/${detector.name}.svg`;
@@ -160,7 +162,8 @@ export class CategoryNavComponent implements OnInit {
                     let itemName = tool.item.name;
 
                     let isSelected = () => {
-                        return this._route.url.includes("support");
+                      //  return this._route.url.includes("support");
+                      return this._route.url.includes(tool.item.id);
                     };
 
                     //   let icon = `${this.imageRootPath}/${detector.name}.svg`;
@@ -178,7 +181,8 @@ export class CategoryNavComponent implements OnInit {
                     let itemName = tool.item.name;
 
                     let isSelected = () => {
-                        return this._route.url.includes("premium");
+                      //  return this._route.url.includes("premium");
+                      return this._route.url.includes(tool.item.id);
                     };
 
                     //   let icon = `${this.imageRootPath}/${detector.name}.svg`;

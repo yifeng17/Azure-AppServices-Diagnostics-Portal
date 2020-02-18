@@ -9,7 +9,7 @@ import { AppType, SupportBladeDefinitions } from '../../../shared/models/portal'
 import { OperatingSystem, Site, HostingEnvironmentKind } from '../../../shared/models/site';
 import { SiteFilteredItem } from '../models/site-filter';
 import { Sku } from '../../../shared/models/server-farm';
-import { ToolNames } from '../../../shared/models/tools-constants';
+import { ToolNames, ToolIds } from '../../../shared/models/tools-constants';
 import { PortalActionService } from '../../../shared/services/portal-action.service';
 import { WebSitesService } from './web-sites.service';
 import { WebSiteFilter } from '../pipes/site-filter.pipe';
@@ -170,13 +170,13 @@ export class SiteFeatureService extends FeatureService {
         hostingEnvironmentKind: HostingEnvironmentKind.All,
         stack: '',
         item: {
-          id: ToolNames.AutoHealing,
+          id: ToolIds.AutoHealing,
           name: ToolNames.AutoHealing,
           category: 'Proactive Tools',
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.AutoHealing, 'Proactive Tools', () => {
-            this._router.navigateByUrl(`resource${resourceId}/tools/mitigate`);
+            this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/mitigate`);
           })
         }
       }, {
@@ -186,13 +186,13 @@ export class SiteFeatureService extends FeatureService {
         hostingEnvironmentKind: HostingEnvironmentKind.All,
         stack: '',
         item: {
-          id: ToolNames.CpuMonitoring,
+          id: ToolIds.CpuMonitoring,
           name: ToolNames.CpuMonitoring,
           category: 'Proactive Tools',
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.CpuMonitoring, 'Proactive Tools', () => {
-            this._router.navigateByUrl(`resource${resourceId}/tools/cpumonitoring`);
+            this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/cpumonitoring`);
           })
         }
       }
@@ -207,13 +207,14 @@ export class SiteFeatureService extends FeatureService {
         hostingEnvironmentKind: HostingEnvironmentKind.All,
         stack: 'ASP.NET',
         item: {
-          id: ToolNames.Profiler,
+          id: ToolIds.Profiler,
           name: ToolNames.Profiler,
           category: 'Diagnostic Tools',
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.Profiler, 'Diagnostic Tools', () => {
-            this._router.navigateByUrl(`resource${resourceId}/tools/profiler`);
+           // this._router.navigateByUrl(`resource${resourceId}/tools/profiler`);
+           this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/profiler`);
           })
         }
       },
@@ -224,13 +225,13 @@ export class SiteFeatureService extends FeatureService {
         hostingEnvironmentKind: HostingEnvironmentKind.All,
         stack: 'ASP.NET Core',
         item: {
-          id: ToolNames.Profiler,
+          id: ToolIds.Profiler,
           name: ToolNames.Profiler,
           category: 'Diagnostic Tools',
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.Profiler, 'Diagnostic Tools', () => {
-            this._router.navigateByUrl(`resource${resourceId}/tools/profiler`);
+            this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/profiler`);
           })
         }
       },
@@ -241,13 +242,13 @@ export class SiteFeatureService extends FeatureService {
         hostingEnvironmentKind: HostingEnvironmentKind.All,
         stack: '',
         item: {
-          id: ToolNames.MemoryDump,
+          id: ToolIds.MemoryDump,
           name: ToolNames.MemoryDump,
           category: 'Diagnostic Tools',
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.MemoryDump, 'Diagnostic Tools', () => {
-            this._router.navigateByUrl(`resource${resourceId}/tools/memorydump`);
+            this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/memorydump`);
           })
         }
       },
@@ -258,13 +259,13 @@ export class SiteFeatureService extends FeatureService {
         hostingEnvironmentKind: HostingEnvironmentKind.All,
         stack: '',
         item: {
-          id: ToolNames.DatabaseTester,
+          id: ToolIds.DatabaseTester,
           name: ToolNames.DatabaseTester,
           category: 'Diagnostic Tools',
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.DatabaseTester, 'Diagnostic Tools', () => {
-            this._router.navigateByUrl(`resource${resourceId}/tools/databasetester`);
+            this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/databasetester`);
           })
         }
       },
@@ -275,13 +276,13 @@ export class SiteFeatureService extends FeatureService {
         hostingEnvironmentKind: HostingEnvironmentKind.All,
         stack: '',
         item: {
-          id: ToolNames.NetworkTrace,
+          id: ToolIds.NetworkTrace,
           name: ToolNames.NetworkTrace,
           category: 'Diagnostic Tools',
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.NetworkTrace, 'Diagnostic Tools', () => {
-            this._router.navigateByUrl(`resource${resourceId}/tools/networktrace`);
+            this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/networktrace`);
           })
         }
       },
@@ -292,13 +293,13 @@ export class SiteFeatureService extends FeatureService {
         hostingEnvironmentKind: HostingEnvironmentKind.All,
         stack: 'PHP',
         item: {
-          id: ToolNames.PHPLogAnalyzer,
+          id: ToolIds.PHPLogAnalyzer,
           name: ToolNames.PHPLogAnalyzer,
           category: 'Diagnostic Tools',
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.PHPLogAnalyzer, 'Diagnostic Tools', () => {
-            this._router.navigateByUrl(`resource${resourceId}/tools/phploganalyzer`);
+            this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/phploganalyzer`);
           })
         }
       },
@@ -309,13 +310,13 @@ export class SiteFeatureService extends FeatureService {
         hostingEnvironmentKind: HostingEnvironmentKind.All,
         stack: 'PHP',
         item: {
-          id: ToolNames.PHPProcessAnalyzer,
+          id: ToolIds.PHPProcessAnalyzer,
           name: ToolNames.PHPProcessAnalyzer,
           category: 'Diagnostic Tools',
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.PHPProcessAnalyzer, 'Diagnostic Tools', () => {
-            this._router.navigateByUrl(`resource${resourceId}/tools/phpprocessanalyzer`);
+            this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/phpprocessanalyzer`);
           })
         }
       },
@@ -326,13 +327,13 @@ export class SiteFeatureService extends FeatureService {
         hostingEnvironmentKind: HostingEnvironmentKind.All,
         stack: 'Java',
         item: {
-          id: ToolNames.JavaMemoryDump,
+          id: ToolIds.JavaMemoryDump,
           name: ToolNames.JavaMemoryDump,
           category: 'Diagnostic Tools',
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.JavaMemoryDump, 'Diagnostic Tools', () => {
-            this._router.navigateByUrl(`resource${resourceId}/tools/javamemorydump`);
+            this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/javamemorydump`);
           })
         }
       },
@@ -343,13 +344,13 @@ export class SiteFeatureService extends FeatureService {
         hostingEnvironmentKind: HostingEnvironmentKind.All,
         stack: 'Java',
         item: {
-          id: ToolNames.JavaThreadDump,
+          id: ToolIds.JavaThreadDump,
           name: ToolNames.JavaThreadDump,
           category: 'Diagnostic Tools',
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.JavaThreadDump, 'Diagnostic Tools', () => {
-            this._router.navigateByUrl(`resource${resourceId}/tools/javathreaddump`);
+            this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/javathreaddump`);
           })
         }
       },
@@ -403,7 +404,7 @@ export class SiteFeatureService extends FeatureService {
           description: 'View event logs(containing exceptions, errors etc) generated by your application.',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(SupportBladeDefinitions.EventViewer.Identifier, 'Support Tools', () => {
-            this._router.navigateByUrl(`resource${resourceId}/tools/eventviewer`);
+            this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/eventviewer`);
           })
         }
       },
@@ -420,7 +421,7 @@ export class SiteFeatureService extends FeatureService {
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(SupportBladeDefinitions.FREBLogs.Identifier, 'Support Tools', () => {
-            this._router.navigateByUrl(`resource${resourceId}/tools/frebviewer`);
+            this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/frebviewer`);
           })
         }
       },
