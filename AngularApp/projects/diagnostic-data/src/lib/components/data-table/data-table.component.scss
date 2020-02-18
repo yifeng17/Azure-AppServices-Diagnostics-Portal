@@ -2,6 +2,7 @@
   background-color: lightgray !important;
   color:black !important;
 }
+
 .group-header {
   padding: 5px;
   cursor: pointer;
@@ -26,10 +27,24 @@
 
 .description-text{
     margin-top: 5px;
-    padding:5px;
-    height:150px;
+    padding: 5px;
+    height: 150px;
     max-height: 150px;
     overflow-y: scroll;
     border-radius: 0px;
     white-space: pre-wrap;
+}
+
+:host ::ng-deep .ngx-datatable {
+    .sortable .sort-btn:before {
+        font-family: data-table;
+        padding-left: 1em;
+        content: "c";
+    }
+    .sortable .sort-btn.datatable-icon-down:before {
+        content: "f";
+    }
+    .sortable .sort-btn.datatable-icon-up:before {
+        content: "e";
+    }
 }
