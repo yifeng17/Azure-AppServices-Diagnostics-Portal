@@ -5,7 +5,7 @@
     <fab-choice-group [options]="choiceGroupOptions" [defaultSelectedKey]="defaultSelectedKey">
     </fab-choice-group>
     <div *ngIf="showTimePicker" class="row">
-      <div style="padding:15px">Start Time </div>
+      <div style="padding:15px">Start Time (UTC) </div>
       <fab-date-picker class="col-md-8" [strings]="dates" [minDate]="minDate" [maxDate]="maxDate"
         placeholder="Select a date..." ariaLabel="Select start date" allowTextInput="true"
         showMonthPickerAsOverlay="true" (onSelectDate)="onSelectStartDateHandler($event)" [formatDate]="formatDate"
@@ -15,7 +15,7 @@
         [mask]="'99:99'" [maskChar]="'-'" [validateOnFocusOut]="true" [getErrorMessage]="getErrorMessageOnTextField">
       </fab-masked-text-field>
 
-      <div style="padding:15px; margin-top:30px">End Time </div>
+      <div style="padding:15px; margin-top:30px">End Time (UTC) </div>
       <fab-date-picker class="col-md-8" [strings]="dates" [minDate]="minDate" [maxDate]="maxDate"
         placeholder="Select a date..." ariaLabel="Select end date" allowTextInput="true" showMonthPickerAsOverlay="true"
         (onSelectDate)="onSelectEndDateHandler($event)" [formatDate]="formatDate" [value]="endDate">
