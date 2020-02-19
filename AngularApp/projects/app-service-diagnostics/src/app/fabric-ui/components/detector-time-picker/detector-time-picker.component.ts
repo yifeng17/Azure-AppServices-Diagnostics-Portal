@@ -15,8 +15,8 @@ export class DetectorTimePickerComponent implements OnInit {
   internalTime: string = "";
   showCalendar: boolean = false;
   showTimePicker: boolean = false;
+  defaultSelectedKey: string;
 
-  
   today: Date = new Date(Date.now());
   maxDate: Date = this.convertUTCToLocalDate(this.today);
   minDate: Date = this.convertUTCToLocalDate(addMonths(this.today, -1));
@@ -26,9 +26,8 @@ export class DetectorTimePickerComponent implements OnInit {
   };
   startDate: Date;
   endDate: Date;
-  // isCustom: boolean = false;
   //set Last xx hours
-  hourDiff: number = 24;
+  hourDiff: number;
 
   startClock: string;
   endClock: string;
@@ -76,13 +75,39 @@ export class DetectorTimePickerComponent implements OnInit {
     this.startDate = addDays(this.today, -1);
     this.endDate = this.today;
 
-    this.hourDiff = 24;
-    const localEndTime = this.today;
-    const localStartTime = new Date(localEndTime.getTime() - this.hourDiff * 60 * 60 * 1000);
-    const startDateWithTime = this.convertLocalDateToUTC(localStartTime);
-    const endDateWithTime = this.convertLocalDateToUTC(localEndTime);
-    this.internalTime = `${startDateWithTime} to ${endDateWithTime}`;
-    this.time = "UTC Time Range (" + this.internalTime + ")";
+    this.globals.timePickerInfoSub.subscribe(timerPickerInfo => {
+      const option = this.choiceGroupOptions.find(option => timerPickerInfo.selectedKey === option.key);
+      this.defaultSelectedKey = option.key;
+      //If it's customized then should default the option
+      //If not customized then prefill start date and endDate
+      if (timerPickerInfo.selectedKey === 'Custom') {
+        this.showTimePicker = true;
+        const start = timerPickerInfo.startDate;
+        const end = timerPickerInfo.endDate;
+        this.startDate = start;
+        this.endDate = end;
+
+        //startDate and endDate contains current hour and minute info, only need hh:mm
+        this.startClock = this.convertDateToString(this.startDate).substring(11, 16);
+        this.endClock = this.convertDateToString(this.endDate).substring(11, 16);
+        const startDateWithTime = this.convertLocalDateToUTCWithTimeString(this.startDate,this.startClock);
+        const endDateWithTime = this.convertLocalDateToUTCWithTimeString(this.endDate,this.endClock)
+        this.internalTime = `${startDateWithTime} to ${endDateWithTime}`;
+        this.time = "UTC Time Range (" + this.internalTime + ")";
+      } else {
+        //Trigger setTime function to set this.hourDiff
+        option.onClick.apply(this);
+
+        const localEndTime = this.today;
+        const localStartTime = new Date(localEndTime.getTime() - this.hourDiff * 60 * 60 * 1000);
+        const startDateWithTime = this.convertLocalDateToUTC(localStartTime);
+        const endDateWithTime = this.convertLocalDateToUTC(localEndTime);
+        this.internalTime = `${startDateWithTime} to ${endDateWithTime}`;
+        this.time = "UTC Time Range (" + this.internalTime + ")";
+      }
+    });
+
+
 
     this.timeDiffError = '';
     if (this.detectorControlService.timeRangeDefaulted) {
@@ -121,23 +146,38 @@ export class DetectorTimePickerComponent implements OnInit {
   applyTimeRange() {
     let startDateWithTime: string;
     let endDateWithTime: string;
-    //custom
+    let timePickerInfo: TimePickerInfo;
+    //customize
     if (this.showTimePicker) {
-      // startDateWithTime = this.convertDateToString(this.convertLocalDateToUTCWithTimeString(this.startDate, this.startClock));
-      // endDateWithTime = this.convertDateToString(this.convertLocalDateToUTCWithTimeString(this.endDate, this.endClock));
-      startDateWithTime = this.convertLocalDateToUTCWithTimeString(this.startDate,this.startClock);
-      endDateWithTime = this.convertLocalDateToUTCWithTimeString(this.endDate,this.endClock);
+      startDateWithTime = this.convertLocalDateToUTCWithTimeString(this.startDate, this.startClock);
+      endDateWithTime = this.convertLocalDateToUTCWithTimeString(this.endDate, this.endClock);
+
+      //for timer picker, date and hour,minute
+      let infoStartDate = new Date(this.startDate);
+      infoStartDate.setHours(Number.parseInt(this.startClock.split(":")[0]), Number.parseInt(this.startClock.split(":")[1]));
+      let infoEndDate = new Date(this.endDate);
+      infoEndDate.setHours(Number.parseInt(this.endClock.split(":")[0]), Number.parseInt(this.endClock.split(":")[1]));
+      timePickerInfo =
+      {
+        selectedKey: 'Custom',
+        startDate: infoStartDate,
+        endDate: infoEndDate
+      };
+
     } else {
-      const localEndTime = new Date();
+      const localEndTime = this.today;
       const localStartTime = new Date(localEndTime.getTime() - this.hourDiff * 60 * 60 * 1000);
       startDateWithTime = this.convertLocalDateToUTC(localStartTime);
       endDateWithTime = this.convertLocalDateToUTC(localEndTime);
-      // const utcEndTime = this.convertLocalDateToUTC(localEndTime);
-      // const utcStartTime = this.convertLocalDateToUTC(localStartTime);
-      // startDateWithTime = this.convertDateToString(utcStartTime);
-      // endDateWithTime = this.convertDateToString(utcEndTime);
+
+      //find which option contains the hourDiff number
+      const infoSelectKey = this.choiceGroupOptions.find(option => option.key.includes(this.hourDiff.toString())).key
+      timePickerInfo = {
+        selectedKey: infoSelectKey
+      };
     }
 
+    this.globals.updateTimePickerInfo(timePickerInfo);
 
     this.internalTime = `${startDateWithTime} to ${endDateWithTime}`;
     this.time = "UTC Time Range (" + this.internalTime + ")";
@@ -170,12 +210,11 @@ export class DetectorTimePickerComponent implements OnInit {
 
   //Use year-month-date in calender and time hh-mm as input
   private convertLocalDateToUTCWithTimeString(date: Date, time: string): string {
-    //replace hour and minute within formatted UTC string
     const year = date.getFullYear().toString();
-    const month = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}`:`${date.getMonth() + 1}`;
-    const day = date.getDate() < 10 ? `0${date.getDate()}`:`${date.getDate()}`;
-    const hour = Number.parseInt(time.split(":")[0]) < 10 ? `0${Number.parseInt(time.split(":")[0])}` :`${Number.parseInt(time.split(":")[0])}`;
-    const minute = Number.parseInt(time.split(":")[1]) < 10 ? `0${Number.parseInt(time.split(":")[1])}` :`${Number.parseInt(time.split(":")[1])}`;
+    const month = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : `${date.getMonth() + 1}`;
+    const day = date.getDate() < 10 ? `0${date.getDate()}` : `${date.getDate()}`;
+    const hour = Number.parseInt(time.split(":")[0]) < 10 ? `0${Number.parseInt(time.split(":")[0])}` : `${Number.parseInt(time.split(":")[0])}`;
+    const minute = Number.parseInt(time.split(":")[1]) < 10 ? `0${Number.parseInt(time.split(":")[1])}` : `${Number.parseInt(time.split(":")[1])}`;
     return `${year}-${month}-${day} ${hour}:${minute}`;
   }
 
@@ -196,27 +235,34 @@ export class DetectorTimePickerComponent implements OnInit {
 
   private convertDateToString(date: Date, withHours: boolean = true): string {
     const year = date.getFullYear().toString();
-    const month = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}`:`${date.getMonth() + 1}`;
-    const day = date.getDate() < 10 ? `0${date.getDate()}`:`${date.getDate()}`;
-    const hour = date.getHours() < 10 ? `0${date.getHours()}` :`${date.getHours()}`;
-    const minute = date.getMinutes() < 10 ? `0${date.getMinutes()}` :`${date.getMinutes()}`;
-    return withHours ? `${year}-${month}-${day} ${hour}:${minute}`:`${year}-${month}-${day}`;
+    const month = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : `${date.getMonth() + 1}`;
+    const day = date.getDate() < 10 ? `0${date.getDate()}` : `${date.getDate()}`;
+    const hour = date.getHours() < 10 ? `0${date.getHours()}` : `${date.getHours()}`;
+    const minute = date.getMinutes() < 10 ? `0${date.getMinutes()}` : `${date.getMinutes()}`;
+    return withHours ? `${year}-${month}-${day} ${hour}:${minute}` : `${year}-${month}-${day}`;
 
   }
 
-  //when click LastXX hours,prefill into custom input, shoould be UTC time
+  //when click LastXX hours,prefill into custom input, should be UTC time
   selectCustom() {
     this.showTimePicker = true;
     this.timeDiffError = "";
 
-    const end = new Date();
-    const start = new Date(end.getTime() - this.hourDiff *  60 * 60 * 1000);
+    const end = this.today;
+    const start = new Date(end.getTime() - this.hourDiff * 60 * 60 * 1000);
     this.startDate = this.convertUTCToLocalDate(start);
     this.endDate = this.convertUTCToLocalDate(end);
 
     //startDate and endDate contains current hour and minute info
     //only need hh:mm
-    this.startClock = this.convertDateToString(this.startDate).substring(11,16);
-    this.endClock = this.convertDateToString(this.endDate).substring(11,16);
+    this.startClock = this.convertDateToString(this.startDate).substring(11, 16);
+    this.endClock = this.convertDateToString(this.endDate).substring(11, 16);
   }
+}
+
+export interface TimePickerInfo {
+  selectedKey: string,
+  //if it is customized, then prefill with strart date and time
+  startDate?: Date,
+  endDate?: Date,
 }

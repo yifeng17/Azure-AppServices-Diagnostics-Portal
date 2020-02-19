@@ -1,8 +1,8 @@
 <div class="timepicker">
-  <fab-callout [hidden]="!globals.openTimePicker" [directionalHint]="'5'" [gapSpace]="'30'">
+  <div class="time-picker-container" *ngIf="globals.openTimePicker">
     <!-- <div>Time range</div>
     [selectedKey]="selectedItem && selectedItem.key" -->
-    <fab-choice-group [options]="choiceGroupOptions" [defaultSelectedKey]="'Last24Hours'">
+    <fab-choice-group [options]="choiceGroupOptions" [defaultSelectedKey]="defaultSelectedKey">
     </fab-choice-group>
     <div *ngIf="showTimePicker" class="row">
       <div style="padding:15px">Start Time </div>
@@ -30,7 +30,7 @@
       </fab-primary-button>
       <fab-default-button text="Cancel" (onClick)="cancelTimeRange()"></fab-default-button>
     </div>
-  </fab-callout>
+  </div>
   <!-- <fab-choice-group *ngIf="showCalendar" style="position: absolute;
 top: 20px;
 right: 0px ;

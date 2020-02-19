@@ -15,6 +15,8 @@ import { Message } from './supportbot/models/message';
 // import { MainMenuComponent } from './supportbot/message-flow/main-menu/main-menu.component';
 // import { TalkToAgentMessageComponent } from './supportbot/message-flow/talk-to-agent/talk-to-agent-message.component';
 import { ActivatedRoute } from '@angular/router';
+import { TimePickerInfo } from './fabric-ui/components/detector-time-picker/detector-time-picker.component';
+import { BehaviorSubject } from 'rxjs';
 
 
 
@@ -41,7 +43,9 @@ export class Globals {
   openFeedback: boolean = false;
   openTimePicker: boolean = false;
   private localStorageKey: string = "genieChat";
-
+  public timePickerInfoSub:BehaviorSubject<TimePickerInfo> = new BehaviorSubject<TimePickerInfo>({
+    selectedKey: "Last24Hours"
+  });
   constructor(private activatedRoute: ActivatedRoute){
    // this.updateMsgFromLocalStorage();
   }
@@ -141,4 +145,7 @@ export class Globals {
     return detectorName;
   }
 
+  updateTimePickerInfo(updatedInfo:TimePickerInfo) {
+    this.timePickerInfoSub.next(updatedInfo);
+  }
 }
