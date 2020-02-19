@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, Injector, Pipe, PipeTransform  } from '@angular/core';
 import { MessageProcessor } from '../../../supportbot/message-processor.service';
 import { ActivatedRoute, Router, NavigationExtras, NavigationEnd, Scroll } from '@angular/router';
 import { CategoryService } from '../../../shared-v2/services/category.service';
@@ -16,6 +16,13 @@ import { filter } from 'rxjs/operators';
 import { CollapsibleMenuItem, CategoryMenuItemComponent } from '../category-menu-item/category-menu-item.component';
 import { DetectorCategorizationService } from '../../../shared/services/detector-categorized.service';
 import { SiteFeatureService } from '../../../resources/web-sites/services/site-feature.service';
+import { SiteFilteredItem } from '../../../resources/web-sites/models/site-filter';
+import { WebSitesService } from '../../../resources/web-sites/services/web-sites.service';
+import { AppType } from '../../../shared/models/portal';
+import { OperatingSystem, HostingEnvironmentKind } from '../../../shared/models/site';
+import { Sku } from '../../../shared/models/server-farm';
+// import { SiteFilteredItem } from '../models/site-filter';
+// import { WebSitesService } from '../services/web-sites.service';
 
 @Component({
     selector: 'category-nav',
@@ -24,6 +31,8 @@ import { SiteFeatureService } from '../../../resources/web-sites/services/site-f
 })
 export class CategoryNavComponent implements OnInit {
     imageRootPath = '../../../../assets/img/detectors';
+    toolCategories: SiteFilteredItem<any>[] = [];
+    toolCategoriesFilteredByStack: SiteFilteredItem<any>[] = [];
     currentRoutePath: string[];
     allProblemCategories: Category[] = [];
     features: Feature[];
@@ -54,6 +63,52 @@ export class CategoryNavComponent implements OnInit {
         return this._route.url.includes(detectorId);
     }
 
+    tempCategoriesArray: any[] = [];
+    tempToolsArray: any[] = [];
+    tempArray = [];
+    transform(siteFilteredItems: SiteFilteredItem<any>[]): any[] {
+        this.tempArray = [];
+        return siteFilteredItems
+            .filter(item =>
+                (item.appType & this._webSiteService.appType) > 0 &&
+                (item.platform & this._webSiteService.platform) > 0 &&
+                (item.sku & this._webSiteService.sku) > 0 &&
+                (item.hostingEnvironmentKind & this._webSiteService.hostingEnvironmentKind) > 0 &&
+                (item.stack === ''
+                // || (overrideStack && (overrideStack === '' || overrideStack.toLowerCase() === 'all'))
+                || item.stack.toLowerCase().indexOf('all') >= 0) &&
+                (!this.alreadyAdded(item.item)))
+                .map(item => item);
+    }
+
+    stackMatchedForTools(item: SiteFilteredItem<any>): boolean {
+        return (item.appType & this._webSiteService.appType) > 0 &&
+        (item.platform & this._webSiteService.platform) > 0 &&
+        (item.sku & this._webSiteService.sku) > 0 &&
+        (item.hostingEnvironmentKind & this._webSiteService.hostingEnvironmentKind) > 0 &&
+       // (item.stack === ''
+        // || (overrideStack && (overrideStack === '' || overrideStack.toLowerCase() === 'all'))
+       // || item.stack.toLowerCase().indexOf('all') >= 0) &&
+        (!this.toolsAlreadyAdded(item.item));
+    }
+
+    alreadyAdded(item: any): boolean {
+        if (item.title && this.tempArray.indexOf(item.title) > -1) {
+            return true;
+        }
+        this.tempArray.push(item.title);
+        return false;
+    }
+
+    toolsAlreadyAdded(item: any): boolean {
+        console.log("checking tools name:", item.name);
+        if (item.name && this.tempToolsArray.indexOf(item.name) > -1) {
+            return true;
+        }
+        this.tempToolsArray.push(item.name);
+        return false;
+    }
+
     navigateTo(path: string) {
         let navigationExtras: NavigationExtras = {
             queryParamsHandling: 'preserve',
@@ -72,26 +127,12 @@ export class CategoryNavComponent implements OnInit {
 
     constructor(public siteFeatureService: SiteFeatureService, protected _diagnosticApiService: DiagnosticService, private _route: Router, private _injector: Injector, private _activatedRoute: ActivatedRoute, private categoryService: CategoryService,
         private _chatState: CategoryChatStateService, private _genericApiService: GenericApiService
-        , private _featureService: FeatureService, protected _authService: AuthService, public _detectorCategorization: DetectorCategorizationService) { }
+        , private _featureService: FeatureService, protected _authService: AuthService, public _detectorCategorization: DetectorCategorizationService, private _webSiteService: WebSitesService) { }
 
     detectorDataLocalCopy: DetectorMetaData[] = [];
     detectorList: CollapsibleMenuItem[] = [];
     orphanDetectorList: CollapsibleMenuItem[] = [];
     orphanDetectorList1: CollapsibleMenuItem[] = [];
-    proactiveTools: CollapsibleMenuItem[] = [];
-    dignosticTools: CollapsibleMenuItem[] = [];
-    supportTools: CollapsibleMenuItem[] = [];
-    premiumTools: CollapsibleMenuItem[] = [];
-    // [
-    //     {
-    //       label: 'Diagnostic Report',
-    //       onClick: () => { window.open('https://app-service-diagnostics-docs.azurewebsites.net/api/Diagnostics.ModelsAndUtils.Models.Response.html#extensionmethods', '_blank') },
-    //       expanded: false,
-    //       subItems: [],
-    //       isSelected: null,
-    //       icon: null
-    //     }];
-
 
     private getCurrentRoutePath() {
         this.currentRoutePath = this._activatedRoute.firstChild.snapshot.url.map(urlSegment => urlSegment.path);
@@ -104,6 +145,81 @@ export class CategoryNavComponent implements OnInit {
             this.getCurrentRoutePath();
         });
 
+        this.toolCategories.push(<SiteFilteredItem<any>>{
+            appType: AppType.WebApp | AppType.FunctionApp,
+            platform: OperatingSystem.windows,
+            sku: Sku.NotDynamic,
+            hostingEnvironmentKind:HostingEnvironmentKind.All,
+            stack: '',
+            item: {
+              title: 'Proactive Tools',
+              tools: this.siteFeatureService.proactiveTools.map(tool => {
+                //   if (this.filterStack(tool))
+                //   {
+
+                //   }
+                let isSelected = () => {
+                     return this._route.url.includes("/"+tool.item.id);
+                 };
+                 let imageIndex = 0;
+                 let icon = `${this.imageRootPath}/${imageIndex}.png`;
+                return  new CollapsibleMenuItem(tool.item.name, tool.item.clickAction, isSelected, icon);
+                })}});
+
+          this.toolCategories.push(<SiteFilteredItem<any>>{
+            appType: AppType.WebApp | AppType.FunctionApp,
+            platform: OperatingSystem.windows,
+            sku: Sku.NotDynamic,
+            hostingEnvironmentKind:HostingEnvironmentKind.All,
+            stack: '',
+            item: {
+              title: 'Diagnostic Tools',
+              tools: this.siteFeatureService.diagnosticTools.filter(tool=>this.stackMatchedForTools(tool)).map(tool => {
+                let isSelected = () => {
+                    return this._route.url.includes("/"+tool.item.id);
+                 };
+                 let imageIndex = 1;
+                 let icon = `${this.imageRootPath}/${imageIndex}.png`;
+                return  new CollapsibleMenuItem(tool.item.name, tool.item.clickAction, isSelected, icon);
+            })}});
+
+          this.toolCategories.push(<SiteFilteredItem<any>>{
+            appType: AppType.WebApp,
+            platform: OperatingSystem.windows,
+            sku: Sku.NotDynamic,
+            hostingEnvironmentKind:HostingEnvironmentKind.All,
+            stack: '',
+            item: {
+              title: 'Support Tools',
+              tools: this.siteFeatureService.supportTools.filter(tool=>this.stackMatchedForTools(tool)).map(tool => {
+                let isSelected = () => {
+                    return this._route.url.includes("/"+tool.item.id);
+                 };
+                 let imageIndex = 2;
+                 let icon = `${this.imageRootPath}/${imageIndex}.png`;
+                return  new CollapsibleMenuItem(tool.item.name, tool.item.clickAction, isSelected, icon);
+            })}});
+
+          this.toolCategories.push(<SiteFilteredItem<any>>{
+            appType: AppType.WebApp,
+            platform: OperatingSystem.windows,
+            sku: Sku.NotDynamic,
+            hostingEnvironmentKind:HostingEnvironmentKind.All,
+            stack: '',
+            item: {
+              title: 'Premium Tools',
+              tools: this.siteFeatureService.premiumTools.filter(tool=> this.stackMatchedForTools(tool)).map(tool => {
+                let isSelected = () => {
+                    return this._route.url.includes("/"+tool.item.id);
+                 };
+                 let imageIndex = 3;
+                 let icon = `${this.imageRootPath}/${imageIndex}.png`;
+                return  new CollapsibleMenuItem(tool.item.name, tool.item.clickAction, isSelected, icon);
+            })}
+        });
+
+        this.toolCategoriesFilteredByStack = this.transform(this.toolCategories);
+
         this.categoryService.categories.subscribe(categories => {
             //  let decodedCategoryName = decodeURIComponent(this._activatedRoute.snapshot.params.category);
             let decodedCategoryName = this._activatedRoute.snapshot.params.category.toLowerCase();
@@ -112,88 +228,6 @@ export class CategoryNavComponent implements OnInit {
             this.categoryName = this.category.name;
             this.categoryId = this.category.id;
             this.isDiagnosticTools = this.category.id === "DiagnosticTools";
-            if (this.isDiagnosticTools)
-            {
-                this.siteFeatureService.proactiveTools.forEach((tool)=>{
-                    let routePath: any = "detectors";
-                    // if (detector.type === DetectorType.Analysis) {
-                    //     routePath = "analysis";
-                    // }
-                    // let onClick = () => {
-                    //                       this.navigateTo(`${routePath}/${detector.id}`);
-                    // };
-                    let onClick1 = tool.item.clickAction;
-                    let itemName = tool.item.name;
-
-                    let isSelected = () => {
-                      //  return this._route.url.includes("proactive");
-                      return this._route.url.includes(tool.item.id);
-                    };
-
-                    //   let icon = `${this.imageRootPath}/${detector.name}.svg`;
-                    let imageIndex = 0;
-                    let icon = `${this.imageRootPath}/${imageIndex}.png`;
-                    let menuItem = new CollapsibleMenuItem(itemName, onClick1, isSelected, icon);
-
-                    this.proactiveTools.push(menuItem);
-                });
-
-                this.siteFeatureService.diagnosticTools.forEach((tool)=>{
-                    let routePath: any = "detectors";
-                    let onClick1 = tool.item.clickAction;
-                    let itemName = tool.item.name;
-
-                    let isSelected = () => {
-                       // return this._route.url.includes("diagnostic");
-                        return this._route.url.includes(tool.item.id);
-                    };
-
-                    //   let icon = `${this.imageRootPath}/${detector.name}.svg`;
-                    let imageIndex = 1;
-                    let icon = `${this.imageRootPath}/${imageIndex}.png`;
-                    let menuItem = new CollapsibleMenuItem(itemName, onClick1, isSelected, icon);
-
-                    this.dignosticTools.push(menuItem);
-                });
-
-                this.siteFeatureService.supportTools.forEach((tool)=>{
-                    let routePath: any = "detectors";
-                    let onClick1 = tool.item.clickAction;
-                    let itemName = tool.item.name;
-
-                    let isSelected = () => {
-                      //  return this._route.url.includes("support");
-                      return this._route.url.includes(tool.item.id);
-                    };
-
-                    //   let icon = `${this.imageRootPath}/${detector.name}.svg`;
-                    let imageIndex = 2;
-                    let icon = `${this.imageRootPath}/${imageIndex}.png`;
-                    let menuItem = new CollapsibleMenuItem(itemName, onClick1, isSelected, icon);
-
-                    this.supportTools.push(menuItem);
-                });
-
-
-                this.siteFeatureService.premiumTools.forEach((tool)=>{
-                    let routePath: any = "detectors";
-                    let onClick1 = tool.item.clickAction;
-                    let itemName = tool.item.name;
-
-                    let isSelected = () => {
-                      //  return this._route.url.includes("premium");
-                      return this._route.url.includes(tool.item.id);
-                    };
-
-                    //   let icon = `${this.imageRootPath}/${detector.name}.svg`;
-                    let imageIndex = 3;
-                    let icon = `${this.imageRootPath}/${imageIndex}.png`;
-                    let menuItem = new CollapsibleMenuItem(itemName, onClick1, isSelected, icon);
-
-                    this.premiumTools.push(menuItem);
-                });
-
-            }
 
             this.orphanDetectorList = this._detectorCategorization.detectorlistCategories[this.category.id];
 
@@ -336,32 +370,6 @@ export class CategoryNavComponent implements OnInit {
                 // });
             }
             );
-
-        //   console.log("*****detectors", this.detectorList);
-
-        this.styles = {
-            root: {
-                position: 'fixed',
-                width: 264,
-                boxSizing: 'border-box',
-                overflowY: 'auto',
-                overflowX: 'hiden',
-            },
-
-            link: {
-                fontSize: 13,
-                color: "#000"
-            },
-            chevronIcon: {
-                display: 'none'
-            },
-            chevronButton: {
-                marginTop: -20,
-                paddingLeft: 10,
-                fontSize: 12,
-                fontWeight: 600
-            }
-        };
     });
 }
 
