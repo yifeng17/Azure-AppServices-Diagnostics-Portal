@@ -86,7 +86,7 @@ export const HomeRoutes = RouterModule.forChild([
         path: 'categories/:category',
         component: CategorySummaryComponent,
         data: {
-          cacheComponent: true
+            cacheComponent: true
         },
         children: [
             {
@@ -228,133 +228,133 @@ export const HomeRoutes = RouterModule.forChild([
                     cacheComponent: true
                 }
             },
-             // Java Memory Dump
-    {
-        path: 'tools/javamemorydump',
-        component: JavaMemoryDumpToolComponent,
-        data: {
-            navigationTitle: ToolNames.JavaMemoryDump,
-            cacheComponent: true
-        }
-    },
-    // HTTP Log Analyzer
-    {
-        path: 'tools/httploganalyzer',
-        component: HttpLogAnalysisToolComponent,
-        data: {
-            navigationTitle: ToolNames.HttpLogAnalyzer,
-            cacheComponent: true
-        }
-    },
-    // PHP Log Analyzer
-    {
-        path: 'tools/phploganalyzer',
-        component: PhpLogsAnalyzerToolComponent,
-        data: {
-            navigationTitle: ToolNames.PHPLogAnalyzer,
-            cacheComponent: true
-        }
-    },
-    // PHP Process Analyzer
-    {
-        path: 'tools/phpprocessanalyzer',
-        component: PhpProcessAnalyzerToolComponent,
-        data: {
-            navigationTitle: ToolNames.PHPProcessAnalyzer,
-            cacheComponent: true
-        }
-    },
-    // Database Test Tool
-    {
-        path: 'tools/databasetester',
-        component: ConnectionDiagnoserToolComponent,
-        data: {
-            navigationTitle: ToolNames.DatabaseTester,
-            cacheComponent: true
-        }
-    },
-    // CPU Monitoring tool
-    {
-        path: 'tools/cpumonitoring',
-        component: CpuMonitoringToolComponent,
-        data: {
-            navigationTitle: ToolNames.CpuMonitoring,
-            cacheComponent: true
-        }
-    },
-    // Autohealing
-    {
-        path: 'tools/mitigate',
-        component: AutohealingComponent,
-        data: {
-            navigationTitle: 'Auto-Heal',
-            detectorComponent: AutohealingDetectorComponent
-        }
-    },
-    // Network Trace
-    {
-        path: 'tools/networktrace',
-        component: NetworkTraceToolComponent,
-        data: {
-            navigationTitle: ToolNames.NetworkTrace,
-            cacheComponent: true
-        }
-    },
-    // Diagnostics
-    {
-        path: 'tools/daas',
-        component: DaasMainComponent,
-        data: {
-            navigationTitle: ToolNames.Diagnostics,
-            cacheComponent: true
-        }
-    },
-    // Event Viewer
-    {
-        path: 'tools/eventviewer',
-        component: EventViewerComponent,
-        data: {
-            navigationTitle: ToolNames.EventViewer,
-            cacheComponent: true
-        }
-    },
-    // Freb Viewer
-    {
-        path: 'tools/frebviewer',
-        component: FrebViewerComponent,
-        data: {
-            navigationTitle: ToolNames.FrebViewer,
-            cacheComponent: true
-        }
-    },
-    //Metrics per Instance (Apps)
-    {
-        path:'tools/metricsperinstance',
-        resolve: {
-            reroute:MetricsPerInstanceAppsResolver
-        },
-    },
-    //Metrics per Instance (App Service Plan)
-    {
-        path:'tools/metricsperinstanceappserviceplan',
-        resolve: {
-            reroute:MetricsPerInstanceAppServicePlanResolver
-        },
-    },
-    //Advanced Application Restart
-    {
-        path:'tools/applicationrestart',
-        resolve: {
-            reroute:AdvanceApplicationRestartResolver
-        },
-    },
-    //Security Scanning
-    {
-        path:'tools/securityscanning',
-        resolve: {
-            reroute:SecurityScanningResolver
-        },
-    }
+            // Java Memory Dump
+            {
+                path: 'tools/javamemorydump',
+                component: JavaMemoryDumpToolComponent,
+                data: {
+                    navigationTitle: ToolNames.JavaMemoryDump,
+                    cacheComponent: true
+                }
+            },
+            // HTTP Log Analyzer
+            {
+                path: 'tools/httploganalyzer',
+                component: HttpLogAnalysisToolComponent,
+                data: {
+                    navigationTitle: ToolNames.HttpLogAnalyzer,
+                    cacheComponent: true
+                }
+            },
+            // PHP Log Analyzer
+            {
+                path: 'tools/phploganalyzer',
+                component: PhpLogsAnalyzerToolComponent,
+                data: {
+                    navigationTitle: ToolNames.PHPLogAnalyzer,
+                    cacheComponent: true
+                }
+            },
+            // PHP Process Analyzer
+            {
+                path: 'tools/phpprocessanalyzer',
+                component: PhpProcessAnalyzerToolComponent,
+                data: {
+                    navigationTitle: ToolNames.PHPProcessAnalyzer,
+                    cacheComponent: true
+                }
+            },
+            // Database Test Tool
+            {
+                path: 'tools/databasetester',
+                component: ConnectionDiagnoserToolComponent,
+                data: {
+                    navigationTitle: ToolNames.DatabaseTester,
+                    cacheComponent: true
+                }
+            },
+            // CPU Monitoring tool
+            {
+                path: 'tools/cpumonitoring',
+                component: CpuMonitoringToolComponent,
+                data: {
+                    navigationTitle: ToolNames.CpuMonitoring,
+                    cacheComponent: true
+                }
+            },
+            // Autohealing
+            {
+                path: 'tools/mitigate',
+                component: AutohealingComponent,
+                data: {
+                    navigationTitle: 'Auto-Heal',
+                    detectorComponent: AutohealingDetectorComponent
+                }
+            },
+            // Network Trace
+            {
+                path: 'tools/networktrace',
+                component: NetworkTraceToolComponent,
+                data: {
+                    navigationTitle: ToolNames.NetworkTrace,
+                    cacheComponent: true
+                }
+            },
+            // Diagnostics
+            {
+                path: 'tools/daas',
+                component: DaasMainComponent,
+                data: {
+                    navigationTitle: ToolNames.Diagnostics,
+                    cacheComponent: true
+                }
+            },
+            // Event Viewer
+            {
+                path: 'tools/eventviewer',
+                component: EventViewerComponent,
+                data: {
+                    navigationTitle: ToolNames.EventViewer,
+                    cacheComponent: true
+                }
+            },
+            // Freb Viewer
+            {
+                path: 'tools/frebviewer',
+                component: FrebViewerComponent,
+                data: {
+                    navigationTitle: ToolNames.FrebViewer,
+                    cacheComponent: true
+                }
+            },
+            //Metrics per Instance (Apps)
+            {
+                path: 'tools/metricsperinstance',
+                resolve: {
+                    reroute: MetricsPerInstanceAppsResolver
+                },
+            },
+            //Metrics per Instance (App Service Plan)
+            {
+                path: 'tools/metricsperinstanceappserviceplan',
+                resolve: {
+                    reroute: MetricsPerInstanceAppServicePlanResolver
+                },
+            },
+            //Advanced Application Restart
+            {
+                path: 'tools/applicationrestart',
+                resolve: {
+                    reroute: AdvanceApplicationRestartResolver
+                },
+            },
+            //Security Scanning
+            {
+                path: 'tools/securityscanning',
+                resolve: {
+                    reroute: SecurityScanningResolver
+                },
+            }
         ],
         resolve: {
             navigationTitle: CategoryTabResolver,
@@ -513,9 +513,19 @@ export const HomeRoutes = RouterModule.forChild([
     ],
     declarations: [HomeComponent, CategoryChatComponent, CategoryTileComponent, SearchResultsComponent, SupportTopicRedirectComponent, DiagnosticsSettingsComponent],
     // ,FabricFeedbackComponent,FabricFeedbackContainerComponent
-    providers: [CategoryTabResolver, CategoryChatResolver, TimeControlResolver, UncategorizedDetectorsResolver, DetectorCategorizationService,
-        { provide: GenericSupportTopicService, useExisting: SupportTopicService }
-    ],
+    providers: 
+        [
+            CategoryTabResolver, 
+            CategoryChatResolver, 
+            TimeControlResolver, 
+            UncategorizedDetectorsResolver, 
+            DetectorCategorizationService, 
+            MetricsPerInstanceAppsResolver,
+            MetricsPerInstanceAppServicePlanResolver,
+            AdvanceApplicationRestartResolver,
+            SecurityScanningResolver,
+            { provide: GenericSupportTopicService, useExisting: SupportTopicService }
+        ],
     // exports: [GeniePanelComponent]
 })
 export class HomeModule { }
