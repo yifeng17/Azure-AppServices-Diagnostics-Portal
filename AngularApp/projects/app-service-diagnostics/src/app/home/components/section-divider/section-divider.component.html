@@ -3,6 +3,7 @@
       <ng-content select=".menu-icon"></ng-content>
       </div>
     <div class="menu-label">
+      <img *ngIf="label == 'Overview'" [src]="overviewImagePath" alt="Overview">
         {{label}}
     </div>
     <div class="menu-expand-icon">

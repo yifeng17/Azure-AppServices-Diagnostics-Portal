@@ -22,7 +22,7 @@ export class SectionDividerComponent implements OnInit {
   @Input() collapsible: boolean = true;
   @Input() disableExpandIcon: boolean = false;
   @Input() routePath: string="";
-
+  overviewImagePath:string = "../../../../assets/img/detectors/Overview.svg";
   selected: boolean = true;
 
   constructor(private _route: Router, private _activatedRoute:ActivatedRoute) { }
