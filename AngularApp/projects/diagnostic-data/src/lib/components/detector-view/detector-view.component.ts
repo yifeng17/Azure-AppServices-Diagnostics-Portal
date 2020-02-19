@@ -1,7 +1,7 @@
 import { Moment } from 'moment';
 import { BehaviorSubject } from 'rxjs';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit, Pipe, PipeTransform } from '@angular/core';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
 import { DetectorResponse, Rendering, RenderingType, DetectorMetaData, DetectorType, DiagnosticData } from '../../models/detector';
 import { DetectorControlService } from '../../services/detector-control.service';
@@ -101,9 +101,6 @@ export class DetectorViewComponent implements OnInit {
   protected loadDetector() {
     this.detectorResponseSubject.subscribe((data: DetectorResponse) => {
       let metadata: DetectorMetaData = data? data.metadata: null;
-      if (metadata && (metadata.type == DetectorType.Analysis)){
-        data.dataset = data.dataset.filter((ds: DiagnosticData) => (ds.renderingProperties.type !== RenderingType.SearchComponent));
-      }
       this.detectorDataLocalCopy = data;
       if (data) {
         this.detectorEventProperties = {
@@ -334,4 +331,20 @@ export class DetectorViewComponent implements OnInit {
     }
   }
 
+}
+
+@Pipe({
+  name: 'renderfilter',
+  pure: false
+})
+export class RenderFilterPipe implements PipeTransform {
+  transform(items: DiagnosticData[], isAnalysisView: any): any {
+      if (!items || !isAnalysisView) {
+          return items;
+      }
+      if (isAnalysisView)
+      return items.filter(item => item.renderingProperties.type !== RenderingType.SearchComponent);
+      else
+      return items;
+  }
 }

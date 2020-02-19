@@ -86,6 +86,7 @@ import { AppInsightsEnablementComponent } from './components/app-insights-enable
 import { ConnectAppInsightsComponent } from './components/connect-app-insights/connect-app-insights.component';
 import {DetectorSearchComponent} from './components/detector-search/detector-search.component';
 import {WebSearchComponent} from './components/web-search/web-search.component';
+import {RenderFilterPipe} from './components/detector-view/detector-view.component';
 
 @NgModule({
   imports: [
@@ -121,7 +122,8 @@ import {WebSearchComponent} from './components/web-search/web-search.component';
     CxpChatLauncherComponent,
     AppInsightsEnablementComponent,
     ConnectAppInsightsComponent,
-    WebSearchComponent
+    WebSearchComponent,
+    RenderFilterPipe
   ],
   exports: [
     FormsModule, TimeSeriesGraphComponent, DataTableComponent, DynamicDataComponent, DetectorViewComponent, DetectorSearchComponent,
