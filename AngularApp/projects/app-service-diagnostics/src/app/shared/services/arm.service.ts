@@ -114,9 +114,9 @@ export class ArmService {
         additionalHeaders.set('x-ms-subscription-location-placementid', subscriptionLocation);
         // When x-ms-diagversion is set to 1, the requests will be sent to DiagnosticRole.
         //If the value is set to other than 1 or if the header is not present at all, requests will go to runtimehost
-        if(!this.isNationalCloud) {
+        //if(!this.isNationalCloud) {
             additionalHeaders.set('x-ms-diagversion', this.diagRoleVersion);
-        }
+        //}
         const request = this._http.get<ResponseMessageEnvelope<T>>(url, {
             headers: this.getHeaders(null, additionalHeaders)
         }).pipe(
