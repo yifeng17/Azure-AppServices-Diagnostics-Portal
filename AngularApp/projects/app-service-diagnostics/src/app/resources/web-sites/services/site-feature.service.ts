@@ -26,16 +26,16 @@ export class SiteFeatureService extends FeatureService {
   public premiumTools: SiteFilteredItem<Feature>[];
 
   constructor(protected _diagnosticApiService: DiagnosticService, protected _resourceService: WebSitesService, protected _contentService: ContentService, protected _router: Router,
-    protected _authService: AuthService, protected _portalActionService: PortalActionService, private _websiteFilter: WebSiteFilter, protected _logger: LoggingV2Service,protected _siteService: SiteService,protected _categoryService:CategoryService,protected _activedRoute:ActivatedRoute) {
+    protected _authService: AuthService, protected _portalActionService: PortalActionService, private _websiteFilter: WebSiteFilter, protected _logger: LoggingV2Service, protected _siteService: SiteService, protected _categoryService: CategoryService, protected _activedRoute: ActivatedRoute) {
 
-    super(_diagnosticApiService, _contentService, _router, _authService, _logger,_siteService,_categoryService,_activedRoute,_portalActionService);
+    super(_diagnosticApiService, _contentService, _router, _authService, _logger, _siteService, _categoryService, _activedRoute, _portalActionService);
 
     this._featureDisplayOrder = [{
-        category: "Availability and Performance",
-        platform: OperatingSystem.windows,
-        appType: AppType.WebApp,
-        order: ['appdownanalysis', 'perfanalysis', 'webappcpu', 'memoryusage', 'webapprestart'].reverse()
-      }];
+      category: "Availability and Performance",
+      platform: OperatingSystem.windows,
+      appType: AppType.WebApp,
+      order: ['appdownanalysis', 'perfanalysis', 'webappcpu', 'memoryusage', 'webapprestart'].reverse()
+    }];
 
     this._authService.getStartupInfo().subscribe(startupInfo => {
 
@@ -43,9 +43,13 @@ export class SiteFeatureService extends FeatureService {
       // if (this._resourceService.appType == AppType.WebApp && this._resourceService.platform == OperatingSystem.windows) {
       //   this.getLegacyAvailabilityAndPerformanceFeatures(startupInfo.resourceId).forEach(feature => this._features.push(feature));
       // }
-      this.addDiagnosticTools(startupInfo.resourceId);
-      this.addProactiveTools(startupInfo.resourceId);
-      this.addPremiumTools();
+      try {
+        this.addDiagnosticTools(startupInfo.resourceId);
+        this.addProactiveTools(startupInfo.resourceId);
+        this.addPremiumTools();
+      } catch(e) {
+        console.log("site-feature service",e);
+      }
     });
   }
 
@@ -213,8 +217,8 @@ export class SiteFeatureService extends FeatureService {
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.Profiler, 'Diagnostic Tools', () => {
-           // this._router.navigateByUrl(`resource${resourceId}/tools/profiler`);
-           this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/profiler`);
+            // this._router.navigateByUrl(`resource${resourceId}/tools/profiler`);
+            this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/profiler`);
           })
         }
       },
@@ -356,7 +360,7 @@ export class SiteFeatureService extends FeatureService {
       },
     ];
 
-    this.supportTools = [ 
+    this.supportTools = [
       {
         appType: AppType.WebApp,
         platform: OperatingSystem.windows,
