@@ -93,11 +93,11 @@ export class DropdownComponent extends DataRenderBaseComponent {
   }
 
   calculateFabWidth(options:IDropdownOption[]):number {
-    //one char 10px  
+    //each char 10px  
     let length = 0;  
     options.forEach(option => {
       length = Math.max(length,option.text.length);
     });
-    return length * 10;
+    return length * 11;
   }
 }
