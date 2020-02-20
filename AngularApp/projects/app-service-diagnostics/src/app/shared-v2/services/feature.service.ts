@@ -129,9 +129,9 @@ export class FeatureService {
   }
 
   private navigatTo(startupInfo:StartupInfo,category:string,detector:string,type:DetectorType) {
-    const isCategory = !!this._activatedRoute.root.firstChild.firstChild.firstChild.firstChild.snapshot.params["category"];
+    const isHomepage = !this._activatedRoute.root.firstChild.firstChild.firstChild.firstChild.snapshot.params["category"];
     //If it's in category overview page
-    if (isCategory) {
+    if (!isHomepage) {
       if (type === DetectorType.Detector) {
         this._router.navigateByUrl(`resource${startupInfo.resourceId}/categories/${category}/detectors/${detector}`);
       } else if (type === DetectorType.Analysis) {

@@ -53,13 +53,16 @@ export class ResourceRedirectComponent implements OnInit {
               );
             }
           }
-
+          console.log("category,detector,type param after", info.optionalParameters);
           // To Open the right category page
-          if (info.optionalParameters && !!info.optionalParameters.find(para => para.key === "detectorId")) {
+          if (info.optionalParameters && 
+              ( info.optionalParameters.find(para => para.key === "detectorId") 
+                || info.optionalParameters.find(para => para.key === "toolId"))) {
             let categoryIdParam = info.optionalParameters.find(param => param.key === "categoryId");
             let detectorTypeParam = info.optionalParameters.find(param => param.key === "detectorType");
             let detectorIdParam = info.optionalParameters.find(param => param.key === "detectorId");
-            console.log("category,detector,type param after", categoryIdParam,detectorIdParam,detectorTypeParam);
+            let toolIdParam = info.optionalParameters.find(param => param.key === "toolId");
+            console.log("category,detector,type param after", categoryIdParam,detectorIdParam,detectorTypeParam,toolIdParam);
             if (categoryIdParam) {
               let categoryId = categoryIdParam.value;
               path += `/categories/${categoryId}`;
@@ -69,6 +72,8 @@ export class ResourceRedirectComponent implements OnInit {
                 } else if (detectorTypeParam.value === DetectorType.Analysis) {
                   path += `/analysis/${detectorIdParam.value}`;
                 }
+              } else if (toolIdParam) {
+                path += `/tools/${toolIdParam.value}`;
               }
 
               this._router.navigateByUrl(

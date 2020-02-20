@@ -43,13 +43,9 @@ export class SiteFeatureService extends FeatureService {
       // if (this._resourceService.appType == AppType.WebApp && this._resourceService.platform == OperatingSystem.windows) {
       //   this.getLegacyAvailabilityAndPerformanceFeatures(startupInfo.resourceId).forEach(feature => this._features.push(feature));
       // }
-      try {
-        this.addDiagnosticTools(startupInfo.resourceId);
-        this.addProactiveTools(startupInfo.resourceId);
-        this.addPremiumTools();
-      } catch(e) {
-        console.log("site-feature service",e);
-      }
+      this.addDiagnosticTools(startupInfo.resourceId);
+      this.addProactiveTools(startupInfo.resourceId);
+      this.addPremiumTools();
     });
   }
 
@@ -180,7 +176,8 @@ export class SiteFeatureService extends FeatureService {
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.AutoHealing, 'Proactive Tools', () => {
-            this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/mitigate`);
+            this.navigateTo(resourceId,'mitigate');
+            // this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/mitigate`);
           })
         }
       }, {
@@ -196,7 +193,8 @@ export class SiteFeatureService extends FeatureService {
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.CpuMonitoring, 'Proactive Tools', () => {
-            this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/cpumonitoring`);
+            this.navigateTo(resourceId,'cpumonitoring');
+            // this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/cpumonitoring`);
           })
         }
       }
@@ -218,7 +216,8 @@ export class SiteFeatureService extends FeatureService {
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.Profiler, 'Diagnostic Tools', () => {
             // this._router.navigateByUrl(`resource${resourceId}/tools/profiler`);
-            this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/profiler`);
+            // this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/profiler`);
+            this.navigateTo(resourceId,'profiler');
           })
         }
       },
@@ -235,7 +234,8 @@ export class SiteFeatureService extends FeatureService {
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.Profiler, 'Diagnostic Tools', () => {
-            this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/profiler`);
+            // this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/profiler`);
+            this.navigateTo(resourceId,'profiler');
           })
         }
       },
@@ -252,7 +252,8 @@ export class SiteFeatureService extends FeatureService {
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.MemoryDump, 'Diagnostic Tools', () => {
-            this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/memorydump`);
+            // this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/memorydump`);
+            this.navigateTo(resourceId,'memorydump');
           })
         }
       },
@@ -269,7 +270,8 @@ export class SiteFeatureService extends FeatureService {
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.DatabaseTester, 'Diagnostic Tools', () => {
-            this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/databasetester`);
+            // this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/databasetester`);
+            this.navigateTo(resourceId,'databasetester');
           })
         }
       },
@@ -286,7 +288,8 @@ export class SiteFeatureService extends FeatureService {
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.NetworkTrace, 'Diagnostic Tools', () => {
-            this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/networktrace`);
+            // this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/networktrace`);
+            this.navigateTo(resourceId,'networktrace');
           })
         }
       },
@@ -303,7 +306,8 @@ export class SiteFeatureService extends FeatureService {
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.PHPLogAnalyzer, 'Diagnostic Tools', () => {
-            this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/phploganalyzer`);
+            // this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/phploganalyzer`);
+            this.navigateTo(resourceId,'phploganalyzer');
           })
         }
       },
@@ -320,7 +324,8 @@ export class SiteFeatureService extends FeatureService {
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.PHPProcessAnalyzer, 'Diagnostic Tools', () => {
-            this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/phpprocessanalyzer`);
+            // this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/phpprocessanalyzer`);
+            this.navigateTo(resourceId,'phpprocessanalyzer');
           })
         }
       },
@@ -337,7 +342,8 @@ export class SiteFeatureService extends FeatureService {
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.JavaMemoryDump, 'Diagnostic Tools', () => {
-            this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/javamemorydump`);
+            // this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/javamemorydump`);
+            this.navigateTo(resourceId,'javamemorydump');
           })
         }
       },
@@ -354,7 +360,8 @@ export class SiteFeatureService extends FeatureService {
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(ToolNames.JavaThreadDump, 'Diagnostic Tools', () => {
-            this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/javathreaddump`);
+            // this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/javathreaddump`);
+            this.navigateTo(resourceId,'javathreaddump');
           })
         }
       },
@@ -374,7 +381,8 @@ export class SiteFeatureService extends FeatureService {
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(SupportBladeDefinitions.MetricPerInstance.Identifier, 'Support Tools', () => {
-            this._portalActionService.openMdmMetricsV3Blade();
+            // this._portalActionService.openMdmMetricsV3Blade();
+            this.navigateTo(resourceId,'metricsperinstance');
           })
         }
       },
@@ -408,7 +416,8 @@ export class SiteFeatureService extends FeatureService {
           description: 'View event logs(containing exceptions, errors etc) generated by your application.',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(SupportBladeDefinitions.EventViewer.Identifier, 'Support Tools', () => {
-            this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/eventviewer`);
+            // this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/eventviewer`);
+            this.navigateTo(resourceId,'eventviewer');
           })
         }
       },
@@ -425,7 +434,8 @@ export class SiteFeatureService extends FeatureService {
           description: '',
           featureType: FeatureTypes.Tool,
           clickAction: this._createFeatureAction(SupportBladeDefinitions.FREBLogs.Identifier, 'Support Tools', () => {
-            this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/frebviewer`);
+            // this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/frebviewer`);
+            this.navigateTo(resourceId,'frebviewer');
           })
         }
       },
@@ -455,5 +465,14 @@ export class SiteFeatureService extends FeatureService {
     this._websiteFilter.transform(this.supportTools).forEach(tool => {
       this._features.push(tool);
     });
+  }
+
+  private navigateTo(resourceId: string, toolId: string) {
+    const isHomepage = !this._activatedRoute.root.firstChild.firstChild.firstChild.firstChild.snapshot.params["category"];
+    if (isHomepage) {
+      this._portalActionService.openBladeDiagnosticToolId(toolId);
+    } else {
+      this._router.navigateByUrl(`resource${resourceId}/categories/DiagnosticTools/tools/${toolId}`);
+    }
   }
 }
