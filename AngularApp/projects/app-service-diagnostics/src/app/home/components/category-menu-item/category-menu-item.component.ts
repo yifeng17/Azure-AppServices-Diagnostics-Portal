@@ -10,82 +10,78 @@ import { SearchPipe } from '../pipes/search.pipe';
 })
 
 export class CategoryMenuItemComponent implements OnInit {
-    private _searchValueSubject: BehaviorSubject<string> = new BehaviorSubject<string>(null);
-    private searchValueLocal: string;
+  private _searchValueSubject: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+  private searchValueLocal: string;
 
-    @Input() menuItem: CollapsibleMenuItem;
-    @Input() level: number = 0;
-    // @Input() set searchValue(value) {
-    //   this._searchValueSubject.next(value);
-    // };
+  @Input() menuItem: CollapsibleMenuItem;
+  @Input() level: number = 0;
+  // @Input() set searchValue(value) {
+  //   this._searchValueSubject.next(value);
+  // };
 
-    children: CollapsibleMenuItem[];
+  children: CollapsibleMenuItem[];
 
-    truncatedLable: string = "";
-    hasChildren: boolean;
-    matchesSearchTerm: boolean = true;
-    // imagePlaceHolder: string = '../../../../assets/img/detectors/default.png';
-    imagePlaceHolder: string = '../../../../assets/img/detectors/default.svg';
+  truncatedLable: string = "";
+  hasChildren: boolean;
+  matchesSearchTerm: boolean = true;
+  // imagePlaceHolder: string = '../../../../assets/img/detectors/default.png';
+  imagePlaceHolder: string = '../../../../assets/img/detectors/default.svg';
 
-    //private _searchPipe: SearchPipe
-    constructor() { }
+  //private _searchPipe: SearchPipe
+  constructor() { }
 
-    ngOnInit() {
-      this.children = this.menuItem.subItems;
-      this.hasChildren = this.menuItem.subItems && this.menuItem.subItems.length > 0;
-      this.truncatedLable = this.menuItem.label.length > 24 ? this.menuItem.label.substr(0, 24)+".." : this.menuItem.label ;
-      // this._searchValueSubject.subscribe(searchValue => {
-      //   this.searchValueLocal = searchValue;
-      //   this.menuItem.expanded = searchValue != undefined;
-      // //  this.hasChildren = this.menuItem.subItems ? this._searchPipe.transform(this.menuItem.subItems, searchValue).length > 0 : false;
-      // this.hasChildren  = false;
-      // this.matchesSearchTerm = !this.searchValueLocal || this.menuItem.label.toLowerCase().indexOf(this.searchValueLocal.toLowerCase()) >= 0 || this.hasChildren;
-      // });
+  ngOnInit() {
+    this.children = this.menuItem.subItems;
+    this.hasChildren = this.menuItem.subItems && this.menuItem.subItems.length > 0;
+    this.truncatedLable = this.menuItem.label.length > 24 ? this.menuItem.label.substr(0, 24) + ".." : this.menuItem.label;
+    // this._searchValueSubject.subscribe(searchValue => {
+    //   this.searchValueLocal = searchValue;
+    //   this.menuItem.expanded = searchValue != undefined;
+    // //  this.hasChildren = this.menuItem.subItems ? this._searchPipe.transform(this.menuItem.subItems, searchValue).length > 0 : false;
+    // this.hasChildren  = false;
+    // this.matchesSearchTerm = !this.searchValueLocal || this.menuItem.label.toLowerCase().indexOf(this.searchValueLocal.toLowerCase()) >= 0 || this.hasChildren;
+    // });
+  }
+
+  handleClick() {
+    if (this.menuItem.subItems && this.menuItem.subItems.length > 0) {
+      this.menuItem.expanded = !this.menuItem.expanded;
     }
-
-    handleClick() {
-      if (this.menuItem.subItems && this.menuItem.subItems.length > 0) {
-        this.menuItem.expanded = !this.menuItem.expanded;
-      }
-      else {
-        this.menuItem.onClick();
-      }
-    }
-
-    isSelected() {
-      if (this.menuItem.isSelected) {
-        return this.menuItem.isSelected();
-      }
-      return false;
-    }
-
-    getPadding() {
-      return (25 + this.level * 10) + 'px';
-    }
-
-    getFontSize() {
-        return (14 - this.level) + 'px';
-    }
-
-    imgErrorHandler(event:any) {
-      event.target.src = '../../../../assets/img/detectors/default.svg';
+    else {
+      this.menuItem.onClick();
     }
   }
 
-  export class CollapsibleMenuItem {
-    label: string;
-    onClick: Function;
-    expanded: boolean = false;
-    subItems: CollapsibleMenuItem[];
-    isSelected: Function;
-    icon: string;
-
-    constructor(label: string, onClick: Function, isSelected: Function, icon: string = null, expanded: boolean = false, subItems: CollapsibleMenuItem[] = []) {
-      this.label = label;
-      this.onClick = onClick;
-      this.expanded = expanded;
-      this.subItems = subItems;
-      this.isSelected = isSelected;
-      this.icon = icon;
+  isSelected() {
+    if (this.menuItem.isSelected) {
+      return this.menuItem.isSelected();
     }
+    return false;
+  }
+
+  getPadding() {
+    return (25 + this.level * 10) + 'px';
+  }
+
+  getFontSize() {
+    return (14 - this.level) + 'px';
+  }
+}
+
+export class CollapsibleMenuItem {
+  label: string;
+  onClick: Function;
+  expanded: boolean = false;
+  subItems: CollapsibleMenuItem[];
+  isSelected: Function;
+  icon: string;
+
+  constructor(label: string, onClick: Function, isSelected: Function, icon: string = null, expanded: boolean = false, subItems: CollapsibleMenuItem[] = []) {
+    this.label = label;
+    this.onClick = onClick;
+    this.expanded = expanded;
+    this.subItems = subItems;
+    this.isSelected = isSelected;
+    this.icon = icon;
+  }
 }
