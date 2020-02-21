@@ -110,7 +110,11 @@ export class FeatureService {
   private getCategoryIdByCategoryName(name: string): string {
     let categoryId: string;
     const currentCategoryId = this._activatedRoute.root.firstChild.firstChild.firstChild.firstChild.snapshot.params["category"];
-    if (name && this.categories.find(category => category.name === name)) {
+    //If category name is "XXX Tools" then should belong to Diagnostic Tool Category
+    if (name && name.includes('Tools')) {
+      categoryId = 'DiagnosticTools';
+    }
+    else if (name && this.categories.find(category => category.name === name)) {
       const category = this.categories.find(category => category.name === name);
       categoryId = category.id;
     }
