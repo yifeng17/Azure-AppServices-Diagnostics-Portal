@@ -1,19 +1,39 @@
-<div class="section-divider" [class.not-expandable]="!collapsible" [class.selected]="isSelected()" (click)="sectionHeaderClick()">
-    <div>
-      <ng-content select=".menu-icon"></ng-content>
-      </div>
-    <div class="menu-label">
-      <img *ngIf="label == 'Overview'" [src]="overviewImagePath" alt="Overview">
-        {{label}}
-    </div>
-    <div class="menu-expand-icon">
-        <span class="fa section-expand-icon" *ngIf="collapsible" [class.fa-angle-down]="!expanded && !disableExpandIcon" [class.fa-angle-up]="expanded && !disableExpandIcon"></span>
-    </div>
+<div class="section-divider" [class.overview-header]="isOverview" [class.not-expandable]="!collapsible" [class.selected]="isSelected()"
+  (click)="sectionHeaderClick()" (click)="expanded = !expanded">
+  <div>
+    <ng-content select=".menu-icon"></ng-content>
+  </div>
+  <div class="menu-label">
+    <img *ngIf="label === 'Overview'" [src]="overviewImagePath" alt="Overview" class="menu-title-icon">
+    <span class="menu-title">{{label}}</span>
+  </div>
+  <div class="menu-expand-icon">
+    <span class="fa section-expand-icon" *ngIf="collapsible" [class.fa-angle-down]="!expanded && !disableExpandIcon"
+      [class.fa-angle-up]="expanded && !disableExpandIcon"></span>
+  </div>
+</div>
+<div class="section-children">
+  <div class="expandable-content" [@expand]="'shown'">
+    <ng-content select="collapsible-menu-item"></ng-content>
+    <ng-content select=".fa-spin "></ng-content>
+  </div>
+</div>
 
-  </div>
-  <div class="section-children">
-    <div class="expandable-content" [@expand]="'shown'">
-        <ng-content select="collapsible-menu-item"></ng-content>
-        <ng-content select=".fa-spin "></ng-content>
+<!-- <div class="section-divider" [class.not-expandable]="!collapsible" (click)="expanded = !expanded">
+  <div>
+    <ng-content select=".menu-icon"></ng-content>
     </div>
+  <div class="menu-label">
+      {{label.toUpperCase()}}
   </div>
+  <div class="menu-expand-icon">
+      <span class="fa section-expand-icon" *ngIf="collapsible" [class.fa-angle-down]="!expanded && !disableExpandIcon" [class.fa-angle-up]="expanded && !disableExpandIcon"></span>
+  </div>
+
+</div>
+<div class="section-children">
+  <div class="expandable-content" [@expand]="collapsible && expanded ? 'shown' : 'hidden'">
+      <ng-content select="collapsible-menu-item"></ng-content>
+      <ng-content select=".fa-spin "></ng-content>
+  </div>
+</div> -->

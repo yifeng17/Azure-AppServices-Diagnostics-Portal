@@ -16,7 +16,7 @@ import { ActivatedRoute, Router, NavigationExtras, NavigationEnd, Scroll } from 
   ]
 })
 export class SectionDividerComponent implements OnInit {
-
+  @Input() isOverview: boolean = false;
   @Input() label: string;
   @Input() initiallySelected: boolean = true;
   @Input() collapsible: boolean = true;
@@ -30,7 +30,6 @@ export class SectionDividerComponent implements OnInit {
   ngOnInit() {
     this.selected = this.initiallySelected;
   }
-
 
   isSelected() {
     if(this._route.url.includes(this.routePath))
