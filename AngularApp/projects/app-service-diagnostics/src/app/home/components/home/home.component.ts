@@ -388,9 +388,5 @@ private logHTTPError(error: any, methodName: string): void {
     this.globals.openGeniePanel = true;
     console.log(this.globals.openGeniePanel);
   }
-
-  openTest() {
-    this._router.navigateByUrl("/test");
-  }
 }
 

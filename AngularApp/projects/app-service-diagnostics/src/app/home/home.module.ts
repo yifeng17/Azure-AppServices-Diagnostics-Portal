@@ -264,7 +264,7 @@ export const HomeRoutes = RouterModule.forChild([
                     cacheComponent: true
                 }
             },
-            // Database Test Tool
+            // Database Test Tool(connection string)
             {
                 path: 'tools/databasetester',
                 component: ConnectionDiagnoserToolComponent,
@@ -287,7 +287,7 @@ export const HomeRoutes = RouterModule.forChild([
                 path: 'tools/mitigate',
                 component: AutohealingComponent,
                 data: {
-                    navigationTitle: 'Auto-Heal',
+                    navigationTitle: ToolNames.AutoHealing,
                     detectorComponent: AutohealingDetectorComponent
                 }
             },
@@ -320,7 +320,8 @@ export const HomeRoutes = RouterModule.forChild([
             },
             // Freb Viewer
             {
-                path: 'tools/frebviewer',
+                // path: 'tools/frebviewer',
+                path: 'tools/freblogs',
                 component: FrebViewerComponent,
                 data: {
                     navigationTitle: ToolNames.FrebViewer,
@@ -329,28 +330,32 @@ export const HomeRoutes = RouterModule.forChild([
             },
             //Metrics per Instance (Apps)
             {
-                path: 'tools/metricsperinstance',
+                // path: 'tools/metricsperinstance',
+                path: 'tools/sitemetrics',
                 resolve: {
                     reroute: MetricsPerInstanceAppsResolver
                 },
             },
             //Metrics per Instance (App Service Plan)
             {
-                path: 'tools/metricsperinstanceappserviceplan',
+                // path: 'tools/metricsperinstanceappserviceplan',
+                path: 'tools/appserviceplanmetrics',
                 resolve: {
                     reroute: MetricsPerInstanceAppServicePlanResolver
                 },
             },
             //Advanced Application Restart
             {
-                path: 'tools/applicationrestart',
+                // path: 'tools/applicationrestart',
+                path: 'tools/advancedapprestart',
                 resolve: {
                     reroute: AdvanceApplicationRestartResolver
                 },
             },
             //Security Scanning
             {
-                path: 'tools/securityscanning',
+                // path: 'tools/securityscanning',
+                path: 'tools/tinfoil',
                 resolve: {
                     reroute: SecurityScanningResolver
                 },

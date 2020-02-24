@@ -4,6 +4,7 @@ import { FeatureService } from "../../../shared-v2/services/feature.service";
 import { LoggingV2Service } from "../../../shared-v2/services/logging-v2.service";
 import { NotificationService } from "../../../shared-v2/services/notification.service";
 import { Globals } from "../../../globals";
+import { icons } from "../../icons-constants";
 
 enum BlurType {
   //click other place to close panel
@@ -67,7 +68,7 @@ export class FabricSearchResultsComponent {
 
 
   constructor(public featureService: FeatureService, private _logger: LoggingV2Service,
-    private _notificationService: NotificationService,private globals:Globals) {
+    private _notificationService: NotificationService, private globals: Globals) {
     // this.features = this.featureService.getFeatures(this.searchValue);
   }
 
@@ -143,13 +144,9 @@ export class FabricSearchResultsComponent {
     this.globals.openGeniePanel = true;
   }
 
-
-  getImageUrl(name:string) {
-    return `../../../../assets/img/detectors/${name}.svg`;
-  }
-
-  //No detector image, load default image
-  imgErrorHandler(event:any) {
-    event.target.src = "../../../../assets/img/detectors/default.svg";
+  generateIconImagePath(name: string) {
+    const basePath = "../../../../assets/img/detectors";
+    const fileName = icons.has(name) ? name : 'default';
+    return `${basePath}/${fileName}.svg`;
   }
 }

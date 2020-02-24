@@ -72,6 +72,29 @@ export class PortalActionService {
         this._portalService.openBlade(bladeInfo, 'troubleshoot');
     }
 
+    public openBladeDiagnosticToolId(toolId: string) {
+        const category = "DiagnosticTools";
+        const bladeInfo = {
+            title: category,
+            detailBlade: 'SCIFrameBlade',
+            extension: 'WebsitesExtension',
+            detailBladeInputs: {
+                id: this.currentSite.id,
+                categoryId: category,
+                optionalParameters: [{
+                    key: "categoryId",
+                    value: category
+                },
+                {
+                    key: "toolId",
+                    value: toolId
+                }]
+            }
+        };
+
+        this._portalService.openBlade(bladeInfo, 'troubleshoot');
+    }
+
     public updateDiagnoseCategoryBladeTitle(category: string) {
         const bladeInfo = {
             title: category

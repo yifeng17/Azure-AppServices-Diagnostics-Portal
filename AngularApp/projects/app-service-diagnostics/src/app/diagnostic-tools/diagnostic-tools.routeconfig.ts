@@ -18,48 +18,67 @@ import { FrebViewerComponent } from '../shared/components/daas/freb-viewer/freb-
 import { Injectable, Component } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { PortalActionService } from '../shared/services/portal-action.service';
+import { AuthService } from '../startup/services/auth.service';
 
 @Injectable()
 export class MetricsPerInstanceAppsResolver implements Resolve<Observable<boolean>> {
-    constructor(private _portalActionService:PortalActionService,private _router:Router,private _activatedRoute:ActivatedRoute) {}
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot):Observable<boolean>{
-        console.log("open new blade for mdm");
-        console.log(route,state);
+    private resourceId: string;
+    constructor(private _portalActionService: PortalActionService, private _router: Router, private _authService: AuthService) {
+        this._authService.getStartupInfo().subscribe(startupInfo => this.resourceId = startupInfo.resourceId);
+    }
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+        //if open from home page second blade will go to Diagnostic Tool Overview Page
+        //Otherwise redirect to previous page(open from category search bar)
+        const url = this._router.url === '/resourceRedirect' ? `resource${this.resourceId}/categories/DiagnosticTools/overview` : this._router.url;
+        // const url = this._router.url === '/resourceRedirect' ? `resource${this.resourceId}/categories/DiagnosticTools/tools/metricsperinstance` : this._router.url;
+        // this._router.navigate([`../../overview`],{relativeTo: this._activatedRoute});
+        this._router.navigateByUrl(url);
         this._portalActionService.openMdmMetricsV3Blade();
-        this._router.navigate([`../../categories/DiagnosticTools`],{relativeTo: this._activatedRoute});
         return of(true);
     }
 }
 
 @Injectable()
 export class MetricsPerInstanceAppServicePlanResolver implements Resolve<Observable<boolean>> {
-    constructor(private _portalActionService:PortalActionService,private _router:Router,private _activatedRoute:ActivatedRoute) {}
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot):Observable<boolean>{
-        console.log("open new blade for mdm");
+    private resourceId: string;
+    constructor(private _portalActionService: PortalActionService, private _router: Router, private _authService: AuthService) {
+        this._authService.getStartupInfo().subscribe(startupInfo => this.resourceId = startupInfo.resourceId);
+    }
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+        const url = this._router.url === '/resourceRedirect' ? `resource${this.resourceId}/categories/DiagnosticTools/overview` : this._router.url;
+        this._router.navigateByUrl(url);
         this._portalActionService.openMdmMetricsV3Blade(this._portalActionService.currentSite.properties.serverFarmId);
-        this._router.navigate([`../../categories/DiagnosticTools`],{relativeTo: this._activatedRoute});
+        // this._router.navigate([`../../categories/DiagnosticTools`], { relativeTo: this._activatedRoute });
         return of(true);
     }
 }
 
 @Injectable()
 export class AdvanceApplicationRestartResolver implements Resolve<Observable<boolean>> {
-    constructor(private _portalActionService:PortalActionService,private _router:Router,private _activatedRoute:ActivatedRoute) {}
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot):Observable<boolean>{
-        console.log("open new blade for mdm");
+    private resourceId: string;
+    constructor(private _portalActionService: PortalActionService, private _router: Router, private _authService: AuthService) {
+        this._authService.getStartupInfo().subscribe(startupInfo => this.resourceId = startupInfo.resourceId);
+    }
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+        const url = this._router.url === '/resourceRedirect' ? `resource${this.resourceId}/categories/DiagnosticTools/overview` : this._router.url;
+        this._router.navigateByUrl(url);
         this._portalActionService.openBladeAdvancedAppRestartBladeForCurrentSite();
-        this._router.navigate([`../../categories/DiagnosticTools`],{relativeTo: this._activatedRoute});
+        // this._router.navigate([`../../categories/DiagnosticTools`], { relativeTo: this._activatedRoute });
         return of(true);
     }
 }
 
 @Injectable()
 export class SecurityScanningResolver implements Resolve<Observable<boolean>> {
-    constructor(private _portalActionService:PortalActionService,private _router:Router,private _activatedRoute:ActivatedRoute) {}
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot):Observable<boolean>{
-        console.log("open new blade for mdm");
+    private resourceId: string;
+    constructor(private _portalActionService: PortalActionService, private _router: Router, private _authService: AuthService) {
+        this._authService.getStartupInfo().subscribe(startupInfo => this.resourceId = startupInfo.resourceId);
+    }
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+        const url = this._router.url === '/resourceRedirect' ? `resource${this.resourceId}/categories/DiagnosticTools/overview` : this._router.url;
+        this._router.navigateByUrl(url);
         this._portalActionService.openTifoilSecurityBlade();
-        this._router.navigate([`../../categories/DiagnosticTools`],{relativeTo: this._activatedRoute});
+        // this._router.navigate([`../../categories/DiagnosticTools`], { relativeTo: this._activatedRoute });
         return of(true);
     }
 }
@@ -219,30 +238,30 @@ export const DiagnosticToolsRoutes: Route[] = [
     },
     //Metrics per Instance (Apps)
     {
-        path:'metricsperinstance',
+        path: 'metricsperinstance',
         resolve: {
-            reroute:MetricsPerInstanceAppsResolver
+            reroute: MetricsPerInstanceAppsResolver
         },
     },
     //Metrics per Instance (App Service Plan)
     {
-        path:'metricsperinstanceappserviceplan',
+        path: 'metricsperinstanceappserviceplan',
         resolve: {
-            reroute:MetricsPerInstanceAppServicePlanResolver
+            reroute: MetricsPerInstanceAppServicePlanResolver
         },
     },
     //Advanced Application Restart
     {
-        path:'applicationrestart',
+        path: 'applicationrestart',
         resolve: {
-            reroute:AdvanceApplicationRestartResolver
+            reroute: AdvanceApplicationRestartResolver
         },
     },
     //Security Scanning
     {
-        path:'securityscanning',
+        path: 'securityscanning',
         resolve: {
-            reroute:SecurityScanningResolver
+            reroute: SecurityScanningResolver
         },
     },
 ];
