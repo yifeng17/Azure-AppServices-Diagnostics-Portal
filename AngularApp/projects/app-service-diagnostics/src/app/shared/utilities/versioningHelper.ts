@@ -11,6 +11,8 @@ export class VersioningHelper {
         if (isBetaSubscription) {
             return true;
         }
+        // Just to test out both UI locally.
+        return false;
         
         let firstDigit = "0x" + subscriptionId.substr(0, 1);
 

@@ -7,7 +7,7 @@ import { GenericSupportTopicService } from 'diagnostic-data';
 import { HomeComponent } from './components/home/home.component';
 import { CategoryChatComponent } from './components/category-chat/category-chat.component';
 import { CategoryTileComponent } from './components/category-tile/category-tile.component';
-import { CategoryTabResolver, CategoryChatResolver } from './resolvers/category-tab.resolver';
+import { CategoryTabResolver } from './resolvers/category-tab.resolver';
 import { SupportBotModule } from '../supportbot/supportbot.module';
 import { SearchResultsComponent } from './components/search-results/search-results.component';
 import { FormsModule } from '@angular/forms';
@@ -95,7 +95,6 @@ export const HomeRoutes = RouterModule.forChild([
                 data: {
                     cacheComponent: true,
                     navigationTitle: CategoryTabResolver,
-                    //   messageList: CategoryChatResolver
                 },
             },
             {
@@ -520,8 +519,7 @@ export const HomeRoutes = RouterModule.forChild([
     // ,FabricFeedbackComponent,FabricFeedbackContainerComponent
     providers: 
         [
-            CategoryTabResolver, 
-            CategoryChatResolver, 
+            CategoryTabResolver,  
             TimeControlResolver, 
             UncategorizedDetectorsResolver, 
             DetectorCategorizationService, 

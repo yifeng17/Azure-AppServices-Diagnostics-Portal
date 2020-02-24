@@ -1,12 +1,46 @@
-<div class="main-area">
-  <div class="home-content">
-    <h2 tabindex="0" class="home-title">{{homePageText.title}}</h2>
-    <p tabindex="0" class="home-description">{{homePageText.description}}</p>
-    <p class="home-description">If you would like to look at the health check then <a (click)="openAvaAndPerf()">click here.</a>You can also ask
-      chatbot <a (click)="openGeniePanel()">Genie</a> any questions you may have</p>
+<div *ngIf="useLegacy else newSolution" class="home-container">
+  <div class="input-group input-group-lg search-input-group" (keyup.escape)="clearSearch()" role="search" *ngIf="!isAKSOnNationalCloud">
+    <input tabindex="0" type="search" class="form-control" placeholder="{{searchPlaceHolder}}" [ngModel]="searchValue" (ngModelChange)="updateSearchValue($event)"
+      (focus)="onSearchBoxFocus(event)" (focusout)="onSearchLostFocus()" aria-controls="search-results">
+    <div class="input-group-btn" id="clear-search">
+      <button class="btn btn-default" type="button" aria-label="Clear" title="Clear" tabindex="0" (click)="clearSearch()" (focus)="onFocusClear()">
+        <i class="fa fa-close"></i>
+      </button>
+    </div>
   </div>
-  <div class="home-container">
-    <!-- <div style="margin:25px 0px;" (keyup.escape)="clearSearch()" role="search">
+  <div role="status">
+    <p *ngIf="inputAriaLabel">{{inputAriaLabel}}</p>
+  </div>
+  <div id="search-results" role="region" aria-live="polite">
+    <ng-container *ngIf="searchBoxFocus">
+      <search-results [searchValue]="searchValue" (resultCount)="onResultCount($event)" (keyup.escape)="clearSearch()"></search-results>
+    </ng-container>
+  </div>
+  <div class="main-area">
+    <h2 tabindex="0">{{homePageText.title}}</h2>
+    <p id="page-description" tabindex="0">{{homePageText.description}}</p>
+    <div *ngIf="categories && !isAKSOnNationalCloud " class="category-container">
+      <div *ngFor="let category of categories" style="display: inline-block;padding: 20px 40px 20px 0px">
+        <category-tile [category]="category" [useLegacy]="true"></category-tile>
+      </div>
+    </div>
+    <div class="privacy-statement" tabindex="0">
+      <a href="https://azure.microsoft.com/en-us/support/legal/?amp%3Bclcid=0x9" target="_blank">Privacy</a>
+    </div>
+  </div>
+</div>
+
+<ng-template #newSolution>
+  <div class="main-area">
+    <div class="home-content">
+      <h2 tabindex="0" class="home-title">{{homePageText.title}}</h2>
+      <p tabindex="0" class="home-description">{{homePageText.description}}</p>
+      <p class="home-description">If you would like to look at the health check then
+        <a (click)="openAvaAndPerf()">click here.</a>You can also ask chatbot
+        <a (click)="openGeniePanel()">Genie</a> any questions you may have</p>
+    </div>
+    <div class="home-container">
+      <!-- <div style="margin:25px 0px;" (keyup.escape)="clearSearch()" role="search">
       <div class="search-box">
         <fab-search-box tabindex="0" type="search" placeholder="Search" [value]="searchValue"
           (onChange)="updateSearchValue($event)" (onFocus)="onSearchBoxFocus($event)" iconProps="iconProps"
@@ -23,17 +57,18 @@
         </ng-container>
       </div>
     </div> -->
-    <!-- style="margin:25px 0px;" -->
-    <div>
-      <fabric-search-results></fabric-search-results>
+      <!-- style="margin:25px 0px;" -->
+      <div>
+        <fabric-search-results></fabric-search-results>
+      </div>
+    </div>
+    <div *ngIf="categories" class="category-container">
+      <div *ngFor="let category of categories" style="display: inline-block;padding: 10px 40px 10px 0px" class="col-md-4">
+        <category-tile [category]="category"></category-tile>
+      </div>
+    </div>
+    <div class="privacy-statement" tabindex="0">
+      <a href="https://azure.microsoft.com/en-us/support/legal/?amp%3Bclcid=0x9" target="_blank">Privacy</a>
     </div>
   </div>
-  <div *ngIf="categories" class="category-container">
-    <div *ngFor="let category of categories" style="display: inline-block;padding: 10px 40px 10px 0px" class="col-md-4">
-      <category-tile [category]="category"></category-tile>
-    </div>
-  </div>
-  <div class="privacy-statement" tabindex="0">
-    <a href="https://azure.microsoft.com/en-us/support/legal/?amp%3Bclcid=0x9" target="_blank">Privacy</a>
-  </div>
-</div>
+</ng-template>

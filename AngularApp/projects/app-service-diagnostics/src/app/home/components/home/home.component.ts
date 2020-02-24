@@ -21,6 +21,8 @@ import { FabDropdownComponent } from '@angular-react/fabric';
 import { HttpResponse } from '@angular/common/http';
 import { FabSearchBoxComponent } from '@angular-react/fabric';
 import { Globals } from '../../../globals';
+import { VersioningHelper } from '../../../shared/utilities/versioningHelper';
+import { DemoSubscriptions } from "../../../betaSubscriptions";
 // import { FabSearchBoxModule } from '@angular-react/fabric';
 // import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
 import {
@@ -46,138 +48,10 @@ import { PortalActionService } from '../../../shared/services/portal-action.serv
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-    logEvent(...args: any[]) {
-        console.log(args);
-    }
-
-    selectedItem?: IDropdownOption;
-    options: FabDropdownComponent['options'] = [
-        { key: 'A', text: 'Option a' },
-        { key: 'B', text: 'Option b' },
-        { key: 'C', text: 'Option c' },
-        { key: 'D', text: 'Option d' },
-        { key: 'divider_1', text: '-', itemType: DropdownMenuItemType.Divider },
-        { key: 'E', text: 'Option e' },
-        { key: 'F', text: 'Option f' },
-        { key: 'G', text: 'Option g' },
-    ];
-
-
-    strings: ICalendarStrings = {
-        months: [
-            'January',
-            'February',
-            'March',
-            'April',
-            'May',
-            'June',
-            'July',
-            'August',
-            'September',
-            'October',
-            'November',
-            'December',
-        ],
-
-        shortMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-
-        days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-
-        shortDays: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
-
-        goToToday: 'Go to today',
-        weekNumberFormatString: 'Week number {0}',
-    };
-
-    detailItems = [
-        { field1: 'f1content1', field2: 'f2content1' },
-        { field1: 'f1content2', field2: 'f2content2' },
-        { field1: 'f1content3', field2: 'f2content3' },
-        { field1: 'f1content4' },
-        { field2: 'f2content5' },
-    ];
-
-    onNewClicked() {
-        console.log('New clicked');
-    }
-
-    onCopyClicked() {
-        console.log('Copy clicked');
-    }
-
-    onSaveAsClicked() {
-        console.log('Save as clicked');
-    }
-
-    onSaveAsFirstClicked() {
-        console.log('Save as 1 clicked');
-    }
-
-    onSaveAsSecondClicked() {
-        console.log('Save as 2 clicked');
-    }
-
-    customItemCount = 1;
-
-    onCustomItemClick(item: any) {
-        this.customItemCount++;
-        console.log('custom item clicked', item);
-    }
-
-    onColumnHeaderClicked(event: any) {
-        console.log('Column header clicked', event);
-    }
-
-
-
-    disabled = true;
-    dialogHidden = true;
-    sampleContentCounter = 0;
-    secondsCounter = 0;
-    sampleContent2 = '0 Seconds Passed';
-    sampleContent3 = '';
-    selectedComboBoxKey: string = "None";
-    selectedComboBoxValue: string = "None";
-    selectedDate: Date;
-
-    //   comboBoxOptions: IComboBoxOption[] = [
-    //     { key: 'A', text: 'See option A' },
-    //     { key: 'B', text: 'See option B' },
-    //   ];
-
-    onSelectDate(event) {
-        this.selectedDate = event.date;
-    }
-
-    comboChange(event) {
-        this.selectedComboBoxKey = event.option.key;
-        this.selectedComboBoxValue = event.option.text;
-    }
-
-    get sampleContent() {
-        return `Button clicked ${this.sampleContentCounter} times.`;
-    }
-
-    toggle() {
-        this.disabled = !this.disabled;
-    }
-
-    toggleDialog() {
-        this.dialogHidden = !this.dialogHidden;
-        this.sampleContent3 = '';
-    }
-
-    click() {
-        this.sampleContentCounter += 1;
-    }
-
-    clickSave() {
-        this.sampleContent3 = 'Saved...';
-    }
-
-    iconProps: ISearchBoxProps['iconProps'] = { iconName: 'Filter' };
+    useLegacy: boolean = true;
     resourceName: string;
     categories: Category[];
+    searchValue = '';
     searchBoxFocus: boolean;
     searchLogTimout: any;
     event: any;
@@ -186,11 +60,11 @@ export class HomeComponent implements OnInit {
     homePageText: HomePageText;
     searchPlaceHolder: string;
     providerRegisterUrl: string;
-    // get inputAriaLabel(): string {
-    //   return this.searchValue !== '' ?
-    //     `${this.searchResultCount} Result` + (this.searchResultCount !== 1 ? 's' : '') :
-    //     '';
-    // }
+    get inputAriaLabel(): string {
+        return this.searchValue !== '' ?
+          `${this.searchResultCount} Result` + (this.searchResultCount !== 1 ? 's' : '') :
+          '';
+      }
 
     get isIE_Browser(): boolean {
       return /msie\s|trident\//i.test(window.navigator.userAgent);
@@ -203,15 +77,11 @@ export class HomeComponent implements OnInit {
     constructor(private _resourceService: ResourceService, private _categoryService: CategoryService, private _notificationService: NotificationService, private _router: Router,
         private _detectorControlService: DetectorControlService, private _featureService: FeatureService, private _logger: LoggingV2Service, private _authService: AuthService,
         private _navigator: FeatureNavigationService, private _activatedRoute: ActivatedRoute, private armService: ArmService, private logService: TelemetryService, private kustologgingService: PortalKustoTelemetryService, private _diagnosticService: DiagnosticService, private _portalService: PortalActionService,private globals:Globals) {
-
-    const i = setInterval(() => {
-      this.secondsCounter += 1;
-      this.sampleContent2 = `${this.secondsCounter} Seconds Passed`;
-    }, 1000);
-
-        setTimeout(() => {
-            clearInterval(i);
-        }, 12000);
+            
+        this.subscriptionId = this._activatedRoute.snapshot.params['subscriptionid'];
+        this.useLegacy = DemoSubscriptions.betaSubscriptions.findIndex(item => this.subscriptionId.toLowerCase() === item.toLowerCase()) > -1;
+       // this.useLegacy = true;
+        //  !VersioningHelper.isV2Subscription(this.subscriptionId);
 
         if (_resourceService.armResourceConfig && _resourceService.armResourceConfig.homePageText
             && _resourceService.armResourceConfig.homePageText.title && _resourceService.armResourceConfig.homePageText.title.length > 1
@@ -279,7 +149,6 @@ export class HomeComponent implements OnInit {
         }
       });
 
-    this.subscriptionId = this._activatedRoute.snapshot.params['subscriptionid'];
     // this.globals.removeMsgFromLocalStorage();
   }
 
@@ -314,45 +183,46 @@ export class HomeComponent implements OnInit {
     initializeIcons('https://static2.sharepointonline.com/files/fabric/assets/icons/');
 
   };
+  
 
-  // onSearchBoxFocus(event: any): void {
-  //     this.searchBoxFocus = true;
-  // }
+  onSearchBoxFocus(event: any): void {
+      this.searchBoxFocus = true;
+  }
 
-  // clearSearch() {
-  //     this.searchBoxFocus = false;
-  //     this.searchValue = '';
-  //     this.searchResultCount = 0;
-  // }
+  clearSearch() {
+      this.searchBoxFocus = false;
+      this.searchValue = '';
+      this.searchResultCount = 0;
+  }
 
-  // updateSearchValue(searchValue:{newValue:string}) {
-  //     console.log("fab-search-box",searchValue);
-  //     this.searchValue = searchValue.newValue;
+  updateSearchValue(searchValue:{newValue:string}) {
+      console.log("fab-search-box",searchValue);
+      this.searchValue = searchValue.newValue;
 
-  //     if (this.searchLogTimout) {
-  //         clearTimeout(this.searchLogTimout);
-  //     }
+      if (this.searchLogTimout) {
+          clearTimeout(this.searchLogTimout);
+      }
 
-  //     this.searchLogTimout = setTimeout(() => {
-  //         this._logSearch();
-  //     }, 5000);
-  // }
+      this.searchLogTimout = setTimeout(() => {
+          this._logSearch();
+      }, 5000);
+  }
 
-  // onResultCount(count: number) {
-  //     this.searchResultCount = count;
-  // }
+  onResultCount(count: number) {
+      this.searchResultCount = count;
+  }
 
-  // onSearchLostFocus() {
-  //     if (this.searchValue === '') {
-  //         this.searchResultCount = 0;
-  //     }
-  // }
+  onSearchLostFocus() {
+      if (this.searchValue === '') {
+          this.searchResultCount = 0;
+      }
+  }
 
-  // onFocusClear() {
-  //     if (this.searchValue === '') {
-  //         this.clearSearch();
-  //     }
-  // }
+  onFocusClear() {
+      if (this.searchValue === '') {
+          this.clearSearch();
+      }
+  }
 
   private _updateRouteBasedOnAdditionalParameters(route: string, additionalParameters: any): string {
     if (additionalParameters.featurePath) {
@@ -365,9 +235,9 @@ export class HomeComponent implements OnInit {
     return null;
 }
 
-// private _logSearch() {
-//   this._logger.LogSearch(this.searchValue);
-// }
+private _logSearch() {
+  this._logger.LogSearch(this.searchValue);
+}
 
 private logHTTPError(error: any, methodName: string): void {
   let errorLoggingProps = {
