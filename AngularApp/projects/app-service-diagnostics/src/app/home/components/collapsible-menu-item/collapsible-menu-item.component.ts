@@ -5,11 +5,11 @@ import { SearchPipe } from '../pipes/search.pipe';
 
 @Component({
   selector: 'collapsible-menu-item',
-  templateUrl: './category-menu-item.component.html',
-  styleUrls: ['./category-menu-item.component.scss']
+  templateUrl: './collapsible-menu-item.component.html',
+  styleUrls: ['./collapsible-menu-item.component.scss']
 })
 
-export class CategoryMenuItemComponent implements OnInit {
+export class CollapsibleMenuItemComponent implements OnInit {
     private _searchValueSubject: BehaviorSubject<string> = new BehaviorSubject<string>(null);
     private searchValueLocal: string;
 

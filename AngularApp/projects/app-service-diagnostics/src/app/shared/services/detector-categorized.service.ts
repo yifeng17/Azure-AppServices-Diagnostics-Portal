@@ -8,7 +8,7 @@ import { AuthService } from '../../startup/services/auth.service';
 import { ArmService } from './arm.service';
 import { DetectorResponse, DetectorMetaData } from 'diagnostic-data';
 import { CategoryService } from '../../shared-v2/services/category.service';
-import { CollapsibleMenuItem } from '../../home/components/category-menu-item/category-menu-item.component';
+import { CollapsibleMenuItem } from '../../home/components/collapsible-menu-item/collapsible-menu-item.component';
 
 
 

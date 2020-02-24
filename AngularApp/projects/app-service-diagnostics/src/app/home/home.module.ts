@@ -29,7 +29,7 @@ import { PortalReferrerResolverComponent } from '../shared/components/portal-ref
 import { SearchPipe, SearchMatchPipe } from './components/pipes/search.pipe';
 
 import { CategoryNavComponent } from './components/category-nav/category-nav.component';
-import { CategoryMenuItemComponent } from './components/category-menu-item/category-menu-item.component';
+import { CollapsibleMenuItemComponent } from './components/collapsible-menu-item/collapsible-menu-item.component';
 import { SectionDividerComponent } from './components/section-divider/section-divider.component';
 import { FabricSearchResultsComponent } from '../fabric-ui/components/fabric-search-results/fabric-search-results.component';
 import { FabricFeedbackComponent } from '../fabric-ui/components/fabric-feedback/fabric-feedback.component';

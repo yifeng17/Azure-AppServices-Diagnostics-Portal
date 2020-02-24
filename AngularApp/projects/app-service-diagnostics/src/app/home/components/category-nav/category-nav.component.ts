@@ -13,7 +13,7 @@ import { Feature } from '../../../shared-v2/models/features';
 import { AuthService } from '../../../startup/services/auth.service';
 import { DiagnosticService, DetectorMetaData, DetectorType, DetectorResponse } from 'diagnostic-data';
 import { filter } from 'rxjs/operators';
-import { CollapsibleMenuItem, CategoryMenuItemComponent } from '../category-menu-item/category-menu-item.component';
+import { CollapsibleMenuItem, CollapsibleMenuItemComponent } from '../collapsible-menu-item/collapsible-menu-item.component';
 import { DetectorCategorizationService } from '../../../shared/services/detector-categorized.service';
 import { SiteFeatureService } from '../../../resources/web-sites/services/site-feature.service';
 import { SiteFilteredItem } from '../../../resources/web-sites/models/site-filter';
