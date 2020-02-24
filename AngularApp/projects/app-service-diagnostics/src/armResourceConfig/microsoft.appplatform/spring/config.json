@@ -14,12 +14,20 @@
 		"supportTopicIds": []
 	},
 	"categories": [{
-			"id": "Troubleshooting",
-			"name": "Troubleshooting",
-			"description": "Explore the most common problems for your resource. Follow do-it-yourself troubleshooting steps, or explore a wide range of troubleshooting tools.",
-			"keywords": ["Failures", "Service Up"],
-			"color": "rgb(186, 211, 245)",
-			"createFlowForCategory": true,
+			"id": "AvailabilityAndPerformance",
+			"name": "Availability and Performance",
+			"description": "Is your app experiencing app downtime or slowness? Are your configurations for Config Server experiencing unresponsiveness? Investigate and discover issues that may impact your app availability.",
+			"keywords": ["Downtime", "Discovery", "Config Sever", "App Health", "Deploy Jar Artifact"],
+			"color": "rgb(208, 228, 176)",
+			"createFlowForCategory": false,
+			"chatEnabled": false
+		}, {
+			"id": "ConfigurationsAndManagement",
+			"name": "Configurations and Management",
+			"description": "Are you having issues exporting platform logs or distributed tracing? Are you having issue with some settings that you configured for your app? Find out if you misconfigured some features of Azure Spring Cloud, such as Log Analytics, App Insights, scaling, deployments and domain.",
+			"keywords": ["Log", "Metrics", "Distributed Tracing", "Scaling", "Swap", "Custom Domain", "SSL"],
+			"color": "rgb(249, 213, 180)",
+			"createFlowForCategory": false,
 			"chatEnabled": false
 		}
 	],
