@@ -1,0 +1,145 @@
+// .chat-container {
+//     /* padding: 0px 10%; */
+//     margin: 0px -10px;
+//     background-color: #f3f3f3;
+// }
+
+// .App {
+//     min-height: 100vh;
+//   }
+
+.body-content {
+    display: flex!important;
+ //   flex-direction: row;
+   // min-height: 100%!important;
+   height: calc(100vh - 100px);
+//   overflow-y: scroll;
+ }
+
+ section.sidebar {
+     width: 265px;
+     position: fixed;
+    // float: left;
+     top: 0px;
+     bottom: 0px;
+     border-right: 1px solid #eee;
+     overflow-y: scroll;
+   }
+
+   section.content {
+     position: fixed;
+     width:calc(100% - 265px);
+     // top: 43px;
+     top: 0px;
+     bottom: 0px;
+     left: 265px;
+     overflow-y: auto;
+     // if set padding-left, the sidebar item becomes unclickable
+  }
+
+.sidebar, .content{
+ flex-basis: auto;
+}
+
+//   .sidebar {
+//     //padding: 0px 1px 0px 0px!important;
+//     min-height: 100%!important;
+//     // border-right: 1px solid #eee;
+//   //  height: inherit;
+//   //  overflow-y: scroll;
+//   }
+
+//  {
+//     padding: 0px!important;
+//   }
+
+/*
+To use Flexbox we need to set the display
+setting of the container component to flex.
+The we set the direction of the wrapped
+components. By default flexbox will order
+them by row, but we can also tell it to do
+it by column.
+*/
+// .App {
+//   display: flex!important;
+//   flex-direction: column;
+// }
+/*
+Something similar is done to the body
+element, except we order the wrapped
+component as rows.
+*/
+// .App .body {
+//   display: flex!important;
+//   flex-direction: row;
+// }
+/*
+Flexbox let's us reorder the way the
+elements are placed inside the wrapper
+component. Using the order rule, we move
+the sidebar to the left of the content
+component. We also set its width to 12em
+and set its flex propertires so it doesn't
+grow or shrink with the rest of the page.
+*/
+
+// .body .content {
+//   display: flex!important;
+// }
+// .body .sidebar {
+//   display: flex!important;
+//   order: -1;
+//   max-width: 12em;
+//   flex-grow: 0;    /* Defined the ability to grow */
+//   flex-shrink: 0;  /* Defines the ability to shrink */
+//   flex-basis: 12em;/* Default value of the element before distribuing the remaing space */
+// }
+/*
+Lastly we give some custom height to our
+header and footer components.
+*/
+.App .header {
+ position: fixed;
+ height: 43px;
+ width: 100%;
+ padding-left: 25px;
+ padding-right: 115px;
+ box-shadow: inset 0px -1px 0px rgba(204, 204, 204, 0.8);
+ border-bottom: 1px solid #eee;
+}
+
+.category-label {
+ font-family: Segoe UI;
+ font-style: normal;
+ font-weight: 600;
+ font-size: 18px;
+ line-height: 24px;
+ height: 25px;
+}
+
+.category-description {
+ font-family: Segoe UI;
+ font-style: normal;
+ font-weight: normal;
+ font-size: 10px;
+ line-height: 14px;
+ height: 18px;
+ color: #605E5C;;
+}
+
+// .content-wrapper.white-background, .content-wrapper.gray-background {
+//     min-height: calc(100vh - 95px);
+//     height: 100%;
+//     margin-top:0px;
+
+//     // Nested onboarding-flow components have two navbars totalling 92px
+//     ::ng-deep onboarding-flow {
+//         height: calc(100vh - 92px);
+//     }
+
+//     // The immediate child onboarding-flow does not have a 42px header
+//     ::ng-deep>onboarding-flow {
+//         height: calc(100vh - 50px);
+//     }
+// }
