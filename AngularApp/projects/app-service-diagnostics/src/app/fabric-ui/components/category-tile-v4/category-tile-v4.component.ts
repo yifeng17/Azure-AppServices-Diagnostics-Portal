@@ -5,19 +5,29 @@ import { NotificationService } from '../../../shared-v2/services/notification.se
 import { LoggingV2Service } from '../../../shared-v2/services/logging-v2.service';
 import { DiagnosticService, DetectorMetaData, DetectorType } from 'diagnostic-data';
 import { ResourceService } from '../../../shared-v2/services/resource.service';
+import { PortalActionService } from '../../../shared/services/portal-action.service';
+
+const imageRootPath = '../../../../assets/img/landing-home';
 
 @Component({
-  selector: 'category-tile',
-  templateUrl: './category-tile.component.html',
-  styleUrls: ['./category-tile.component.scss']
+  selector: 'category-tile-v4',
+  templateUrl: './category-tile-v4.component.html',
+  styleUrls: ['./category-tile-v4.component.scss']
 })
-export class CategoryTileComponent implements OnInit {
+export class CategoryTileV4Component implements OnInit {
 
   @Input() category: Category;
-
-  constructor(private _router: Router, private _activatedRoute: ActivatedRoute, private _notificationService: NotificationService, private _logger: LoggingV2Service, private _diagnosticService: DiagnosticService, private _resourceService: ResourceService) { }
+  categoryImgPath: string;
+  keywords: string;
+  constructor(private _portalService: PortalActionService, private _router: Router, private _activatedRoute: ActivatedRoute, private _notificationService: NotificationService, private _logger: LoggingV2Service, private _diagnosticService: DiagnosticService, private _resourceService: ResourceService) { }
 
   ngOnInit() {
+    this.categoryImgPath = this.generateImagePath(this.category.name);
+    this.keywords = this.category.keywords.join(", ");
+  }
+
+  openBladeDiagnoseCategoryBlade() {
+    this._portalService.openBladeDiagnoseCategoryBlade(this.category.id);
   }
 
   navigateToCategory(): void {
@@ -32,16 +42,20 @@ export class CategoryTileComponent implements OnInit {
 
     this._diagnosticService.getDetectors().subscribe(detectors => {
 
+      console.log("All detectors", detectors);
+      console.log("category id", this.category.id);
       var currentCategoryDetectors = detectors.filter(detector => detector.category === this.category.id);
+      console.log("this category", this.category);
 
+      console.log("Filetered detectors", currentCategoryDetectors);
       if (currentCategoryDetectors.length === 1) {
         this._notificationService.dismiss();
         this._logger.LogTopLevelDetector(currentCategoryDetectors[0].id, currentCategoryDetectors[0].name, this.category.id);
-        if(currentCategoryDetectors[0].type === DetectorType.Detector) {
+        if (currentCategoryDetectors[0].type === DetectorType.Detector) {
           this._router.navigateByUrl(`resource${this._resourceService.resourceIdForRouting}/detectors/${currentCategoryDetectors[0].id}`);
-        }  else if (currentCategoryDetectors[0].type === DetectorType.Analysis) {
+        } else if (currentCategoryDetectors[0].type === DetectorType.Analysis) {
           this._router.navigateByUrl(`resource${this._resourceService.resourceIdForRouting}/analysis/${currentCategoryDetectors[0].id}`);
-        }        
+        }
       }
       else {
         const path = ['categories', this.category.id];
@@ -53,8 +67,16 @@ export class CategoryTileComponent implements OnInit {
 
         this._notificationService.dismiss();
 
+        console.log("router", path);
         this._router.navigate(path, navigationExtras);
       }
     });
+
+    console.log("Get detectors")
   }
+
+  generateImagePath(name: string): string {
+    return `${imageRootPath}/${name}.svg`;
+  }
+
 }
