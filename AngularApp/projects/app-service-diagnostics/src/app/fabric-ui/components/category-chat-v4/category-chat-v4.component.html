@@ -1,0 +1,130 @@
+<!--
+<div class="content-wrapper gray-background">
+
+</div> -->
+
+<!--
+<div>
+  <button class="btn btn-sm" [routerLink]="['analysis/webappdown']" preserveFragment queryParamsHandling="preserve">Go
+    to Detector</button>
+</div>
+<div>
+  <button class="btn btn-sm" [routerLink]="['analysis/tcpconnections']" preserveFragment
+    queryParamsHandling="preserve">Back to Observations</button>
+</div> -->
+<!--
+React refresh bug test
+<div>
+  <fab-icon iconName="Filter" style="float:right" (click)="showChoiceGroup = !showChoiceGroup"></fab-icon>
+  <span>counter</span>
+  <fab-primary-button type="Submit" text='Go'></fab-primary-button>
+  <fab-primary-button type="Go" text='Go'>
+    </fab-primary-button>
+</div> -->
+
+<!--
+<div class="site-content">
+  <section class="sidebar">
+    <div class="user-panel" [class.active]="doesMatchCurrentRoute('home')">
+      <div class="pull-left image" (click)="navigateTo('home/category')">
+        <img [src]="resourceService.imgSrc" class="resource-logo" style="max-width:25px">
+      </div>
+      <div class="info" (click)="navigateTo('home/category')">
+        <p>{{resourceService.getResourceName() | formatResourceName}}</p>
+      </div>
+      <div class='resource-summary' (click)="openResourceInfoModal()">
+        <i class="fa fa-info-circle" aria-hidden="true"></i>
+      </div>
+    </div>
+  </section>
+  <category-nav></category-nav>
+  <div class="content-wrapper gray-background">
+    <router-outlet></router-outlet>
+    <ngx-smart-modal #resourceInfoModal identifier="resourceInfoModal" [customClass]="'wide-modal'">
+      <div class="modal-header" style="background-color: #4968d0; padding: 10px 15px 10px 15px">
+        <h4 class="modal-title" id="myModalLabel" style="color:white">Resource Information</h4>
+      </div>
+      <div class="modal-content">
+        <div class="resource-content">
+          <div *ngIf="observerLink !== ''">
+            <a href="{{observerLink}}" target="_blank">Observer Link
+              <i class="fa fa-link" aria-hidden="true"></i>
+            </a>
+          </div>
+          <div *ngFor="let key of keys">
+            <b>{{key}}:</b> {{resource[key]}}
+          </div>
+        </div>
+      </div>
+    </ngx-smart-modal>
+  </div>
+</div> -->
+
+
+<!-- <div class="site-content">
+  <category-nav></category-nav>
+  <div class="content-wrapper gray-background">
+    <router-outlet></router-outlet>
+  </div>
+</div> -->
+
+
+
+<div class="App">
+  <!-- <div class="header">
+    <span class="category-label">{{categoryName}}</span>
+    <br />
+    <span class="category-description">Diagnose and solve problems</span>
+  </div> -->
+  <div class="body-content" style="border:bold; color:black">
+    <section class="sidebar">
+     <!-- <category-nav></category-nav> -->
+         <!-- <fab-nav [groups]="groups" [styles]="styles" [initialSelectedKey]='initialSelectedKey'
+        [selectedKey]='selectedKey'></fab-nav> -->
+    </section>
+    <section class="content">
+      <router-outlet></router-outlet>
+    </section>
+  </div>
+</div>
+
+<!-- <div *ngFor="let category of allProblemCategories;let i = index">
+        <collapsible-list [title]="category.Name" [collapsed]="category.Collapsed" *ngIf="(category.Subcategories | toolstack:AppStack | platformfilter:platform  | apptype:appType).length > 0">
+            <collapsible-list-item>
+                <div class="col zoomIn animated category-box"
+                    *ngFor="let subcategory of category.Subcategories | toolstack:AppStack | platformfilter:platform | apptype:appType" [style.background-color]="category.BgColor" [style.color]="category.TextColor"
+                    [routerLink]="[subcategory.Href]" (click)="logCategorySelected(subcategory.Name)">
+                    <div class="category-content">{{subcategory.Name}}</div>
+                </div>
+            </collapsible-list-item>
+            <div *ngIf="category.Name ==='Diagnostic Tools'" class="area">
+                <div class="content">
+                    Showing tools for
+                    <strong>{{ AppStack }}</strong>.
+                    <div style="display:inline-block" class="dropup">
+                        <a class="dropdown-toggle" (click)="showToolsDropdown = !showToolsDropdown">Change Stack</a>
+                        <ul class="dropdown-menu" style="cursor: pointer" aria-labelledby="dropdownMenu1" [ngClass]="{'show': showToolsDropdown ===
+                    true, 'hide': showToolsDropdown === false}">
+                            <li (click)="onStackChanged('ASP.Net')">
+                                <a>ASP.Net</a>
+                            </li>
+                            <li (click)="onStackChanged('ASP.Net Core')">
+                                <a>ASP.NET Core</a>
+                            </li>
+                            <li (click)="onStackChanged('Java')">
+                                <a>Java</a>
+                            </li>
+                            <li (click)="onStackChanged('PHP')">
+                                <a>PHP</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </collapsible-list>
+    </div> -->
+<!-- <div class="chat-container">
+    <div>
+        <support-bot [startingKey]="startingKey"></support-bot>
+    </div>
+</div> -->

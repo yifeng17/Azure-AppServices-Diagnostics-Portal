@@ -21,7 +21,7 @@
     <p id="page-description" tabindex="0">{{homePageText.description}}</p>
     <div *ngIf="categories && !isAKSOnNationalCloud " class="category-container">
       <div *ngFor="let category of categories" style="display: inline-block;padding: 20px 40px 20px 0px">
-        <category-tile [category]="category" [useLegacy]="true"></category-tile>
+        <category-tile [category]="category"></category-tile>
       </div>
     </div>
     <div class="privacy-statement" tabindex="0">
@@ -64,7 +64,7 @@
     </div>
     <div *ngIf="categories" class="category-container">
       <div *ngFor="let category of categories" style="display: inline-block;padding: 10px 40px 10px 0px" class="col-md-4">
-        <category-tile [category]="category"></category-tile>
+        <category-tile-v4 [category]="category"></category-tile-v4>
       </div>
     </div>
     <div class="privacy-statement" tabindex="0">
