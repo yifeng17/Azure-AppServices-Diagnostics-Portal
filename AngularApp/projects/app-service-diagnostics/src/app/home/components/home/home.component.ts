@@ -77,9 +77,9 @@ export class HomeComponent implements OnInit {
     constructor(private _resourceService: ResourceService, private _categoryService: CategoryService, private _notificationService: NotificationService, private _router: Router,
         private _detectorControlService: DetectorControlService, private _featureService: FeatureService, private _logger: LoggingV2Service, private _authService: AuthService,
         private _navigator: FeatureNavigationService, private _activatedRoute: ActivatedRoute, private armService: ArmService, private logService: TelemetryService, private kustologgingService: PortalKustoTelemetryService, private _diagnosticService: DiagnosticService, private _portalService: PortalActionService,private globals:Globals) {
-            
+
         this.subscriptionId = this._activatedRoute.snapshot.params['subscriptionid'];
-        this.useLegacy = DemoSubscriptions.betaSubscriptions.findIndex(item => this.subscriptionId.toLowerCase() === item.toLowerCase()) > -1;
+        this.useLegacy = DemoSubscriptions.betaSubscriptions.findIndex(item => this.subscriptionId.toLowerCase() === item.toLowerCase()) <= -1;
        // this.useLegacy = true;
         //  !VersioningHelper.isV2Subscription(this.subscriptionId);
 
@@ -183,7 +183,7 @@ export class HomeComponent implements OnInit {
     initializeIcons('https://static2.sharepointonline.com/files/fabric/assets/icons/');
 
   };
-  
+
 
   onSearchBoxFocus(event: any): void {
       this.searchBoxFocus = true;
