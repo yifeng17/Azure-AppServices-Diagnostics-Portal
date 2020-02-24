@@ -85,6 +85,7 @@ import { FabIconModule, FabChoiceGroupModule, FabSearchBoxModule, FabDropdownMod
 // import { FabSummaryCardComponent } from './components/fab-summary-card/fab-summary-card.component';
 import { SummaryCardsComponent } from './components/summary-cards/summary-cards.component';
 import { CardSelectionV4Component } from 'projects/app-service-diagnostics/src/app/fabric-ui/components/card-selection-v4/card-selection-v4.component';
+import { DropdownV4Component } from 'projects/app-service-diagnostics/src/app/fabric-ui/components/dropdown-v4/dropdown-v4.component';
 // import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
@@ -123,7 +124,8 @@ import { CardSelectionV4Component } from 'projects/app-service-diagnostics/src/a
     AppInsightsMarkdownComponent,
     HighchartsGraphComponent,
     SummaryCardsComponent,
-    CardSelectionV4Component
+    CardSelectionV4Component,
+    DropdownV4Component
   ],
   exports: [
     FormsModule, TimeSeriesGraphComponent, DataTableComponent, DynamicDataComponent, DetectorViewComponent,

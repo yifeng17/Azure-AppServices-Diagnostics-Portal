@@ -29,3 +29,26 @@
 .dropdown-menu {
     box-shadow:  1px 1px 18px #afafaf;
 }
+
+
+.fabric-dropdown-header{
+    padding: 15px 0px;
+    // position: relative;
+    font-size: 15px;
+    line-height: 20px;
+    font-family: Segoe UI;
+    color: #24272b;
+}
+
+.fabric-dropdown-container{
+    margin: 25px 0px;
+}
+
+.fabric-dropdown-title{
+    font-weight: 600;
+    margin-right: 15px;
+}
+
+.fabric-body-container {
+    padding-top: 15px;
+}
