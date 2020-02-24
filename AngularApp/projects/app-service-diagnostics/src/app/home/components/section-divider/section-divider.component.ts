@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, ContentChildren, QueryList } from '@angular/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { CategoryMenuItemComponent } from '../category-menu-item/category-menu-item.component';
 import { ActivatedRoute, Router, NavigationExtras, NavigationEnd, Scroll } from '@angular/router';
 
 @Component({
@@ -22,6 +21,7 @@ export class SectionDividerComponent implements OnInit {
   @Input() collapsible: boolean = true;
   @Input() disableExpandIcon: boolean = false;
   @Input() routePath: string="";
+  expanded: boolean = true;
   overviewImagePath:string = "../../../../assets/img/detectors/Overview.svg";
   selected: boolean = true;
 

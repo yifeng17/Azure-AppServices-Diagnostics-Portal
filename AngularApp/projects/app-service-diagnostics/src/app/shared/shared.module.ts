@@ -145,7 +145,7 @@ import { DetectorCommandBarComponent } from '../fabric-ui/components/detector-co
 import { FabricFeedbackComponent } from '../fabric-ui/components/fabric-feedback/fabric-feedback.component';
 import { FabricFeedbackContainerComponent } from '../fabric-ui/components/fabric-feedback-container/fabric-feedback-container.component';
 import { FabricSearchResultsComponent } from '../fabric-ui/components/fabric-search-results/fabric-search-results.component';
-import { CategoryMenuItemComponent } from '../home/components/category-menu-item/category-menu-item.component';
+import { CollapsibleMenuItemComponent } from '../home/components/collapsible-menu-item/collapsible-menu-item.component';
 import { SearchPipe, SearchMatchPipe } from '../home/components/pipes/search.pipe';
 import { DetectorTimePickerComponent } from '../fabric-ui/components/detector-time-picker/detector-time-picker.component';
 
@@ -224,7 +224,7 @@ import { DetectorTimePickerComponent } from '../fabric-ui/components/detector-ti
         FabricFeedbackComponent,
         FabricFeedbackContainerComponent,
         SectionDividerComponent,
-        CategoryMenuItemComponent,
+        CollapsibleMenuItemComponent,
         DetectorTimePickerComponent,
         SearchPipe,
         SearchMatchPipe
@@ -342,7 +342,7 @@ import { DetectorTimePickerComponent } from '../fabric-ui/components/detector-ti
         FabricFeedbackComponent,
         FabricFeedbackContainerComponent,
         SectionDividerComponent,
-        CategoryMenuItemComponent
+        CollapsibleMenuItemComponent
     ],
     entryComponents: [GenericAnalysisComponent, GenericDetectorComponent]
 })

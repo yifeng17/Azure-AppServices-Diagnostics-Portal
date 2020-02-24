@@ -7,7 +7,7 @@ import { GenericSupportTopicService } from 'diagnostic-data';
 import { HomeComponent } from './components/home/home.component';
 import { CategoryChatComponent } from './components/category-chat/category-chat.component';
 import { CategoryTileComponent } from './components/category-tile/category-tile.component';
-import { CategoryTabResolver, CategoryChatResolver } from './resolvers/category-tab.resolver';
+import { CategoryTabResolver } from './resolvers/category-tab.resolver';
 import { SupportBotModule } from '../supportbot/supportbot.module';
 import { SearchResultsComponent } from './components/search-results/search-results.component';
 import { FormsModule } from '@angular/forms';
@@ -29,7 +29,7 @@ import { PortalReferrerResolverComponent } from '../shared/components/portal-ref
 import { SearchPipe, SearchMatchPipe } from './components/pipes/search.pipe';
 
 import { CategoryNavComponent } from './components/category-nav/category-nav.component';
-import { CategoryMenuItemComponent } from './components/category-menu-item/category-menu-item.component';
+import { CollapsibleMenuItemComponent } from './components/collapsible-menu-item/collapsible-menu-item.component';
 import { SectionDividerComponent } from './components/section-divider/section-divider.component';
 import { FabricSearchResultsComponent } from '../fabric-ui/components/fabric-search-results/fabric-search-results.component';
 import { FabricFeedbackComponent } from '../fabric-ui/components/fabric-feedback/fabric-feedback.component';
@@ -95,7 +95,6 @@ export const HomeRoutes = RouterModule.forChild([
                 data: {
                     cacheComponent: true,
                     navigationTitle: CategoryTabResolver,
-                    //   messageList: CategoryChatResolver
                 },
             },
             {
@@ -520,8 +519,7 @@ export const HomeRoutes = RouterModule.forChild([
     // ,FabricFeedbackComponent,FabricFeedbackContainerComponent
     providers: 
         [
-            CategoryTabResolver, 
-            CategoryChatResolver, 
+            CategoryTabResolver,  
             TimeControlResolver, 
             UncategorizedDetectorsResolver, 
             DetectorCategorizationService, 

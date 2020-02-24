@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform, Injectable } from '@angular/core';
-import { CollapsibleMenuItem } from '../category-menu-item/category-menu-item.component';
+import { CollapsibleMenuItem } from '../collapsible-menu-item/collapsible-menu-item.component';
 
 @Pipe({
     name: 'search',

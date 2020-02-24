@@ -23,23 +23,23 @@ export class CategoryTabResolver implements Resolve<Observable<string>> {
     }
 }
 
-@Injectable()
-export class CategoryChatResolver implements Resolve<Observable<any>> {
-    constructor(private _categoryService: CategoryService, private _genericCategoryService: GenericCategoryFlow, private _genieChatFlow: GenieChatFlow) { }
+// @Injectable()
+// export class CategoryChatResolver implements Resolve<Observable<any>> {
+//     constructor(private _categoryService: CategoryService, private _genericCategoryService: GenericCategoryFlow, private _genieChatFlow: GenieChatFlow) { }
 
-    resolve(activatedRouteSnapshot: ActivatedRouteSnapshot): Observable<any> {
-       if (activatedRouteSnapshot.params && activatedRouteSnapshot.params.category) {
-       // let decodedCategoryName = decodeURIComponent(activatedRouteSnapshot.params.category);
-       let decodedCategoryName = activatedRouteSnapshot.params.category.toLowerCase();
-           return this._categoryService.categories.pipe(mergeMap(categories => {
-               console.log("category", activatedRouteSnapshot.params.category);
-               console.log("categories", categories);
-               const category = categories.find(category => category.id.toLowerCase() === activatedRouteSnapshot.params.category.toLowerCase() || category.name.replace(/\s/g, '').toLowerCase() === decodedCategoryName);
-               console.log("finding category", category);
-               return this._genieChatFlow.createMessageFlowForCategory(category);
-           }), first());
-       }
+//     resolve(activatedRouteSnapshot: ActivatedRouteSnapshot): Observable<any> {
+//        if (activatedRouteSnapshot.params && activatedRouteSnapshot.params.category) {
+//        // let decodedCategoryName = decodeURIComponent(activatedRouteSnapshot.params.category);
+//        let decodedCategoryName = activatedRouteSnapshot.params.category.toLowerCase();
+//            return this._categoryService.categories.pipe(mergeMap(categories => {
+//                console.log("category", activatedRouteSnapshot.params.category);
+//                console.log("categories", categories);
+//                const category = categories.find(category => category.id.toLowerCase() === activatedRouteSnapshot.params.category.toLowerCase() || category.name.replace(/\s/g, '').toLowerCase() === decodedCategoryName);
+//                console.log("finding category", category);
+//                return this._genieChatFlow.createMessageFlowForCategory(category);
+//            }), first());
+//        }
 
-       return of('Genie');
-    }
-}
+//        return of('Genie');
+//     }
+// }

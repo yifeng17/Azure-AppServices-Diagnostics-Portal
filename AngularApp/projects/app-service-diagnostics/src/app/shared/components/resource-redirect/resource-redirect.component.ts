@@ -14,7 +14,7 @@ import { DetectorType } from 'diagnostic-data';
   styleUrls: ['./resource-redirect.component.scss']
 })
 export class ResourceRedirectComponent implements OnInit {
-
+  private _newVersionEnabled = true;
   constructor(private _authService: AuthService, private _router: Router, private _windowService: WindowService) { }
 
   ngOnInit() {
@@ -27,85 +27,149 @@ export class ResourceRedirectComponent implements OnInit {
         if (info && info.resourceId && info.token) {
           console.log("startupinfo", info);
 
-          // Uncomment to enable only for internal subs
-          //let split = info.resourceId.split('/');
-          //let subscriptionId = split[split.indexOf('subscriptions') + 1];
-          //this._newVersionEnabled = DemoSubscriptions.betaSubscriptions.indexOf(subscriptionId) >= 0;
+          //   Uncomment to enable only for internal subs
+          let split = info.resourceId.split('/');
+          let subscriptionId = split[split.indexOf('subscriptions') + 1];
+          this._newVersionEnabled = DemoSubscriptions.betaSubscriptions.indexOf(subscriptionId) >= 0;
 
-          const navigationExtras: NavigationExtras = {
-            queryParamsHandling: 'merge',
-          };
+          // If it's internal subscription and windows app, enable newer version of UI
+          if ((this._newVersionEnabled || (info.pesId && info.pesId === "14748"))) {
+            const navigationExtras: NavigationExtras = {
+              queryParamsHandling: 'merge',
+            };
 
-          let path = 'resource/' + info.resourceId.toLowerCase();
-          var caseSubject = null;
-          var categoryId = null;
-          if (info.optionalParameters) {
-            var caseSubjectParam = info.optionalParameters.find(param => param.key === "caseSubject");
-            if (caseSubjectParam) {
-              caseSubject = caseSubjectParam.value;
-            }
-
-            var referrerParam = info.optionalParameters.find(param => param.key.toLowerCase() === "referrer");
-            if (referrerParam) {
-              path += `/portalReferrerResolver`;
-              this._router.navigateByUrl(
-                this._router.createUrlTree([path])
-              );
-            }
-          }
-          console.log("category,detector,type param after", info.optionalParameters);
-          // To Open the right category page
-          if (info.optionalParameters && 
-              ( info.optionalParameters.find(para => para.key === "detectorId") 
-                || info.optionalParameters.find(para => para.key === "toolId"))) {
-            let categoryIdParam = info.optionalParameters.find(param => param.key === "categoryId");
-            let detectorTypeParam = info.optionalParameters.find(param => param.key === "detectorType");
-            let detectorIdParam = info.optionalParameters.find(param => param.key === "detectorId");
-            let toolIdParam = info.optionalParameters.find(param => param.key === "toolId");
-            console.log("category,detector,type param after", categoryIdParam,detectorIdParam,detectorTypeParam,toolIdParam);
-            if (categoryIdParam) {
-              let categoryId = categoryIdParam.value;
-              path += `/categories/${categoryId}`;
-              if (detectorIdParam && detectorTypeParam) {
-                if (detectorTypeParam.value === DetectorType.Detector) {
-                  path += `/detectors/${detectorIdParam.value}`;
-                } else if (detectorTypeParam.value === DetectorType.Analysis) {
-                  path += `/analysis/${detectorIdParam.value}`;
-                }
-              } else if (toolIdParam) {
-                path += `/tools/${toolIdParam.value}`;
+            let path = 'resource/' + info.resourceId.toLowerCase();
+            var caseSubject = null;
+            if (info.optionalParameters) {
+              var caseSubjectParam = info.optionalParameters.find(param => param.key === "caseSubject");
+              if (caseSubjectParam) {
+                caseSubject = caseSubjectParam.value;
               }
 
-              this._router.navigateByUrl(
-                this._router.createUrlTree([path], navigationExtras)
-              );
+              var referrerParam = info.optionalParameters.find(param => param.key.toLowerCase() === "referrer");
+              if (referrerParam) {
+                path += `/portalReferrerResolver`;
+                this._router.navigateByUrl(
+                  this._router.createUrlTree([path])
+                );
+              }
             }
-          }
-          else if (info.optionalParameters) {
-            console.log("category Id param before");
-            var categoryIdParam = info.optionalParameters.find(param => param.key === "categoryId");
+            console.log("category,detector,type param after", info.optionalParameters);
+            // This additional info is used to open a specific detector/tool under the right category in a new SCIFrameblade
+            // To Open the detector or diagnostic tool under the right category
+            if (info.optionalParameters)
+            {
+              let categoryIdParam = info.optionalParameters.find(param => param.key === "categoryId");
+              if (categoryIdParam) {
+                let categoryId = categoryIdParam.value;
+                path += `/categories/${categoryId}`;
 
-            if (categoryIdParam) {
-              var categoryId = categoryIdParam.value;
-              path += `/categories/${categoryId}`;
-              this._router.navigateByUrl(
-                this._router.createUrlTree([path], navigationExtras)
-              );
+                // To Open the overview page under the right category
+                let detectorTypeParam = info.optionalParameters.find(param => param.key === "detectorType");
+                let detectorIdParam = info.optionalParameters.find(param => param.key === "detectorId");
+                let toolIdParam = info.optionalParameters.find(param => param.key === "toolId");
+                
+                if (detectorIdParam && detectorTypeParam) {
+                  if (detectorTypeParam.value === DetectorType.Detector) {
+                    path += `/detectors/${detectorIdParam.value}`;
+                  } else if (detectorTypeParam.value === DetectorType.Analysis) {
+                    path += `/analysis/${detectorIdParam.value}`;
+                  }
+                } else if (toolIdParam) {
+                  path += `/tools/${toolIdParam.value}`;
+                }
+
+                this._router.navigateByUrl(
+                  this._router.createUrlTree([path], navigationExtras)
+                );
+              }
             }
-          }
 
-          if (info.supportTopicId) {
-            path += `/supportTopicId`;
-            navigationExtras.queryParams = {
-              supportTopicId: info.supportTopicId,
-              caseSubject: caseSubject,
-              pesId: info.pesId
+            // if (info.optionalParameters && (info.optionalParameters.find(param => param.key === "detectorId") || info.optionalParameters.find(para => para.key === "toolId"))) {
+            //   let categoryIdParam = info.optionalParameters.find(param => param.key === "categoryId");
+            //   let detectorTypeParam = info.optionalParameters.find(param => param.key === "detectorType");
+            //   let detectorIdParam = info.optionalParameters.find(param => param.key === "detectorId");
+            //   let toolIdParam = info.optionalParameters.find(param => param.key === "toolId");
+            //   console.log("category,detector,type param after", categoryIdParam, detectorIdParam, detectorTypeParam, toolIdParam);
+            //   if (categoryIdParam) {
+            //     let categoryId = categoryIdParam.value;
+            //     path += `/categories/${categoryId}`;
+
+            //     if (detectorIdParam && detectorTypeParam) {
+            //       if (detectorTypeParam.value === DetectorType.Detector) {
+            //         path += `/detectors/${detectorIdParam.value}`;
+            //       } else if (detectorTypeParam.value === DetectorType.Analysis) {
+            //         path += `/analysis/${detectorIdParam.value}`;
+            //       }
+            //     } else if (toolIdParam) {
+            //       path += `/tools/${toolIdParam.value}`;
+            //     }
+
+            //     this._router.navigateByUrl(
+            //       this._router.createUrlTree([path], navigationExtras)
+            //     );
+            //   }
+            // }
+            // // To Open the overview page under the right category
+            // else if (info.optionalParameters) {
+            //   var categoryIdParam = info.optionalParameters.find(param => param.key === "categoryId");
+
+            //   if (categoryIdParam) {
+            //     var categoryId = categoryIdParam.value;
+            //     path += `/categories/${categoryId}`;
+            //     this._router.navigateByUrl(
+            //       this._router.createUrlTree([path], navigationExtras)
+            //     );
+            //   }
+            // }
+
+            if (info.supportTopicId) {
+              path += `/supportTopicId`;
+              navigationExtras.queryParams = {
+                supportTopicId: info.supportTopicId,
+                caseSubject: caseSubject,
+                pesId: info.pesId
+              };
+            }
+
+            this._router.navigateByUrl(
+              this._router.createUrlTree([path], navigationExtras)
+            );
+          }
+          else {
+            const navigationExtras: NavigationExtras = {
+              queryParamsHandling: 'merge',
             };
+  
+            let path = 'resource/' + info.resourceId.toLowerCase();
+            var caseSubject = null;
+            if (info.optionalParameters){
+              var caseSubjectParam = info.optionalParameters.find(param => param.key === "caseSubject");
+              if (caseSubjectParam){
+                caseSubject = caseSubjectParam.value;
+              }
+  
+              var referrerParam = info.optionalParameters.find(param => param.key.toLowerCase() === "referrer");
+              if (referrerParam){
+                path += `/portalReferrerResolver`;
+                this._router.navigateByUrl(
+                  this._router.createUrlTree([path])
+                  );
+              }
+            }
+            if (info.supportTopicId) {
+              path += `/supportTopicId`;
+              navigationExtras.queryParams = {
+                supportTopicId: info.supportTopicId,
+                caseSubject: caseSubject,
+                pesId: info.pesId
+              };
+            }
+  
+            this._router.navigateByUrl(
+              this._router.createUrlTree([path], navigationExtras)
+            );
           }
-
-          this._router.navigateByUrl(
-            this._router.createUrlTree([path], navigationExtras)
-          );
         } else {
           if (!environment.production) {
             this._router.navigateByUrl('/test');
