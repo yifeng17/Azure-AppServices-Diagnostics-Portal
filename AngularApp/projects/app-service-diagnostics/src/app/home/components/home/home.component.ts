@@ -80,7 +80,8 @@ export class HomeComponent implements OnInit {
             
         this.subscriptionId = this._activatedRoute.snapshot.params['subscriptionid'];
         this.useLegacy = DemoSubscriptions.betaSubscriptions.findIndex(item => this.subscriptionId.toLowerCase() === item.toLowerCase()) > -1;
-       // this.useLegacy = true;
+        // this.useLegacy = false;
+      //  this.useLegacy = true;
         //  !VersioningHelper.isV2Subscription(this.subscriptionId);
 
         if (_resourceService.armResourceConfig && _resourceService.armResourceConfig.homePageText
