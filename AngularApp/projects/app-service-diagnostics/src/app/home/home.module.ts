@@ -73,6 +73,7 @@ import { PortalActionService } from '../shared/services/portal-action.service';
 import { DiagnosticToolsRoutes, MetricsPerInstanceAppServicePlanResolver, AdvanceApplicationRestartResolver, SecurityScanningResolver, MetricsPerInstanceAppsResolver } from '../diagnostic-tools/diagnostic-tools.routeconfig';
 import { CategoryTileV4Component } from '../fabric-ui/components/category-tile-v4/category-tile-v4.component';
 import { CategoryChatV4Component } from '../fabric-ui/components/category-chat-v4/category-chat-v4.component';
+import { VersionTestService } from '../fabric-ui/version-test.service';
 export const HomeRoutes = RouterModule.forChild([
     {
         path: '',
@@ -528,7 +529,8 @@ export const HomeRoutes = RouterModule.forChild([
             MetricsPerInstanceAppServicePlanResolver,
             AdvanceApplicationRestartResolver,
             SecurityScanningResolver,
-            { provide: GenericSupportTopicService, useExisting: SupportTopicService }
+            { provide: GenericSupportTopicService, useExisting: SupportTopicService },
+            VersionTestService
         ],
     // exports: [GeniePanelComponent]
 })
