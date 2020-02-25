@@ -41,10 +41,10 @@ export class CategoryTileComponent implements OnInit {
           this._router.navigateByUrl(`resource${this._resourceService.resourceIdForRouting}/detectors/${currentCategoryDetectors[0].id}`);
         }  else if (currentCategoryDetectors[0].type === DetectorType.Analysis) {
           this._router.navigateByUrl(`resource${this._resourceService.resourceIdForRouting}/analysis/${currentCategoryDetectors[0].id}`);
-        }        
+        }
       }
       else {
-        const path = ['categories', this.category.id];
+        const path = ['categoriesv3', this.category.id];
         const navigationExtras: NavigationExtras = {
           queryParamsHandling: 'preserve',
           preserveFragment: true,

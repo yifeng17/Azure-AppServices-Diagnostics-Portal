@@ -9,13 +9,13 @@ import { ButtonActionType } from './models/message-enums';
 export class MessageProcessor {
     private _messageFlowProviders: IMessageFlowProvider[];
     private _messageGroups: MessageGroup[] = [];
-    private _startingKey: string = 'welcome';
+    private _startingKey: string = 'startup';
     private _currentKey: string;
     private _currentMessageGroup: MessageGroup;
     private _currentMessageIterator: number;
 
     constructor(private _injector: Injector) {
-        this._messageGroups = MessageFlowFactory.getMessageGroups();
+      //  this._messageGroups = MessageFlowFactory.getMessageGroups();
 
         this._messageFlowProviders = MessageFlowFactory.getMessageFlowProviders().map(provider => {
             return this._injector.get(provider);

@@ -7,7 +7,7 @@ import { GenericSupportTopicService } from 'diagnostic-data';
 import { HomeComponent } from './components/home/home.component';
 import { CategoryChatComponent } from './components/category-chat/category-chat.component';
 import { CategoryTileComponent } from './components/category-tile/category-tile.component';
-import { CategoryTabResolver } from './resolvers/category-tab.resolver';
+import { CategoryTabResolver, CategoryChatResolver } from './resolvers/category-tab.resolver';
 import { SupportBotModule } from '../supportbot/supportbot.module';
 import { SearchResultsComponent } from './components/search-results/search-results.component';
 import { FormsModule } from '@angular/forms';
@@ -82,6 +82,17 @@ export const HomeRoutes = RouterModule.forChild([
             cacheComponent: true
         },
         pathMatch: 'full',
+    },
+    {
+        path: 'categoriesv3/:category',
+        component: CategoryChatComponent,
+        data: {
+          cacheComponent: true
+        },
+        resolve: {
+          navigationTitle: CategoryTabResolver,
+          messageList: CategoryChatResolver
+        }
     },
     {
         path: 'categories/:category',
@@ -518,12 +529,13 @@ export const HomeRoutes = RouterModule.forChild([
     ],
     declarations: [HomeComponent, CategoryChatComponent, CategoryTileComponent, SearchResultsComponent, SupportTopicRedirectComponent, DiagnosticsSettingsComponent,CategoryTileV4Component,CategoryChatV4Component],
     // ,FabricFeedbackComponent,FabricFeedbackContainerComponent
-    providers: 
+    providers:
         [
-            CategoryTabResolver,  
-            TimeControlResolver, 
-            UncategorizedDetectorsResolver, 
-            DetectorCategorizationService, 
+            CategoryTabResolver,
+            CategoryChatResolver,
+            TimeControlResolver,
+            UncategorizedDetectorsResolver,
+            DetectorCategorizationService,
             MetricsPerInstanceAppsResolver,
             MetricsPerInstanceAppServicePlanResolver,
             AdvanceApplicationRestartResolver,
