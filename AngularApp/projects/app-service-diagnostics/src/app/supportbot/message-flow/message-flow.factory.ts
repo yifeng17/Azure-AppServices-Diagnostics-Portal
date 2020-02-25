@@ -1,6 +1,7 @@
 import { MessageGroup } from '../models/message-group';
 import { IMessageFlowProvider } from '../interfaces/imessageflowprovider';
 
+// @dynamic
 export class MessageFlowFactory {
     public static _registeredMessageFlowProviders: any[] = [];
 
