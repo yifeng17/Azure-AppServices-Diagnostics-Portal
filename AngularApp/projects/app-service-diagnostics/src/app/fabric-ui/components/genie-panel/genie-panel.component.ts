@@ -5,7 +5,7 @@ import { MessageSender, ButtonActionType } from '../../../supportbot/models/mess
 import { MessageProcessor } from '../../../supportbot/message-processor.service';
 import { mergeStyleSets, hiddenContentStyle, MessageBarType, FontSizes } from 'office-ui-fabric-react';
 import { DynamicComponent } from '../../../supportbot/dynamic-component/dynamic.component';
-import { TextMessageComponent } from '../../../supportbot/common/text-message/text-message.component';
+// import { TextMessageComponent } from '../../../supportbot/common/text-message/text-message.component';
 import { LoadingMessageComponent } from '../../../supportbot/common/loading-message/loading-message.component';
 import { Router, NavigationEnd } from '@angular/router';
 import { WebSitesService } from '../../../resources/web-sites/services/web-sites.service';
@@ -156,7 +156,7 @@ export class GeniePanelComponent implements OnInit, OnDestroy {
     scrollToBottom(event?: any): void {
         try {
             this.myScrollContainer.nativeElement.childNodes[0].scrollTop = this.myScrollContainer.nativeElement.childNodes[0].scrollHeight;
-        } catch (err) { 
+        } catch (err) {
             console.log("scrolltobottom error", err);
         }
     }

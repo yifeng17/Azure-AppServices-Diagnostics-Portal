@@ -9,7 +9,8 @@ import { ButtonActionType } from './models/message-enums';
 export class MessageProcessor {
     private _messageFlowProviders: IMessageFlowProvider[];
     private _messageGroups: MessageGroup[] = [];
-    private _startingKey: string = 'startup';
+    //private _startingKey: string = 'startup';
+    private _startingKey: string = 'welcome';
     private _currentKey: string;
     private _currentMessageGroup: MessageGroup;
     private _currentMessageIterator: number;
