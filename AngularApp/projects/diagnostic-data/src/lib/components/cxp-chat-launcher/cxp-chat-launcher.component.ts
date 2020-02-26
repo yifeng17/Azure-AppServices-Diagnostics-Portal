@@ -41,9 +41,8 @@ export class CxpChatLauncherComponent implements OnInit {
       this._cxpChatService.logUserActionOnChat('ChatBubbleShown', this.trackingId, this.chatUrl);
     }
     this.firstTimeCheck = false;
-
-    //Always return false right now since we are merely collecting telemetry. Remove '&& false' below once we are ready to go live.
-    return  initializedTestResult && false;
+    
+    return  initializedTestResult;
   }
 
   public toggleChatConfDialog(): void {
