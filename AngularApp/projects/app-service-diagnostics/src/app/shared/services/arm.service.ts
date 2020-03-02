@@ -24,9 +24,9 @@ export class ArmService {
     private readonly usGovernmentAzureArmUrl = 'https://management.usgovcloudapi.net';
     private readonly blackforestAzureArmUrl = 'https://management.microsoftazure.de';
     private readonly usnatAzureArmUrl = 'https://management.azure.eaglex.ic.gov';    
-    private readonly  diagRoleVersion = '1';
+    private diagRoleVersion: string = '';
     private readonly routeToLiberation = '2';
-    private diagRoleVersionToPass: string = this.diagRoleVersion;
+    private readonly routeToDiagnosticRole = '1';
     private armEndpoint:string = '';
     constructor(private _http: HttpClient, private _authService: AuthService, private _cache: CacheService, private _genericArmConfigService?: GenericArmConfigService ) {
         this._authService.getStartupInfo().subscribe((startupInfo: StartupInfo) => {
