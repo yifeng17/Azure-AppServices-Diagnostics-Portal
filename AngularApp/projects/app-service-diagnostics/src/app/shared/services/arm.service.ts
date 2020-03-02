@@ -35,7 +35,7 @@ export class ArmService {
             }
             
             if(this.isNationalCloud) {
-                this.diagRoleVersionToPass = this.routeToLiberation;
+                this.diagRoleVersion= this.routeToLiberation;
             }
         });
     }
