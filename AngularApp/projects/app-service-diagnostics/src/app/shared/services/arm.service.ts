@@ -23,14 +23,22 @@ export class ArmService {
     private readonly chinaAzureArmUrl = 'https://management.chinacloudapi.cn';
     private readonly usGovernmentAzureArmUrl = 'https://management.usgovcloudapi.net';
     private readonly blackforestAzureArmUrl = 'https://management.microsoftazure.de';
-    private readonly usnatAzureArmUrl = 'https://management.azure.eaglex.ic.gov';
-    private readonly diagRoleVersion = '1';
+    private readonly usnatAzureArmUrl = 'https://management.azure.eaglex.ic.gov';    
+    private diagRoleVersion: string = '';
     private readonly routeToLiberation = '2';
+    private readonly routeToDiagnosticRole = '1';
     private armEndpoint:string = '';
     constructor(private _http: HttpClient, private _authService: AuthService, private _cache: CacheService, private _genericArmConfigService?: GenericArmConfigService ) {
         this._authService.getStartupInfo().subscribe((startupInfo: StartupInfo) => {
             if(!!startupInfo.armEndpoint && startupInfo.armEndpoint !='' && startupInfo.armEndpoint.length > 1) {
                 this.armEndpoint = startupInfo.armEndpoint ;
+            }
+            
+            if(this.isNationalCloud) {
+                this.diagRoleVersion = this.routeToLiberation;
+            }
+            else {
+                this.diagRoleVersion = this.routeToDiagnosticRole;
             }
         });
     }
@@ -115,12 +123,8 @@ export class ArmService {
         additionalHeaders.set('x-ms-subscription-location-placementid', subscriptionLocation);
         // When x-ms-diagversion is set to 1, the requests will be sent to DiagnosticRole.
         //If the value is set to other than 1 or if the header is not present at all, requests will go to runtimehost
-        if(this.isNationalCloud) {
-            additionalHeaders.set('x-ms-diagversion', this.routeToLiberation);
-        }
-        else {
-            additionalHeaders.set('x-ms-diagversion', this.diagRoleVersion);
-        }
+        additionalHeaders.set('x-ms-diagversion', this.diagRoleVersion);
+        
         const request = this._http.get<ResponseMessageEnvelope<T>>(url, {
             headers: this.getHeaders(null, additionalHeaders)
         }).pipe(
@@ -324,12 +328,8 @@ export class ArmService {
         let additionalHeaders = new Map<string, string>();
         // When x-ms-diagversion is set to 1, the requests will be sent to DiagnosticRole.
         //If the value is set to other than 1 or if the header is not present at all, requests will go to runtimehost
-        if(this.isNationalCloud) {
-            additionalHeaders.set('x-ms-diagversion', this.routeToLiberation);
-        }
-        else {
-            additionalHeaders.set('x-ms-diagversion', this.diagRoleVersion);
-        }
+        additionalHeaders.set('x-ms-diagversion', this.diagRoleVersion);
+
         const request = this._http.get(url, { headers: this.getHeaders(null, additionalHeaders) }).pipe(
             map<ResponseMessageCollectionEnvelope<ResponseMessageEnvelope<T>>, ResponseMessageEnvelope<T>[]>(r => r.value),
             catchError(this.handleError)
