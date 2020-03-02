@@ -1,5 +1,5 @@
 import { AdalService } from 'adal-angular4';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 import { Component, OnDestroy, OnInit, Pipe, PipeTransform } from '@angular/core';
 import { ResourceService } from '../../../shared/services/resource.service';
 import * as momentNs from 'moment';
@@ -37,6 +37,8 @@ export class DashboardComponent implements OnDestroy {
   keys: string[];
   observerLink: string="";
   showUserInformation: boolean;
+  resourceReady: Observable<any>;
+  resourceDetailsSub: Subscription;
 
   constructor(public resourceService: ResourceService, private _detectorControlService: DetectorControlService,
     private _router: Router, private _activatedRoute: ActivatedRoute, private _navigator: FeatureNavigationService,
@@ -96,7 +98,8 @@ export class DashboardComponent implements OnDestroy {
   ngOnInit() {
     let serviceInputs = this.startupService.getInputs();
 
-    this.resourceService.getCurrentResource().subscribe(resource => {
+    this.resourceReady = this.resourceService.getCurrentResource();
+    this.resourceReady.subscribe(resource => {
       if (resource) {
         this.resource = resource;
 
@@ -153,16 +156,20 @@ export class DashboardComponent implements OnDestroy {
   }
 
   openResourceInfoModal() {
-    if (this.keys.indexOf('VnetName') == -1)
+    if (this.keys.indexOf('VnetName') == -1 && this.resourceReady !== undefined && this.resourceDetailsSub === undefined)
     {
-      this._observerService.getSiteRequestDetails(this.resource.SiteName, this.resource.StampName).subscribe(siteInfo => {
-        this.resource['VnetName'] = siteInfo.details.vnetname;
-        this.keys.push('VnetName');
+      this.resourceDetailsSub = this.resourceReady.subscribe(resource => {
+        if (resource) {
+          this._observerService.getSiteRequestDetails(this.resource.SiteName, this.resource.StampName).subscribe(siteInfo => {
+            this.resource['VnetName'] = siteInfo.details.vnetname;
+            this.keys.push('VnetName');
 
-        if (this.resource['IsLinux'])
-        {
-          this.resource['LinuxFxVersion'] = siteInfo.details.linuxfxversion;
-          this.keys.push('LinuxFxVersion');
+            if (this.resource['IsLinux'])
+            {
+              this.resource['LinuxFxVersion'] = siteInfo.details.linuxfxversion;
+              this.keys.push('LinuxFxVersion');
+            }
+          });
         }
       });
     }
