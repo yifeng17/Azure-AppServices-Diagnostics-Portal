@@ -111,7 +111,13 @@ export class WebSearchComponent extends DataRenderBaseComponent implements OnIni
                 this.searchTermDisplay = this.searchTerm.valueOf();
                 this.showSearchTermPractices = true;
             }
-            this.logEvent(TelemetryEventNames.WebQueryResults, { searchId: this.searchId, query: this.searchTerm, results: JSON.stringify(this.searchResults), ts: Math.floor((new Date()).getTime() / 1000).toString() });
+            this.logEvent(TelemetryEventNames.WebQueryResults, { searchId: this.searchId, query: this.searchTerm, results: JSON.stringify(this.searchResults.map(result => {
+                return {
+                    title: result.title.replace(";"," "),
+                    description: result.description.replace(";", " "),
+                    link: result.link
+                };
+            })), ts: Math.floor((new Date()).getTime() / 1000).toString() });
         },
         (err) => {
             this.handleRequestFailure();
