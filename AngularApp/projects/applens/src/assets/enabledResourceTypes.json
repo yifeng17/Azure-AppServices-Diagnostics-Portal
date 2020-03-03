@@ -60,6 +60,17 @@
         },
         {
             "service": "ResourceService",
+            "resourceType": "Microsoft.RedHatOpenShift/openShiftClusters",
+            "templateFileName": "openShiftClusters",
+            "imgSrc": "assets/img/Azure-Red-Hat-OpenShift-Logo.png",
+            "versionPrefix": "",
+            "azureCommImpactedServicesList": "openShiftClusters",
+            "pesId": "16734",
+            "staticSelfHelpContent": "",
+            "searchSuffix": "AZURE RED HAT OPENSHIFT CLUSTER"
+        },
+        {
+            "service": "ResourceService",
             "resourceType": "Microsoft.BotService/botServices",
             "templateFileName": "BotService",
             "imgSrc": "assets/img/BotService-Logo.png",
