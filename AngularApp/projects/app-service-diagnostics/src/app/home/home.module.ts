@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { SharedModule } from '../shared/shared.module';
 import { RouterModule } from '@angular/router';
 import { SharedV2Module } from '../shared-v2/shared-v2.module';
-import { GenericSupportTopicService, GenericContentService} from 'diagnostic-data';
+import { GenericSupportTopicService, GenericContentService, GenericResourceService} from 'diagnostic-data';
 import { HomeComponent } from './components/home/home.component';
 import { CategoryChatComponent } from './components/category-chat/category-chat.component';
 import { CategoryTileComponent } from './components/category-tile/category-tile.component';
@@ -24,6 +24,7 @@ import { MarkdownModule } from 'ngx-markdown';
 import { CXPChatService } from 'diagnostic-data' ;
 import { PortalReferrerResolverComponent } from '../shared/components/portal-referrer-resolver/portal-referrer-resolver.component';
 import { CXPChatCallerService } from '../shared-v2/services/cxp-chat-caller.service';
+import { ResourceService } from '../shared-v2/services/resource.service';
 
 export const HomeRoutes = RouterModule.forChild([
   {
@@ -199,6 +200,7 @@ export const HomeRoutes = RouterModule.forChild([
     { provide: GenericSupportTopicService, useExisting: SupportTopicService},
     { provide: GenericContentService, useExisting: ContentService}, 
     { provide: CXPChatService, useExisting: CXPChatCallerService},
+    { provide: GenericResourceService, useExisting: ResourceService},
   ]
 })
 export class HomeModule { }

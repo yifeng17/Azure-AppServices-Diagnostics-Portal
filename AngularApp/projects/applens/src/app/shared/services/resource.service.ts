@@ -43,6 +43,13 @@ export class ResourceService {
     return this._armResource;
   }
 
+  public getPesId(): Observable<string>{
+    if (this.pesId){
+      return Observable.of(this.pesId);
+    }
+    return Observable.of(null);
+  }
+
   public getResourceName(): string {
     return this._armResource.resourceName;
   }

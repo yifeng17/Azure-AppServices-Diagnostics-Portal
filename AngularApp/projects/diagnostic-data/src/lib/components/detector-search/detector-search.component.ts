@@ -17,6 +17,7 @@ import { Solution } from '../solution/solution';
 import { InsightUtils, Insight } from '../../models/insight';
 import { StatusStyles } from '../../models/styles';
 import { SearchConfiguration } from '../../models/search';
+import { GenericResourceService } from '../../services/generic-resource-service';
 @Component({
     selector: 'detector-search',
     templateUrl: './detector-search.component.html',
@@ -37,6 +38,7 @@ import { SearchConfiguration } from '../../models/search';
     ]
 })
 export class DetectorSearchComponent extends DataRenderBaseComponent implements OnInit {
+    detectorSearchEnabledPesIds: string[] = ["14748"];
     startTime: Moment;
     endTime: Moment;
     isPublic: boolean = false;
@@ -77,7 +79,7 @@ export class DetectorSearchComponent extends DataRenderBaseComponent implements 
     @Input() diagnosticData: DiagnosticData;
 
     constructor(@Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig, private _diagnosticService: DiagnosticService, public telemetryService: TelemetryService,
-        private detectorControlService: DetectorControlService, private _activatedRoute: ActivatedRoute, private _router: Router) {
+        private detectorControlService: DetectorControlService, private _activatedRoute: ActivatedRoute, private _router: Router, private _resourceService: GenericResourceService) {
         super(telemetryService);
         this.isPublic = config && config.isPublic;
     }
@@ -87,24 +89,29 @@ export class DetectorSearchComponent extends DataRenderBaseComponent implements 
         super.ngOnInit();
         var searchConf = new SearchConfiguration(this.diagnosticData.table);
         this.searchConfiguration = searchConf;
-        this.detectorControlService.update.subscribe(isValidUpdate => {
-            if (isValidUpdate) {
-                this.refresh();
+        this._resourceService.getPesId().subscribe(pesId => {
+            if (this.detectorSearchEnabledPesIds.findIndex(x => x==pesId)<0){
+                this.searchConfiguration.DetectorSearchEnabled = false;
             }
-        });
-
-        this._activatedRoute.queryParamMap.pipe(take(1)).subscribe(qParams => {
-            this.searchTerm = qParams.get('searchTerm') === null ? "" || this.searchTerm : qParams.get('searchTerm');
-            if (!this.searchTerm || this.searchTerm.length==0){
-                if (this.searchConfiguration.CustomQueryString && this.searchConfiguration.CustomQueryString.length > 1) {
-                    this.searchTerm = this.searchConfiguration.CustomQueryString;
-                    this.hitSearch();
+            this.detectorControlService.update.subscribe(isValidUpdate => {
+                if (isValidUpdate) {
+                    this.refresh();
                 }
-            }
-            else {
-                this.refresh();
-            }
-        });
+            });
+
+            this._activatedRoute.queryParamMap.pipe(take(1)).subscribe(qParams => {
+                this.searchTerm = qParams.get('searchTerm') === null ? "" || this.searchTerm : qParams.get('searchTerm');
+                if (!this.searchTerm || this.searchTerm.length==0){
+                    if (this.searchConfiguration.CustomQueryString && this.searchConfiguration.CustomQueryString.length > 1) {
+                        this.searchTerm = this.searchConfiguration.CustomQueryString;
+                        this.hitSearch();
+                    }
+                }
+                else {
+                    this.refresh();
+                }
+            });
+        });       
 
         this.startTime = this.detectorControlService.startTime;
         this.endTime = this.detectorControlService.endTime;

@@ -32,7 +32,7 @@ import { TabMonitoringComponent } from './tabs/tab-monitoring/tab-monitoring.com
 import { TabMonitoringDevelopComponent } from './tabs/tab-monitoring-develop/tab-monitoring-develop.component';
 import { TabAnalyticsDevelopComponent } from './tabs/tab-analytics-develop/tab-analytics-develop.component';
 import { TabAnalyticsDashboardComponent } from './tabs/tab-analytics-dashboard/tab-analytics-dashboard.component';
-import { DiagnosticSiteService } from 'diagnostic-data';
+import { DiagnosticSiteService, GenericResourceService } from 'diagnostic-data';
 import { SolutionService } from 'diagnostic-data';
 import { GenericSolutionService } from '../../shared/services/generic-solution.service';
 import { GistComponent } from './gist/gist.component';
@@ -266,6 +266,7 @@ export const DashboardModuleRoutes: ModuleWithProviders = RouterModule.forChild(
         { provide: GenericContentService, useExisting: ApplensContentService},
         { provide: CommsService, useExisting: ApplensCommsService },
         { provide: DiagnosticSiteService, useExisting: ResourceService },
+        { provide: GenericResourceService, useExisting: ResourceService },
         { provide: SolutionService, useExisting: GenericSolutionService }
     ],
     declarations: [DashboardComponent, SideNavComponent, ResourceMenuItemComponent, ResourceHomeComponent, OnboardingFlowComponent, SearchTermAdditionComponent,
