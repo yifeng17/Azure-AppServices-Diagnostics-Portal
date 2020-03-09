@@ -168,7 +168,11 @@ export class DetectorSearchComponent extends DataRenderBaseComponent implements 
             var childrenOfParent = results[2];
             if (detectorList) {
                 searchResults.forEach(result => {
-                    if ((result.id !== this.detector) && (childrenOfParent.findIndex((x: string) => x.toLowerCase() == result.id.toLowerCase()) < 0) && (result.type === DetectorType.Detector)) {
+                    if ((result.id === this.detector) || (childrenOfParent.findIndex((x: string) => x.toLowerCase() == result.id.toLowerCase()) >= 0))
+                    {
+                        return;
+                    }
+                    else if (result.type === DetectorType.Detector) {
                         this.insertInDetectorArray({ name: result.name, id: result.id, score: result.score });
                     }
                     else if (result.type === DetectorType.Analysis) {
