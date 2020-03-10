@@ -17,6 +17,7 @@ import {TelemetryEventNames} from '../../../../../../diagnostic-data/src/lib/ser
 import { environment } from '../../../../environments/environment';
 
 const moment = momentNs;
+const newDetectorId:string = "NEW_DETECTOR";
 
 export enum DevelopMode {
   Create,
@@ -265,10 +266,10 @@ export class OnboardingFlowComponent implements OnInit {
         scriptETag: this.compilationPackage.scriptETag,
         assemblyName: this.compilationPackage.assemblyName,
         getFullResponse: true
-      })
+      }, this.getDetectorId())
       .subscribe((response: any) => {
         this.queryResponse = response.body;
-        if (this.queryResponse.invocationOutput && this.queryResponse.invocationOutput.metadata && !isSystemInvoker){
+        if (this.queryResponse.invocationOutput && this.queryResponse.invocationOutput.metadata && this.queryResponse.invocationOutput.metadata.id && !isSystemInvoker){
           this.id = this.queryResponse.invocationOutput.metadata.id;
         }
         if (this.queryResponse.invocationOutput.suggestedUtterances && this.queryResponse.invocationOutput.suggestedUtterances.results) {
@@ -323,6 +324,13 @@ export class OnboardingFlowComponent implements OnInit {
       }));
   }
 
+  getDetectorId():string {
+    if (this.mode === DevelopMode.Edit){
+      return this.id;
+    } else if (this.mode === DevelopMode.Create) {
+      return newDetectorId;
+    }
+  }
   confirmPublish() {
     if (!this.publishButtonDisabled) {
       this.ngxSmartModalService.getModal('publishModal').open();

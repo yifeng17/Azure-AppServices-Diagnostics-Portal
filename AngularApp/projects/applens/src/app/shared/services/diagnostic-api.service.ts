@@ -122,7 +122,7 @@ export class DiagnosticApiService {
   }
 
   public getCompilerResponse(version: string, resourceId: string, body: any, startTime?: string, endTime?: string,
-    additionalParams?: any): Observable<QueryResponse<DetectorResponse>> {
+    additionalParams?: any, publishingDetectorId: string = ""): Observable<QueryResponse<DetectorResponse>> {
     let timeParameters = this._getTimeQueryParameters(startTime, endTime);
     let path = `${version}${resourceId}/diagnostics/query?${timeParameters}`;
 
@@ -134,7 +134,7 @@ export class DiagnosticApiService {
       path += "&detectorUtterances=" + additionalParams.detectorUtterances;
     }
 
-    return this._getCompilerResponseInternal(path, body, additionalParams);
+    return this._getCompilerResponseInternal(path, body, additionalParams, publishingDetectorId);
   }
 
   public getSystemCompilerResponse(resourceId: string, body: any, detectorId: string = '', dataSource: string = '',
@@ -208,12 +208,12 @@ export class DiagnosticApiService {
     });
   }
 
-  public createOrUpdateKustoMappings(resourceId: string, body: string) : Observable<any> {
+  public createOrUpdateKustoMappings(resourceId: string, body: string): Observable<any> {
     let path = `${resourceId}/configurations/kustoclustermappings`;
     return this.invoke<string>(path, HttpMethod.POST, body);
   }
 
-  public getKustoMappings(resourceId: string) : Observable<any> {
+  public getKustoMappings(resourceId: string): Observable<any> {
     let path = `${resourceId}/configurations/kustoclustermappings`;
     return this.invoke<string>(path, HttpMethod.GET);
   }
@@ -307,7 +307,7 @@ export class DiagnosticApiService {
     return `&dataSource=${systemDataSource}&timeRange=${timeRange}`;
   }
 
-  private _getCompilerResponseInternal(path: string, body: any, additionalParams?: any): Observable<QueryResponse<DetectorResponse>> {
+  private _getCompilerResponseInternal(path: string, body: any, additionalParams?: any, publishingDetectorId: string = ""): Observable<QueryResponse<DetectorResponse>> {
 
     let additionalHeaders = new Map<string, string>();
     if (additionalParams && additionalParams.scriptETag) {
@@ -317,6 +317,8 @@ export class DiagnosticApiService {
     if (additionalParams && additionalParams.assemblyName) {
       additionalHeaders = additionalHeaders.set('diag-assembly-name', encodeURI(additionalParams.assemblyName));
     }
+
+    additionalHeaders = additionalHeaders.set('diag-publishing-detector-id', publishingDetectorId);
 
     return this.invoke<QueryResponse<DetectorResponse>>(path, HttpMethod.POST, body, false, undefined, undefined, undefined,
       additionalParams.getFullResponse, additionalHeaders);

@@ -96,7 +96,7 @@ export class ApplensDiagnosticService {
     return this._diagnosticApi.getHasTestersAccess();
   }
 
-  getCompilerResponse(body: any, isSystemInvoker: boolean, detectorId: string = '', startTime: string = '', endTime: string = '', dataSource: string = '', timeRange: string = '', additionalParams: any): Observable<QueryResponse<DetectorResponse>> {
+  getCompilerResponse(body: any, isSystemInvoker: boolean, detectorId: string = '', startTime: string = '', endTime: string = '', dataSource: string = '', timeRange: string = '', additionalParams: any, publishingDetectorId:string): Observable<QueryResponse<DetectorResponse>> {
     if (isSystemInvoker === false)
     {
       return this._diagnosticApi.getCompilerResponse(
@@ -105,7 +105,7 @@ export class ApplensDiagnosticService {
         body,
         startTime,
         endTime,
-        additionalParams);
+        additionalParams, publishingDetectorId);
     }
     else
     {
