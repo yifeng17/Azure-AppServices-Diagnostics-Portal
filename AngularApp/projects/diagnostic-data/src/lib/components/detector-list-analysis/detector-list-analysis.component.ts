@@ -168,7 +168,6 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                                     title: appInsightData.title,
                                     description: appInsightData.description,
                                     renderingProperties: appInsightData.renderingProperties,
-                                    table: rows,
                                     poralBladeInfo: appInsightData.poralBladeInfo,
                                     diagnosticData: <DiagnosticData>{
                                         table: <DataTableResponseObject>{
