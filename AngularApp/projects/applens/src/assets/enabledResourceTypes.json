@@ -61,7 +61,7 @@
         {
             "service": "ResourceService",
             "resourceType": "Microsoft.RedHatOpenShift/openShiftClusters",
-            "templateFileName": "openShiftClusters",
+            "templateFileName": "OpenShiftClusters",
             "imgSrc": "assets/img/Azure-Red-Hat-OpenShift-Logo.png",
             "versionPrefix": "",
             "azureCommImpactedServicesList": "openShiftClusters",
