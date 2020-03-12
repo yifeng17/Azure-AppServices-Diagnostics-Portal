@@ -8,6 +8,7 @@ export interface Communication {
     isAlert: boolean;
     isExpanded: boolean;
     impactedServices: ImpactedService[];
+    icmId: string;
 }
 
 export interface ImpactedService {
