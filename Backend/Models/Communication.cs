@@ -25,6 +25,8 @@ namespace Backend.Models
 
         public bool IsExpanded { get; set; }
 
+        public string IcmId { get; set; }
+
         public Communication()
         {
             ImpactedServices = new List<ImpactedService>();

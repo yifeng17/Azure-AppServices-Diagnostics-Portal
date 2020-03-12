@@ -24,7 +24,7 @@ namespace AppLensV3.Services
         GetCommunicationsBySubIdAndDateRange(@'{SUBSCRIPTION}', startDate, endDate) 
         | where CommunicationType == 'Outage'
         | order by PublishedTime asc
-        | project CommunicationId, PublishedTime, Title, RichTextMessage, Status, Severity, IncidentId, CommunicationType, ImpactedServices
+        | project CommunicationId, PublishedTime, Title, RichTextMessage, Status, Severity, IncidentId, CommunicationType, ImpactedServices, ExternalIncidentId
         ";
 
         public OutageCommunicationService(IKustoQueryService kustoQueryService)
@@ -72,7 +72,8 @@ namespace AppLensV3.Services
                     Title = row["Title"].ToString(),
                     RichTextMessage = row["RichTextMessage"].ToString(),
                     Status = row["Status"].ToString().Equals("Active", StringComparison.OrdinalIgnoreCase) ? CommunicationStatus.Active : CommunicationStatus.Resolved,
-                    IncidentId = row["IncidentId"].ToString()
+                    IncidentId = row["IncidentId"].ToString(),
+                    IcmId = row["ExternalIncidentId"].ToString()
                 };
 
                 comm.ImpactedServices = GetImpactedRegions(row["ImpactedServices"].ToString());
@@ -81,41 +82,28 @@ namespace AppLensV3.Services
 
             commsList = commsList.OrderByDescending(p => p.PublishedTime).ToList();
 
-            Communication impactedServiceComm = null;
-            Communication mostRecentImpactedServiceComm = commsList.FirstOrDefault(p => p.ImpactedServices.Exists(q => q.Name.ToLower().Contains(impactedService.ToLower())));
-            if (mostRecentImpactedServiceComm != null)
-            {
-                if (mostRecentImpactedServiceComm.Status == CommunicationStatus.Active)
-                {
-                    mostRecentImpactedServiceComm.IsAlert = true;
-                    mostRecentImpactedServiceComm.IsExpanded = true;
-                    impactedServiceComm = mostRecentImpactedServiceComm;
-                }
-                else if (mostRecentImpactedServiceComm.Status == CommunicationStatus.Resolved)
-                {
-                    Communication rca = commsList.FirstOrDefault(p => (
-                                p.IncidentId == mostRecentImpactedServiceComm.IncidentId &&
-                                p.PublishedTime > mostRecentImpactedServiceComm.PublishedTime &&
-                                p.CommunicationId != mostRecentImpactedServiceComm.CommunicationId &&
-                                p.Title.ToUpper().Contains("RCA")));
+            Communication mostRecentComm = null;
+            Communication latestCommContainingImpactedService = commsList.FirstOrDefault(p => p.ImpactedServices.Exists(q => q.Name.ToLower().Contains(impactedService.ToLower())));
 
-                    if (rca != null && ((currentTimeUTC - rca.PublishedTime) <= _commAlertWindow))
-                    {
-                        rca.IsAlert = true;
-                        // NOTE:- For now, resolved incidents will be collapsed by Default.
-                        // Uncommenting below line would make resolved incidents expanded by default for certain timespan.
-                        //rca.IsExpanded = ((currentTimeUTC - rca.PublishedTime) <= _commExpandedWindow);
-                        impactedServiceComm = rca;
-                    }
-                    else if ((currentTimeUTC - mostRecentImpactedServiceComm.PublishedTime) <= _commAlertWindow)
-                    {
-                        mostRecentImpactedServiceComm.IsAlert = true;
-                        // NOTE:- For now, resolved incidents will be collapsed by Default.
-                        // Uncommenting below line would make resolved incidents expanded by default for certain timespan.
-                        //mostRecentImpactedServiceComm.IsExpanded = ((currentTimeUTC - mostRecentImpactedServiceComm.PublishedTime) <= _commExpandedWindow);
-                        impactedServiceComm = mostRecentImpactedServiceComm;
-                    }
-                }
+            if (latestCommContainingImpactedService != null)
+            {
+                // Sometimes Communications belonging to same IncidentId may have different Impacted Services.
+                // To accurately identify the latest update:
+                // 1) Figure out the latest communication containing impacted service as your service (object : latestCommContainingImpactedService)
+                // 2) Now find out the latest communication with the same Incident Id as the first one (object : mostRecentCommWithSameIncidentId)
+                mostRecentComm = commsList.FirstOrDefault(p => p.IncidentId.Equals(latestCommContainingImpactedService.IncidentId, StringComparison.OrdinalIgnoreCase));
+            }
+
+            // After finding the most recent communication for the impacted Service, show the alert only:
+            // a) If the alert is still active, or
+            // b) If the published time of the comm is within the _commAlertWindow
+            if (mostRecentComm != null
+                && (mostRecentComm.Status == CommunicationStatus.Active
+                    ||
+                    (currentTimeUTC - mostRecentComm.PublishedTime) <= _commAlertWindow))
+            {
+                mostRecentComm.IsAlert = true;
+                mostRecentComm.IsExpanded = mostRecentComm.Status == CommunicationStatus.Active;
             }
 
             return commsList;
