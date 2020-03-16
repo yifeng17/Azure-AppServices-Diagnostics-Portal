@@ -3,7 +3,6 @@
     *ngIf="!renderingProperties.groupByColumnName && !(renderingProperties.groupByColumnName === ''); else groupedTable">
     <ngx-datatable #myTable class="bootstrap with-shadow"
       [columnMode]="'force'"
-      [limit]="rowLimit"
       [rowHeight]="'auto'"
       [footerHeight]="0"
       [scrollbarH]="false"
@@ -25,7 +24,6 @@
       [rows]="rows"
       [columns]="columns"
       [columnMode]="'force'"
-      [limit]="rowLimit"
       [rowHeight]="'auto'"
       [footerHeight]="0"
       [scrollbarH]="false"
