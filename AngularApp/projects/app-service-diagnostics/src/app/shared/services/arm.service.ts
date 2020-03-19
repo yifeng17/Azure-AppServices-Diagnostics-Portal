@@ -11,7 +11,7 @@ import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { GenericArmConfigService } from './generic-arm-config.service';
 import { StartupInfo } from '../models/portal';
 import { DemoSubscriptions } from '../../betaSubscriptions';
-
+import {VersioningHelper} from '../../../app/shared/utilities/versioningHelper';
 @Injectable()
 export class ArmService {
     public subscriptions = new ReplaySubject<Subscription[]>(1);
@@ -36,7 +36,7 @@ export class ArmService {
             let resourceId = startupInfo.resourceId;
             let subscriptionId = resourceId.split('/')[2];
             let isInternalSub = DemoSubscriptions.betaSubscriptions.findIndex(sub => sub.toLocaleLowerCase() === subscriptionId.toLocaleLowerCase()) >= 0;
-            if(this.isNationalCloud || isInternalSub) {
+            if(this.isNationalCloud || VersioningHelper.isV2Subscription(subscriptionId)) {
                 this.diagRoleVersion = this.routeToLiberation;
             }
             else {
