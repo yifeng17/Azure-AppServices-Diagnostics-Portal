@@ -221,7 +221,6 @@ export class OnboardingFlowComponent implements OnInit {
         this.localDevUrl = response;
         this.localDevText = "Download Local Development Package";
         this.localDevIcon = "fa fa-download";
-        // window.open(response);
 
         var element = document.createElement('a');
         element.setAttribute('href', response);

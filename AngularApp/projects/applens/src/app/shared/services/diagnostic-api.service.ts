@@ -1,15 +1,13 @@
 import { AdalService } from 'adal-angular4';
 import { DetectorMetaData, DetectorResponse, QueryResponse } from 'diagnostic-data';
-import { map, retry } from 'rxjs/operators';
+import {map, retry,  catchError, tap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable ,  throwError as observableThrowError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { HttpMethod } from '../models/http';
 import { Package } from '../models/package';
 import { CacheService } from './cache.service';
-import { throwError as observableThrowError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
 
 @Injectable()
 export class DiagnosticApiService {

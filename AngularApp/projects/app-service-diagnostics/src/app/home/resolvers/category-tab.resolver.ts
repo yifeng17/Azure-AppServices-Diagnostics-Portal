@@ -12,7 +12,8 @@ export class CategoryTabResolver implements Resolve<Observable<string>> {
     resolve(activatedRouteSnapshot: ActivatedRouteSnapshot): Observable<string> {
        if (activatedRouteSnapshot.params && activatedRouteSnapshot.params.category) {
            return this._categoryService.categories.pipe(map(categories => {
-               return categories.find(category => category.id === activatedRouteSnapshot.params.category).name;
+               let category = categories.find(category => category.id === activatedRouteSnapshot.params.category || category.name.replace(/\s/g, '').toLowerCase() === activatedRouteSnapshot.params.category.toLowerCase());
+               return category ? category.name : "availabilityandperformance    ";
             }), first());
        }
 
@@ -27,7 +28,7 @@ export class CategoryChatResolver implements Resolve<Observable<any>> {
     resolve(activatedRouteSnapshot: ActivatedRouteSnapshot): Observable<any> {
        if (activatedRouteSnapshot.params && activatedRouteSnapshot.params.category) {
            return this._categoryService.categories.pipe(mergeMap(categories => {
-               const category = categories.find(category => category.id === activatedRouteSnapshot.params.category);
+               const category = categories.find(category => category.id === activatedRouteSnapshot.params.category || category.name.replace(/\s/g, '').toLowerCase() === activatedRouteSnapshot.params.category.toLowerCase());
                return this._genericCategoryService.createMessageFlowForCategory(category);
            }), first());
        }

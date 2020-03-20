@@ -1,10 +1,11 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, Inject } from '@angular/core';
 import { GenericDetectorComponent } from '../generic-detector/generic-detector.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ResourceService } from '../../../shared-v2/services/resource.service';
 import { FeatureNavigationService, TelemetryService, DiagnosticService, DiagnosticDataConfig, DIAGNOSTIC_DATA_CONFIG } from 'diagnostic-data';
 import { AuthService } from '../../../startup/services/auth.service';
-import { CXPChatService } from 'diagnostic-data' ;//'../../services/cxp-chat.service';
+import { SearchAnalysisMode } from 'projects/diagnostic-data/src/lib/models/search-mode';
+import { CXPChatService } from 'diagnostic-data' ;
 import {GenericSupportTopicService} from '../../../../../../diagnostic-data/src/lib/services/generic-support-topic.service';
 
 @Component({
@@ -13,12 +14,18 @@ import {GenericSupportTopicService} from '../../../../../../diagnostic-data/src/
   styleUrls: ['./generic-analysis.component.scss']
 })
 export class GenericAnalysisComponent extends GenericDetectorComponent implements OnInit {
-
+  @Input() analysisId: string = "";
+  @Input() searchTerm: string = "";
+  @Input() searchMode: SearchAnalysisMode = SearchAnalysisMode.CaseSubmission;
+  @Input() resourceId: string="";
+  @Input() targetedScore: number = 0;
   detectorId: string = "";
-  analysisId: string = "";
   detectorName: string = "";
-  searchTerm: string = "";
-  showSearchBar: boolean = false;
+  @Input() showSearchBar: boolean = undefined;
+  @Output() onComplete = new EventEmitter<any>();
+
+  SearchAnalysisMode = SearchAnalysisMode;
+  displayDetectorContainer: boolean = true;
   searchBarFocus: boolean = false;
   isPublic: boolean = false;
   cxpChatTrackingId: string = '';
@@ -47,17 +54,21 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
       this._cxpChatService.logChatEligibilityCheck('Call to CXP Chat API skipped. Config is not Public.', JSON.stringify(checkOutcome));
     }    
     this._activatedRouteLocal.paramMap.subscribe(params => {
-      this.analysisId = params.get('analysisId');
+      this.analysisId = this.analysisId === "" ? params.get('analysisId'): this.analysisId;
       this.detectorId = params.get('detectorName') === null ? "" : params.get('detectorName');
       this._activatedRouteLocal.queryParamMap.subscribe(qParams => {
-        this.searchTerm = qParams.get('searchTerm') === null ? "" : qParams.get('searchTerm');
+        this.searchTerm = qParams.get('searchTerm') === null ? this.searchTerm : qParams.get('searchTerm');
         if (this.analysisId=== "searchResultsAnalysis" && this.searchTerm && this.searchTerm.length>0){
-          this.showSearchBar = true;
+            this.showSearchBar = this.searchMode === SearchAnalysisMode.CaseSubmission ? true : this.showSearchBar;
+            this.displayDetectorContainer = false;
+        }
+        else
+        {
+            this.showSearchBar = false;
         }
 
         this._diagnosticServiceLocal.getDetectors().subscribe(detectorList => {
           if (detectorList) {
-
             if (this.detectorId !== "") {
               let currentDetector = detectorList.find(detector => detector.id == this.detectorId)
               this.detectorName = currentDetector.name;
@@ -66,6 +77,10 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
         });
       });
     });
+  }
+
+  updateLoadingStatus(dataOutput){
+      this.onComplete.emit(dataOutput);
   }
 
   triggerSearch(){

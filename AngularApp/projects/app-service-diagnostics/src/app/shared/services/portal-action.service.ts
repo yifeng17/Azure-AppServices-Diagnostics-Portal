@@ -8,15 +8,18 @@ import { PortalService } from '../../startup/services/portal.service';
 import { ArmService } from './arm.service';
 import { AuthService } from '../../startup/services/auth.service';
 import { mergeMap, filter } from 'rxjs/operators';
+import { DetectorType } from 'diagnostic-data';
+import { VersionTestService } from '../../fabric-ui/version-test.service';
 
 @Injectable()
 export class PortalActionService {
     public apiVersion = '2016-08-01';
 
     public currentSite: ResponseMessageEnvelope<Site>;
-
+    private isLegacy:boolean;
     constructor(private _windowService: WindowService, private _portalService: PortalService, private _armService: ArmService,
-        private _authService: AuthService) {
+        private _authService: AuthService,private _versionTestService:VersionTestService) {
+        this._versionTestService.isLegacySub.subscribe(isLegacy => this.isLegacy = isLegacy);
         this._authService.getStartupInfo().pipe(
             mergeMap((startUpInfo: StartupInfo) => {
                 return this._armService.getResource<Site>(startUpInfo.resourceId);
@@ -27,9 +30,85 @@ export class PortalActionService {
         });
     }
 
+    public openBladeDiagnoseCategoryBlade(category: string) {
+        const bladeInfo = {
+            title: category,
+            detailBlade: 'SCIFrameBlade',
+            extension: 'WebsitesExtension',
+            detailBladeInputs: {
+                id: this.currentSite.id,
+                categoryId: category,
+                optionalParameters: [{
+                    key: "categoryId",
+                    value: category
+                }]
+            }
+        };
+
+        this._portalService.openBlade(bladeInfo, 'troubleshoot');
+    }
+
+    public openBladeDiagnoseDetectorId(category: string, detector: string, type: DetectorType = DetectorType.Detector) {
+        const bladeInfo = {
+            title: category,
+            detailBlade: 'SCIFrameBlade',
+            extension: 'WebsitesExtension',
+            detailBladeInputs: {
+                id: this.currentSite.id,
+                categoryId: category,
+                optionalParameters: [{
+                    key: "categoryId",
+                    value: category
+                },
+                {
+                    key: "detectorId",
+                    value: detector
+                },
+                {
+                    key: "detectorType",
+                    value: type
+                }]
+            }
+        };
+
+        this._portalService.openBlade(bladeInfo, 'troubleshoot');
+    }
+
+    public openBladeDiagnosticToolId(toolId: string) {
+        const category = "DiagnosticTools";
+        const bladeInfo = {
+            title: category,
+            detailBlade: 'SCIFrameBlade',
+            extension: 'WebsitesExtension',
+            detailBladeInputs: {
+                id: this.currentSite.id,
+                categoryId: category,
+                optionalParameters: [{
+                    key: "categoryId",
+                    value: category
+                },
+                {
+                    key: "toolId",
+                    value: toolId
+                }]
+            }
+        };
+
+        this._portalService.openBlade(bladeInfo, 'troubleshoot');
+    }
+
+    public updateDiagnoseCategoryBladeTitle(category: string) {
+        const bladeInfo = {
+            title: category
+        };
+
+        this._portalService.updateBladeInfo(bladeInfo, 'updateBlade');
+    }
+
+    //Need remove after A/B test
     public openBladeScaleUpBlade() {
         const bladeInfo = {
-            detailBlade: 'scaleup',
+            detailBlade: this.isLegacy ? 'scaleup' :'SciFrameBlade',
             detailBladeInputs: {}
         };
         this._portalService.postMessage(Verbs.openScaleUpBlade, JSON.stringify(bladeInfo));

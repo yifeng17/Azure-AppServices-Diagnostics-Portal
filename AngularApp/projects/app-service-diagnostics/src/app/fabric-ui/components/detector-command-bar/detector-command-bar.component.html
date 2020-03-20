@@ -1,0 +1,33 @@
+<fab-command-bar contentStyle="border-bottom:1px solid gray;font-weight:12px" contentClass="fab-command-bar-class">
+  <items>
+    <fab-command-bar-item key="custom1" text="custom text" (click)="onCopyClicked()">
+      <render>
+        <ng-template let-item="item">
+          <div style="padding-top:1px!important;">
+            <fabric-search-results></fabric-search-results>
+          </div>
+        </ng-template>
+      </render>
+      <render-icon>
+        <ng-template let-contextualMenuItemProps="contextualMenuItemProps">
+          <div>custom icon</div>
+        </ng-template>
+      </render-icon>
+
+    </fab-command-bar-item>
+    <fab-command-bar-item key="askGenie" text="Ask Genie" [iconProps]="{ iconName: 'ChatInviteFriend' }"
+      (click)="toggleOpenState()" data-track-type="run"></fab-command-bar-item>
+    <fab-command-bar-item key="refresh1" text="Refresh" [iconProps]="{ iconName: 'Refresh' }" (click)="refreshPage()">
+    </fab-command-bar-item>
+    <fab-command-bar-item key="sendFeedback" text="Feedback" [iconProps]="{ iconName: 'Emoji2' }"
+      (click)="sendFeedback()"></fab-command-bar-item>
+  </items>
+
+  <far-items>
+    <fab-command-bar-item key="timepicker" [text]="time" [iconProps]="{ iconName: 'ChevronDown' }"
+      (click)="toggleOpenTimePicker()">
+    </fab-command-bar-item>
+  </far-items>
+</fab-command-bar>
+<detector-time-picker (updateTimerMessage)="updateMessage($event)"></detector-time-picker>
+<fabric-feedback></fabric-feedback>

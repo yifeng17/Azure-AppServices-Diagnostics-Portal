@@ -9,6 +9,8 @@ import { TelemetryEventNames } from '../../services/telemetry/telemetry.common';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { CompilationProperties} from '../../models/compilation-properties';
 import {GenericSupportTopicService} from '../../services/generic-support-topic.service';
+import { ActivatedRoute, UrlSegment } from '@angular/router';
+import { VersionService } from '../../services/version.service';
 import { CXPChatService } from '../../services/cxp-chat.service'
 @Component({
   selector: 'detector-view',
@@ -29,10 +31,9 @@ export class DetectorViewComponent implements OnInit {
   errorState: any;
   isPublic: boolean;
 
-  hideDetectorHeader: boolean = false;
-
   supportDocumentContent: string = "";
   supportDocumentRendered: boolean = false;
+
 
   buttonViewVisible: boolean = false;
   buttonViewActiveComponent: string;
@@ -76,21 +77,34 @@ export class DetectorViewComponent implements OnInit {
   @Input() script: string = '';
   @Input() detector: string = '';
   @Input() compilationPackage: CompilationProperties;
-  @Input() analysisMode:boolean = false;
+  @Input() analysisMode: boolean = false;
   @Input() isAnalysisView: boolean = false;
+  @Input() hideDetectorHeader: boolean = false;
+  @Input() isCategoryOverview:boolean = false;
   feedbackButtonLabel: string = 'Send Feedback';
-
+  hideDetectorControl: boolean = false;
+  private isLegacy:boolean;
   constructor(@Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig, private telemetryService: TelemetryService,
-    private detectorControlService: DetectorControlService, private _supportTopicService: GenericSupportTopicService, private _cxpChatService: CXPChatService) {
+    private detectorControlService: DetectorControlService, private _supportTopicService: GenericSupportTopicService, private _cxpChatService: CXPChatService, protected _route: ActivatedRoute,private versionService:VersionService) {
     this.isPublic = config && config.isPublic;
     this.feedbackButtonLabel = this.isPublic ? 'Send Feedback' : 'Rate Detector';
   }
 
   ngOnInit() {
+    this.versionService.isLegacySub.subscribe(isLegacy => this.isLegacy = isLegacy);
     this.loadDetector();
     this.errorSubject.subscribe((data: any) => {
       this.errorState = data;
     });
+
+    // If it is using the new route, don't show those buttons
+    // this.hideDetectorControl = this._route.snapshot.parent.url.findIndex((x: UrlSegment) => x.path === 'categories') > -1;
+    //Remove after A/B Test
+    if (this.isLegacy) {
+      this.hideDetectorControl = false;
+    } else {
+      this.hideDetectorControl = this._route.snapshot.parent.url.findIndex((x: UrlSegment) => x.path === 'categories') > -1;
+    }
 
     // The detector name can be retrieved from  url column of application insight resource pageviews table.
     if (!this.insideDetectorList) {
@@ -151,7 +165,7 @@ export class DetectorViewComponent implements OnInit {
         this.feedbackDetector = this.isSystemInvoker ? this.feedbackDetector : data.metadata.id;
         let subject = encodeURIComponent(`Detector Feedback for ${this.feedbackDetector}`);
         let body = encodeURIComponent('Current site: ' + window.location.href + '\n' + 'Please provide feedback here:');
-        this.emailToApplensTeam  = `mailto:applensdisc@microsoft.com?subject=${subject}&body=${body}`;
+        this.emailToApplensTeam = `mailto:applensdisc@microsoft.com?subject=${subject}&body=${body}`;
 
         if (!this.isSystemInvoker && data.metadata && data.metadata.author) {
           this.authorInfo = data.metadata.author;
@@ -175,8 +189,7 @@ export class DetectorViewComponent implements OnInit {
 
         this.logInsights(data);
 
-        this.hideDetectorHeader = data.dataset.findIndex(set => (<Rendering>set.renderingProperties).type === RenderingType.Cards) >= 0;
-
+        // this.hideDetectorHeader = data.dataset.findIndex(set => (<Rendering>set.renderingProperties).type === RenderingType.Cards) >= 0;
       }
     });
   }
@@ -312,8 +325,8 @@ export class DetectorViewComponent implements OnInit {
   populateSupportTopicDocument(){
     if (!this.supportDocumentRendered){
       this._supportTopicService.getSelfHelpContentDocument().subscribe(res => {
-        if (res && res.json() && res.json().length>0){
-          var htmlContent = res.json()[0]["htmlContent"];
+        if (res && res.length>0){
+          var htmlContent = res[0]["htmlContent"];
           // Custom javascript code to remove top header from support document html string
           var tmp = document.createElement("DIV");
           tmp.innerHTML = htmlContent;

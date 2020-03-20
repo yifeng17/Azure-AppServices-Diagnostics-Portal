@@ -18,7 +18,7 @@ export class AutohealingCustomActionComponent implements OnInit, OnChanges, Afte
   constructor(private _serverFarmService: ServerFarmDataService, private _siteService: SiteService, private _daasService: DaasService) {
   }
 
-  @ViewChild('daasValidatorRef') daasValidatorRef: DaasValidatorComponent;
+  @ViewChild('daasValidatorRef', {static: true}) daasValidatorRef: DaasValidatorComponent;
 
   @Input() siteToBeDiagnosed: SiteInfoMetaData;
   @Input() customAction: AutoHealCustomAction;

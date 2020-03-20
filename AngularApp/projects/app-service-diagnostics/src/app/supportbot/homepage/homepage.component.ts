@@ -13,7 +13,6 @@ import { DetectorControlService } from 'diagnostic-data';
     templateUrl: 'homepage.component.html'
 })
 export class HomepageComponent implements OnInit {
-
     public listCollection: any;
     public toolsContainerHeight: number;
     public isSite: boolean;

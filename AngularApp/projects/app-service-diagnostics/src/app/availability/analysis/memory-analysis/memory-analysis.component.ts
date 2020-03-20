@@ -47,7 +47,6 @@ export class MemoryAnalysisComponent implements OnInit, OnDestroy {
         this.slotName = this._route.snapshot.params['slot'] ? this._route.snapshot.params['slot'] : '';
 
         this.refreshSubscription = this._detectorControlService.update.subscribe(isValidUpdate => {
-            console.log(isValidUpdate);
             if (isValidUpdate) {
                 this._refresh();
             }

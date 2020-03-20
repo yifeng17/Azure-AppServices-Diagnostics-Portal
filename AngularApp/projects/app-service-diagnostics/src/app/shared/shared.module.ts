@@ -3,7 +3,7 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 import { LimitToFilter } from './utilities/limitToFilter.pipe';
 import { nvD3 } from './utilities/nvd3graph.component';
 import { MarkupPipe } from './pipes/markup.pipe';
@@ -28,7 +28,7 @@ import { StepWizardComponent } from './components/step-wizard/step-wizard.compon
 import { DaasSessionsComponent, DateTimeDiffPipe } from './components/daas-sessions/daas-sessions.component';
 import { WindowService } from '../startup/services/window.service';
 import { ArmService } from './services/arm.service';
-import {GenericArmConfigService} from './services/generic-arm-config.service';
+import { GenericArmConfigService } from './services/generic-arm-config.service';
 import { UriElementsService } from './services/urielements.service';
 import { PortalActionService } from './services/portal-action.service';
 import { SiteService } from './services/site.service';
@@ -158,21 +158,21 @@ import { ConfigureStorageAccountComponent } from './components/daas/configure-st
         EventViewerComponent,
         FrebViewerComponent,
         PortalReferrerResolverComponent,
-        ConfigureStorageAccountComponent
+        ConfigureStorageAccountComponent,
     ],
     imports: [
-        HttpModule,
+        HttpClientModule,
         CommonModule,
         StartupModule,
         FormsModule,
         RouterModule,
         DiagnosticDataModule,
-        Ng5SliderModule
+        Ng5SliderModule,
     ],
     exports: [
         CommonModule,
         FormsModule,
-        HttpModule,
+        HttpClientModule,
         LimitToFilter,
         RouterModule,
         nvD3,
@@ -221,8 +221,10 @@ import { ConfigureStorageAccountComponent } from './components/daas/configure-st
         ToggleButtonComponent,
         DaasScaleupComponent,
         TileListComponent,
-        GenericCommsComponent
-    ]
+        GenericCommsComponent,
+        GenericAnalysisComponent,
+    ],
+    entryComponents: [GenericAnalysisComponent, GenericDetectorComponent]
 })
 export class SharedModule {
     static forRoot(): ModuleWithProviders {

@@ -30,8 +30,8 @@ const ResourceRoutes = RouterModule.forChild([
   ],
   declarations: [],
   providers: [
-    ContentService,
-    FeatureService,    
+    // ContentService,
+    FeatureService,
     LoggingV2Service,
     LiveChatService,
     CXPChatCallerService,

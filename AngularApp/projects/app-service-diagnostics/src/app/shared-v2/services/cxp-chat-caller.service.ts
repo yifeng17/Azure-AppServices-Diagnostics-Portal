@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { flatMap } from 'rxjs/operators';
-import { Observable, ReplaySubject, generate } from 'rxjs';
+import { Observable, ReplaySubject, generate, of} from 'rxjs';
 import { PortalService } from '../../startup/services/portal.service';
 import { ResourceService } from './resource.service' ;
 import { Verbs } from '../../shared/models/portal'
@@ -147,7 +147,7 @@ export class CXPChatCallerService {
         "passedInput": JSON.stringify(input),
         "returnValue": stringToLog
       });
-      return Observable.of(returnValue);
+      return of(returnValue);
 
     }));
 
@@ -222,7 +222,7 @@ export class CXPChatCallerService {
           "passedInput": JSON.stringify(input),
           "returnValue": stringToLog
         });
-        return Observable.of(returnValue);
+        return of(returnValue);
       }));      
     } catch (error) {
       this._telemetryService.logEvent(TelemetryEventNames.GetCXPChatURL, {
@@ -230,7 +230,7 @@ export class CXPChatCallerService {
         "passedInput": JSON.stringify(input),
         "returnValue": `Error in Chat portal RPC API response. ${JSON.stringify(error)}`
       });
-      return Observable.of('');
+      return of('');
     }
 
   }

@@ -1,0 +1,19 @@
+<div style="margin-bottom: 20px; display: flex; justify-content: start; font-size: 15px;">
+  <div class="card-container" 
+        *ngFor="let summaryCard of summaryCards;let i = index" 
+        (click)="onClickCard(summaryCard)"
+        [ngClass]="{'card-container-hover':summaryCard.isClickable}"
+    >
+      <h3 class="card-title">{{summaryCard.title}}</h3>
+      <p class="card-message">
+          <span class="fa status-icon card-icon" [class.fa-exclamation-circle]="summaryCard.status === SummaryStatus.Critical"
+              [class.fa-exclamation-triangle]="summaryCard.status === SummaryStatus.Warning"
+              [class.fa-check-circle]="summaryCard.status === SummaryStatus.Success"
+              [class.fa-info-circle]="summaryCard.status === SummaryStatus.Info"
+          ></span>
+          <span>{{summaryCard.message}}</span>
+      </p>
+      <p class="card-description">{{summaryCard.description}}</p>
+  </div>
+</div>
+

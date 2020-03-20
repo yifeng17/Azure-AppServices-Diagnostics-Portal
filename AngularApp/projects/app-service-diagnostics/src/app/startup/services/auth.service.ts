@@ -1,4 +1,4 @@
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable ,  of } from 'rxjs';
 import { StartupInfo, ResourceType } from '../../shared/models/portal';
@@ -26,7 +26,7 @@ export class AuthService {
         return this.localStartUpInfo && this.localStartUpInfo.token && this.localStartUpInfo.resourceId;
     }
 
-    constructor(private _http: Http, private _portalService: PortalService) {
+    constructor(private _http: HttpClient, private _portalService: PortalService) {
         this.inIFrame = window.parent !== window;
     }
 

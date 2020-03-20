@@ -22,7 +22,7 @@ export class SitesCategoryService extends CategoryService {
       item: {
         id: 'WindowsAvailabilityAndPerformance',
         name: 'Availability and Performance',
-        description: 'Is your app experiencing downtime or slowness? Click here to run a health checkup to discover issues that may be affect your app’s high availability, by either platform or app issues. ',
+        description: 'Is your app experiencing downtime or slowness? Check out the current health status of your app and discover platform and application issues that might affect your app\'s high availability.',
         keywords: ['Health Check', 'Downtime', '5xx Errors', '4xx Errors', 'CPU', 'Memory'],
         color: 'rgb(208, 175, 239)',
         createFlowForCategory: false,
@@ -163,4 +163,5 @@ export class SitesCategoryService extends CategoryService {
       }
     };
   }
+
 }

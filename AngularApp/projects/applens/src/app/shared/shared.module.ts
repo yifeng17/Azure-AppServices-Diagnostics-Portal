@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { TreeViewComponent } from './components/tree-view/tree-view.component';
 import { DiagnosticApiService } from './services/diagnostic-api.service';
 import { ModuleWithProviders } from '@angular/compiler/src/core';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 import { SiteService } from './services/site.service';
 import { FormsModule } from '@angular/forms';
 import { StartupService } from './services/startup.service';
@@ -20,14 +20,14 @@ import { CaseCleansingApiService } from './services/casecleansing-api.service';
 @NgModule({
   imports: [
     CommonModule,
-    HttpModule,
+    HttpClientModule,
     FormsModule,
     RouterModule,
   ],
   declarations: [TreeViewComponent, LoginComponent],
   exports: [TreeViewComponent]
 })
-export class SharedModule { 
+export class SharedModule {
   static forRoot(): ModuleWithProviders {
     return {
       ngModule: SharedModule,

@@ -1,8 +1,22 @@
-<div class="home-container">
-  <div class="input-group input-group-lg search-input-group" (keyup.escape)="clearSearch()" role="search" *ngIf="!useStaticAksText">
-    <input tabindex="0" type="search" class="form-control" placeholder="{{searchPlaceHolder}}"
-      [ngModel]="searchValue" (ngModelChange)="updateSearchValue($event)" (focus)="onSearchBoxFocus(event)"
-      (focusout)="onSearchLostFocus()" aria-controls="search-results">
+<ng-container *ngIf="isWindowsWebApp&&!isExternalSub">
+  <div *ngIf="useLegacy" class="switch2new-context-text">
+    <i class="fa fa-info-circle info-banner-icon"></i>
+    We have recently launched the new version of App Service Diagnostics.
+    <a (click)="switchView()">Click here to checkout the new version.</a>
+  </div>
+  <div *ngIf="!useLegacy" class="switch2old-context-text">
+    <i class="fa fa-info-circle info-banner-icon"></i>
+    Welcome to the new App Service Diagnostics. Simply explore or check out the <a
+      href='https://aka.ms/New-Diagnostics-and-Genie' target="_blank">documentation</a> on the new updates.
+    <a (click)="switchView()" class="old-version-link">Click here to go back to the old version.</a>
+  </div>
+</ng-container>
+<div *ngIf="useLegacy else newSolution" class="home-container">
+  <div class="input-group input-group-lg search-input-group" (keyup.escape)="clearSearch()" role="search"
+    *ngIf="!isAKSOnNationalCloud">
+    <input tabindex="0" type="search" class="form-control" placeholder="{{searchPlaceHolder}}" [ngModel]="searchValue"
+      (ngModelChange)="updateSearchValue($event)" (focus)="onSearchBoxFocus(event)" (focusout)="onSearchLostFocus()"
+      aria-controls="search-results">
     <div class="input-group-btn" id="clear-search">
       <button class="btn btn-default" type="button" aria-label="Clear" title="Clear" tabindex="0"
         (click)="clearSearch()" (focus)="onFocusClear()">
@@ -15,8 +29,8 @@
   </div>
   <div id="search-results" role="region" aria-live="polite">
     <ng-container *ngIf="searchBoxFocus">
-      <search-results [searchValue]="searchValue" (resultCount)="onResultCount($event)"
-        (keyup.escape)="clearSearch()"></search-results>
+      <search-results [searchValue]="searchValue" (resultCount)="onResultCount($event)" (keyup.escape)="clearSearch()">
+      </search-results>
     </ng-container>
   </div>
   <div class="main-area">
@@ -31,46 +45,96 @@
       ## Management
       Cannot stop, start, or edit my Kubernetes containers
 
-      - <a href="https://docs.azure.cn/aks/troubleshooting" target="_blank">https://docs.azure.cn/aks/troubleshooting</a>
-      - <a href="https://docs.azure.cn/aks/kubernetes-dashboard" target="_blank">https://docs.azure.cn/aks/kubernetes-dashboard</a>
+      - <a href="https://docs.azure.cn/aks/troubleshooting"
+        target="_blank">https://docs.azure.cn/aks/troubleshooting</a>
+      - <a href="https://docs.azure.cn/aks/kubernetes-dashboard"
+        target="_blank">https://docs.azure.cn/aks/kubernetes-dashboard</a>
       - <a href="https://docs.azure.cn/aks/scale-cluster" target="_blank">https://docs.azure.cn/aks/scale-cluster</a>
-      - <a href="https://docs.azure.cn/aks/upgrade-cluster" target="_blank">https://docs.azure.cn/aks/upgrade-cluster</a>
-      - <a href="https://docs.azure.cn/aks/configure-azure-cni" target="_blank">https://docs.azure.cn/aks/configure-azure-cni</a>
-      - <a href="https://docs.azure.cn/aks/kube-advisor-tool" target="_blank">https://docs.azure.cn/aks/kube-advisor-tool</a>
-      - <a href="https://stackoverflow.com/questions/tagged/azure-container-service" target="_blank">https://stackoverflow.com/questions/tagged/azure-container-service</a>
-      
+      - <a href="https://docs.azure.cn/aks/upgrade-cluster"
+        target="_blank">https://docs.azure.cn/aks/upgrade-cluster</a>
+      - <a href="https://docs.azure.cn/aks/configure-azure-cni"
+        target="_blank">https://docs.azure.cn/aks/configure-azure-cni</a>
+      - <a href="https://docs.azure.cn/aks/kube-advisor-tool"
+        target="_blank">https://docs.azure.cn/aks/kube-advisor-tool</a>
+      - <a href="https://stackoverflow.com/questions/tagged/azure-container-service"
+        target="_blank">https://stackoverflow.com/questions/tagged/azure-container-service</a>
+
       ## Configuration and setup issues
       Cannot create Azure Kubernetes service container cluster
-      
-      - <a href="https://docs.microsoft.com/azure/aks/create-cluster" target="_blank">https://docs.microsoft.com/azure/aks/create-cluster</a>
+
+      - <a href="https://docs.microsoft.com/azure/aks/create-cluster"
+        target="_blank">https://docs.microsoft.com/azure/aks/create-cluster</a>
       - <a href="https://docs.azure.cn/aks/scale-cluster" target="_blank">https://docs.azure.cn/aks/scale-cluster</a>
-      - <a href="https://docs.azure.cn/aks/upgrade-cluster" target="_blank">https://docs.azure.cn/aks/upgrade-cluster</a>
-      - <a href="https://docs.azure.cn/aks/azure-disks-dynamic-pv" target="_blank">https://docs.azure.cn/aks/azure-disks-dynamic-pv</a>
+      - <a href="https://docs.azure.cn/aks/upgrade-cluster"
+        target="_blank">https://docs.azure.cn/aks/upgrade-cluster</a>
+      - <a href="https://docs.azure.cn/aks/azure-disks-dynamic-pv"
+        target="_blank">https://docs.azure.cn/aks/azure-disks-dynamic-pv</a>
       - <a href="https://docs.azure.cn/aks/ssh" target="_blank">https://docs.azure.cn/aks/ssh</a>
-      - <a href="https://docs.azure.cn/aks/concepts-identity" target="_blank">https://docs.azure.cn/aks/concepts-identity</a>
-      - <a href="https://docs.azure.cn/aks/troubleshooting" target="_blank">https://docs.azure.cn/aks/troubleshooting</a>
-      - <a href="https://docs.azure.cn/aks/kube-advisor-tool" target="_blank">https://docs.azure.cn/aks/kube-advisor-tool</a>
-      - <a href="https://docs.azure.cn/aks/kubernetes-dashboard" target="_blank">https://docs.azure.cn/aks/kubernetes-dashboard</a>
-      - <a href="https://stackoverflow.com/questions/tagged/azure-container-service" target="_blank">https://stackoverflow.com/questions/tagged/azure-container-service</a>
-      
+      - <a href="https://docs.azure.cn/aks/concepts-identity"
+        target="_blank">https://docs.azure.cn/aks/concepts-identity</a>
+      - <a href="https://docs.azure.cn/aks/troubleshooting"
+        target="_blank">https://docs.azure.cn/aks/troubleshooting</a>
+      - <a href="https://docs.azure.cn/aks/kube-advisor-tool"
+        target="_blank">https://docs.azure.cn/aks/kube-advisor-tool</a>
+      - <a href="https://docs.azure.cn/aks/kubernetes-dashboard"
+        target="_blank">https://docs.azure.cn/aks/kubernetes-dashboard</a>
+      - <a href="https://stackoverflow.com/questions/tagged/azure-container-service"
+        target="_blank">https://stackoverflow.com/questions/tagged/azure-container-service</a>
+
       ## Connectivity
       Cannot connect to my Azure Kubernetes service container
       - <a href="https://docs.azure.cn/aks/ssh" target="_blank">https://docs.azure.cn/aks/ssh</a>
-      - <a href="https://docs.azure.cn/aks/Kubernetes-dashboard" target="_blank">https://docs.azure.cn/aks/Kubernetes-dashboard</a>
-      - <a href="https://docs.azure.cn/aks/configure-azure-cni" target="_blank">https://docs.azure.cn/aks/configure-azure-cni</a>
-      - <a href="https://stackoverflow.com/questions/49560394/new-aks-cluster-unreachable-via-network-including-dashboard" target="_blank">https://stackoverflow.com/questions/49560394/new-aks-cluster-unreachable-via-network-including-dashboard</a>
-      - <a href="https://stackoverflow.com/questions/51531561/kubernetes-aks-unable-to-view-the-site" target="_blank">https://stackoverflow.com/questions/51531561/kubernetes-aks-unable-to-view-the-site</a>
-      - <a href="https://docs.azure.cn/aks/troubleshooting" target="_blank">https://docs.azure.cn/aks/troubleshooting</a>
-      - <a href="https://docs.azure.cn/aks/kube-advisor-tool" target="_blank">https://docs.azure.cn/aks/kube-advisor-tool</a>
-      - <a href="https://stackoverflow.com/questions/tagged/azure-container-service" target="_blank">https://stackoverflow.com/questions/tagged/azure-container-service</a>
-      
+      - <a href="https://docs.azure.cn/aks/Kubernetes-dashboard"
+        target="_blank">https://docs.azure.cn/aks/Kubernetes-dashboard</a>
+      - <a href="https://docs.azure.cn/aks/configure-azure-cni"
+        target="_blank">https://docs.azure.cn/aks/configure-azure-cni</a>
+      - <a
+        href="https://stackoverflow.com/questions/49560394/new-aks-cluster-unreachable-via-network-including-dashboard"
+        target="_blank">https://stackoverflow.com/questions/49560394/new-aks-cluster-unreachable-via-network-including-dashboard</a>
+      - <a href="https://stackoverflow.com/questions/51531561/kubernetes-aks-unable-to-view-the-site"
+        target="_blank">https://stackoverflow.com/questions/51531561/kubernetes-aks-unable-to-view-the-site</a>
+      - <a href="https://docs.azure.cn/aks/troubleshooting"
+        target="_blank">https://docs.azure.cn/aks/troubleshooting</a>
+      - <a href="https://docs.azure.cn/aks/kube-advisor-tool"
+        target="_blank">https://docs.azure.cn/aks/kube-advisor-tool</a>
+      - <a href="https://stackoverflow.com/questions/tagged/azure-container-service"
+        target="_blank">https://stackoverflow.com/questions/tagged/azure-container-service</a>
+
       ## Connectivity
       Certificate Management issue (SSH key)
-      
+
       - <a href="https://docs.azure.cn/aks/ssh" target="_blank">https://docs.azure.cn/aks/ssh</a>
     </markdown>
     <div class="privacy-statement" tabindex="0">
-      <a href="https://azure.microsoft.com/en-us/support/legal/?amp%3Bclcid=0x9" target="_blank">Privacy</a>
+      <a href="https://azure.microsoft.com/support/legal/?amp%3Bclcid=0x9" target="_blank">Privacy</a>
     </div>
   </div>
 </div>
+
+<ng-template #newSolution>
+  <div class="main-area-v4">
+    <div class="home-content">
+      <h2 tabindex="0" class="home-title">{{homePageText.title}}</h2>
+      <p tabindex="0" class="home-description-v4">{{homePageText.description}}</p>
+      <p class="home-description-v4">If you would like to look at the health check then
+        <a (click)="openAvaAndPerf()" tabindex="0" aria-label="Open health check"
+          (keydown.enter)="openAvaAndPerf()">click here.</a>You can also ask chatbot
+        <a (click)="openGeniePanel()" tabindex="0" aria-label="Open Genie" (keydown.enter)="openGeniePanel()">Genie</a>
+        any questions you may have</p>
+    </div>
+    <div class="home-container-v4">
+      <div>
+        <fabric-search-results></fabric-search-results>
+      </div>
+    </div>
+    <div *ngIf="categories" class="category-container">
+      <div *ngFor="let category of categories" style="display: inline-block;padding: 10px 40px 10px 0px"
+        class="col-md-4">
+        <category-tile-v4 [category]="category"></category-tile-v4>
+      </div>
+    </div>
+    <div class="privacy-statement" tabindex="0">
+      <a href="https://azure.microsoft.com/support/legal/?amp%3Bclcid=0x9" target="_blank">Privacy</a>
+    </div>
+  </div>
+</ng-template>

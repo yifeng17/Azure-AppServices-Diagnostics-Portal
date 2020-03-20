@@ -1,0 +1,46 @@
+<fab-panel [isOpen]="globals.openGeniePanel" [type]="type" [customWidth]="width" [isHiddenOnDismiss]="true"
+  [isLightDismiss]="true" [hasCloseButton]="true" [closeButtonAriaLabel]="'close'"
+  (onDismissed)="genieDismissedHandler()">
+  <div class="row">
+    <div>
+      <div style="margin-bottom: 10px">
+        <div
+          style="position: absolute; left:25px; right: 32px; top:0px; height: 32px; font-family: 'segoe UI'; font-size: 18px; line-height: 24px; font-weight: 600;display: flex; align-items: flex-end"
+          tabindex="0" aria-label="Hi my name is genie">
+          App Service Diagnostics: Genie</div>
+        <div
+          style="color:#605E5C; position: absolute; left:25px; right: 32px; top:35px; height: 19px; font-family: 'segoe UI'; font-size: 10px; line-height: 14px; display: block"
+          tabindex="0" aria-label="HelpBot">
+          An interactive self-serve diagnostics tool</div>
+        <div style="position: absolute; top:10px; right: 10px; align-items: flex-end; cursor: pointer; "
+          class="button-container" (keydown.enter)="closeGeniePanel()" (click)="closeGeniePanel()">
+          <div tabindex="0" aria-label="Collapse">
+          </div>
+          <div class="button-container" style="margin-top:25px">
+            <span class="tooltiptext" style="margin-left: -30px;">Collapse Genie</span>
+          </div>
+        </div>
+      </div>
+      <div class="panel-content" style="margin-top: 10px;" #scrollMe>
+        <!-- Remove style afterF A/B Test,except margin-left -->
+        <div [style.height.px]="chatContainerHeight" style="overflow-y: auto; display: inline-block; height: 78vh;"
+          class="ms-Panel-scrollableContent scroll-bottom">
+          <div class="animated fadeIn chat-message-container" *ngFor="let item of messages" style="margin-left:0px;margin-top: 10px;margin-right: 10px;
+          content: ' ';clear: both;">
+            <dynamic-component-genie [componentData]="item" (onViewUpdate)="updateView($event)"
+              (onComplete)="updateStatus($event)"></dynamic-component-genie>
+          </div>
+        </div>
+      </div>
+      <div class="search-box-container">
+        <textarea id="genieChatBox" class="genie-search-box" (keydown.enter)="onSearchEnter($event)"
+          placeholder="Type your question" aria-label="Type your question"></textarea>
+        <div class="search-button-container">
+            <span (click)="onSearchEnter($event)" (keydown.enter)="onSearchEnter($event)" tabindex="0"
+              aria-label="Send Message"><i class="fa fa-paper-plane search-box-icon"></i></span>
+            <span *ngIf="isMessageEmpty" tabindex="0" aria-label="Message is empty" class="empty-message-warning">Message is empty</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</fab-panel>

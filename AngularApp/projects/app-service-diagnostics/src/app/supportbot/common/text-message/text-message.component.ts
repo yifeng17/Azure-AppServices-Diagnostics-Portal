@@ -12,7 +12,7 @@ export class TextMessageComponent implements OnInit, AfterViewInit, IChatMessage
     message: string = '';
     focus: boolean = false;
     messageByUser: boolean = false;
-    @ViewChild('messagefocus') elem:ElementRef;
+    @ViewChild('messagefocus', {static: false}) elem:ElementRef;
 
     @Output() onViewUpdate = new EventEmitter();
     @Output() onComplete = new EventEmitter<{ status: boolean, data?: any }>();

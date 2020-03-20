@@ -1,0 +1,9 @@
+<div class="category-container" style="width:100%">
+  <div>
+    <h3 class="category-title">{{category.name}}</h3>
+    <p class="category-description">{{category.description}}</p>
+  </div>
+  <div style="margin-left: -20px;margin-top: 10px;">
+    <detector-container [detector]="categoryId" [hideDetectorControl]="true"></detector-container>
+  </div>
+</div>

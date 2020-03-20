@@ -1,0 +1,28 @@
+.card-container {
+    flex: 0 0 35%;
+    padding: 10px;
+    height: 110px;
+    border: 1px solid rgb(214,214,214);
+    box-shadow: 3px 3px rgb(214,214,214);
+    margin: 10px 10px 10px 0px;
+}
+
+.card-container:hover {
+    cursor: pointer;
+}
+
+.card-header {
+    font-size: 14px;
+    line-height: 18px;
+    font-weight: 500;
+}
+
+.card-description {
+    font-size: 12px;
+    line-height: 22px;
+}
+
+.card-flex {
+    display: flex;
+    flex-wrap: wrap;
+}

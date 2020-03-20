@@ -1,0 +1,54 @@
+<ng-template #header>
+  {{renderingProperties.title}}
+</ng-template>
+
+<!-- Legacy DropDown -->
+<data-container [headerTemplate]="header" [title]="renderingProperties.title" *ngIf="dropdownType == Type.Legacy">
+  <div>
+    <div class="label-container">
+      <label>{{label}}</label>
+    </div>
+    <div class="dropdown-container">
+      <div class="dropdown">
+        <button class="btn btn-default dropdown-toggle dropdown-button" type="button" id="dropdownMenuId"
+          data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+          <span [innerHtml]="selectedKey"></span>
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuId">
+          <li *ngFor="let key of keys">
+            <a (click)="selectKey(key)">
+              <span [innerHtml]="key"></span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <hr class="line-break" />
+
+  <div class="body-container">
+    <div *ngFor="let data of selectedData" class="dynamic-data-container">
+      <dynamic-data [diagnosticData]="data" [startTime]="startTime" [endTime]="endTime"></dynamic-data>
+    </div>
+  </div>
+
+</data-container>
+
+<!-- Fabric Dropdown -->
+<div class="fabric-dropdown-container" *ngIf="dropdownType == Type.Fabric">
+  <div class="fabric-dropdown-header" style="display: flex;" [ngStyle]="{'justify-content': dropdownPostion == Position.FloatRight ? 'space-between' : 'start'}">
+    <span class="fabric-dropdown-title">{{renderingProperties.title}}</span>
+    <div style="display: flex">
+      <label>{{label}}:</label>
+      <fab-dropdown [options]="options" (onChange)="selectFabricKey($event)" [defaultSelectedKey]="selectedKey"
+        contentStyle="margin-top: -5px; margin-left: 5px;width:{{fabDropdownWidth}}px;"></fab-dropdown>
+    </div>
+  </div>
+  <div class="fabric-body-container">
+    <div *ngFor="let data of selectedData" class="dynamic-data-container">
+      <dynamic-data [diagnosticData]="data" [startTime]="startTime" [endTime]="endTime"></dynamic-data>
+    </div>
+  </div>
+</div>

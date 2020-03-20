@@ -80,6 +80,10 @@ export class PortalService {
         this.postMessage(Verbs.openBlade, JSON.stringify(bladeInfo));
     }
 
+    updateBladeInfo(bladeInfo: any, source: string) {
+        this.postMessage("update-blade-info", JSON.stringify(bladeInfo));
+    }
+
     openSupportRequestBlade(obj: any, source: string): void {
         this.logAction(source, 'open-blade-input' + obj.bladeName, null);
         const inputStr = JSON.stringify(obj);
@@ -126,7 +130,7 @@ export class PortalService {
 
         const data = event.data.data;
         const methodName = event.data.kind;
-        console.log('[iFrame] Received mesg: ' + methodName);
+        console.log('[iFrame] Received mesg: ' + methodName, event);
 
         if (methodName === Verbs.sendStartupInfo) {
             const info = <StartupInfo>data;

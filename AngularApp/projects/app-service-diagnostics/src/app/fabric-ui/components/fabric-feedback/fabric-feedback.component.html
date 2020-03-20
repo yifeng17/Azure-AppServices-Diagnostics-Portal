@@ -1,0 +1,4 @@
+<fab-panel [isOpen]="globals.openFeedback" [type]="type" [customWidth]="'355px'" [isHiddenOnDismiss]="true"
+  [isLightDismiss]="true" [hasCloseButton]="true" [closeButtonAriaLabel]="'close'" (onDismissed)="dismissedHandler()">
+  <fabric-feedback-container [dimissObservable]="dismissSubject.asObservable()" ></fabric-feedback-container>
+</fab-panel>

@@ -5,7 +5,8 @@ import { WindowService } from '../../../startup/services/window.service';
 import { environment } from '../../../../environments/environment';
 import { StartupInfo } from '../../models/portal';
 import { DemoSubscriptions } from '../../../betaSubscriptions';
-
+import { DetectorType } from 'diagnostic-data';
+import { VersionTestService } from '../../../fabric-ui/version-test.service';
 
 @Component({
   selector: 'resource-redirect',
@@ -13,10 +14,12 @@ import { DemoSubscriptions } from '../../../betaSubscriptions';
   styleUrls: ['./resource-redirect.component.scss']
 })
 export class ResourceRedirectComponent implements OnInit {
-
-  constructor(private _authService: AuthService, private _router: Router, private _windowService: WindowService) { }
+  private _newVersionEnabled = true;
+  private _useLegacyVersion = true;
+  constructor(private _authService: AuthService, private _router: Router, private _windowService: WindowService, private _versionTestService: VersionTestService) { }
 
   ngOnInit() {
+    this._versionTestService.isLegacySub.subscribe(useLegacyVersion => this._useLegacyVersion = useLegacyVersion);
     this.navigateToExperience();
   }
 
@@ -24,30 +27,32 @@ export class ResourceRedirectComponent implements OnInit {
     this._authService.getStartupInfo()
       .subscribe(info => {
         if (info && info.resourceId && info.token) {
-
-          // Uncomment to enable only for internal subs
-          //let split = info.resourceId.split('/');
-          //let subscriptionId = split[split.indexOf('subscriptions') + 1];
-          //this._newVersionEnabled = DemoSubscriptions.betaSubscriptions.indexOf(subscriptionId) >= 0;
-
+          if (info.optionalParameters && info.optionalParameters.find(param => param.key === "categoryId")) {
+            //  Open the new experience since we are navigating to a specific category
+            this._versionTestService.setLegacyFlag(2);
+          }
+          //   Uncomment to enable only for internal subs
+          let split = info.resourceId.split('/');
+          let subscriptionId = split[split.indexOf('subscriptions') + 1];
+          this._newVersionEnabled = DemoSubscriptions.betaSubscriptions.indexOf(subscriptionId) >= 0;
           const navigationExtras: NavigationExtras = {
             queryParamsHandling: 'merge',
           };
 
           let path = 'resource/' + info.resourceId.toLowerCase();
           var caseSubject = null;
-          if (info.optionalParameters){
+          if (info.optionalParameters) {
             var caseSubjectParam = info.optionalParameters.find(param => param.key === "caseSubject");
-            if (caseSubjectParam){
+            if (caseSubjectParam) {
               caseSubject = caseSubjectParam.value;
             }
 
             var referrerParam = info.optionalParameters.find(param => param.key.toLowerCase() === "referrer");
-            if (referrerParam){
+            if (referrerParam) {
               path += `/portalReferrerResolver`;
               this._router.navigateByUrl(
                 this._router.createUrlTree([path])
-                );
+              );
             }
           }
           if (info.supportTopicId) {
@@ -62,6 +67,37 @@ export class ResourceRedirectComponent implements OnInit {
           this._router.navigateByUrl(
             this._router.createUrlTree([path], navigationExtras)
           );
+
+          if (!this._useLegacyVersion) {
+            // This additional info is used to open a specific detector/tool under the right category in a new SCIFrameblade
+            // To Open the detector or diagnostic tool under the right category
+            if (info.optionalParameters) {
+              let categoryIdParam = info.optionalParameters.find(param => param.key === "categoryId");
+              if (categoryIdParam) {
+                let categoryId = categoryIdParam.value;
+                path += `/categories/${categoryId}`;
+
+                // To Open the overview page under the right category
+                let detectorTypeParam = info.optionalParameters.find(param => param.key === "detectorType");
+                let detectorIdParam = info.optionalParameters.find(param => param.key === "detectorId");
+                let toolIdParam = info.optionalParameters.find(param => param.key === "toolId");
+
+                if (detectorIdParam && detectorTypeParam) {
+                  if (detectorTypeParam.value === DetectorType.Detector) {
+                    path += `/detectors/${detectorIdParam.value}`;
+                  } else if (detectorTypeParam.value === DetectorType.Analysis) {
+                    path += `/analysis/${detectorIdParam.value}`;
+                  }
+                } else if (toolIdParam) {
+                  path += `/tools/${toolIdParam.value}`;
+                }
+
+                this._router.navigateByUrl(
+                  this._router.createUrlTree([path], navigationExtras)
+                );
+              }
+            }
+          }
         } else {
           if (!environment.production) {
             this._router.navigateByUrl('/test');

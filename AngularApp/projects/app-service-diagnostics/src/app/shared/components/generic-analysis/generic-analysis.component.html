@@ -1,4 +1,4 @@
-<detector-container *ngIf="!showSearchBar" [detector]="analysisDetector" [isAnalysisView]="true"></detector-container>
+<detector-container *ngIf="displayDetectorContainer" [detector]="analysisDetector" [isAnalysisView]="true"></detector-container>
 <div *ngIf="showSearchBar" class="search-box">
     <span>Diagnostics based on </span>
     <div class="search-input-box">
@@ -7,9 +7,9 @@
       <i class="fa fa-exclamation icon-err" [style.display]="searchTerm?.trim().length>0 && searchTerm?.trim().length<2? '': 'none'" title="At least 2 characters"></i>
     </div>
 </div>
-<detector-list-analysis withinDiagnoseAndSolve="true" detectorParmName="detectorName"></detector-list-analysis>
+<detector-list-analysis withinDiagnoseAndSolve="true" detectorParmName="detectorName"[resourceId]="resourceId" [targetedScore]="targetedScore" [analysisId]="analysisId" [searchTerm]="searchTerm" [searchMode]="searchMode" (onComplete)="updateLoadingStatus($event)"></detector-list-analysis>
 
-<div [hidden]="detectorId === ''">
+<div *ngIf="searchMode !== SearchAnalysisMode.Genie" [hidden]="detectorId === ''">
   <div>
     <div style="display: inline-block;margin-left: 20px">
       <h2>{{ detectorName }}</h2>
@@ -22,6 +22,6 @@
   <router-outlet></router-outlet>
 </div>
 
-<div  class = "cxp-chat-launcher-container align-width">
+<div *ngIf="searchMode !== SearchAnalysisMode.Genie" class = "cxp-chat-launcher-container align-width">
   <cxp-chat-launcher *ngIf="showChatButton()" [trackingId] = "cxpChatTrackingId" [chatUrl] = "cxpChatUrl" ></cxp-chat-launcher>
 </div>

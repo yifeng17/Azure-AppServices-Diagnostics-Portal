@@ -5,6 +5,7 @@ import { DiagnosticService } from './services/diagnostic.service';
 import { GenericSupportTopicService } from './services/generic-support-topic.service';
 import { GenericContentService } from './services/generic-content.service';
 import { TelemetryService } from './services/telemetry/telemetry.service';
+import { GenieGlobals } from './services/genie.service';
 import { NvD3Module } from 'ng2-nvd3';
 import { MarkdownModule } from 'ngx-markdown';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
@@ -80,6 +81,12 @@ import { DetectorListAnalysisComponent } from './components/detector-list-analys
 import { AppDependenciesComponent } from './components/app-dependencies/app-dependencies.component';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { HighchartsGraphComponent } from './components/highcharts-graph/highcharts-graph.component';
+import { FabNavModule } from './components/fab-nav/fab-nav.module';
+import { FabIconModule, FabChoiceGroupModule, FabSearchBoxModule, FabDropdownModule } from '@angular-react/fabric';
+import { SummaryCardsComponent } from './components/summary-cards/summary-cards.component';
+import { InsightsV4Component } from './components/insights-v4/insights-v4.component';
+import { CardSelectionV4Component } from './components/card-selection-v4/card-selection-v4.component';
+import { DropdownV4Component } from './components/dropdown-v4/dropdown-v4.component';
 import { CXPChatService } from './services/cxp-chat.service';
 import { CxpChatLauncherComponent } from './components/cxp-chat-launcher/cxp-chat-launcher.component';
 import { AppInsightsEnablementComponent } from './components/app-insights-enablement/app-insights-enablement.component';
@@ -97,7 +104,11 @@ import {RenderFilterPipe} from './components/detector-view/detector-view.compone
     FormsModule,
     MonacoEditorModule.forRoot(),
     CustomMaterialModule,
-    HighchartsChartModule
+    HighchartsChartModule,
+    FabIconModule,
+    FabChoiceGroupModule,
+    FabSearchBoxModule,
+    FabDropdownModule
   ],
   providers: [
     ClipboardService
@@ -119,6 +130,10 @@ import {RenderFilterPipe} from './components/detector-view/detector-view.compone
     AppDependenciesComponent,
     AppInsightsMarkdownComponent,
     HighchartsGraphComponent,
+    SummaryCardsComponent,
+    InsightsV4Component,
+    CardSelectionV4Component,
+    DropdownV4Component,
     CxpChatLauncherComponent,
     AppInsightsEnablementComponent,
     ConnectAppInsightsComponent,
@@ -135,6 +150,8 @@ import {RenderFilterPipe} from './components/detector-view/detector-view.compone
     ChangesViewComponent,
     DetectorListAnalysisComponent,
     AppInsightsMarkdownComponent,
+    FabNavModule,
+    FeedbackComponent,
     CxpChatLauncherComponent,
     AppInsightsEnablementComponent,
     ConnectAppInsightsComponent,
@@ -152,12 +169,14 @@ export class DiagnosticDataModule {
         { provide: DIAGNOSTIC_DATA_CONFIG, useValue: config },
         CXPChatService,
         KustoTelemetryService,
+        GenieGlobals,
         AppInsightsTelemetryService,
         TelemetryService,
         DetectorControlService,
         CommsService,
         FeatureNavigationService,
-        AppInsightsQueryService
+        AppInsightsQueryService,
+        FabNavModule
       ]
     };
   }

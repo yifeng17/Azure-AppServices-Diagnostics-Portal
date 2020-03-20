@@ -23,7 +23,7 @@ const ResourceRoutes = RouterModule.forChild([
   {
     path: '',
     loadChildren: '../../home/home.module#HomeModule',
-    resolve: { data: ResourceResolver }
+     resolve: { data: ResourceResolver }
   },
   {
     path: 'diagnosticTools',

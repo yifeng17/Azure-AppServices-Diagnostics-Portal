@@ -2,6 +2,7 @@
 @import "styles/controls/buttons";
 @import "~@ng-select/ng-select/themes/default.theme.css";
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+// @import 'office-ui-fabric-core/dist/sass/Fabric.scss';
 .ngx-datatable.bootstrap {
   border: 1px solid #dddddd;
 }
@@ -168,12 +169,18 @@ body {
 /* highchart container configuration */
 .highcharts-container {
     overflow: visible !important;
+    width:100%!important;
   }
 
 .highcharts-container svg {
     overflow: visible !important;
+    width:100%!important;
 }
 
 highcharts-chart {
     overflow: visible!important;
+}
+
+fab-command-bar .ms-SearchBox {
+    border-width: 0px!important;
 }

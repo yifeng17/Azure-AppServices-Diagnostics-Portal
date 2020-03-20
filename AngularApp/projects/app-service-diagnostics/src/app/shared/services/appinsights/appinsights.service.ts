@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, of } from 'rxjs';
 import { StartupInfo, ResourceType } from '../../models/portal';
 import { Verbs } from '../../models/portal';
@@ -45,8 +45,7 @@ export class AppInsightsService {
     siteName:string;
     slotName:string;
 
-    constructor(private http: Http, private authService: AuthService, private armService: ArmService, private siteService: SiteService, private appAnalysisService: AppAnalysisService, private portalService: PortalService, private portalActionService: PortalActionService, private logger: AvailabilityLoggingService, private _telmetryService: TelemetryService) {
-
+    constructor(private http: HttpClient, private authService: AuthService, private armService: ArmService, private siteService: SiteService, private appAnalysisService: AppAnalysisService, private portalService: PortalService, private portalActionService: PortalActionService, private logger: AvailabilityLoggingService, private _telmetryService: TelemetryService) {
         this.loadAppInsightsResourceObservable = new BehaviorSubject<boolean>(null);
         this.loadAppDiagnosticPropertiesObservable = new BehaviorSubject<boolean>(null);
         this.applicationInsightsValidForApp = new BehaviorSubject<boolean>(null);
@@ -143,7 +142,7 @@ export class AppInsightsService {
                 if (!this.isNotNullOrEmpty(aiResource)) {
                     return this.getAppInsightsResourceFromAppSettings();
                 } else {
-                    return Observable.of(aiResource);
+                    return of(aiResource);
                 }
             }));
     }
@@ -162,7 +161,7 @@ export class AppInsightsService {
                 if (this.isNotNullOrEmpty(instrumentationKey)) {
                     return this.getAppInsightsResourceForInstrumentationKey(instrumentationKey, this.subscriptionId);
                 } else {
-                    return Observable.of('');
+                    return of('');
                 }
             })
         );

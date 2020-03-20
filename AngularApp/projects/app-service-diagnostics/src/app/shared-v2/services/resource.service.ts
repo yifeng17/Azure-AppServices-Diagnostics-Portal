@@ -1,14 +1,15 @@
 
+import {of,  Observable, BehaviorSubject } from 'rxjs';
+
 import { map, flatMap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject } from 'rxjs';
 import { ArmResource } from '../models/arm';
 import { ArmService } from '../../shared/services/arm.service';
 import { ArmResourceConfig, ResourceDescriptor, ResourceDescriptorGroups } from '../../shared/models/arm/armResourceConfig';
 import { GenericArmConfigService } from '../../shared/services/generic-arm-config.service';
 import { PortalReferrerMap } from '../../shared/models/portal-referrer-map';
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ResourceService {
 
   protected _subscription: string;
@@ -39,14 +40,14 @@ export class ResourceService {
   }
 
   public getIbizaBladeToDetectorMapings():Observable<PortalReferrerMap[]> {
-    return Observable.of(null);
+    return of(null);
   }
 
   public getPesId(): Observable<string>{
     if (this.armResourceConfig){
-      return Observable.of(this.armResourceConfig.pesId);
+      return of(this.armResourceConfig.pesId);
     }
-    return Observable.of(null);
+    return of(null);
   }
 
   public get searchSuffix(): string {
@@ -149,7 +150,7 @@ export class ResourceService {
       if (!resourceUri.startsWith('/')) {
         resourceUri = '/' + resourceUri;
       }
-      
+
       var result = resourceUri.match(resourceDesc.resourceUriRegExp);
       if (result && result.length > 0) {
 

@@ -1,0 +1,57 @@
+.card-container {
+    background: #ffffff;
+    border: 1px solid rgba(204, 204, 204, 0.5);
+    box-sizing: border-box;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 2px;
+    //width can be percent to responsive 
+    max-width: 250px;
+    // height: 90px;
+    flex: 1;
+    margin: 8px 16px 8px 0px;
+    padding: 8px;
+}
+
+.card-container-hover:hover{
+    cursor: pointer;
+}
+
+
+
+.fa-exclamation-circle {
+    color: #ff0000;
+}
+
+.fa-exclamation-triangle {
+    color: #ff9104;
+}
+
+.fa-check-circle {
+    color: #3da907;
+}
+
+.fa-info-circle {
+    color: #3a9bc7;
+}
+.card-title{
+    font-size: 13px;
+    line-height: 15px;
+    color: #646464;
+    margin: 3px;
+}
+.card-description {
+    font-size: 13px;
+    line-height: 15px;
+    margin: 3px;
+}
+
+.card-message{
+    font-size: 20px;
+    line-height: 23px;
+    margin: 5px 3px;
+    font-weight: 600;
+}
+
+.card-icon {
+    margin-right: 7px
+}

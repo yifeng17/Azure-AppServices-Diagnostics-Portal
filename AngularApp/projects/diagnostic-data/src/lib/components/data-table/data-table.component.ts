@@ -45,8 +45,8 @@ export class DataTableComponent extends DataRenderBaseComponent implements After
   currentStyles = {};
   searchTexts = {};
 
-  @ViewChild('myTable') table: DatatableComponent
-  @ViewChild("headerTemplate") headerTemplate: TemplateRef<any>;
+  @ViewChild('myTable', {static: false}) table: DatatableComponent
+  @ViewChild("headerTemplate", {static: false}) headerTemplate: TemplateRef<any>;
 
   protected processData(data: DiagnosticData) {
     super.processData(data);

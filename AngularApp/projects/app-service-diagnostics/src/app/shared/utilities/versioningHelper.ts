@@ -11,7 +11,6 @@ export class VersioningHelper {
         if (isBetaSubscription) {
             return true;
         }
-
         let firstDigit = "0x" + subscriptionId.substr(0, 1);
 
         // roughly split of 5% of subscriptions to use new feature.

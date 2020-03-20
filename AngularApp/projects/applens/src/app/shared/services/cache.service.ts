@@ -2,7 +2,6 @@
 import {throwError as observableThrowError, of as observableOf,  Observable, Subscription as RxSubscription, Subject, ReplaySubject } from 'rxjs';
 
 import {tap} from 'rxjs/operators';
-import { Http, Headers, Response, Request } from '@angular/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 

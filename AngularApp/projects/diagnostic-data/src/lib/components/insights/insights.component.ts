@@ -16,7 +16,7 @@ import { LinkInterceptorService } from '../../services/link-interceptor.service'
 })
 export class InsightsComponent extends DataRenderBaseComponent implements OnDestroy {
 
-  @ViewChild(MarkdownComponent)
+  @ViewChild(MarkdownComponent, { static: false })
   public set markdown(v: MarkdownComponent) {
     this.markdownDiv = v;
     if (this.markdownDiv) {

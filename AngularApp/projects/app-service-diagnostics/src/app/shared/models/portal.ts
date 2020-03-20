@@ -74,6 +74,7 @@ export class Verbs {
     public static getStartupInfo = 'get-startup-info';
     public static openBlade = 'open-blade';
     public static closeBlades = 'close-blades';
+    public static updateBladeInfo = 'update-blade-info';
     public static logAction = 'log-action';
     public static logMessage = 'log-message';
     public static setDirtyState = 'set-dirtystate';
