@@ -18,6 +18,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Tokens.Saml2;
 using AppLensV3.Authorization;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Diagnostics;
 
 namespace AppLensV3.Configuration
 {
@@ -46,7 +48,7 @@ namespace AppLensV3.Configuration
         public virtual void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IDiagnosticClientService, DiagnosticClient>();
-            services.AddSingleton<IObserverClientService, DiagnosticObserverClientService>();
+            services.AddObserver(configuration);
             services.AddSingleton<IEmailNotificationService, NullableEmailNotificationService>();
             services.AddSingleton<IGithubClientService, GithubClientService>();
             services.AddSingleton<IGraphClientService, NationalCloudGraphClientService>();
@@ -66,6 +68,12 @@ namespace AppLensV3.Configuration
             });
 
             services.AddSingleton<IAuthorizationHandler, SecurityGroupHandlerNationalCloud>();
+
+            // If we are using runtime host directly
+            if (configuration.GetValue<bool>("DiagnosticRole:UseAppService"))
+            {
+                DiagnosticClientToken.Instance.Initialize(configuration);
+            }
 
             if (env.IsEnvironment("NationalCloud"))
             {
@@ -112,6 +120,22 @@ namespace AppLensV3.Configuration
 
         public virtual void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseExceptionHandler(errorApp =>
+            {
+                errorApp.Run(async context =>
+                {
+                    context.Response.StatusCode = 500;
+                    context.Response.ContentType = "text/html";
+                    await context.Response.WriteAsync("<html lang=\"en\"><body>\r\n");
+                    await context.Response.WriteAsync("ERROR!<br><br>\r\n");
+                    var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
+                    await context.Response.WriteAsync(exceptionHandlerPathFeature?.Error?.ToString());
+                    await context.Response.WriteAsync("<a href=\"/\">Home</a><br>\r\n");
+                    await context.Response.WriteAsync("</body></html>\r\n");
+                    await context.Response.WriteAsync(new string(' ', 512));
+                });
+            });
+
             app.UseCors(cors =>
                 cors
                 .AllowAnyHeader()
@@ -138,7 +162,7 @@ namespace AppLensV3.Configuration
                 {
                     if (context.Request.Path.ToString().Contains("signin"))
                     {
-                        context.Response.Redirect($"https://{context.Request.Host}/index.html", true);
+                        context.Response.Redirect($"https://{context.Request.Host}/index.html", false);
                     }
                     else
                     {
