@@ -31,7 +31,6 @@ export class FeatureService {
         detectors.forEach(detector => {
           if ((detector.category && detector.category.length > 0) ||
             (detector.description && detector.description.length > 0)) {
-            const categoryId = this.getCategoryIdByCategoryName(detector.category);
             if (detector.type === DetectorType.Detector) {
               this._features.push(<Feature>{
                 id: detector.id,
@@ -44,6 +43,7 @@ export class FeatureService {
                   if (this.isLegacy) {
                     this._router.navigateByUrl(`resource${startupInfo.resourceId}/detectors/${detector.id}`);
                   } else {
+                    const categoryId = this.getCategoryIdByCategoryName(detector.category);
                     this.navigatTo(startupInfo,categoryId,detector.id,DetectorType.Detector);
                   }
                 })
