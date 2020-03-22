@@ -21,6 +21,7 @@ export class DetectorCommandBarComponent {
   }
 
   refreshPage() {
+    console.log("Gonna call refresh in detector control");
     this.detectorControlService.refresh();
   }
 

@@ -191,11 +191,11 @@ export class DetectorControlService {
         endTime = moment.utc().subtract(16,'minutes');
       }
       else {
-    endTime = moment.utc(end);
+      endTime = moment.utc(end);
     }
-
       startTime = endTime.clone().subtract(1, 'days');
     } else {
+      console.log("option 4 and return");
       this.selectDuration(this.durationSelections[2]);
       return;
     }
@@ -203,6 +203,7 @@ export class DetectorControlService {
     if (this.getTimeDurationError(start, end) === '') {
       this._startTime = startTime;
       this._endTime = endTime;
+      console.log("option 5 and refresh");
       this._refreshData();
     }
     else {
@@ -242,6 +243,7 @@ export class DetectorControlService {
   }
 
   public selectDuration(duration: DurationSelector) {
+    console.log("selectDuration", duration);
     this._duration = duration;
     this._startTime = moment.utc().subtract(duration.duration);
     this._endTime = this._startTime.clone().add(duration.duration);
@@ -262,6 +264,7 @@ export class DetectorControlService {
 
   public refresh() {
     this._duration ? this.selectDuration(this._duration) : this._refreshData();
+    console.log("this._duration", this._duration);
   }
 
   public toggleInternalExternal() {
@@ -274,6 +277,7 @@ export class DetectorControlService {
   }
 
   private _refreshData() {
+    console.log("should refresh and eimit _refresh to be true");
     this._shouldRefresh = true;
     this._refresh.next(true);
   }
