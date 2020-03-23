@@ -1,9 +1,10 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { DiagnosticService } from '../../services/diagnostic.service';
 import { DetectorControlService } from '../../services/detector-control.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { DetectorResponse, RenderingType, DownTime } from '../../models/detector';
 import { BehaviorSubject } from 'rxjs';
+import { VersionService } from '../../services/version.service';
 
 @Component({
   selector: 'detector-container',
@@ -14,7 +15,9 @@ export class DetectorContainerComponent implements OnInit {
 
   detectorResponse: DetectorResponse = null;
   error: any;
-  hideDetectorControl: boolean = false;
+
+  @Input() hideDetectorControl: boolean = false;
+  hideTimerPicker: boolean = false;
   detectorName: string;
 
   @Input() detectorSubject: BehaviorSubject<string> = new BehaviorSubject<string>(null);
@@ -23,14 +26,24 @@ export class DetectorContainerComponent implements OnInit {
     this.detectorSubject.next(detector);
   }
 
-  @Input() analysisMode: boolean = false;
-  @Input() isAnalysisView: boolean = false;
+  @Input() analysisMode:boolean = false;
+  @Input() isAnalysisView:boolean = false;
   @Output() downTimeChanged: EventEmitter<DownTime> = new EventEmitter<DownTime>();
+  isCategoryOverview:boolean = false;
+  private isLegacy:boolean
 
   constructor(private _route: ActivatedRoute, private _diagnosticService: DiagnosticService,
-    public detectorControlService: DetectorControlService) { }
+    public detectorControlService: DetectorControlService,private versionService:VersionService) { }
 
   ngOnInit() {
+    this.versionService.isLegacySub.subscribe(isLegacy => this.isLegacy = isLegacy);
+    //Remove after A/B Test
+    if (this.isLegacy) {
+      this.hideTimerPicker = false;
+    } else {
+      this.hideTimerPicker= this.hideDetectorControl || this._route.snapshot.parent.url.findIndex((x: UrlSegment) => x.path === "categories") > -1;
+    }
+    
     this.detectorControlService.update.subscribe(isValidUpdate => {
       if (isValidUpdate && this.detectorName) {
         this.refresh();
@@ -43,6 +56,11 @@ export class DetectorContainerComponent implements OnInit {
         this.refresh();
       }
     });
+
+    const component:any = this._route.component; 
+    if (component && component.name) {
+      this.isCategoryOverview = component.name === "CategoryOverviewComponent";
+    }
   }
 
   refresh() {
@@ -54,51 +72,52 @@ export class DetectorContainerComponent implements OnInit {
   getDetectorResponse() {
     let startTime = this.detectorControlService.startTimeString;
     let endTime = this.detectorControlService.endTimeString;
-
-    if (this.analysisMode) {
-      this._route.queryParams.subscribe(params => {
-        var startTimeChildDetector: string = params['startTimeChildDetector'];
-        var endTimeChildDetector: string = params['endTimeChildDetector'];
-
-        if (startTimeChildDetector == null) {
-          startTimeChildDetector = startTime;
+	let allRouteQueryParams = this._route.snapshot.queryParams;
+    let additionalQueryString = '';
+    let knownQueryParams = ['startTime', 'endTime'];
+	Object.keys(allRouteQueryParams).forEach(key => {
+        if(knownQueryParams.indexOf(key) < 0) {
+            additionalQueryString += `&${key}=${encodeURIComponent(allRouteQueryParams[key])}`;
+		}
+	});
+	
+	if (this.analysisMode) {
+		var startTimeChildDetector: string = allRouteQueryParams['startTimeChildDetector'];
+        var endTimeChildDetector: string = allRouteQueryParams['endTimeChildDetector'];
+		if (startTimeChildDetector != null) {
+          startTime = startTimeChildDetector ;
         }
-        if (endTimeChildDetector == null) {
-          endTimeChildDetector = endTime;
+        if (endTimeChildDetector != null) {
+          endTime = endTimeChildDetector;
         }
-        this._diagnosticService.getDetector(this.detectorName, startTimeChildDetector, endTimeChildDetector,
-          this.detectorControlService.shouldRefresh, this.detectorControlService.isInternalView)
-          .subscribe((response: DetectorResponse) => {
-            this.shouldHideTimePicker(response);
-            this.detectorResponse = response;
-          }, (error: any) => {
-            this.error = error;
-          });
+	}
+	
+	this._diagnosticService.getDetector(this.detectorName, startTime, endTime,
+      this.detectorControlService.shouldRefresh, this.detectorControlService.isInternalView, additionalQueryString)
+      .subscribe((response: DetectorResponse) => {
+        this.shouldHideTimePicker(response);
+        this.detectorResponse = response;
+      }, (error: any) => {
+        this.error = error;
       });
-
-    } else {
-      this._diagnosticService.getDetector(this.detectorName, startTime, endTime,
-        this.detectorControlService.shouldRefresh, this.detectorControlService.isInternalView)
-        .subscribe((response: DetectorResponse) => {
-          this.shouldHideTimePicker(response);
-          this.detectorResponse = response;
-        }, (error: any) => {
-          this.error = error;
-        });
-    }
-
-  }
+}
 
   // TODO: Right now this is hardcoded to hide for cards, but make this configurable from backend
   shouldHideTimePicker(response: DetectorResponse) {
     if (response && response.dataset && response.dataset.length > 0) {
       const cardRenderingIndex = response.dataset.findIndex(data => data.renderingProperties.type == RenderingType.Cards);
-      this.hideDetectorControl = cardRenderingIndex >= 0;
+
+      //Remove after A/B Test
+      if (this.isLegacy) {
+        this.hideDetectorControl = cardRenderingIndex >= 0;
+      } else {
+        this.hideDetectorControl = cardRenderingIndex >= 0 || this.hideDetectorControl;
+      }
+      
     }
   }
 
   ondownTimeChanged(event: DownTime) {
     this.downTimeChanged.emit(event);
   }
-
 }

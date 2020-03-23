@@ -4,25 +4,25 @@ import { Solution } from '../components/solution/solution';
 export class InsightBase {
     status: HealthStatus;
     title: string;
+    isRated: boolean = false;
+    isHelpful: boolean = false;
+    isExpanded: boolean = false;
 
-    constructor(status: string, title: string) {
+    constructor(status: string, title: string, isExpanded: boolean) {
         this.title = title;
         this.status = HealthStatus[status];
+        this.isExpanded = isExpanded;
     }
 }
 
 export class Insight extends InsightBase {
 
     data: Map<string, string>;
-    isExpanded: boolean = false;
-    isRated: boolean = false;
-    isHelpful: boolean = false;
     solutions: Solution[] = null;
 
     constructor(status: string, title: string, isExpanded: boolean, solutions?: Solution[]) {
-        super(status, title);
+        super(status, title, isExpanded);
         this.data = new Map<string, string>();
-        this.isExpanded = isExpanded;
         if (solutions) {
             this.solutions = solutions;
         }
@@ -91,5 +91,4 @@ export class InsightUtils {
 export class DynamicInsight extends InsightBase {
     description: string;
     innerDiagnosticData: DiagnosticData;
-    expanded: boolean;
 }

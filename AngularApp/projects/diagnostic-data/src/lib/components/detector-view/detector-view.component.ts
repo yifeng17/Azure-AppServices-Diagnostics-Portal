@@ -1,14 +1,17 @@
 import { Moment } from 'moment';
 import { BehaviorSubject } from 'rxjs';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, Inject, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Inject, Input, OnInit, Output, EventEmitter, Pipe, PipeTransform } from '@angular/core';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
-import { DetectorResponse, Rendering, RenderingType, DataTableResponseObject, DownTime } from '../../models/detector';
+import { DetectorResponse, Rendering, RenderingType, DataTableResponseObject, DownTime , DetectorMetaData, DetectorType, DiagnosticData } from '../../models/detector';
 import { DetectorControlService } from '../../services/detector-control.service';
 import { TelemetryEventNames } from '../../services/telemetry/telemetry.common';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
-import { CompilationProperties } from '../../models/compilation-properties';
-import { GenericSupportTopicService } from '../../services/generic-support-topic.service';
+import { CompilationProperties} from '../../models/compilation-properties';
+import {GenericSupportTopicService} from '../../services/generic-support-topic.service';
+import { ActivatedRoute, UrlSegment } from '@angular/router';
+import { VersionService } from '../../services/version.service';
+import { CXPChatService } from '../../services/cxp-chat.service';
 import * as momentNs from 'moment';
 const moment = momentNs;
 
@@ -31,10 +34,9 @@ export class DetectorViewComponent implements OnInit {
   errorState: any;
   isPublic: boolean;
 
-  hideDetectorHeader: boolean = false;
-
   supportDocumentContent: string = "";
   supportDocumentRendered: boolean = false;
+
 
   buttonViewVisible: boolean = false;
   buttonViewActiveComponent: string;
@@ -52,6 +54,9 @@ export class DetectorViewComponent implements OnInit {
 
   emailToAuthor: string = '';
   emailToApplensTeam: string = '';
+
+  cxpChatTrackingId:string= '';
+  cxpChatUrl:string = '';
 
   @Input()
   set detectorResponse(value: DetectorResponse) {
@@ -77,23 +82,37 @@ export class DetectorViewComponent implements OnInit {
   @Input() compilationPackage: CompilationProperties;
   @Input() analysisMode: boolean = false;
   @Input() isAnalysisView: boolean = false;
+  @Input() hideDetectorHeader: boolean = false;
+  @Input() isCategoryOverview:boolean = false;
   feedbackButtonLabel: string = 'Send Feedback';
+
   downTimes: DownTime[] = [];
   selectedDownTime: DownTime;
-
   @Output() downTimeChanged: EventEmitter<DownTime> = new EventEmitter<DownTime>();
+  hideDetectorControl: boolean = false;
+  private isLegacy:boolean;
 
   constructor(@Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig, private telemetryService: TelemetryService,
-    private detectorControlService: DetectorControlService, private _supportTopicService: GenericSupportTopicService) {
+    private detectorControlService: DetectorControlService, private _supportTopicService: GenericSupportTopicService, private _cxpChatService: CXPChatService, protected _route: ActivatedRoute,private versionService:VersionService) {
     this.isPublic = config && config.isPublic;
     this.feedbackButtonLabel = this.isPublic ? 'Send Feedback' : 'Rate Detector';
   }
 
   ngOnInit() {
+    this.versionService.isLegacySub.subscribe(isLegacy => this.isLegacy = isLegacy);
     this.loadDetector();
     this.errorSubject.subscribe((data: any) => {
       this.errorState = data;
     });
+
+    // If it is using the new route, don't show those buttons
+    // this.hideDetectorControl = this._route.snapshot.parent.url.findIndex((x: UrlSegment) => x.path === 'categories') > -1;
+    //Remove after A/B Test
+    if (this.isLegacy) {
+      this.hideDetectorControl = false;
+    } else {
+      this.hideDetectorControl = this._route.snapshot.parent.url.findIndex((x: UrlSegment) => x.path === 'categories') > -1;
+    }
 
     // The detector name can be retrieved from  url column of application insight resource pageviews table.
     if (!this.insideDetectorList) {
@@ -103,6 +122,7 @@ export class DetectorViewComponent implements OnInit {
 
   protected loadDetector() {
     this.detectorResponseSubject.subscribe((data: DetectorResponse) => {
+      let metadata: DetectorMetaData = data? data.metadata: null;
       this.detectorDataLocalCopy = data;
       if (data) {
         this.detectorEventProperties = {
@@ -115,6 +135,34 @@ export class DetectorViewComponent implements OnInit {
 
         if (data.metadata.supportTopicList && data.metadata.supportTopicList.findIndex(supportTopic => supportTopic.id === this._supportTopicService.supportTopicId) >= 0) {
           this.populateSupportTopicDocument();
+          if(this.isPublic && !this.isAnalysisView && data.metadata.type === DetectorType.Detector) {
+            //Since the analysis view is already showing the chat button, no need to show the chat button on the detector (csx) implementing the analysis view.
+            this.renderCXPChatButton();
+          }
+          else {
+                var checkOutcome = {
+                  _supportTopicServiceObj: !!this._supportTopicService,
+                  supportTopicId: (!!this._supportTopicService)? this._supportTopicService.supportTopicId : '_supportTopicService is NULL',
+                  _cxpChatService: !!this._cxpChatService,
+                  isSupportTopicEnabledForLiveChat:  (!!this._supportTopicService && !!this._cxpChatService)? this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId): null,
+                  isPublic: !!this.isPublic,
+                  isAnalysisView: !!this.isAnalysisView,
+                  DetectorMetadata: data.metadata
+                };
+                this._cxpChatService.logChatEligibilityCheck('Call to CXP Chat API skipped for analysis', JSON.stringify(checkOutcome));            
+          }          
+        }
+        else {
+                    var checkOutcome = {
+            _supportTopicServiceObj: !!this._supportTopicService,
+            supportTopicId: (!!this._supportTopicService)? this._supportTopicService.supportTopicId : '_supportTopicService is NULL',
+            _cxpChatService: !!this._cxpChatService,
+            isSupportTopicEnabledForLiveChat:  (!!this._supportTopicService && !!this._cxpChatService)? this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId): null,
+            isPublic: !!this.isPublic,
+            isAnalysisView: !!this.isAnalysisView,
+            DetectorMetadata: data.metadata
+          };          
+          this._cxpChatService.logChatEligibilityCheck('Call to CXP Chat API skipped. Detector does not match support Topic', JSON.stringify(checkOutcome));   
         }
 
         this.ratingEventProperties = {
@@ -164,7 +212,7 @@ export class DetectorViewComponent implements OnInit {
           this.selectedDownTime = defaultDowntime;
           this.downTimeChanged.emit(defaultDowntime);
         }
-
+        // this.hideDetectorHeader = data.dataset.findIndex(set => (<Rendering>set.renderingProperties).type === RenderingType.Cards) >= 0;
       }
     });
   }
@@ -298,11 +346,39 @@ export class DetectorViewComponent implements OnInit {
     this.telemetryService.logEvent(eventMessage, eventProperties, measurements);
   }
 
-  populateSupportTopicDocument() {
-    if (!this.supportDocumentRendered) {
+  showChatButton():boolean {
+    return this.isPublic && !this.isAnalysisView && this.cxpChatTrackingId != '' && this.cxpChatUrl != '';
+  }
+
+
+  renderCXPChatButton(){
+    if(this.cxpChatTrackingId === '' && this.cxpChatUrl === '') {
+      if(this._supportTopicService && this._cxpChatService && this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId)) {
+          this.cxpChatTrackingId = this._cxpChatService.generateTrackingId();
+          this._cxpChatService.getChatURL(this._supportTopicService.supportTopicId, this.cxpChatTrackingId).subscribe((chatApiResponse:any)=>{
+            if (chatApiResponse && chatApiResponse != '') {
+              this.cxpChatUrl = chatApiResponse;
+            }
+          });               
+      }
+      else {
+        var checkOutcome = {
+          _supportTopicServiceObj: !!this._supportTopicService,
+          supportTopicId: (!!this._supportTopicService)? this._supportTopicService.supportTopicId : '_supportTopicService is NULL',
+          _cxpChatService: !!this._cxpChatService,
+          isSupportTopicEnabledForLiveChat:  (!!this._supportTopicService && !!this._cxpChatService)? this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId): null
+        };
+
+        this._cxpChatService.logChatEligibilityCheck('Call to CXP Chat API skipped', JSON.stringify(checkOutcome));
+      }
+    }
+  }
+
+  populateSupportTopicDocument(){
+    if (!this.supportDocumentRendered){
       this._supportTopicService.getSelfHelpContentDocument().subscribe(res => {
-        if (res && res.json() && res.json().length > 0) {
-          var htmlContent = res.json()[0]["htmlContent"];
+        if (res && res.length>0){
+          var htmlContent = res[0]["htmlContent"];
           // Custom javascript code to remove top header from support document html string
           var tmp = document.createElement("DIV");
           tmp.innerHTML = htmlContent;
@@ -314,9 +390,26 @@ export class DetectorViewComponent implements OnInit {
           // Set the innter html for support document display
           this.supportDocumentContent = tmp.innerHTML;
           this.supportDocumentRendered = true;
+          
         }
       });
     }
   }
 
+}
+
+@Pipe({
+  name: 'renderfilter',
+  pure: false
+})
+export class RenderFilterPipe implements PipeTransform {
+  transform(items: DiagnosticData[], isAnalysisView: any): any {
+      if (!items || !isAnalysisView) {
+          return items;
+      }
+      if (isAnalysisView)
+      return items.filter(item => item.renderingProperties.type !== RenderingType.SearchComponent);
+      else
+      return items;
+  }
 }

@@ -21,7 +21,7 @@ export class DataTableComponent extends DataRenderBaseComponent implements After
     }
 
     if (this.renderingProperties.height != null && this.renderingProperties.height !== "") {
-      this.currentStyles = { 'height': this.renderingProperties.height ,'overflow-y':'visible' };
+      this.currentStyles = { 'height': this.renderingProperties.height, 'overflow-y':'visible' };
     }
 
     if (this.renderingProperties.tableOptions != null) {
@@ -40,13 +40,13 @@ export class DataTableComponent extends DataRenderBaseComponent implements After
   rows: any[];
   rowsClone: any[];
   grouped: boolean = true;
-  rowLimit: 25;
+  rowLimit = 25;
   renderingProperties: DataTableRendering;
   currentStyles = {};
   searchTexts = {};
 
-  @ViewChild('myTable') table: DatatableComponent
-  @ViewChild("headerTemplate") headerTemplate: TemplateRef<any>;
+  @ViewChild('myTable', {static: false}) table: DatatableComponent
+  @ViewChild("headerTemplate", {static: false}) headerTemplate: TemplateRef<any>;
 
   protected processData(data: DiagnosticData) {
     super.processData(data);
@@ -123,6 +123,10 @@ export class DataTableComponent extends DataRenderBaseComponent implements After
     this.rows = temp;
     this.table.rows = this.rows;
 
+  }
+
+  onInputClicked(event: any) {
+    event.stopPropagation();
   }
 
 }

@@ -40,6 +40,7 @@ export class AppInsightsMarkdownComponent extends DataRenderBaseComponent {
   diagnosticDataSet: DiagnosticData[] = [];
   loadingAppInsightsResource: boolean = true;
   loadingAppInsightsQueryData: boolean = true;
+  showSectionHeader: boolean = false;
 
   constructor(public _appInsightsService: AppInsightsQueryService, private _diagnosticService: DiagnosticService, private _router: Router,
     private _activatedRoute: ActivatedRoute, protected telemetryService: TelemetryService, private _navigator: FeatureNavigationService, @Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig) {
@@ -70,53 +71,74 @@ export class AppInsightsMarkdownComponent extends DataRenderBaseComponent {
         description: row[1],
         query: row[2],
         poralBladeInfo: row[3],
-        renderingProperties: row[4]
+        renderingProperties: row[4],
+        dataTable: row[5]
       });
     });
 
 
-    if (this.isPublic && this.appInsightQueryMetaDataList !== []) {
-      this._appInsightsService.loadAppInsightsResourceObservable.subscribe(loadStatus => {
-        if (loadStatus === true) {
+    if (this.appInsightQueryMetaDataList !== []) {
+
+      this.appInsightQueryMetaDataList.forEach(appInsightData => {
+
+        if (appInsightData.dataTable !== null) {
           this.loadingAppInsightsResource = false;
-          this.appInsightQueryMetaDataList.forEach(appInsightData => {
+          this.loadingAppInsightsQueryData = false;
+          this.isAppInsightsEnabled = true;
 
-            this._appInsightsService.ExecuteQuerywithPostMethod(appInsightData.query).subscribe(data => {
+          this.appInsightDataList.push(<AppInsightData>{
+            title: appInsightData.title,
+            description: appInsightData.description,
+            renderingProperties: appInsightData.renderingProperties,
+            poralBladeInfo: appInsightData.poralBladeInfo,
+            diagnosticData: <DiagnosticData>{
+              table: appInsightData.dataTable,
+              renderingProperties: appInsightData.renderingProperties,
+            }
+          });
 
-              if (data && data["Tables"]) {
-                let rows = data["Tables"][0]["Rows"];
-                let columns = data["Tables"][0]["Columns"];
-                let dataColumns: DataTableResponseColumn[] = [];
-                columns.forEach(column => {
-                  dataColumns.push(<DataTableResponseColumn>{
-                    columnName: column.ColumnName,
-                    dataType: column.DataType,
-                    columnType: column.ColumnType,
-                  }
+        } else {
+          if (this.isPublic) {
+            this._appInsightsService.loadAppInsightsResourceObservable.subscribe(loadStatus => {
+              if (loadStatus === true) {
+                this.loadingAppInsightsResource = false;
+                this.appInsightQueryMetaDataList.forEach(appInsightData => {
 
-                  )
+                  this._appInsightsService.ExecuteQuerywithPostMethod(appInsightData.query).subscribe(data => {
 
-                });
+                    if (data && data["Tables"]) {
+                      let rows = data["Tables"][0]["Rows"];
+                      let columns = data["Tables"][0]["Columns"];
+                      let dataColumns: DataTableResponseColumn[] = [];
+                      columns.forEach(column => {
+                        dataColumns.push(<DataTableResponseColumn>{
+                          columnName: column.ColumnName,
+                          dataType: column.DataType,
+                          columnType: column.ColumnType,
+                        })
+                      });
 
-                this.appInsightDataList.push(<AppInsightData>{
-                  title: appInsightData.title,
-                  description: appInsightData.description,
-                  renderingProperties: appInsightData.renderingProperties,
-                  table: rows,
-                  poralBladeInfo: appInsightData.poralBladeInfo,
-                  diagnosticData: <DiagnosticData>{
-                    table: <DataTableResponseObject>{
-                      columns: dataColumns,
-                      rows: rows,
-                    },
-                    renderingProperties: appInsightData.renderingProperties,
-                  }
+                      this.appInsightDataList.push(<AppInsightData>{
+                        title: appInsightData.title,
+                        description: appInsightData.description,
+                        renderingProperties: appInsightData.renderingProperties,
+                        poralBladeInfo: appInsightData.poralBladeInfo,
+                        diagnosticData: <DiagnosticData>{
+                          table: <DataTableResponseObject>{
+                            columns: dataColumns,
+                            rows: rows,
+                          },
+                          renderingProperties: appInsightData.renderingProperties,
+                        }
+                      });
+                    }
+
+                    this.loadingAppInsightsQueryData = false;
+                  });
                 });
               }
-
-              this.loadingAppInsightsQueryData = false;
             });
-          });
+          }
         }
       });
     }

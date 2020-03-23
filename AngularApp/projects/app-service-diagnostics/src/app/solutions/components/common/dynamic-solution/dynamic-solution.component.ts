@@ -24,7 +24,7 @@ export class DynamicSolutionComponent implements AfterViewInit {
 
     @Input() solutionHolder: SolutionHolder;
 
-    @ViewChild(DynamicSolutionPlaceHolderDirective) solutionPlaceHolder: DynamicSolutionPlaceHolderDirective;
+    @ViewChild(DynamicSolutionPlaceHolderDirective, { static: false }) solutionPlaceHolder: DynamicSolutionPlaceHolderDirective;
 
     constructor(private componentFactoryResolver: ComponentFactoryResolver) { }
 

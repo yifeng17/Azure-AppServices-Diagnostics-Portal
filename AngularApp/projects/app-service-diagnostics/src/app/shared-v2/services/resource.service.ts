@@ -1,14 +1,15 @@
 
+import {of,  Observable, BehaviorSubject } from 'rxjs';
+
 import { map, flatMap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject } from 'rxjs';
 import { ArmResource } from '../models/arm';
 import { ArmService } from '../../shared/services/arm.service';
 import { ArmResourceConfig, ResourceDescriptor, ResourceDescriptorGroups } from '../../shared/models/arm/armResourceConfig';
 import { GenericArmConfigService } from '../../shared/services/generic-arm-config.service';
 import { PortalReferrerMap } from '../../shared/models/portal-referrer-map';
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class ResourceService {
 
   protected _subscription: string;
@@ -39,14 +40,14 @@ export class ResourceService {
   }
 
   public getIbizaBladeToDetectorMapings():Observable<PortalReferrerMap[]> {
-    return Observable.of(null);
+    return of(null);
   }
 
   public getPesId(): Observable<string>{
     if (this.armResourceConfig){
-      return Observable.of(this.armResourceConfig.pesId);
+      return of(this.armResourceConfig.pesId);
     }
-    return Observable.of(null);
+    return of(null);
   }
 
   public get searchSuffix(): string {
@@ -86,8 +87,8 @@ export class ResourceService {
   public get isApplicableForLiveChat(): boolean {
     if (this._genericArmConfigService) {
       let currConfig: ArmResourceConfig = this._genericArmConfigService.getArmResourceConfig(this.resource.id);
-      if (typeof currConfig.isApplicableForLiveChat == 'boolean') {
-        return currConfig.isApplicableForLiveChat;
+      if ( currConfig.liveChatConfig && typeof currConfig.liveChatConfig.isApplicableForLiveChat == 'boolean') {
+        return currConfig.liveChatConfig.isApplicableForLiveChat;
       }
       else {
         return false;
@@ -95,6 +96,25 @@ export class ResourceService {
     }
     else {
       return false;
+    }
+  }
+
+  public get liveChatEnabledSupportTopicIds():string[] {
+    if(this._genericArmConfigService) {
+      let currConfig: ArmResourceConfig = this._genericArmConfigService.getArmResourceConfig(this.resource.id);
+      if(this.isApplicableForLiveChat === true) {
+        if ( currConfig.liveChatConfig && currConfig.liveChatConfig.supportTopicIds
+          &&  currConfig.liveChatConfig.supportTopicIds instanceof Array  
+          && currConfig.liveChatConfig.supportTopicIds.length > 0 ) {
+          return currConfig.liveChatConfig.supportTopicIds;
+        }
+        else {
+          return [];
+        }
+      }
+      else {
+        return [];
+      }
     }
   }
 
@@ -130,7 +150,7 @@ export class ResourceService {
       if (!resourceUri.startsWith('/')) {
         resourceUri = '/' + resourceUri;
       }
-      
+
       var result = resourceUri.match(resourceDesc.resourceUriRegExp);
       if (result && result.length > 0) {
 

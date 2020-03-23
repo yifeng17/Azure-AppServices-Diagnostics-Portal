@@ -1,5 +1,5 @@
 import { AdalService } from 'adal-angular4';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 import { Component, OnDestroy, OnInit, Pipe, PipeTransform } from '@angular/core';
 import { ResourceService } from '../../../shared/services/resource.service';
 import * as momentNs from 'moment';
@@ -13,6 +13,7 @@ import { SearchService } from '../services/search.service';
 import { v4 as uuid } from 'uuid';
 import { environment } from '../../../../environments/environment';
 import {DiagnosticApiService} from '../../../shared/services/diagnostic-api.service';
+import { ObserverService } from '../../../shared/services/observer.service';
 
 @Component({
   selector: 'dashboard',
@@ -36,10 +37,12 @@ export class DashboardComponent implements OnDestroy {
   keys: string[];
   observerLink: string="";
   showUserInformation: boolean;
+  resourceReady: Observable<any>;
+  resourceDetailsSub: Subscription;
 
   constructor(public resourceService: ResourceService, private _detectorControlService: DetectorControlService,
     private _router: Router, private _activatedRoute: ActivatedRoute, private _navigator: FeatureNavigationService,
-    private _diagnosticService: ApplensDiagnosticService, private _adalService: AdalService, public ngxSmartModalService: NgxSmartModalService, private startupService: StartupService, public _searchService: SearchService, private _diagnosticApiService: DiagnosticApiService) {
+    private _diagnosticService: ApplensDiagnosticService, private _adalService: AdalService, public ngxSmartModalService: NgxSmartModalService, private startupService: StartupService, public _searchService: SearchService, private _diagnosticApiService: DiagnosticApiService, private _observerService: ObserverService) {
     this.contentHeight = (window.innerHeight - 50) + 'px';
 
     this.navigateSub = this._navigator.OnDetectorNavigate.subscribe((detector: string) => {
@@ -73,7 +76,9 @@ export class DashboardComponent implements OnDestroy {
         this._searchService.searchTerm = this._activatedRoute.snapshot.queryParams['searchTerm'];
         routeParams['searchTerm'] = this._activatedRoute.snapshot.queryParams['searchTerm'];
       }
-      this._router.navigate([], { queryParams: routeParams, relativeTo: this._activatedRoute });
+
+
+      this._router.navigate([], { queryParams: routeParams, queryParamsHandling: 'merge', relativeTo: this._activatedRoute });
     }
 
     if((this.showUserInformation = environment.adal.enabled)){
@@ -82,7 +87,7 @@ export class DashboardComponent implements OnDestroy {
       this._diagnosticService.getUserPhoto(this.userId).subscribe(image => {
         this.userPhotoSource = image;
       });
-  
+
       this._diagnosticService.getUserInfo(this.userId).subscribe((userInfo: UserInfo) => {
         this.userName = userInfo.givenName;
         this.displayName = userInfo.displayName;
@@ -93,18 +98,27 @@ export class DashboardComponent implements OnDestroy {
   ngOnInit() {
     let serviceInputs = this.startupService.getInputs();
 
-    this.resourceService.getCurrentResource().subscribe(resource => {
+    this.resourceReady = this.resourceService.getCurrentResource();
+    this.resourceReady.subscribe(resource => {
       if (resource) {
         this.resource = resource;
 
         if (serviceInputs.resourceType.toString() === 'Microsoft.Web/hostingEnvironments' && this.resource && this.resource.Name)
         {
             this.observerLink = "https://wawsobserver.azurewebsites.windows.net/MiniEnvironments/"+ this.resource.Name;
+            this._diagnosticApiService.GeomasterServiceAddress = this.resource["GeomasterServiceAddress"];
+            this._diagnosticApiService.GeomasterName = this.resource["GeomasterName"];
         }
         else if (serviceInputs.resourceType.toString() === 'Microsoft.Web/sites')
         {
             this._diagnosticApiService.GeomasterServiceAddress = this.resource["GeomasterServiceAddress"];
+            this._diagnosticApiService.GeomasterName = this.resource["GeomasterName"];
+            this._diagnosticApiService.Location = this.resource["WebSpace"];
             this.observerLink = "https://wawsobserver.azurewebsites.windows.net/sites/"+ this.resource.SiteName;
+
+            if (resource['IsXenon']) {
+                this.resourceService.imgSrc = this.resourceService.altIcons['Xenon'];
+            }
         }
 
         this.keys = Object.keys(this.resource);
@@ -145,7 +159,40 @@ export class DashboardComponent implements OnDestroy {
   }
 
   openResourceInfoModal() {
+    if (this.keys.indexOf('VnetName') == -1 && this.resourceReady != null && this.resourceDetailsSub == null)
+    {
+      this.resourceDetailsSub = this.resourceReady.subscribe(resource => {
+        if (resource) {
+          this._observerService.getSiteRequestDetails(this.resource.SiteName, this.resource.InternalStampName).subscribe(siteInfo => {
+            this.resource['VnetName'] = siteInfo.details.vnetname;
+            this.keys.push('VnetName');
+
+            if (this.resource['IsLinux'])
+            {
+              this.resource['LinuxFxVersion'] = siteInfo.details.linuxfxversion;
+              this.keys.push('LinuxFxVersion');
+            }
+          });
+        }
+      });
+    }
     this.ngxSmartModalService.getModal('resourceInfoModal').open();
+  }
+
+  copyToClipboard(item, event) {
+    let listener = (e: ClipboardEvent) => {
+      e.clipboardData.setData('text/plain', (item));
+      e.preventDefault();
+    };
+
+    document.addEventListener('copy', listener);
+    document.execCommand('copy');
+    document.removeEventListener('copy', listener);
+
+    event.target.src = "/assets/img/copy-icon-copied.png";
+    setTimeout(() => {
+      event.target.src = "/assets/img/copy-icon.png";
+    }, 3000);
   }
 
   ngOnDestroy() {
@@ -166,4 +213,3 @@ export class FormatResourceNamePipe implements PipeTransform {
         return displayedResourceName;
     }
 }
-

@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, forwardRef, Inject } from '@angular/core';
 import { INavigationItem } from '../../models/inavigationitem';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { CustomReuseStrategy } from '../../../app-route-reusestrategy.service';
 import { filter } from 'rxjs/operators';
+import { VersionTestService } from '../../../fabric-ui/version-test.service';
+import { AuthService } from '../../../startup/services/auth.service';
 
 @Component({
   selector: 'tabs',
@@ -12,14 +14,14 @@ import { filter } from 'rxjs/operators';
 export class TabsComponent implements OnInit {
 
   public navigationItems: INavigationItem[];
-
-  constructor(private _router: Router, private _activatedRoute: ActivatedRoute, private _routeReuseStrategy: CustomReuseStrategy) {
+  public isLegacy:boolean = true;
+  constructor(private _router: Router, private _activatedRoute: ActivatedRoute, private _routeReuseStrategy: CustomReuseStrategy,private _versionTestService:VersionTestService,private _authService: AuthService) {
     this.navigationItems = [];
+    this._versionTestService.isLegacySub.subscribe(isLegacy => this.isLegacy = isLegacy);
   }
 
   ngOnInit() {
     this._router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(event => {
-
       const navigationTitleStr: string = 'navigationTitle';
       let currentRoute = this._activatedRoute.root;
       while (currentRoute.children[0] !== undefined) {
@@ -28,7 +30,7 @@ export class TabsComponent implements OnInit {
 
       if (currentRoute.snapshot.data.hasOwnProperty(navigationTitleStr)) {
 
-        let navigationTitle = currentRoute.snapshot.data[navigationTitleStr];
+        let navigationTitle = currentRoute.snapshot.data[navigationTitleStr].toString();
 
         if (navigationTitle.indexOf(':') >= 0) {
           const parameterName = navigationTitle.replace(':', '');

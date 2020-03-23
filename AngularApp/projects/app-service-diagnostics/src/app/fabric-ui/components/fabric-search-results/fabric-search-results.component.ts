@@ -1,0 +1,194 @@
+import { Component, HostListener } from "@angular/core";
+import { Feature } from "../../../shared-v2/models/features";
+import { FeatureService } from "../../../shared-v2/services/feature.service";
+import { LoggingV2Service } from "../../../shared-v2/services/logging-v2.service";
+import { NotificationService } from "../../../shared-v2/services/notification.service";
+import { Globals } from "../../../globals";
+import { icons } from "../../icons-constants";
+import { SelectionMode } from 'office-ui-fabric-react/lib/DetailsList'
+import { Router } from "@angular/router";
+
+enum BlurType {
+  //click other place to close panel
+  Blur,
+  //use tab or cross icon(on right) will not trigger blur
+  None
+}
+@Component({
+  selector: 'fabric-search-results',
+  templateUrl: './fabric-search-results.component.html',
+  styleUrls: ['./fabric-search-results.component.scss']
+})
+export class FabricSearchResultsComponent {
+
+  searchValue: string = "";
+  resultCount: number;
+  features: Feature[] = [];
+  searchLogTimout: any;
+  showSearchResults: boolean;
+  clickSearchBox: BlurType = BlurType.Blur;
+  //Only ture when press ESC and no word in search box,collapse search result.
+  isEscape: boolean = false;
+  selectionMode = SelectionMode.none;
+  isInCategory:boolean;
+  get inputAriaLabel(): string {
+    const resultCount = this.features.length;
+    if (this.searchValue === "") {
+      return "";
+    } else if (resultCount >= 1) {
+      return resultCount > 1 ? `${resultCount} Results` : `${resultCount} Result`;
+    } else {
+      return `No results were found.`;
+    }
+  }
+
+  @HostListener('mousedown', ['$event.target'])
+  onClick(ele: HTMLElement) {
+    //If is cross icon in search box
+    if ((ele.tagName === "DIV" && ele.className.indexOf("ms-SearchBox-clearButton") > -1) ||
+      (ele.tagName === "BUTTON" && ele.className.indexOf("ms-Button--icon") > -1) ||
+      (ele.tagName === "DIV" && ele.className.indexOf("ms-Button-flexContainer") > -1) ||
+      (ele.tagName === "I" && ele.className.indexOf("ms-Button-icon") > -1)) {
+      this.clickSearchBox = BlurType.None;
+      //Async set to BlurType.Blur,so after clean result it will set to Blur for next onBlur action
+      setTimeout(() => { this.clickSearchBox = BlurType.Blur }, 0);
+    }
+    else if (this.isInCategory) {
+      this.clickSearchBox = BlurType.Blur;
+    } 
+    else {
+      this.clickSearchBox = BlurType.Blur;
+    }
+  }
+
+  @HostListener('keydown.Tab', ['$event.target'])
+  onKeyUp(ele: HTMLElement) {
+    if (ele.tagName === "INPUT") {
+      this.clickSearchBox = BlurType.None;
+    }
+    //If in genie or detailLists then blur after tab
+    else if (ele.innerText === "Ask chatbot Genie" ||
+      ele.className.indexOf("ms-FocusZone") > -1) {
+      this.clickSearchBox = BlurType.Blur;
+      this.onBlurHandler();
+    }
+    else {
+      this.clickSearchBox = BlurType.Blur;
+    }
+  }
+
+  //Remove after no longer use search in command bar
+  @HostListener('keydown.arrowright',['$event.target'])
+  onArrowLeft(ele:HTMLElement) {
+    if (this.isInCategory) {
+      this.clickSearchBox = BlurType.None;
+      const list = <any[]>Array.from(ele.parentElement.children);
+      const index = list.findIndex(e => ele === e);
+      if (ele.tagName === "A" &&  this.features.length > 0 && index === this.features.length - 1) {
+        this.clickSearchBox = BlurType.Blur;
+        this.onBlurHandler();
+      }
+
+      if (this.features.length === 0 && ele.innerHTML.includes('Genie')) {
+        this.clickSearchBox = BlurType.Blur;
+        this.onBlurHandler();
+      }
+    }
+  }
+  
+  constructor(public featureService: FeatureService, private _logger: LoggingV2Service,private _notificationService: NotificationService, private globals: Globals,private router:Router) {
+    this.isInCategory = this.router.url.includes('categories');
+  }
+
+  navigateToFeature(feature: Feature) {
+    this._notificationService.dismiss();
+    this._logSearchSelection(feature);
+    feature.clickAction();
+  }
+
+  private _logSearch() {
+    this._logger.LogSearch(this.searchValue);
+  }
+
+  private _logSearchSelection(feature: Feature) {
+    this._logSearch();
+    this._logger.LogSearchSelection(this.searchValue, feature.id, feature.name, feature.featureType.name);
+  }
+
+  updateSearchValue(searchValue: { newValue: string }) {
+    this.showSearchResults = !this.isEscape;
+    this.searchValue = searchValue.newValue;
+
+    if (this.searchLogTimout) {
+      clearTimeout(this.searchLogTimout);
+    }
+
+    this.searchLogTimout = setTimeout(() => {
+      this._logSearch();
+    }, 5000);
+    this.features = this.featureService.getFeatures(this.searchValue);
+    this.isEscape = false;
+
+
+    //Remove tab to right Cross in search bar
+    const crossBtn: any = document.querySelector('.ms-SearchBox-clearButton button');
+    if (crossBtn) {
+      crossBtn.tabIndex = -1;
+    }
+  }
+
+  onSearchBoxFocus() {
+    this.showSearchResults = true;
+    this.features = this.featureService.getFeatures(this.searchValue);
+
+    //Disable AutoComplete
+    //get element which type is input,class has ms-SearchBox-field,placeholder=Search
+    const input: any = document.querySelector("input.ms-SearchBox-field[placeholder=Search]");
+    input.autocomplete = "off";
+  }
+
+  clearSearch() {
+    this.searchValue = "";
+    this.features = this.featureService.getFeatures(this.searchValue);
+  }
+
+  clearSearchWithKey() {
+    //only true when trigger ESC
+    this.isEscape = this.searchValue === "";
+  }
+
+  onBlurHandler() {
+    switch (this.clickSearchBox) {
+      case BlurType.Blur:
+        this.clearSearch();
+        this.showSearchResults = false;
+        break;
+      case BlurType.None:
+        break;
+      default:
+        break;
+    }
+  }
+  openGeniePanel() {
+    this.isEscape = true;
+    this.globals.openGeniePanel = true;
+  }
+
+  generateIconImagePath(name: string) {
+    const basePath = "../../../../assets/img/detectors";
+    const fileName = icons.has(name) ? name : 'default';
+    return `${basePath}/${fileName}.svg`;
+  }
+
+  invokeHandler(selected: { item: Feature }) {
+    this.navigateToFeature(selected.item);
+  }
+
+  escapeHandler(){
+    (<HTMLInputElement>document.querySelector('#fabSearchBox input')).focus();
+  }
+  clickOutsideHandler(){
+    this.clearSearch();
+    this.showSearchResults = false;
+  }
+}

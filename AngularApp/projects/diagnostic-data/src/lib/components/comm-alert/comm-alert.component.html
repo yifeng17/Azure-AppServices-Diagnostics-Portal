@@ -23,10 +23,16 @@
               <span *ngIf="commAlertToShow.status === 1">Resolved</span>
             </div>
         </div>
-        <div style="display:inline-block">
+        <div style="display:inline-block;width:30%">
             <div class="comm-info-label">Last Updated On: (UTC)</div>
             <div class="comm-info-data">{{commPublishedTime}}</div>
         </div>
+        <div *ngIf="!isPublic" style="display:inline-block;width:30%">
+          <div class="comm-info-label">ICM:</div>
+          <div class="comm-info-data">
+            <a href="https://icm.ad.msft.net/imp/v3/incidents/details/{{commAlertToShow.icmId}}/home" target="_blank"><b>{{commAlertToShow.icmId}}</b></a>
+          </div>
+      </div>
       </div>
 
       <div *ngIf="!isPublic" class="comm-info-row">
@@ -34,10 +40,14 @@
               <div class="comm-info-label">Impacted Region(s)</div>
               <div class="comm-info-data">{{impactedRegions}}</div>
           </div>
-          <div style="display:inline-block;vertical-align: top">
+          <div style="display:inline-block;vertical-align: top;width:30%">
               <div class="comm-info-label">Impacted Service(s)</div>
               <div class="comm-info-data">{{impactedServices}}</div>
           </div>
+          <div style="display:inline-block;vertical-align: top;width:30%">
+            <div class="comm-info-label">Incident Tracking Id</div>
+            <div class="comm-info-data"><b>{{commAlertToShow.incidentId}}</b></div>
+        </div>
       </div>
 
       <div class="comm-info-row">

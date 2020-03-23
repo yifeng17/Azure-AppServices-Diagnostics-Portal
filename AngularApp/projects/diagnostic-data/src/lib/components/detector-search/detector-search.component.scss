@@ -1,0 +1,104 @@
+.list-wrapper {
+    position: relative;
+    //margin-left: 30px;
+}
+
+.list-item-wrapper {
+    margin-top: 10px;
+    position: relative;
+}
+
+.list-item {
+    vertical-align: middle;
+    //margin-left: 50px;
+}
+
+.list-title {
+    font-weight: 700;
+}
+
+.list-text {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.success-msg{
+    background: #f9f9f9;
+    border: 1px solid #ebebeb;
+    width: 98%;
+    padding:10px;
+    margin-top:10px;
+}
+
+.detector-list {
+    background: #f9f9f9;
+    border: 1px solid #ebebeb;
+    width: 98%;
+    margin-bottom: 0px!important;
+}
+
+.analysis-content
+{
+    width:98%
+}
+
+.search-input-group {
+    width:98%;
+    height: 30px;
+}
+
+.successful-section-title {
+    cursor:pointer;
+    color:#1074fe;
+    text-decoration:underline;
+}
+
+.up-down-caret{
+    vertical-align: bottom;
+    font-size: 21px;
+    color: #1074fe;
+}
+
+.icon-err{
+    color: #bf0000;
+}
+
+.no-results-section{
+    margin-top: 10px;
+}
+
+.no-results-header{
+    display: block;
+    font-weight: 400;
+    font-size: 14px;
+  }
+  
+.no-results-content{
+    display:block;
+    font-size: 13px;
+}
+
+.form-control{
+    font-size: 16px;
+}
+
+.span-h1{
+    font-size: 1.8rem;
+    font-weight: 400;
+    display: block;
+    color: #015cda;
+}
+
+.shown {
+    display: block;
+}
+
+.hidden {
+    display:none;
+}
+
+.diagnostics-heading{
+    color: black;
+    font-weight: bold;
+    margin-bottom: 5px;
+}

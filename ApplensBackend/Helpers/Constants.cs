@@ -14,10 +14,10 @@ namespace AppLensV3.Helpers
     {
         internal const string RawFileHeaderMediaType = "application/vnd.github.VERSION.raw";
         internal const string TemplatePath = "https://raw.githubusercontent.com/Azure/Azure-AppServices-Diagnostics/master/data/templates/{filename}.csx";
-        internal const string SourceFilePathFormat = "https://api.github.com/repos/{0}/{1}/contents/{2}/{2}.csx?ref={3}&access_token={4}";
-        internal const string MetadataFilePathFormat = "https://api.github.com/repos/{0}/{1}/contents/{2}/metadata.json?ref={3}&access_token={4}";
-        internal const string ConfigPathFormat = "https://api.github.com/repos/{0}/{1}/contents/{2}/package.json?ref={3}&access_token={4}";
-        internal const string ResourceConfigFormat = "https://api.github.com/repos/{0}/{1}/contents/resourceConfig/config.json?ref={2}&access_token={3}";
+        internal const string SourceFilePathFormat = "https://api.github.com/repos/{0}/{1}/contents/{2}/{2}.csx?ref={3}";
+        internal const string MetadataFilePathFormat = "https://api.github.com/repos/{0}/{1}/contents/{2}/metadata.json?ref={3}";
+        internal const string ConfigPathFormat = "https://api.github.com/repos/{0}/{1}/contents/{2}/package.json?ref={3}";
+        internal const string ResourceConfigFormat = "https://api.github.com/repos/{0}/{1}/contents/resourceConfig/config.json?ref={2}";
     }
 
     /// <summary>
@@ -60,9 +60,12 @@ namespace AppLensV3.Helpers
         public const string PathQueryHeader = "x-ms-path-query";
         public const string MethodHeader = "x-ms-method";
         public const string EmailRecipientsHeader = "x-ms-emailRecipients";
+        public const string ModifiedByHeader = "x-ms-modifiedBy";
         public const string InternalClientHeader = "x-ms-internal-client";
         public const string InternalViewHeader = "x-ms-internal-view";
         public const string ScriptEtagHeader = "diag-script-etag";
         public const string VerbHeader = "x-ms-verb";
+        public const string IsTemporaryAccessHeader = "IsTemporaryAccess";
+        public const string TemporaryAccessExpiresHeader = "TemporaryAccessExpires";
     }
 }

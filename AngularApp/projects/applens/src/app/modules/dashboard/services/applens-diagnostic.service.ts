@@ -47,6 +47,18 @@ export class ApplensDiagnosticService {
         internalClient);
   }
 
+  getDetectorsSearch(query: string, internalClient: boolean = true): Observable<DetectorMetaData[]> {
+    var queryParams: any[] = null;
+    if (query != null)
+      queryParams = [{ "key": "text", "value": encodeURIComponent(query) }];
+      return this._diagnosticApi.getDetectors(
+        this._resourceService.versionPrefix, 
+        this._resourceService.getCurrentResourceId(true),
+        null,
+        queryParams,
+        internalClient);
+  }
+
   getUsers(body: any): Observable<any> {
     return this._diagnosticApi.getUsers(body);
   }
@@ -84,7 +96,7 @@ export class ApplensDiagnosticService {
     return this._diagnosticApi.getHasTestersAccess();
   }
 
-  getCompilerResponse(body: any, isSystemInvoker: boolean, detectorId: string = '', startTime: string = '', endTime: string = '', dataSource: string = '', timeRange: string = '', additionalParams: any): Observable<QueryResponse<DetectorResponse>> {
+  getCompilerResponse(body: any, isSystemInvoker: boolean, detectorId: string = '', startTime: string = '', endTime: string = '', dataSource: string = '', timeRange: string = '', additionalParams: any, publishingDetectorId:string): Observable<QueryResponse<DetectorResponse>> {
     if (isSystemInvoker === false)
     {
       return this._diagnosticApi.getCompilerResponse(
@@ -93,7 +105,7 @@ export class ApplensDiagnosticService {
         body,
         startTime,
         endTime,
-        additionalParams);
+        additionalParams, publishingDetectorId);
     }
     else
     {
@@ -124,5 +136,13 @@ export class ApplensDiagnosticService {
       emailRecipients,
       pkg
     );
+  }
+
+  createOrUpdateKustoMappings(body: string) : Observable<any> {
+    return this._diagnosticApi.createOrUpdateKustoMappings(this._resourceService.getCurrentResourceId(true), body);
+  }
+
+  getKustoMappings() : Observable<any> {
+    return this._diagnosticApi.getKustoMappings(this._resourceService.getCurrentResourceId(true));
   }
 }

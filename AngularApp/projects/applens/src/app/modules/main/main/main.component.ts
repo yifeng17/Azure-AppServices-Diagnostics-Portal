@@ -2,13 +2,14 @@ import { AdalService } from 'adal-angular4';
 import * as momentNs from 'moment';
 import { map, catchError } from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
-import { Http } from '@angular/http';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import {
     ResourceServiceInputs, ResourceType, ResourceTypeState, ResourceServiceInputsJsonResponse
 } from '../../../shared/models/resources';
 import { trimTrailingNulls } from '@angular/compiler/src/render3/view/util';
 import { HttpClient } from '@angular/common/http';
+import { DialogType } from 'office-ui-fabric-react/lib/Dialog';
+import { FabDialogModule, FabButtonModule } from '@angular-react/fabric';
 const moment = momentNs;
 
 @Component({
@@ -17,6 +18,19 @@ const moment = momentNs;
   styleUrls: ['./main.component.scss']
 })
 export class MainComponent implements OnInit {
+  DialogType = DialogType;
+
+  name = 'Cindy';
+  dialogHidden = true;
+  counter = 0;
+
+  toggleDialog() {
+    this.dialogHidden = !this.dialogHidden;
+  }
+
+  incrementCounter() {
+    this.counter += 1;
+  }
 
   showResourceTypeOptions = false;
   showCaseCleansingOption = false;
@@ -71,7 +85,7 @@ export class MainComponent implements OnInit {
     // TODO: Use this to restrict access to routes that don't match a supported resource type
     this._http.get<ResourceServiceInputsJsonResponse>('assets/enabledResourceTypes.json').subscribe(jsonResponse =>{
       this.enabledResourceTypes = <ResourceServiceInputs[]>jsonResponse.enabledResourceTypes;
-    });    
+    });
 
     if (_adalService.userInfo.userName === 'cmaher@microsoft.com' || _adalService.userInfo.userName === "shgup@microsoft.com"){
       this.showCaseCleansingOption = true;
@@ -90,7 +104,7 @@ export class MainComponent implements OnInit {
   }
 
   private normalizeArmUriForRoute(resourceURI: string, enabledResourceTypes : ResourceServiceInputs[]) : string {
-    resourceURI = resourceURI.trim();    
+    resourceURI = resourceURI.trim();
     var resourceUriPattern = /subscriptions\/(.*)\/resourceGroups\/(.*)\/providers\/(.*)/i;
     var result = resourceURI.match(resourceUriPattern);
 
@@ -113,13 +127,13 @@ export class MainComponent implements OnInit {
       }
 
       this.errorMessage = routeString === '' ?
-        'The supplied ARM resource is not enabled in AppLens. Allowed resource types are as follows\n\n' + 
+        'The supplied ARM resource is not enabled in AppLens. Allowed resource types are as follows\n\n' +
           `${allowedResources}` :
         '';
 
       return routeString;
     } else {
-      this.errorMessage = "Invalid ARM resource id. Resource id must be of the following format:\n" + 
+      this.errorMessage = "Invalid ARM resource id. Resource id must be of the following format:\n" +
         "  /subscriptions/SUBSCRIPTION_ID/resourceGroups/MY_RG/providers/Microsoft.ContainerService/" +
         "managedClusters/RESOURCE_NAME";
 
@@ -129,7 +143,7 @@ export class MainComponent implements OnInit {
 
   onSubmit(form: any) {
     form.resourceName = form.resourceName.trim();
-    
+
     if (this.selectedResourceType.displayName === "ARM Resource ID") {
       form.resourceName = this.normalizeArmUriForRoute(form.resourceName, this.enabledResourceTypes);
     } else {
@@ -153,7 +167,7 @@ export class MainComponent implements OnInit {
     let navigationExtras: NavigationExtras = {
       queryParams: timeParams
     }
-    
+
     if (this.errorMessage === '') {
       this._router.navigate([route], navigationExtras);
     }

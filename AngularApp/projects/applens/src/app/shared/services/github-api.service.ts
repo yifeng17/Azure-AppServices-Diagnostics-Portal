@@ -14,6 +14,10 @@ export class GithubApiService {
     return this._diagnosticApiService.get<string>(`api/github/template/${name}`, true);
   }
 
+  public getTemplateWithExtension(name: string, fileExtension: string): Observable<string> {
+    return this._diagnosticApiService.get<string>(`api/github/template/${name}/${fileExtension}`, true);
+  }
+
   public getSourceFile(id: string): Observable<string> {
     return this._diagnosticApiService.get<string>(`api/github/package/${id}`, true);
   }

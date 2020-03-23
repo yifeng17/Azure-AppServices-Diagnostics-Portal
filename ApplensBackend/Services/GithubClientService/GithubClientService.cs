@@ -28,12 +28,12 @@ namespace AppLensV3
         /// <param name="configuration">The configuration.</param>
         public GithubClientService(IConfiguration configuration)
         {
-            InitializeHttpClient();
             GitHubCache = new ConcurrentDictionary<string, Tuple<string, object>>();
             UserName = configuration["Github:UserName"];
             RepoName = configuration["Github:RepoName"];
             Branch = configuration["Github:Branch"];
             AccessToken = configuration["Github:AccessToken"];
+            InitializeHttpClient();
 
             OctokitClient = new GitHubClient(new Octokit.ProductHeaderValue(UserName))
             {
@@ -105,12 +105,11 @@ namespace AppLensV3
                 UserName,
                 RepoName,
                 id,
-                Branch,
-                AccessToken);
+                Branch);
 
             return await GetRawFile(gistFileUrl);
         }
-        
+
         /// <summary>
         /// Get metadata file.
         /// </summary>
@@ -128,24 +127,23 @@ namespace AppLensV3
                 UserName,
                 RepoName,
                 id,
-                Branch,
-                AccessToken);
+                Branch);
 
             return await GetRawFile(gistFileUrl);
         }
 
         /// <summary>
-        /// Get Resource configuration for search
+        /// Get Resource configuration for search.
         /// </summary>
-        /// <returns>Resource Configuration JSON for search api</returns>
-        public async Task<string> GetResourceConfigFile(){
+        /// <returns>Resource Configuration JSON for search api.</returns>
+        public async Task<string> GetResourceConfigFile()
+        {
             var resourceConfigFileUrl = string.Format(
                 GithubConstants.ResourceConfigFormat,
                 UserName,
                 RepoName,
-                Branch,
-                AccessToken);
-            
+                Branch);
+
             return await GetRawFile(resourceConfigFileUrl);
         }
 
@@ -166,8 +164,7 @@ namespace AppLensV3
                 UserName,
                 RepoName,
                 id,
-                Branch,
-                AccessToken);
+                Branch);
 
             return await GetRawFile(gistFileUrl);
         }
@@ -219,7 +216,13 @@ namespace AppLensV3
                 Sha = Branch
             };
 
-            var allCommits = await OctokitClient.Repository.Commit.GetAll(UserName, RepoName, request);
+            var options = new ApiOptions()
+            {
+                PageSize = 2,
+                PageCount = 30
+            };
+
+            var allCommits = await OctokitClient.Repository.Commit.GetAll(UserName, RepoName, request, options);
             var res = new List<Models.Commit>();
 
             var commits = allCommits
@@ -321,6 +324,7 @@ namespace AppLensV3
                 Timeout = TimeSpan.FromSeconds(30)
             };
 
+            HttpClient.DefaultRequestHeaders.Add("Authorization", $@"token {AccessToken}");
             HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             HttpClient.DefaultRequestHeaders.Add("User-Agent", "applensv3");
         }

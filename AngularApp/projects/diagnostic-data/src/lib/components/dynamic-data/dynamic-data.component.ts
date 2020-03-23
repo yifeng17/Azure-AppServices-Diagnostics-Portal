@@ -27,6 +27,13 @@ import { ChangeAnalysisOnboardingComponent } from '../changeanalysis-onboarding/
 import { ChangesetsViewComponent } from '../changesets-view/changesets-view.component';
 import { AppDependenciesComponent } from '../app-dependencies/app-dependencies.component';
 import { DetectorListAnalysisComponent } from '../detector-list-analysis/detector-list-analysis.component';
+import { SummaryCardsComponent } from '../summary-cards/summary-cards.component';
+import { InsightsV4Component } from '../insights-v4/insights-v4.component';
+import { DropdownV4Component } from '../dropdown-v4/dropdown-v4.component';
+import { CardSelectionV4Component } from '../card-selection-v4/card-selection-v4.component';
+import { VersionService } from '../../services/version.service';
+import { ConnectAppInsightsComponent } from '../connect-app-insights/connect-app-insights.component';
+import { DetectorSearchComponent } from '../detector-search/detector-search.component';
 
 @Component({
   selector: 'dynamic-data',
@@ -36,7 +43,8 @@ import { DetectorListAnalysisComponent } from '../detector-list-analysis/detecto
     TimeSeriesGraphComponent, DataTableComponent, DataSummaryComponent, EmailComponent,
     InsightsComponent, TimeSeriesInstanceGraphComponent, DynamicInsightComponent, MarkdownViewComponent,
     DetectorListComponent, DropdownComponent, CardSelectionComponent, SolutionComponent, GuageControlComponent, FormComponent,
-    ChangeAnalysisOnboardingComponent, ChangesetsViewComponent, AppDependenciesComponent, AppInsightsMarkdownComponent, DetectorListAnalysisComponent
+    ChangeAnalysisOnboardingComponent, ChangesetsViewComponent, AppDependenciesComponent, AppInsightsMarkdownComponent, DetectorListAnalysisComponent,
+    ConnectAppInsightsComponent, DetectorSearchComponent, SummaryCardsComponent, InsightsV4Component, DropdownV4Component, CardSelectionV4Component
   ]
 })
 export class DynamicDataComponent implements OnInit {
@@ -55,11 +63,12 @@ export class DynamicDataComponent implements OnInit {
   @Input() detector: string = '';
   @Input() compilationPackage: CompilationProperties;
   @Input() isAnalysisView: boolean = false;
-  @ViewChild('dynamicDataContainer', { read: ViewContainerRef }) dynamicDataContainer: ViewContainerRef;
-
-  constructor(private componentFactoryResolver: ComponentFactoryResolver) { }
+  @ViewChild('dynamicDataContainer', { read: ViewContainerRef, static: true }) dynamicDataContainer: ViewContainerRef;
+  private isLegacy: boolean;
+  constructor(private componentFactoryResolver: ComponentFactoryResolver, private versionService: VersionService) { }
 
   ngOnInit(): void {
+    this.versionService.isLegacySub.subscribe(isLegacy => this.isLegacy = isLegacy);
     this.dataBehaviorSubject.subscribe((diagnosticData: DiagnosticData) => {
       const component = this._findInputComponent((<Rendering>diagnosticData.renderingProperties).type);
 
@@ -67,7 +76,6 @@ export class DynamicDataComponent implements OnInit {
         return;
       }
       const componentFactory = this.componentFactoryResolver.resolveComponentFactory(component);
-
       const viewContainerRef = this.dynamicDataContainer;
       viewContainerRef.clear();
 
@@ -96,7 +104,7 @@ export class DynamicDataComponent implements OnInit {
       case RenderingType.Email:
         return EmailComponent;
       case RenderingType.Insights:
-        return InsightsComponent;
+        return this.isLegacy ? InsightsComponent : InsightsV4Component;
       case RenderingType.TimeSeriesPerInstance:
         return TimeSeriesInstanceGraphComponent;
       case RenderingType.DynamicInsight:
@@ -106,9 +114,9 @@ export class DynamicDataComponent implements OnInit {
       case RenderingType.DetectorList:
         return DetectorListComponent;
       case RenderingType.DropDown:
-        return DropdownComponent;
+        return this.isLegacy ? DropdownComponent : DropdownV4Component;
       case RenderingType.Cards:
-        return CardSelectionComponent;
+        return this.isLegacy ? CardSelectionComponent : CardSelectionV4Component;
       case RenderingType.Solution:
         return SolutionComponent;
       case RenderingType.Guage:
@@ -123,6 +131,12 @@ export class DynamicDataComponent implements OnInit {
         return AppInsightsMarkdownComponent;
       case RenderingType.DependencyGraph:
         return AppDependenciesComponent;
+      case RenderingType.SummaryCard:
+        return SummaryCardsComponent;
+      case RenderingType.SearchComponent:
+        return DetectorSearchComponent;
+      case RenderingType.AppInsightEnablement:
+        return ConnectAppInsightsComponent;
       default:
         return null;
     }

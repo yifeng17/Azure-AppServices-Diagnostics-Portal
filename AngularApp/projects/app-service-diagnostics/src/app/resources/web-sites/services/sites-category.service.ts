@@ -7,6 +7,7 @@ import { AppType } from '../../../shared/models/portal';
 import { SiteFilteredItem } from '../models/site-filter';
 import { Sku } from '../../../shared/models/server-farm';
 import { WebSitesService } from './web-sites.service';
+import { ArmService } from '../../../shared/services/arm.service';
 
 @Injectable()
 export class SitesCategoryService extends CategoryService {
@@ -21,7 +22,7 @@ export class SitesCategoryService extends CategoryService {
       item: {
         id: 'WindowsAvailabilityAndPerformance',
         name: 'Availability and Performance',
-        description: 'Is your app experiencing downtime or slowness? Click here to run a health checkup to discover issues that may be affect your app’s high availability, by either platform or app issues. ',
+        description: 'Is your app experiencing downtime or slowness? Check out the current health status of your app and discover platform and application issues that might affect your app\'s high availability.',
         keywords: ['Health Check', 'Downtime', '5xx Errors', '4xx Errors', 'CPU', 'Memory'],
         color: 'rgb(208, 175, 239)',
         createFlowForCategory: false,
@@ -111,29 +112,33 @@ export class SitesCategoryService extends CategoryService {
         createFlowForCategory: true,
         chatEnabled: false
       }
-    },
-    //Separate tile for Navigator for Windows Web App
-    {
-        appType: AppType.WebApp,
-        platform: OperatingSystem.windows,
-        stack: '',
-        sku: Sku.All,
-        hostingEnvironmentKind: HostingEnvironmentKind.All,
-        item: {
-            id: 'navigator',
-            name: 'Navigator',
-            description: 'Are you having issues after making changes on your app and its dependencies? Review Navigator to investigate the recent changes in your app and dependencies.',
-            keywords: ['Dependency Map', 'Changes', 'Dependency', 'Change Analysis'],
-            color: 'rgb(255, 217, 119)',
-            createFlowForCategory: false,
-            chatEnabled: false,
-            overridePath: `resource${this._resourceService.resourceIdForRouting}/detectors/navigator`
-        }
     }
   ];
 
-  constructor(private _resourceService: WebSitesService, private _websiteFilter: WebSiteFilter) {
+  constructor(private _resourceService: WebSitesService, private _websiteFilter: WebSiteFilter, private _armService: ArmService) {
     super();
+    if(this._armService.isPublicAzure) {
+      //Separate tile for Navigator for Windows Web App only when the site is on publicx Azure.
+      this._sitesCategories.push(
+        {
+          appType: AppType.WebApp,
+          platform: OperatingSystem.windows,
+          stack: '',
+          sku: Sku.All,
+          hostingEnvironmentKind: HostingEnvironmentKind.All,
+          item: {
+              id: 'navigator',
+              name: 'Navigator (Preview)',
+              description: 'Are you having issues after making changes on your app and its dependencies? Review Navigator to investigate the recent changes in your app and dependencies.',
+              keywords: ['Dependency Map', 'Changes', 'Dependency', 'Change Analysis'],
+              color: 'rgb(255, 217, 119)',
+              createFlowForCategory: false,
+              chatEnabled: false,
+              overridePath: `resource${this._resourceService.resourceIdForRouting}/detectors/navigator`
+          }
+      }
+      );      
+    }
     this._sitesCategories.push(this._getDiagnosticToolsCategory(this._resourceService.resourceIdForRouting));
     this._addCategories(
       this._websiteFilter.transform(this._sitesCategories)
@@ -158,4 +163,5 @@ export class SitesCategoryService extends CategoryService {
       }
     };
   }
+
 }

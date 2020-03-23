@@ -22,7 +22,6 @@ export class GenericDetectorComponent implements OnDestroy {
 
   constructor(private _activatedRoute: ActivatedRoute, private _diagnosticService: DiagnosticService, private _resourceService: ResourceService, private _authServiceInstance: AuthService, private _telemetryService: TelemetryService,
     private _navigator: FeatureNavigationService, private _router: Router) {
-
     if (this._activatedRoute.snapshot.params['analysisId'] != null) {
       this.analysisDetector = this._activatedRoute.snapshot.params['analysisId'];
       if (this._activatedRoute.snapshot.params['detectorName'] != null) {
@@ -32,7 +31,6 @@ export class GenericDetectorComponent implements OnDestroy {
         this.detector = this._activatedRoute.snapshot.params['analysisId'];
         this.analysisDetector = this.detector;
       }
-
     }
     else if (this._activatedRoute.snapshot.params['detectorName'] != null) {
       this.detector = this._activatedRoute.snapshot.params['detectorName'];

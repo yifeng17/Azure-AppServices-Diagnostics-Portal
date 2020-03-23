@@ -9,7 +9,10 @@
 	"azureServiceName": "",
 	"armApiVersion": "",
 	"isSearchEnabled": true,
-	"isApplicableForLiveChat": false,
+	"liveChatConfig": {
+		"isApplicableForLiveChat": false,
+		"supportTopicIds": []
+	},
 	"categories": [{
 			"id": "",
 			"name": "",

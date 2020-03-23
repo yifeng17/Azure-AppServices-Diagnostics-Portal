@@ -11,10 +11,9 @@ export class VersioningHelper {
         if (isBetaSubscription) {
             return true;
         }
-        
         let firstDigit = "0x" + subscriptionId.substr(0, 1);
 
-        // doing a 70:30 split for now
-        return (parseInt(firstDigit, 16) >= 12) && enableV2;
+        // roughly split of 5% of subscriptions to use new feature.
+        return (parseInt(firstDigit, 16) > 14) && enableV2;
     }
 }

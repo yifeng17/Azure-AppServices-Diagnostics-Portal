@@ -3,27 +3,40 @@
 <ng-template #loadingAppInsight>
   <div>
     <i class="fa fa-circle-o-notch fa-2x fa-spin spin-icon" aria-hidden="true"></i>
-    <span [@loadingAnimation]="loadingAppInsightsResource ? 'shown' : 'hiden'" class="loading-message">Checking Application Insights</span>
+    <span [@loadingAnimation]="loadingAppInsightsResource ? 'shown' : 'hiden'" class="loading-message">Checking
+      Application Insights</span>
   </div>
 </ng-template>
 
 <ng-template #loadingAppInsightsData>
   <div>
     <i class="fa fa-circle-o-notch fa-2x fa-spin spin-icon" aria-hidden="true"></i>
-    <span [@loadingAnimation]="loadingAppInsightsQueryData ? 'shown' : 'hiden'" class="loading-message">Loading Application Insight Analysis</span>
+    <span [@loadingAnimation]="loadingAppInsightsQueryData ? 'shown' : 'hiden'" class="loading-message">Loading
+      Application Insight Analysis</span>
   </div>
 </ng-template>
 
 <ng-template #loadInternalView>
   <div *ngFor="let metadata of appInsightQueryMetaDataList;let i = index" class="dynamic-data-container">
-    <data-container [title]="metadata.title" [description]="metadata.description" [applicationInsightContainerStyle]="1">
+
+    <data-container *ngIf="metadata.dataTable == null" [title]="metadata.title" [description]="metadata.description"
+      [applicationInsightContainerStyle]="1">
       <markdown [data]="getMetaDataMarkdown(metadata)"></markdown>
     </data-container>
+
+    <div *ngIf="metadata.dataTable != null">
+      <div *ngFor="let data of appInsightDataList;let i = index" class="dynamic-data-container">
+        <data-container [title]="data.title" [description]="data.description" [applicationInsightContainerStyle]="1">
+          <dynamic-data [diagnosticData]="data.diagnosticData" [startTime]="startTime" [endTime]="endTime">
+          </dynamic-data>
+        </data-container>
+      </div>
+    </div>
   </div>
 </ng-template>
 
 <ng-template #appInsightsEnabled>
-  <div class="panel panel-default">
+  <div *ngIf="showSectionHeader" class="panel panel-default">
     <div class="panel-heading" class="app-insights-header">
       <h5 class="panel-title">
         <span class="fa status-icon" [class.fa-info-circle]="true"></span>
@@ -37,10 +50,12 @@
             <td class="table-value">
               <div class="app-insights-markdown">
                 <div>
-                  Using application insights will help you detect and diagnose issues in your web application code easily.
+                  Using application insights will help you detect and diagnose issues in your web application code
+                  easily.
                 </div>
 
-                <button type="button" class="btn btn-info" class="app-insights-blade" (click)="this._appInsightsService.openAppInsightsBlade()">
+                <button type="button" class="btn btn-info" class="app-insights-blade"
+                  (click)="this._appInsightsService.openAppInsightsBlade()">
                   Open Application Insights Blade
                   <i class="fa fa-chevron-right"></i>
                 </button>
@@ -71,11 +86,13 @@
                   <div class="app-insights-markdown">
                     <div>
                       Looks like there is no application insights resource associated with your app
-                      <br />Using application insights will help you detect and diagnose issues in your web application code very
+                      <br />Using application insights will help you detect and diagnose issues in your web application
+                      code very
                       easily.
                     </div>
 
-                    <button type="button" class="btn btn-info" class="app-insights-blade" (click)="this._appInsightsService.openAppInsightsBlade()">
+                    <button type="button" class="btn btn-info" class="app-insights-blade"
+                      (click)="this._appInsightsService.openAppInsightsBlade()">
                       Enable Application Insights
                       <i class="fa fa-chevron-right"></i>
                     </button>
@@ -89,9 +106,12 @@
       <div *ngIf="isAppInsightsEnabled">
         <div *ngIf="!loadingAppInsightsQueryData; else loadingAppInsightsData">
           <div *ngFor="let data of appInsightDataList;let i = index" class="dynamic-data-container">
-            <data-container [title]="data.title" [description]="data.description" [applicationInsightContainerStyle]="1">
-              <dynamic-data [diagnosticData]="data.diagnosticData" [startTime]="startTime" [endTime]="endTime"></dynamic-data>
-              <button type="button" class="btn btn-info" class="app-insights-blade" (click)="_appInsightsService.openAppInsightsExtensionBlade(data.poralBladeInfo.bladeName)">
+            <data-container [title]="data.title" [description]="data.description"
+              [applicationInsightContainerStyle]="1">
+              <dynamic-data [diagnosticData]="data.diagnosticData" [startTime]="startTime" [endTime]="endTime">
+              </dynamic-data>
+              <button type="button" class="btn btn-info" class="app-insights-blade"
+                (click)="_appInsightsService.openAppInsightsExtensionBlade(data.poralBladeInfo.bladeName)">
                 {{data.poralBladeInfo.description}}
                 <i class="fa fa-chevron-right"></i>
               </button>

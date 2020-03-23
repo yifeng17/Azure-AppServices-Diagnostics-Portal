@@ -1,7 +1,6 @@
 import { HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Headers } from '@angular/http';
 import { Communication } from 'diagnostic-data';
 import { BackendCtrlService } from './backend-ctrl.service';
 import { AuthService } from '../../startup/services/auth.service';

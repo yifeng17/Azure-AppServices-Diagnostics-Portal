@@ -8,9 +8,14 @@ export class ArmResourceConfig {
 	azureServiceName?: string;
 	armApiVersion?: string;
 	isSearchEnabled?: boolean;
-	isApplicableForLiveChat?: boolean;
+	liveChatConfig?: LiveChatConfig
 	categories?: Array<Category>;
 	pesId?: string;
+}
+
+export interface LiveChatConfig {
+	isApplicableForLiveChat?: boolean;
+	supportTopicIds?: string[];
 }
 
 export interface GenieConfig {

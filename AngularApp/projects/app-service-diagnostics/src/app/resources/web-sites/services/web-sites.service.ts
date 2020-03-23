@@ -6,12 +6,12 @@ import { AppAnalysisService } from '../../../shared/services/appanalysis.service
 import { ArmService } from '../../../shared/services/arm.service';
 import { Sku } from '../../../shared/models/server-farm';
 import { IDiagnosticProperties } from '../../../shared/models/diagnosticproperties';
-import { Observable, BehaviorSubject } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
 import { PortalReferrerMap } from '../../../shared/models/portal-referrer-map';
 import { DetectorType } from 'diagnostic-data';
+import { of,  Observable, BehaviorSubject } from 'rxjs';
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class WebSitesService extends ResourceService {
 
     private _resourceGroup: string;
@@ -30,8 +30,8 @@ export class WebSitesService extends ResourceService {
 
     public getIbizaBladeToDetectorMapings():Observable<PortalReferrerMap[]> {
         return this.warmUpCallFinished.pipe(flatMap( ()=>{
-            let bladeToDetectorMap:PortalReferrerMap[]; 
-            
+            let bladeToDetectorMap:PortalReferrerMap[];
+
             bladeToDetectorMap = [{
                 ReferrerExtensionName: 'Websites',
                 ReferrerBladeName: 'CertificatesBlade',
@@ -46,7 +46,7 @@ export class WebSitesService extends ResourceService {
                 DetectorType: DetectorType.Detector,
                 DetectorId: 'configuringsslandcustomdomains'
             }];
-            
+
 
             if(this.appType == AppType.WebApp) {
                 bladeToDetectorMap.push({
@@ -57,23 +57,23 @@ export class WebSitesService extends ResourceService {
                     DetectorId: 'backupFailures'
                 });
             }
-            return Observable.of(bladeToDetectorMap);            
+            return of(bladeToDetectorMap);
         }  ));
     }
 
     public getPesId(): Observable<string> {
         return this.warmUpCallFinished.pipe(flatMap(() => {
             if (this.appType == AppType.WebApp && this.platform == OperatingSystem.windows){
-                return Observable.of("14748");
+                return of("14748");
             }
             else if (this.appType == AppType.WebApp && this.platform == OperatingSystem.linux){
-                return Observable.of("16170");
+                return of("16170");
             }
             else if (this.appType == AppType.FunctionApp){
-                return Observable.of("16072");
+                return of("16072");
             }
             else{
-                return Observable.of(null);
+                return of(null);
             }
         }));
     }
@@ -86,11 +86,55 @@ export class WebSitesService extends ResourceService {
         return this.appType === AppType.WebApp ? this.platform === OperatingSystem.windows ? 'Web App (Windows)' : 'Web App (Linux)' : 'Function App';
     }
 
-    public get isApplicableForLiveChat(): boolean {
+    public get isApplicableForLiveChat(): boolean {        
         return this.resource
-            && (this.sku & Sku.Paid) > 0
-            && (this.appType & AppType.WebApp) > 0
-            && (this.platform & (OperatingSystem.windows | OperatingSystem.linux)) > 0;
+            && (this.appType & AppType.WebApp) > 0 //Do not enable chat for Function apps
+            && (this.platform & (OperatingSystem.windows | OperatingSystem.linux)
+            ) > 0;
+    }
+
+    public get liveChatEnabledSupportTopicIds():string[] {
+        if(this.isApplicableForLiveChat) {
+            if(this.appType === AppType.FunctionApp) {
+                return [];
+            }
+            else if (this.appType === AppType.WebApp) {
+                if(this.platform === OperatingSystem.windows) {
+                    return [
+                        '32583701', //Availability and Performance/Web App experiencing High CPU
+                        '32542218', //Availability and Performance/Web App Down
+                        '32581616', //Availability and Performance/Web App experiencing High Memory Usage
+                        '32457411', //Availability and Performance/Web App Slow
+                        '32570954', //Availability and Performance/Web App Restarted
+                        '32440123', //Configuration and Management/Configuring SSL
+                        '32440122', //Configuration and Management/Configuring custom domain names
+                        '32542210', //Configuration and Management/IP Configuration
+                        '32581615', //Configuration and Management/Deployment Slots
+                        '32542208', //Configuration and Management/Backup and Restore
+                        '32589277', //How Do I/Configure domains and certificates,
+                        '32589281', //How Do I/IP Configuration
+                        '32588774', // Deployment/Visual Studio
+                        '32589276' //How Do I/Backup and Restore
+                      ];
+                }
+                else if (this.platform === OperatingSystem.linux) {
+                    return [
+                        '32542218', //Availability and Performance/Web App Down
+                        '32570954', //Availability and Performance/Web App Restarted
+                        '32440123', //Configuration and Management/Configuring SSL
+                        '32440122', //Configuration and Management/Configuring custom domain names
+                        '32542208', //Configuration and Management/Backup and Restore
+                        '32542210' //Configuration and Management/IP Configuration
+                      ]; 
+                }
+                else {
+                    return [];
+                }
+            }
+        }
+        else {
+            return [];
+        }
     }
 
     public getSitePremierAddOns(resourceUri: string): Observable<any> {

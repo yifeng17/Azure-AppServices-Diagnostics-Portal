@@ -12,15 +12,16 @@ textarea {
 %chat-message {
     font-size: 13px;
     display: inline-block;
-    max-width: 50%;
     padding: 10px;
     padding-right: 30px;
     border-radius: 10px;
+    margin-bottom: 10px;
 }
 
 .message-sent-by-system {
     @extend %chat-message;
 
+    max-width: 50%;
     background-color: $chat-message-system-color;
     border-bottom-left-radius: 0;
     border: $chat-message-system-border;
@@ -30,6 +31,28 @@ textarea {
 .message-sent-by-user {
     @extend %chat-message;
 
+    max-width: 50%;
+    background-color: $chat-message-user-color;
+    border-bottom-right-radius: 0;
+    border: none;
+    float: right;
+    color: $chat-message-user-text-color;
+}
+
+.message-sent-by-system-genie {
+    @extend %chat-message;
+
+    max-width: 80%;
+    background-color: $chat-message-system-color;
+    border-bottom-left-radius: 0;
+    border: $chat-message-system-border;
+    float: left;
+}
+
+.message-sent-by-user-genie {
+    @extend %chat-message;
+
+    max-width: 80%;
     background-color: $chat-message-user-color;
     border-bottom-right-radius: 0;
     border: none;

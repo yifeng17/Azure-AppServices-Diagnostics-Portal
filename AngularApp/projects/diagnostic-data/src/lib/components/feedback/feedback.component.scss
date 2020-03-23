@@ -10,6 +10,7 @@ body{ margin: 20px; }
 .feedback-button {
     color: white;
     background:#416dea;
+    border: 1px solid #4b90d5;
 }
 
 textarea {
@@ -62,7 +63,7 @@ textarea:focus {
 }
 
 .rating-row {
-  width:150px; 
+  width:150px;
   margin-top: 0px;
 }
 
@@ -93,15 +94,15 @@ textarea:focus {
 
 .rating-div {
   padding: 15px, 0px, 15px, 15px;
-  max-width: 350px; 
-  border-right: rgb(169, 169, 169); 
+  max-width: 350px;
+  border-right: rgb(169, 169, 169);
   margin-left:0px;
 }
 
 .rating-hint {
-  font-size: 12px; 
-  font-weight:500; 
-  padding-top:12px; 
+  font-size: 12px;
+  font-weight:500;
+  padding-top:12px;
   margin-left:2px;
 }
 
@@ -114,11 +115,11 @@ textarea:focus {
 }
 
 .rating-comments {
-  width: 100%; 
-  border:white; 
-  margin-bottom:-5px; 
-  padding:5px 15px 0px 15px; 
-  height:60px; 
+  width: 100%;
+  border:white;
+  margin-bottom:-5px;
+  padding:5px 15px 0px 15px;
+  height:60px;
   font-size:12px;
 }
 

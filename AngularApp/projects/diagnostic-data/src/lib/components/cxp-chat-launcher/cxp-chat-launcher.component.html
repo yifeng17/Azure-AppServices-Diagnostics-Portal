@@ -1,0 +1,26 @@
+<div #chatComponentContainer *ngIf="isComponentInitialized()">
+  <div class="cxpChat-ConfContainer" *ngIf="showChatConfDialog">
+    <div class="cxpChat-ConfText">
+      <div>
+        <img src="assets/img/jen.jpg" class="agentImage">
+        <span class="agentName"> Jen </span>
+      </div>
+      <hr>
+      <div>
+        I'd love to help you out with your issue and connect you with our quick help chat team.
+      </div>
+    </div>
+    <div class="cxpChat-actionBtnContainer">
+      <input class="custom-button inactive-button white-border" (click)="hideChatConfDialog(true, 'CancelButton')" type="button"
+        value="Maybe later" />
+      <input class="custom-button default-button white-border" (click)="openChatPopup()" type="button"
+        value="Confirm & Start!" />
+    </div>
+  </div>
+
+  <div *ngIf="showChatConfDialog" class="arrow-bottom"></div>
+
+  <div class='chatBubble' (click)="toggleChatConfDialog()">
+    <i class="fa fa-comments chatIcon" aria-hidden="true"></i>
+  </div>
+</div>

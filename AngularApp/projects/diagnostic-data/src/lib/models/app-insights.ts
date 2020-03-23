@@ -1,4 +1,4 @@
-import {  DiagnosticData } from '../models/detector';
+import {  DiagnosticData, DataTableResponseObject } from '../models/detector';
 
 export class AppInsightQueryMetadata {
     title: string;
@@ -6,12 +6,12 @@ export class AppInsightQueryMetadata {
     query: string;
     poralBladeInfo: BladeInfo;
     renderingProperties: any;
+    dataTable: DataTableResponseObject;
   }
   
   export class AppInsightData {
     title: string;
     description: string;
-    table: any;
     poralBladeInfo: BladeInfo;
     renderingProperties: any;
     diagnosticData: DiagnosticData;

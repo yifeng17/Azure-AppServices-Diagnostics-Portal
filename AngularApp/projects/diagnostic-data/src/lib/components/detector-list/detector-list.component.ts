@@ -51,13 +51,13 @@ export class DetectorListComponent extends DataRenderBaseComponent {
 
     this._diagnosticService.getDetectors().subscribe(detectors => {
       this.detectorMetaData = detectors.filter(detector => this.renderingProperties.detectorIds.indexOf(detector.id) >= 0);
-      this.detectorViewModels = this.detectorMetaData.map(detector => this.getDetectorViewModel(detector));
+      this.detectorViewModels = this.detectorMetaData.map(detector => this.getDetectorViewModel(detector, this.renderingProperties.additionalParams));
 
       const requests: Observable<any>[] = [];
       this.detectorViewModels.forEach((metaData, index) => {
         requests.push((<Observable<DetectorResponse>>metaData.request).pipe(
           map((response: DetectorResponse) => {
-            this.detectorViewModels[index] = this.updateDetectorViewModelSuccess(metaData, response);            
+            this.detectorViewModels[index] = this.updateDetectorViewModelSuccess(metaData, response);
             return {
               'ChildDetectorName': this.detectorViewModels[index].title,
               'ChildDetectorId': this.detectorViewModels[index].metadata.id,
@@ -91,7 +91,17 @@ export class DetectorListComponent extends DataRenderBaseComponent {
       });
   }
 
-  private getDetectorViewModel(detector: DetectorMetaData) {
+  private getDetectorViewModel(detector: DetectorMetaData, additionalParams?: string) {
+      let queryString = null;
+      if(additionalParams) {
+          let contextToPass = <Object>JSON.parse(additionalParams);
+          queryString = '';
+          for(var key in contextToPass) {
+              if(contextToPass.hasOwnProperty(key)) {
+                queryString += `&${key}=${encodeURIComponent(contextToPass[key])}`;
+              }
+          }
+      }
     return {
       title: detector.name,
       metadata: detector,
@@ -101,7 +111,7 @@ export class DetectorListComponent extends DataRenderBaseComponent {
       statusIcon: null,
       expanded: false,
       response: null,
-      request: this._diagnosticService.getDetector(detector.id, this._detectorControl.startTimeString, this._detectorControl.endTimeString)
+      request: this._diagnosticService.getDetector(detector.id, this._detectorControl.startTimeString, this._detectorControl.endTimeString, this._detectorControl.shouldRefresh, this._detectorControl.isInternalView, queryString)
     };
   }
 

@@ -86,6 +86,17 @@
     z-index: 0;
 }
 
+.gray-line {
+    background: #F0F0F0;
+    top: 0px;
+    width: 6px;
+    height: 100%;
+    position: absolute;
+    left: 15px;
+    border: 0;
+    z-index: 0;
+}
+
 .list-text {
     margin-top: 10px;
     margin-bottom: 20px;
@@ -192,4 +203,42 @@
 .analysis-content
 {
     width:98%
+}
+
+.detector-insight:hover
+{
+    background-color: hsla(207, 100%, 49%, 0.1);
+}
+
+.list-text {
+    transition: all .2s;
+}
+
+.expand-section {
+    display: inline;
+    font-size: 15px;
+    vertical-align: middle;
+    margin-left: 1px
+}
+
+.expand-icon{
+    background-color: white;
+    color: black;   
+}
+
+.successful-check{
+    opacity: 1;
+    visibility: visible;
+    height: '';
+}
+
+.hide-successful-check {
+    opacity: 0;
+    visibility: hidden;
+    height: 0;
+    
+}
+
+.list-wrapper-genie {
+    top: 10px;
 }

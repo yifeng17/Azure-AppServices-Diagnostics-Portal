@@ -80,7 +80,8 @@ export interface SupportTopic {
 
 export enum DetectorType{
     Detector = "Detector",
-    Analysis = "Analysis"
+    Analysis = "Analysis",
+    CategoryOverview = "CategoryOverview"
 }
 export enum RenderingType {
     NoGraph = 0,
@@ -104,7 +105,10 @@ export enum RenderingType {
     ChangesView,
     ApplicationInsightsView,
     DependencyGraph,
-    DownTime
+    DownTime,
+    SummaryCard,
+    SearchComponent,
+    AppInsightEnablement
 }
 
 export enum TimeSeriesType {
@@ -180,6 +184,7 @@ export interface DynamicInsightRendering extends Rendering {
 
 export interface DetectorListRendering extends Rendering {
     detectorIds: string[];
+    additionalParams?: string;
 }
 
 export interface MarkdownRendering extends Rendering {

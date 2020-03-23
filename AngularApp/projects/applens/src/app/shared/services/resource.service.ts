@@ -12,6 +12,8 @@ export class ResourceService {
   public azureCommImpactedServicesList: string;
   public pesId: string;
   public staticSelfHelpContent: string;
+  public altIcons: { [path: string]: string };
+  public searchSuffix: string;
 
   protected _observerResource: any = null;
   protected _armResource: ArmResource;
@@ -25,6 +27,8 @@ export class ResourceService {
     this.azureCommImpactedServicesList = inputs.azureCommImpactedServicesList;
     this.pesId = inputs.pesId;
     this.staticSelfHelpContent = inputs.staticSelfHelpContent;
+    this.altIcons = inputs.altIcons;
+    this.searchSuffix = inputs.searchSuffix;
   }
 
   public startInitializationObservable() {
@@ -37,6 +41,13 @@ export class ResourceService {
 
   public get ArmResource(): ArmResource {
     return this._armResource;
+  }
+
+  public getPesId(): Observable<string>{
+    if (this.pesId){
+      return Observable.of(this.pesId);
+    }
+    return Observable.of(null);
   }
 
   public getResourceName(): string {

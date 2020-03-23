@@ -38,7 +38,11 @@ function Get-RequestHeader {
 
         [parameter(Mandatory = $false)]
         [boolean]
-        $IsInternalView = $true
+        $IsInternalView = $true,
+
+        [parameter(Mandatory = $false)]
+        [System.String]
+        $DetectorId = ""
     )
 
     $authenticationResult = Get-AuthenticationResult
@@ -51,6 +55,7 @@ function Get-RequestHeader {
         "X-ms-path-query"      = "$Path"
         "x-ms-internal-client" = $IsInternalClient
         "x-ms-internal-view"   = $IsInternalView
+        "diag-publishing-detector-id" = $DetectorId
     }
 
     return $header
@@ -77,6 +82,27 @@ function Get-ResourceIdFromSettings {
     }
 
     return $resourceId
+}
+
+function Get-DetectorIdFromSettings {
+
+    $ErrorActionPreference = 'Stop'
+    $VerbosePreference = 'Continue'
+
+    $json = [System.IO.File]::ReadAllText("$($PSScriptRoot)\..\..\Detector\package.json")
+    $jsonObject = ConvertFrom-Json $json
+    $jsonObject = $jsonObject.packageDefinition
+    if ($null -eq $jsonObject.id)
+    {
+        $detectorIdFromSettings = "NEW_DETECTOR"
+    }
+    else 
+    {
+        $detectorIdFromSettings = $jsonObject.id
+    }
+    
+    Write-Verbose "Publishing DetectorId = $detectorIdFromSettings"
+    return $detectorIdFromSettings
 }
 
 function Set-ResourceInfo {
@@ -212,8 +238,10 @@ function Start-Compilation {
     $path = $versionPrefix + $ResourceId + "/diagnostics/query";
     Write-Verbose "Get path: $path"
 
+    $publishingDetectorId = Get-DetectorIdFromSettings
+    
     # Get request header
-    $header = Get-RequestHeader -Path  $path -IsInternalClient $IsInternalClient -IsInternalView $IsInternalView
+    $header = Get-RequestHeader -Path  $path -IsInternalClient $IsInternalClient -IsInternalView $IsInternalView -DetectorId $publishingDetectorId
 
     # Passing request body with detector location, without specifying resourceId will be fine
     $codeString = [System.IO.File]::ReadAllText($FilePath)

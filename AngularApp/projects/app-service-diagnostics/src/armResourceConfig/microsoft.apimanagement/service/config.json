@@ -9,7 +9,10 @@
 	"azureServiceName": "Azure API Management Service",
 	"armApiVersion": "2018-06-01-preview",
 	"isSearchEnabled": true,
-	"isApplicableForLiveChat": false,
+	"liveChatConfig": {
+		"isApplicableForLiveChat": false,
+		"supportTopicIds": []
+	},
 	"categories": [{
 			"id": "Service Availability",
 			"name": "Service Availability",

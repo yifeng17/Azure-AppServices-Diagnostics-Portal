@@ -131,7 +131,7 @@ export class MonitoringSession {
     StartDate: string;
     EndDate: string;
     ProcessesToMonitor: string;
-    MonitorScmProcess: boolean;
+    MonitorScmProcesses: boolean;
     CpuThreshold: number;
     ThresholdSeconds: number;
     MonitorDuration: number;

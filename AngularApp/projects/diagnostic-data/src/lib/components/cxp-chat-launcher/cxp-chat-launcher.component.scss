@@ -1,0 +1,109 @@
+@import "../../../../../app-service-diagnostics/src/styles/common/variables";
+@import "../../../../../app-service-diagnostics/src/styles/controls/buttons";
+
+$chatBubble-color:#008080;
+$zIndex:99;
+
+.chatBubble {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width:4em;
+    height:4em;
+    bottom:10px;
+    left:10px;
+    text-align: center;
+    box-shadow: 0 0 15px #00214B;
+    border-radius:50%;
+    cursor: pointer;
+    background-color: $chatBubble-color;
+    z-index:$zIndex;
+}
+
+.agentImage {
+    height: 2em;
+    width: 2em;
+    border-radius: 50%;
+}
+
+.agentName {
+    padding-left:4px;
+}
+
+.chatIcon {
+    font-size:1.7em;
+    color: ghostwhite;
+}
+
+ .arrow-bottom  {
+    width: 2.5%;
+    height: 0;
+    position:fixed;
+    bottom:4.9em;
+    left:2em;
+    z-index:$zIndex + 1;
+ }
+
+ .arrow-bottom::before {
+    content: '';
+    display: block;
+    width: 0;
+    margin-top:-10px;
+    z-index:$zIndex + 1;
+      
+    border-left: 10px solid transparent;
+    border-right: 10px solid  transparent;
+    border-top: 10px solid $chatBubble-color;
+    border-bottom: 10px solid transparent;
+}
+
+.cxpChat-ConfContainer {
+    background: $chatBubble-color;
+    color:white;
+    font-size:14px;
+    padding: 5px;
+    z-index:$zIndex;
+    border-radius: 2px;
+    border:solid 1px $chatBubble-color;
+    position: fixed;
+    left:1.8em;
+    bottom:5.2em;    
+}
+
+
+.cxpChat-ConfText {
+    padding-top: 18px;
+    padding-right: 24px;
+    padding-bottom: 20px;
+    padding-left: 24px;  
+    width: 30em;  
+}
+
+
+.cxpChat-actionBtnContainer {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 10px;
+}
+
+.inactive-button {
+    background-color: $chatBubble-color;
+    &:hover {
+        background-color: $primary-color;
+    }
+}
+
+.default-button {
+    background-color: white;
+    color: $chatBubble-color;
+    font-weight: bold;
+    &:hover{
+        color: white;
+        background-color: $primary-color;
+    }
+}
+
+.white-border {
+    border: 1px solid white;
+}

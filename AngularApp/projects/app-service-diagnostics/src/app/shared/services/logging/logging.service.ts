@@ -79,7 +79,7 @@ export class LoggingService {
 
                         if (resourceEnvelope && resourceEnvelope.properties) {
                             this.platform = SiteExtensions.operatingSystem(resourceEnvelope.properties) === OperatingSystem.windows ? 'windows' : 'linux';
-                            this._appType = resourceEnvelope.properties.kind.toLowerCase().indexOf('functionapp') >= 0 ? 'functionapp' : 'webapp';
+                            this._appType = resourceEnvelope.properties.kind && resourceEnvelope.properties.kind.toLowerCase().indexOf('functionapp') >= 0 ? 'functionapp' : 'webapp';
                         }
 
                         this.LogStartUpInfo(this._startUpInfo);
@@ -168,6 +168,14 @@ export class LoggingService {
     LogFeedbackMessage(source: string, message: string, category: string = 'Availability') {
         this._log(CommonLogEventType[CommonLogEventType.FeedbackMessage], category, {
             source: source,
+            message: message
+        });
+    }
+
+    LogGenieFeedbackMessage(source: string, rating: string, message: string, category: string = 'Availability') {
+        this._log(CommonLogEventType[CommonLogEventType.FeedbackMessage], category, {
+            source: source,
+            rating: rating,
             message: message
         });
     }

@@ -8,7 +8,11 @@
             "versionPrefix": "v4/",
             "azureCommImpactedServicesList": "appservice",
             "pesId": "14748",
-            "staticSelfHelpContent": "microsoft.web"
+            "staticSelfHelpContent": "microsoft.web",
+            "altIcons": {
+                "Xenon": "assets/img/WebAppForContainers.svg"
+            },
+            "searchSuffix": "AZURE WEB APP"
         },
         {
             "service": "AseService",
@@ -18,7 +22,8 @@
             "versionPrefix": "v2/",
             "azureCommImpactedServicesList": "appservice",
             "pesId": "16533",
-            "staticSelfHelpContent": "microsoft.ase"
+            "staticSelfHelpContent": "microsoft.ase",
+            "searchSuffix": "AZURE APP SERVICE ENVIRONMENT"
         },
         {
             "service": "ResourceService",
@@ -28,7 +33,8 @@
             "versionPrefix": "",
             "azureCommImpactedServicesList": "logicapp",
             "pesId": "15791",
-            "staticSelfHelpContent": "microsoft.logicapps"
+            "staticSelfHelpContent": "microsoft.logicapps",
+            "searchSuffix": "AZURE LOGIC APP"
         },
         {
             "service": "ResourceService",
@@ -38,7 +44,8 @@
             "versionPrefix": "",
             "azureCommImpactedServicesList": "kubernetesservice",
             "pesId": "16450",
-            "staticSelfHelpContent": "microsoft.containerservice"
+            "staticSelfHelpContent": "microsoft.containerservice",
+            "searchSuffix": "AZURE KUBERNETES CLUSTER"
         },
         {
             "service": "ResourceService",
@@ -48,7 +55,19 @@
             "versionPrefix": "",
             "azureCommImpactedServicesList": "openShiftManagedClusters",
             "pesId": "",
-            "staticSelfHelpContent": ""
+            "staticSelfHelpContent": "",
+            "searchSuffix": "AZURE KUBERNETES CLUSTER"
+        },
+        {
+            "service": "ResourceService",
+            "resourceType": "Microsoft.RedHatOpenShift/openShiftClusters",
+            "templateFileName": "OpenShiftClusters",
+            "imgSrc": "assets/img/Azure-Red-Hat-OpenShift-Logo.png",
+            "versionPrefix": "",
+            "azureCommImpactedServicesList": "openShiftClusters",
+            "pesId": "16734",
+            "staticSelfHelpContent": "",
+            "searchSuffix": "AZURE RED HAT OPENSHIFT CLUSTER"
         },
         {
             "service": "ResourceService",
@@ -56,7 +75,8 @@
             "templateFileName": "BotService",
             "imgSrc": "assets/img/BotService-Logo.png",
             "versionPrefix": "",
-            "azureCommImpactedServicesList": "botServices"
+            "azureCommImpactedServicesList": "botServices",
+            "searchSuffix": "AZURE BOT SERVICE"
         },
         {
             "service": "ResourceService",
@@ -64,7 +84,8 @@
             "templateFileName": "ServiceFabric",
             "imgSrc": "assets/img/Azure-Service-Fabric-Logo.png",
             "versionPrefix": "",
-            "azureCommImpactedServicesList": "serviceFabric"
+            "azureCommImpactedServicesList": "serviceFabric",
+            "searchSuffix": "AZURE SERVICE FABRIC"
         },
         {
             "service": "ResourceService",
@@ -74,7 +95,8 @@
             "versionPrefix": "",
             "azureCommImpactedServicesList": "",
             "pesId": "15551",
-            "staticSelfHelpContent": "microsoft.apim"
+            "staticSelfHelpContent": "microsoft.apim",
+            "searchSuffix": "AZURE API MANAGEMENT SERVICE"
         },
         {
             "service": "ResourceService",
@@ -84,7 +106,8 @@
             "versionPrefix": "",
             "azureCommImpactedServicesList": "",
             "pesId": "16512",
-            "staticSelfHelpContent": "microsoft.asc"
+            "staticSelfHelpContent": "microsoft.asc",
+            "searchSuffix": "AZURE APP SERVICE CERTIFICATE"
         },
         {
             "service": "ResourceService",
@@ -94,7 +117,8 @@
             "versionPrefix": "",
             "azureCommImpactedServicesList": "",
             "pesId": "16513",
-            "staticSelfHelpContent": "microsoft.asd"
+            "staticSelfHelpContent": "microsoft.asd",
+            "searchSuffix": "AZURE APP SERVICE DOMAIN"
         },
         {
             "service": "ResourceService",
@@ -104,7 +128,8 @@
             "versionPrefix": "",
             "azureCommImpactedServicesList": "",
             "pesId": "",
-            "staticSelfHelpContent": ""
+            "staticSelfHelpContent": "",
+            "searchSuffix": "AZURE SPRING CLOUD SERVICE"
         },
         {
             "service": "ResourceService",
@@ -114,9 +139,10 @@
             "versionPrefix": "",
             "azureCommImpactedServicesList": "registries",
             "pesId": "16533",
-            "staticSelfHelpContent": ""
+            "staticSelfHelpContent": "",
+            "searchSuffix": "AZURE CONTAINER REGISTRY"
         },
-		{
+        {
             "service": "ResourceService",
             "resourceType": "Microsoft.Automation/automationAccounts",
             "templateFileName": "AzureAutomation",
@@ -124,9 +150,10 @@
             "versionPrefix": "",
             "azureCommImpactedServicesList": "AzureAutomation",
             "pesId": "15607",
-            "staticSelfHelpContent": ""
+            "staticSelfHelpContent": "",
+            "searchSuffix": "AZURE AUTOMATION ACCOUNT"
         },
-		{
+        {
             "service": "ResourceService",
             "resourceType": "Microsoft.MachineLearningServices/workspaces",
             "templateFileName": "MachineLearningServices",
@@ -134,7 +161,8 @@
             "versionPrefix": "",
             "azureCommImpactedServicesList": "MachineLearningServices",
             "pesId": "",
-            "staticSelfHelpContent": ""
+            "staticSelfHelpContent": "",
+            "searchSuffix": "AZURE MACHINE LEARNING SERVICE"
         },
         {
             "service": "ResourceService",
@@ -144,7 +172,8 @@
             "versionPrefix": "",
             "azureCommImpactedServicesList": "containerGroups",
             "pesId": "",
-            "staticSelfHelpContent": ""
+            "staticSelfHelpContent": "",
+            "searchSuffix": "AZURE CONTAINER INSTANCE"
         },
         {
             "service": "ResourceService",
@@ -154,7 +183,8 @@
             "versionPrefix": "",
             "azureCommImpactedServicesList": "BatchAI",
             "pesId": "",
-            "staticSelfHelpContent": ""
+            "staticSelfHelpContent": "",
+            "searchSuffix": "AZURE BATCH AI SERVICE"
         },
         {
             "service": "ResourceService",
@@ -164,7 +194,8 @@
             "versionPrefix": "",
             "azureCommImpactedServicesList": "ISE",
             "pesId": "",
-            "staticSelfHelpContent": ""
+            "staticSelfHelpContent": "",
+            "searchSuffix": "AZURE INTEGRATION SERVICE ENVIRONMENT"
         },
         {
             "service": "ResourceService",
@@ -174,7 +205,96 @@
             "versionPrefix": "",
             "azureCommImpactedServicesList": "BatchAccounts",
             "pesId": "15614",
-            "staticSelfHelpContent": ""
+            "staticSelfHelpContent": "",
+            "searchSuffix": "AZURE BATCH ACCOUNT"
+        },
+        {
+            "service": "ResourceService",
+            "resourceType": "Microsoft.Storage/storageAccounts",
+            "templateFileName": "StorageAccount",
+            "imgSrc": "assets/img/StorageAccount.png",
+            "versionPrefix": "",
+            "azureCommImpactedServicesList": "StorageAccounts",
+            "pesId": "15629",
+            "staticSelfHelpContent": "",
+            "searchSuffix": "AZURE STORAGE ACCOUNT"
+        },
+        {
+            "service": "ResourceService",
+            "resourceType": "Microsoft.ClassicStorage/storageAccounts",
+            "templateFileName": "ClassicStorageAccount",
+            "imgSrc": "assets/img/ClassicStorageAccount.png",
+            "versionPrefix": "",
+            "azureCommImpactedServicesList": "ClassicStorageAccounts",
+            "pesId": "15629",
+            "staticSelfHelpContent": "",
+            "searchSuffix": "AZURE CLASSIC STORAGE ACCOUNT"
+        },
+        {
+            "service": "ResourceService",
+            "resourceType": "Microsoft.Network/applicationGateways",
+            "templateFileName": "ApplicationGateway",
+            "imgSrc": "assets/img/ApplicationGateway-Logo.png",
+            "versionPrefix": "",
+            "azureCommImpactedServicesList": "ApplicationGateways",
+            "pesId": "15922",
+            "staticSelfHelpContent": "",
+            "searchSuffix": "AZURE APPLICATION GATEWAY"
+        },
+        {
+            "service": "ResourceService",
+            "resourceType": "Microsoft.ServiceBus/namespaces",
+            "templateFileName": "ServiceBus",
+            "imgSrc": "assets/img/servicebus-logo.png",
+            "versionPrefix": "",
+            "azureCommImpactedServicesList": "ServiceBus",
+            "pesId": "13186",
+            "staticSelfHelpContent": "Microsoft.ServiceBus",
+            "searchSuffix": "AZURE SERVICE BUS"
+        },
+        {
+            "service": "ResourceService",
+            "resourceType": "Microsoft.EventHub/namespaces",
+            "templateFileName": "EventHub",
+            "imgSrc": "assets/img/eventhub-logo.png",
+            "versionPrefix": "",
+            "azureCommImpactedServicesList": "EventHub",
+            "pesId": "16125",
+            "staticSelfHelpContent": "Microsoft.EventHub",
+            "searchSuffix": "AZURE EVENT HUB"
+        },
+        {
+            "service": "ResourceService",
+            "resourceType": "Microsoft.EventGrid/topics",
+            "templateFileName": "EventGridTopics",
+            "imgSrc": "assets/img/eventgrid-logo.png",
+            "versionPrefix": "",
+            "azureCommImpactedServicesList": "EventGrid",
+            "pesId": "16263",
+            "staticSelfHelpContent": "Microsoft.EventGrid",
+            "searchSuffix": "AZURE EVENT GRID"
+        },
+        {
+            "service": "ResourceService",
+            "resourceType": "Microsoft.EventGrid/domains",
+            "templateFileName": "EventGridDomains",
+            "imgSrc": "assets/img/eventgrid-logo.png",
+            "versionPrefix": "",
+            "azureCommImpactedServicesList": "EventGrid",
+            "pesId": "16263",
+            "staticSelfHelpContent": "Microsoft.EventGrid",
+            "searchSuffix": "AZURE EVENT GRID"
+        },
+        {
+            "service": "ResourceService",
+            "resourceType": "Microsoft.Relay/namespaces",
+            "templateFileName": "Relay",
+            "imgSrc": "assets/img/relay-logo.png",
+            "versionPrefix": "",
+            "azureCommImpactedServicesList": "Relay",
+            "pesId": "16123",
+            "staticSelfHelpContent": "Microsoft.Relay",
+            "searchSuffix": "AZURE RELAY"
         }
     ]
 }

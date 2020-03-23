@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -15,6 +16,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SendGrid.Helpers.Mail;
@@ -29,11 +31,16 @@ namespace AppLensV3.Controllers
     [Authorize(Policy = "ApplensAccess")]
     public class DiagnosticController : Controller
     {
+        IConfiguration config;
+        private readonly string[] blackListedAscRegions;
+        private readonly string diagAscHeaderValue;
+
         private class InvokeHeaders
         {
             public string Path { get; set; }
             public string Method { get; set; }
             public IEnumerable<string> DetectorAuthors { get; set; }
+            public string ModifiedBy { get; set; }
             public bool InternalClient { get; set; }
             public bool InternalView { get; set; }
         }
@@ -44,11 +51,14 @@ namespace AppLensV3.Controllers
         /// <param name="env">The environment.</param>
         /// <param name="diagnosticClient">Diagnostic client.</param>
         /// <param name="emailNotificationService">Email notification service.</param>
-        public DiagnosticController(IHostingEnvironment env, IDiagnosticClientService diagnosticClient, IEmailNotificationService emailNotificationService)
+        public DiagnosticController(IHostingEnvironment env, IDiagnosticClientService diagnosticClient, IEmailNotificationService emailNotificationService, IConfiguration configuration)
         {
             Env = env;
             DiagnosticClient = diagnosticClient;
             EmailNotificationService = emailNotificationService;
+            blackListedAscRegions = configuration.GetValue<string>("BlackListedAscRegions", string.Empty).Replace(" ", string.Empty).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            diagAscHeaderValue = configuration.GetValue<string>("DiagAscHeaderValue");
+            this.config = configuration;
         }
 
         private IDiagnosticClientService DiagnosticClient { get; }
@@ -61,6 +71,15 @@ namespace AppLensV3.Controllers
         public IActionResult Ping()
         {
             return new OkResult();
+        }
+
+        [HttpGet("appsettings/{name}")]
+        public IActionResult GetAppSettingValue(string name){
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return BadRequest("App setting name is empty");
+            }
+            return Ok(config[name]);
         }
 
         private static string TryGetHeader(HttpRequest request, string headerName, string defaultValue = "") =>
@@ -82,7 +101,11 @@ namespace AppLensV3.Controllers
                 return BadRequest($"Missing {PathQueryHeader} header");
             }
 
-            var detectorId = body?["id"] != null ? body["id"].ToString() : string.Empty;
+            string detectorId = null;
+            if (body?.GetType() != typeof(JArray))
+            {
+                detectorId = body?["id"] != null ? body["id"].ToString() : string.Empty;
+            }
 
             string applensLink = "https://applens.azurewebsites.net/" + invokeHeaders.Path.Replace("resourcegroup", "resourceGroup").Replace("diagnostics/publish", string.Empty) + "detectors/" + detectorId;
 
@@ -98,7 +121,11 @@ namespace AppLensV3.Controllers
             HttpRequestHeaders headers = new HttpRequestMessage().Headers;
             foreach (var header in Request.Headers)
             {
-                if ((header.Key.StartsWith("x-ms-") || header.Key.StartsWith("diag-")) && !headers.Contains(header.Key))
+                if (header.Key.Equals("x-ms-location", StringComparison.CurrentCultureIgnoreCase) && blackListedAscRegions.Any(region => header.Value.FirstOrDefault()?.Contains(region) == true))
+                {
+                    headers.Add("x-ms-subscription-location-placementid", diagAscHeaderValue);
+                }
+                else if ((header.Key.StartsWith("x-ms-") || header.Key.StartsWith("diag-")) && !headers.Contains(header.Key))
                 {
                     headers.Add(header.Key, header.Value.ToString());
                 }
@@ -123,7 +150,7 @@ namespace AppLensV3.Controllers
 
             if (invokeHeaders.Path.EndsWith("/diagnostics/publish", StringComparison.OrdinalIgnoreCase) && detectorAuthorEmails.Count > 0 && Env.IsProduction())
             {
-                EmailNotificationService.SendPublishingAlert(invokeHeaders.DetectorAuthors.Last(), detectorId, applensLink, detectorAuthorEmails);
+                EmailNotificationService.SendPublishingAlert(invokeHeaders.ModifiedBy, detectorId, applensLink, detectorAuthorEmails);
             }
 
             return Ok(JsonConvert.DeserializeObject(await responseTask));
@@ -146,11 +173,25 @@ namespace AppLensV3.Controllers
 
         private InvokeHeaders ProcessInvokeHeaders()
         {
+            var authorization = Request.Headers["Authorization"].ToString();
+            string userId = string.Empty;
+
+            if (!string.IsNullOrWhiteSpace(authorization))
+            {
+                string accessToken = authorization.Split(" ")[1];
+                var token = new JwtSecurityToken(accessToken);
+                object upn;
+                if (token.Payload.TryGetValue("upn", out upn))
+                {
+                    userId = upn.ToString().Replace("@microsoft.com", string.Empty);
+                }
+            }
+
             var path = GetHeaderOrDefault(Request.Headers, PathQueryHeader);
             var method = GetHeaderOrDefault(Request.Headers, MethodHeader, HttpMethod.Get.Method);
             var rawDetectorAuthors = GetHeaderOrDefault(Request.Headers, EmailRecipientsHeader);
             var detectorAuthors = rawDetectorAuthors.Split(new char[] { ' ', ',', ';', ':' }, StringSplitOptions.RemoveEmptyEntries);
-
+            var modifiedBy = GetHeaderOrDefault(Request.Headers, ModifiedByHeader, userId);
             bool.TryParse(GetHeaderOrDefault(Request.Headers, InternalClientHeader, true.ToString()), out var internalClient);
             bool.TryParse(GetHeaderOrDefault(Request.Headers, InternalViewHeader, true.ToString()), out var internalView);
 
@@ -160,7 +201,8 @@ namespace AppLensV3.Controllers
                 Method = method,
                 DetectorAuthors = detectorAuthors,
                 InternalClient = internalClient,
-                InternalView = internalView
+                InternalView = internalView,
+                ModifiedBy = modifiedBy
             };
         }
     }

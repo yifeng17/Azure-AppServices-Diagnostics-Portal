@@ -157,7 +157,7 @@ export class ResourceHomeComponent implements OnInit {
             relativeTo: this._activatedRoute,
             queryParams: queryParams
         };
-    
+
         this._router.navigate([path], navigationExtras);
     }
 

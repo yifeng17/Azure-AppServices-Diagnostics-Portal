@@ -9,13 +9,25 @@
 	"azureServiceName": "Logic Apps",
 	"armApiVersion": "2016-06-01",
 	"isSearchEnabled": true,
-	"isApplicableForLiveChat": false,
+	"liveChatConfig": {
+		"isApplicableForLiveChat": false,
+		"supportTopicIds": []
+	},
 	"categories": [{
 			"id": "Diagnostics",
 			"name": "Diagnostics",
 			"description": "Is your logic app experiencing problems or slowness? To get an overview about the most recent runs and their steps, troubleshoot, and identify possible improvements, select this category.",
 			"keywords": ["Overview", "Runs", "Performance", "Triggers"],
 			"color": "rgb(186, 211, 245)",
+			"createFlowForCategory": true,
+			"chatEnabled": false
+		},
+		{
+			"id": "Connector Actions Health",
+			"name": "Connector Actions Health",
+			"description": "Are you seeing any action failures in your logic app? Review connector actions health to get the details on connector errors, timeouts, or any other unexpected behavior.",
+			"keywords": ["Actions", "Timeouts", "Connector", "4xx Errors", "5xx Errors", "SQL, Storage, and more"],
+			"color": "rgb(249, 213, 180)",
 			"createFlowForCategory": true,
 			"chatEnabled": false
 		}

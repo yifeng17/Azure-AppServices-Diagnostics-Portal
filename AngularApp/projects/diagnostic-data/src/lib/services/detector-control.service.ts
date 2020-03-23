@@ -2,7 +2,6 @@ import { Injectable, Inject } from '@angular/core';
 import * as momentNs from 'moment';
 import { BehaviorSubject } from 'rxjs';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../config/diagnostic-data-config';
-import { stringify } from '@angular/core/src/render3/util';
 
 const moment = momentNs;
 
@@ -192,8 +191,8 @@ export class DetectorControlService {
         endTime = moment.utc().subtract(16,'minutes');
       }
       else {
-        endTime = moment.utc(end);
-      }
+    endTime = moment.utc(end);
+    }
 
       startTime = endTime.clone().subtract(1, 'days');
     } else {

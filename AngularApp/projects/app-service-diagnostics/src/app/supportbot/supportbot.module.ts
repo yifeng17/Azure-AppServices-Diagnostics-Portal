@@ -81,6 +81,9 @@ import { LinuxAvailabilityPerformanceFlow } from './message-flow/v2-flows/linux-
         AvailabilityPerformanceFlow,
         LinuxAvailabilityPerformanceFlow,
         GenericCategoryFlow
+    ],
+    entryComponents: [
+        TextMessageComponent
     ]
 })
 export class SupportBotModule {

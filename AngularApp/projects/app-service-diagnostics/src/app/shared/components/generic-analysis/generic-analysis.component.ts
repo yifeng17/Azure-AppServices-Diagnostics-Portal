@@ -1,10 +1,14 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, Output, EventEmitter, Inject } from '@angular/core';
 import { GenericDetectorComponent } from '../generic-detector/generic-detector.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ResourceService } from '../../../shared-v2/services/resource.service';
-import { FeatureNavigationService, TelemetryService, DiagnosticService, DownTime } from 'diagnostic-data';
+import { FeatureNavigationService, TelemetryService, DiagnosticService, DownTime, DiagnosticDataConfig, DIAGNOSTIC_DATA_CONFIG } from 'diagnostic-data';
 import { AuthService } from '../../../startup/services/auth.service';
 import { DetectorListAnalysisComponent } from 'diagnostic-data';
+import { SearchAnalysisMode } from 'projects/diagnostic-data/src/lib/models/search-mode';
+import { CXPChatService } from 'diagnostic-data' ;
+import {GenericSupportTopicService} from '../../../../../../diagnostic-data/src/lib/services/generic-support-topic.service';
+
 
 @Component({
   selector: 'generic-analysis',
@@ -12,20 +16,30 @@ import { DetectorListAnalysisComponent } from 'diagnostic-data';
   styleUrls: ['./generic-analysis.component.scss']
 })
 export class GenericAnalysisComponent extends GenericDetectorComponent implements OnInit {
-
+  @Input() analysisId: string = "";
+  @Input() searchTerm: string = "";
+  @Input() searchMode: SearchAnalysisMode = SearchAnalysisMode.CaseSubmission;
+  @Input() resourceId: string="";
+  @Input() targetedScore: number = 0;
   detectorId: string = "";
-  analysisId: string = "";
   detectorName: string = "";
-  searchTerm: string = "";
-  showSearchBar: boolean = false;
+  @Input() showSearchBar: boolean = undefined;
+  @Output() onComplete = new EventEmitter<any>();
+
+  SearchAnalysisMode = SearchAnalysisMode;
+  displayDetectorContainer: boolean = true;
   searchBarFocus: boolean = false;
   downTime: DownTime;
-
   @ViewChild('detectorListAnalysis') detectorListAnalysis: DetectorListAnalysisComponent
+  isPublic: boolean = false;
+  cxpChatTrackingId: string = '';
+  cxpChatUrl: string = ''; 
 
   constructor(private _activatedRouteLocal: ActivatedRoute, private _diagnosticServiceLocal: DiagnosticService, _resourceService: ResourceService, _authServiceInstance: AuthService, _telemetryService: TelemetryService,
-    _navigator: FeatureNavigationService, private _routerLocal: Router) {
+    _navigator: FeatureNavigationService, private _routerLocal: Router, private _supportTopicService:GenericSupportTopicService, private _cxpChatService:CXPChatService,
+    @Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig) {
     super(_activatedRouteLocal, _diagnosticServiceLocal, _resourceService, _authServiceInstance, _telemetryService, _navigator, _routerLocal);
+    this.isPublic = config && config.isPublic;
   }
 
   ondownTimeChanged(event: DownTime) {
@@ -34,18 +48,36 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
   }
 
   ngOnInit() {
+    if (this.isPublic) {
+      this.renderCXPChatButton();
+    }
+    else {
+      var checkOutcome = {
+        _supportTopicServiceObj: !!this._supportTopicService,
+        supportTopicId: (!!this._supportTopicService)? this._supportTopicService.supportTopicId : '_supportTopicService is NULL',
+        _cxpChatService: !!this._cxpChatService,
+        isSupportTopicEnabledForLiveChat:  (!!this._supportTopicService && !!this._cxpChatService)? this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId): null,
+        isPublic: false
+      };
+
+      this._cxpChatService.logChatEligibilityCheck('Call to CXP Chat API skipped. Config is not Public.', JSON.stringify(checkOutcome));
+    }    
     this._activatedRouteLocal.paramMap.subscribe(params => {
-      this.analysisId = params.get('analysisId');
+      this.analysisId = this.analysisId === "" ? params.get('analysisId'): this.analysisId;
       this.detectorId = params.get('detectorName') === null ? "" : params.get('detectorName');
       this._activatedRouteLocal.queryParamMap.subscribe(qParams => {
-        this.searchTerm = qParams.get('searchTerm') === null ? "" : qParams.get('searchTerm');
+        this.searchTerm = qParams.get('searchTerm') === null ? this.searchTerm : qParams.get('searchTerm');
         if (this.analysisId=== "searchResultsAnalysis" && this.searchTerm && this.searchTerm.length>0){
-          this.showSearchBar = true;
+            this.showSearchBar = this.searchMode === SearchAnalysisMode.CaseSubmission ? true : this.showSearchBar;
+            this.displayDetectorContainer = false;
+        }
+        else
+        {
+            this.showSearchBar = false;
         }
 
         this._diagnosticServiceLocal.getDetectors().subscribe(detectorList => {
           if (detectorList) {
-
             if (this.detectorId !== "") {
               let currentDetector = detectorList.find(detector => detector.id == this.detectorId)
               this.detectorName = currentDetector.name;
@@ -54,6 +86,10 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
         });
       });
     });
+  }
+
+  updateLoadingStatus(dataOutput){
+      this.onComplete.emit(dataOutput);
   }
 
   triggerSearch(){
@@ -77,6 +113,34 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
     }
     else{
       this._routerLocal.navigate([`../../../${this.analysisId}`], { relativeTo: this._activatedRouteLocal, queryParamsHandling: 'merge' });
+    }
+  }
+
+  showChatButton():boolean {
+    return this.isPublic && this.cxpChatTrackingId != '' && this.cxpChatUrl != '';
+  }
+
+  renderCXPChatButton(){
+    if(this.cxpChatTrackingId === '' && this.cxpChatUrl === '') {
+      if(this._supportTopicService && this._cxpChatService && this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId)) {
+          this.cxpChatTrackingId = this._cxpChatService.generateTrackingId();
+          this._cxpChatService.getChatURL(this._supportTopicService.supportTopicId, this.cxpChatTrackingId).subscribe((chatApiResponse:any)=>{
+            if (chatApiResponse && chatApiResponse != '') {
+              this.cxpChatUrl = chatApiResponse;
+            }
+          });               
+      }
+      else {
+        var checkOutcome = {
+          _supportTopicServiceObj: !!this._supportTopicService,
+          supportTopicId: (!!this._supportTopicService)? this._supportTopicService.supportTopicId : '_supportTopicService is NULL',
+          _cxpChatService: !!this._cxpChatService,
+          isSupportTopicEnabledForLiveChat:  (!!this._supportTopicService && !!this._cxpChatService)? this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId): null,
+          isPublic: true
+        };
+
+        this._cxpChatService.logChatEligibilityCheck('Call to CXP Chat API skipped', JSON.stringify(checkOutcome));
+      }
     }
   }
 

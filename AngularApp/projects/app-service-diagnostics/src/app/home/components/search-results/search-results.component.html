@@ -1,5 +1,5 @@
 <div class="search-result-container">
-  <div class="search-result" *ngFor="let feature of features" (click)="navigateToFeature(feature)"
+  <div class="search-result" *ngFor="let feature of features" (mousedown)="navigateToFeature(feature)"
     (keyup.enter)="navigateToFeature(feature)" tabindex="0">
     <div class="feature-icon">
       <div class="feature-icon-circle" [style.background-color]="feature.featureType.color">
