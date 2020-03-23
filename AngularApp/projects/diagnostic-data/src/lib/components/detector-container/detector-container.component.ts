@@ -43,13 +43,17 @@ export class DetectorContainerComponent implements OnInit {
     }
     
     this.detectorControlService.update.subscribe(isValidUpdate => {
+      console.log("In detector container get update", isValidUpdate);
       if (isValidUpdate && this.detectorName) {
+        console.log("isValidUpdate && this.detectorName", isValidUpdate && this.detectorName);
         this.refresh();
       }
     });
 
     this.detectorSubject.subscribe(detector => {
+      console.log("detectorSubject refresh check starts", detector);
       if (detector && detector !== "searchResultsAnalysis") {
+        console.log("detectorSubject refresh not searchResultsAnalysis", detector);
         this.detectorName = detector;
         this.refresh();
       }
@@ -76,9 +80,13 @@ export class DetectorContainerComponent implements OnInit {
             additionalQueryString += `&${key}=${encodeURIComponent(allRouteQueryParams[key])}`;
         }
       });
+
+    console.log("in getDetectorResponse: additionalQueryString", additionalQueryString);
+    console.log(" should refresh from detector control", this.detectorControlService.shouldRefresh);
     this._diagnosticService.getDetector(this.detectorName, this.detectorControlService.startTimeString, this.detectorControlService.endTimeString,
       this.detectorControlService.shouldRefresh,  this.detectorControlService.isInternalView, additionalQueryString)
       .subscribe((response: DetectorResponse) => {
+        console.log("get a new response", response);
         this.shouldHideTimePicker(response);
         this.detectorResponse = response;
       }, (error: any) => {
