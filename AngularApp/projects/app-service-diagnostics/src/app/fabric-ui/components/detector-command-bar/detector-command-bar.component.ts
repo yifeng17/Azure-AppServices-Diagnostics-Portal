@@ -15,19 +15,29 @@ export class DetectorCommandBarComponent implements OnInit {
 
   ngOnInit() {
     this.detectorControlService.update.subscribe(validUpdate => {
-      const routeParams = {
-        'startTime': this.detectorControlService.startTime.format('YYYY-MM-DDTHH:mm'),
-        'endTime': this.detectorControlService.endTime.format('YYYY-MM-DDTHH:mm')
-      };
-      if(this.detectorControlService.detectorQueryParamsString != "") {
-        routeParams['detectorQueryParams'] = this.detectorControlService.detectorQueryParamsString;
-      }
-      if (!this._activatedRoute.queryParams['searchTerm']){
-        routeParams['searchTerm'] = this._activatedRoute.snapshot.queryParams['searchTerm'];
-      }
+      try {
+        const routeParams = {
+          'startTime': this.detectorControlService.startTime.format('YYYY-MM-DDTHH:mm'),
+          'endTime': this.detectorControlService.endTime.format('YYYY-MM-DDTHH:mm')
+        };
+        if(this.detectorControlService.detectorQueryParamsString != "") {
+          console.log("query string in detector command bar", this.detectorControlService.detectorQueryParamsString);
+          routeParams['detectorQueryParams'] = this.detectorControlService.detectorQueryParamsString;
+        }
+        if (!this._activatedRoute.queryParams['searchTerm']){
+          console.log("searchTerm in detector command bar",  this._activatedRoute.snapshot.queryParams['searchTerm']);
+          routeParams['searchTerm'] = this._activatedRoute.snapshot.queryParams['searchTerm'];
+        }
 
-      this._router.navigate([], { queryParams: routeParams, queryParamsHandling: 'merge', relativeTo: this._activatedRoute });
-    });
+        console.log("routeParams", routeParams);
+  
+        this._router.navigate([], { queryParams: routeParams, queryParamsHandling: 'merge', relativeTo: this._activatedRoute });
+      }
+      catch(e){
+        console.log("exception in detector command bar", e);
+      }
+      }
+);
   }
 
   toggleOpenState() {

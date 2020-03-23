@@ -242,7 +242,7 @@ export class DetectorControlService {
     }
   }
 
-  public selectDuration(duration: DurationSelector) {
+  public  selectDuration(duration: DurationSelector) {
     console.log("selectDuration", duration);
     this._duration = duration;
     this._startTime = moment.utc().subtract(duration.duration);

@@ -76,6 +76,9 @@ import { GenieModule } from './genie/genie.module';
         loadChildren: './resources/resources.module#ResourcesModule',
       }
     ],
+    {
+      enableTracing: true,
+    }
     ),
     CustomMaterialModule,
     HighchartsChartModule,

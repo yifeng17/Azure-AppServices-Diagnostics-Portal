@@ -36,9 +36,11 @@ export class DetectorControlComponent implements OnInit {
         'endTime': this.detectorControlService.endTime.format('YYYY-MM-DDTHH:mm')
       };
       if(this.detectorControlService.detectorQueryParamsString != "") {
+        console.log("query string", this.detectorControlService.detectorQueryParamsString);
         routeParams['detectorQueryParams'] = this.detectorControlService.detectorQueryParamsString;
       }
       if (!this._activatedRoute.queryParams['searchTerm']){
+        console.log("searchTerm",  this._activatedRoute.snapshot.queryParams['searchTerm']);
         routeParams['searchTerm'] = this._activatedRoute.snapshot.queryParams['searchTerm'];
       }
 
