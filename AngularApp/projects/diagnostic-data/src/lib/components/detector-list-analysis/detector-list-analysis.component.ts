@@ -124,6 +124,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
         else {
             this._detectorControl.update.subscribe(isValidUpdate => {
                 if (isValidUpdate) {
+                    console.log("isValidUpdate in detectorlistanalysis", isValidUpdate);
                     this.refresh();
                 }
             });
