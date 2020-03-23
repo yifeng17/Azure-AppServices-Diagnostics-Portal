@@ -267,14 +267,17 @@ export class CategoryNavComponent implements OnInit {
                     let itemId = "";
                     let routePath: any = "detectors";
                     if (!(evt.url.split("/").length > 14 && evt.url.split("/")[12].toLowerCase() === "analysis" && (evt.url.split("/")[14].toLowerCase() === "detectors" || evt.url.split("/")[14].toLowerCase() === "analysis"))) {
-                        if (evt.url.split("/")[12].toLowerCase() === "detectors")
+                        if (evt.url.split("/").length > 12)
                         {
-                            itemId = evt.url.split("detectors/")[1].split("?")[0];
-                        }
-                        else if (evt.url.split("/")[12].toLowerCase() === "analysis")
-                        {
-                            itemId = evt.url.split("analysis/")[1].split("?")[0];
-                            routePath = "analysis";
+                            if (evt.url.split("/")[12].toLowerCase() === "detectors")
+                            {
+                                itemId = evt.url.split("detectors/")[1].split("?")[0];
+                            }
+                            else if (evt.url.split("/")[12].toLowerCase() === "analysis")
+                            {
+                                itemId = evt.url.split("analysis/")[1].split("?")[0];
+                                routePath = "analysis";
+                            }
                         }
 
                         let item = this.detectorDataLocalCopy.find(metadata => metadata.id.toLowerCase() === itemId.toLowerCase());
