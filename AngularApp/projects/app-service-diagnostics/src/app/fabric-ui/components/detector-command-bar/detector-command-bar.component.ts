@@ -11,7 +11,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 export class DetectorCommandBarComponent implements OnInit {
   time: string;
 
-  constructor(private globals: Globals, private detectorControlService: DetectorControlService, private _router: Router, private _activatedRoute: ActivatedRoute) { }
+  constructor(private globals: Globals, public detectorControlService: DetectorControlService, private _router: Router, private _activatedRoute: ActivatedRoute) { }
 
   ngOnInit() {
     this.detectorControlService.update.subscribe(validUpdate => {
