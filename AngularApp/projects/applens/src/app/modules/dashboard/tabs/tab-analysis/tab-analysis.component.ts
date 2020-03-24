@@ -17,7 +17,7 @@ export class TabAnalysisComponent implements OnInit {
   detectorName: string;
   downTime: DownTime;
 
-  @ViewChild('detectorListAnalysis') detectorListAnalysis: DetectorListAnalysisComponent
+  @ViewChild('detectorListAnalysis', {static:false}) detectorListAnalysis: DetectorListAnalysisComponent
 
   constructor(private _activatedRoute: ActivatedRoute, private _diagnosticService: ApplensDiagnosticService) {
     this._activatedRoute.paramMap.subscribe(params => {

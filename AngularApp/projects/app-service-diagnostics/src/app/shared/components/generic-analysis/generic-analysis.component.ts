@@ -30,7 +30,7 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
   displayDetectorContainer: boolean = true;
   searchBarFocus: boolean = false;
   downTime: DownTime;
-  @ViewChild('detectorListAnalysis') detectorListAnalysis: DetectorListAnalysisComponent
+  @ViewChild('detectorListAnalysis', {static:false}) detectorListAnalysis: DetectorListAnalysisComponent
   isPublic: boolean = false;
   cxpChatTrackingId: string = '';
   cxpChatUrl: string = ''; 
