@@ -542,6 +542,8 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
             title: detector.name,
             metadata: detector,
             loadingStatus: LoadingStatus.Loading,
+            startTime: startTimeString,
+            endTime: endTimeString,
             status: null,
             statusColor: null,
             statusIcon: null,
@@ -623,7 +625,16 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                     }
                 }
                 else {
-                    this._router.navigate([`../../analysis/${this.analysisId}/detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true });
+                    if (viewModel.model.startTime != null && viewModel.model.endTime != null) {
+                        this._router.navigate([`../../analysis/${this.analysisId}/detectors/${detectorId}`], {
+                            relativeTo: this._activatedRoute,
+                            queryParams: { startTimeChildDetector: viewModel.model.startTime, endTimeChildDetector: viewModel.model.endTime },
+                            queryParamsHandling: 'merge'
+                          });
+                    }
+                    else {
+                        this._router.navigate([`../../analysis/${this.analysisId}/detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true });
+                    }                    
                 }
             }
         }
