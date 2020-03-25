@@ -5,6 +5,9 @@ import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { DetectorResponse, RenderingType, DownTime } from '../../models/detector';
 import { BehaviorSubject } from 'rxjs';
 import { VersionService } from '../../services/version.service';
+import { Moment } from 'moment';
+import * as momentNs from 'moment';
+const moment = momentNs;
 
 @Component({
   selector: 'detector-container',
@@ -15,6 +18,11 @@ export class DetectorContainerComponent implements OnInit {
 
   detectorResponse: DetectorResponse = null;
   error: any;
+
+  startTimeToUse:Moment;
+  endTimeToUse:Moment;
+  startTimeChildDetector : Moment = null;
+  endTimeChildDetector : Moment = null;
 
   @Input() hideDetectorControl: boolean = false;
   hideTimerPicker: boolean = false;
@@ -61,12 +69,62 @@ export class DetectorContainerComponent implements OnInit {
     if (component && component.name) {
       this.isCategoryOverview = component.name === "CategoryOverviewComponent";
     }
+
+    let startTimeChildDetector: string = this._route.snapshot.queryParams['startTimeChildDetector'];
+    if (startTimeChildDetector != null) {
+      this.startTimeChildDetector =  moment.utc(startTimeChildDetector) ;
+    }
+
+    let endTimeChildDetector: string = this._route.snapshot.queryParams['endTimeChildDetector'];
+    if (endTimeChildDetector != null) {
+      this.endTimeChildDetector =  moment.utc(endTimeChildDetector) ;
+    }
+
   }
 
   refresh() {
     this.error = null;
     this.detectorResponse = null;
     this.getDetectorResponse();
+  }
+
+  public get getStartTime():Moment {        
+    let startTime:Moment = this.detectorControlService.startTime;
+    let analysisId = this._route.snapshot.paramMap.get('analysisId');    
+
+    if (this.analysisMode && analysisId != null && analysisId != this.detectorName) {
+      let startTimeChildDetector: string = this._route.snapshot.queryParams['startTimeChildDetector'];
+
+      if (startTimeChildDetector != null) {
+        startTime =  moment.utc(startTimeChildDetector) ;
+        this.startTimeChildDetector = startTime;
+      }
+      else {
+        if(this.endTimeChildDetector != null) {
+          startTime = this.startTimeChildDetector;
+        }
+      }
+    }
+    return startTime;
+  }
+
+  public get getEndTime():Moment {    
+    let endTime:Moment = this.detectorControlService.endTime;
+    let analysisId = this._route.snapshot.paramMap.get('analysisId');
+    if (this.analysisMode && analysisId != null && analysisId != this.detectorName) {
+      let endTimeChildDetector: string = this._route.snapshot.queryParams['endTimeChildDetector'];
+
+      if (endTimeChildDetector != null) {
+        endTime =  moment.utc(endTimeChildDetector) ;
+        this.endTimeChildDetector = endTime;
+      }
+      else {
+        if(this.endTimeChildDetector != null) {
+          endTime = this.endTimeChildDetector;
+        }
+      }
+    }
+    return endTime;
   }
 
   getDetectorResponse() {
@@ -82,14 +140,15 @@ export class DetectorContainerComponent implements OnInit {
 	});
 	
 	if (this.analysisMode) {
-		var startTimeChildDetector: string = allRouteQueryParams['startTimeChildDetector'];
-        var endTimeChildDetector: string = allRouteQueryParams['endTimeChildDetector'];
+    var startTimeChildDetector: string = allRouteQueryParams['startTimeChildDetector'];
+    var endTimeChildDetector: string = allRouteQueryParams['endTimeChildDetector'];
 		if (startTimeChildDetector != null) {
-          startTime = startTimeChildDetector ;
-        }
-        if (endTimeChildDetector != null) {
-          endTime = endTimeChildDetector;
-        }
+      startTime = startTimeChildDetector ;
+    }
+    
+    if (endTimeChildDetector != null) {
+      endTime = endTimeChildDetector;
+    }
 	}
 	
 	this._diagnosticService.getDetector(this.detectorName, startTime, endTime,
