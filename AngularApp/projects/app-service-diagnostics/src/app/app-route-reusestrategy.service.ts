@@ -33,7 +33,7 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
             return;
         }
 
-        this.handlers[url] = handle;
+        this.handlers[this.getCacheKey(route, url)] = handle;
     }
 
     /**
@@ -41,7 +41,8 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
      */
     shouldAttach(route: ActivatedRouteSnapshot): boolean {
         const url = this._getUrl(route);
-        return !!route.routeConfig && !!this.handlers[url];
+        
+        return !!route.routeConfig && !!this.handlers[this.getCacheKey(route, url)];
     }
 
     /**
@@ -55,7 +56,8 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
         return null; }
 
         const url = this._getUrl(route);
-        return this.handlers[url];
+
+        return this.handlers[this.getCacheKey(route, url)];
     }
 
     /**
@@ -77,6 +79,15 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
         this.closedTab = url;
         this._deactivateOutlet(this.handlers[url]);
         this.handlers[url] = null;
+    }
+
+    public getCacheKey(route: ActivatedRouteSnapshot, url:string):string {
+        let cacheKey:string = url;
+        let allRouteQueryParams = route.queryParams;
+        Object.keys(allRouteQueryParams).forEach(key => {
+            cacheKey += `&${key}=${encodeURIComponent(allRouteQueryParams[key])}`;
+        });
+        return cacheKey;
     }
 
     private _deactivateOutlet(handle: DetachedRouteHandle): void {
@@ -114,3 +125,5 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
         return returnValue;
     }
 }
+
+
