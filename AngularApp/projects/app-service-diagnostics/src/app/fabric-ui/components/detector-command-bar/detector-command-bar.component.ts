@@ -21,6 +21,7 @@ export class DetectorCommandBarComponent {
   }
 
   refreshPage() {
+    console.log("1. Refresh clicked in detector commandbar");
     this.detectorControlService.refresh();
   }
 

@@ -43,7 +43,9 @@ export class DetectorContainerComponent implements OnInit {
     }
     
     this.detectorControlService.update.subscribe(isValidUpdate => {
+      console.log("detectorcontaine: isValidUpate, this.detectorName", isValidUpdate, this.detectorName);
       if (isValidUpdate && this.detectorName) {
+        console.log("detectorcontaine: starts refresh");
         this.refresh();
       }
     });
@@ -64,6 +66,7 @@ export class DetectorContainerComponent implements OnInit {
   refresh() {
     this.error = null;
     this.detectorResponse = null;
+    console.log("detectorcontaine: refresh(), calling getDetectorResponse");
     this.getDetectorResponse();
   }
 
@@ -79,6 +82,7 @@ export class DetectorContainerComponent implements OnInit {
     this._diagnosticService.getDetector(this.detectorName, this.detectorControlService.startTimeString, this.detectorControlService.endTimeString,
       this.detectorControlService.shouldRefresh,  this.detectorControlService.isInternalView, additionalQueryString)
       .subscribe((response: DetectorResponse) => {
+        console.log("detectorcontaine calling getDetectorResponse",additionalQueryString,  response);
         this.shouldHideTimePicker(response);
         this.detectorResponse = response;
       }, (error: any) => {
