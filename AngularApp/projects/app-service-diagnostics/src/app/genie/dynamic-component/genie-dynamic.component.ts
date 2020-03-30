@@ -9,9 +9,6 @@ import { GraphMessageComponent } from '../common/graph-message/graph-message.com
 import { SolutionsMessageComponent } from '../common/solutions-message/solutions-message.component';
 import { GenieTextMessageComponent } from '../common/text-message/text-message.component';
 import {
-    DetectorSummaryComponent
-} from '../message-flow/detector-summary/detector-summary.component';
-import {
     DocumentSearchResultsComponent
 } from '../message-flow/document-search-results/document-search-results.component';
 import {
@@ -30,7 +27,7 @@ import { HealthCheckV3Component } from '../message-flow/health-check-v3/health-c
     selector: 'dynamic-component-genie',
     entryComponents: [GenieTextMessageComponent, ButtonMessageComponent, FeedbackButtonMessageComponent, HealthCheckV3Component,
         GenieFeedbackComponent, SolutionsMessageComponent, GraphMessageComponent, TalkToAgentMessageComponent,
-        DetectorSummaryComponent, DocumentSearchComponent, DocumentSearchResultsComponent, DynamicAnalysisComponent],
+        DocumentSearchComponent, DocumentSearchResultsComponent, DynamicAnalysisComponent],
     template: `
     <div #genieDynamicComponentContainer></div>
   `,

@@ -14,7 +14,6 @@ import { TalkToAgentMessageComponent } from './message-flow/talk-to-agent/talk-t
 import { GenieFeedbackComponent } from './message-flow/genie-feedback/genie-feedback.component'
 import { SolutionsMessageComponent } from './common/solutions-message/solutions-message.component';
 import { GraphMessageComponent } from './common/graph-message/graph-message.component';
-import { DetectorSummaryComponent } from './message-flow/detector-summary/detector-summary.component';
 import { DocumentSearchComponent } from './message-flow/document-search/document-search.component';
 import { DocumentSearchResultsComponent } from './message-flow/document-search-results/document-search-results.component';
 import { SharedV2Module } from '../shared-v2/shared-v2.module';
@@ -38,7 +37,6 @@ import { FabPanelModule } from '@angular-react/fabric';
         GenieFeedbackComponent,
         SolutionsMessageComponent,
         GraphMessageComponent,
-        DetectorSummaryComponent,
         DocumentSearchComponent,
         DocumentSearchResultsComponent,
         HealthCheckV3Component,
@@ -58,7 +56,6 @@ import { FabPanelModule } from '@angular-react/fabric';
         FabPanelModule
     ],
     exports: [
-        DetectorSummaryComponent,
         HealthCheckV3Component,
         LoadingMessageComponent,
         GeniePanelComponent,

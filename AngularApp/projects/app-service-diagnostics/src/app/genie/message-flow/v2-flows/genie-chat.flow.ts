@@ -7,7 +7,6 @@ import { DetectorMetaData, DiagnosticService } from 'diagnostic-data';
 import { IMessageFlowProvider } from '../../interfaces/imessageflowprovider';
 import { RegisterMessageFlowWithFactory } from '../message-flow.factory';
 import { MessageSender, ButtonActionType, MessageType } from '../../models/message-enums';
-import { DetectorSummaryMessage } from '../detector-summary/detector-summary.component';
 import { DynamicAnalysisMessage } from '../dynamic-analysis/dynamic-analysis.component';
 import { DocumentSearchMessage } from '../document-search/document-search.component';
 import { GenieFeedbackMessage } from '../genie-feedback/geniefeedbackmessageflow'
