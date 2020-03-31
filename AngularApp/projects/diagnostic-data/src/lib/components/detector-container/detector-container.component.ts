@@ -5,6 +5,7 @@ import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { DetectorResponse, RenderingType } from '../../models/detector';
 import { BehaviorSubject } from 'rxjs';
 import { VersionService } from '../../services/version.service';
+import { Guid } from 'projects/app-service-diagnostics/src/app/shared/utilities/guid';
 
 @Component({
   selector: 'detector-container',
@@ -18,7 +19,7 @@ export class DetectorContainerComponent implements OnInit {
   @Input() hideDetectorControl: boolean = false;
   hideTimerPicker: boolean = false;
 
-   detectorName: string;
+  detectorName: string;
 
   @Input() detectorSubject: BehaviorSubject<string> = new BehaviorSubject<string>(null);
 
@@ -29,11 +30,16 @@ export class DetectorContainerComponent implements OnInit {
   @Input() analysisMode:boolean = false;
   @Input() isAnalysisView:boolean = false;
   isCategoryOverview:boolean = false;
+  detectorResSubscription: any;
   private isLegacy:boolean
   constructor(private _route: ActivatedRoute, private _diagnosticService: DiagnosticService,
     public detectorControlService: DetectorControlService,private versionService:VersionService) { }
 
+
   ngOnInit() {
+    // let guid = Guid.newGuid();
+    // console.log("new guid", guid);
+    console.info("Entering ngoninit");
     this.versionService.isLegacySub.subscribe(isLegacy => this.isLegacy = isLegacy);
     //Remove after A/B Test
     if (this.isLegacy) {
@@ -42,18 +48,19 @@ export class DetectorContainerComponent implements OnInit {
       this.hideTimerPicker= this.hideDetectorControl || this._route.snapshot.parent.url.findIndex((x: UrlSegment) => x.path === "categories") > -1;
     }
     
-    this.detectorControlService.update.subscribe(isValidUpdate => {
-      console.log("detectorcontaine: isValidUpate, this.detectorName", isValidUpdate, this.detectorName);
-      if (isValidUpdate && this.detectorName) {
-        console.log("detectorcontaine: starts refresh");
-        this.refresh();
-      }
-    });
+    // this.detectorResSubscription = this.detectorControlService.update.subscribe(isValidUpdate => {
+    //   console.log("detectorcontaine: isValidUpate, this.detectorName", isValidUpdate, this.detectorName);
+    //   if (isValidUpdate && this.detectorName) {
+    //     console.log("detectorcontaine: starts refresh");
+    //     this.refresh();
+    //   }
+    // });
 
     this.detectorSubject.subscribe(detector => {
       if (detector && detector !== "searchResultsAnalysis") {
         this.detectorName = detector;
         this.refresh();
+        this.startSubscribingToRefresh();
       }
     });
 
@@ -62,6 +69,27 @@ export class DetectorContainerComponent implements OnInit {
       this.isCategoryOverview = component.name === "CategoryOverviewComponent";
     }
   }
+
+  private startSubscribingToRefresh()
+  {
+    if (this.detectorResSubscription)
+    {
+      this.detectorResSubscription.unsubscribe();
+    }
+    console.info("In detector view, calling resetRefresBehaviorSubject() in detector control service");
+
+    this.detectorControlService.resetRefresBehaviorSubject();
+    this.detectorResSubscription = this.detectorControlService.update.subscribe(isValidUpdate => {
+     // console.log("detectorcontaine: isValidUpate, this.detectorName", isValidUpdate, this.detectorName);
+     console.info(`In detector View : ${this.detectorName}, got isValidUpdate: ${isValidUpdate} from detector control service`);
+      if (isValidUpdate && this.detectorName) {
+        console.info(`In detector View : ${this.detectorName}, triggering refresh`);
+        this.refresh();
+      }
+    });
+  }
+
+
 
   refresh() {
     this.error = null;
@@ -79,7 +107,7 @@ export class DetectorContainerComponent implements OnInit {
             additionalQueryString += `&${key}=${encodeURIComponent(allRouteQueryParams[key])}`;
         }
       });
-    this._diagnosticService.getDetector(this.detectorName, this.detectorControlService.startTimeString, this.detectorControlService.endTimeString,
+     this._diagnosticService.getDetector(this.detectorName, this.detectorControlService.startTimeString, this.detectorControlService.endTimeString,
       this.detectorControlService.shouldRefresh,  this.detectorControlService.isInternalView, additionalQueryString)
       .subscribe((response: DetectorResponse) => {
         console.log("detectorcontaine calling getDetectorResponse",additionalQueryString,  response);
@@ -103,5 +131,14 @@ export class DetectorContainerComponent implements OnInit {
       }
       
     }
+  }
+
+  
+  ngOnDestroy(): void {
+    console.log("destroying detector container for:", this.detectorName);
+    if (this.detectorResSubscription) {
+        this.detectorResSubscription.unsubscribe();
+    }
+
   }
 }

@@ -68,6 +68,11 @@ export class DetectorControlService {
     return this._refresh;
   }
 
+  public resetRefresBehaviorSubject() {
+    console.info("In control service, resetting behaviorSubject _refresh with false");
+    this._refresh = new BehaviorSubject<boolean>(false);
+  }
+
   public setDefault() {
     this.selectDuration(this.durationSelections.find(duration => duration.displayName === '1d'));
   }
@@ -262,7 +267,7 @@ export class DetectorControlService {
   }
 
   public refresh() {
-    console.log("detectorcontrol:_duration", this._duration);
+ //   console.log("detectorcontrol:_duration", this._duration);
     this._duration ? this.selectDuration(this._duration) : this._refreshData();
   }
 
@@ -276,9 +281,12 @@ export class DetectorControlService {
   }
 
   private _refreshData() {
-    console.log("_refreshData():, _shouldRefresh, _refresh", this._shouldRefresh, this._refresh);
+   // console.log(" _refreshData():1, _shouldRefresh, _refresh", this._shouldRefresh, this._refresh);
+   console.info("Pushing the behavior subject _refresh with true");
     this._shouldRefresh = true;
     this._refresh.next(true);
+
+  //  console.log("_refreshData():2, _shouldRefresh, _refresh", this._shouldRefresh, this._refresh);
   }
 
   public get error(): string {
