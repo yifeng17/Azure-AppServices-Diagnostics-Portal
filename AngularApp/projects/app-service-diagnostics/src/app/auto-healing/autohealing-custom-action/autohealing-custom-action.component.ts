@@ -35,7 +35,9 @@ export class AutohealingCustomActionComponent implements OnInit, OnChanges, Afte
   { Name: 'CLR Profiler', Description: 'Profiles ASP.NET application code to identify exceptions and performance issues' },
   { Name: 'CLR Profiler With Thread Stacks', Description: 'Profiles ASP.NET application code to identify exceptions and performance issues and dumps stacks to identify deadlocks' },
   { Name: 'JAVA Memory Dump', Description: 'Collects a binary memory dump using jMap of all java.exe processes running for this web app' },
-  { Name: 'JAVA Thread Dump', Description: 'Collects jStack output of all java.exe processes running for this app and analyzes the same' }];
+  { Name: 'JAVA Thread Dump', Description: 'Collects jStack output of all java.exe processes running for this app and analyzes the same' },
+  { Name: 'Stdout Logs', Description: 'Collects STDOUT logs of a .NET Core application by editing the web.config, causing a recycle of the application process' }
+];
   DiagnoserOptions = [
     { option: 'CollectKillAnalyze', Description: 'With this option, the above selected tool\'s data will collected, analyzed and the process will be recycled.' },
     { option: 'CollectLogs', Description: 'With this option, only the above selected tool\'s data will collected. No analysis will be performed and process will not be restarted.' },
