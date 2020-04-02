@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, Inject } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, Inject, ViewChild } from '@angular/core';
 import { GenericDetectorComponent } from '../generic-detector/generic-detector.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ResourceService } from '../../../shared-v2/services/resource.service';
@@ -14,6 +14,7 @@ import {GenericSupportTopicService} from '../../../../../../diagnostic-data/src/
   styleUrls: ['./generic-analysis.component.scss']
 })
 export class GenericAnalysisComponent extends GenericDetectorComponent implements OnInit {
+  @ViewChild('detectorContainerComponent', { static: true }) detectorContainerComponent: any;
   @Input() analysisId: string = "";
   @Input() searchTerm: string = "";
   @Input() searchMode: SearchAnalysisMode = SearchAnalysisMode.CaseSubmission;
@@ -135,4 +136,11 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
     }
   }
 
+  refresh() {
+    console.log("In generic analysis component, ${0} start calling refresh()", this.detectorContainerComponent);
+    if (this.detectorContainerComponent)
+    {
+      this.detectorContainerComponent.refresh(true);
+    }
+  }
 }

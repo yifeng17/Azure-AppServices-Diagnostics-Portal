@@ -5,7 +5,6 @@ import { TelemetryService, FeatureNavigationService, DiagnosticService, Detector
 import { AuthService } from '../../../startup/services/auth.service';
 import { Subscription } from 'rxjs';
 import { ResourceService } from '../../../shared-v2/services/resource.service';
-//import { DetectorContainerComponent } from 'dist/diagnostic-data/lib/components/detector-container/detector-container.component';
 
 @Component({
   selector: 'generic-detector',
@@ -74,7 +73,7 @@ export class GenericDetectorComponent implements OnDestroy {
 
    refresh() {
         console.log("In generic detector component, ${0} start calling refresh()", this.detectorContainerComponent);
-        this.detectorContainerComponent.refresh();
+        this.detectorContainerComponent.refresh(true);
     }
 
   ngOnDestroy() {

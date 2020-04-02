@@ -58,6 +58,6 @@ export class CategoryOverviewComponent implements OnInit {
 
     refresh() {
         console.log("In category overview component, ${0} start calling refresh()", this.detectorContainerComponent);
-        this.detectorContainerComponent.refresh();
+        this.detectorContainerComponent.refresh(true);
     }
 }

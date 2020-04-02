@@ -48,19 +48,19 @@ export class DetectorContainerComponent implements OnInit {
       this.hideTimerPicker= this.hideDetectorControl || this._route.snapshot.parent.url.findIndex((x: UrlSegment) => x.path === "categories") > -1;
     }
     
-    // this.detectorResSubscription = this.detectorControlService.update.subscribe(isValidUpdate => {
-    //   console.log("detectorcontaine: isValidUpate, this.detectorName", isValidUpdate, this.detectorName);
-    //   if (isValidUpdate && this.detectorName) {
-    //     console.log("detectorcontaine: starts refresh");
-    //     this.refresh();
-    //   }
-    // });
+    this.detectorResSubscription = this.detectorControlService.update.subscribe(isValidUpdate => {
+      console.log("detectorcontaine: isValidUpate, this.detectorName", isValidUpdate, this.detectorName);
+      if (isValidUpdate && this.detectorName) {
+        console.log("detectorcontaine: starts refresh");
+        this.refresh(false);
+      }
+    });
 
     this.detectorSubject.subscribe(detector => {
       if (detector && detector !== "searchResultsAnalysis") {
         this.detectorName = detector;
-        this.refresh();
-     //   this.startSubscribingToRefresh();
+        this.refresh(false);
+   //    this.startSubscribingToRefresh();
       }
     });
 
@@ -84,21 +84,22 @@ export class DetectorContainerComponent implements OnInit {
      console.info(`In detector View : ${this.detectorName}, got isValidUpdate: ${isValidUpdate} from detector control service`);
       if (isValidUpdate && this.detectorName) {
         console.info(`In detector View : ${this.detectorName}, triggering refresh`);
-        this.refresh();
+        this.refresh(false);
       }
     });
   }
 
 
 
-  refresh() {
+  refresh(hardRefresh: boolean) {
     this.error = null;
     this.detectorResponse = null;
     console.log("detectorcontainer: refresh(), calling getDetectorResponse");
-    this.getDetectorResponse();
+    this.getDetectorResponse(hardRefresh);
   }
 
-  getDetectorResponse() {
+  getDetectorResponse(hardRefresh: boolean) {
+      let invalidateCache = hardRefresh ? hardRefresh : this.detectorControlService.shouldRefresh;
       let allRouteQueryParams = this._route.snapshot.queryParams;
       let additionalQueryString = '';
       let knownQueryParams = ['startTime', 'endTime'];
@@ -108,7 +109,7 @@ export class DetectorContainerComponent implements OnInit {
         }
       });
      this._diagnosticService.getDetector(this.detectorName, this.detectorControlService.startTimeString, this.detectorControlService.endTimeString,
-      true,  this.detectorControlService.isInternalView, additionalQueryString)
+      invalidateCache,  this.detectorControlService.isInternalView, additionalQueryString)
       .subscribe((response: DetectorResponse) => {
         console.log("detectorcontainer calling getDetectorResponse",additionalQueryString,  response);
         this.shouldHideTimePicker(response);

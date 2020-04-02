@@ -1,4 +1,4 @@
-<detector-container *ngIf="displayDetectorContainer" [detector]="analysisDetector" [isAnalysisView]="true"></detector-container>
+<detector-container #detectorContainerComponent *ngIf="displayDetectorContainer" [detector]="analysisDetector" [isAnalysisView]="true"></detector-container>
 <div *ngIf="showSearchBar" class="search-box">
     <span>Diagnostics based on </span>
     <div class="search-input-box">
