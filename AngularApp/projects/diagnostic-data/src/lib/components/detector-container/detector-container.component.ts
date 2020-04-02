@@ -41,7 +41,7 @@ export class DetectorContainerComponent implements OnInit {
   private isLegacy:boolean
 
   constructor(private _route: ActivatedRoute, private _diagnosticService: DiagnosticService,
-    public detectorControlService: DetectorControlService,private versionService:VersionService) { }
+    public detectorControlService: DetectorControlService,private versionService:VersionService) {}
 
   ngOnInit() {
     this.versionService.isLegacySub.subscribe(isLegacy => this.isLegacy = isLegacy);
@@ -90,9 +90,7 @@ export class DetectorContainerComponent implements OnInit {
 
   public get getStartTime():Moment {        
     let startTime:Moment = this.detectorControlService.startTime;
-    let analysisId = this._route.snapshot.paramMap.get('analysisId');    
-
-    if (this.analysisMode && analysisId != null && analysisId != this.detectorName) {
+    if(!this.isAnalysisDetector()){
       let startTimeChildDetector: string = this._route.snapshot.queryParams['startTimeChildDetector'];
 
       if (startTimeChildDetector != null) {
@@ -110,8 +108,7 @@ export class DetectorContainerComponent implements OnInit {
 
   public get getEndTime():Moment {    
     let endTime:Moment = this.detectorControlService.endTime;
-    let analysisId = this._route.snapshot.paramMap.get('analysisId');
-    if (this.analysisMode && analysisId != null && analysisId != this.detectorName) {
+    if(!this.isAnalysisDetector()){
       let endTimeChildDetector: string = this._route.snapshot.queryParams['endTimeChildDetector'];
 
       if (endTimeChildDetector != null) {
@@ -127,17 +124,30 @@ export class DetectorContainerComponent implements OnInit {
     return endTime;
   }
 
+  isAnalysisDetector():boolean {
+    let analysisId = this._route.snapshot.paramMap.get('analysisId');  
+    return !(this.analysisMode && analysisId != null && analysisId != this.detectorName);    
+  }
+
   getDetectorResponse() {
     let startTime = this.detectorControlService.startTimeString;
     let endTime = this.detectorControlService.endTimeString;
-	let allRouteQueryParams = this._route.snapshot.queryParams;
+    let allRouteQueryParams = this._route.snapshot.queryParams;
     let additionalQueryString = '';
     let knownQueryParams = ['startTime', 'endTime'];
-	Object.keys(allRouteQueryParams).forEach(key => {
-        if(knownQueryParams.indexOf(key) < 0) {
+    let queryParamsToSkipForAnalysis = ['startTimeChildDetector', 'endTimeChildDetector'];
+    Object.keys(allRouteQueryParams).forEach(key => {
+      if(knownQueryParams.indexOf(key) < 0) {
+        if(this.isAnalysisDetector()) {
+          if(queryParamsToSkipForAnalysis.indexOf(key)<0) {
             additionalQueryString += `&${key}=${encodeURIComponent(allRouteQueryParams[key])}`;
-		}
-	});
+          }
+        }
+        else {
+          additionalQueryString += `&${key}=${encodeURIComponent(allRouteQueryParams[key])}`;
+        }        
+      }
+    });
 	
 	if (this.analysisMode) {
     var startTimeChildDetector: string = allRouteQueryParams['startTimeChildDetector'];
@@ -150,7 +160,9 @@ export class DetectorContainerComponent implements OnInit {
       endTime = endTimeChildDetector;
     }
 	}
-	
+  
+  
+  
 	this._diagnosticService.getDetector(this.detectorName, startTime, endTime,
       this.detectorControlService.shouldRefresh, this.detectorControlService.isInternalView, additionalQueryString)
       .subscribe((response: DetectorResponse) => {
