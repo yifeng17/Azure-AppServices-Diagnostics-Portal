@@ -50,6 +50,8 @@ export class CategorySummaryComponent implements OnInit {
     openPanel: boolean = false;
     routedComponent: any;
 
+    refreshSubscriptionObject: any;
+
     setFocusOnCallpsibleButton() {
         document.getElementById("collapse-genie-button").focus();
     }
@@ -69,7 +71,21 @@ export class CategorySummaryComponent implements OnInit {
 
     public onRouterOutletActivate(componentRef : any) {
         console.log("In category summary routing child event:", componentRef);
+        if (this.refreshSubscriptionObject)
+        {
+            this.refreshSubscriptionObject.unsubscribe();
+        }
+
+        this.detectorCommandService.resetRefresBehaviorSubject();
         this.routedComponent = componentRef;
+
+        this.refreshSubscriptionObject = this.detectorCommandService.update.subscribe(refresh => {
+            if (refresh)
+            {
+                console.log("In category Summary, calling refresh for component:", this.routedComponent);
+                this.routedComponent.refresh();
+            }
+        });
     }
     
     constructor(protected _diagnosticApiService: DiagnosticService, private _route: Router, private _injector: Injector, private _activatedRoute: ActivatedRoute, private categoryService: CategoryService,
@@ -89,13 +105,13 @@ export class CategorySummaryComponent implements OnInit {
             this._portalActionService.updateDiagnoseCategoryBladeTitle(`${this.resourceName} - ` + this.categoryName);
         });
 
-        this.detectorCommandService.update.subscribe(refresh => {
-            if (refresh)
-            {
-                console.log("In category Summary, calling refresh for component:", this.routedComponent);
-                this.routedComponent.refresh();
-            }
-        });
+        // this.refreshSubscriptionObject = this.detectorCommandService.update.subscribe(refresh => {
+        //     if (refresh)
+        //     {
+        //         console.log("In category Summary, calling refresh for component:", this.routedComponent);
+        //         this.routedComponent.refresh();
+        //     }
+        // });
     }
 
     navigateTo(path: string) {
