@@ -1,11 +1,11 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { DiagnosticService } from '../../services/diagnostic.service';
 import { DetectorControlService } from '../../services/detector-control.service';
+import { DetectorCommandService } from '../../services/detector-command.service';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { DetectorResponse, RenderingType } from '../../models/detector';
 import { BehaviorSubject } from 'rxjs';
 import { VersionService } from '../../services/version.service';
-import { Guid } from 'projects/app-service-diagnostics/src/app/shared/utilities/guid';
 
 @Component({
   selector: 'detector-container',
@@ -33,7 +33,7 @@ export class DetectorContainerComponent implements OnInit {
   detectorResSubscription: any;
   private isLegacy:boolean
   constructor(private _route: ActivatedRoute, private _diagnosticService: DiagnosticService,
-    public detectorControlService: DetectorControlService,private versionService:VersionService) { }
+    public detectorControlService: DetectorControlService, private detectorCommandService: DetectorCommandService, private versionService:VersionService) { }
 
 
   ngOnInit() {
@@ -60,7 +60,7 @@ export class DetectorContainerComponent implements OnInit {
       if (detector && detector !== "searchResultsAnalysis") {
         this.detectorName = detector;
         this.refresh();
-        this.startSubscribingToRefresh();
+     //   this.startSubscribingToRefresh();
       }
     });
 
@@ -94,7 +94,7 @@ export class DetectorContainerComponent implements OnInit {
   refresh() {
     this.error = null;
     this.detectorResponse = null;
-    console.log("detectorcontaine: refresh(), calling getDetectorResponse");
+    console.log("detectorcontainer: refresh(), calling getDetectorResponse");
     this.getDetectorResponse();
   }
 

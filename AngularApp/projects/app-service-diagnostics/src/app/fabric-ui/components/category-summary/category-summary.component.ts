@@ -11,7 +11,7 @@ import { FeatureService } from '../../../shared-v2/services/feature.service';
 import { Tile } from '../../../shared/components/tile-list/tile-list.component';
 import { Feature } from '../../../shared-v2/models/features';
 import { AuthService } from '../../../startup/services/auth.service';
-import { DiagnosticService, DetectorMetaData, DetectorType } from 'diagnostic-data';
+import { DiagnosticService, DetectorMetaData, DetectorType, DetectorCommandService } from 'diagnostic-data';
 import { filter, tap } from 'rxjs/operators';
 import { PortalActionService } from '../../../shared/services/portal-action.service';
 import { Globals } from '../../../globals';
@@ -48,6 +48,7 @@ export class CategorySummaryComponent implements OnInit {
     selectedCategoryIndex = "1";
 
     openPanel: boolean = false;
+    routedComponent: any;
 
     setFocusOnCallpsibleButton() {
         document.getElementById("collapse-genie-button").focus();
@@ -65,12 +66,19 @@ export class CategorySummaryComponent implements OnInit {
         const categoryIndex = event.option.key;
         this.selectedCategoryIndex = categoryIndex;
       }
+
+    public onRouterOutletActivate(componentRef : any) {
+        console.log("In category summary routing child event:", componentRef);
+        this.routedComponent = componentRef;
+    }
+    
     constructor(protected _diagnosticApiService: DiagnosticService, private _route: Router, private _injector: Injector, private _activatedRoute: ActivatedRoute, private categoryService: CategoryService,
         private _chatState: CategoryChatStateService, private _genericApiService: GenericApiService
-        , private _featureService: FeatureService, protected _authService: AuthService, private _portalActionService: PortalActionService, private globals: Globals) {
+        , private _featureService: FeatureService, protected _authService: AuthService, private _portalActionService: PortalActionService, private globals: Globals, private detectorCommandService: DetectorCommandService) {
     }
 
     ngOnInit() {
+        console.warn("Enter ngOnInit category summary component");
         this.categoryService.categories.subscribe(categories => {
           let decodedCategoryName = this._activatedRoute.snapshot.params.category.toLowerCase();
             this.category = categories.find(category => category.id.toLowerCase() === this._activatedRoute.snapshot.params.category.toLowerCase() ||  category.name.replace(/\s/g, '').toLowerCase() === decodedCategoryName);
@@ -79,6 +87,14 @@ export class CategorySummaryComponent implements OnInit {
 
             this.resourceName = this._activatedRoute.snapshot.params.resourcename;
             this._portalActionService.updateDiagnoseCategoryBladeTitle(`${this.resourceName} - ` + this.categoryName);
+        });
+
+        this.detectorCommandService.update.subscribe(refresh => {
+            if (refresh)
+            {
+                console.log("In category Summary, calling refresh for component:", this.routedComponent);
+                this.routedComponent.refresh();
+            }
         });
     }
 

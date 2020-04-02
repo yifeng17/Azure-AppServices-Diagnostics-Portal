@@ -1,10 +1,11 @@
 import { Router } from '@angular/router';
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TelemetryService, FeatureNavigationService, DiagnosticService, DetectorMetaData, DetectorType } from 'diagnostic-data';
 import { AuthService } from '../../../startup/services/auth.service';
 import { Subscription } from 'rxjs';
 import { ResourceService } from '../../../shared-v2/services/resource.service';
+//import { DetectorContainerComponent } from 'dist/diagnostic-data/lib/components/detector-container/detector-container.component';
 
 @Component({
   selector: 'generic-detector',
@@ -15,6 +16,8 @@ import { ResourceService } from '../../../shared-v2/services/resource.service';
   ]
 })
 export class GenericDetectorComponent implements OnDestroy {
+  @ViewChild('detectorContainerComponent', { static: true }) detectorContainerComponent: any;
+ 
   detector: string;
   analysisDetector: string;
   navigateSub: Subscription;
@@ -68,6 +71,11 @@ export class GenericDetectorComponent implements OnDestroy {
       }
     });
   }
+
+   refresh() {
+        console.log("In generic detector component, ${0} start calling refresh()", this.detectorContainerComponent);
+        this.detectorContainerComponent.refresh();
+    }
 
   ngOnDestroy() {
     this.navigateSub.unsubscribe();

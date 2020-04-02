@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CategoryService } from '../../../shared-v2/services/category.service';
 import { Category } from '../../../shared-v2/models/category';
 import { Globals } from '../../../globals';
+//import { DetectorContainerComponent } from 'dist/diagnostic-data/lib/components/detector-container/detector-container.component';
 
 const suffix = ' cm';
 
@@ -15,6 +16,7 @@ const suffix = ' cm';
 //extends Renderable
 
 export class CategoryOverviewComponent implements OnInit {
+    @ViewChild('detectorContainerComponent', { static: true }) detectorContainerComponent: any;
     categoryId: string = "";
     category: Category;
 
@@ -44,11 +46,18 @@ export class CategoryOverviewComponent implements OnInit {
     }
 
     ngOnInit() {
+        console.log("load overview component");
         let categoryParam = this._activatedRoute.parent.snapshot.params.category.toLowerCase();
         this._categoryService.categories.subscribe(categories => {
             this.category = categories.find(category => categoryParam === category.id.toLowerCase() || category.name.replace(/\s/g, '').toLowerCase() === categoryParam);
         });
 
         this.categoryId = this.category.id
+        console.log("gonna load category component with detectorId", this.categoryId);
+    }
+
+    refresh() {
+        console.log("In category overview component, ${0} start calling refresh()", this.detectorContainerComponent);
+        this.detectorContainerComponent.refresh();
     }
 }

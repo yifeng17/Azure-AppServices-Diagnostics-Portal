@@ -10,6 +10,7 @@ export * from './lib/services/comms.service';
 export * from './lib/services/cxp-chat.service';
 export * from './lib/services/telemetry/telemetry.service';
 export * from './lib/services/detector-control.service';
+export * from './lib/services/detector-command.service';
 export * from './lib/services/telemetry/telemetry.common';
 export * from './lib/services/feature-navigation.service';
 export * from './lib/services/diagnostic-site.service';
