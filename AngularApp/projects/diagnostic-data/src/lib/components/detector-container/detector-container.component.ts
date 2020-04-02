@@ -108,9 +108,9 @@ export class DetectorContainerComponent implements OnInit {
         }
       });
      this._diagnosticService.getDetector(this.detectorName, this.detectorControlService.startTimeString, this.detectorControlService.endTimeString,
-      this.detectorControlService.shouldRefresh,  this.detectorControlService.isInternalView, additionalQueryString)
+      true,  this.detectorControlService.isInternalView, additionalQueryString)
       .subscribe((response: DetectorResponse) => {
-        console.log("detectorcontaine calling getDetectorResponse",additionalQueryString,  response);
+        console.log("detectorcontainer calling getDetectorResponse",additionalQueryString,  response);
         this.shouldHideTimePicker(response);
         this.detectorResponse = response;
       }, (error: any) => {
