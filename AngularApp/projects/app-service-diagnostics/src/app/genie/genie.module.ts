@@ -19,7 +19,6 @@ import { DocumentSearchResultsComponent } from './message-flow/document-search-r
 import { SharedV2Module } from '../shared-v2/shared-v2.module';
 import { DiagnosticDataModule } from 'diagnostic-data';
 import { GenieChatFlow } from './message-flow/v2-flows/genie-chat.flow';
-import { HealthCheckV3Component } from './message-flow/health-check-v3/health-check-v3.component';
 import { FabIconModule,FabChoiceGroupModule } from '@angular-react/fabric';
 import { DynamicAnalysisComponent } from './message-flow/dynamic-analysis/dynamic-analysis.component';
 import { GeniePanelComponent } from '../fabric-ui/components/genie-panel/genie-panel.component';
@@ -39,7 +38,6 @@ import { FabPanelModule } from '@angular-react/fabric';
         GraphMessageComponent,
         DocumentSearchComponent,
         DocumentSearchResultsComponent,
-        HealthCheckV3Component,
         DynamicAnalysisComponent,
         GeniePanelComponent,
         GenieDynamicComponent
@@ -56,7 +54,6 @@ import { FabPanelModule } from '@angular-react/fabric';
         FabPanelModule
     ],
     exports: [
-        HealthCheckV3Component,
         LoadingMessageComponent,
         GeniePanelComponent,
         GenieDynamicComponent
