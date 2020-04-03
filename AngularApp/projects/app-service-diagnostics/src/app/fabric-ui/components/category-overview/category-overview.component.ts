@@ -3,6 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CategoryService } from '../../../shared-v2/services/category.service';
 import { Category } from '../../../shared-v2/models/category';
 import { Globals } from '../../../globals';
+import { DetectorContainerComponent } from 'projects/diagnostic-data/src/lib/components/detector-container/detector-container.component';
+import { Refreshable } from '../../../shared/models/refreshable';
 
 const suffix = ' cm';
 
@@ -12,9 +14,9 @@ const suffix = ' cm';
     styleUrls: ['./category-overview.component.scss',
     ]
 })
-//extends Renderable
 
-export class CategoryOverviewComponent implements OnInit {
+export class CategoryOverviewComponent implements OnInit, Refreshable{
+    @ViewChild(DetectorContainerComponent, { static: false }) detectorContainerComponent: DetectorContainerComponent;
     categoryId: string = "";
     category: Category;
 
@@ -50,5 +52,9 @@ export class CategoryOverviewComponent implements OnInit {
         });
 
         this.categoryId = this.category.id
+    }
+
+    refresh() {
+        this.detectorContainerComponent.refresh(true);
     }
 }

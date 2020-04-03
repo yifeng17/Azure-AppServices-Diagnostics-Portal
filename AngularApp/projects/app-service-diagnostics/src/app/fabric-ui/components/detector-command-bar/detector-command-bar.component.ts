@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Globals } from '../../../globals';
-import { DetectorControlService } from 'projects/diagnostic-data/src/lib/services/detector-control.service';
+import { DetectorControlService, DetectorCommandService } from 'diagnostic-data';
 
 @Component({
   selector: 'detector-command-bar',
@@ -10,7 +10,7 @@ import { DetectorControlService } from 'projects/diagnostic-data/src/lib/service
 export class DetectorCommandBarComponent {
   time: string;
 
-  constructor(private globals: Globals, private detectorControlService: DetectorControlService) { }
+  constructor(private globals: Globals, private detectorControlService: DetectorControlService, private detectorCommandService: DetectorCommandService) { }
 
   toggleOpenState() {
     this.globals.openGeniePanel = !this.globals.openGeniePanel;
@@ -21,11 +21,10 @@ export class DetectorCommandBarComponent {
   }
 
   refreshPage() {
-    this.detectorControlService.refresh();
+    this.detectorCommandService.refesh();
   }
 
   toggleOpenTimePicker() {
-    // setTimeout(() => {this.globals.openTimePicker = !this.globals.openTimePicker},0);
     this.globals.openTimePicker = !this.globals.openTimePicker
   }
 

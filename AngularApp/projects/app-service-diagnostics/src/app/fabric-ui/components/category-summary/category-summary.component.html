@@ -7,7 +7,7 @@
     <section class="content">
       <div class="col-md col-ms col-lg" style="width:98%; display: inline-block;">
         <detector-command-bar (openPanel)="setFocusOnCallpsibleButton()"></detector-command-bar>
-        <router-outlet></router-outlet>
+        <router-outlet (activate)="onRouterOutletActivate($event)"></router-outlet>
       </div>
       <div id="collapse-genie-button button-container" class="col-md col-sm col-lg" class="collapsible-button"
         style=" float: right; height: 100vh; border-left:1px solid #cccccc; " (click)="openGeniePanel()" tabindex="0"

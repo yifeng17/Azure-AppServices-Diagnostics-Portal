@@ -80,22 +80,6 @@ export const HomeRoutes = RouterModule.forChild([
         },
         children: [
             {
-                path: 'overview',
-                component: CategoryOverviewComponent,
-                data: {
-                    cacheComponent: true,
-                    navigationTitle: CategoryTabResolver,
-                },
-            },
-            {
-                path: '',
-                redirectTo: 'overview',
-                pathMatch: 'full',
-                data: {
-                    cacheComponent: true
-                },
-            },
-            {
                 path: 'analysis/:analysisId',
                 component: GenericAnalysisComponent,
                 data: {
@@ -356,6 +340,22 @@ export const HomeRoutes = RouterModule.forChild([
                 data: {
                     navigationTitle: 'App Service Diagnostics Settings'
                 }
+            },
+            {
+                path: 'overview',
+                component: CategoryOverviewComponent,
+                data: {
+                    cacheComponent: true,
+                    navigationTitle: CategoryTabResolver,
+                },
+            },
+            {
+                path: '',
+                redirectTo: 'overview',
+                pathMatch: 'full',
+                data: {
+                    cacheComponent: true
+                },
             },
         ],
         resolve: {

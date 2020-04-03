@@ -1,6 +1,7 @@
 import 'd3';
 import 'nvd3';
 import { DetectorControlService } from './services/detector-control.service';
+import { DetectorCommandService } from './services/detector-command.service';
 import { DiagnosticService } from './services/diagnostic.service';
 import { GenericSupportTopicService } from './services/generic-support-topic.service';
 import { GenericContentService } from './services/generic-content.service';
@@ -173,6 +174,7 @@ export class DiagnosticDataModule {
         AppInsightsTelemetryService,
         TelemetryService,
         DetectorControlService,
+        DetectorCommandService,
         CommsService,
         FeatureNavigationService,
         AppInsightsQueryService,
