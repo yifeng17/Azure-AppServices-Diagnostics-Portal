@@ -247,7 +247,6 @@ export class DetectorControlService {
   }
 
   public selectDuration(duration: DurationSelector) {
-    console.log("starts select duration");
     this._duration = duration;
     this._startTime = moment.utc().subtract(duration.duration);
     this._endTime = this._startTime.clone().add(duration.duration);
@@ -267,7 +266,6 @@ export class DetectorControlService {
   }
 
   public refresh() {
- //   console.log("detectorcontrol:_duration", this._duration);
     this._duration ? this.selectDuration(this._duration) : this._refreshData();
   }
 
@@ -281,12 +279,8 @@ export class DetectorControlService {
   }
 
   private _refreshData() {
-   // console.log(" _refreshData():1, _shouldRefresh, _refresh", this._shouldRefresh, this._refresh);
-   console.info("Pushing the behavior subject _refresh with true");
     this._shouldRefresh = true;
     this._refresh.next(true);
-
-  //  console.log("_refreshData():2, _shouldRefresh, _refresh", this._shouldRefresh, this._refresh);
   }
 
   public get error(): string {

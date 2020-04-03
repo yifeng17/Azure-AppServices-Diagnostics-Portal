@@ -7,7 +7,6 @@ import { AuthService } from '../../../startup/services/auth.service';
 import { SearchAnalysisMode } from 'projects/diagnostic-data/src/lib/models/search-mode';
 import { CXPChatService } from 'diagnostic-data' ;
 import { GenericSupportTopicService } from '../../../../../../diagnostic-data/src/lib/services/generic-support-topic.service';
-import { DetectorContainerComponent } from 'projects/diagnostic-data/src/lib/components/detector-container/detector-container.component';
 
 @Component({
   selector: 'generic-analysis',
@@ -15,7 +14,6 @@ import { DetectorContainerComponent } from 'projects/diagnostic-data/src/lib/com
   styleUrls: ['./generic-analysis.component.scss']
 })
 export class GenericAnalysisComponent extends GenericDetectorComponent implements OnInit {
-  @ViewChild(DetectorContainerComponent, { static: false }) detectorContainerComponent: DetectorContainerComponent;
   @Input() analysisId: string = "";
   @Input() searchTerm: string = "";
   @Input() searchMode: SearchAnalysisMode = SearchAnalysisMode.CaseSubmission;
@@ -135,14 +133,5 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
         this._cxpChatService.logChatEligibilityCheck('Call to CXP Chat API skipped', JSON.stringify(checkOutcome));
       }
     }
-  }
-
-  refresh() {
-    console.log("In generic analysis component, ${0} start calling refresh()", this.detectorContainerComponent);
-    // if (this.detectorContainerComponent)
-    // {
-    //   this.detectorContainerComponent.refresh(true);
-    // }
-    super.refresh();
   }
 }

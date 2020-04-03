@@ -26,7 +26,6 @@ export class DetectorControlComponent implements OnInit {
       this.timeDiffError = this.detectorControlService.timeRangeErrorString;
     }
     this.detectorControlService.update.subscribe(validUpdate => {
-      console.log("detectorControlservice listen to update");
       if (validUpdate) {
         this.startTime = this.detectorControlService.startTimeString;
         this.endTime = this.detectorControlService.endTimeString;
@@ -43,7 +42,6 @@ export class DetectorControlComponent implements OnInit {
         routeParams['searchTerm'] = this._activatedRoute.snapshot.queryParams['searchTerm'];
       }
 
-      console.log("detectorControlservice listen to update with routeParams", routeParams);
       this._router.navigate([], { queryParams: routeParams, queryParamsHandling: 'merge', relativeTo: this._activatedRoute });
 
     });

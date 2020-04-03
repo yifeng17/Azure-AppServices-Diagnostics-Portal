@@ -37,9 +37,6 @@ export class DetectorContainerComponent implements OnInit {
 
 
   ngOnInit() {
-    // let guid = Guid.newGuid();
-    // console.log("new guid", guid);
-    console.info("Entering ngoninit");
     this.versionService.isLegacySub.subscribe(isLegacy => this.isLegacy = isLegacy);
     //Remove after A/B Test
     if (this.isLegacy) {
@@ -49,9 +46,7 @@ export class DetectorContainerComponent implements OnInit {
     }
     
     this.detectorResSubscription = this.detectorControlService.update.subscribe(isValidUpdate => {
-      console.log("detectorcontaine: isValidUpate, this.detectorName", isValidUpdate, this.detectorName);
       if (isValidUpdate && this.detectorName) {
-        console.log("detectorcontaine: starts refresh");
         this.refresh(false);
       }
     });
@@ -60,8 +55,7 @@ export class DetectorContainerComponent implements OnInit {
       if (detector && detector !== "searchResultsAnalysis") {
         this.detectorName = detector;
         this.refresh(false);
-   //    this.startSubscribingToRefresh();
-      }
+     }
     });
 
     const component:any = this._route.component; 
@@ -70,31 +64,9 @@ export class DetectorContainerComponent implements OnInit {
     }
   }
 
-  private startSubscribingToRefresh()
-  {
-    if (this.detectorResSubscription)
-    {
-      this.detectorResSubscription.unsubscribe();
-    }
-    console.info("In detector view, calling resetRefresBehaviorSubject() in detector control service");
-
-    this.detectorControlService.resetRefresBehaviorSubject();
-    this.detectorResSubscription = this.detectorControlService.update.subscribe(isValidUpdate => {
-     // console.log("detectorcontaine: isValidUpate, this.detectorName", isValidUpdate, this.detectorName);
-     console.info(`In detector View : ${this.detectorName}, got isValidUpdate: ${isValidUpdate} from detector control service`);
-      if (isValidUpdate && this.detectorName) {
-        console.info(`In detector View : ${this.detectorName}, triggering refresh`);
-        this.refresh(false);
-      }
-    });
-  }
-
-
-
   refresh(hardRefresh: boolean) {
     this.error = null;
     this.detectorResponse = null;
-    console.log("detectorcontainer: refresh(), calling getDetectorResponse");
     this.getDetectorResponse(hardRefresh);
   }
 
@@ -111,7 +83,6 @@ export class DetectorContainerComponent implements OnInit {
      this._diagnosticService.getDetector(this.detectorName, this.detectorControlService.startTimeString, this.detectorControlService.endTimeString,
       invalidateCache,  this.detectorControlService.isInternalView, additionalQueryString)
       .subscribe((response: DetectorResponse) => {
-        console.log("detectorcontainer calling getDetectorResponse",additionalQueryString,  response);
         this.shouldHideTimePicker(response);
         this.detectorResponse = response;
       }, (error: any) => {
@@ -136,7 +107,6 @@ export class DetectorContainerComponent implements OnInit {
 
   
   ngOnDestroy(): void {
-    console.log("destroying detector container for:", this.detectorName);
     if (this.detectorResSubscription) {
         this.detectorResSubscription.unsubscribe();
     }

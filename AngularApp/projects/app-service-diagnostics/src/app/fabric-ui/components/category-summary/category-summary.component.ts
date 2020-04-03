@@ -81,7 +81,6 @@ export class CategorySummaryComponent implements OnInit {
         this.refreshSubscriptionObject = this.detectorCommandService.update.subscribe(refresh => {
             if (refresh)
             {
-                console.log("In category Summary, calling refresh for component:", this.routedComponent);
                 this.routedComponent.refresh();
             }
         });
@@ -112,4 +111,11 @@ export class CategorySummaryComponent implements OnInit {
         };
         this._route.navigate(path.split('/'), navigationExtras);
     }
+
+    ngOnDestroy() {
+        if (this.refreshSubscriptionObject)
+        {
+            this.refreshSubscriptionObject.unsubscribe();
+        }
+      }
 }

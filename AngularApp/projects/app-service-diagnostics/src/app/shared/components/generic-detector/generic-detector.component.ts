@@ -74,7 +74,6 @@ export class GenericDetectorComponent implements OnDestroy, Refreshable {
   }
 
    refresh() {
-        console.log("In generic detector component, ${0} start calling refresh()", this.detectorContainerComponent);
         this.detectorContainerComponent.refresh(true);
     }
 

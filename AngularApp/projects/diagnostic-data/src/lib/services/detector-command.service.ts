@@ -13,7 +13,6 @@ export class DetectorCommandService {
   }
 
   public resetRefresBehaviorSubject() {
-    console.log("In detectorCommandService, reset _refresh to be false");
     this._refresh = new BehaviorSubject<boolean>(false);
   }
 
