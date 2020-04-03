@@ -5,6 +5,8 @@ import { TelemetryService, FeatureNavigationService, DiagnosticService, Detector
 import { AuthService } from '../../../startup/services/auth.service';
 import { Subscription } from 'rxjs';
 import { ResourceService } from '../../../shared-v2/services/resource.service';
+import { DetectorContainerComponent } from 'projects/diagnostic-data/src/lib/components/detector-container/detector-container.component';
+import { Refreshable } from '../../models/refreshable';
 
 @Component({
   selector: 'generic-detector',
@@ -14,8 +16,8 @@ import { ResourceService } from '../../../shared-v2/services/resource.service';
     FeatureNavigationService
   ]
 })
-export class GenericDetectorComponent implements OnDestroy {
-  @ViewChild('detectorContainerComponent', { static: true }) detectorContainerComponent: any;
+export class GenericDetectorComponent implements OnDestroy, Refreshable {
+  @ViewChild(DetectorContainerComponent, { static: false }) detectorContainerComponent: any;
  
   detector: string;
   analysisDetector: string;

@@ -70,7 +70,6 @@ export class CategorySummaryComponent implements OnInit {
       }
 
     public onRouterOutletActivate(componentRef : any) {
-        console.log("In category summary routing child event:", componentRef);
         if (this.refreshSubscriptionObject)
         {
             this.refreshSubscriptionObject.unsubscribe();
@@ -94,7 +93,6 @@ export class CategorySummaryComponent implements OnInit {
     }
 
     ngOnInit() {
-        console.warn("Enter ngOnInit category summary component");
         this.categoryService.categories.subscribe(categories => {
           let decodedCategoryName = this._activatedRoute.snapshot.params.category.toLowerCase();
             this.category = categories.find(category => category.id.toLowerCase() === this._activatedRoute.snapshot.params.category.toLowerCase() ||  category.name.replace(/\s/g, '').toLowerCase() === decodedCategoryName);
@@ -104,14 +102,6 @@ export class CategorySummaryComponent implements OnInit {
             this.resourceName = this._activatedRoute.snapshot.params.resourcename;
             this._portalActionService.updateDiagnoseCategoryBladeTitle(`${this.resourceName} - ` + this.categoryName);
         });
-
-        // this.refreshSubscriptionObject = this.detectorCommandService.update.subscribe(refresh => {
-        //     if (refresh)
-        //     {
-        //         console.log("In category Summary, calling refresh for component:", this.routedComponent);
-        //         this.routedComponent.refresh();
-        //     }
-        // });
     }
 
     navigateTo(path: string) {
