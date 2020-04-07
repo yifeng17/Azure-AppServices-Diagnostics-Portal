@@ -19,6 +19,8 @@ export class DetectorContainerComponent implements OnInit {
   hideTimerPicker: boolean = false;
 
    detectorName: string;
+   detectorRefreshSubscription: any;
+   refreshInstanceIdSubscription: any;
 
   @Input() detectorSubject: BehaviorSubject<string> = new BehaviorSubject<string>(null);
 
@@ -31,7 +33,7 @@ export class DetectorContainerComponent implements OnInit {
   isCategoryOverview:boolean = false;
   private isLegacy:boolean
   constructor(private _route: ActivatedRoute, private _diagnosticService: DiagnosticService,
-    public detectorControlService: DetectorControlService,private versionService:VersionService) { }
+    public detectorControlService: DetectorControlService, private versionService:VersionService) { }
 
   ngOnInit() {
     this.versionService.isLegacySub.subscribe(isLegacy => this.isLegacy = isLegacy);
@@ -42,17 +44,22 @@ export class DetectorContainerComponent implements OnInit {
       this.hideTimerPicker= this.hideDetectorControl || this._route.snapshot.parent.url.findIndex((x: UrlSegment) => x.path === "categories") > -1;
     }
     
-    this.detectorControlService.update.subscribe(isValidUpdate => {
+    this.detectorRefreshSubscription = this.detectorControlService.update.subscribe(isValidUpdate => {
       if (isValidUpdate && this.detectorName) {
-        this.refresh();
+        this.refreshInstanceIdSubscription = this.detectorControlService._refreshInstanceId.subscribe((instanceId) => {
+            if (instanceId.toLowerCase() === this.detectorName.toLowerCase())
+            {
+              this.refresh(true);
+            }
+        });
       }
     });
 
     this.detectorSubject.subscribe(detector => {
       if (detector && detector !== "searchResultsAnalysis") {
         this.detectorName = detector;
-        this.refresh();
-      }
+        this.refresh(false);
+     }
     });
 
     const component:any = this._route.component; 
@@ -61,13 +68,14 @@ export class DetectorContainerComponent implements OnInit {
     }
   }
 
-  refresh() {
+  refresh(hardRefresh: boolean) {
     this.error = null;
     this.detectorResponse = null;
-    this.getDetectorResponse();
+    this.getDetectorResponse(hardRefresh);
   }
 
-  getDetectorResponse() {
+  getDetectorResponse(hardRefresh: boolean) {
+      let invalidateCache = hardRefresh ? hardRefresh : this.detectorControlService.shouldRefresh;
       let allRouteQueryParams = this._route.snapshot.queryParams;
       let additionalQueryString = '';
       let knownQueryParams = ['startTime', 'endTime'];
@@ -76,8 +84,8 @@ export class DetectorContainerComponent implements OnInit {
             additionalQueryString += `&${key}=${encodeURIComponent(allRouteQueryParams[key])}`;
         }
       });
-    this._diagnosticService.getDetector(this.detectorName, this.detectorControlService.startTimeString, this.detectorControlService.endTimeString,
-      this.detectorControlService.shouldRefresh,  this.detectorControlService.isInternalView, additionalQueryString)
+     this._diagnosticService.getDetector(this.detectorName, this.detectorControlService.startTimeString, this.detectorControlService.endTimeString,
+      invalidateCache,  this.detectorControlService.isInternalView, additionalQueryString)
       .subscribe((response: DetectorResponse) => {
         this.shouldHideTimePicker(response);
         this.detectorResponse = response;
@@ -98,6 +106,16 @@ export class DetectorContainerComponent implements OnInit {
         this.hideDetectorControl = cardRenderingIndex >= 0 || this.hideDetectorControl;
       }
       
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.detectorRefreshSubscription) {
+        this.detectorRefreshSubscription.unsubscribe();
+    }
+    if (this.refreshInstanceIdSubscription)
+    {
+      this.refreshInstanceIdSubscription.unsubscribe();
     }
   }
 }

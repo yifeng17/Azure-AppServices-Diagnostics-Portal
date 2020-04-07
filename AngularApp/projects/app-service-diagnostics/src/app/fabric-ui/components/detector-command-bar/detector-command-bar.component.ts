@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Globals } from '../../../globals';
 import { DetectorControlService } from 'projects/diagnostic-data/src/lib/services/detector-control.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'detector-command-bar',
@@ -10,7 +11,7 @@ import { DetectorControlService } from 'projects/diagnostic-data/src/lib/service
 export class DetectorCommandBarComponent {
   time: string;
 
-  constructor(private globals: Globals, private detectorControlService: DetectorControlService) { }
+  constructor(private globals: Globals, private detectorControlService: DetectorControlService, private _route: ActivatedRoute) { }
 
   toggleOpenState() {
     this.globals.openGeniePanel = !this.globals.openGeniePanel;
@@ -21,7 +22,13 @@ export class DetectorCommandBarComponent {
   }
 
   refreshPage() {
-    this.detectorControlService.refresh();
+    let childRouteSnapshot = this._route.firstChild.snapshot;
+    let childRouteType = childRouteSnapshot.url[0].toString();
+    let instanceId = childRouteType === "overview" ? this._route.snapshot.params["category"] : childRouteType === "detectors" ? childRouteSnapshot.params["detectorName"] : childRouteSnapshot.params["analysisId"] ;
+    if (instanceId)
+    {
+      this.detectorControlService.refresh(instanceId);
+    }
   }
 
   toggleOpenTimePicker() {
