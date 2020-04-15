@@ -11,6 +11,7 @@ import { GenericArmConfigService } from './generic-arm-config.service';
 import { StartupInfo } from '../models/portal';
 import { DemoSubscriptions } from '../../betaSubscriptions';
 import {VersioningHelper} from '../../../app/shared/utilities/versioningHelper';
+import {PortalKustoTelemetryService} from '../../../app/shared/services/portal-kusto-telemetry.service';
 @Injectable()
 export class ArmService {
     public subscriptions = new ReplaySubject<Subscription[]>(1);
@@ -27,7 +28,8 @@ export class ArmService {
     private readonly routeToLiberation = '2';
     private readonly routeToDiagnosticRole = '1';
     private armEndpoint:string = '';
-    constructor(private _http: HttpClient, private _authService: AuthService, private _cache: CacheService, private _genericArmConfigService?: GenericArmConfigService ) {
+    constructor(private _http: HttpClient, private _authService: AuthService, private _cache: CacheService, private _genericArmConfigService?: GenericArmConfigService,
+        private kustoLogging?: PortalKustoTelemetryService ) {
         this._authService.getStartupInfo().subscribe((startupInfo: StartupInfo) => {
             if(!!startupInfo.armEndpoint && startupInfo.armEndpoint !='' && startupInfo.armEndpoint.length > 1) {
                 this.armEndpoint = startupInfo.armEndpoint ;
@@ -128,6 +130,15 @@ export class ArmService {
         // This is just for logs so that we know requests are coming from Portal.
         if(this.diagRoleVersion === this.routeToLiberation) {
             additionalHeaders.set('x-ms-azureportal', 'true');
+        }
+        let eventProps = {
+            'resourceId' : resourceUri,
+            'x-ms-diagversion': this.diagRoleVersion
+        };
+        if(this.diagRoleVersion === this.routeToLiberation) {
+            this.kustoLogging.logEvent('RoutedToLiberation', eventProps);
+        } else {
+            this.kustoLogging.logEvent('RoutedToDiagnosticRole', eventProps);
         }
         const request = this._http.get<ResponseMessageEnvelope<T>>(url, {
             headers: this.getHeaders(null, additionalHeaders)
@@ -332,6 +343,15 @@ export class ArmService {
          // This is just for logs so that we know requests are coming from Portal.
          if(this.diagRoleVersion === this.routeToLiberation) {
             additionalHeaders.set('x-ms-azureportal', 'true');
+        }
+        let eventProps = {
+            'resourceId' : resourceId,
+            'x-ms-diagversion': this.diagRoleVersion
+        };
+        if(this.diagRoleVersion === this.routeToLiberation) {
+            this.kustoLogging.logEvent('RoutedToLiberation', eventProps);
+        } else {
+            this.kustoLogging.logEvent('RoutedToDiagnosticRole', eventProps);
         }
         const request = this._http.get(url, { headers: this.getHeaders(null, additionalHeaders) }).pipe(
             map<ResponseMessageCollectionEnvelope<ResponseMessageEnvelope<T>>, ResponseMessageEnvelope<T>[]>(r => r.value),

@@ -33,6 +33,7 @@ export class DemoSubscriptions {
         '8eeeb512-e3d7-4732-b40c-36df9ff628d0', // Nikhil Vetteth's Susbscription
         '81fe176a-bfcc-47f6-b21f-865f1acd12c3',//Accessibility Team
         '688dfd98-3a87-47d6-abd8-55e5e5e87c78',//Jeff Hopper's Subscription, external
-        '82acd5bb-4206-47d4-9c12-a65db028483d'//Christian Smith
+        '82acd5bb-4206-47d4-9c12-a65db028483d',//Christian Smith,
+        '59673966-501b-4a6c-9ed5-12a166a5bde9' // Testing mwh geo
     ];
 }
