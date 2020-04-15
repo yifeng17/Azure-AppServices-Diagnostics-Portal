@@ -133,13 +133,9 @@ export class ArmService {
         }
         let eventProps = {
             'resourceId' : resourceUri,
-            'x-ms-diagversion': this.diagRoleVersion
+            'targetRuntime': this.diagRoleVersion == this.routeToLiberation ? "Liberation" : "DiagnosticRole"
         };
-        if(this.diagRoleVersion === this.routeToLiberation) {
-            this.kustoLogging.logEvent('RoutedToLiberation', eventProps);
-        } else {
-            this.kustoLogging.logEvent('RoutedToDiagnosticRole', eventProps);
-        }
+        this.kustoLogging.logEvent("RequestRoutingDetails", eventProps);
         const request = this._http.get<ResponseMessageEnvelope<T>>(url, {
             headers: this.getHeaders(null, additionalHeaders)
         }).pipe(
@@ -344,15 +340,12 @@ export class ArmService {
          if(this.diagRoleVersion === this.routeToLiberation) {
             additionalHeaders.set('x-ms-azureportal', 'true');
         }
+
         let eventProps = {
             'resourceId' : resourceId,
-            'x-ms-diagversion': this.diagRoleVersion
+            'targetRuntime': this.diagRoleVersion == this.routeToLiberation ? "Liberation" : "DiagnosticRole"
         };
-        if(this.diagRoleVersion === this.routeToLiberation) {
-            this.kustoLogging.logEvent('RoutedToLiberation', eventProps);
-        } else {
-            this.kustoLogging.logEvent('RoutedToDiagnosticRole', eventProps);
-        }
+        this.kustoLogging.logEvent("RequestRoutingDetails", eventProps);
         const request = this._http.get(url, { headers: this.getHeaders(null, additionalHeaders) }).pipe(
             map<ResponseMessageCollectionEnvelope<ResponseMessageEnvelope<T>>, ResponseMessageEnvelope<T>[]>(r => r.value),
             catchError(this.handleError)
