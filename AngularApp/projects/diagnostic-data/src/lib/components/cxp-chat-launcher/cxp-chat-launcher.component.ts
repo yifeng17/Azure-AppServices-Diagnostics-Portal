@@ -13,6 +13,7 @@ export class CxpChatLauncherComponent implements OnInit {
   public chatConfDialogOpenedAtleastOnce = false;
   public showChatConfDialog: boolean = false;
   public firstTimeCheck: boolean = true;
+  public diagnosticLogsConsent:boolean = true;
 
   constructor(private _cxpChatService: CXPChatService) {
   }

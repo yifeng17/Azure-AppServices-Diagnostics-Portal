@@ -80,6 +80,26 @@ $zIndex:99;
     width: 30em;  
 }
 
+.cxpChat-ConsentContainer {
+    display: flex;
+    justify-content: space-between;
+}
+
+.cxpChat-ConsentOptionContainer {
+    display: flex;
+}
+
+.cxpChat-ConsentText {
+    padding-left: .2em;
+}
+
+label {
+    color: white;
+}
+
+a {
+    color: skyblue;
+}
 
 .cxpChat-actionBtnContainer {
     display: flex;
