@@ -13,6 +13,7 @@ export class CxpChatLauncherComponent implements OnInit {
   public chatConfDialogOpenedAtleastOnce = false;
   public showChatConfDialog: boolean = false;
   public firstTimeCheck: boolean = true;
+  public diagnosticLogsConsent:boolean = true;
 
   constructor(private _cxpChatService: CXPChatService) {
   }
@@ -65,9 +66,10 @@ export class CxpChatLauncherComponent implements OnInit {
 
   public openChatPopup(): void {
     if (this.chatUrl != '') {
+      let completeChatUrl:string = `${this.chatUrl}&diagnosticsConsent=${this.diagnosticLogsConsent}`;
       const windowFeatures: string = 'menubar=no,location=no,resizable=no,scrollbars=no,status=no,height=550,width=450';
-      window.open(this.chatUrl, '_blank', windowFeatures, false);
-      this._cxpChatService.logUserActionOnChat('ChatUrlOpened', this.trackingId, this.chatUrl);
+      window.open(completeChatUrl, '_blank', windowFeatures, false);
+      this._cxpChatService.logUserActionOnChat('ChatUrlOpened', this.trackingId, completeChatUrl);
       this.hideChatConfDialog(false,'AutohideAfterChatLaunch');
     }
   }
