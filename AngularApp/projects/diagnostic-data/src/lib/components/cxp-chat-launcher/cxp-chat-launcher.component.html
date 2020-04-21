@@ -1,5 +1,8 @@
 <div #chatComponentContainer *ngIf="isComponentInitialized()">
   <div class="cxpChat-ConfContainer" *ngIf="showChatConfDialog">
+    <div class = "cxpChat-CloseIconBackground">
+      <i role="button" aria-label="Close chat dialogue" title="Close" class="fa fa-times-circle cxpChat-CloseIcon" (click)="hideChatConfDialog(true, 'CloseIcon')"></i>
+	</div>
     <div class="cxpChat-ConfText">
       <div>
         <img src="assets/img/jen.jpg" class="agentImage">
@@ -7,12 +10,10 @@
       </div>
       <hr>
       <div>
-        I'd love to help you out with your issue and connect you with our quick help chat team.
+        <markdown ngPreserveWhitespaces [data]="chatWelcomeMessage"></markdown>        
       </div>
       <br/>
-
-
-      <div class="cxpChat-ConsentContainer">
+      <div *ngIf="showDiagnosticsConsentOption" class="cxpChat-ConsentContainer">
         <div class="cxpChat-ConsentOptionContainer">
           <div>
             <input id="chkBoxDiagnosticConsent" type="checkbox" [(ngModel)]="diagnosticLogsConsent">
@@ -28,12 +29,8 @@
           </a>
         </div>
       </div>
-      
-
-
-
     </div>
-    <div class="cxpChat-actionBtnContainer">
+    <div *ngIf="showChatButtons" class="cxpChat-actionBtnContainer">
       <input class="custom-button inactive-button white-border" (click)="hideChatConfDialog(true, 'CancelButton')" type="button" role="button"
         aria-label="Maybe later" value="Maybe later" />
       <input class="custom-button default-button white-border" (click)="openChatPopup()" type="button" role="button"

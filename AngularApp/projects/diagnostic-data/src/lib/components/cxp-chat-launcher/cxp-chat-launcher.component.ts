@@ -14,8 +14,14 @@ export class CxpChatLauncherComponent implements OnInit {
   public showChatConfDialog: boolean = false;
   public firstTimeCheck: boolean = true;
   public diagnosticLogsConsent:boolean = true;
+  public chatWelcomeMessage:string = "";
+  public showChatButtons:boolean = true;
+  public showDiagnosticsConsentOption:boolean = true;
+  public completeChatUrl:string = '';
+  public readonly windowFeatures: string = 'menubar=no,location=no,resizable=no,scrollbars=no,status=no,height=550,width=450';
 
   constructor(private _cxpChatService: CXPChatService) {
+    this.chatWelcomeMessage =  "I'd love to help you out with your issue and connect you with our quick help chat team.";
   }
 
   
@@ -27,6 +33,28 @@ export class CxpChatLauncherComponent implements OnInit {
         this._cxpChatService.logUserActionOnChat('ChatConfDialogShownBySystem', this.trackingId, this.chatUrl);
       }      
     }, 10000);
+  }
+
+  public showChatOpenedMessage() {
+    this.showChatButtons = false;
+    this.showDiagnosticsConsentOption = false;
+
+    let browserUrl = (window.location != window.parent.location) ? document.referrer : document.location.href;
+    let portalUrl = 'https://portal.azure.com';
+
+    if (browserUrl.includes("azure.cn")){
+      portalUrl = 'https://portal.azure.cn';
+    }
+    else if(browserUrl.includes("azure.us")){
+      portalUrl = 'https://portal.azure.us';
+    } else if(browserUrl.includes("azure.de")) {
+      portalUrl = 'https://portal.azure.de';
+    }
+
+    this.chatWelcomeMessage = `A support request has been created. You can view the case <strong><a role="link" aria-label="Click to view your support requests" title="Support requests." style='color:skyblue' target = '_blank' href='${portalUrl}/#blade/Microsoft_Azure_Support/HelpAndSupportBlade/managesupportrequest'>here</a></strong>.
+
+
+In case chat did not start in a pop up window, disable your popup blocker and click <strong><a role="link" aria-label="Click to launch chat popup" title="Launch chat popup."  style='color:skyblue' href="javascript:window.open('${this.completeChatUrl}', 'AzureSupportCaseChat', '${this.windowFeatures}');">here</a></strong> to launch chat again.`;
   }
 
   public isComponentInitialized(): boolean {
@@ -66,11 +94,10 @@ export class CxpChatLauncherComponent implements OnInit {
 
   public openChatPopup(): void {
     if (this.chatUrl != '') {
-      let completeChatUrl:string = `${this.chatUrl}&diagnosticsConsent=${this.diagnosticLogsConsent}`;
-      const windowFeatures: string = 'menubar=no,location=no,resizable=no,scrollbars=no,status=no,height=550,width=450';
-      window.open(completeChatUrl, '_blank', windowFeatures, false);
-      this._cxpChatService.logUserActionOnChat('ChatUrlOpened', this.trackingId, completeChatUrl);
-      this.hideChatConfDialog(false,'AutohideAfterChatLaunch');
+      this.completeChatUrl = `${this.chatUrl}&diagnosticsConsent=${this.diagnosticLogsConsent}`;      
+      window.open(this.completeChatUrl, '_blank', this.windowFeatures, false);
+      this._cxpChatService.logUserActionOnChat('ChatUrlOpened', this.trackingId, this.completeChatUrl);
+      this.showChatOpenedMessage();
     }
   }
 }
