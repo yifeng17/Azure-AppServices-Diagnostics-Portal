@@ -148,7 +148,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         let eventProps = {
             subscriptionId: this.subscriptionId,
             resourceName: this.resourceName,
-            switchToView: this.useLegacy.toString(),
+            switchToLegacy: this.useLegacy.toString(),
         };
         this.logService.logEvent('SwitchView',eventProps);
     }
@@ -280,10 +280,16 @@ export class HomeComponent implements OnInit, AfterViewInit {
         if (category) {
             this._portalService.openBladeDiagnoseCategoryBlade(category.id);
         }
+        this.logService.logEvent('OpenAviPerf',{
+            'Location':'LandingPage'
+        });
     }
 
     openGeniePanel() {
         this.globals.openGeniePanel = true;
+        this.logService.logEvent('OpenGenie',{
+            'Location':'LandingPage'
+        });
     }
 }
 
