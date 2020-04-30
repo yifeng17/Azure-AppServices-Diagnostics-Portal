@@ -1,6 +1,7 @@
 import {
   CommsService, DiagnosticDataModule, DiagnosticService, DiagnosticSiteService,
-  PUBLIC_DEV_CONFIGURATION, PUBLIC_PROD_CONFIGURATION, SolutionService, SettingsService, BackendCtrlQueryService, GenieGlobals, VersionService
+  PUBLIC_DEV_CONFIGURATION, PUBLIC_PROD_CONFIGURATION, SolutionService, SettingsService,
+  BackendCtrlQueryService, GenieGlobals, VersionService, PortalActionGenericService
 } from 'diagnostic-data';
 import { SiteService } from 'projects/app-service-diagnostics/src/app/shared/services/site.service';
 import { HttpClientModule } from '@angular/common/http';
@@ -48,7 +49,7 @@ import { WebSitesModule } from './resources/web-sites/web-sites.module';
 import { VersionTestService } from './fabric-ui/version-test.service';
 import { BackendCtrlService } from './shared/services/backend-ctrl.service';
 import { GenieModule } from './genie/genie.module';
-
+import { PortalActionService} from './shared/services/portal-action.service';
 
 @NgModule({
   imports: [
@@ -110,7 +111,8 @@ import { GenieModule } from './genie/genie.module';
     SupportTopicService,
     ResourceResolver,
     { provide: VersionService, useExisting: VersionTestService },
-    { provide: BackendCtrlQueryService, useExisting: BackendCtrlService }
+    { provide: BackendCtrlQueryService, useExisting: BackendCtrlService },
+    { provide: PortalActionGenericService, useExisting: PortalActionService}
   ],
   bootstrap: [AppComponent]
 })

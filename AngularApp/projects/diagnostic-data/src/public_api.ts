@@ -19,6 +19,7 @@ export * from './lib/services/settings.service';
 export * from './lib/services/genie.service';
 export * from './lib/services/version.service';
 export * from './lib/services/backend-ctrl-query.service';
+export * from './lib/services/portal-action.service';
 export * from './lib/config/diagnostic-data-config';
 export * from './lib/diagnostic-data.module';
 export * from './lib/components/fab-nav/fab-nav.module';
