@@ -72,6 +72,11 @@ export class DetectorSearchComponent extends DataRenderBaseComponent implements 
     webSearchResults: any[] = [];
     
     searchConfiguration: SearchConfiguration = null;
+    
+    initialDelay: number = 5000;
+    isVisible: boolean = false;
+    isListening: boolean = true;
+    componentStartTime: number;
 
     @Input()
     withinDiagnoseAndSolve: boolean = false;
@@ -87,6 +92,10 @@ export class DetectorSearchComponent extends DataRenderBaseComponent implements 
 
     ngOnInit() {
         super.ngOnInit();
+        this.componentStartTime = Date.now();
+        setTimeout(() => {
+            this.controlListening();
+        }, this.initialDelay);
         var searchConf = new SearchConfiguration(this.diagnosticData.table);
         this.searchConfiguration = searchConf;
         this._resourceService.getPesId().subscribe(pesId => {
@@ -115,6 +124,32 @@ export class DetectorSearchComponent extends DataRenderBaseComponent implements 
 
         this.startTime = this.detectorControlService.startTime;
         this.endTime = this.detectorControlService.endTime;
+    }
+    
+    listenVisibility(event) {
+        if (Date.now() - this.componentStartTime > this.initialDelay) {
+            if (this.isListening && event.visible) {
+                this.logVisibility();
+            }
+        } else {
+            this.isVisible = event.visible;
+        }
+    }
+
+    controlListening() {
+        if (this.isVisible) {
+            this.logVisibility();
+        }
+    }
+
+    logVisibility() {
+        this.isListening = false;
+        this.logEvent(TelemetryEventNames.SearchComponentVisible, {
+            parentDetectorId: this.detector,
+            searchId: this.searchId,
+            isVisible: true,
+            ts: Math.floor(new Date().getTime() / 1000).toString(),
+        });
     }
 
     hitSearch(){
