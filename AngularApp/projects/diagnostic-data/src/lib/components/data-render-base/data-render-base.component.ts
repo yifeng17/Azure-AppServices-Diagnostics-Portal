@@ -4,6 +4,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { DiagnosticData, RenderingType } from '../../models/detector';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { CompilationProperties } from '../../models/compilation-properties';
+import { xAxisPlotBand } from '../../models/time-series';
 export interface DataRenderer {
   diagnosticDataInput: DiagnosticData;
 }
@@ -28,6 +29,14 @@ export class DataRenderBaseComponent implements OnInit, DataRenderer {
   @Input() detector: string = '';
   @Input() compilationPackage: CompilationProperties;
   @Input() isAnalysisView:boolean = false;
+  private _xAxisPlotBands: xAxisPlotBand[] = null;
+  @Input() public set xAxisPlotBands(value:xAxisPlotBand[]) {
+    this._xAxisPlotBands = [];
+    this._xAxisPlotBands = value;
+  }
+  public get xAxisPlotBands() {
+    return this._xAxisPlotBands;
+  }
 
   constructor(protected telemetryService: TelemetryService) { }
 

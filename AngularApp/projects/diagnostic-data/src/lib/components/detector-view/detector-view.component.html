@@ -51,7 +51,7 @@
   <div *ngFor="let data of detectorDataLocalCopy.dataset  | renderfilter:isAnalysisView" class="dynamic-data-container">
     <dynamic-data [isAnalysisView]="isAnalysisView" [diagnosticData]="data" [startTime]="startTime" [endTime]="endTime"
       [detectorEventProperties]="detectorEventProperties" [developmentMode]="developmentMode" [executionScript]="script"
-      [detector]="detector" [compilationPackage]="compilationPackage"></dynamic-data>
+      [detector]="detector" [xAxisPlotBands]="xAxisPlotBands" [compilationPackage]="compilationPackage"></dynamic-data>
   </div>
 </div>
 
@@ -59,7 +59,7 @@
   <markdown *ngIf="supportDocumentContent.length>0" #markdownDiv [data]="supportDocumentContent"></markdown>
 </data-container>
 
-<select class ="downtime-select" [(ngModel)]="selectedDownTime" *ngIf="isAnalysisView && downTimes.length > 0" (change)="onDownTimeChange()">
+<select class ="downtime-select" [(ngModel)]="selectedDownTime" *ngIf="isAnalysisView && downTimes.length > 0" (change)="onDownTimeChange(selectedDownTime)">
   <option *ngFor = "let downtime of downTimes" [ngValue]="downtime">
     {{ getDowntimeLabel(downtime) }}
   </option>

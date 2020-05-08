@@ -6,6 +6,7 @@ import HC_exporting from 'highcharts/modules/exporting';
 import * as HC_customEvents_ from 'highcharts-custom-events';
 import AccessibilityModule from 'highcharts/modules/accessibility';
 import { DetectorControlService } from '../../services/detector-control.service';
+import { xAxisPlotBand, xAxisPlotBandStyles } from '../../models/time-series';
 
 const HC_customEvents = HC_customEvents_;
 HC_exporting(Highcharts);
@@ -34,6 +35,52 @@ export class HighchartsGraphComponent implements OnInit {
     @Input() startTime: momentNs.Moment;
 
     @Input() endTime: momentNs.Moment;
+
+    private _xAxisPlotBands: xAxisPlotBand[] = null;
+    @Input() public set xAxisPlotBands(value:xAxisPlotBand[]) {
+        this._xAxisPlotBands = [];
+        this._xAxisPlotBands = value;
+        if(value != null && !this.loading ) {
+            this._updateOptions();
+            this.rebindChartOptions();
+        }
+    }
+    public get xAxisPlotBands() {
+        return this._xAxisPlotBands;
+    }
+
+    private getXAxisOption(currXAxisOptions:Highcharts.XAxisOptions|Highcharts.XAxisOptions[] ):Highcharts.XAxisOptions {
+        if(currXAxisOptions instanceof Array) {
+            return  ((currXAxisOptions as Highcharts.XAxisOptions[])[0]) as Highcharts.XAxisOptions;
+        }
+        else {
+            return currXAxisOptions as Highcharts.XAxisOptions;
+        }
+    }
+
+    private isPlotBandUpdateApplicable(chart: Highcharts.Chart):boolean {
+        var chartPlotBands:Highcharts.XAxisPlotBandsOptions[] = null;
+        if(!!chart) {
+            chartPlotBands = this.getXAxisOption(chart.options.xAxis).plotBands;
+            if(!!chartPlotBands && chartPlotBands.length > 0)  {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
+    }
+
+    private rebindChartOptions():void {
+        this.Highcharts.charts.forEach(chart => {
+            if( this.isPlotBandUpdateApplicable(chart)) {
+                chart.update(this.options);
+            }
+        });
+    }
 
     loading: boolean = true;
 
@@ -89,6 +136,26 @@ export class HighchartsGraphComponent implements OnInit {
 
         this.options.chart.type = type;
         this.options.plotOptions.series.stacking = stacking;
+
+        
+        if(!!this.xAxisPlotBands && this.xAxisPlotBands.length>0) {
+            let chartPlotBands = [];
+            this.xAxisPlotBands.forEach(plotBand => {
+                var currPlotBand = {
+                    color: plotBand.color == ''? '#FCFFC5': plotBand.color,
+                    from:plotBand.from.utc(true),
+                    to: plotBand.to.utc(true),
+                    zIndex:!!plotBand.style?plotBand.style:xAxisPlotBandStyles.BehindPlotLines,
+                    borderWidth:(!!plotBand.borderWidth && plotBand.borderWidth > 0)?plotBand.borderWidth:0,
+                    borderColor:(!!plotBand.borderColor) ? plotBand.borderColor:'white',
+                    id:(!!plotBand.id)?plotBand.id:''
+                };
+                chartPlotBands.push(currPlotBand);
+                
+            });
+            this.options.xAxis.plotBands = chartPlotBands;            
+        }
+        
 
         if (this.chartOptions) {
             this._updateObject(this.options, this.chartOptions);
@@ -282,6 +349,7 @@ export class HighchartsGraphComponent implements OnInit {
                         whiteSpace: 'nowrap'
                     }
                 },
+                plotBands:[],
             },
             yAxis: {
                 tickAmount: 3,

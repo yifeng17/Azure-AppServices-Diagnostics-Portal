@@ -13,6 +13,8 @@ import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { VersionService } from '../../services/version.service';
 import { CXPChatService } from '../../services/cxp-chat.service';
 import * as momentNs from 'moment';
+import { xAxisPlotBand, xAxisPlotBandStyles } from '../../models/time-series';
+
 const moment = momentNs;
 
 @Component({
@@ -88,6 +90,7 @@ export class DetectorViewComponent implements OnInit {
 
   downTimes: DownTime[] = [];
   selectedDownTime: DownTime;
+  public xAxisPlotBands: xAxisPlotBand[] = null;
   @Output() downTimeChanged: EventEmitter<DownTime> = new EventEmitter<DownTime>();
   hideDetectorControl: boolean = false;
   private isLegacy:boolean;
@@ -222,6 +225,37 @@ export class DetectorViewComponent implements OnInit {
     return d.downTimeLabel;
   }
 
+  private setxAxisPlotBands(includeAllBands:boolean = false):void {
+    if(this.downTimes.length<1) {
+      this.xAxisPlotBands = null;      
+    }
+    else {
+      this.xAxisPlotBands = [];
+      if(includeAllBands) {
+        this.downTimes.forEach(downtime => {
+          var currentPlotBand :xAxisPlotBand = {
+            color:downtime.isSelected? '#FFCAC4' : '#FCFFC5',
+            from:downtime.StartTime,
+            to:downtime.EndTime,
+            style:xAxisPlotBandStyles.BehindPlotLines           
+          };
+          this.xAxisPlotBands.push(currentPlotBand);
+        });
+      }
+      else {
+        var currentPlotBand :xAxisPlotBand = {
+          color: '#FCFFC5',
+          from:this.selectedDownTime.StartTime,
+          to:this.selectedDownTime.EndTime,
+          style:xAxisPlotBandStyles.BehindPlotLines,
+          borderWidth:1,
+          borderColor:'red'
+        };        
+        this.xAxisPlotBands.push(currentPlotBand);
+      }
+    }
+  }
+
   private parseDownTimeData(table: DataTableResponseObject) {
 
     if (!(table.rows === undefined || table.rows.length < 1)) {
@@ -239,8 +273,17 @@ export class DetectorViewComponent implements OnInit {
         d.EndTime = moment(row[endTimeIndex]);
         d.downTimeLabel = row[downtimeLabelIndex];
         d.isSelected = row[isSelectedIndex];
+        if(d.isSelected) {
+          this.selectedDownTime = d;
+        }
         this.downTimes.push(d);
       }
+      let selectedDownTime = this.downTimes.find(downtime => downtime.isSelected == true);
+      if(selectedDownTime == null) {
+        this.downTimes[0].isSelected = true;
+        this.selectedDownTime = this.downTimes[0];
+      }
+      this.setxAxisPlotBands(false);
     }
   }
 
@@ -334,8 +377,10 @@ export class DetectorViewComponent implements OnInit {
     }
   }
 
-  onDownTimeChange() {
+  onDownTimeChange(selectedDownTime:any) {
+    this.selectedDownTime = selectedDownTime;
     this.downTimeChanged.emit(this.selectedDownTime);
+    this.setxAxisPlotBands(false);
   }
   protected logEvent(eventMessage: string, eventProperties?: any, measurements?: any) {
     for (const id of Object.keys(this.detectorEventProperties)) {

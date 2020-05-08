@@ -34,6 +34,7 @@ import { CardSelectionV4Component } from '../card-selection-v4/card-selection-v4
 import { VersionService } from '../../services/version.service';
 import { ConnectAppInsightsComponent } from '../connect-app-insights/connect-app-insights.component';
 import { DetectorSearchComponent } from '../detector-search/detector-search.component';
+import { xAxisPlotBand } from '../../models/time-series';
 
 @Component({
   selector: 'dynamic-data',
@@ -63,6 +64,21 @@ export class DynamicDataComponent implements OnInit {
   @Input() detector: string = '';
   @Input() compilationPackage: CompilationProperties;
   @Input() isAnalysisView: boolean = false;
+  private _instanceRef: DataRenderBaseComponent = null;
+  private _xAxisPlotBands: xAxisPlotBand[] = null;
+  @Input() public set xAxisPlotBands(value:xAxisPlotBand[]) {
+    if(!!value) {
+      //this._xAxisPlotBands = [];
+      this._xAxisPlotBands = value;
+      if(this._instanceRef != null) {
+        this._instanceRef.xAxisPlotBands = value;      
+      }      
+    }    
+  }
+  public get xAxisPlotBands() {
+    return this._xAxisPlotBands;
+  }
+
   @ViewChild('dynamicDataContainer', { read: ViewContainerRef, static: true }) dynamicDataContainer: ViewContainerRef;
   private isLegacy: boolean;
   constructor(private componentFactoryResolver: ComponentFactoryResolver, private versionService: VersionService) { }
@@ -90,6 +106,8 @@ export class DynamicDataComponent implements OnInit {
       instance.detector = this.detector;
       instance.compilationPackage = this.compilationPackage;
       instance.isAnalysisView = this.isAnalysisView;
+      instance.xAxisPlotBands = this.xAxisPlotBands;
+      this._instanceRef = instance;
     });
   }
 
