@@ -59,6 +59,7 @@
     "ie-shim": "^0.1.0",
     "jquery": "^3.4.1",
     "moment": "^2.22.1",
+    "ng-in-viewport": "^6.1.0",
     "ng-pick-datetime": "^6.0.16",
     "ng-pick-datetime-moment": "1.0.7",
     "ng2-nvd3": "^2.0.0",

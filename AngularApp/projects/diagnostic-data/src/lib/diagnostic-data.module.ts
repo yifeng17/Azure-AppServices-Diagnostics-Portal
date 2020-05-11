@@ -95,6 +95,7 @@ import {DetectorSearchComponent} from './components/detector-search/detector-sea
 import {WebSearchComponent} from './components/web-search/web-search.component';
 import {RenderFilterPipe} from './components/detector-view/detector-view.component';
 import { DynamicInsightV4Component } from './components/dynamic-insight-v4/dynamic-insight-v4.component';
+import { InViewportModule } from "ng-in-viewport";
 
 @NgModule({
   imports: [
@@ -109,7 +110,8 @@ import { DynamicInsightV4Component } from './components/dynamic-insight-v4/dynam
     FabIconModule,
     FabChoiceGroupModule,
     FabSearchBoxModule,
-    FabDropdownModule
+    FabDropdownModule,
+    InViewportModule
   ],
   providers: [
     ClipboardService
