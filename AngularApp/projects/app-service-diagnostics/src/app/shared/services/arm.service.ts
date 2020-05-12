@@ -11,7 +11,7 @@ import { GenericArmConfigService } from './generic-arm-config.service';
 import { StartupInfo } from '../models/portal';
 import { DemoSubscriptions } from '../../betaSubscriptions';
 import { VersioningHelper } from '../../../app/shared/utilities/versioningHelper';
-import { TelemetryService } from 'diagnostic-data';
+import { PortalKustoTelemetryService } from './portal-kusto-telemetry.service';
 
 @Injectable()
 export class ArmService {
@@ -30,7 +30,7 @@ export class ArmService {
     private readonly routeToDiagnosticRole = '1';
     private armEndpoint:string = '';
     constructor(private _http: HttpClient, private _authService: AuthService, private _cache: CacheService, private _genericArmConfigService?: GenericArmConfigService,
-        private telemetryService?: TelemetryService ) {
+        private telemetryService?: PortalKustoTelemetryService ) {
         this._authService.getStartupInfo().subscribe((startupInfo: StartupInfo) => {
             if(!!startupInfo.armEndpoint && startupInfo.armEndpoint !='' && startupInfo.armEndpoint.length > 1) {
                 this.armEndpoint = startupInfo.armEndpoint ;

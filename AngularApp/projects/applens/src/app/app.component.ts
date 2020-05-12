@@ -4,7 +4,6 @@ import {AadAuthGuard} from './shared/auth/aad-auth-guard.service';
 import { environment } from '../environments/environment';
 import * as Highcharts from 'highcharts';
 import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
-import { ApplensAppinsightsTelemetryService } from './shared/services/applens-appinsights-telemetry.service';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +14,7 @@ export class AppComponent implements OnInit{
 
   env = environment;
   showBanner = true;
-  constructor(private _adalService: AdalService, public _authGuardService: AadAuthGuard, private _applensAppinsightsTelemetryService: ApplensAppinsightsTelemetryService) {
+  constructor(private _adalService: AdalService, public _authGuardService: AadAuthGuard) {
     if (environment.adal.enabled){
       this._adalService.init({
         clientId: environment.adal.clientId,

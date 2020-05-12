@@ -278,14 +278,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
         if (category) {
             this._portalService.openBladeDiagnoseCategoryBlade(category.id);
         }
-        this.logService.logEvent('OpenAviPerf',{
+        this._telemetryService.logEvent('OpenAviPerf',{
             'Location':'LandingPage'
         });
     }
 
     openGeniePanel() {
         this.globals.openGeniePanel = true;
-        this.logService.logEvent('OpenGenie',{
+        this._telemetryService.logEvent('OpenGenie',{
             'Location':'LandingPage'
         });
     }
