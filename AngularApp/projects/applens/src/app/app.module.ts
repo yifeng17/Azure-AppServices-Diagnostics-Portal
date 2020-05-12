@@ -125,7 +125,6 @@ export const Routes = RouterModule.forRoot([
   ],
   providers: [
     ValidResourceResolver,
-    ApplensAppinsightsTelemetryService,
     { provide: AppInsightsTelemetryService, useExisting: ApplensAppinsightsTelemetryService},
     AdalService,
     {

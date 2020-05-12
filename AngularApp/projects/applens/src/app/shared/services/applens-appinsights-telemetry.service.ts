@@ -5,7 +5,9 @@ import { of, forkJoin, throwError } from 'rxjs';
 import { map, retry, catchError } from 'rxjs/operators';
 import { DiagnosticApiService } from './diagnostic-api.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class ApplensAppinsightsTelemetryService implements ITelemetryProvider {
   appInsights: ApplicationInsights;
   instrumentationKey: string;

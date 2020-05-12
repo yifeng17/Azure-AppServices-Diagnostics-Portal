@@ -10,7 +10,7 @@ export class UnhandledExceptionHandlerService extends ErrorHandler{
 
     router: Router;
 
-    constructor(private logService: TelemetryService, private injector: Injector) { 
+    constructor(private injector: Injector) { 
         super();
     }
 
@@ -19,6 +19,8 @@ export class UnhandledExceptionHandlerService extends ErrorHandler{
             if (this.router == undefined) {
                 this.router = this.injector.get(Router);
             }
+            
+            const logService = this.injector.get(TelemetryService);
 
             const props = {
                 'route': this.router.url
@@ -28,7 +30,7 @@ export class UnhandledExceptionHandlerService extends ErrorHandler{
                 props['stack'] = error.stack;
             }
 
-            this.logService.logException(error, "unhandled", props, SeverityLevel.Critical);
+            logService.logException(error, "unhandled", props, SeverityLevel.Critical);
         }
         catch (err) {
             // Squash logging error
