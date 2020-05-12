@@ -1,5 +1,5 @@
 import { Component, OnInit, isDevMode } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, NavigationError, NavigationCancel } from '@angular/router';
 import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
 import { WebSitesService } from './resources/web-sites/services/web-sites.service';
 import { AuthService } from './startup/services/auth.service';
@@ -18,7 +18,17 @@ export class AppComponent implements OnInit {
         this._newVersionEnabled = value;
      }
 
+    private logRoutingEvents: boolean = false;
+
     constructor(private _router: Router) {
+        if(this.logRoutingEvents) {
+            this._router.events.forEach(event=>{
+                console.log(event)
+                if(event instanceof NavigationError || event instanceof NavigationCancel) {
+                    console.error('Routing navigation failure.');                    
+                }
+            });
+        }        
     }
 
     ngOnInit() {
