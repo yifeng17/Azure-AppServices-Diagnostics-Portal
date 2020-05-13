@@ -68,7 +68,7 @@
 </data-container>
 
 <div *ngIf="isAnalysisView && downTimes.length > 0" class="dynamic-data-container">  
-  <h2>Showing results for downtime from {{ getTimestampAsString(selectedDownTime.StartTime) }} to {{ getTimestampAsString(selectedDownTime.EndTime) }}</h2>
+  <h2>Showing results for time range {{ getTimestampAsString(selectedDownTime.StartTime) }} to {{ getTimestampAsString(selectedDownTime.EndTime) }}</h2>
 </div>
 
 <cxp-chat-launcher *ngIf="showChatButton()" [trackingId] = "cxpChatTrackingId" [chatUrl] = "cxpChatUrl" ></cxp-chat-launcher>
