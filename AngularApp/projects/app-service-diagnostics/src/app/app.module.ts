@@ -85,9 +85,9 @@ import { GenieModule } from './genie/genie.module';
     AppComponent,
   ],
   providers: [
-    CustomReuseStrategy,
+    //CustomReuseStrategy,
     { provide: KustoTelemetryService, useExisting: PortalKustoTelemetryService },
-    { provide: RouteReuseStrategy, useExisting: CustomReuseStrategy },
+    //{ provide: RouteReuseStrategy, useExisting: CustomReuseStrategy },
     {
       provide: DiagnosticService,
       useFactory: (_localBackendService: LocalBackendService, _genericApiService: GenericApiService) => environment.useApplensBackend ? _localBackendService : _genericApiService,
