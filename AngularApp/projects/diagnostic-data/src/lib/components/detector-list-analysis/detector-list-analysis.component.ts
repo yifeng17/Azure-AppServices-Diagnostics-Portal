@@ -233,7 +233,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
     }
 
   refresh(downTime: DownTime) {      
-    if (downTime == null) {
+    if (downTime == null && this.analysisId == 'appDownAnalysis') {
       return;											
     }
     else {
