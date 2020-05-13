@@ -125,7 +125,14 @@ export class DetectorContainerComponent implements OnInit {
   }
 
   isAnalysisDetector():boolean {
-    let analysisId = this._route.snapshot.paramMap.get('analysisId');  
+    let analysisId = '';
+    if(this.analysisMode) {
+      analysisId = this._route.parent.snapshot.paramMap.get("analysisId");
+    }
+    else {
+      analysisId = this._route.snapshot.paramMap.get('analysisId');  
+    }
+    
     return !(this.analysisMode && analysisId != null && analysisId != this.detectorName);    
   }
 

@@ -46,6 +46,7 @@ import { SolutionService } from '../../services/solution.service';
 export class DetectorListAnalysisComponent extends DataRenderBaseComponent implements OnInit {
     @Input() analysisId: string;
     @Input() searchMode: SearchAnalysisMode = SearchAnalysisMode.CaseSubmission;
+    SearchAnalysisMode = SearchAnalysisMode;
     @Input() renderingOnlyMode: boolean = false;
     @Input() detectorViewModelsData: any;
     @Input() resourceId: string = "";
@@ -94,6 +95,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
     showWebSearchTimeout: any = null;
     searchDiagnosticData: DiagnosticData;
     readonly stringFormat: string = 'YYYY-MM-DDTHH:mm';
+    inDrillDownMode:boolean = false;
 
     constructor(private _activatedRoute: ActivatedRoute, private _router: Router,
         private _diagnosticService: DiagnosticService, private _detectorControl: DetectorControlService,
@@ -230,7 +232,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
         }
     }
 
-  refresh(downTime: DownTime) {
+  refresh(downTime: DownTime) {      
     if (downTime == null) {
       return;											
     }
@@ -240,8 +242,10 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
             this.showAppInsightsSection = false;
             this.renderInsightsFromSearch(downTime);
         }
-        else {
+        else {            
             this._activatedRoute.paramMap.subscribe(params => {
+                this.goBackToAnalysis();
+
                 this.analysisId = this.analysisId == undefined ? params.get('analysisId') : this.analysisId;
                 this.detectorId = params.get(this.detectorParmName) === null ? "" : params.get(this.detectorParmName);
                 this.resetGlobals();
@@ -579,6 +583,28 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
 
     }
 
+    public goBackToAnalysis():void {
+        this.updateDrillDownMode(false, null);
+        if (this.analysisId=== "searchResultsAnalysis" && this.searchTerm){
+          this._router.navigate([`../../${this.analysisId}/search`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', queryParams: {searchTerm: this.searchTerm} });
+        }
+        else{
+          this._router.navigate([`../${this.analysisId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge' });
+        }
+      }
+
+    private updateDrillDownMode(inDrillDownMode:boolean, viewModel:any):void {
+        this.inDrillDownMode = inDrillDownMode;
+        if(!this.inDrillDownMode) {
+            this.detectorName = '';
+        }
+        else {
+            if(!!viewModel && !!viewModel.model && !!viewModel.model.metadata && !!viewModel.model.metadata.name) {
+                this.detectorName = viewModel.model.metadata.name;
+            }
+        }        
+    }
+
     public selectDetector(viewModel: any) {
         if (viewModel != null && viewModel.model.metadata.id) {
             let detectorId = viewModel.model.metadata.id;
@@ -625,14 +651,15 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                     }
                 }
                 else {
+                    this.updateDrillDownMode(true, viewModel);
                     if (viewModel.model.startTime != null && viewModel.model.endTime != null) {
-                        this._router.navigate([`../../analysis/${this.analysisId}/detectors/${detectorId}`], {
+                        this._router.navigate([`./detectors/${detectorId}`], {
                             relativeTo: this._activatedRoute,
                             queryParams: { startTimeChildDetector: viewModel.model.startTime, endTimeChildDetector: viewModel.model.endTime },
                             queryParamsHandling: 'merge'
                           });
                     }
-                    else {
+                    else {                        
                         this._router.navigate([`../../analysis/${this.analysisId}/detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true });
                     }                    
                 }

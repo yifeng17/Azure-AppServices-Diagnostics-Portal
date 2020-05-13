@@ -10,18 +10,7 @@
 
 <detector-list-analysis #detectorListAnalysis withinDiagnoseAndSolve="true" detectorParmName="detectorName" [resourceId]="resourceId" [targetedScore]="targetedScore" [analysisId]="analysisId" [searchTerm]="searchTerm" [searchMode]="searchMode" (onComplete)="updateLoadingStatus($event)"></detector-list-analysis>
 
-<div *ngIf="searchMode !== SearchAnalysisMode.Genie" [hidden]="detectorId === ''">
-  <div>
-    <div style="display: inline-block;margin-left: 20px">
-      <h2>{{ detectorName }}</h2>
-    </div>
-    <div style="display: inline-block;margin-left: 10px">
-      <a tabindex="0" (keyup.enter)="goBackToAnalysis()" aria-label="Link to go back to the analysis view" role="button"
-        (click)="goBackToAnalysis()" *ngIf="detectorId !== ''">Back to Observations</a>
-    </div>
-  </div>
-  <router-outlet></router-outlet>
-</div>
+<router-outlet></router-outlet>
 
 <div *ngIf="searchMode !== SearchAnalysisMode.Genie" class = "cxp-chat-launcher-container align-width">
   <cxp-chat-launcher *ngIf="showChatButton()" [trackingId] = "cxpChatTrackingId" [chatUrl] = "cxpChatUrl" ></cxp-chat-launcher>

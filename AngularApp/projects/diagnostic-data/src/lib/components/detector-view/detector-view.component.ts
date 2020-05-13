@@ -1,7 +1,7 @@
 import { Moment } from 'moment';
 import { BehaviorSubject } from 'rxjs';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, Inject, Input, OnInit, Output, EventEmitter, Pipe, PipeTransform } from '@angular/core';
+import { Component, Inject, Input, OnInit, Output, EventEmitter, Pipe, PipeTransform, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
 import { DetectorResponse, Rendering, RenderingType, DataTableResponseObject, DownTime , DetectorMetaData, DetectorType, DiagnosticData } from '../../models/detector';
 import { DetectorControlService } from '../../services/detector-control.service';
@@ -90,6 +90,7 @@ export class DetectorViewComponent implements OnInit {
 
   downTimes: DownTime[] = [];
   selectedDownTime: DownTime;
+  downtimeEventFiredOnce:boolean = false;
   public xAxisPlotBands: xAxisPlotBand[] = null;
   @Output() downTimeChanged: EventEmitter<DownTime> = new EventEmitter<DownTime>();
   hideDetectorControl: boolean = false;
@@ -218,6 +219,10 @@ export class DetectorViewComponent implements OnInit {
         // this.hideDetectorHeader = data.dataset.findIndex(set => (<Rendering>set.renderingProperties).type === RenderingType.Cards) >= 0;
       }
     });
+  }
+
+  getTimestampAsString(dateTime:Moment) {
+    return dateTime.format('YYYY-MM-DD HH:mm') + ' UTC';
   }
 
   getDowntimeLabel(d: DownTime) {

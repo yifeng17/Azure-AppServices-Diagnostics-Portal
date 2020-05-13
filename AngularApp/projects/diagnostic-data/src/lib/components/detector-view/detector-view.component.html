@@ -48,6 +48,14 @@
     <hr>
   </div>
 
+  <div *ngIf="isAnalysisView && downTimes.length > 0" class="dynamic-data-container">
+    <select class ="downtime-select" [(ngModel)]="selectedDownTime" (change)="onDownTimeChange(selectedDownTime)">
+      <option *ngFor = "let downtime of downTimes" [ngValue]="downtime">
+        {{ getDowntimeLabel(downtime) }}
+      </option>
+    </select>
+  </div>
+
   <div *ngFor="let data of detectorDataLocalCopy.dataset  | renderfilter:isAnalysisView" class="dynamic-data-container">
     <dynamic-data [isAnalysisView]="isAnalysisView" [diagnosticData]="data" [startTime]="startTime" [endTime]="endTime"
       [detectorEventProperties]="detectorEventProperties" [developmentMode]="developmentMode" [executionScript]="script"
@@ -59,11 +67,9 @@
   <markdown *ngIf="supportDocumentContent.length>0" #markdownDiv [data]="supportDocumentContent"></markdown>
 </data-container>
 
-<select class ="downtime-select" [(ngModel)]="selectedDownTime" *ngIf="isAnalysisView && downTimes.length > 0" (change)="onDownTimeChange(selectedDownTime)">
-  <option *ngFor = "let downtime of downTimes" [ngValue]="downtime">
-    {{ getDowntimeLabel(downtime) }}
-  </option>
-</select>
+<div *ngIf="isAnalysisView && downTimes.length > 0" class="dynamic-data-container">  
+  <h2>Showing results for downtime from {{ getTimestampAsString(selectedDownTime.StartTime) }} to {{ getTimestampAsString(selectedDownTime.EndTime) }}</h2>
+</div>
 
 <cxp-chat-launcher *ngIf="showChatButton()" [trackingId] = "cxpChatTrackingId" [chatUrl] = "cxpChatUrl" ></cxp-chat-launcher>
 <loader-view style="margin-top:300px" *ngIf="!detectorDataLocalCopy && !errorState"

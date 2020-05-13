@@ -30,7 +30,7 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
   displayDetectorContainer: boolean = true;
   searchBarFocus: boolean = false;
   downTime: DownTime;
-  @ViewChild('detectorListAnalysis', {static:false}) detectorListAnalysis: DetectorListAnalysisComponent
+  @ViewChild('detectorListAnalysis', {static:true}) detectorListAnalysis: DetectorListAnalysisComponent
   isPublic: boolean = false;
   cxpChatTrackingId: string = '';
   cxpChatUrl: string = ''; 
@@ -105,15 +105,6 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
     var searchBar = document.getElementById('caseSubmissionFlowSearchBar');
     searchBar.focus();
     this.searchBarFocus = true;
-  }
-
-  goBackToAnalysis() {
-    if (this.analysisId=== "searchResultsAnalysis" && this.searchTerm){
-      this._routerLocal.navigate([`../../../../${this.analysisId}/search`], { relativeTo: this._activatedRouteLocal, queryParamsHandling: 'merge', queryParams: {searchTerm: this.searchTerm} });
-    }
-    else{
-      this._routerLocal.navigate([`../../../${this.analysisId}`], { relativeTo: this._activatedRouteLocal, queryParamsHandling: 'merge' });
-    }
   }
 
   showChatButton():boolean {
