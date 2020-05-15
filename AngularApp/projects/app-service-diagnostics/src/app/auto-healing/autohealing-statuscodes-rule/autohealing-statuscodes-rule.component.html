@@ -41,10 +41,10 @@
         <td>{{ singleRule.win32Status }}</td>
         <td>{{ singleRule.timeInterval }}</td>
         <td>
-          <button class="image-btn" *ngIf="!editMode" (click)="editStatusCodeRule(i)">
+          <button class="image-btn" *ngIf="!editMode" (click)="editStatusCodeRule(i)" title="Edit rule" name="editRule">
             <i class="fa fa-edit"></i>
           </button>
-          <button class="image-btn" *ngIf="!editMode" (click)="deleteStatusCodeRule(i)">
+          <button class="image-btn" *ngIf="!editMode" (click)="deleteStatusCodeRule(i)" title="Delete rule" name="deleteRule">
             <i class="fa fa-trash"></i>
           </button>
         </td>
