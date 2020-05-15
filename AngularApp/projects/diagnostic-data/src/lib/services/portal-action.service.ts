@@ -7,7 +7,7 @@ export class PortalActionGenericService {
 
   constructor() { }
 
-  public openChangeAnalysisBlade(startTime?: string, endTime?: string) {
+  public openChangeAnalysisBlade(startTime?: string, endTime?: string, resourceUri?: string) {
 
   }
 }

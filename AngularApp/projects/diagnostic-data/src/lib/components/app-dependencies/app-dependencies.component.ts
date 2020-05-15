@@ -9,6 +9,8 @@ import { DiagnosticService } from '../../services/diagnostic.service';
 import { DetectorControlService } from '../../services/detector-control.service';
 import { ChangeAnalysisService} from '../../services/change-analysis.service';
 import { TelemetryEventNames } from '../../services/telemetry/telemetry.common';
+import { PortalActionGenericService } from '../../services/portal-action.service';
+
 @Component({
   selector: 'app-dependencies',
   templateUrl: './app-dependencies.component.html',
@@ -24,8 +26,9 @@ export class AppDependenciesComponent extends DataRenderBaseComponent implements
     showNotSupport: boolean = false;
     selectedResourceType: string = '';
     supportedResources: string[] = ['Storage Account', 'SQL Server', 'Redis Cache', 'Vnet'];
+
     constructor(protected telemetryService: TelemetryService, protected diagnosticService: DiagnosticService,
-        protected detectorControlService: DetectorControlService, protected changeAnalysisService: ChangeAnalysisService) {
+        protected detectorControlService: DetectorControlService, protected changeAnalysisService: ChangeAnalysisService, protected portalAction: PortalActionGenericService) {
         super(telemetryService);
     }
 
@@ -47,10 +50,11 @@ export class AppDependenciesComponent extends DataRenderBaseComponent implements
             let provider = ChangeAnalysisUtilities.getResourceType(this.primaryResourceId);
             let resourceName = ChangeAnalysisUtilities.getResourceName(this.primaryResourceId, provider).split("/")[1];
             this.changeAnalysisService.setCurrentResourceName(resourceName);
+            let calloutText = 'Click on resource to open Change Analysis blade for resource ';
             networkDataSet.push({
                 id: this.primaryResourceId,
                 image: ChangeAnalysisUtilities.getImgPathForResource(ChangeAnalysisUtilities.getResourceType(this.primaryResourceId)),
-                title: this.primaryResourceId,
+                title: this.createTitle(this.primaryResourceId),
                 shape: 'circularImage',
                 label: resourceName
             });
@@ -62,7 +66,7 @@ export class AppDependenciesComponent extends DataRenderBaseComponent implements
                 networkDataSet.push({
                     id: resourceUri,
                     image: ChangeAnalysisUtilities.getImgPathForResource(resourceType),
-                    title: resourceUri,
+                    title: this.createTitle(resourceUri),
                     shape: 'circularImage',
                     label: resourceName
                 })
@@ -101,6 +105,10 @@ export class AppDependenciesComponent extends DataRenderBaseComponent implements
                 color: {
                     border: '#D3D3D3',
                     background: '#fcfcfc'
+                  },
+                  font:{
+                      face: 'Segoe UI',
+                      size: 13
                   }
             },
             interaction: {
@@ -108,14 +116,24 @@ export class AppDependenciesComponent extends DataRenderBaseComponent implements
                 zoomView: false,
                 dragNodes: false,
                 dragView: false
-            }
+            },
+
         };
-        var network = new Network(container, networkData, networkOptions);
+        let network = new Network(container, networkData, networkOptions);
         network.on("selectNode", this.triggerTimelineRefresh);
         network.selectNodes([this.primaryResourceId]);
-        }
+        network.on("afterDrawing", function(props:any){
+            console.log("Inside after drawing");
+            nodes.forEach(node => {
+                console.log("register for node "+node.id);
+                let position = network.getPosition(node.id);
+                let DOM = network.canvasToDOM(position);
 
+            });
+        });
+        }
     }
+
 
     private triggerTimelineRefresh(properties: any): void {
         let domelement = <HTMLInputElement>document.getElementById("resourceUri");
@@ -126,12 +144,27 @@ export class AppDependenciesComponent extends DataRenderBaseComponent implements
         }
     }
 
+    createTitle(resource: string): HTMLElement {
+         // create a new div element
+        let contentTag = document.createElement("p");
+
+        // and give it some content
+        var text = "Opening Change Analysis blade for "+ resource;
+        contentTag.innerHTML = text;
+        return contentTag;
+    }
+
     refreshChangeTimeline(): void {
         this.logGraphClick();
         let selectedResource = <HTMLInputElement> document.getElementById('resourceUri');
         if(selectedResource.value) {
             this.selectedResourceId = selectedResource.value;
-            this.loadChangesTimeLine();
+            if(this.detectorControlService.internalClient) {
+                this.refreshChangeTimeline();
+            } else {
+                this.portalAction.openChangeAnalysisBlade(this.detectorControlService.startTimeString, this.detectorControlService.endTimeString, this.selectedResourceId);
+            }
+
         }
     }
 

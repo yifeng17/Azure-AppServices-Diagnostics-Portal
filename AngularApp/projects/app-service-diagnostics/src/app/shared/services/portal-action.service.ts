@@ -237,13 +237,13 @@ export class PortalActionService {
         this._portalService.openBlade(bladeInfo, 'troubleshoot');
     }
 
-    public openChangeAnalysisBlade(startTime?: string, endTime?: string) {
+    public openChangeAnalysisBlade(startTime?: string, endTime?: string, resourceUri?: string) {
         let bladeInfo = {
             extension: 'Microsoft_Azure_ChangeAnalysis',
             detailBlade: 'ResourceChangesBlade',
             deepLinkOrigin: 'appservicediagnostics',
             detailBladeInputs: {
-                resourceId: this.currentSite.id,
+                resourceId: resourceUri != null || resourceUri != undefined ? resourceUri : this.currentSite.id,
                 changeLevels: "important,normal"
             }
         };
