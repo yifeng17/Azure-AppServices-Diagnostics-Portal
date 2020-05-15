@@ -50,7 +50,6 @@ export class AppDependenciesComponent extends DataRenderBaseComponent implements
             let provider = ChangeAnalysisUtilities.getResourceType(this.primaryResourceId);
             let resourceName = ChangeAnalysisUtilities.getResourceName(this.primaryResourceId, provider).split("/")[1];
             this.changeAnalysisService.setCurrentResourceName(resourceName);
-            let calloutText = 'Click on resource to open Change Analysis blade for resource ';
             networkDataSet.push({
                 id: this.primaryResourceId,
                 image: ChangeAnalysisUtilities.getImgPathForResource(ChangeAnalysisUtilities.getResourceType(this.primaryResourceId)),
@@ -122,15 +121,6 @@ export class AppDependenciesComponent extends DataRenderBaseComponent implements
         let network = new Network(container, networkData, networkOptions);
         network.on("selectNode", this.triggerTimelineRefresh);
         network.selectNodes([this.primaryResourceId]);
-        network.on("afterDrawing", function(props:any){
-            console.log("Inside after drawing");
-            nodes.forEach(node => {
-                console.log("register for node "+node.id);
-                let position = network.getPosition(node.id);
-                let DOM = network.canvasToDOM(position);
-
-            });
-        });
         }
     }
 
