@@ -1,7 +1,8 @@
 import {
   CommsService, DiagnosticDataModule, DiagnosticService, DiagnosticSiteService,
   PUBLIC_DEV_CONFIGURATION, PUBLIC_PROD_CONFIGURATION, SolutionService, SettingsService,
-  BackendCtrlQueryService, GenieGlobals, VersionService, PortalActionGenericService
+  BackendCtrlQueryService, GenieGlobals, VersionService, PortalActionGenericService,
+  KustoTelemetryService, AppInsightsTelemetryService, UnhandledExceptionHandlerService
 } from 'diagnostic-data';
 import { SiteService } from 'projects/app-service-diagnostics/src/app/shared/services/site.service';
 import { HttpClientModule } from '@angular/common/http';
@@ -9,12 +10,6 @@ import { ErrorHandler, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouteReuseStrategy, RouterModule } from '@angular/router';
-import {
-  KustoTelemetryService
-} from '../../../diagnostic-data/src/lib/services/telemetry/kusto-telemetry.service';
-import {
-  UnhandledExceptionHandlerService
-} from '../../../diagnostic-data/src/lib/services/unhandled-exception-handler.service';
 import { environment } from '../environments/environment';
 import { CustomReuseStrategy } from './app-route-reusestrategy.service';
 import { AppComponent } from './app.component';
@@ -27,6 +22,7 @@ import { GenericCommsService } from './shared/services/generic-comms.service';
 import { GenericSolutionService } from './shared/services/generic-solution.service';
 import { LocalBackendService } from './shared/services/local-backend.service';
 import { PortalKustoTelemetryService } from './shared/services/portal-kusto-telemetry.service';
+import { PortalAppInsightsTelemetryService } from './shared/services/portal-appinsights-telemetry.service';
 import { SharedModule } from './shared/shared.module';
 import { ContentService } from './shared-v2/services/content.service';
 import { CategoryChatStateService } from './shared-v2/services/category-chat-state.service';
@@ -86,6 +82,7 @@ import { PortalActionService} from './shared/services/portal-action.service';
   providers: [
     CustomReuseStrategy,
     { provide: KustoTelemetryService, useExisting: PortalKustoTelemetryService },
+    { provide: AppInsightsTelemetryService, useExisting: PortalAppInsightsTelemetryService },
     { provide: RouteReuseStrategy, useExisting: CustomReuseStrategy },
     {
       provide: DiagnosticService,

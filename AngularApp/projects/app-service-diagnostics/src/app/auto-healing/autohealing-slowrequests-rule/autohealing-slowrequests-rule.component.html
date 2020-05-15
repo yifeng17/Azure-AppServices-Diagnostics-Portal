@@ -33,10 +33,10 @@
       <td>{{ rule.timeTaken }}</td>
       <td>{{ rule.timeInterval }}</td>
       <td>
-        <button class="image-btn" *ngIf="!editMode" (click)="editRule()">
+        <button class="image-btn" *ngIf="!editMode" (click)="editRule()" title="Edit rule" name="editRule">
           <i class="fa fa-edit"></i>
         </button>
-        <button class="image-btn" *ngIf="!editMode" (click)="deleteRule()">
+        <button class="image-btn" *ngIf="!editMode" (click)="deleteRule()" title="Delete rule" name="deleteRule">
           <i class="fa fa-trash"></i>
         </button>
       </td>
