@@ -1,7 +1,7 @@
 <div class="container">
-  <h2 tabindex="0">{{ title }}</h2>
+  <div class="header1">{{ title }}</div>
 
-  <p tabindex="0">{{ description }}</p>
+  <span>{{ description }}</span>
   <div style="margin-top:10px;margin-bottom: 5px">
     <cpu-monitoring [siteToBeDiagnosed]="siteToBeDiagnosed" [scmPath]="scmPath"></cpu-monitoring>
   </div>
