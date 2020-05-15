@@ -231,7 +231,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
         }
         else {
             this._activatedRoute.paramMap.subscribe(params => {
-                this.analysisId = params.get('analysisId') === null ? this.analysisId :  params.get('analysisId');
+                this.analysisId = params.get('analysisId') === null ? this.analysisId : params.get('analysisId');
                 this.detectorId = params.get(this.detectorParmName) === null ? "" : params.get(this.detectorParmName);
                 this.resetGlobals();
                 this.populateSupportTopicDocument();
@@ -476,11 +476,16 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
         let insight: any;
         if (allInsights.length > 0) {
 
-            let description = null;
-            if (allInsights[0].hasData()) {
-                description = allInsights[0].data["Description"];
+            let detectorInsight = allInsights.find(i => i.status === viewModel.status);
+            if (detectorInsight == null) {
+                detectorInsight = allInsights[0];
             }
-            insight = { title: allInsights[0].title, description: description };
+
+            let description = null;
+            if (detectorInsight.hasData()) {
+                description = detectorInsight.data["Description"];
+            }
+            insight = { title: detectorInsight.title, description: description };
 
             // now populate solutions for all the insights
             allInsights.forEach(i => {

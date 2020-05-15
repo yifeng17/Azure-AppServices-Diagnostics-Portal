@@ -50,7 +50,8 @@
           <div class="header2">1. Define Conditions</div>
           <div class="autohealtile-content">
             <ng-container *ngFor="let trigger of triggers; let i = index;">
-              <div class="autohealtile" tabindex="0" (click)="updateTriggerStatus(i)"
+              <div class="autohealtile" tabindex="0" (click)="updateTriggerStatus(i)" role="radio"
+                (keyup.space)= "updateTriggerStatus(i)" (keyup.enter)= "updateTriggerStatus(i)"
                 [class.active]="triggerSelected ===  i" [class.activeAction]="triggers[i].IsConfigured">
                 <div class="autohealtile-icon">
                   <div class="icon-template">
@@ -80,7 +81,7 @@
           <div class="header2">2. Configure Actions</div>
           <div class="autohealtile-content">
             <ng-container *ngFor="let action of actions; let i = index;">
-              <div class="autohealtile" [class.activeAction]="actionSelected == i" (click)="updateActionStatus(i)">
+              <div class="autohealtile" tabindex="0" [class.activeAction]="actionSelected == i" role="radio" (click)="updateActionStatus(i)" (keyup.space)= "updateActionStatus(i)" (keyup.enter)= "updateActionStatus(i)">
                 <div class="autohealtile-icon">
                   <div class="icon-template">
                     <i [class]="action.Icon" aria-hidden="true"></i>
@@ -102,8 +103,10 @@
 
           <div class="header2">3. Override when Action executes (Optional)</div>
           <div class="autohealtile-content">
-            <div class="autohealtile" [class.activeAction]="minProcessExecutionTime > 0"
-              (click)="minProcessExecutionTimeExpanded = !minProcessExecutionTimeExpanded">
+            <div class="autohealtile" tabindex="0" [class.activeAction]="minProcessExecutionTime > 0"
+              (click)="minProcessExecutionTimeExpanded = !minProcessExecutionTimeExpanded"
+              (keyup.space)= "minProcessExecutionTimeExpanded = !minProcessExecutionTimeExpanded" 
+              (keyup.enter)= "minProcessExecutionTimeExpanded = !minProcessExecutionTimeExpanded">
               <div class="autohealtile-icon">
                 <div class="icon-template">
                   <i class="fa fa-clock-o" aria-hidden="true"></i>
