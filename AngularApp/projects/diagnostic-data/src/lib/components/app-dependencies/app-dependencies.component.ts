@@ -54,7 +54,7 @@ export class AppDependenciesComponent extends DataRenderBaseComponent implements
             networkDataSet.push({
                 id: this.primaryResourceId,
                 image: ChangeAnalysisUtilities.getImgPathForResource(ChangeAnalysisUtilities.getResourceType(this.primaryResourceId)),
-                title: this.createTitle(this.primaryResourceId),
+                title: this.detectorControlService.internalClient ? this.primaryResourceId: this.createTitle(this.primaryResourceId),
                 shape: 'circularImage',
                 label: resourceName
             });
@@ -66,7 +66,7 @@ export class AppDependenciesComponent extends DataRenderBaseComponent implements
                 networkDataSet.push({
                     id: resourceUri,
                     image: ChangeAnalysisUtilities.getImgPathForResource(resourceType),
-                    title: this.createTitle(resourceUri),
+                    title: this.detectorControlService.internalClient ? resourceUri: this.createTitle(resourceUri),
                     shape: 'circularImage',
                     label: resourceName
                 })
@@ -145,11 +145,8 @@ export class AppDependenciesComponent extends DataRenderBaseComponent implements
     }
 
     createTitle(resource: string): HTMLElement {
-         // create a new div element
         let contentTag = document.createElement("p");
-
-        // and give it some content
-        var text = "Opening Change Analysis blade for "+ resource;
+        var text = "Resource Uri: </br>" + resource + "</br></br> <span>Open the Change Analysis blade to view the changes</span>";
         contentTag.innerHTML = text;
         return contentTag;
     }
