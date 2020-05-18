@@ -44,7 +44,11 @@ export class FeatureService {
                 clickAction: this._createFeatureAction(detector.name, detector.category, () => {
                   //Remove after A/B test
                   if (this.isLegacy) {
-                    this._router.navigateByUrl(`resource${startupInfo.resourceId}/detectors/${detector.id}`);
+                      if(detector.id === 'appchanges') {
+                          this._portalActionService.openChangeAnalysisBlade();
+                      } else {
+                        this._router.navigateByUrl(`resource${startupInfo.resourceId}/detectors/${detector.id}`);
+                      }
                   } else {
                     const categoryId = this.getCategoryIdByCategoryName(detector.category);
                     this.navigatTo(startupInfo,categoryId,detector.id,DetectorType.Detector);
@@ -116,11 +120,11 @@ export class FeatureService {
   }
 
   getFeatures(searchValue?: string) {
-    const featureUnique = this._features.filter((feature,index,array) => 
+    const featureUnique = this._features.filter((feature,index,array) =>
     {
-        return array.findIndex(fea =>feature.name === fea.name) === index; 
+        return array.findIndex(fea =>feature.name === fea.name) === index;
     })
-    
+
     if (!searchValue || searchValue === '') {
       // return this._features;
       return featureUnique;
@@ -155,12 +159,12 @@ export class FeatureService {
       const category = this.categories.find(category => category.name === name);
       categoryId = category.id;
     }
-    //In home page,no categoryId in router,return category as availability&perf 
+    //In home page,no categoryId in router,return category as availability&perf
     else if (!currentCategoryId){
       const category = this.categories.find(category => category.name === "Availability and Performance");
       categoryId = category.id;
     }
-    //In category-overview page and uncategoried detector,return current categoryId  
+    //In category-overview page and uncategoried detector,return current categoryId
     else {
       categoryId = currentCategoryId;
     }
@@ -169,19 +173,23 @@ export class FeatureService {
   }
 
   private navigatTo(startupInfo:StartupInfo,category:string,detector:string,type:DetectorType) {
+      if(detector === 'appchanges') {
+        this._portalActionService.openChangeAnalysisBlade();
+        return;
+      }
     const isHomepage = !this._activatedRoute.root.firstChild.firstChild.firstChild.firstChild.snapshot.params["category"];
     //If it's in category overview page
     if (!isHomepage) {
-      if (type === DetectorType.Detector) {
-        this._router.navigateByUrl(`resource${startupInfo.resourceId}/categories/${category}/detectors/${detector}`);
-      } else if (type === DetectorType.Analysis) {
-        this._router.navigateByUrl(`resource${startupInfo.resourceId}/categories/${category}/analysis/${detector}`);
+         if (type === DetectorType.Detector) {
+            this._router.navigateByUrl(`resource${startupInfo.resourceId}/categories/${category}/detectors/${detector}`);
+        } else if (type === DetectorType.Analysis) {
+            this._router.navigateByUrl(`resource${startupInfo.resourceId}/categories/${category}/analysis/${detector}`);
       }
-      
+
     }
     //If it's in Home page,open new category page
     else {
-      this._portalActionService.openBladeDiagnoseDetectorId(category,detector,type);
+        this._portalActionService.openBladeDiagnoseDetectorId(category,detector,type);
     }
   }
 }
