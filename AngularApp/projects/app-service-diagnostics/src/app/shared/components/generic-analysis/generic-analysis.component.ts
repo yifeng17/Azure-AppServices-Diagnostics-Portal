@@ -63,7 +63,8 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
       this._cxpChatService.logChatEligibilityCheck('Call to CXP Chat API skipped. Config is not Public.', JSON.stringify(checkOutcome));
     }    
     this._activatedRouteLocal.paramMap.subscribe(params => {
-      this.analysisId = this.analysisId === "" ? params.get('analysisId'): this.analysisId;
+      this.analysisId = params.get('analysisId');
+      this.analysisDetector = this.analysisId;
       this.detectorId = params.get('detectorName') === null ? "" : params.get('detectorName');
       this._activatedRouteLocal.queryParamMap.subscribe(qParams => {
         this.searchTerm = qParams.get('searchTerm') === null ? this.searchTerm : qParams.get('searchTerm');
