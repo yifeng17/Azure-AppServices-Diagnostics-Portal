@@ -240,7 +240,7 @@ export class HighchartsGraphComponent implements OnInit {
                 enabled: true,
                 align: 'center',
                 layout: 'horizontal',
-                verticalAlign: 'bottom',
+                verticalAlign: 'top',
                 itemStyle: { "color": "#333", "cursor": "pointer", "fontSize": "12px", "textOverflow": "ellipsis", "font-weight": "normal", "font-family": " Arial, sans-serif" },
                 itemMarginTop: 0,
                 itemMarginBottom: 0,
@@ -274,7 +274,6 @@ export class HighchartsGraphComponent implements OnInit {
             },
             navigation: {
                 buttonOptions: {
-                    verticalAlign: 'bottom',
                     y: -10,
                     theme: {
                         'stroke-width': 0,
