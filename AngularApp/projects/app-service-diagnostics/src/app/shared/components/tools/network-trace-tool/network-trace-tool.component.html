@@ -53,21 +53,24 @@
                 Console</a> for the App.
         </div>
 
-        <div style="margin-top:20px;">
-            Choose duration to collect the Network Trace
-            <select [attr.aria-label]="'select duration'" (click)="durationClicked()" [(ngModel)]="duration" [disabled]="status >= NetworkTraceStatus.Starting">
-                <option value="60">60 seconds</option>
-                <option value="120">2 minutes</option>
-                <option value="180">3 minutes</option>
-                <option value="300">5 minutes</option>
-                <option value="600">10 minutes</option>
-                <option value="900">15 minutes</option>
-            </select>
-        </div>
-
-        <div style="margin-top:10px">
-            <button [disabled]="status >= NetworkTraceStatus.Starting" class="btn btn-primary" (click)="collectNetworkTrace()">Collect
-                Network Trace</button>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group" style="margin-top:20px;">
+                    <label for="chooseDuration">Choose duration to collect the Network Trace</label>
+                    <select class="form-control" tabindex="0" id="chooseDuration" [(ngModel)]="duration" [disabled]="status >= NetworkTraceStatus.Starting">
+                        <option value="60">60 seconds</option>
+                        <option value="120">2 minutes</option>
+                        <option value="180">3 minutes</option>
+                        <option value="300">5 minutes</option>
+                        <option value="600">10 minutes</option>
+                        <option value="900">15 minutes</option>
+                    </select>
+                    <div style="margin-top:10px">
+                        <button tabindex="0" [disabled]="status >= NetworkTraceStatus.Starting" class="btn btn-primary" (click)="collectNetworkTrace()">Collect
+                            Network Trace</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div style="margin-top:20px; display: table;">
