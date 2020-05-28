@@ -230,10 +230,19 @@ export class DetectorViewComponent implements OnInit {
             this.selectedDownTime = defaultDowntime;
             this.downTimeChanged.emit(defaultDowntime);            
           }
+          else {
+            this.resetGlobals();
+          }
         }
         // this.hideDetectorHeader = data.dataset.findIndex(set => (<Rendering>set.renderingProperties).type === RenderingType.Cards) >= 0;
       }
     });
+  }
+
+  resetGlobals() {
+    this.downTimes = [];
+    this.selectedDownTime = null;
+    this.xAxisPlotBands = [];
   }
 
   getTimestampAsString(dateTime:Moment) {
@@ -247,7 +256,7 @@ export class DetectorViewComponent implements OnInit {
 
   private setxAxisPlotBands(includeAllBands:boolean = false, customDownTime?:DownTime):void {
     if(customDownTime == null && this.downTimes.length<1 && this.selectedDownTime == null) {
-      this.xAxisPlotBands = null;      
+      this.xAxisPlotBands = [];      
     }
     else {      
       this.xAxisPlotBands = [];

@@ -232,8 +232,9 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
         }
     }
 
-  refresh(downTime: DownTime) {      
-    if (downTime == null && this.analysisId == 'appDownAnalysis') {
+  refresh(downTime: DownTime) {
+    if (downTime == null ){//&& this.analysisId == 'appDownAnalysis') {
+        this.resetGlobals();
       return;											
     }
     else {
@@ -491,6 +492,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
         this.successfulViewModels = [];
         this.showWebSearch = false;
         this.isSearchEmbedded = false;
+        this.downTime = null;
     }
 
     getDetectorInsight(viewModel: any): any {
