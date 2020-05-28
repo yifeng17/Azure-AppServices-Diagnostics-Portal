@@ -7,6 +7,7 @@ import { BehaviorSubject } from 'rxjs';
 import { VersionService } from '../../services/version.service';
 import { Moment } from 'moment';
 import * as momentNs from 'moment';
+import { XAxisSelection } from '../../models/time-series';
 const moment = momentNs;
 
 @Component({
@@ -36,6 +37,12 @@ export class DetectorContainerComponent implements OnInit {
 
   @Input() analysisMode:boolean = false;
   @Input() isAnalysisView:boolean = false;
+
+  @Output() XAxisSelection:EventEmitter<XAxisSelection> = new EventEmitter<XAxisSelection>();	
+  public onXAxisSelection(event:XAxisSelection) {
+		this.XAxisSelection.emit(event);
+  }
+  
   @Output() downTimeChanged: EventEmitter<DownTime> = new EventEmitter<DownTime>();
   isCategoryOverview:boolean = false;
   private isLegacy:boolean

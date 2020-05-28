@@ -13,7 +13,7 @@ import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { VersionService } from '../../services/version.service';
 import { CXPChatService } from '../../services/cxp-chat.service';
 import * as momentNs from 'moment';
-import { xAxisPlotBand, xAxisPlotBandStyles } from '../../models/time-series';
+import { xAxisPlotBand, xAxisPlotBandStyles, zoomBehaviors, XAxisSelection } from '../../models/time-series';
 
 const moment = momentNs;
 
@@ -92,6 +92,20 @@ export class DetectorViewComponent implements OnInit {
   selectedDownTime: DownTime;
   downtimeEventFiredOnce:boolean = false;
   public xAxisPlotBands: xAxisPlotBand[] = null;
+  public zoomBehavior: zoomBehaviors = zoomBehaviors.Zoom;
+  @Output() XAxisSelection:EventEmitter<XAxisSelection> = new EventEmitter<XAxisSelection>();	
+  public onXAxisSelection(event:XAxisSelection) {
+    this.XAxisSelection.emit(event);
+    let downTime = new DownTime();
+    downTime.StartTime = event.fromTime;
+    downTime.EndTime = event.toTime;
+    downTime.downTimeLabel = `Custom selection from ${event.fromTime.format('YYYY-MM-DD HH:mm')} to ${event.toTime.format('YYYY-MM-DD HH:mm')}`;
+    downTime.isSelected = true;
+    this.downTimes = this.downTimes.filter(currDownTime=> !currDownTime.downTimeLabel.startsWith('Custom selection') );    
+    this.downTimes.push(downTime);    
+    this.onDownTimeChange(downTime);
+	}
+
   @Output() downTimeChanged: EventEmitter<DownTime> = new EventEmitter<DownTime>();
   hideDetectorControl: boolean = false;
   private isLegacy:boolean;
@@ -204,17 +218,18 @@ export class DetectorViewComponent implements OnInit {
         this.hideDetectorHeader = data.dataset.findIndex(set => (<Rendering>set.renderingProperties).type === RenderingType.Cards) >= 0;
 
         if (this.isAnalysisView) {
+          this.zoomBehavior = zoomBehaviors.CancelZoom | zoomBehaviors.FireXAxisSelectionEvent;
           let downTime = data.dataset.find(set => (<Rendering>set.renderingProperties).type === RenderingType.DownTime);
           if (downTime) {
             this.parseDownTimeData(downTime.table);
+            let defaultDowntime = this.downTimes.find(x => x.isSelected);
+            if (defaultDowntime == null && this.downTimes.length > 0) {
+              this.downTimes[0].isSelected = true;
+              defaultDowntime = this.downTimes[0];
+            }
+            this.selectedDownTime = defaultDowntime;
+            this.downTimeChanged.emit(defaultDowntime);            
           }
-          let defaultDowntime = this.downTimes.find(x => x.isSelected);
-          if (defaultDowntime == null && this.downTimes.length > 0) {
-            this.downTimes[0].isSelected = true;
-            defaultDowntime = this.downTimes[0];
-          }
-          this.selectedDownTime = defaultDowntime;
-          this.downTimeChanged.emit(defaultDowntime);
         }
         // this.hideDetectorHeader = data.dataset.findIndex(set => (<Rendering>set.renderingProperties).type === RenderingType.Cards) >= 0;
       }
@@ -230,34 +245,47 @@ export class DetectorViewComponent implements OnInit {
     return d.downTimeLabel;
   }
 
-  private setxAxisPlotBands(includeAllBands:boolean = false):void {
-    if(this.downTimes.length<1) {
+  private setxAxisPlotBands(includeAllBands:boolean = false, customDownTime?:DownTime):void {
+    if(customDownTime == null && this.downTimes.length<1 && this.selectedDownTime == null) {
       this.xAxisPlotBands = null;      
     }
-    else {
+    else {      
       this.xAxisPlotBands = [];
-      if(includeAllBands) {
-        this.downTimes.forEach(downtime => {
-          var currentPlotBand :xAxisPlotBand = {
-            color:downtime.isSelected? '#FFCAC4' : '#FCFFC5',
-            from:downtime.StartTime,
-            to:downtime.EndTime,
-            style:xAxisPlotBandStyles.BehindPlotLines           
-          };
-          this.xAxisPlotBands.push(currentPlotBand);
-        });
-      }
-      else {
+      if(!!customDownTime) {
         var currentPlotBand :xAxisPlotBand = {
           color: '#FCFFC5',
-          from:this.selectedDownTime.StartTime,
-          to:this.selectedDownTime.EndTime,
+          from:customDownTime.StartTime,
+          to:customDownTime.EndTime,
           style:xAxisPlotBandStyles.BehindPlotLines,
           borderWidth:1,
           borderColor:'red'
         };        
         this.xAxisPlotBands.push(currentPlotBand);
       }
+      else {
+        if(includeAllBands) {
+          this.downTimes.forEach(downtime => {
+            var currentPlotBand :xAxisPlotBand = {
+              color:downtime.isSelected? '#FFCAC4' : '#FCFFC5',
+              from:downtime.StartTime,
+              to:downtime.EndTime,
+              style:xAxisPlotBandStyles.BehindPlotLines           
+            };
+            this.xAxisPlotBands.push(currentPlotBand);
+          });
+        }
+        else {
+          var currentPlotBand :xAxisPlotBand = {
+            color: '#FCFFC5',
+            from:this.selectedDownTime.StartTime,
+            to:this.selectedDownTime.EndTime,
+            style:xAxisPlotBandStyles.BehindPlotLines,
+            borderWidth:1,
+            borderColor:'red'
+          };        
+          this.xAxisPlotBands.push(currentPlotBand);
+        }
+      }      
     }
   }
 

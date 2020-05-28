@@ -1,7 +1,7 @@
 import { Moment } from 'moment';
 import { BehaviorSubject } from 'rxjs';
 import {
-  Component, ComponentFactoryResolver, Input, OnInit, ViewChild, ViewContainerRef
+  Component, ComponentFactoryResolver, Input, OnInit, ViewChild, ViewContainerRef, Output, EventEmitter
 } from '@angular/core';
 import { DiagnosticData, Rendering, RenderingType } from '../../models/detector';
 import { CardSelectionComponent } from '../card-selection/card-selection.component';
@@ -34,7 +34,7 @@ import { CardSelectionV4Component } from '../card-selection-v4/card-selection-v4
 import { VersionService } from '../../services/version.service';
 import { ConnectAppInsightsComponent } from '../connect-app-insights/connect-app-insights.component';
 import { DetectorSearchComponent } from '../detector-search/detector-search.component';
-import { xAxisPlotBand } from '../../models/time-series';
+import { xAxisPlotBand, zoomBehaviors, XAxisSelection } from '../../models/time-series';
 
 @Component({
   selector: 'dynamic-data',
@@ -68,7 +68,6 @@ export class DynamicDataComponent implements OnInit {
   private _xAxisPlotBands: xAxisPlotBand[] = null;
   @Input() public set xAxisPlotBands(value:xAxisPlotBand[]) {
     if(!!value) {
-      //this._xAxisPlotBands = [];
       this._xAxisPlotBands = value;
       if(this._instanceRef != null) {
         this._instanceRef.xAxisPlotBands = value;      
@@ -78,6 +77,21 @@ export class DynamicDataComponent implements OnInit {
   public get xAxisPlotBands() {
     return this._xAxisPlotBands;
   }
+
+  private _zoomBehavior: zoomBehaviors = zoomBehaviors.Zoom;
+  @Input() public set zoomBehavior(value:zoomBehaviors) {
+    if(!!value) {
+      this._zoomBehavior = value;
+      if(this._instanceRef != null) {
+        this._instanceRef.zoomBehavior = value;      
+      }
+    }
+  }
+  public get zoomBehavior() {
+      return this._zoomBehavior;
+  }
+
+  @Output() XAxisSelection:EventEmitter<XAxisSelection> = new EventEmitter<XAxisSelection>();	
 
   @ViewChild('dynamicDataContainer', { read: ViewContainerRef, static: true }) dynamicDataContainer: ViewContainerRef;
   private isLegacy: boolean;
@@ -107,6 +121,10 @@ export class DynamicDataComponent implements OnInit {
       instance.compilationPackage = this.compilationPackage;
       instance.isAnalysisView = this.isAnalysisView;
       instance.xAxisPlotBands = this.xAxisPlotBands;
+      instance.zoomBehavior = this.zoomBehavior;      
+      instance.XAxisSelection.subscribe(XAxisSelectionEventArgs => {
+        this.XAxisSelection.emit(XAxisSelectionEventArgs);
+      });
       this._instanceRef = instance;
     });
   }

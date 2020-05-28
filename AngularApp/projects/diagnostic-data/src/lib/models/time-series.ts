@@ -46,6 +46,19 @@ export enum xAxisPlotBandStyles {
   AbovePlotLinesAndSeries = "5"
 }
 
+export enum zoomBehaviors {
+  Zoom = 1,
+  CancelZoom = 2,
+  FireXAxisSelectionEvent = 4
+}
+
+export class XAxisSelection {
+  public chart:Highcharts.Chart;
+  public _rawEventArgs:Highcharts.ChartSelectionContextObject;
+  public fromTime:momentNs.Moment;
+  public toTime:momentNs.Moment;
+}
+
 export class InstanceDetails {
   roleInstance: string; // SmallDedid...
   tenant: string; // Stamp Tenant

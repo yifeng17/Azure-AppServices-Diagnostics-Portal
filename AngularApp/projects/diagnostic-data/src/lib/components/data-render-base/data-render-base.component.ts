@@ -1,10 +1,10 @@
 import * as momentNs from 'moment';
 import { ReplaySubject } from 'rxjs';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
 import { DiagnosticData, RenderingType } from '../../models/detector';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { CompilationProperties } from '../../models/compilation-properties';
-import { xAxisPlotBand } from '../../models/time-series';
+import { xAxisPlotBand, zoomBehaviors, XAxisSelection } from '../../models/time-series';
 export interface DataRenderer {
   diagnosticDataInput: DiagnosticData;
 }
@@ -37,6 +37,19 @@ export class DataRenderBaseComponent implements OnInit, DataRenderer {
   public get xAxisPlotBands() {
     return this._xAxisPlotBands;
   }
+  private _zoomBehavior: zoomBehaviors = zoomBehaviors.Zoom;
+  @Input() public set zoomBehavior(value:zoomBehaviors) {
+      this._zoomBehavior = value;
+      
+  }
+  public get zoomBehavior() {
+      return this._zoomBehavior;
+  }
+
+  @Output() XAxisSelection:EventEmitter<XAxisSelection> = new EventEmitter<XAxisSelection>();
+  public onXAxisSelection(event:XAxisSelection) {
+		this.XAxisSelection.emit(event);
+	}
 
   constructor(protected telemetryService: TelemetryService) { }
 

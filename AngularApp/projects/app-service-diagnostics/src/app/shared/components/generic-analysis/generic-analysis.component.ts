@@ -8,6 +8,7 @@ import { DetectorListAnalysisComponent } from 'diagnostic-data';
 import { SearchAnalysisMode } from 'projects/diagnostic-data/src/lib/models/search-mode';
 import { CXPChatService } from 'diagnostic-data' ;
 import {GenericSupportTopicService} from '../../../../../../diagnostic-data/src/lib/services/generic-support-topic.service';
+import { XAxisSelection } from 'projects/diagnostic-data/src/lib/models/time-series';
 
 
 @Component({
@@ -41,6 +42,18 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
     super(_activatedRouteLocal, _diagnosticServiceLocal, _resourceService, _authServiceInstance, _telemetryService, _navigator, _routerLocal);
     this.isPublic = config && config.isPublic;
   }
+
+  public onXAxisSelection(event:XAxisSelection) {
+    console.log('--------------Generic Analysis-----------------');
+    console.log(`From : ${event.fromTime.format('YYYY-MM-DD HH:mm')} TO ${event.toTime.format('YYYY-MM-DD HH:mm')}`);
+    console.log('--------------Generic Analysis-----------------');
+    // let downTime = new DownTime();
+    // downTime.StartTime = event.fromTime;
+    // downTime.EndTime = event.toTime;
+    // downTime.downTimeLabel = `from  ${event.fromTime.format('YYYY-MM-DD HH:mm')} tO ${event.toTime.format('YYYY-MM-DD HH:mm')}`;
+    // downTime.isSelected = true;
+    // this.ondownTimeChanged(downTime);
+	}
 
   ondownTimeChanged(event: DownTime) {
     this.downTime = event;
