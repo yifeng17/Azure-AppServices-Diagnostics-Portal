@@ -60,6 +60,7 @@ export class HighchartsGraphComponent implements OnInit {
                 this.chartProperties[chartContainerId].some(prop => {
                     if(prop.key == propertyName) {
                         retVal = prop.value;
+                        return true;
                     }
                 });                
             }
@@ -79,6 +80,7 @@ export class HighchartsGraphComponent implements OnInit {
                 HighchartsGraphComponent.chartProperties[chartContainerId].some(prop => {
                     if(prop.key == propertyName) {
                         prop.value = propertyValue;
+                        return true;
                     }
                 });
             }
