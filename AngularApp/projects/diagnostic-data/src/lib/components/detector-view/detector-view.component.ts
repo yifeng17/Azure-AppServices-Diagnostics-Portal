@@ -89,6 +89,7 @@ export class DetectorViewComponent implements OnInit {
   feedbackButtonLabel: string = 'Send Feedback';
 
   downTimes: DownTime[] = [];
+  supportsDownTime:boolean = false;
   selectedDownTime: DownTime;
   downtimeEventFiredOnce:boolean = false;
   public xAxisPlotBands: xAxisPlotBand[] = null;
@@ -101,7 +102,9 @@ export class DetectorViewComponent implements OnInit {
     downTime.EndTime = event.toTime;
     downTime.downTimeLabel = `Custom selection from ${event.fromTime.format('YYYY-MM-DD HH:mm')} to ${event.toTime.format('YYYY-MM-DD HH:mm')}`;
     downTime.isSelected = true;
-    this.downTimes = this.downTimes.filter(currDownTime=> !currDownTime.downTimeLabel.startsWith('Custom selection') );    
+    this.downTimes = this.downTimes.filter(currDownTime=>  
+      !(!!currDownTime.downTimeLabel && currDownTime.downTimeLabel.length > 0 && currDownTime.downTimeLabel.startsWith('Custom selection')) 
+     );
     this.downTimes.push(downTime);    
     this.onDownTimeChange(downTime);
 	}
@@ -217,18 +220,21 @@ export class DetectorViewComponent implements OnInit {
 
         this.hideDetectorHeader = data.dataset.findIndex(set => (<Rendering>set.renderingProperties).type === RenderingType.Cards) >= 0;
 
-        if (this.isAnalysisView) {
-          this.zoomBehavior = zoomBehaviors.CancelZoom | zoomBehaviors.FireXAxisSelectionEvent;
+        if (this.isAnalysisView) {          
           let downTime = data.dataset.find(set => (<Rendering>set.renderingProperties).type === RenderingType.DownTime);
           if (downTime) {
+            this.zoomBehavior = zoomBehaviors.CancelZoom | zoomBehaviors.FireXAxisSelectionEvent;
+            this.supportsDownTime = true;
             this.parseDownTimeData(downTime.table);
             let defaultDowntime = this.downTimes.find(x => x.isSelected);
             if (defaultDowntime == null && this.downTimes.length > 0) {
               this.downTimes[0].isSelected = true;
               defaultDowntime = this.downTimes[0];
             }
-            this.selectedDownTime = defaultDowntime;
-            this.downTimeChanged.emit(defaultDowntime);            
+            if(!!defaultDowntime) {
+              this.selectedDownTime = defaultDowntime;
+              this.downTimeChanged.emit(defaultDowntime);
+            }            
           }
           else {
             this.resetGlobals();
@@ -242,7 +248,9 @@ export class DetectorViewComponent implements OnInit {
   resetGlobals() {
     this.downTimes = [];
     this.selectedDownTime = null;
+    this.supportsDownTime = false;
     this.xAxisPlotBands = [];
+    this.zoomBehavior = zoomBehaviors.Zoom;
   }
 
   getTimestampAsString(dateTime:Moment) {

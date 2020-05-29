@@ -115,7 +115,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
 
     @Input()
     detectorParmName: string;
-   
+
     @Input()
     set downTime(downTime: DownTime) {
       if (downTime != null && downTime.StartTime != null && downTime.EndTime != null) {
@@ -232,87 +232,97 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
         }
     }
 
-  refresh(downTime: DownTime) {
-    if (downTime == null ){//&& this.analysisId == 'appDownAnalysis') {
-        this.resetGlobals();
-      return;											
+    analysisContainsDowntime() : Observable<boolean> {
+        return this._diagnosticService.getDetector(this.analysisId, this._detectorControl.startTimeString, this._detectorControl.endTimeString)
+                        .map((response: DetectorResponse) => {
+                            let downTimeRenderingType = response.dataset.find(set => (<Rendering>set.renderingProperties).type === RenderingType.DownTime);
+                            if(!!downTimeRenderingType) {
+                                return true;
+                            }
+                            else {
+                                return false;
+                            }
+                        });
     }
-    else {
+  
+    refresh(downTime: DownTime) {
         if (this.withinGenie) {
             this.detectorId = "";
             this.showAppInsightsSection = false;
             this.renderInsightsFromSearch(downTime);
         }
-        else {            
+        else {
             this._activatedRoute.paramMap.subscribe(params => {
                 this.analysisId = params.get('analysisId');
                 this.detectorId = params.get(this.detectorParmName) === null ? "" : params.get(this.detectorParmName);
                 this.resetGlobals();
                 this.goBackToAnalysis();
                 this.populateSupportTopicDocument();
-
-                if (this.analysisId === "searchResultsAnalysis") {
-                    this._activatedRoute.queryParamMap.subscribe(qParams => {
-                        this.resetGlobals();
-                        this.searchTerm = qParams.get('searchTerm') === null ? this.searchTerm : qParams.get('searchTerm');this.showAppInsightsSection = false;
-                        if (this.searchTerm && this.searchTerm.length > 1) {
-                            this.isDynamicAnalysis = true;
-                            this.showSuccessfulChecks = false;
-                            this.renderInsightsFromSearch(downTime);
-                        }
-                    });
-                }
-                else {
-                    // Add application insights analysis data
-                    this._diagnosticService.getDetector(this.analysisId, this._detectorControl.startTimeString, this._detectorControl.endTimeString)
-                        .subscribe((response: DetectorResponse) => {
-                            this.checkSearchEmbedded(response);
-                            this.getApplicationInsightsData(response);
-                        });
-
-                    this._diagnosticService.getDetectors().subscribe(detectorList => {
-                        if (detectorList) {
-
-                            if (this.detectorId !== "") {
-                                let currentDetector = detectorList.find(detector => detector.id == this.detectorId)
-                                this.detectorName = currentDetector.name;
-                                return;
-                            } else {
-                                this.detectorEventProperties = {
-                                    'StartTime': String(this._detectorControl.startTime),
-                                    'EndTime': String(this._detectorControl.endTime),
-                                    'DetectorId': this.analysisId,
-                                    'ParentDetectorId': "",
-                                    'Url': window.location.href
-                                };
-                            }
-
-                            detectorList.forEach(element => {
-
-                                if (element.analysisTypes != null && element.analysisTypes.length > 0) {
-                                    element.analysisTypes.forEach(analysis => {
-                                        if (analysis === this.analysisId) {
-                                            this.detectors.push({ name: element.name, id: element.id });
-                                            this.loadingMessages.push("Checking " + element.name);
-                                        }
-                                    });
+                this.analysisContainsDowntime().subscribe(containsDownTime => {
+                    if( (containsDownTime && !!downTime ) || !containsDownTime ) {
+                        if (this.analysisId === "searchResultsAnalysis") {
+                            this._activatedRoute.queryParamMap.subscribe(qParams => {
+                                this.resetGlobals();
+                                this.searchTerm = qParams.get('searchTerm') === null ? this.searchTerm : qParams.get('searchTerm');this.showAppInsightsSection = false;
+                                if (this.searchTerm && this.searchTerm.length > 1) {
+                                    this.isDynamicAnalysis = true;
+                                    this.showSuccessfulChecks = false;
+                                    this.renderInsightsFromSearch(downTime);
                                 }
                             });
-
-                            this.startDetectorRendering(detectorList, downTime);
                         }
-                    });
-                }
+                        else {
+                            // Add application insights analysis data
+                            this._diagnosticService.getDetector(this.analysisId, this._detectorControl.startTimeString, this._detectorControl.endTimeString)
+                                .subscribe((response: DetectorResponse) => {
+                                    this.checkSearchEmbedded(response);
+                                    this.getApplicationInsightsData(response);
+                                });
+
+                            this._diagnosticService.getDetectors().subscribe(detectorList => {
+                                if (detectorList) {
+
+                                    if (this.detectorId !== "") {
+                                        let currentDetector = detectorList.find(detector => detector.id == this.detectorId)
+                                        this.detectorName = currentDetector.name;
+                                        return;
+                                    } else {
+                                        this.detectorEventProperties = {
+                                            'StartTime': String(this._detectorControl.startTime),
+                                            'EndTime': String(this._detectorControl.endTime),
+                                            'DetectorId': this.analysisId,
+                                            'ParentDetectorId': "",
+                                            'Url': window.location.href
+                                        };
+                                    }
+
+                                    detectorList.forEach(element => {
+
+                                        if (element.analysisTypes != null && element.analysisTypes.length > 0) {
+                                            element.analysisTypes.forEach(analysis => {
+                                                if (analysis === this.analysisId) {
+                                                    this.detectors.push({ name: element.name, id: element.id });
+                                                    this.loadingMessages.push("Checking " + element.name);
+                                                }
+                                            });
+                                        }
+                                    });
+
+                                    this.startDetectorRendering(detectorList, downTime);
+                                }
+                            });
+                        }
+                    }
+                });
             });
         }
     }
-  }
 
 
 
     renderInsightsFromSearch(downTime: DownTime) {
       if (downTime == null) {
-        return;											
+        return;
       }
       else {
         this.searchId = uuid();
@@ -356,7 +366,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                 this.showPreLoader = false;
                 this.showPreLoadingError = true;
             });
-      }        
+      }
     }
 
     checkSearchEmbedded(response: DetectorResponse) {
@@ -542,7 +552,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
         startTimeString = downtime.StartTime.format(this.stringFormat);
         endTimeString = downtime.EndTime.format(this.stringFormat);
       }
-      
+
         return {
             title: detector.name,
             metadata: detector,
@@ -603,7 +613,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
             if(!!viewModel && !!viewModel.model && !!viewModel.model.metadata && !!viewModel.model.metadata.name) {
                 this.detectorName = viewModel.model.metadata.name;
             }
-        }        
+        }
     }
 
     public selectDetector(viewModel: any) {
@@ -633,7 +643,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                 this.logEvent(TelemetryEventNames.ChildDetectorClicked, clickDetectorEventProperties);
 
                 if (this.analysisId === "searchResultsAnalysis" && this.searchTerm && this.searchTerm.length > 0) {
-                    //If in homepage then open second blade for Diagnostic Tool and second blade will continue to open third blade for 
+                    //If in homepage then open second blade for Diagnostic Tool and second blade will continue to open third blade for
                     if (this.withinGenie) {
                         const isHomepage = !this._activatedRoute.root.firstChild.firstChild.firstChild.firstChild.snapshot.params["category"];
                         if (isHomepage) {
@@ -660,9 +670,9 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                             queryParamsHandling: 'merge'
                           });
                     }
-                    else {                        
+                    else {
                         this._router.navigate([`../../analysis/${this.analysisId}/detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true });
-                    }                    
+                    }
                 }
             }
         }

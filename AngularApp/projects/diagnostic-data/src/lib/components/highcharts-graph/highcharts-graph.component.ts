@@ -140,7 +140,6 @@ export class HighchartsGraphComponent implements OnInit {
             if (!!event.xAxis) {                          
                 let fromSelection = moment.utc(Highcharts.dateFormat('%Y-%m-%d %H:%M:00',event.xAxis[0].min));
                 let toSelection =moment.utc(Highcharts.dateFormat('%Y-%m-%d %H:%M:00',event.xAxis[0].max));
-                //console.log(`From ${fromSelection.format('MM/DD HH:mm')} to ${toSelection.format('MM/DD HH:mm')}`);
 
                 let fromPoint = null;
                 let toPoint = null;
@@ -161,9 +160,6 @@ export class HighchartsGraphComponent implements OnInit {
                         xAxisSelectionEventArgs._rawEventArgs = event;
                         xAxisSelectionEventArgs.fromTime = fromPoint;
                         xAxisSelectionEventArgs.toTime = toPoint;
-                        // console.log('--------------HighCharts-----------------');
-                        // console.log(`From : ${xAxisSelectionEventArgs.fromTime.format('YYYY-MM-DD HH:mm')} TO ${xAxisSelectionEventArgs.toTime.format('YYYY-MM-DD HH:mm')}`);
-                        // console.log('--------------HighCharts-----------------');
                         this.XAxisSelection.emit(xAxisSelectionEventArgs);
                     }
                 }
