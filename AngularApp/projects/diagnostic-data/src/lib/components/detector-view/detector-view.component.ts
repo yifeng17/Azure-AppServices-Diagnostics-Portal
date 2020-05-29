@@ -139,6 +139,12 @@ export class DetectorViewComponent implements OnInit {
     if (!this.insideDetectorList) {
       this.telemetryService.logPageView(TelemetryEventNames.DetectorViewLoaded, { "detectorId": this.detector });
     }
+
+    this.detectorControlService.update.subscribe(isValidUpdate => {
+      if (isValidUpdate && this.isAnalysisView) {
+        this.resetGlobals();
+      }
+    });
   }
 
   protected loadDetector() {
@@ -220,7 +226,7 @@ export class DetectorViewComponent implements OnInit {
 
         this.hideDetectorHeader = data.dataset.findIndex(set => (<Rendering>set.renderingProperties).type === RenderingType.Cards) >= 0;
 
-        if (this.isAnalysisView) {          
+        if (this.isAnalysisView) {
           let downTime = data.dataset.find(set => (<Rendering>set.renderingProperties).type === RenderingType.DownTime);
           if (downTime) {
             this.zoomBehavior = zoomBehaviors.CancelZoom | zoomBehaviors.FireXAxisSelectionEvent;
