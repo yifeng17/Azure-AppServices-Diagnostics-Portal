@@ -49,11 +49,13 @@
   </div>
 
   <div *ngIf="isAnalysisView && downTimes.length > 0" class="dynamic-data-container">
-    <select class ="downtime-select" [(ngModel)]="selectedDownTime" (change)="onDownTimeChange(selectedDownTime)">
-      <option *ngFor = "let downtime of downTimes" [ngValue]="downtime">
-        {{ getDowntimeLabel(downtime) }}
-      </option>
-    </select>
+    <div class="downtime-container">
+      <span class="downtime-icon"><i class="fa fa-filter fa-lg" aria-hidden="true"></i></span>
+      <label for="downtimeFilter"><strong>Downtime</strong></label>
+      <fab-dropdown id="downtimeFilter" [options]="fabOptions" (onChange)="selectFabricKey($event)" [defaultSelectedKey]="selectedKey"
+        contentStyle="margin-top: -5px; margin-left: 5px;width:{{fabDropdownWidth}}px;"></fab-dropdown>
+    </div>
+    
   </div>
 
   <div *ngFor="let data of detectorDataLocalCopy.dataset  | renderfilter:isAnalysisView" class="dynamic-data-container">

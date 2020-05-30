@@ -14,6 +14,7 @@ import { VersionService } from '../../services/version.service';
 import { CXPChatService } from '../../services/cxp-chat.service';
 import * as momentNs from 'moment';
 import { xAxisPlotBand, xAxisPlotBandStyles, zoomBehaviors, XAxisSelection } from '../../models/time-series';
+import { IDropdownOption } from 'office-ui-fabric-react';
 
 const moment = momentNs;
 
@@ -60,6 +61,10 @@ export class DetectorViewComponent implements OnInit {
   cxpChatTrackingId:string= '';
   cxpChatUrl:string = '';
 
+  fabOptions: IDropdownOption[] = [];
+  selectedKey:string = '';
+  fabDropdownWidth:number
+
   @Input()
   set detectorResponse(value: DetectorResponse) {
     this.detectorResponseSubject.next(value);
@@ -105,7 +110,9 @@ export class DetectorViewComponent implements OnInit {
     this.downTimes = this.downTimes.filter(currDownTime=>  
       !(!!currDownTime.downTimeLabel && currDownTime.downTimeLabel.length > 0 && currDownTime.downTimeLabel.startsWith('Custom selection')) 
      );
-    this.downTimes.push(downTime);    
+    this.downTimes.forEach(d=>{d.isSelected = false;});
+    this.downTimes.push(downTime);
+    this.populateFabricDowntimeDropDown(this.downTimes);
     this.onDownTimeChange(downTime);
 	}
 
@@ -142,7 +149,10 @@ export class DetectorViewComponent implements OnInit {
 
     this.detectorControlService.update.subscribe(isValidUpdate => {
       if (isValidUpdate && this.isAnalysisView) {
-        this.resetGlobals();
+        //this.resetGlobals();
+        //To do, because of this when I move away from analysis and come back, the downtime selection goes blank. 
+        //However without this, if someone changes the time selection on the page, the view does not update.
+        //Need to find out how to get this to work.
       }
     });
   }
@@ -312,6 +322,53 @@ export class DetectorViewComponent implements OnInit {
     }
   }
 
+  calculateFabWidth(options: IDropdownOption[]): number {
+    //each char 8px  
+    let length = 0;
+    options.forEach(option => {
+      length = Math.max(length, option.text.length);
+    });
+    return length * 8;
+  }
+
+  selectFabricKey(event: { option: IDropdownOption }) {
+    this.selectedKey = this.getKeyForDownTime(event.option.data);
+    this.onDownTimeChange(event.option.data);
+  }
+
+  private getKeyForDownTime(d: DownTime):string {
+    return `${this.getTimestampAsString(d.StartTime)}-${this.getTimestampAsString(d.EndTime)}`
+  }
+
+  private populateFabricDowntimeDropDown(downTimes: DownTime[]) : void {
+    if(!!downTimes) {
+      this.fabOptions = [];
+      downTimes.forEach(d => {
+        this.fabOptions.push({
+          key:this.getKeyForDownTime(d),
+          text: this.getDowntimeLabel(d),
+          ariaLabel: this.getDowntimeLabel(d),
+          data: d,
+          isSelected: d.isSelected
+        });
+
+        if(d.isSelected) {
+          this.selectedKey = this.getKeyForDownTime(d);
+        }
+
+      });
+
+      let defaultOption = this.fabOptions.find(x => x.isSelected);
+      if (defaultOption == null && this.fabOptions.length > 0) {
+        this.fabOptions[0].isSelected = true;
+        this.selectedKey = this.getKeyForDownTime(this.fabOptions[0].data);
+      }
+
+      this.fabDropdownWidth = this.calculateFabWidth(this.fabOptions);
+
+    }
+  }
+
   private parseDownTimeData(table: DataTableResponseObject) {
 
     if (!(table.rows === undefined || table.rows.length < 1)) {
@@ -335,10 +392,12 @@ export class DetectorViewComponent implements OnInit {
         this.downTimes.push(d);
       }
       let selectedDownTime = this.downTimes.find(downtime => downtime.isSelected == true);
-      if(selectedDownTime == null) {
+      if(selectedDownTime == null && this.downTimes.length > 0) {
         this.downTimes[0].isSelected = true;
         this.selectedDownTime = this.downTimes[0];
       }
+
+      this.populateFabricDowntimeDropDown(this.downTimes);
       this.setxAxisPlotBands(false);
     }
   }

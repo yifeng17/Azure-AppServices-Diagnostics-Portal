@@ -189,32 +189,7 @@ export class HighchartsGraphComponent implements OnInit {
                 }
             }
         }
-    };
-    
-    private getXAxisOption(currXAxisOptions:Highcharts.XAxisOptions|Highcharts.XAxisOptions[] ):Highcharts.XAxisOptions {
-        if(currXAxisOptions instanceof Array) {
-            return  ((currXAxisOptions as Highcharts.XAxisOptions[])[0]) as Highcharts.XAxisOptions;
-        }
-        else {
-            return currXAxisOptions as Highcharts.XAxisOptions;
-        }
-    }
-
-    private isPlotBandUpdateApplicable(chart: Highcharts.Chart):boolean {
-        var chartPlotBands:Highcharts.XAxisPlotBandsOptions[] = null;
-        if(!!chart) {
-            chartPlotBands = this.getXAxisOption(chart.options.xAxis).plotBands;
-            if(!!chartPlotBands && chartPlotBands.length > 0)  {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-        else {
-            return false;
-        }
-    }
+    };    
 
     private rebindChartOptions():void {
         let currChart = this.getCurrentChart();
