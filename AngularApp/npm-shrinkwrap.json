@@ -2088,6 +2088,135 @@
         }
       }
     },
+    "@microsoft/applicationinsights-analytics-js": {
+      "version": "2.5.4",
+      "resolved": "https://registry.npmjs.org/@microsoft/applicationinsights-analytics-js/-/applicationinsights-analytics-js-2.5.4.tgz",
+      "integrity": "sha512-Eda0bcThQJA/zNVzmU3+Vo9WJT/55LzUxpEATOCB6BbN1uGGUp3hGOdlV/hRl652TPutXII/gvhg8Z4uqq+VsA==",
+      "requires": {
+        "@microsoft/applicationinsights-common": "2.5.4",
+        "@microsoft/applicationinsights-core-js": "2.5.4",
+        "@microsoft/dynamicproto-js": "^0.5.2",
+        "tslib": "^1.11.1"
+      },
+      "dependencies": {
+        "tslib": {
+          "version": "1.13.0",
+          "resolved": "https://registry.npmjs.org/tslib/-/tslib-1.13.0.tgz",
+          "integrity": "sha512-i/6DQjL8Xf3be4K/E6Wgpekn5Qasl1usyw++dAA35Ue5orEn65VIxOA+YvNNl9HV3qv70T7CNwjODHZrLwvd1Q=="
+        }
+      }
+    },
+    "@microsoft/applicationinsights-channel-js": {
+      "version": "2.5.4",
+      "resolved": "https://registry.npmjs.org/@microsoft/applicationinsights-channel-js/-/applicationinsights-channel-js-2.5.4.tgz",
+      "integrity": "sha512-xDgI+7LAT5xPdxbBu/fueufH/j7p+hqfPJkkyG9BYdLa77mp+UfnP1kKjthcsdrhJiVIAbx08hmZpo72espIng==",
+      "requires": {
+        "@microsoft/applicationinsights-common": "2.5.4",
+        "@microsoft/applicationinsights-core-js": "2.5.4",
+        "tslib": "^1.11.1"
+      },
+      "dependencies": {
+        "tslib": {
+          "version": "1.13.0",
+          "resolved": "https://registry.npmjs.org/tslib/-/tslib-1.13.0.tgz",
+          "integrity": "sha512-i/6DQjL8Xf3be4K/E6Wgpekn5Qasl1usyw++dAA35Ue5orEn65VIxOA+YvNNl9HV3qv70T7CNwjODHZrLwvd1Q=="
+        }
+      }
+    },
+    "@microsoft/applicationinsights-common": {
+      "version": "2.5.4",
+      "resolved": "https://registry.npmjs.org/@microsoft/applicationinsights-common/-/applicationinsights-common-2.5.4.tgz",
+      "integrity": "sha512-lrLwBUKqK4SZq2nCegUs/O8Ew2KPtL+JUCARoo6YdT8vSiUSxVk+XvwnMOViv27+NWsM3HpqOcjMn+C3kwULZQ==",
+      "requires": {
+        "@microsoft/applicationinsights-core-js": "2.5.4",
+        "tslib": "^1.11.1"
+      },
+      "dependencies": {
+        "tslib": {
+          "version": "1.13.0",
+          "resolved": "https://registry.npmjs.org/tslib/-/tslib-1.13.0.tgz",
+          "integrity": "sha512-i/6DQjL8Xf3be4K/E6Wgpekn5Qasl1usyw++dAA35Ue5orEn65VIxOA+YvNNl9HV3qv70T7CNwjODHZrLwvd1Q=="
+        }
+      }
+    },
+    "@microsoft/applicationinsights-core-js": {
+      "version": "2.5.4",
+      "resolved": "https://registry.npmjs.org/@microsoft/applicationinsights-core-js/-/applicationinsights-core-js-2.5.4.tgz",
+      "integrity": "sha512-U3spLDr99R8X7X7VH49RJhx7KhB8HZpKo7rb3ymFG6z6hB7eWQQyLyMsFnThNJI3sVqwEPCQd7dBs7viheLqjw==",
+      "requires": {
+        "@microsoft/dynamicproto-js": "^0.5.2",
+        "tslib": "^1.11.1"
+      },
+      "dependencies": {
+        "tslib": {
+          "version": "1.13.0",
+          "resolved": "https://registry.npmjs.org/tslib/-/tslib-1.13.0.tgz",
+          "integrity": "sha512-i/6DQjL8Xf3be4K/E6Wgpekn5Qasl1usyw++dAA35Ue5orEn65VIxOA+YvNNl9HV3qv70T7CNwjODHZrLwvd1Q=="
+        }
+      }
+    },
+    "@microsoft/applicationinsights-dependencies-js": {
+      "version": "2.5.4",
+      "resolved": "https://registry.npmjs.org/@microsoft/applicationinsights-dependencies-js/-/applicationinsights-dependencies-js-2.5.4.tgz",
+      "integrity": "sha512-C01PkF7nQSYFpHiTo4Ltz5VOJqyTaQMHk2fNLBnyxLF2VhSUlfowPhyS6mGU3miscd5sQuktrlYol7LqjiRCXw==",
+      "requires": {
+        "@microsoft/applicationinsights-common": "2.5.4",
+        "@microsoft/applicationinsights-core-js": "2.5.4",
+        "@microsoft/dynamicproto-js": "^0.5.2",
+        "tslib": "^1.11.1"
+      },
+      "dependencies": {
+        "tslib": {
+          "version": "1.13.0",
+          "resolved": "https://registry.npmjs.org/tslib/-/tslib-1.13.0.tgz",
+          "integrity": "sha512-i/6DQjL8Xf3be4K/E6Wgpekn5Qasl1usyw++dAA35Ue5orEn65VIxOA+YvNNl9HV3qv70T7CNwjODHZrLwvd1Q=="
+        }
+      }
+    },
+    "@microsoft/applicationinsights-properties-js": {
+      "version": "2.5.4",
+      "resolved": "https://registry.npmjs.org/@microsoft/applicationinsights-properties-js/-/applicationinsights-properties-js-2.5.4.tgz",
+      "integrity": "sha512-2ueiQYhMiNIf9Iua7zrUGIDBiO8zPLau1yBePqLvEQ2CewBE9ZrTbdqhzpBrUQUKFbmWlETXYsIWQNz+T2rRfw==",
+      "requires": {
+        "@microsoft/applicationinsights-common": "2.5.4",
+        "@microsoft/applicationinsights-core-js": "2.5.4",
+        "tslib": "^1.11.1"
+      },
+      "dependencies": {
+        "tslib": {
+          "version": "1.13.0",
+          "resolved": "https://registry.npmjs.org/tslib/-/tslib-1.13.0.tgz",
+          "integrity": "sha512-i/6DQjL8Xf3be4K/E6Wgpekn5Qasl1usyw++dAA35Ue5orEn65VIxOA+YvNNl9HV3qv70T7CNwjODHZrLwvd1Q=="
+        }
+      }
+    },
+    "@microsoft/applicationinsights-web": {
+      "version": "2.5.4",
+      "resolved": "https://registry.npmjs.org/@microsoft/applicationinsights-web/-/applicationinsights-web-2.5.4.tgz",
+      "integrity": "sha512-5nBgxEDkM61E0irdi78DcEwfiLvYueyU5tQsCxovPfhbt5Ub8KzzT8cvmrh6p9Rt9DcpKP/uHD8k6OqMvdgvVg==",
+      "requires": {
+        "@microsoft/applicationinsights-analytics-js": "2.5.4",
+        "@microsoft/applicationinsights-channel-js": "2.5.4",
+        "@microsoft/applicationinsights-common": "2.5.4",
+        "@microsoft/applicationinsights-core-js": "2.5.4",
+        "@microsoft/applicationinsights-dependencies-js": "2.5.4",
+        "@microsoft/applicationinsights-properties-js": "2.5.4",
+        "@microsoft/dynamicproto-js": "^0.5.2",
+        "tslib": "^1.11.1"
+      },
+      "dependencies": {
+        "tslib": {
+          "version": "1.13.0",
+          "resolved": "https://registry.npmjs.org/tslib/-/tslib-1.13.0.tgz",
+          "integrity": "sha512-i/6DQjL8Xf3be4K/E6Wgpekn5Qasl1usyw++dAA35Ue5orEn65VIxOA+YvNNl9HV3qv70T7CNwjODHZrLwvd1Q=="
+        }
+      }
+    },
+    "@microsoft/dynamicproto-js": {
+      "version": "0.5.2",
+      "resolved": "https://registry.npmjs.org/@microsoft/dynamicproto-js/-/dynamicproto-js-0.5.2.tgz",
+      "integrity": "sha512-tGwZJLtLVK96OKl5/pHeZFgi28rnKJB2DQ0V/28SVQnv9tC/OXCNOrvvvtIZM6wp1YJwqVSFnyp46w3azDjC0Q=="
+    },
     "@microsoft/load-themed-styles": {
       "version": "1.10.12",
       "resolved": "https://registry.npmjs.org/@microsoft/load-themed-styles/-/load-themed-styles-1.10.12.tgz",
@@ -2351,11 +2480,6 @@
       "version": "15.0.2",
       "resolved": "https://registry.npmjs.org/@swimlane/ngx-datatable/-/ngx-datatable-15.0.2.tgz",
       "integrity": "sha512-IlUyCs/hLv12hzz2pGugbrdRpBbwE6JUM4Bm4CCqLptmZj+t8pw8Ywthde8yUDdpgGgTJeJ9G5o92QadyGbP3g=="
-    },
-    "@types/applicationinsights-js": {
-      "version": "1.0.9",
-      "resolved": "https://registry.npmjs.org/@types/applicationinsights-js/-/applicationinsights-js-1.0.9.tgz",
-      "integrity": "sha512-tf2BBQFIRgaoxkii5Ys4Q2nvhPQ2PFt9FfgDc+xL7+XPi3s4ScqzRuAn8FRBCglnyzVvwEznOtdfqGREzUOkCw=="
     },
     "@types/estree": {
       "version": "0.0.39",
@@ -3066,11 +3190,6 @@
       "requires": {
         "default-require-extensions": "^1.0.0"
       }
-    },
-    "applicationinsights-js": {
-      "version": "1.0.20",
-      "resolved": "https://registry.npmjs.org/applicationinsights-js/-/applicationinsights-js-1.0.20.tgz",
-      "integrity": "sha512-vN6fEv2fNPZtw76/mv5OJ44cTP/VzSDahdXVIGnRB5Apnf2/9PIl4IyWpwS9biG53I1sWvkw83RjdrAnsIKoRQ=="
     },
     "aproba": {
       "version": "1.2.0",
