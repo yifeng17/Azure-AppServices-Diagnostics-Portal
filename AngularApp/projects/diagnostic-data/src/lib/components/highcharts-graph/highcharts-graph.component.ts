@@ -8,7 +8,6 @@ import AccessibilityModule from 'highcharts/modules/accessibility';
 import { DetectorControlService } from '../../services/detector-control.service';
 import { HighChartTimeSeries } from '../../models/time-series';
 import { xAxisPlotBand, xAxisPlotBandStyles, zoomBehaviors, XAxisSelection } from '../../models/time-series';
-import { HighContrastSelector } from 'office-ui-fabric-react';
 import { KeyValue } from '@angular/common';
 
 const HC_customEvents = HC_customEvents_;
@@ -176,6 +175,9 @@ export class HighchartsGraphComponent implements OnInit {
     private customSetExtremesCallbackFunction: Highcharts.AxisSetExtremesEventCallbackFunction = (evt: Highcharts.AxisSetExtremesEventObject) => {
         if (evt.trigger !== 'sync') { // Prevent feedback loop
             let currChart = this.getCurrentChart();
+            if(!currChart) {
+                return;
+            }
             for(let i = 0; i < Highcharts.charts.length; i++)
             {
                 let chart = Highcharts.charts[i];
@@ -199,7 +201,7 @@ export class HighchartsGraphComponent implements OnInit {
     }
 	
     loading: boolean = true;   
-
+    
     @HostListener('mousemove', ['$event'])
     onMouseMove(ev: MouseEvent) {
         this.syncCharts(ev);
@@ -241,12 +243,16 @@ export class HighchartsGraphComponent implements OnInit {
 
     private syncCharts(ev: MouseEvent) {
         let xAxisValue : number;
-        let currentId = this.el.nativeElement.getElementsByClassName('highcharts-container')[0].id;
+
+        let currentCharts = this.el.nativeElement.getElementsByClassName('highcharts-container');
+        if (!currentCharts || !currentCharts[0]) {
+            return;
+        }
+        let currentId = currentCharts[0].id;
 
         // Find out which is the current chart object
         for(let i = 0; i < Highcharts.charts.length; i++) {
             let chart = Highcharts.charts[i];
-
             if (chart) {
                 if (currentId === chart.container.id) {
                     //Add width of side-nav in Diag&Solve so cursor will align with vertical line
@@ -532,7 +538,7 @@ export class HighchartsGraphComponent implements OnInit {
                         whiteSpace: 'nowrap'
                     }
                 },
-                plotBands:[],				
+                plotBands:[],
                 events: {
                     setExtremes: this.customSetExtremesCallbackFunction
                 }

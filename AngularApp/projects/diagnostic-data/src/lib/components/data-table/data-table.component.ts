@@ -2,6 +2,10 @@ import { Component, ViewChild, AfterViewInit, TemplateRef } from '@angular/core'
 import { DiagnosticData, DataTableRendering, RenderingType } from '../../models/detector';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
 import { DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
+import * as Highcharts from 'highcharts';
+import HC_exporting from 'highcharts/modules/exporting';
+
+HC_exporting(Highcharts);
 
 @Component({
   selector: 'data-table',
@@ -9,8 +13,11 @@ import { DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
   styleUrls: ['./data-table.component.scss']
 })
 export class DataTableComponent extends DataRenderBaseComponent implements AfterViewInit {
+  Highcharts: typeof Highcharts = Highcharts;
 
   ngAfterViewInit(): void {
+
+    this.createNgxDataTableObjects();
 
     if (this.renderingProperties.descriptionColumnName != null) {
       this.table.selectionType = SelectionType.single;
@@ -51,7 +58,7 @@ export class DataTableComponent extends DataRenderBaseComponent implements After
   protected processData(data: DiagnosticData) {
     super.processData(data);
     this.renderingProperties = <DataTableRendering>data.renderingProperties;
-    this.createNgxDataTableObjects();
+
   }
 
   private createNgxDataTableObjects() {
@@ -129,4 +136,25 @@ export class DataTableComponent extends DataRenderBaseComponent implements After
     event.stopPropagation();
   }
 
+  onActivate(event: any) {
+    if (!event.row || !event.row.TIMESTAMP) {
+      return;
+    }
+
+    let timestamp = new Date(event.row.TIMESTAMP + 'Z');
+    for(let i = 0; i < Highcharts.charts.length; i++)
+    {
+        let chart = Highcharts.charts[i];
+        if (chart) {
+            let xi = chart.xAxis[0];
+            xi.removePlotLine("myPlotLine");
+            xi.addPlotLine({
+                value: timestamp.valueOf(),
+                width: 1,
+                color: 'grey',
+                id: 'myPlotLine'
+            });
+        }
+    }
+  }
 }

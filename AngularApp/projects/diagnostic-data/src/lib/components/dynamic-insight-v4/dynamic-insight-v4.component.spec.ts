@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CategoryMenuComponent } from './category-menu.component';
+import { DynamicInsightV4Component } from './dynamic-insight-v4.component';
 
-describe('CategoryMenuComponent', () => {
-  let component: CategoryMenuComponent;
-  let fixture: ComponentFixture<CategoryMenuComponent>;
+describe('DynamicInsightV4Component', () => {
+  let component: DynamicInsightV4Component;
+  let fixture: ComponentFixture<DynamicInsightV4Component>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CategoryMenuComponent ]
+      declarations: [ DynamicInsightV4Component ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CategoryMenuComponent);
+    fixture = TestBed.createComponent(DynamicInsightV4Component);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -11,12 +11,14 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using AppLensV3.Helpers;
 using AppLensV3.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SendGrid.Helpers.Mail;
@@ -74,16 +76,47 @@ namespace AppLensV3.Controllers
         }
 
         [HttpGet("appsettings/{name}")]
-        public IActionResult GetAppSettingValue(string name){
+        public IActionResult GetAppSettingValue(string name)
+        {
             if (string.IsNullOrWhiteSpace(name))
             {
                 return BadRequest("App setting name is empty");
             }
+
             return Ok(config[name]);
         }
 
         private static string TryGetHeader(HttpRequest request, string headerName, string defaultValue = "") =>
             request.Headers.ContainsKey(headerName) ? (string)request.Headers[headerName] : defaultValue;
+
+        [HttpGet("invoke")]
+        public async Task<IActionResult> InvokeUsingGet(string path, string method = "POST")
+        {
+            IActionResult response;
+            string reason;
+
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                reason = @"Expecting a URL encoded path as a query string parameter eg., https:\\applens.azurewebsites.net?path=%2Fsubscriptions%2F0000-0000-000000-00000000-0000000%2FresourceGroups%2Fexample-rg%2Fproviders%2FMicrosoft.Web%2Fsites%2Fexample_sites%2Fdetectors";
+                return BadRequest(reason);
+            }
+
+            this.HttpContext.Request.Headers.Add(PathQueryHeader, path);
+            this.HttpContext.Request.Headers.Add(MethodHeader, method);
+            this.HttpContext.Request.Headers.Add(HeaderNames.ContentType, "application/json");
+
+            try
+            {
+                response = await Invoke(null);
+            }
+            catch (Exception ex)
+            {
+                string errorResponse = $"Error encountered during API call\n{ex.ToString()}";
+                response = StatusCode(500, errorResponse);
+            }
+
+            return response;
+        }
 
         /// <summary>
         /// Action for invoke request.

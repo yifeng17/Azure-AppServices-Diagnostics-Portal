@@ -1,4 +1,4 @@
-import { Component, HostListener } from "@angular/core";
+import { Component, HostListener, ViewChild, ElementRef, Renderer2 } from "@angular/core";
 import { Feature } from "../../../shared-v2/models/features";
 import { FeatureService } from "../../../shared-v2/services/feature.service";
 import { LoggingV2Service } from "../../../shared-v2/services/logging-v2.service";
@@ -7,6 +7,7 @@ import { Globals } from "../../../globals";
 import { icons } from "../../icons-constants";
 import { SelectionMode } from 'office-ui-fabric-react/lib/DetailsList'
 import { Router } from "@angular/router";
+import { TelemetryService } from "diagnostic-data";
 
 enum BlurType {
   //click other place to close panel
@@ -62,7 +63,7 @@ export class FabricSearchResultsComponent {
   }
 
   @HostListener('keydown.Tab', ['$event.target'])
-  onKeyUp(ele: HTMLElement) {
+  onKeyDown(ele: HTMLElement) {
     if (ele.tagName === "INPUT") {
       this.clickSearchBox = BlurType.None;
     }
@@ -95,9 +96,17 @@ export class FabricSearchResultsComponent {
       }
     }
   }
-  
-  constructor(public featureService: FeatureService, private _logger: LoggingV2Service,private _notificationService: NotificationService, private globals: Globals,private router:Router) {
+
+  @ViewChild('fabSearchResult',{static:true}) fabSearchResult:ElementRef
+  constructor(public featureService: FeatureService, private _logger: LoggingV2Service,private _notificationService: NotificationService, private globals: Globals,private router:Router,private render:Renderer2,private telemetryService:TelemetryService) {
     this.isInCategory = this.router.url.includes('categories');
+
+    this.render.listen('window','click',(e:Event) => {
+      if (!this.fabSearchResult.nativeElement.contains(e.target)){
+        this.clickSearchBox = BlurType.Blur;
+        this.onBlurHandler();
+      }
+    });
   }
 
   navigateToFeature(feature: Feature) {
@@ -107,12 +116,20 @@ export class FabricSearchResultsComponent {
   }
 
   private _logSearch() {
-    this._logger.LogSearch(this.searchValue);
+    this.telemetryService.logEvent('Search',{
+      'SearchValue': this.searchValue,
+      'Location': this.isInCategory ? 'CategoryOverview' : 'LandingPage'
+    });
   }
 
   private _logSearchSelection(feature: Feature) {
     this._logSearch();
-    this._logger.LogSearchSelection(this.searchValue, feature.id, feature.name, feature.featureType.name);
+    this.telemetryService.logEvent('SearchItemClicked',{
+      'SearchValue':this.searchValue,
+      'SelectionId': feature.id,
+      'SelectionName': feature.name,
+      'Location': this.isInCategory ? 'CategoryOverview' : 'LandingPage'
+    });
   }
 
   updateSearchValue(searchValue: { newValue: string }) {

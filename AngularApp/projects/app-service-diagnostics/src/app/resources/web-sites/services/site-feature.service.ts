@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FeatureService } from '../../../shared-v2/services/feature.service';
-import { DiagnosticService } from 'diagnostic-data';
+import { DiagnosticService, TelemetryService } from 'diagnostic-data';
 import { ContentService } from '../../../shared-v2/services/content.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../startup/services/auth.service';
@@ -29,7 +29,7 @@ export class SiteFeatureService extends FeatureService {
   public premiumTools: SiteFilteredItem<Feature>[];
   public subscriptionId: string;
   constructor(protected _diagnosticApiService: DiagnosticService, protected _resourceService: WebSitesService, protected _contentService: ContentService, protected _router: Router,
-    protected _authService: AuthService, protected _portalActionService: PortalActionService, private _websiteFilter: WebSiteFilter, protected _logger: LoggingV2Service, protected armService: ArmService,
+    protected _authService: AuthService, protected _portalActionService: PortalActionService, private _websiteFilter: WebSiteFilter, protected _logger: TelemetryService, protected armService: ArmService,
     protected subscriptionPropertiesService: SubscriptionPropertiesService, protected _siteService: SiteService, protected _categoryService: CategoryService, protected _activedRoute: ActivatedRoute, protected _versionTestService: VersionTestService) {
 
     super(_diagnosticApiService, _contentService, _router, _authService, _logger, _siteService, _categoryService, _activedRoute, _portalActionService, _versionTestService);
@@ -42,11 +42,6 @@ export class SiteFeatureService extends FeatureService {
     }];
 
     this._authService.getStartupInfo().subscribe(startupInfo => {
-
-      // removing v2 detectors for Availability and Perf
-      // if (this._resourceService.appType == AppType.WebApp && this._resourceService.platform == OperatingSystem.windows) {
-      //   this.getLegacyAvailabilityAndPerformanceFeatures(startupInfo.resourceId).forEach(feature => this._features.push(feature));
-      // }
       this.addDiagnosticTools(startupInfo.resourceId);
       this.addProactiveTools(startupInfo.resourceId);
       this.addPremiumTools();

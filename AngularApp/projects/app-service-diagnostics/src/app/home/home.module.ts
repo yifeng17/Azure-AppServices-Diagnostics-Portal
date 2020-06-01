@@ -352,7 +352,15 @@ export const HomeRoutes = RouterModule.forChild([
                 resolve: {
                     reroute: SecurityScanningResolver
                 },
-            }
+            },
+            // App settings page
+            {
+                path: 'settings',
+                component: DiagnosticsSettingsComponent,
+                data: {
+                    navigationTitle: 'App Service Diagnostics Settings'
+                }
+            },
         ],
         resolve: {
             navigationTitle: CategoryTabResolver,

@@ -23,6 +23,7 @@ import { GenericSupportTopicService } from '../../services/generic-support-topic
 import { SearchAnalysisMode } from '../../models/search-mode';
 import { GenieGlobals } from '../../services/genie.service';
 import { SolutionService } from '../../services/solution.service';
+import { PortalActionGenericService } from '../../services/portal-action.service';
 
 @Component({
     selector: 'detector-list-analysis',
@@ -101,7 +102,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
         private _diagnosticService: DiagnosticService, private _detectorControl: DetectorControlService,
         protected telemetryService: TelemetryService, public _appInsightsService: AppInsightsQueryService,
         private _supportTopicService: GenericSupportTopicService, protected _globals: GenieGlobals, private _solutionService: SolutionService,
-        @Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig) {
+        @Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig, private portalActionService: PortalActionGenericService) {
         super(telemetryService);
         this.isPublic = config && config.isPublic;
 
@@ -510,11 +511,16 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
         let insight: any;
         if (allInsights.length > 0) {
 
-            let description = null;
-            if (allInsights[0].hasData()) {
-                description = allInsights[0].data["Description"];
+            let detectorInsight = allInsights.find(i => i.status === viewModel.status);
+            if (detectorInsight == null) {
+                detectorInsight = allInsights[0];
             }
-            insight = { title: allInsights[0].title, description: description };
+
+            let description = null;
+            if (detectorInsight.hasData()) {
+                description = detectorInsight.data["Description"];
+            }
+            insight = { title: detectorInsight.title, description: description };
 
             // now populate solutions for all the insights
             allInsights.forEach(i => {
@@ -646,6 +652,10 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                     //If in homepage then open second blade for Diagnostic Tool and second blade will continue to open third blade for
                     if (this.withinGenie) {
                         const isHomepage = !this._activatedRoute.root.firstChild.firstChild.firstChild.firstChild.snapshot.params["category"];
+                        if(detectorId == 'appchanges' && !this._detectorControl.internalClient) {
+                            this.portalActionService.openChangeAnalysisBlade(this._detectorControl.startTimeString, this._detectorControl.endTimeString);
+                            return;
+                        }
                         if (isHomepage) {
                             this.openBladeDiagnoseDetectorId(categoryName, detectorId, DetectorType.Detector);
                         }
@@ -662,16 +672,20 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                     }
                 }
                 else {
-                    this.updateDrillDownMode(true, viewModel);
-                    if (viewModel.model.startTime != null && viewModel.model.endTime != null) {
-                        this._router.navigate([`./detectors/${detectorId}`], {
-                            relativeTo: this._activatedRoute,
-                            queryParams: { startTimeChildDetector: viewModel.model.startTime, endTimeChildDetector: viewModel.model.endTime },
-                            queryParamsHandling: 'merge'
-                          });
-                    }
-                    else {
-                        this._router.navigate([`../../analysis/${this.analysisId}/detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true });
+                    if(detectorId === 'appchanges' && !this._detectorControl.internalClient) {
+                        this.portalActionService.openChangeAnalysisBlade(this._detectorControl.startTimeString, this._detectorControl.endTimeString);
+                    } else {
+                        this.updateDrillDownMode(true, viewModel);
+                        if (viewModel.model.startTime != null && viewModel.model.endTime != null) {
+                            this._router.navigate([`./detectors/${detectorId}`], {
+                                relativeTo: this._activatedRoute,
+                                queryParams: { startTimeChildDetector: viewModel.model.startTime, endTimeChildDetector: viewModel.model.endTime },
+                                queryParamsHandling: 'merge'
+                            });
+                        }
+                        else {
+                            this._router.navigate([`../../analysis/${this.analysisId}/detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true });
+                        }
                     }
                 }
             }
