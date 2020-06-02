@@ -98,7 +98,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
     readonly stringFormat: string = 'YYYY-MM-DDTHH:mm';
     inDrillDownMode:boolean = false;
 
-    constructor(private _activatedRoute: ActivatedRoute, private _router: Router,
+    constructor(public _activatedRoute: ActivatedRoute, private _router: Router,
         private _diagnosticService: DiagnosticService, private _detectorControl: DetectorControlService,
         protected telemetryService: TelemetryService, public _appInsightsService: AppInsightsQueryService,
         private _supportTopicService: GenericSupportTopicService, protected _globals: GenieGlobals, private _solutionService: SolutionService,
@@ -117,10 +117,16 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
     @Input()
     detectorParmName: string;
 
+    public _downTime:DownTime = null;
     @Input()
     set downTime(downTime: DownTime) {
       if (downTime != null && downTime.StartTime != null && downTime.EndTime != null) {
-        this.refresh(downTime);
+          this._downTime = downTime;
+          //this.refresh(downTime);
+          this.refresh();
+      }
+      else {
+          this._downTime = null;
       }
     }
 
@@ -130,12 +136,14 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
     ngOnInit() {
         this.withinGenie = this.analysisId === "searchResultsAnalysis" && this.searchMode === SearchAnalysisMode.Genie && this.searchTerm != "" && this.searchTerm.length > 0;
         if (this.analysisId === "searchResultsAnalysis" && this.searchTerm && this.searchTerm.length > 0) {
-            this.refresh(this.downTime);
+            //this.refresh(this.downTime);
+            this.refresh();
         }
         else {
             this._detectorControl.update.subscribe(isValidUpdate => {
                 if (isValidUpdate) {
-                    this.refresh(this.downTime);
+                    //this.refresh(this.downTime);
+                    this.refresh();
                 }
             });
         }
@@ -246,21 +254,26 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                         });
     }
   
-    refresh(downTime: DownTime) {
+    //refresh(downTime: DownTime) {
+    refresh() {
+        // if(!downTime) {
+        //     return;
+        // }
         if (this.withinGenie) {
             this.detectorId = "";
             this.showAppInsightsSection = false;
-            this.renderInsightsFromSearch(downTime);
+            this.renderInsightsFromSearch(this._downTime);
         }
         else {
             this._activatedRoute.paramMap.subscribe(params => {
                 this.analysisId = params.get('analysisId');
-                this.detectorId = params.get(this.detectorParmName) === null ? "" : params.get(this.detectorParmName);
-                this.resetGlobals();
+                this.detectorId = params.get(this.detectorParmName) === null ? "" : params.get(this.detectorParmName);               
                 this.goBackToAnalysis();
                 this.populateSupportTopicDocument();
                 this.analysisContainsDowntime().subscribe(containsDownTime => {
-                    if( (containsDownTime && !!downTime ) || !containsDownTime ) {
+                    if( (containsDownTime && !!this._downTime ) || !containsDownTime ) {
+                        let currDowntime = this._downTime;
+                        this.resetGlobals();
                         if (this.analysisId === "searchResultsAnalysis") {
                             this._activatedRoute.queryParamMap.subscribe(qParams => {
                                 this.resetGlobals();
@@ -268,7 +281,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                                 if (this.searchTerm && this.searchTerm.length > 1) {
                                     this.isDynamicAnalysis = true;
                                     this.showSuccessfulChecks = false;
-                                    this.renderInsightsFromSearch(downTime);
+                                    this.renderInsightsFromSearch(currDowntime);
                                 }
                             });
                         }
@@ -309,10 +322,13 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                                         }
                                     });
 
-                                    this.startDetectorRendering(detectorList, downTime);
+                                    this.startDetectorRendering(detectorList, currDowntime, containsDownTime);
                                 }
                             });
                         }
+                    }
+                    else {
+                        this.resetGlobals();
                     }
                 });
             });
@@ -360,7 +376,10 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                         }
                     }
                 });
-                this.startDetectorRendering(detectorList, downTime);
+                this.analysisContainsDowntime().subscribe(containsDownTime => {
+                    this.startDetectorRendering(detectorList, downTime, containsDownTime);
+                });
+                
             }
         },
             (err) => {
@@ -384,7 +403,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
         });
     }
 
-    startDetectorRendering(detectorList, downTime: DownTime) {
+    startDetectorRendering(detectorList, downTime: DownTime, containsDownTime:boolean) {
         if (this.showWebSearchTimeout) {
             clearTimeout(this.showWebSearchTimeout);
         }
@@ -393,7 +412,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
         const requests: Observable<any>[] = [];
 
         this.detectorMetaData = detectorList.filter(detector => this.detectors.findIndex(d => d.id === detector.id) >= 0);
-        this.detectorViewModels = this.detectorMetaData.map(detector => this.getDetectorViewModel(detector, downTime));
+        this.detectorViewModels = this.detectorMetaData.map(detector => this.getDetectorViewModel(detector, downTime, containsDownTime));
         if (this.detectorViewModels.length > 0) {
             this.loadingChildDetectors = true;
             this.startLoadingMessage();
@@ -413,6 +432,10 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                             let insight = this.getDetectorInsight(this.detectorViewModels[index]);
                             let successViewModel = { model: this.detectorViewModels[index], insightTitle: insight.title, insightDescription: insight.description };
 
+                            if(this.successfulViewModels.length > 0) {
+                                this.successfulViewModels  = this.successfulViewModels.filter(sVM=> (!!sVM.model && !!sVM.model.metadata && !!sVM.model.metadata.id && sVM.model.metadata.id != successViewModel.model.metadata.id));
+                            }
+                            
                             this.successfulViewModels.push(successViewModel);
                         }
                     }
@@ -550,11 +573,11 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
         return viewModel;
     }
 
-    private getDetectorViewModel(detector: DetectorMetaData, downtime: DownTime) {
+    private getDetectorViewModel(detector: DetectorMetaData, downtime: DownTime, containsDownTime:boolean) {
       let startTimeString = this._detectorControl.startTimeString;
       let endTimeString = this._detectorControl.endTimeString;
 
-      if (downtime != null && downtime.StartTime != null && downtime.EndTime != null) {
+      if (containsDownTime && downtime != null && downtime.StartTime != null && downtime.EndTime != null) {
         startTimeString = downtime.StartTime.format(this.stringFormat);
         endTimeString = downtime.EndTime.format(this.stringFormat);
       }

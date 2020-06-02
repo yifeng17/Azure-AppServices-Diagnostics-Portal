@@ -9,9 +9,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { RouteReuseStrategy, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { environment } from '../environments/environment';
-import { CustomReuseStrategy } from './app-route-reusestrategy.service';
 import { AppComponent } from './app.component';
 import {
   ResourceRedirectComponent

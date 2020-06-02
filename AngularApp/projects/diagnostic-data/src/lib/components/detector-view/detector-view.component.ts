@@ -150,6 +150,7 @@ export class DetectorViewComponent implements OnInit {
     this.detectorControlService.update.subscribe(isValidUpdate => {
       if (isValidUpdate && this.isAnalysisView) {
         //this.resetGlobals();
+        // If I resetGlobals, then when I move from analysis to Overview and then back into analysis, the zoom behavior stays reset to Zoom instead of cancelZoom+ FireXAxisSelection event
         //To do, because of this when I move away from analysis and come back, the downtime selection goes blank. 
         //However without this, if someone changes the time selection on the page, the view does not update.
         //Need to find out how to get this to work.
@@ -264,9 +265,10 @@ export class DetectorViewComponent implements OnInit {
   resetGlobals() {
     this.downTimes = [];
     this.selectedDownTime = null;
-    this.supportsDownTime = false;
+    this.supportsDownTime = false;    
     this.xAxisPlotBands = [];
     this.zoomBehavior = zoomBehaviors.Zoom;
+    this.populateFabricDowntimeDropDown(this.downTimes);
   }
 
   getTimestampAsString(dateTime:Moment) {
