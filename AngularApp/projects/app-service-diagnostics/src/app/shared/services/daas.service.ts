@@ -152,6 +152,11 @@ export class DaasService {
         return <Observable<DaasSettings>>(this._armClient.getResourceWithoutEnvelope<DaasSettings>(resourceUri, null, true));
     }
 
+    putStdoutSetting(resourceUrl: string, enabled: boolean): Observable<{ Stdout: string } > {
+        const resourceUri: string = this._uriElementsService.getStdoutSettingUrl(resourceUrl);
+        return <Observable<{ Stdout: string }>>this._armClient.putResourceWithoutEnvelope<{Stdout: string}, any>(resourceUri, {Stdout: enabled ? "Enabled" : "Disabled"});
+    }
+
     private _getHeaders(): HttpHeaders {
 
         const headers = new HttpHeaders();
