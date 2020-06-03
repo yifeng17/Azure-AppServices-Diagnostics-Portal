@@ -113,6 +113,9 @@ export class DaasValidatorComponent implements OnInit {
   }
 
   validateDiagnoser(): void {
+    if (this.diagnosers == null){
+      return;
+    }
     this.storageAccountNeeded = this.diagnosersRequiringStorageAccount.findIndex(x => x === this.diagnoserName) >= 0;
     if (this.checkDiagnoserWarnings()) {
       this.validationResult.Validated = false;
