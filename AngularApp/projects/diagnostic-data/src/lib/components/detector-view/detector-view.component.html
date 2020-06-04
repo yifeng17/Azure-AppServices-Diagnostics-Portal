@@ -51,16 +51,10 @@
   <div *ngIf="isAnalysisView && supportsDownTime" class="dynamic-data-container">
     <div class="downtime-container">
       <span class="downtime-icon"><i class="fa fa-filter fa-lg" aria-hidden="true"></i></span>
-      <div *ngIf="downTimes.length > 0" style="display:inline-flex">
         <label for="downtimeFilter"><strong>Downtime</strong></label>
         <fab-dropdown id="downtimeFilter" [options]="fabOptions" (onChange)="selectFabricKey($event)" [defaultSelectedKey]="selectedKey"
-          contentStyle="margin-top: -5px; margin-left: 5px;width:{{fabDropdownWidth}}px;">
+          contentStyle="margin-top: -5px; margin-left: 5px;width:{{fabDropdownWidth}}px;min-width:336px">
         </fab-dropdown>
-        <span><strong>&nbsp;OR&nbsp;</strong>drag and select a time window on the graph</span>
-      </div>
-      <div *ngIf="downTimes.length == 0" style="display:inline-flex">
-        <span><strong>Drag and select a time window on the graph</strong></span>
-      </div>
     </div>
   </div>
  
@@ -76,7 +70,7 @@
   <markdown *ngIf="supportDocumentContent.length>0" #markdownDiv [data]="supportDocumentContent"></markdown>
 </data-container>
 
-<div *ngIf="isAnalysisView && downTimes.length > 0" class="dynamic-data-container">  
+<div *ngIf="isAnalysisView && supportsDownTime && downTimes.length > 0" class="dynamic-data-container">  
   <h2>Showing results for time range {{ getTimestampAsString(selectedDownTime.StartTime) }} to {{ getTimestampAsString(selectedDownTime.EndTime) }}</h2>
 </div>
 

@@ -15,6 +15,7 @@ import { CXPChatService } from '../../services/cxp-chat.service';
 import * as momentNs from 'moment';
 import { xAxisPlotBand, xAxisPlotBandStyles, zoomBehaviors, XAxisSelection } from '../../models/time-series';
 import { IDropdownOption } from 'office-ui-fabric-react';
+import { MomentDateTimeAdapter } from 'ng-pick-datetime-moment';
 
 const moment = momentNs;
 
@@ -106,16 +107,17 @@ export class DetectorViewComponent implements OnInit {
     let downTime = new DownTime();
     downTime.StartTime = event.fromTime;
     downTime.EndTime = event.toTime;
-    downTime.downTimeLabel = `Custom selection from ${event.fromTime.format('YYYY-MM-DD HH:mm')} to ${event.toTime.format('YYYY-MM-DD HH:mm')}`;
+    downTime.downTimeLabel = `Custom selection from ${this.getTimestampAsString(event.fromTime)} to ${this.getTimestampAsString(event.toTime)}`;
     downTime.isSelected = true;
     this.downTimes = this.downTimes.filter(currDownTime=>  
-      !(!!currDownTime.downTimeLabel && currDownTime.downTimeLabel.length > 0 && currDownTime.downTimeLabel.startsWith('Custom selection')) 
+      !(!!currDownTime.downTimeLabel && currDownTime.downTimeLabel.length > 0 && currDownTime.downTimeLabel.startsWith('Custom selection'))  &&
+      !(!!currDownTime.downTimeLabel && currDownTime.downTimeLabel.length > 0  && currDownTime.downTimeLabel == this.getDefaultDowntimeEntry().downTimeLabel)
      );
     this.downTimes.forEach(d=>{d.isSelected = false;});
     this.downTimes.push(downTime);
     this.populateFabricDowntimeDropDown(this.downTimes);
     this.onDownTimeChange(downTime);
-	}
+  }  
 
   @Output() downTimeChanged: EventEmitter<DownTime> = new EventEmitter<DownTime>();
   hideDetectorControl: boolean = false;
@@ -265,7 +267,6 @@ export class DetectorViewComponent implements OnInit {
   }
 
   getDowntimeLabel(d: DownTime) {
-    //return "Downtime from " + d.StartTime + " to " + d.EndTime ;
     return d.downTimeLabel;
   }
 
@@ -331,6 +332,26 @@ export class DetectorViewComponent implements OnInit {
     return `${this.getTimestampAsString(d.StartTime)}-${this.getTimestampAsString(d.EndTime)}`
   }
 
+  getDefaultFabricDownTimeEntry():IDropdownOption {
+    let d = this.getDefaultDowntimeEntry();
+    return {
+      key:this.getKeyForDownTime(d),
+        text: this.getDowntimeLabel(d),
+        ariaLabel: this.getDowntimeLabel(d),
+        data: d,
+        isSelected: d.isSelected
+    } as IDropdownOption;    
+  }
+  
+  getDefaultDowntimeEntry() : DownTime {
+    return {
+      StartTime: momentNs.utc('1990-01-01 00:00:00'),
+      EndTime: momentNs.utc('1990-01-01 00:00:00'),
+      isSelected:false,
+      downTimeLabel: 'Drag and select a time window on the graph'
+    } as DownTime;
+  }
+
   private populateFabricDowntimeDropDown(downTimes: DownTime[]) : void {
     if(!!downTimes) {
       this.fabOptions = [];
@@ -348,6 +369,8 @@ export class DetectorViewComponent implements OnInit {
         }
 
       });
+
+      this.fabOptions.push(this.getDefaultFabricDownTimeEntry());
 
       let defaultOption = this.fabOptions.find(x => x.isSelected);
       if (defaultOption == null && this.fabOptions.length > 0) {
@@ -483,10 +506,15 @@ export class DetectorViewComponent implements OnInit {
     }
   }
 
-  onDownTimeChange(selectedDownTime:any) {
-    this.selectedDownTime = selectedDownTime;
-    this.downTimeChanged.emit(this.selectedDownTime);
-    this.setxAxisPlotBands(false);
+  onDownTimeChange(selectedDownTime:DownTime) {
+    if( selectedDownTime.downTimeLabel != this.getDefaultDowntimeEntry().downTimeLabel   && 
+         momentNs.duration(selectedDownTime.StartTime.diff(this.startTime)).asMinutes() > 0 &&
+         momentNs.duration(this.endTime.diff(selectedDownTime.EndTime)).asMinutes() > 0
+    ) {
+      this.selectedDownTime = selectedDownTime;
+      this.downTimeChanged.emit(this.selectedDownTime);
+      this.setxAxisPlotBands(false);
+    }
   }
   protected logEvent(eventMessage: string, eventProperties?: any, measurements?: any) {
     for (const id of Object.keys(this.detectorEventProperties)) {
