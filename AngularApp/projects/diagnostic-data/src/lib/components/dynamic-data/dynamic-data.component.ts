@@ -36,6 +36,7 @@ import { ConnectAppInsightsComponent } from '../connect-app-insights/connect-app
 import { DetectorSearchComponent } from '../detector-search/detector-search.component';
 import { xAxisPlotBand, zoomBehaviors, XAxisSelection } from '../../models/time-series';
 import { DynamicInsightV4Component } from '../dynamic-insight-v4/dynamic-insight-v4.component';
+import { TelemetryService } from '../../services/telemetry/telemetry.service';
 
 @Component({
   selector: 'dynamic-data',
@@ -95,14 +96,16 @@ export class DynamicDataComponent implements OnInit {
 
   @ViewChild('dynamicDataContainer', { read: ViewContainerRef, static: true }) dynamicDataContainer: ViewContainerRef;
   private isLegacy: boolean;
-  constructor(private componentFactoryResolver: ComponentFactoryResolver, private versionService: VersionService) { }
+  constructor(private componentFactoryResolver: ComponentFactoryResolver, private versionService: VersionService, private telemetryService: TelemetryService) { }
 
   ngOnInit(): void {
     this.versionService.isLegacySub.subscribe(isLegacy => this.isLegacy = isLegacy);
     this.dataBehaviorSubject.subscribe((diagnosticData: DiagnosticData) => {
       const component = this._findInputComponent((<Rendering>diagnosticData.renderingProperties).type);
-
-      if (component == null) {
+      if (component == null)
+      {
+        const rendering = (<Rendering>diagnosticData.renderingProperties).type;
+        this.telemetryService.logTrace(`No component found for rendering type : ${RenderingType[rendering]}`);
         return;
       }
       const componentFactory = this.componentFactoryResolver.resolveComponentFactory(component);

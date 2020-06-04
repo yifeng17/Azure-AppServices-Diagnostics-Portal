@@ -19,9 +19,13 @@
         <li>If the remote endpoints are called over TLS or SSL (i.e. HTTPS), then the traffic in the trace will be
             encrypted.</li>
         <li>Network traces are collected on all the instance(s) serving your App.</li>
+        <li>Traces are captured only of process'es that are running when the trace is started. The trace does not
+            capture packets of any process'es that start <strong>after the catpure is started.</strong></li>
         <li>To analyze the Network Trace, you need tools like
-            <a href='https://www.microsoft.com/en-in/download/details.aspx?id=4865' target="_blank" aria-label="Download link for Microsoft Network Monitor">Network Monitor </a> or
-            <a href='https://www.wireshark.org/' aria-label="Download link for Wireshark tool" target="_blank">Wireshark</a> that can open the network captures. </li>
+            <a href='https://www.microsoft.com/en-in/download/details.aspx?id=4865' target="_blank"
+                aria-label="Download link for Microsoft Network Monitor">Network Monitor </a> or
+            <a href='https://www.wireshark.org/' aria-label="Download link for Wireshark tool"
+                target="_blank">Wireshark</a> that can open the network captures. </li>
     </ul>
 
     <div *ngIf="!checkingValidity && networkTraceDisabled">
@@ -47,15 +51,17 @@
     </div>
 
     <div *ngIf="!checkingValidity && !networkTraceDisabled && status < NetworkTraceStatus.Started">
-        
+
         <div class="pastNetworkTracesMessage">
-            View past collected Network traces in <strong>{{traceLocation}}</strong> folder in <a href='https://{{scmPath}}' target="_blank">Kudu
+            View past collected Network traces in <strong>{{traceLocation}}</strong> folder in <a
+                href='https://{{scmPath}}' target="_blank">Kudu
                 Console</a> for the App.
         </div>
 
         <div style="margin-top:20px;">
             Choose duration to collect the Network Trace
-            <select [attr.aria-label]="'select duration'" (click)="durationClicked()" [(ngModel)]="duration" [disabled]="status >= NetworkTraceStatus.Starting">
+            <select [attr.aria-label]="'select duration'" (click)="durationClicked()" [(ngModel)]="duration"
+                [disabled]="status >= NetworkTraceStatus.Starting">
                 <option value="60">60 seconds</option>
                 <option value="120">2 minutes</option>
                 <option value="180">3 minutes</option>
@@ -66,7 +72,8 @@
         </div>
 
         <div style="margin-top:10px">
-            <button [disabled]="status >= NetworkTraceStatus.Starting" class="btn btn-primary" (click)="collectNetworkTrace()">Collect
+            <button [disabled]="status >= NetworkTraceStatus.Starting" class="btn btn-primary"
+                (click)="collectNetworkTrace()">Collect
                 Network Trace</button>
         </div>
     </div>
@@ -77,12 +84,13 @@
                     <i class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true"></i>
                 </div>
                 <div *ngIf="durationRemaining > 0" style="display: table-cell;" role="timer" aria-live="polite">
-                        Network trace started and will automatically stop after
-                        <strong>{{ durationRemaining }}</strong> seconds.
+                    Network trace started and will automatically stop after
+                    <strong>{{ durationRemaining }}</strong> seconds.
                 </div>
                 <div *ngIf="durationRemaining > 0">
                     Network traces collected will be available in
-                    <strong>{{traceLocation}}</strong> folder in <a  aria-label="link to Kudu Console" href='https://{{scmPath}}' target="_blank">Kudu Console</a> for
+                    <strong>{{traceLocation}}</strong> folder in <a aria-label="link to Kudu Console"
+                        href='https://{{scmPath}}' target="_blank">Kudu Console</a> for
                     the App.
                 </div>
                 <div *ngIf="durationRemaining <= 0" style="display: table-cell;" aria-live="polite">

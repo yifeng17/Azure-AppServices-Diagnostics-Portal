@@ -241,10 +241,10 @@ export class PortalActionService {
         let bladeInfo = {
             extension: 'Microsoft_Azure_ChangeAnalysis',
             detailBlade: 'ResourceChangesBlade',
-            deepLinkOrigin: 'appservicediagnostics',
             detailBladeInputs: {
                 resourceId: resourceUri != null || resourceUri != undefined ? resourceUri : this.currentSite.id,
-                changeLevels: "important,normal"
+                changeLevels: "important,normal",
+                deepLinkOrigin: 'appservicediagnostics'
             }
         };
 
