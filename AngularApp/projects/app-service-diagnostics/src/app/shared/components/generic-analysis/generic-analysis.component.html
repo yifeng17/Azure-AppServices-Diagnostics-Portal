@@ -10,7 +10,9 @@
 
 <detector-list-analysis #detectorListAnalysis withinDiagnoseAndSolve="true" detectorParmName="detectorName" [resourceId]="resourceId" [targetedScore]="targetedScore" [analysisId]="analysisId" [searchTerm]="searchTerm" [searchMode]="searchMode" (onComplete)="updateLoadingStatus($event)"></detector-list-analysis>
 
-<router-outlet></router-outlet>
+<div  *ngIf="searchMode !== SearchAnalysisMode.Genie" >
+  <router-outlet></router-outlet>
+</div>
 
 <div *ngIf="searchMode !== SearchAnalysisMode.Genie" class = "cxp-chat-launcher-container align-width">
   <cxp-chat-launcher *ngIf="showChatButton()" [trackingId] = "cxpChatTrackingId" [chatUrl] = "cxpChatUrl" ></cxp-chat-launcher>

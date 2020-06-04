@@ -242,16 +242,21 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
     }
 
     analysisContainsDowntime() : Observable<boolean> {
-        return this._diagnosticService.getDetector(this.analysisId, this._detectorControl.startTimeString, this._detectorControl.endTimeString)
-                        .map((response: DetectorResponse) => {
-                            let downTimeRenderingType = response.dataset.find(set => (<Rendering>set.renderingProperties).type === RenderingType.DownTime);
-                            if(!!downTimeRenderingType) {
-                                return true;
-                            }
-                            else {
-                                return false;
-                            }
-                        });
+        if(this.analysisId === 'searchResultsAnalysis') {
+            return of(false);
+        }
+        return this._diagnosticService.getDetector(this.analysisId, this._detectorControl.startTimeString, this._detectorControl.endTimeString).pipe(
+            map((response: DetectorResponse) => {
+                let downTimeRenderingType = response.dataset.find(set => (<Rendering>set.renderingProperties).type === RenderingType.DownTime);
+                if(!!downTimeRenderingType) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }),
+            catchError(e=>{return of(false)})
+        );
     }
   
     //refresh(downTime: DownTime) {
@@ -266,8 +271,8 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
         }
         else {
             this._activatedRoute.paramMap.subscribe(params => {
-                this.analysisId = params.get('analysisId');
-                this.detectorId = params.get(this.detectorParmName) === null ? "" : params.get(this.detectorParmName);               
+                this.analysisId = (this.analysisId != 'searchResultsAnalysis' && !!params.get('analysisId'))? params.get('analysisId') : this.analysisId;
+                this.detectorId = params.get(this.detectorParmName) === null ? "" : params.get(this.detectorParmName);
                 this.goBackToAnalysis();
                 this.populateSupportTopicDocument();
                 this.analysisContainsDowntime().subscribe(containsDownTime => {
@@ -338,10 +343,10 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
 
 
     renderInsightsFromSearch(downTime: DownTime) {
-      if (downTime == null) {
-        return;
-      }
-      else {
+    //   if (downTime == null) {
+    //     return;
+    //   }
+    //   else {
         this.searchId = uuid();
         let searchTask = this._diagnosticService.getDetectorsSearch(this.searchTerm).pipe(map((res) => res), catchError(e => of([])));
         let detectorsTask = this._diagnosticService.getDetectors().pipe(map((res) => res), catchError(e => of([])));
@@ -386,7 +391,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                 this.showPreLoader = false;
                 this.showPreLoadingError = true;
             });
-      }
+      //}
     }
 
     checkSearchEmbedded(response: DetectorResponse) {
@@ -629,7 +634,9 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
           this._router.navigate([`../../${this.analysisId}/search`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', queryParams: {searchTerm: this.searchTerm} });
         }
         else{
-          this._router.navigate([`../${this.analysisId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge' });
+            if(!!this.analysisId && this.analysisId.length>0) {
+                this._router.navigate([`../${this.analysisId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge' });
+            }          
         }
       }
 

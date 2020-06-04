@@ -48,15 +48,22 @@
     <hr>
   </div>
 
-  <div *ngIf="isAnalysisView && downTimes.length > 0" class="dynamic-data-container">
+  <div *ngIf="isAnalysisView && supportsDownTime" class="dynamic-data-container">
     <div class="downtime-container">
       <span class="downtime-icon"><i class="fa fa-filter fa-lg" aria-hidden="true"></i></span>
-      <label for="downtimeFilter"><strong>Downtime</strong></label>
-      <fab-dropdown id="downtimeFilter" [options]="fabOptions" (onChange)="selectFabricKey($event)" [defaultSelectedKey]="selectedKey"
-        contentStyle="margin-top: -5px; margin-left: 5px;width:{{fabDropdownWidth}}px;"></fab-dropdown>
+      <div *ngIf="downTimes.length > 0" style="display:inline-flex">
+        <label for="downtimeFilter"><strong>Downtime</strong></label>
+        <fab-dropdown id="downtimeFilter" [options]="fabOptions" (onChange)="selectFabricKey($event)" [defaultSelectedKey]="selectedKey"
+          contentStyle="margin-top: -5px; margin-left: 5px;width:{{fabDropdownWidth}}px;">
+        </fab-dropdown>
+        <span><strong>&nbsp;OR&nbsp;</strong>drag and select a time window on the graph</span>
+      </div>
+      <div *ngIf="downTimes.length == 0" style="display:inline-flex">
+        <span><strong>Drag and select a time window on the graph</strong></span>
+      </div>
     </div>
-    
   </div>
+ 
 
   <div *ngFor="let data of detectorDataLocalCopy.dataset  | renderfilter:isAnalysisView" class="dynamic-data-container">
     <dynamic-data [isAnalysisView]="isAnalysisView" [diagnosticData]="data" [startTime]="startTime" [endTime]="endTime"
@@ -72,9 +79,7 @@
 <div *ngIf="isAnalysisView && downTimes.length > 0" class="dynamic-data-container">  
   <h2>Showing results for time range {{ getTimestampAsString(selectedDownTime.StartTime) }} to {{ getTimestampAsString(selectedDownTime.EndTime) }}</h2>
 </div>
-<div *ngIf="isAnalysisView && supportsDownTime && downTimes.length == 0" class="dynamic-data-container">  
-  <h2>Drag and select a time window on the graph</h2>
-</div>
+
 
 <cxp-chat-launcher *ngIf="showChatButton()" [trackingId] = "cxpChatTrackingId" [chatUrl] = "cxpChatUrl" ></cxp-chat-launcher>
 <loader-view style="margin-top:300px" *ngIf="!detectorDataLocalCopy && !errorState"

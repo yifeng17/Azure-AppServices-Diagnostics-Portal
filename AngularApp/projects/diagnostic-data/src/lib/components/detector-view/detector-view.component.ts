@@ -226,8 +226,6 @@ export class DetectorViewComponent implements OnInit {
 
         this.logInsights(data);
 
-        this.hideDetectorHeader = data.dataset.findIndex(set => (<Rendering>set.renderingProperties).type === RenderingType.Cards) >= 0;
-
         if (this.isAnalysisView) {
           let downTime = data.dataset.find(set => (<Rendering>set.renderingProperties).type === RenderingType.DownTime);
           if (downTime) {
@@ -263,7 +261,7 @@ export class DetectorViewComponent implements OnInit {
   }
 
   getTimestampAsString(dateTime:Moment) {
-    return dateTime.format('YYYY-MM-DD HH:mm') + ' UTC';
+    return dateTime.format('DD-MMM-YY hh:mm A') + ' UTC';
   }
 
   getDowntimeLabel(d: DownTime) {
@@ -316,12 +314,12 @@ export class DetectorViewComponent implements OnInit {
   }
 
   calculateFabWidth(options: IDropdownOption[]): number {
-    //each char 8px  
+    //each char 7px  
     let length = 0;
     options.forEach(option => {
       length = Math.max(length, option.text.length);
     });
-    return length * 8;
+    return length * 7;
   }
 
   selectFabricKey(event: { option: IDropdownOption }) {

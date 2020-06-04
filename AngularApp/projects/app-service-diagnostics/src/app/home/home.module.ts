@@ -174,27 +174,6 @@ export const HomeRoutes = RouterModule.forChild([
                     navigationTitle: TabTitleResolver,
                 }
             },
-            // {
-            //     path: 'analysis/:analysisId/detectors/:detectorName',
-            //     component: GenericAnalysisComponent,
-            //     data: {
-            //         cacheComponent: true
-            //     },
-            //     children: [
-            //         {
-            //             path: '',
-            //             component: GenericDetectorComponent,
-            //             data: {
-            //                 analysisMode: true,
-            //                 cacheComponent: true
-            //             }
-            //         }
-            //     ],
-            //     resolve: {
-            //         time: TimeControlResolver,
-            //         navigationTitle: TabTitleResolver,
-            //     }
-            // },
             {
                 path: 'tools/profiler',
                 component: ProfilerToolComponent,
@@ -378,27 +357,6 @@ export const HomeRoutes = RouterModule.forChild([
             navigationTitle: TabTitleResolver,
         }
     },
-    // {
-    //     path: 'analysis/:analysisId/detectors/:detectorName',
-    //     component: GenericAnalysisComponent,
-    //     data: {
-    //         cacheComponent: true
-    //     },
-    //     children: [
-    //         {
-    //             path: '',
-    //             component: GenericDetectorComponent,
-    //             data: {
-    //                 analysisMode: true,
-    //                 cacheComponent: true
-    //             }
-    //         }
-    //     ],
-    //     resolve: {
-    //         time: TimeControlResolver,
-    //         navigationTitle: TabTitleResolver,
-    //     }
-    // },
     {
         path: 'analysis/:analysisId',
         component: GenericAnalysisComponent,
@@ -418,14 +376,6 @@ export const HomeRoutes = RouterModule.forChild([
                     navigationTitle: TabTitleResolver,
                 }
             },
-            // {
-            //     path: '',
-            //     component: GenericDetectorComponent,
-            //     data: {
-            //         analysisMode: true,
-            //         cacheComponent: false
-            //     }
-            // }
         ],
         resolve: {
             time: TimeControlResolver,
