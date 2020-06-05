@@ -320,7 +320,7 @@ export class DetectorViewComponent implements OnInit {
     options.forEach(option => {
       length = Math.max(length, option.text.length);
     });
-    return length * 7;
+    return (length * 7)+50;
   }
 
   selectFabricKey(event: { option: IDropdownOption }) {
@@ -396,8 +396,8 @@ export class DetectorViewComponent implements OnInit {
       for (let i: number = 0; i < table.rows.length; i++) {
         const row = table.rows[i];
         let d = new DownTime();
-        d.StartTime = moment(row[startTimeIndex]);
-        d.EndTime = moment(row[endTimeIndex]);
+        d.StartTime = moment.utc(row[startTimeIndex]);
+        d.EndTime = moment.utc(row[endTimeIndex]);
         d.downTimeLabel = row[downtimeLabelIndex];
         d.isSelected = row[isSelectedIndex];
         if(d.isSelected) {
