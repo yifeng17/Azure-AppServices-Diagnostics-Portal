@@ -8,7 +8,6 @@ import { DetectorListAnalysisComponent } from 'diagnostic-data';
 import { SearchAnalysisMode } from 'projects/diagnostic-data/src/lib/models/search-mode';
 import { CXPChatService } from 'diagnostic-data' ;
 import {GenericSupportTopicService} from '../../../../../../diagnostic-data/src/lib/services/generic-support-topic.service';
-import { XAxisSelection } from 'projects/diagnostic-data/src/lib/models/time-series';
 
 
 @Component({

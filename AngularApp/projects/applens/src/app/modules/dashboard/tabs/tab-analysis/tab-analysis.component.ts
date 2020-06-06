@@ -17,7 +17,7 @@ export class TabAnalysisComponent implements OnInit {
   detectorName: string;
   downTime: DownTime;
 
-  @ViewChild('detectorListAnalysis', {static:false}) detectorListAnalysis: DetectorListAnalysisComponent
+  @ViewChild('detectorListAnalysis', {static:true}) detectorListAnalysis: DetectorListAnalysisComponent
 
   constructor(private _activatedRoute: ActivatedRoute, private _diagnosticService: ApplensDiagnosticService) {
     this._activatedRoute.paramMap.subscribe(params => {
@@ -28,14 +28,6 @@ export class TabAnalysisComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._diagnosticService.getDetectors().subscribe(detectorList => {
-      if (detectorList) {
-        if (this.detectorId !== "") {
-          let currentDetector = detectorList.find(detector => detector.id == this.detectorId)
-          this.detectorName = currentDetector.name;
-        }
-      }
-    });
   }
   onActivate(event) {
     window.scroll(0, 0);

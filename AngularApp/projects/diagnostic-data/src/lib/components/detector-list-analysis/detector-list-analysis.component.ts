@@ -56,7 +56,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
     @Input() searchTerm: string = "";
     detectorViewModels: any[];
     detectorId: string;
-    detectorName: string;
+    detectorName: string = '';
     contentHeight: string;
     detectors: any[] = [];
     LoadingStatus = LoadingStatus;
@@ -97,6 +97,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
     searchDiagnosticData: DiagnosticData;
     readonly stringFormat: string = 'YYYY-MM-DDTHH:mm';
     inDrillDownMode:boolean = false;
+    drillDownDetectorId:string = '';
 
     constructor(public _activatedRoute: ActivatedRoute, private _router: Router,
         private _diagnosticService: DiagnosticService, private _detectorControl: DetectorControlService,
@@ -628,6 +629,14 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
 
     }
 
+    public navigateToDetector():void {
+        if(!this.isPublic) {
+           if(!!this.drillDownDetectorId && this.drillDownDetectorId.length > 0 ) {
+            this._router.navigate([`./popout/${this.drillDownDetectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge' });            
+           }
+        }
+    }
+
     public goBackToAnalysis():void {
         this.updateDrillDownMode(false, null);
         if (this.analysisId=== "searchResultsAnalysis" && this.searchTerm){
@@ -644,10 +653,12 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
         this.inDrillDownMode = inDrillDownMode;
         if(!this.inDrillDownMode) {
             this.detectorName = '';
+            this.drillDownDetectorId = '';
         }
         else {
             if(!!viewModel && !!viewModel.model && !!viewModel.model.metadata && !!viewModel.model.metadata.name) {
                 this.detectorName = viewModel.model.metadata.name;
+                this.drillDownDetectorId = viewModel.model.metadata.id;
             }
         }
     }

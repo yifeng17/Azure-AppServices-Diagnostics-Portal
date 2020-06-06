@@ -112,7 +112,7 @@ export class DetectorContainerComponent implements OnInit {
         this.startTimeChildDetector = startTime;
       }
       else {
-        if(this.endTimeChildDetector != null) {
+        if(this.startTimeChildDetector != null) {
           startTime = this.startTimeChildDetector;
         }
       }
@@ -147,7 +147,7 @@ export class DetectorContainerComponent implements OnInit {
       analysisId = this._route.snapshot.paramMap.get('analysisId');  
     }
     
-    return !(this.analysisMode && analysisId != null && analysisId != this.detectorName);
+    return !(this.analysisMode && analysisId != this.detectorName);
   }
 
   getDetectorResponse(hardRefresh: boolean) {
