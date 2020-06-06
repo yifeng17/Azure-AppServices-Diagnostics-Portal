@@ -15,7 +15,6 @@ import { CXPChatService } from '../../services/cxp-chat.service';
 import * as momentNs from 'moment';
 import { xAxisPlotBand, xAxisPlotBandStyles, zoomBehaviors, XAxisSelection } from '../../models/time-series';
 import { IDropdownOption } from 'office-ui-fabric-react';
-import { MomentDateTimeAdapter } from 'ng-pick-datetime-moment';
 
 const moment = momentNs;
 
