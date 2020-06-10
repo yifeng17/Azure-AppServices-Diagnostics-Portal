@@ -123,7 +123,6 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
     set downTime(downTime: DownTime) {
       if (downTime != null && downTime.StartTime != null && downTime.EndTime != null) {
           this._downTime = downTime;
-          //this.refresh(downTime);
           this.refresh();
       }
       else {
@@ -137,13 +136,11 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
     ngOnInit() {
         this.withinGenie = this.analysisId === "searchResultsAnalysis" && this.searchMode === SearchAnalysisMode.Genie && this.searchTerm != "" && this.searchTerm.length > 0;
         if (this.analysisId === "searchResultsAnalysis" && this.searchTerm && this.searchTerm.length > 0) {
-            //this.refresh(this.downTime);
             this.refresh();
         }
         else {
             this._detectorControl.update.subscribe(isValidUpdate => {
                 if (isValidUpdate) {
-                    //this.refresh(this.downTime);
                     this.refresh();
                 }
             });
@@ -260,11 +257,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
         );
     }
   
-    //refresh(downTime: DownTime) {
     refresh() {
-        // if(!downTime) {
-        //     return;
-        // }
         if (this.withinGenie) {
             this.detectorId = "";
             this.showAppInsightsSection = false;
@@ -344,10 +337,6 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
 
 
     renderInsightsFromSearch(downTime: DownTime) {
-    //   if (downTime == null) {
-    //     return;
-    //   }
-    //   else {
         this.searchId = uuid();
         let searchTask = this._diagnosticService.getDetectorsSearch(this.searchTerm).pipe(map((res) => res), catchError(e => of([])));
         let detectorsTask = this._diagnosticService.getDetectors().pipe(map((res) => res), catchError(e => of([])));
@@ -388,11 +377,10 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                 
             }
         },
-            (err) => {
+        (err) => {
                 this.showPreLoader = false;
                 this.showPreLoadingError = true;
-            });
-      //}
+        });
     }
 
     checkSearchEmbedded(response: DetectorResponse) {
