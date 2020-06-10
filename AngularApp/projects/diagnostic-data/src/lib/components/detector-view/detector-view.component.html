@@ -51,10 +51,13 @@
   <div *ngIf="isAnalysisView && supportsDownTime" class="dynamic-data-container">
     <div class="downtime-container">
       <span class="downtime-icon"><i class="fa fa-filter fa-lg" aria-hidden="true"></i></span>
-        <label for="downtimeFilter"><strong>Downtime</strong></label>
-        <fab-dropdown id="downtimeFilter" [options]="fabOptions" (onChange)="selectFabricKey($event)" [defaultSelectedKey]="selectedKey"
+        <label for="downtimeFilter"  tabindex="0"  aria-label="Select a downtime to investigate." role="text"><strong>Downtime</strong></label>
+        <fab-dropdown id="downtimeFilter" role="combobox" [options]="fabOptions" (onChange)="selectFabricKey($event)" [defaultSelectedKey]="selectedKey"
           contentStyle="margin-top: -5px; margin-left: 5px;width:{{fabDropdownWidth}}px;min-width:336px">
         </fab-dropdown>
+    </div>
+    <div *ngIf="downtimeSelectionErrorStr!=''" class="errorMessage"  attr.aria-label = "Error : {{downtimeSelectionErrorStr}}"  tabindex="0" role="text">
+      <strong>Error :</strong> {{downtimeSelectionErrorStr}}<span style='vertical-align:super'>*</span>
     </div>
   </div>
  
@@ -70,8 +73,8 @@
   <markdown *ngIf="supportDocumentContent.length>0" #markdownDiv [data]="supportDocumentContent"></markdown>
 </data-container>
 
-<div *ngIf="isAnalysisView && supportsDownTime && downTimes.length > 0" class="dynamic-data-container">  
-  <h2>Showing results for time range {{ getTimestampAsString(selectedDownTime.StartTime) }} to {{ getTimestampAsString(selectedDownTime.EndTime) }}</h2>
+<div *ngIf="isAnalysisView && supportsDownTime && downTimes.length > 0" class="dynamic-data-container" tabindex="0"  role="text" attr.aria-label ="Showing results from {{ getTimestampAsString(selectedDownTime.StartTime) }} to {{ getTimestampAsString(selectedDownTime.EndTime) }}">
+  <h2 aria-hidden="true">Showing results from {{ getTimestampAsString(selectedDownTime.StartTime) }} to {{ getTimestampAsString(selectedDownTime.EndTime) }}</h2>
 </div>
 
 

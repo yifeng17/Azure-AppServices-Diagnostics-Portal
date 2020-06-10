@@ -1,3 +1,5 @@
+@import "../../../../../app-service-diagnostics/src/styles/main.scss";
+
 .edit-button{
     float:right;
     margin-top: 10px;
@@ -70,4 +72,9 @@
 .downtime-icon {
     padding-right: 0.5em;
     color:deepskyblue
+}
+
+.errorMessage {
+    padding-top: 10px;
+    color: $error-color;
 }

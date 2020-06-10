@@ -17,6 +17,8 @@ import { xAxisPlotBand, xAxisPlotBandStyles, zoomBehaviors, XAxisSelection } fro
 import { IDropdownOption } from 'office-ui-fabric-react';
 
 const moment = momentNs;
+const minSupportedDowntimeDuration:number = 10;
+const defaultDowntimeSelectionError:string = 'Downtimes less than 10 minutes are not supported. Select a time duration spanning at least 10 minutes.';
 
 @Component({
   selector: 'detector-view',
@@ -97,25 +99,31 @@ export class DetectorViewComponent implements OnInit {
   downTimes: DownTime[] = [];
   supportsDownTime:boolean = false;
   selectedDownTime: DownTime;
-  downtimeEventFiredOnce:boolean = false;
+  downtimeSelectionErrorStr:string = '';
   public xAxisPlotBands: xAxisPlotBand[] = null;
   public zoomBehavior: zoomBehaviors = zoomBehaviors.Zoom;
   @Output() XAxisSelection:EventEmitter<XAxisSelection> = new EventEmitter<XAxisSelection>();	
-  public onXAxisSelection(event:XAxisSelection) {
-    this.XAxisSelection.emit(event);
+  public onXAxisSelection(event:XAxisSelection) {    
     let downTime = new DownTime();
     downTime.StartTime = event.fromTime;
     downTime.EndTime = event.toTime;
     downTime.downTimeLabel = `Custom selection from ${this.getTimestampAsString(event.fromTime)} to ${this.getTimestampAsString(event.toTime)}`;
     downTime.isSelected = true;
-    this.downTimes = this.downTimes.filter(currDownTime=>  
-      !(!!currDownTime.downTimeLabel && currDownTime.downTimeLabel.length > 0 && currDownTime.downTimeLabel.startsWith('Custom selection'))  &&
-      !(!!currDownTime.downTimeLabel && currDownTime.downTimeLabel.length > 0  && currDownTime.downTimeLabel == this.getDefaultDowntimeEntry().downTimeLabel)
-     );
-    this.downTimes.forEach(d=>{d.isSelected = false;});
-    this.downTimes.push(downTime);
-    this.populateFabricDowntimeDropDown(this.downTimes);
-    this.onDownTimeChange(downTime);
+
+    if(this.validateDowntimeEntry(downTime)) {
+      this.XAxisSelection.emit(event);
+      this.downTimes = this.downTimes.filter(currDownTime=>  
+        !(!!currDownTime.downTimeLabel && currDownTime.downTimeLabel.length > 0 && currDownTime.downTimeLabel.startsWith('Custom selection'))  &&
+        !(!!currDownTime.downTimeLabel && currDownTime.downTimeLabel.length > 0  && currDownTime.downTimeLabel == this.getDefaultDowntimeEntry().downTimeLabel)
+      );
+      this.downTimes.forEach(d=>{d.isSelected = false;});
+      this.downTimes.push(downTime);
+      this.populateFabricDowntimeDropDown(this.downTimes);
+      this.onDownTimeChange(downTime);
+    }
+    else {
+      this.updateDownTimeErrorMessage(defaultDowntimeSelectionError);
+    }
   }  
 
   @Output() downTimeChanged: EventEmitter<DownTime> = new EventEmitter<DownTime>();
@@ -402,7 +410,9 @@ export class DetectorViewComponent implements OnInit {
         if(d.isSelected) {
           this.selectedDownTime = d;
         }
-        this.downTimes.push(d);
+        if(this.validateDowntimeEntry(d)) {
+          this.downTimes.push(d);
+        }        
       }
       let selectedDownTime = this.downTimes.find(downtime => downtime.isSelected == true);
       if(selectedDownTime == null && this.downTimes.length > 0) {
@@ -505,14 +515,33 @@ export class DetectorViewComponent implements OnInit {
     }
   }
 
+  updateDownTimeErrorMessage(msg:string) {
+    this.downtimeSelectionErrorStr = msg;
+  }
+
+  validateDowntimeEntry(selectedDownTime:DownTime):boolean {
+    if(momentNs.duration(selectedDownTime.EndTime.diff(selectedDownTime.StartTime)).asMinutes() < minSupportedDowntimeDuration) {
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
+
   onDownTimeChange(selectedDownTime:DownTime) {
     if( selectedDownTime.downTimeLabel != this.getDefaultDowntimeEntry().downTimeLabel   && 
          momentNs.duration(selectedDownTime.StartTime.diff(this.startTime)).asMinutes() > 0 &&
          momentNs.duration(this.endTime.diff(selectedDownTime.EndTime)).asMinutes() > 0
     ) {
-      this.selectedDownTime = selectedDownTime;
-      this.downTimeChanged.emit(this.selectedDownTime);
-      this.setxAxisPlotBands(false);
+      if(this.validateDowntimeEntry(selectedDownTime)) {
+        this.updateDownTimeErrorMessage('');
+        this.selectedDownTime = selectedDownTime;
+        this.downTimeChanged.emit(this.selectedDownTime);
+        this.setxAxisPlotBands(false);
+      }
+      else {
+        this.updateDownTimeErrorMessage(defaultDowntimeSelectionError);
+      }
     }
   }
   protected logEvent(eventMessage: string, eventProperties?: any, measurements?: any) {
