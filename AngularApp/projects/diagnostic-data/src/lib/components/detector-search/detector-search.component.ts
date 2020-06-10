@@ -86,6 +86,9 @@ export class DetectorSearchComponent extends DataRenderBaseComponent implements 
     withinDiagnoseAndSolve: boolean = false;
     @Input() detector: string = '';
     @Input() diagnosticData: DiagnosticData;
+    @Input() visibleLogging: boolean = true;
+    @Input() showSearchBar: boolean = true;
+    @Input() forceShowSearchPractices: boolean = false;
 
     constructor(@Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig, private _diagnosticService: DiagnosticService, public telemetryService: TelemetryService,
         private detectorControlService: DetectorControlService, private _activatedRoute: ActivatedRoute, private _router: Router, private _resourceService: GenericResourceService) {
@@ -100,7 +103,7 @@ export class DetectorSearchComponent extends DataRenderBaseComponent implements 
         setTimeout(() => {
             this.controlListening();
         }, this.initialDelay);
-        var searchConf = new SearchConfiguration(this.diagnosticData.table);
+        var searchConf = new SearchConfiguration(this.diagnosticData? this.diagnosticData.table: null);
         this.searchConfiguration = searchConf;
         this._resourceService.getPesId().subscribe(pesId => {
             if (this.detectorSearchEnabledPesIds.findIndex(x => x==pesId)<0){
@@ -112,18 +115,34 @@ export class DetectorSearchComponent extends DataRenderBaseComponent implements 
                 }
             });
 
-            this._activatedRoute.queryParamMap.pipe(take(1)).subscribe(qParams => {
-                this.searchTerm = qParams.get('searchTerm') === null ? "" || this.searchTerm : qParams.get('searchTerm');
-                if (!this.searchTerm || this.searchTerm.length==0){
-                    if (this.searchConfiguration.CustomQueryString && this.searchConfiguration.CustomQueryString.length > 1) {
-                        this.searchTerm = this.searchConfiguration.CustomQueryString;
-                        this.hitSearch();
+            if (this.showSearchBar){
+                this._activatedRoute.queryParamMap.pipe(take(1)).subscribe(qParams => {
+                    this.searchTerm = qParams.get('searchTerm') === null ? "" || this.searchTerm : qParams.get('searchTerm');
+                    if (!this.searchTerm || this.searchTerm.length==0){
+                        if (this.searchConfiguration.CustomQueryString && this.searchConfiguration.CustomQueryString.length > 1) {
+                            this.searchTerm = this.searchConfiguration.CustomQueryString;
+                            this.hitSearch();
+                        }
                     }
-                }
-                else {
-                    this.refresh();
-                }
-            });
+                    else {
+                        this.refresh();
+                    }
+                });
+            }
+            else{
+                this._activatedRoute.queryParamMap.subscribe(qParams => {
+                    this.searchTerm = qParams.get('searchTerm') === null ? "" || this.searchTerm : qParams.get('searchTerm');
+                    if (!this.searchTerm || this.searchTerm.length==0){
+                        if (this.searchConfiguration.CustomQueryString && this.searchConfiguration.CustomQueryString.length > 1) {
+                            this.searchTerm = this.searchConfiguration.CustomQueryString;
+                            this.hitSearch();
+                        }
+                    }
+                    else {
+                        this.refresh();
+                    }
+                });
+            }
         });       
 
         this.startTime = this.detectorControlService.startTime;
@@ -148,6 +167,7 @@ export class DetectorSearchComponent extends DataRenderBaseComponent implements 
 
     logVisibility() {
         this.isListening = false;
+        if(!this.visibleLogging) {return;}
         this.logEvent(TelemetryEventNames.SearchComponentVisible, {
             parentDetectorId: this.detector,
             searchId: this.searchId,
