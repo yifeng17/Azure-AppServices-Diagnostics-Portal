@@ -10,7 +10,6 @@ import { AuthService } from '../../../startup/services/auth.service';
 import { ResourceType } from '../../../shared/models/portal';
 import { Site, SiteInfoMetaData } from '../../../shared/models/site';
 import { LiveChatSettings } from '../../../liveChatSettings';
-import { LiveChatService } from '../../../shared-v2/services/livechat.service';
 
 //TODO: THIS IS NO LONGER REGISTERED ANYWHERE
 // Need to migrate this
@@ -21,7 +20,7 @@ export class TalkToAgentMessageFlow extends IMessageFlowProvider {
     public isApplicable: boolean;
     private isDemoMode: boolean = LiveChatSettings.DemoModeForHomePage;
 
-    constructor(private siteService: SiteService, private authService: AuthService, private liveChatService: LiveChatService) {
+    constructor(private siteService: SiteService, private authService: AuthService) {
         super();
         this.isApplicable = false;
 
@@ -32,7 +31,7 @@ export class TalkToAgentMessageFlow extends IMessageFlowProvider {
 
                     this.siteService.currentSiteMetaData.subscribe((siteMetaData: SiteInfoMetaData) => {
                         if (siteMetaData) {
-                            this.isApplicable = false;//this.liveChatService.isChatApplicableForSite(site, siteMetaData, this.isDemoMode);
+                            this.isApplicable = false;
                         }
                     });
                 }
