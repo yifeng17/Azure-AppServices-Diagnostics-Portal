@@ -9,7 +9,6 @@ import { SiteService } from '../../../shared/services/site.service';
 import { AuthService } from '../../../startup/services/auth.service';
 import { ResourceType } from '../../../shared/models/portal';
 import { Site, SiteInfoMetaData } from '../../../shared/models/site';
-import { LiveChatSettings } from '../../../liveChatSettings';
 
 //TODO: THIS IS NO LONGER REGISTERED ANYWHERE
 // Need to migrate this
@@ -18,7 +17,7 @@ import { LiveChatSettings } from '../../../liveChatSettings';
 export class TalkToAgentMessageFlow extends IMessageFlowProvider {
 
     public isApplicable: boolean;
-    private isDemoMode: boolean = LiveChatSettings.DemoModeForHomePage;
+    private isDemoMode: boolean = true;
 
     constructor(private siteService: SiteService, private authService: AuthService) {
         super();
