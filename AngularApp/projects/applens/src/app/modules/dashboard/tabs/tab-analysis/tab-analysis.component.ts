@@ -33,7 +33,7 @@ export class TabAnalysisComponent implements OnInit {
     window.scroll(0, 0);
   }
 
-  ondownTimeChanged(event: DownTime) {
+  onDowntimeChanged(event: DownTime) {
     this.detectorListAnalysis.downTime = event;
   }
 }

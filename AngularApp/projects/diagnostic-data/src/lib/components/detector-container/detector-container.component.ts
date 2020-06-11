@@ -219,7 +219,7 @@ export class DetectorContainerComponent implements OnInit {
     }
   }
 
-  ondownTimeChanged(event: DownTime) {
+  onDowntimeChanged(event: DownTime) {
     this.downTimeChanged.emit(event);
   }
 }

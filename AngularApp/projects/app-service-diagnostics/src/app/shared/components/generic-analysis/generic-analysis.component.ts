@@ -42,7 +42,7 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
     this.isPublic = config && config.isPublic;
   }
 
-  ondownTimeChanged(event: DownTime) {
+  onDowntimeChanged(event: DownTime) {
     this.downTime = event;
     this.detectorListAnalysis.downTime = event;
   }
