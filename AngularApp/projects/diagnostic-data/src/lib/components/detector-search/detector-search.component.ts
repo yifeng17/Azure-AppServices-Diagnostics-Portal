@@ -70,8 +70,6 @@ export class DetectorSearchComponent extends DataRenderBaseComponent implements 
     loadingMessageTimer: any;
     showLoadingMessage: boolean = false;
 
-    showSuccessfulChecks: boolean = false;
-
     webSearchResults: any[] = [];
     
     searchConfiguration: SearchConfiguration = null;
@@ -89,6 +87,7 @@ export class DetectorSearchComponent extends DataRenderBaseComponent implements 
     @Input() visibleLogging: boolean = true;
     @Input() showSearchBar: boolean = true;
     @Input() forceShowSearchPractices: boolean = false;
+    @Input() showSuccessfulChecks: boolean = false;
 
     constructor(@Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig, private _diagnosticService: DiagnosticService, public telemetryService: TelemetryService,
         private detectorControlService: DetectorControlService, private _activatedRoute: ActivatedRoute, private _router: Router, private _resourceService: GenericResourceService) {
