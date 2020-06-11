@@ -8,7 +8,7 @@
     </div>
 </div>
 
-<detector-list-analysis #detectorListAnalysis withinDiagnoseAndSolve="true" detectorParmName="detectorName" [resourceId]="resourceId" [targetedScore]="targetedScore" [analysisId]="analysisId" [searchTerm]="searchTerm" [searchMode]="searchMode" (onComplete)="updateLoadingStatus($event)"></detector-list-analysis>
+<detector-list-analysis #detectorListAnalysis detectorParmName="detectorName" [resourceId]="resourceId" [targetedScore]="targetedScore" [analysisId]="analysisId" [searchTerm]="searchTerm" [searchMode]="searchMode" (onComplete)="updateLoadingStatus($event)"></detector-list-analysis>
 
 <div  *ngIf="searchMode !== SearchAnalysisMode.Genie" >
   <router-outlet></router-outlet>

@@ -130,8 +130,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
       }
     }
 
-    @Input()
-    withinDiagnoseAndSolve: boolean = false;
+    withinDiagnoseAndSolve: boolean = !this._detectorControl.internalClient;
 
     ngOnInit() {
         this.withinGenie = this.analysisId === "searchResultsAnalysis" && this.searchMode === SearchAnalysisMode.Genie && this.searchTerm != "" && this.searchTerm.length > 0;
