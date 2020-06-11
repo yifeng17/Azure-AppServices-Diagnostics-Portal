@@ -13,7 +13,6 @@ import { DownTime } from 'diagnostic-data';
 export class TabAnalysisComponent implements OnInit {
 
   analysisId: string;
-  detectorId: string;
   detectorName: string;
   downTime: DownTime;
 
@@ -22,7 +21,6 @@ export class TabAnalysisComponent implements OnInit {
   constructor(private _activatedRoute: ActivatedRoute, private _diagnosticService: ApplensDiagnosticService) {
     this._activatedRoute.paramMap.subscribe(params => {
       this.analysisId = params.get('analysisId');
-      this.detectorId = params.get('detector') === null ? "" : params.get('detector');
     });
 
   }
