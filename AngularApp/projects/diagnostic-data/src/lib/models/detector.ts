@@ -207,3 +207,10 @@ export class DownTime {
     downTimeLabel: string;
     isSelected: boolean;
 }
+
+export const DowntimeInteractionSource = {
+    Graph: 'Graph',
+    Dropdown: 'Dropdown',
+    DefaultFromDetector: 'DefaultFromDetector',
+    DefaultFromUI: 'DefaultFromUI'
+};

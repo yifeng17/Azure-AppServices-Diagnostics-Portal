@@ -3,7 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, Inject, Input, OnInit, Output, EventEmitter, Pipe, PipeTransform, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
-import { DetectorResponse, Rendering, RenderingType, DataTableResponseObject, DownTime , DetectorMetaData, DetectorType, DiagnosticData } from '../../models/detector';
+import { DetectorResponse, Rendering, RenderingType, DataTableResponseObject, DownTime, DowntimeInteractionSource, DetectorMetaData, DetectorType, DiagnosticData } from '../../models/detector';
 import { DetectorControlService } from '../../services/detector-control.service';
 import { TelemetryEventNames } from '../../services/telemetry/telemetry.common';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
@@ -119,7 +119,7 @@ export class DetectorViewComponent implements OnInit {
       this.downTimes.forEach(d=>{d.isSelected = false;});
       this.downTimes.push(downTime);
       this.populateFabricDowntimeDropDown(this.downTimes);
-      this.onDownTimeChange(downTime);
+      this.onDownTimeChange(downTime, DowntimeInteractionSource.Graph);
     }
     else {
       this.updateDownTimeErrorMessage(defaultDowntimeSelectionError);
@@ -245,17 +245,25 @@ export class DetectorViewComponent implements OnInit {
             if (defaultDowntime == null && this.downTimes.length > 0) {
               this.downTimes[0].isSelected = true;
               defaultDowntime = this.downTimes[0];
+              this.downtimeTriggerLog(defaultDowntime, DowntimeInteractionSource.DefaultFromUI, true, '');
+            }
+            else {
+              if(this.downTimes.length > 0) {
+                this.downtimeTriggerLog(defaultDowntime, DowntimeInteractionSource.DefaultFromDetector, true, '');
+              }
+              else {
+                this.downtimeTriggerLog(defaultDowntime, DowntimeInteractionSource.DefaultFromDetector, false, 'No downtimes detected by the detector.');
+              }
             }
             if(!!defaultDowntime) {
               this.selectedDownTime = defaultDowntime;
-              this.downTimeChanged.emit(defaultDowntime);
+              this.downTimeChanged.emit(defaultDowntime);              
             }            
           }
           else {
             this.resetGlobals();
           }
         }
-        // this.hideDetectorHeader = data.dataset.findIndex(set => (<Rendering>set.renderingProperties).type === RenderingType.Cards) >= 0;
       }
     });
   }
@@ -332,7 +340,7 @@ export class DetectorViewComponent implements OnInit {
 
   selectFabricKey(event: { option: IDropdownOption }) {
     this.selectedKey = this.getKeyForDownTime(event.option.data);
-    this.onDownTimeChange(event.option.data);
+    this.onDownTimeChange(event.option.data, DowntimeInteractionSource.Dropdown);
   }
 
   private getKeyForDownTime(d: DownTime):string {
@@ -419,6 +427,12 @@ export class DetectorViewComponent implements OnInit {
         this.downTimes[0].isSelected = true;
         this.selectedDownTime = this.downTimes[0];
       }
+      let downtimeListForLogging = {
+        'DowntimesIdentifiedCount': this.downTimes.length,
+        'DowntimesIdentifiedList': JSON.stringify(this.downTimes)
+      };
+
+      this.logEvent(TelemetryEventNames.DowntimeListPassedByDetector, downtimeListForLogging);
 
       this.populateFabricDowntimeDropDown(this.downTimes);
       this.setxAxisPlotBands(false);
@@ -528,7 +542,19 @@ export class DetectorViewComponent implements OnInit {
     }
   }
 
-  onDownTimeChange(selectedDownTime:DownTime) {
+  downtimeTriggerLog(downtime:DownTime, downtimeInteractionSource:string, downtimeTriggerred:boolean, text:string) {
+    const downtimeListForLogging = {
+      'DowntimeInteractionSource': downtimeInteractionSource,
+      'Downtime': JSON.stringify(downtime),
+      'DowntimeTriggered': downtimeTriggerred,
+      'DetectorStartTime': JSON.stringify(this.startTime),
+      'DetectorEndTime': JSON.stringify(this.endTime),
+      'Reason': text
+    };
+    this.logEvent(TelemetryEventNames.DowntimeListPassedByDetector, downtimeListForLogging);
+  }
+
+  onDownTimeChange(selectedDownTime:DownTime, downtimeInteractionSource:string) {
     if( selectedDownTime.downTimeLabel != this.getDefaultDowntimeEntry().downTimeLabel   && 
          momentNs.duration(selectedDownTime.StartTime.diff(this.startTime)).asMinutes() > 0 &&
          momentNs.duration(this.endTime.diff(selectedDownTime.EndTime)).asMinutes() > 0
@@ -538,10 +564,16 @@ export class DetectorViewComponent implements OnInit {
         this.selectedDownTime = selectedDownTime;
         this.downTimeChanged.emit(this.selectedDownTime);
         this.setxAxisPlotBands(false);
+        this.downtimeTriggerLog(selectedDownTime, downtimeInteractionSource, true, '');
       }
       else {
+        this.downtimeTriggerLog(selectedDownTime, downtimeInteractionSource, false, `Downtime valdation failed. Selected downtime is less than ${minSupportedDowntimeDuration} minutes`);
         this.updateDownTimeErrorMessage(defaultDowntimeSelectionError);
       }
+    }
+    else {
+      let reason = selectedDownTime.downTimeLabel === this.getDefaultDowntimeEntry().downTimeLabel?  'Placeholder downtime entry selected' : 'Selected downtime is out of bounds';
+      this.downtimeTriggerLog(selectedDownTime, downtimeInteractionSource, false, reason);
     }
   }
   protected logEvent(eventMessage: string, eventProperties?: any, measurements?: any) {
