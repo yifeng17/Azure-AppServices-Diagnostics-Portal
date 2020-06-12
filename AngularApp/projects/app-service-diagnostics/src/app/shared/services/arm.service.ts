@@ -28,12 +28,12 @@ export class ArmService {
     private diagRoleVersion: string = '';
     private readonly routeToLiberation = '2';
     private readonly routeToDiagnosticRole = '1';
-    private armEndpoint: string = '';
+    private armEndpoint:string = '';
     constructor(private _http: HttpClient, private _authService: AuthService, private _cache: CacheService, private _genericArmConfigService?: GenericArmConfigService,
-        private telemetryService?: PortalKustoTelemetryService) {
+        private telemetryService?: PortalKustoTelemetryService ) {
         this._authService.getStartupInfo().subscribe((startupInfo: StartupInfo) => {
-            if (!!startupInfo.armEndpoint && startupInfo.armEndpoint != '' && startupInfo.armEndpoint.length > 1) {
-                this.armEndpoint = startupInfo.armEndpoint;
+            if(!!startupInfo.armEndpoint && startupInfo.armEndpoint !='' && startupInfo.armEndpoint.length > 1) {
+                this.armEndpoint = startupInfo.armEndpoint ;
             }
             let resourceId = startupInfo.resourceId;
             let subscriptionId = resourceId.split('/')[2];
@@ -41,7 +41,7 @@ export class ArmService {
         });
     }
 
-    get isPublicAzure(): boolean {
+    get isPublicAzure():boolean {
         return this.armUrl === this.publicAzureArmUrl;
     }
 
@@ -54,11 +54,11 @@ export class ArmService {
     }
 
     get isMooncake(): boolean {
-        return this.armUrl === this.chinaAzureArmUrl;
+        return this.armUrl ===  this.chinaAzureArmUrl;
     }
 
     get isUsnat(): boolean {
-        return this.armUrl === this.usnatAzureArmUrl;
+        return this.armUrl ===  this.usnatAzureArmUrl;
     }
 
     get isNationalCloud(): boolean {
@@ -66,28 +66,24 @@ export class ArmService {
     }
 
     get armUrl(): string {
-        if (this.armEndpoint != '' && this.armEndpoint.length > 1) {
-            return this.armEndpoint;
+        if(this.armEndpoint !='' && this.armEndpoint.length > 1 ) {
+            return  this.armEndpoint;
         }
         else {
             let browserUrl = (window.location != window.parent.location) ? document.referrer : document.location.href;
             let armUrl = this.publicAzureArmUrl;
 
-            if (browserUrl.includes("azure.cn")) {
+            if (browserUrl.includes("azure.cn")){
                 armUrl = this.chinaAzureArmUrl;
             }
-            else if (browserUrl.includes("azure.us")) {
+            else if(browserUrl.includes("azure.us")){
                 armUrl = this.usGovernmentAzureArmUrl;
-            } else if (browserUrl.includes("azure.de")) {
+            } else if(browserUrl.includes("azure.de")) {
                 armUrl = this.blackforestAzureArmUrl;
             }
 
             return armUrl;
         }
-    }
-
-    get storageUrl(): string {
-        return this.armUrl.replace("management", "core");
     }
 
     getApiVersion(resourceUri: string, apiVersion?: string): string {
@@ -127,11 +123,11 @@ export class ArmService {
         //If the value is set to other than 1 or if the header is not present at all, requests will go to runtimehost
         additionalHeaders.set('x-ms-diagversion', this.diagRoleVersion);
         // This is just for logs so that we know requests are coming from Portal.
-        if (this.diagRoleVersion === this.routeToLiberation) {
+        if(this.diagRoleVersion === this.routeToLiberation) {
             additionalHeaders.set('x-ms-azureportal', 'true');
         }
         let eventProps = {
-            'resourceId': resourceUri,
+            'resourceId' : resourceUri,
             'targetRuntime': this.diagRoleVersion == this.routeToLiberation ? "Liberation" : "DiagnosticRole"
         };
         this.telemetryService.logEvent("RequestRoutingDetails", eventProps);
@@ -318,15 +314,15 @@ export class ArmService {
                 actualError = JSON.stringify(error.error);
                 if (error.error instanceof ErrorEvent) {
                     loggingError.message = error.error.message;
-                    loggingProps['reason'] = "A client-side or network error occured.";
+                    loggingProps['reason']= "A client-side or network error occured.";
                 }
             }
             else if (error.message) {
-                loggingProps['reason'] = "Server side unsuccessful response code.";
+                loggingProps['reason']= "Server side unsuccessful response code.";
             } else {
                 actualError = 'Server Error';
             }
-            loggingProps['url'] = error.url;
+            loggingProps['url']= error.url;
             loggingProps['status'] = error.status.toString();
             loggingProps['statusText'] = error.statusText;
         }
@@ -335,7 +331,8 @@ export class ArmService {
             loggingError.message = actualError;
         }
 
-        if (this.telemetryService) {
+        if (this.telemetryService)
+        {
             this.telemetryService.logException(loggingError, null, loggingProps);
         }
 
@@ -354,13 +351,13 @@ export class ArmService {
         // When x-ms-diagversion is set to 1, the requests will be sent to DiagnosticRole.
         //If the value is set to other than 1 or if the header is not present at all, requests will go to runtimehost
         additionalHeaders.set('x-ms-diagversion', this.diagRoleVersion);
-        // This is just for logs so that we know requests are coming from Portal.
-        if (this.diagRoleVersion === this.routeToLiberation) {
+         // This is just for logs so that we know requests are coming from Portal.
+         if(this.diagRoleVersion === this.routeToLiberation) {
             additionalHeaders.set('x-ms-azureportal', 'true');
         }
 
         let eventProps = {
-            'resourceId': resourceId,
+            'resourceId' : resourceId,
             'targetRuntime': this.diagRoleVersion == this.routeToLiberation ? "Liberation" : "DiagnosticRole"
         };
         this.telemetryService.logEvent("RequestRoutingDetails", eventProps);
@@ -386,9 +383,9 @@ export class ArmService {
             headers = headers.set('If-None-Match', etag);
         }
 
-        if (additionalHeaders) {
+        if(additionalHeaders) {
             additionalHeaders.forEach((headerVal: string, headerKey: string) => {
-                if (headerVal.length > 0 && headerKey.length > 0) {
+                if(headerVal.length > 0 && headerKey.length > 0) {
                     headers = headers.set(headerKey, headerVal);
                 }
             });

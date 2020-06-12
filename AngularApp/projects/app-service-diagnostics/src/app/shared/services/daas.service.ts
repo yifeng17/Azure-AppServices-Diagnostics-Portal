@@ -143,10 +143,6 @@ export class DaasService {
         settings.BlobContainer = BlobContainerName.toLowerCase();
         settings.BlobKey = blobKey;
         settings.BlobAccount = blobAccount;
-        settings.EndpointSuffix = "";
-        if (this._armClient.isNationalCloud) {
-            settings.EndpointSuffix = this._armClient.storageUrl;
-        }
 
         return <Observable<boolean>>(this._armClient.postResource(resourceUri, settings, null, true));
     }
@@ -156,13 +152,9 @@ export class DaasService {
         return <Observable<DaasSettings>>(this._armClient.getResourceWithoutEnvelope<DaasSettings>(resourceUri, null, true));
     }
 
-    putStdoutSetting(resourceUrl: string, enabled: boolean): Observable<{ Stdout: string }> {
+    putStdoutSetting(resourceUrl: string, enabled: boolean): Observable<{ Stdout: string } > {
         const resourceUri: string = this._uriElementsService.getStdoutSettingUrl(resourceUrl);
-        return <Observable<{ Stdout: string }>>this._armClient.putResourceWithoutEnvelope<{ Stdout: string }, any>(resourceUri, { Stdout: enabled ? "Enabled" : "Disabled" });
-    }
-
-    get isNationalCloud(){
-        return this._armClient.isNationalCloud;
+        return <Observable<{ Stdout: string }>>this._armClient.putResourceWithoutEnvelope<{Stdout: string}, any>(resourceUri, {Stdout: enabled ? "Enabled" : "Disabled"});
     }
 
     private _getHeaders(): HttpHeaders {
