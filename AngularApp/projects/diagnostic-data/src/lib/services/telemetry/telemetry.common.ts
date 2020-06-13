@@ -57,8 +57,7 @@ export const TelemetryEventNames = {
     ToolCardClicked: 'ToolCardClicked',
     TimePickerApplied: 'TimePickerApplied',
     CategoryNavItemClicked: 'CategoryNavItemClicked',
-    DowntimeSelectedViaGraph: 'DowntimeSelectedInGraph',
-    DowntimeSelectedViaDropDown: 'DowntimeSelectedInGraph',
+    DowntimeInteraction: 'DowntimeInteraction',
     DowntimeListPassedByDetector: 'DowntimePassedByDetector'
 };
 

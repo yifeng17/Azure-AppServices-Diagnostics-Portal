@@ -122,6 +122,7 @@ export class DetectorViewComponent implements OnInit {
       this.onDownTimeChange(downTime, DowntimeInteractionSource.Graph);
     }
     else {
+      this.downtimeTriggerLog(downTime, DowntimeInteractionSource.Graph, false, `Downtime valdation failed. Selected downtime is less than ${minSupportedDowntimeDuration} minutes`);
       this.updateDownTimeErrorMessage(defaultDowntimeSelectionError);
     }
   }  
@@ -547,11 +548,11 @@ export class DetectorViewComponent implements OnInit {
       'DowntimeInteractionSource': downtimeInteractionSource,
       'Downtime': JSON.stringify(downtime),
       'DowntimeTriggered': downtimeTriggerred,
-      'DetectorStartTime': JSON.stringify(this.startTime),
-      'DetectorEndTime': JSON.stringify(this.endTime),
+      'DetectorStartTime': `${this.startTime.format("YYYY-MM-DDTHH:mm:ss")}Z`,
+      'DetectorEndTime': `${this.endTime.format("YYYY-MM-DDTHH:mm:ssZ")}Z`,
       'Reason': text
     };
-    this.logEvent(TelemetryEventNames.DowntimeListPassedByDetector, downtimeListForLogging);
+    this.logEvent(TelemetryEventNames.DowntimeInteraction, downtimeListForLogging);
   }
 
   onDownTimeChange(selectedDownTime:DownTime, downtimeInteractionSource:string) {
