@@ -53,6 +53,16 @@ export class DetectorContainerComponent implements OnInit {
     public detectorControlService: DetectorControlService, private versionService: VersionService) {
   }
 
+  get isPopoutFromAnalysis():boolean {
+    if(!!this._route.parent) {
+      return !!this._route.parent.snapshot.url.find(urlPart=>urlPart.path === 'popout');
+    }
+    else {
+      return false;
+    }
+    
+  }
+
   ngOnInit() {
     this.versionService.isLegacySub.subscribe(isLegacy => this.isLegacy = isLegacy);
     //Remove after A/B Test
