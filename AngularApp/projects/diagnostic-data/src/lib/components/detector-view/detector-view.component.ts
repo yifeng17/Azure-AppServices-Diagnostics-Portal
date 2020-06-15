@@ -92,6 +92,7 @@ export class DetectorViewComponent implements OnInit {
   @Input() compilationPackage: CompilationProperties;
   @Input() analysisMode: boolean = false;
   @Input() isAnalysisView: boolean = false;
+  @Input() isPopoutFromAnalysis: boolean = false;
   @Input() hideDetectorHeader: boolean = false;
   @Input() isCategoryOverview:boolean = false;
   feedbackButtonLabel: string = 'Send Feedback';
