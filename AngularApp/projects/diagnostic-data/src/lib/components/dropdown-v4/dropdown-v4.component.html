@@ -30,7 +30,8 @@
 
   <div class="body-container">
     <div *ngFor="let data of selectedData" class="dynamic-data-container">
-      <dynamic-data [diagnosticData]="data" [startTime]="startTime" [endTime]="endTime"></dynamic-data>
+      <dynamic-data [diagnosticData]="data" [startTime]="startTime" [endTime]="endTime" [xAxisPlotBands]="xAxisPlotBands" 
+      [zoomBehavior] = "zoomBehavior" (XAxisSelection)="onXAxisSelection($event)" [isAnalysisView]="isAnalysisView"></dynamic-data>
     </div>
   </div>
 
@@ -48,7 +49,8 @@
   </div>
   <div class="fabric-body-container">
     <div *ngFor="let data of selectedData" class="dynamic-data-container">
-      <dynamic-data [diagnosticData]="data" [startTime]="startTime" [endTime]="endTime"></dynamic-data>
+      <dynamic-data [diagnosticData]="data" [startTime]="startTime" [endTime]="endTime"  [xAxisPlotBands]="xAxisPlotBands" 
+      [zoomBehavior] = "zoomBehavior" (XAxisSelection)="onXAxisSelection($event)" [isAnalysisView]="isAnalysisView"></dynamic-data>
     </div>
   </div>
 </div>

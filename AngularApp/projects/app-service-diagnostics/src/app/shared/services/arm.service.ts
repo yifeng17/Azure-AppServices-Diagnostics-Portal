@@ -12,6 +12,8 @@ import { StartupInfo } from '../models/portal';
 import { DemoSubscriptions } from '../../betaSubscriptions';
 import { VersioningHelper } from '../../../app/shared/utilities/versioningHelper';
 import { PortalKustoTelemetryService } from './portal-kusto-telemetry.service';
+import { Guid } from '../utilities/guid';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class ArmService {
@@ -29,7 +31,7 @@ export class ArmService {
     private readonly routeToLiberation = '2';
     private readonly routeToDiagnosticRole = '1';
     private armEndpoint: string = '';
-    constructor(private _http: HttpClient, private _authService: AuthService, private _cache: CacheService, private _genericArmConfigService?: GenericArmConfigService,
+    constructor(private _http: HttpClient, private _authService: AuthService, private _cache: CacheService, private _router: Router, private _genericArmConfigService?: GenericArmConfigService,
         private telemetryService?: PortalKustoTelemetryService) {
         this._authService.getStartupInfo().subscribe((startupInfo: StartupInfo) => {
             if (!!startupInfo.armEndpoint && startupInfo.armEndpoint != '' && startupInfo.armEndpoint.length > 1) {
@@ -131,8 +133,15 @@ export class ArmService {
         if (this.diagRoleVersion === this.routeToLiberation) {
             additionalHeaders.set('x-ms-azureportal', 'true');
         }
+
+        let requestId:string = Guid.newGuid();
+        additionalHeaders.set('x-ms-request-id', requestId);
+
         let eventProps = {
-            'resourceId': resourceUri,
+            'resourceId': resourceUri,            
+            'requestId': requestId,
+            'requestUrl': url,
+            'routerUrl': this._router.url,
             'targetRuntime': this.diagRoleVersion == this.routeToLiberation ? "Liberation" : "DiagnosticRole"
         };
         this.telemetryService.logEvent("RequestRoutingDetails", eventProps);
@@ -360,8 +369,14 @@ export class ArmService {
             additionalHeaders.set('x-ms-azureportal', 'true');
         }
 
+        let requestId:string = Guid.newGuid();
+        additionalHeaders.set('x-ms-request-id', requestId);
+
         let eventProps = {
-            'resourceId': resourceId,
+            'resourceId': resourceId,            
+            'requestId': requestId,
+            'requestUrl': url,
+            'routerUrl': this._router.url,
             'targetRuntime': this.diagRoleVersion == this.routeToLiberation ? "Liberation" : "DiagnosticRole"
         };
         this.telemetryService.logEvent("RequestRoutingDetails", eventProps);

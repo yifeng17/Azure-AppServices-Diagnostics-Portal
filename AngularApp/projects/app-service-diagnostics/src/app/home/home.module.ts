@@ -100,15 +100,19 @@ export const HomeRoutes = RouterModule.forChild([
                 path: 'analysis/:analysisId',
                 component: GenericAnalysisComponent,
                 data: {
-                    cacheComponent: true
+                    cacheComponent: false
                 },
-                children: [
+                children: [                    
                     {
-                        path: '',
+                        path: 'detectors/:detectorName',
                         component: GenericDetectorComponent,
                         data: {
                             analysisMode: true,
-                            cacheComponent: true
+                            cacheComponent: false
+                        },                        
+                        resolve: {
+                            time: TimeControlResolver,
+                            navigationTitle: TabTitleResolver,
                         }
                     }
                 ],
@@ -152,27 +156,6 @@ export const HomeRoutes = RouterModule.forChild([
             },
             {
                 path: 'analysis/:analysisId/search/detectors/:detectorName',
-                component: GenericAnalysisComponent,
-                data: {
-                    cacheComponent: true
-                },
-                children: [
-                    {
-                        path: '',
-                        component: GenericDetectorComponent,
-                        data: {
-                            analysisMode: true,
-                            cacheComponent: true
-                        }
-                    }
-                ],
-                resolve: {
-                    time: TimeControlResolver,
-                    navigationTitle: TabTitleResolver,
-                }
-            },
-            {
-                path: 'analysis/:analysisId/detectors/:detectorName',
                 component: GenericAnalysisComponent,
                 data: {
                     cacheComponent: true
@@ -385,41 +368,24 @@ export const HomeRoutes = RouterModule.forChild([
         }
     },
     {
-        path: 'analysis/:analysisId/detectors/:detectorName',
-        component: GenericAnalysisComponent,
-        data: {
-            cacheComponent: true
-        },
-        children: [
-            {
-                path: '',
-                component: GenericDetectorComponent,
-                data: {
-                    analysisMode: true,
-                    cacheComponent: true
-                }
-            }
-        ],
-        resolve: {
-            time: TimeControlResolver,
-            navigationTitle: TabTitleResolver,
-        }
-    },
-    {
         path: 'analysis/:analysisId',
         component: GenericAnalysisComponent,
         data: {
-            cacheComponent: true
+            cacheComponent: false
         },
         children: [
             {
-                path: '',
+                path: 'detectors/:detectorName',
                 component: GenericDetectorComponent,
                 data: {
                     analysisMode: true,
-                    cacheComponent: true
+                    cacheComponent: false
+                },
+                resolve: {
+                    time: TimeControlResolver,
+                    navigationTitle: TabTitleResolver,
                 }
-            }
+            },
         ],
         resolve: {
             time: TimeControlResolver,

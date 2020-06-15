@@ -144,6 +144,7 @@ import { InViewportModule } from "ng-in-viewport";
     RenderFilterPipe,
     DynamicInsightV4Component
   ],
+  entryComponents: [DetectorListAnalysisComponent],
   exports: [
     FormsModule, TimeSeriesGraphComponent, DataTableComponent, DynamicDataComponent, DetectorViewComponent, DetectorSearchComponent,
     DataSummaryComponent, LoaderViewComponent, StatusIconComponent, DetectorControlComponent,

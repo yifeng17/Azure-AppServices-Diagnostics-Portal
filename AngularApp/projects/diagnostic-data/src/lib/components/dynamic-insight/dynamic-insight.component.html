@@ -56,7 +56,8 @@
 
   <div class="panel-body" *ngIf="insight.isExpanded">
     <div *ngIf="insight.description" [innerHtml]="insight.description"></div>
-    <dynamic-data [diagnosticData]="insight.innerDiagnosticData" [startTime]="startTime" [endTime]="endTime">
+    <dynamic-data [diagnosticData]="insight.innerDiagnosticData" [startTime]="startTime" [endTime]="endTime"  [xAxisPlotBands]="xAxisPlotBands" 
+    [zoomBehavior] = "zoomBehavior" (XAxisSelection)="onXAxisSelection($event)"  [isAnalysisView]="isAnalysisView">
     </dynamic-data>
   </div>
 </div>
