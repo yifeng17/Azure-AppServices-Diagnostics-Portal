@@ -558,8 +558,8 @@ export class DetectorViewComponent implements OnInit {
 
   onDownTimeChange(selectedDownTime:DownTime, downtimeInteractionSource:string) {
     if( selectedDownTime.downTimeLabel != this.getDefaultDowntimeEntry().downTimeLabel   && 
-         momentNs.duration(selectedDownTime.StartTime.diff(this.startTime)).asMinutes() > 0 &&
-         momentNs.duration(this.endTime.diff(selectedDownTime.EndTime)).asMinutes() > 0
+         momentNs.duration(selectedDownTime.StartTime.diff(this.startTime)).asMinutes() > -1 &&
+         momentNs.duration(this.endTime.diff(selectedDownTime.EndTime)).asMinutes() > -1
     ) {
       if(this.validateDowntimeEntry(selectedDownTime)) {
         this.updateDownTimeErrorMessage('');
