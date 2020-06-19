@@ -96,7 +96,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
     showWebSearchTimeout: any = null;
     searchDiagnosticData: DiagnosticData;
     readonly stringFormat: string = 'YYYY-MM-DDTHH:mm';
-    inDrillDownMode:boolean = false;
+    public inDrillDownMode:boolean = false;
     drillDownDetectorId:string = '';
 
     constructor(public _activatedRoute: ActivatedRoute, private _router: Router,
@@ -266,7 +266,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
             this._activatedRoute.paramMap.subscribe(params => {
                 this.analysisId = (this.analysisId != 'searchResultsAnalysis' && !!params.get('analysisId'))? params.get('analysisId') : this.analysisId;
                 this.detectorId = params.get(this.detectorParmName) === null ? "" : params.get(this.detectorParmName);
-                this.goBackToAnalysis();
+                if (this.analysisId != 'searchResultsAnalysis') this.goBackToAnalysis();
                 this.populateSupportTopicDocument();
                 this.analysisContainsDowntime().subscribe(containsDownTime => {
                     if( (containsDownTime && !!this._downTime ) || !containsDownTime ) {
@@ -278,6 +278,17 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                                 this.searchTerm = qParams.get('searchTerm') === null ? this.searchTerm : qParams.get('searchTerm');this.showAppInsightsSection = false;
                                 if (this.searchTerm && this.searchTerm.length > 1) {
                                     this.isDynamicAnalysis = true;
+                                    if(this.detectorId) {
+                                        this.updateDrillDownMode(true, null);
+                                        this._diagnosticService.getDetectors().subscribe(detectorList => {
+                                            if (detectorList) {
+                                                if (this.detectorId !== "") {
+                                                let currentDetector = detectorList.find(detector => detector.id == this.detectorId)
+                                                this.detectorName = currentDetector.name;
+                                                }
+                                            }
+                                        });
+                                    }                                    
                                     this.showSuccessfulChecks = false;
                                     this.renderInsightsFromSearch(currDowntime);
                                 }
@@ -627,7 +638,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
     public goBackToAnalysis():void {
         this.updateDrillDownMode(false, null);
         if (this.analysisId=== "searchResultsAnalysis" && this.searchTerm){
-          this._router.navigate([`../../${this.analysisId}/search`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', queryParams: {searchTerm: this.searchTerm} });
+          this._router.navigate([`../../../../${this.analysisId}/search`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', queryParams: {searchTerm: this.searchTerm} });
         }
         else{
             if(!!this.analysisId && this.analysisId.length>0) {
