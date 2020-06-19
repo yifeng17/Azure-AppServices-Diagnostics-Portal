@@ -278,7 +278,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                                 this.searchTerm = qParams.get('searchTerm') === null ? this.searchTerm : qParams.get('searchTerm');this.showAppInsightsSection = false;
                                 if (this.searchTerm && this.searchTerm.length > 1) {
                                     this.isDynamicAnalysis = true;
-                                    if(this.detectorId) {
+                                    if(this.detectorId !== '') {
                                         this.updateDrillDownMode(true, null);
                                         this._diagnosticService.getDetectors().subscribe(detectorList => {
                                             if (detectorList) {
