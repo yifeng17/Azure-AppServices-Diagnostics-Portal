@@ -307,25 +307,29 @@ export class DetectorViewComponent implements OnInit {
       else {
         if(includeAllBands) {
           this.downTimes.forEach(downtime => {
-            var currentPlotBand :xAxisPlotBand = {
-              color:downtime.isSelected? '#FFCAC4' : '#FCFFC5',
-              from:downtime.StartTime,
-              to:downtime.EndTime,
-              style:xAxisPlotBandStyles.BehindPlotLines           
-            };
-            this.xAxisPlotBands.push(currentPlotBand);
+            if(!!downtime && !!downtime.StartTime && !!downtime.EndTime) {
+              var currentPlotBand :xAxisPlotBand = {
+                color:downtime.isSelected? '#FFCAC4' : '#FCFFC5',
+                from:downtime.StartTime,
+                to:downtime.EndTime,
+                style:xAxisPlotBandStyles.BehindPlotLines           
+              };
+              this.xAxisPlotBands.push(currentPlotBand);
+            }            
           });
         }
         else {
-          var currentPlotBand :xAxisPlotBand = {
-            color: '#FCFFC5',
-            from:this.selectedDownTime.StartTime,
-            to:this.selectedDownTime.EndTime,
-            style:xAxisPlotBandStyles.BehindPlotLines,
-            borderWidth:1,
-            borderColor:'red'
-          };        
-          this.xAxisPlotBands.push(currentPlotBand);
+          if(!!this.selectedDownTime && !!this.selectedDownTime.StartTime && !!this.selectedDownTime.EndTime) {
+            var currentPlotBand :xAxisPlotBand = {
+              color: '#FCFFC5',
+              from:this.selectedDownTime.StartTime,
+              to:this.selectedDownTime.EndTime,
+              style:xAxisPlotBandStyles.BehindPlotLines,
+              borderWidth:1,
+              borderColor:'red'
+            };        
+            this.xAxisPlotBands.push(currentPlotBand);
+          }
         }
       }      
     }
@@ -346,7 +350,12 @@ export class DetectorViewComponent implements OnInit {
   }
 
   private getKeyForDownTime(d: DownTime):string {
-    return `${this.getTimestampAsString(d.StartTime)}-${this.getTimestampAsString(d.EndTime)}`
+    if(!!d && !!d.StartTime && !!d.EndTime) {
+      return `${this.getTimestampAsString(d.StartTime)}-${this.getTimestampAsString(d.EndTime)}`
+    }
+    else {
+      return '';
+    }
   }
 
   getDefaultFabricDownTimeEntry():IDropdownOption {
@@ -536,12 +545,17 @@ export class DetectorViewComponent implements OnInit {
   }
 
   validateDowntimeEntry(selectedDownTime:DownTime):boolean {
-    if(momentNs.duration(selectedDownTime.EndTime.diff(selectedDownTime.StartTime)).asMinutes() < minSupportedDowntimeDuration) {
-      return false;
+    if(!!selectedDownTime && !!selectedDownTime.StartTime && !!selectedDownTime.EndTime) {
+      if(momentNs.duration(selectedDownTime.EndTime.diff(selectedDownTime.StartTime)).asMinutes() < minSupportedDowntimeDuration) {
+        return false;
+      }
+      else {
+        return true;
+      }
     }
     else {
-      return true;
-    }
+      return false;
+    }  
   }
 
   downtimeTriggerLog(downtime:DownTime, downtimeInteractionSource:string, downtimeTriggerred:boolean, text:string) {
@@ -557,7 +571,8 @@ export class DetectorViewComponent implements OnInit {
   }
 
   onDownTimeChange(selectedDownTime:DownTime, downtimeInteractionSource:string) {
-    if( selectedDownTime.downTimeLabel != this.getDefaultDowntimeEntry().downTimeLabel   && 
+    if( !!selectedDownTime && !!selectedDownTime.StartTime && !!selectedDownTime.EndTime &&
+       selectedDownTime.downTimeLabel != this.getDefaultDowntimeEntry().downTimeLabel   && 
          momentNs.duration(selectedDownTime.StartTime.diff(this.startTime)).asMinutes() > -1 &&
          momentNs.duration(this.endTime.diff(selectedDownTime.EndTime)).asMinutes() > -1
     ) {
@@ -574,7 +589,13 @@ export class DetectorViewComponent implements OnInit {
       }
     }
     else {
-      let reason = selectedDownTime.downTimeLabel === this.getDefaultDowntimeEntry().downTimeLabel?  'Placeholder downtime entry selected' : 'Selected downtime is out of bounds';
+      let reason = '';
+      if(!!selectedDownTime && !!selectedDownTime.downTimeLabel) {
+        reason = selectedDownTime.downTimeLabel === this.getDefaultDowntimeEntry().downTimeLabel?  'Placeholder downtime entry selected' : 'Selected downtime is out of bounds';
+      }
+      else {
+        reason = (!!selectedDownTime) ? 'Empty downtime label' : 'Null downtime selected';
+      }
       this.downtimeTriggerLog(selectedDownTime, downtimeInteractionSource, false, reason);
     }
   }
