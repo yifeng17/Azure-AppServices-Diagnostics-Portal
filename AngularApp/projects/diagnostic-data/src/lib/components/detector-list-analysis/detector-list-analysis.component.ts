@@ -121,7 +121,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
     public _downTime:DownTime = null;
     @Input()
     set downTime(downTime: DownTime) {
-      if (downTime != null && downTime.StartTime != null && downTime.EndTime != null) {
+      if (!!downTime && !!downTime.StartTime && !!downTime.EndTime) {
           this._downTime = downTime;
           this.refresh();
       }
@@ -581,7 +581,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
       let startTimeString = this._detectorControl.startTimeString;
       let endTimeString = this._detectorControl.endTimeString;
 
-      if (containsDownTime && downtime != null && downtime.StartTime != null && downtime.EndTime != null) {
+      if (containsDownTime && !!downtime && !!downtime.StartTime && !!downtime.EndTime) {
         startTimeString = downtime.StartTime.format(this.stringFormat);
         endTimeString = downtime.EndTime.format(this.stringFormat);
       }
