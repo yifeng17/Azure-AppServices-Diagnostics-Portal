@@ -194,9 +194,10 @@ export class CXPChatCallerService {
   /**
    * @param supportTopicId  Support Topic id for which the chat is being initiated for.
    * @param trackingIdGuid  Guid used for tracking. Get this by calling generateTrackingId().
+   * @param forceFetch Optional boolean. If set to true, will force fetch the ChatURK ignoring the one currently cached.
    * @returns Chat URL string. This can be an empty string if no agents are available or if the queue is not found. Always handle for empty string.
    */
-  public getChatURL(supportTopicId: string, trackingIdGuid: string): Observable<string> {
+  public getChatURL(supportTopicId: string, trackingIdGuid: string, forceFetch: boolean = false): Observable<string> {
     let input = {
       tagName: this.cxpChatTagName,
       eligibilityParams: {
@@ -221,7 +222,7 @@ export class CXPChatCallerService {
       }
     };
 
-    if (this.chatUrl.length > 0 && this.trackingId.length > 0) {
+    if (this.chatUrl.length > 0 && this.trackingId.length > 0 && forceFetch == false) {
       let stringToLog = `No call made, result from service cache. ChatUrl: ${this.chatUrl}`;
       this._telemetryService.logEvent(TelemetryEventNames.BuildCXPChatUrl, {
         "cxpChatTrackingId": this.trackingId,
@@ -233,12 +234,24 @@ export class CXPChatCallerService {
     }
     else {
 
+      let forceFetchReasonStr: string = '';
+      if (forceFetch) {
+        forceFetchReasonStr = ' Force Fetch attribute was set for this call.';
+      }
+      if (this.chatUrl.length > 0) {
+        forceFetchReasonStr = `${forceFetchReasonStr} Current chat URL before this call is ${this.chatUrl}.`;
+      }
+
+      if (this.trackingId.length > 0) {
+        forceFetchReasonStr = `${forceFetchReasonStr} Current tracking id before this call is ${this.trackingId}.`;
+      }
+
       //Make a call to the CXP Chat API to get the URL, the call is piped via SCI Frame blade in the portal.
       try {
         this._telemetryService.logEvent(TelemetryEventNames.GetCXPChatURL, {
           "cxpChatTrackingId": trackingIdGuid,
           "passedInput": JSON.stringify(input),
-          "returnValue": 'About to make a call to CXP chat portal RPC API.'
+          "returnValue": `About to make a call to CXP chat portal RPC API.${forceFetchReasonStr}`
         });
 
         this._portalService.postMessage(Verbs.getChatUrl, JSON.stringify(input));

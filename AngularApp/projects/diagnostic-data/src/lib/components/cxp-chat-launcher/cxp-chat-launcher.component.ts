@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { CXPChatService } from '../../services/cxp-chat.service';
+import { Guid } from 'projects/app-service-diagnostics/src/app/shared/utilities/guid';
 
 @Component({
   selector: 'cxp-chat-launcher',
@@ -10,6 +11,7 @@ export class CxpChatLauncherComponent implements OnInit {
 
   @Input() trackingId: string;
   @Input() chatUrl: string;
+  @Input() supportTopicId: string;
   public chatConfDialogOpenedAtleastOnce = false;
   public showChatConfDialog: boolean = false;
   public firstTimeCheck: boolean = true;
@@ -19,6 +21,8 @@ export class CxpChatLauncherComponent implements OnInit {
   public showDiagnosticsConsentOption: boolean = true;
   public completeChatUrl: string = '';
   public readonly windowFeatures: string = 'menubar=no,location=no,resizable=no,scrollbars=no,status=no,height=550,width=450';
+  private chatUrlRefreshTimerHandle: number = 0;
+  private readonly chatUrlTimeout: number = 1800000; //30 minutes
 
   constructor(private _cxpChatService: CXPChatService) {
     this.chatWelcomeMessage = "I'd love to help you out with your issue and connect you with our quick help chat team.";
@@ -33,11 +37,34 @@ export class CxpChatLauncherComponent implements OnInit {
         this._cxpChatService.logUserActionOnChat('ChatConfDialogShownBySystem', this.trackingId, this.chatUrl);
       }
     }, 10000);
+
+    this.refreshChatUrl();
+  }
+
+  private refreshChatUrl(): void {
+    //Chat has not been started by the customer, so we should set a refresh timer for when the URL expires.
+    if (this.showChatButtons) {
+      //Set a 30 minute timer to refresh the URL Cache
+      this.chatUrlRefreshTimerHandle = window.setTimeout(() => {
+        let trackingId = Guid.newGuid();
+        this._cxpChatService.getChatURL(this.supportTopicId, trackingId, true).subscribe((chatApiResponse: any) => {
+          if (!!chatApiResponse && chatApiResponse != '') {
+            this.trackingId = trackingId;
+            this.chatUrl = chatApiResponse;
+          }
+        });
+        this.refreshChatUrl();
+      }, this.chatUrlTimeout);
+    }
+    else {
+      window.clearTimeout(this.chatUrlRefreshTimerHandle);
+    }
   }
 
   public showChatOpenedMessage() {
     this.showChatButtons = false;
     this.showDiagnosticsConsentOption = false;
+    window.clearTimeout(this.chatUrlRefreshTimerHandle);
 
     let browserUrl = (window.location != window.parent.location) ? document.referrer : document.location.href;
     let portalUrl = 'https://portal.azure.com';

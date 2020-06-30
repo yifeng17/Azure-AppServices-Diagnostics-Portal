@@ -41,9 +41,10 @@ export class CXPChatService {
   /**
    * @param supportTopicId  Support Topic id for which the chat is being initiated for.
    * @param trackingIdGuid  Guid used for tracking. Get this by calling generateTrackingId().
+   * @param forceFetch Optional boolean. If set to true, will force fetch the ChatURK ignoring the one currently cached.
    * @returns Chat URL string. This can be an empty string if no agents are available or if the queue is not found. Always handle for empty string.
    */
-  public getChatURL(supportTopicId: string, trackingIdGuid: string): Observable<string> {
+  public getChatURL(supportTopicId: string, trackingIdGuid: string, forceFetch:boolean=false): Observable<string> {
     return null;
   }
 
