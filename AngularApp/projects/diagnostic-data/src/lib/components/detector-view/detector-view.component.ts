@@ -109,7 +109,7 @@ export class DetectorViewComponent implements OnInit {
     let downTime = new DownTime();
     downTime.StartTime = event.fromTime;
     downTime.EndTime = event.toTime;
-    downTime.downTimeLabel = `Custom selection from ${this.getTimestampAsString(event.fromTime)} to ${this.getTimestampAsString(event.toTime)}`;
+    downTime.downTimeLabel = this.prepareCustomDowntimeLabel(event.fromTime, event.toTime);
     downTime.isSelected = true;
 
     if(this.validateDowntimeEntry(downTime)) {
@@ -244,23 +244,66 @@ export class DetectorViewComponent implements OnInit {
             this.zoomBehavior = zoomBehaviors.CancelZoom | zoomBehaviors.FireXAxisSelectionEvent;
             this.supportsDownTime = true;
             this.parseDownTimeData(downTime.table);
-            let defaultDowntime = this.downTimes.find(x => x.isSelected);
-            if (defaultDowntime == null && this.downTimes.length > 0) {
-              this.downTimes[0].isSelected = true;
-              defaultDowntime = this.downTimes[0];
-              this.downtimeTriggerLog(defaultDowntime, DowntimeInteractionSource.DefaultFromUI, true, '');
-            }
-            else {
-              if(this.downTimes.length > 0) {
-                this.downtimeTriggerLog(defaultDowntime, DowntimeInteractionSource.DefaultFromDetector, true, '');
+            let defaultDowntime = null;
+            let defaultDowntimeTriggerSource:string = '';
+            if(this._route.snapshot.queryParamMap.has('startTimeChildDetector') && !!this._route.snapshot.queryParams['startTimeChildDetector']
+            && this._route.snapshot.queryParamMap.has('endTimeChildDetector') &&  !!this._route.snapshot.queryParams['endTimeChildDetector']) {
+              //Query string contains downtime. This is when the analysis is opened via a shared link
+              let qStartTime = moment.utc(this._route.snapshot.queryParams['startTimeChildDetector']);
+              let qEndTime = moment.utc(this._route.snapshot.queryParams['endTimeChildDetector']);
+              
+              if(this.startTime.isSameOrBefore(qStartTime) && this.endTime.isSameOrAfter(qEndTime)) {
+                //Make sure the passed in downtime is within the start and end time range of the detector
+                defaultDowntime = this.downTimes.find(x => x.StartTime.isSame(qStartTime) && x.EndTime.isSame(qEndTime));
+                if(!!defaultDowntime) {
+                  //The downtime that was shared in the link is a part of the detector identified downtime
+                  defaultDowntime.isSelected = true;
+                  this.downTimes.forEach(downtime =>{
+                    downtime.isSelected = this.isDowntimeSame(downtime, defaultDowntime);
+                  });
+                }
+                else {
+                  //The downtime that was shared in the link is a custom downtime selected by the user. Add a custom downtime to the list
+                  this.downTimes.forEach(downtime =>{
+                    downtime.isSelected = false;
+                  });
+
+                  defaultDowntime = {
+                    StartTime: qStartTime,
+                    EndTime: qEndTime,
+                    downTimeLabel:this.prepareCustomDowntimeLabel(qStartTime, qEndTime),
+                    isSelected:true
+                  } as DownTime;
+                  this.downTimes.push(defaultDowntime);
+                }
+                defaultDowntimeTriggerSource = DowntimeInteractionSource.DefaultFromQueryParams;
               }
               else {
-                this.downtimeTriggerLog(defaultDowntime, DowntimeInteractionSource.DefaultFromDetector, false, 'No downtimes detected by the detector.');
+                this.downtimeTriggerLog(defaultDowntime, DowntimeInteractionSource.DefaultFromQueryParams, false, 'Supplied downtime is out of bounds.');
+              }              
+            }
+
+            if(defaultDowntime == null) {
+              //Query string did not contain a downtime or was out of bounds
+              defaultDowntime = this.downTimes.find(x => x.isSelected);
+              if (defaultDowntime == null && this.downTimes.length > 0) {
+                this.downTimes[0].isSelected = true;
+                defaultDowntime = this.downTimes[0];
+                defaultDowntimeTriggerSource = DowntimeInteractionSource.DefaultFromDetector;
+              }
+              else {
+                if(this.downTimes.length > 0) {
+                  defaultDowntimeTriggerSource = DowntimeInteractionSource.DefaultFromDetector;
+                }
+                else {
+                  this.downtimeTriggerLog(defaultDowntime, DowntimeInteractionSource.DefaultFromDetector, false, 'No downtimes detected by the detector.');
+                }
               }
             }
+            
             if(!!defaultDowntime) {
-              this.selectedDownTime = defaultDowntime;
-              this.downTimeChanged.emit(defaultDowntime);              
+              this.populateFabricDowntimeDropDown(this.downTimes);
+              this.onDownTimeChange(defaultDowntime, defaultDowntimeTriggerSource);
             }            
           }
           else {
@@ -369,6 +412,10 @@ export class DetectorViewComponent implements OnInit {
         isSelected: d.isSelected
     } as IDropdownOption;    
   }
+
+  prepareCustomDowntimeLabel(startTime:Moment, endTime:Moment):string {
+    return `Custom selection from ${this.getTimestampAsString(startTime)} to ${this.getTimestampAsString(endTime)}`;
+  }
   
   getDefaultDowntimeEntry() : DownTime {
     return {
@@ -449,6 +496,10 @@ export class DetectorViewComponent implements OnInit {
       this.populateFabricDowntimeDropDown(this.downTimes);
       this.setxAxisPlotBands(false);
     }
+  }
+
+  isDowntimeSame(downtime1:DownTime, downtime2:DownTime):boolean {
+    return downtime1.StartTime.isSame(downtime2.StartTime) && downtime1.EndTime.isSame(downtime2.EndTime);
   }
 
   toggleButtonView(feature: string) {

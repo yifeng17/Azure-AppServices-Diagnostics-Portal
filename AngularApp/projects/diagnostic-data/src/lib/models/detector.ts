@@ -212,5 +212,6 @@ export const DowntimeInteractionSource = {
     Graph: 'Graph',
     Dropdown: 'Dropdown',
     DefaultFromDetector: 'DefaultFromDetector',
+    DefaultFromQueryParams: 'DefaultFromQueryParams',
     DefaultFromUI: 'DefaultFromUI'
 };
