@@ -144,14 +144,23 @@ export class HighchartsGraphComponent implements OnInit {
                 let toPoint = null;
                 let currChart = this.getCurrentChart();
                 if(!!currChart && !!currChart.series && currChart.series.length > 0) {
-                    currChart.series[0].points.forEach(pt=>{
-                        if(  moment.duration(moment.utc(Highcharts.dateFormat('%Y-%m-%d %H:%M:00',pt.x)).diff(fromSelection)).asMinutes() < 4  ) {
-                            fromPoint = moment.utc(Highcharts.dateFormat('%Y-%m-%d %H:%M:00',pt.x));
+                    let firstNonEmptySeries:number = -1;
+                    for (let index = 0; index < currChart.series.length; index++) {
+                        if(currChart.series[index].visible && currChart.series[index].xAxis.hasData()) {
+                            firstNonEmptySeries = index;
+                            break;
                         }
-                        if(toPoint == null && moment.duration(moment.utc(Highcharts.dateFormat('%Y-%m-%d %H:%M:00',pt.x)).diff(toSelection)).asMinutes() > -4 ) {
-                            toPoint = moment.utc(Highcharts.dateFormat('%Y-%m-%d %H:%M:00',pt.x));
-                        }
-                    });
+                    }
+                    if(firstNonEmptySeries>-1) {
+                        currChart.series[firstNonEmptySeries].points.forEach(pt=>{
+                            if(  moment.duration(moment.utc(Highcharts.dateFormat('%Y-%m-%d %H:%M:00',pt.x)).diff(fromSelection)).asMinutes() < 4  ) {
+                                fromPoint = moment.utc(Highcharts.dateFormat('%Y-%m-%d %H:%M:00',pt.x));
+                            }
+                            if(toPoint == null && moment.duration(moment.utc(Highcharts.dateFormat('%Y-%m-%d %H:%M:00',pt.x)).diff(toSelection)).asMinutes() > -4 ) {
+                                toPoint = moment.utc(Highcharts.dateFormat('%Y-%m-%d %H:%M:00',pt.x));
+                            }
+                        });
+                    }                    
 
                     if(!!fromPoint && !!toPoint) {
                         let xAxisSelectionEventArgs = new XAxisSelection();
