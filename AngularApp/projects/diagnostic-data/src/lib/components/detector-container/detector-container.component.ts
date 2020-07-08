@@ -95,12 +95,12 @@ export class DetectorContainerComponent implements OnInit {
     }
 
     let startTimeChildDetector: string = this._route.snapshot.queryParams['startTimeChildDetector'];
-    if (startTimeChildDetector != null) {
+    if (!!startTimeChildDetector && startTimeChildDetector.length > 1 && moment.utc(startTimeChildDetector).isValid()) {
       this.startTimeChildDetector =  moment.utc(startTimeChildDetector) ;
     }
 
     let endTimeChildDetector: string = this._route.snapshot.queryParams['endTimeChildDetector'];
-    if (endTimeChildDetector != null) {
+    if (!!endTimeChildDetector && endTimeChildDetector.length > 1 && moment.utc(endTimeChildDetector).isValid()) {
       this.endTimeChildDetector =  moment.utc(endTimeChildDetector) ;
     }
 
@@ -117,12 +117,12 @@ export class DetectorContainerComponent implements OnInit {
     if(!this.isAnalysisDetector()){
       let startTimeChildDetector: string = this._route.snapshot.queryParams['startTimeChildDetector'];
 
-      if (startTimeChildDetector != null) {
-        startTime =  moment.utc(startTimeChildDetector) ;
-        this.startTimeChildDetector = startTime;
+      if (!!startTimeChildDetector && startTimeChildDetector.length > 1 && moment.utc(startTimeChildDetector).isValid()) {
+        startTime =  moment.utc(startTimeChildDetector);
+          this.startTimeChildDetector = startTime;
       }
       else {
-        if(this.startTimeChildDetector != null) {
+        if(!!this.startTimeChildDetector && startTimeChildDetector.length > 1) {
           startTime = this.startTimeChildDetector;
         }
       }
@@ -135,12 +135,12 @@ export class DetectorContainerComponent implements OnInit {
     if(!this.isAnalysisDetector()){
       let endTimeChildDetector: string = this._route.snapshot.queryParams['endTimeChildDetector'];
 
-      if (endTimeChildDetector != null) {
-        endTime =  moment.utc(endTimeChildDetector) ;
+      if (!!endTimeChildDetector && endTimeChildDetector.length > 1 && moment.utc(endTimeChildDetector).isValid()) {
+        endTime =  moment.utc(endTimeChildDetector);
         this.endTimeChildDetector = endTime;
       }
       else {
-        if(this.endTimeChildDetector != null) {
+        if(!!this.endTimeChildDetector && endTimeChildDetector.length > 1) {
           endTime = this.endTimeChildDetector;
         }
       }

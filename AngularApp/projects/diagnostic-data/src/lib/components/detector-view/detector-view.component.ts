@@ -247,40 +247,45 @@ export class DetectorViewComponent implements OnInit {
             let defaultDowntime = null;
             let defaultDowntimeTriggerSource:string = '';
             if(this._route.snapshot.queryParamMap.has('startTimeChildDetector') && !!this._route.snapshot.queryParams['startTimeChildDetector']
-            && this._route.snapshot.queryParamMap.has('endTimeChildDetector') &&  !!this._route.snapshot.queryParams['endTimeChildDetector']) {
+            && this._route.snapshot.queryParamMap.has('endTimeChildDetector') &&  !!this._route.snapshot.queryParams['endTimeChildDetector']) {              
               //Query string contains downtime. This is when the analysis is opened via a shared link
-              let qStartTime = moment.utc(this._route.snapshot.queryParams['startTimeChildDetector']);
-              let qEndTime = moment.utc(this._route.snapshot.queryParams['endTimeChildDetector']);
-              
-              if(this.startTime.isSameOrBefore(qStartTime) && this.endTime.isSameOrAfter(qEndTime)) {
-                //Make sure the passed in downtime is within the start and end time range of the detector
-                defaultDowntime = this.downTimes.find(x => x.StartTime.isSame(qStartTime) && x.EndTime.isSame(qEndTime));
-                if(!!defaultDowntime) {
-                  //The downtime that was shared in the link is a part of the detector identified downtime
-                  defaultDowntime.isSelected = true;
-                  this.downTimes.forEach(downtime =>{
-                    downtime.isSelected = this.isDowntimeSame(downtime, defaultDowntime);
-                  });
-                }
-                else {
-                  //The downtime that was shared in the link is a custom downtime selected by the user. Add a custom downtime to the list
-                  this.downTimes.forEach(downtime =>{
-                    downtime.isSelected = false;
-                  });
-
-                  defaultDowntime = {
-                    StartTime: qStartTime,
-                    EndTime: qEndTime,
-                    downTimeLabel:this.prepareCustomDowntimeLabel(qStartTime, qEndTime),
-                    isSelected:true
-                  } as DownTime;
-                  this.downTimes.push(defaultDowntime);
-                }
-                defaultDowntimeTriggerSource = DowntimeInteractionSource.DefaultFromQueryParams;
+              if(!moment.utc(this._route.snapshot.queryParams['startTimeChildDetector']).isValid() || !moment.utc(this._route.snapshot.queryParams['endTimeChildDetector']).isValid()) {
+                this.downtimeTriggerLog(defaultDowntime, DowntimeInteractionSource.DefaultFromQueryParams, false, 'Supplied downtime is of invalid format.');
               }
               else {
-                this.downtimeTriggerLog(defaultDowntime, DowntimeInteractionSource.DefaultFromQueryParams, false, 'Supplied downtime is out of bounds.');
-              }              
+                let qStartTime = moment.utc(this._route.snapshot.queryParams['startTimeChildDetector']);
+                let qEndTime = moment.utc(this._route.snapshot.queryParams['endTimeChildDetector']);
+                
+                if(this.startTime.isSameOrBefore(qStartTime) && this.endTime.isSameOrAfter(qEndTime)) {
+                  //Make sure the passed in downtime is within the start and end time range of the detector
+                  defaultDowntime = this.downTimes.find(x => x.StartTime.isSame(qStartTime) && x.EndTime.isSame(qEndTime));
+                  if(!!defaultDowntime) {
+                    //The downtime that was shared in the link is a part of the detector identified downtime
+                    defaultDowntime.isSelected = true;
+                    this.downTimes.forEach(downtime =>{
+                      downtime.isSelected = this.isDowntimeSame(downtime, defaultDowntime);
+                    });
+                  }
+                  else {
+                    //The downtime that was shared in the link is a custom downtime selected by the user. Add a custom downtime to the list
+                    this.downTimes.forEach(downtime =>{
+                      downtime.isSelected = false;
+                    });
+
+                    defaultDowntime = {
+                      StartTime: qStartTime,
+                      EndTime: qEndTime,
+                      downTimeLabel:this.prepareCustomDowntimeLabel(qStartTime, qEndTime),
+                      isSelected:true
+                    } as DownTime;
+                    this.downTimes.push(defaultDowntime);
+                  }
+                  defaultDowntimeTriggerSource = DowntimeInteractionSource.DefaultFromQueryParams;
+                }
+                else {
+                  this.downtimeTriggerLog(defaultDowntime, DowntimeInteractionSource.DefaultFromQueryParams, false, 'Supplied downtime is out of bounds.');
+                } 
+              }                           
             }
 
             if(defaultDowntime == null) {

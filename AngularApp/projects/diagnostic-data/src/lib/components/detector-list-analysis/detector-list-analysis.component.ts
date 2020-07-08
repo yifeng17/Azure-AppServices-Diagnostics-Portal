@@ -716,10 +716,23 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                     } else {
                         this.updateDrillDownMode(true, viewModel);
                         if (viewModel.model.startTime != null && viewModel.model.endTime != null) {
-                            this._router.navigate([`./detectors/${detectorId}`], {
-                                relativeTo: this._activatedRoute,
-                                queryParams: { startTimeChildDetector: viewModel.model.startTime, endTimeChildDetector: viewModel.model.endTime },
-                                queryParamsHandling: 'merge'
+                            this.analysisContainsDowntime().subscribe(containsDowntime => {
+                                if(containsDowntime) {
+                                    this._router.navigate([`./detectors/${detectorId}`], {
+                                        relativeTo: this._activatedRoute,
+                                        queryParams: { startTimeChildDetector: viewModel.model.startTime, endTimeChildDetector: viewModel.model.endTime },
+                                        queryParamsHandling: 'merge',
+                                        replaceUrl:true
+                                    });
+                                }
+                                else {
+                                    this._router.navigate([`./detectors/${detectorId}`], {
+                                        relativeTo: this._activatedRoute,
+                                        queryParams: { startTime: viewModel.model.startTime, endTime: viewModel.model.endTime },
+                                        queryParamsHandling: '',
+                                        replaceUrl:true
+                                    });
+                                }
                             });
                         }
                         else {
