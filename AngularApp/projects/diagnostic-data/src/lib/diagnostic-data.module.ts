@@ -96,6 +96,7 @@ import {WebSearchComponent} from './components/web-search/web-search.component';
 import {RenderFilterPipe} from './components/detector-view/detector-view.component';
 import { DynamicInsightV4Component } from './components/dynamic-insight-v4/dynamic-insight-v4.component';
 import { InViewportModule } from "ng-in-viewport";
+import { ParseResourceService } from './services/parse-resource.service';
 import { MarkdownTextComponent } from './components/markdown-text/markdown-text.component';
 
 @NgModule({
@@ -183,6 +184,7 @@ export class DiagnosticDataModule {
         CommsService,
         FeatureNavigationService,
         AppInsightsQueryService,
+        ParseResourceService,
         FabNavModule
       ]
     };

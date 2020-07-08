@@ -559,6 +559,7 @@ export class HighchartsGraphComponent implements OnInit {
                 tickAmount: 3,
                 softMin: 0,
                 crosshair: true,
+                gridLineColor: "#929294",
                 accessibility: {
                     description: `Y axis values`
                 },
