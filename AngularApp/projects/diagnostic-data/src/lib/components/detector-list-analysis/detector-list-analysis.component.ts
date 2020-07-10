@@ -349,7 +349,6 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                                                 }
                                             });
                                         }
-                                        //console.log('I am here >>>>');
                                         return;
                                     } else {
                                         this.detectorEventProperties = {
