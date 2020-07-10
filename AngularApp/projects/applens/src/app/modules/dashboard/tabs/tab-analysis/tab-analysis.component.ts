@@ -17,7 +17,7 @@ export class TabAnalysisComponent implements OnInit {
   downTime: DownTime;
   readonly stringFormat: string = 'YYYY-MM-DDTHH:mm';
 
-  @ViewChild('detectorListAnalysis', {static:true}) detectorListAnalysis: DetectorListAnalysisComponent
+  @ViewChild('detectorListAnalysis', { static: true }) detectorListAnalysis: DetectorListAnalysisComponent
 
   constructor(private _activatedRoute: ActivatedRoute, private _router: Router, private _diagnosticService: ApplensDiagnosticService) {
     this._activatedRoute.paramMap.subscribe(params => {
@@ -34,11 +34,13 @@ export class TabAnalysisComponent implements OnInit {
 
   onDowntimeChanged(event: DownTime) {
     this.detectorListAnalysis.downTime = event;
-    this._router.navigate([`./`], {
-      relativeTo: this._activatedRoute,
-      queryParams: { startTimeChildDetector: event.StartTime.format(this.stringFormat), endTimeChildDetector: event.EndTime.format(this.stringFormat) },
-      queryParamsHandling: 'merge',
-      replaceUrl:true
-    });
+    if (this._activatedRoute == null || this._activatedRoute.firstChild == null || !this._activatedRoute.firstChild.snapshot.paramMap.has('detector') || this._activatedRoute.firstChild.snapshot.paramMap.get('detector').length < 1) {
+      this._router.navigate([`./`], {
+        relativeTo: this._activatedRoute,
+        queryParams: { startTimeChildDetector: event.StartTime.format(this.stringFormat), endTimeChildDetector: event.EndTime.format(this.stringFormat) },
+        queryParamsHandling: 'merge',
+        replaceUrl: true
+      });
+    }
   }
 }
