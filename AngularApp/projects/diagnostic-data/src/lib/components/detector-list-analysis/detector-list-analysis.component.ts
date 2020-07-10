@@ -472,6 +472,11 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                         if (this.detectorViewModels[index].status === HealthStatus.Critical || this.detectorViewModels[index].status === HealthStatus.Warning) {
                             let insight = this.getDetectorInsight(this.detectorViewModels[index]);
                             let issueDetectedViewModel = { model: this.detectorViewModels[index], insightTitle: insight.title, insightDescription: insight.description };
+
+                            if (this.issueDetectedViewModels.length > 0) {
+                                this.issueDetectedViewModels = this.issueDetectedViewModels.filter(iVM => (!!iVM.model && !!iVM.model.metadata && !!iVM.model.metadata.id && iVM.model.metadata.id != issueDetectedViewModel.model.metadata.id));
+                            }
+
                             this.issueDetectedViewModels.push(issueDetectedViewModel);
                             this.issueDetectedViewModels = this.issueDetectedViewModels.sort((n1, n2) => n1.model.status - n2.model.status);
                         } else {
