@@ -266,7 +266,10 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
             this._activatedRoute.paramMap.subscribe(params => {
                 this.analysisId = (this.analysisId != 'searchResultsAnalysis' && !!params.get('analysisId')) ? params.get('analysisId') : this.analysisId;
                 this.detectorId = params.get(this.detectorParmName) === null ? "" : params.get(this.detectorParmName);
-                if (this.analysisId != 'searchResultsAnalysis') this.goBackToAnalysis();
+                if (this.detectorId == "" && !!this._activatedRoute.firstChild && this._activatedRoute.firstChild.snapshot.paramMap.has(this.detectorParmName) && this._activatedRoute.firstChild.snapshot.paramMap.get(this.detectorParmName).length > 1) {
+                    this.detectorId = this._activatedRoute.firstChild.snapshot.paramMap.get(this.detectorParmName);
+                }
+                if (this.analysisId != 'searchResultsAnalysis' && this.detectorId == "") this.goBackToAnalysis();
                 this.populateSupportTopicDocument();
                 this.analysisContainsDowntime().subscribe(containsDownTime => {
                     if ((containsDownTime && !!this._downTime) || !containsDownTime) {
@@ -308,6 +311,44 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                                     if (this.detectorId !== "") {
                                         let currentDetector = detectorList.find(detector => detector.id == this.detectorId)
                                         this.detectorName = currentDetector.name;
+                                        this.detectors = [];
+                                        detectorList.forEach(element => {
+                                            if (element.analysisTypes != null && element.analysisTypes.length > 0) {
+                                                element.analysisTypes.forEach(analysis => {
+                                                    if (analysis === this.analysisId) {
+                                                        this.detectors.push({ name: element.name, id: element.id });
+                                                        this.loadingMessages.push("Checking " + element.name);
+                                                    }
+                                                });
+                                            }
+                                        });
+                                        this.startDetectorRendering(detectorList, currDowntime, containsDownTime);
+                                        let currViewModel = {
+                                            model: this.getDetectorViewModel(currentDetector, currDowntime, containsDownTime),
+                                            insightTitle: '',
+                                            insightDescription: ''
+                                        };
+                                        this.updateDrillDownMode(true, currViewModel);
+                                        if (currViewModel.model.startTime != null && currViewModel.model.endTime != null) {
+                                            this.analysisContainsDowntime().subscribe(containsDowntime => {
+                                                if (containsDowntime) {
+                                                    this._router.navigate([`./detectors/${currentDetector.id}`], {
+                                                        relativeTo: this._activatedRoute,
+                                                        queryParams: { startTimeChildDetector: currViewModel.model.startTime, endTimeChildDetector: currViewModel.model.endTime },
+                                                        queryParamsHandling: 'merge',
+                                                        replaceUrl: true
+                                                    });
+                                                }
+                                                else {
+                                                    this._router.navigate([`./detectors/${currentDetector.id}`], {
+                                                        relativeTo: this._activatedRoute,
+                                                        queryParams: { startTime: currViewModel.model.startTime, endTime: currViewModel.model.endTime },
+                                                        queryParamsHandling: '',
+                                                        replaceUrl: true
+                                                    });
+                                                }
+                                            });
+                                        }
                                         return;
                                     } else {
                                         this.detectorEventProperties = {
