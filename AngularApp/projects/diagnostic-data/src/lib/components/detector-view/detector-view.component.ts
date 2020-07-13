@@ -240,7 +240,7 @@ export class DetectorViewComponent implements OnInit {
 
         if (this.isAnalysisView) {
           let downTime = data.dataset.find(set => (<Rendering>set.renderingProperties).type === RenderingType.DownTime);
-          if (downTime) {
+          if (!!downTime) {
             this.zoomBehavior = zoomBehaviors.CancelZoom | zoomBehaviors.FireXAxisSelectionEvent;
             this.supportsDownTime = true;
             this.parseDownTimeData(downTime.table);
@@ -638,8 +638,8 @@ export class DetectorViewComponent implements OnInit {
   onDownTimeChange(selectedDownTime: DownTime, downtimeInteractionSource: string) {
     if (!!selectedDownTime && !!selectedDownTime.StartTime && !!selectedDownTime.EndTime &&
       selectedDownTime.downTimeLabel != this.getDefaultDowntimeEntry().downTimeLabel &&
-      momentNs.duration(selectedDownTime.StartTime.diff(this.startTime)).asMinutes() > -1 &&
-      momentNs.duration(this.endTime.diff(selectedDownTime.EndTime)).asMinutes() > -1
+      momentNs.duration(selectedDownTime.StartTime.diff(this.startTime)).asMinutes() > -5 && //Allow a 5 min variance since backend normalizes starttime in 5 min timegrain
+      momentNs.duration(this.endTime.diff(selectedDownTime.EndTime)).asMinutes() > -5 //Allow a 5 min variance since backend normalizes endtime in 5 min timegrain
     ) {
       if (this.validateDowntimeEntry(selectedDownTime)) {
         this.updateDownTimeErrorMessage('');
