@@ -136,6 +136,7 @@ export class HighchartsGraphComponent implements OnInit {
     }
 
     highchartCallback: Highcharts.ChartLoadCallbackFunction = (chart: any) =>{
+        console.log("highchartCallback: calling highchartCallback", chart);
         chart.customNamespace = {};
         chart.customNamespace["selectAllButton"] = chart.renderer.button(
             'All', chart.chartWidth - 120, 10, function () {
@@ -171,6 +172,7 @@ export class HighchartsGraphComponent implements OnInit {
                     // Get custom button if it exists, and set attributes on it
                     var namespace = chart.customNamespace || {};
                     currentCustomKey = customButton.name;
+                    console.log("highchartCallback: current currentCustomKey", currentCustomKey, customButton.name);
                     if (namespace[currentCustomKey]) {
                         namespace[currentCustomKey].attr({
                             role: 'button',
@@ -206,6 +208,7 @@ export class HighchartsGraphComponent implements OnInit {
                             ], function () {
                                 currentCustomKey = customButton.name;
                                 // Fake a click event on the button element
+                                console.log("highchartCallback: current currentCustomKey for clicking", currentCustomKey, customButton.name);
                                 var buttonElement = namespace[currentCustomKey] &&
                                     namespace[currentCustomKey].element;
                                 if (buttonElement) {
@@ -218,6 +221,7 @@ export class HighchartsGraphComponent implements OnInit {
                         // Focus button initially
                         init: function () {
                             currentCustomKey = customButton.name;
+                            console.log("highchartCallback: current currentCustomKey for initializing", currentCustomKey, customButton.name);
                             var buttonElement = namespace[currentCustomKey] &&
                                 namespace[currentCustomKey].element;
                             if (buttonElement && buttonElement.focus) {
@@ -236,7 +240,7 @@ export class HighchartsGraphComponent implements OnInit {
                     selectNoneButton: new SelectNoneButton(chart)
                 },
                 keyboardNavigation: {
-                    order: ["legend", "series", "zoom", "rangeSelector", "selectAllButton", "selectNoneButton"],
+                    order: ["legend", "selectAllButton", "selectNoneButton", "series", "zoom", "rangeSelector"],
                 }
             }
         });
@@ -504,7 +508,7 @@ export class HighchartsGraphComponent implements OnInit {
                 keyboardNavigation: {
                     enabled: true,
                     mode: "normal",
-                    order: ["legend", "series", "zoom", "rangeSelector", "chartMenu"],
+                    order:  ["legend", "selectAllButton", "selectNoneButton", "series", "zoom", "rangeSelector"],
                     focusBorder: {
                         style: {
                             lineWidth: 3,
@@ -663,7 +667,7 @@ export class HighchartsGraphComponent implements OnInit {
                 },
             },
             series: this.HighchartData
-        } as Highcharts.Options
+        } as Highcharts.Options;
     }
 }
 
