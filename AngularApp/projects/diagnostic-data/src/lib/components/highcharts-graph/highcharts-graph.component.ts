@@ -139,27 +139,41 @@ export class HighchartsGraphComponent implements OnInit {
         var chart:any = this;
         chart.customNamespace = {};
         chart.customNamespace["toggleSelectionButton"] = chart.renderer.button(
-            'Select None', null, -10, function () {
+            "None", null, -10, function () {
                 var series = chart.series;
-                var statusToSet = this.text && this.text.textStr && this.text.textStr === "Select All" ? true : false;
+                var statusToSet = this.text && this.text.textStr && this.text.textStr === "All" ? true : false;
                 for (var i = 0; i < series.length; i++) {
                     series[i].setVisible(statusToSet, false);
                 }
                 statusToSet = !statusToSet;
-                var textStr = statusToSet ? "Select All": "Select None";
+                var textStr = statusToSet ? "All": "None";
                 var ariaLabel= statusToSet ? "Select all the series" : "Deselect all the series";
                 this.attr({
                     text: textStr,
                     "aria-label": ariaLabel,
                 });
-            }, null, null, null, null, null, true).add();
+            }, {
+                fill: 'none',
+                stroke: 'none',
+                'stroke-width': 0,
+                style: {
+                    color: '#015cda'
+                }
+            }, {
+                fill: 'grey',
+                stroke: 'none',
+                'stroke-width': 0,
+                style: {
+                    color: '#015cda'
+                }
+            }, null, null, null, true).add();
 
             var namespace = chart.customNamespace || {};
             if (namespace["toggleSelectionButton"]) {
                 namespace["toggleSelectionButton"].attr({
                     role: 'button',
                     tabindex: -1,
-                    x: chart.plotWidth -115,
+                    x: chart.plotWidth -20,
                     "aria-label": "Deselect all the series",
                 });
             }
@@ -508,14 +522,28 @@ export class HighchartsGraphComponent implements OnInit {
                 height: 300,
                 display: 'block!important',
                 type: 'line',
-                // styledMode: true,
                 zoomType: 'x',
                 panKey: 'shift',
                 panning: true,
                 resetZoomButton: {
                     position: {
-                        x: 0,
-                        y: -57
+                        x: -80,
+                        y: -19
+                    },
+                    relativeTo: "spacingBox",
+                    theme: {
+                        fill: 'none',
+                        stroke: 'none',
+                        'stroke-width': 0,
+                        style: {
+                            color: '#015cda'
+                        },
+                        state: {
+                            hover: {
+                                fill: 'white',
+                                color: 'blue'
+                            }
+                        }
                     }
                 },
                 events: {
@@ -524,7 +552,7 @@ export class HighchartsGraphComponent implements OnInit {
                     render: function() {
                         var chart:any = this;
                         chart.customNamespace["toggleSelectionButton"].attr({
-                            x: this.plotWidth -115,
+                            x: this.plotWidth -20,
                         });
                     }
                 },
@@ -533,7 +561,7 @@ export class HighchartsGraphComponent implements OnInit {
                 enabled: true,
                 align: 'center',
                 layout: 'horizontal',
-                verticalAlign: 'top',
+                verticalAlign: 'bottom',
                 itemStyle: { "color": "#333", "cursor": "pointer", "fontSize": "12px", "textOverflow": "ellipsis", "font-weight": "normal", "font-family": " Arial, sans-serif" },
                 itemMarginTop: 0,
                 itemMarginBottom: 0,
