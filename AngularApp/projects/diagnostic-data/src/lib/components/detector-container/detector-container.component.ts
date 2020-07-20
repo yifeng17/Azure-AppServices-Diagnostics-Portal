@@ -129,7 +129,7 @@ export class DetectorContainerComponent implements OnInit {
         this.startTimeChildDetector = startTime;
       }
       else {
-        if (!!this.startTimeChildDetector && startTimeChildDetector.length > 1) {
+        if (!!this.startTimeChildDetector && this.startTimeChildDetector.isValid()) {
           startTime = this.startTimeChildDetector;
         }
       }
@@ -147,7 +147,7 @@ export class DetectorContainerComponent implements OnInit {
         this.endTimeChildDetector = endTime;
       }
       else {
-        if (!!this.endTimeChildDetector && endTimeChildDetector.length > 1) {
+        if (!!this.endTimeChildDetector && this.endTimeChildDetector.isValid()) {
           endTime = this.endTimeChildDetector;
         }
       }
