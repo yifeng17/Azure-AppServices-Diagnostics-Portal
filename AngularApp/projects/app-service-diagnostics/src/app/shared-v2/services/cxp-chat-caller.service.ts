@@ -58,13 +58,13 @@ export class CXPChatCallerService {
 
   public isSupportTopicEnabledForLiveChat(supportTopicIdToCheck: string): boolean {
     if (!this.isChatSupported) {
-      this.logChatEligibilityCheck('CXPChatEnabled', 'false');
+      this.logChatEligibilityCheck(supportTopicIdToCheck, 'CXPChatEnabled', 'false');
       return false;
     }
-    this.logChatEligibilityCheck('CXPChatEnabled', 'true');
+    this.logChatEligibilityCheck(supportTopicIdToCheck, 'CXPChatEnabled', 'true');
 
     if (this.supportedSupportTopicIds.length === 1 && this.supportedSupportTopicIds[0] === '*') {
-      this.logChatEligibilityCheck('SupportTopicEnabledForCXPChat', `${supportTopicIdToCheck} is enabled.`);
+      this.logChatEligibilityCheck(supportTopicIdToCheck, 'SupportTopicEnabledForCXPChat', `${supportTopicIdToCheck} is enabled.`);
       return true;
     }
     else {
@@ -76,20 +76,24 @@ export class CXPChatCallerService {
         return returnValue;
       });
 
-      this.logChatEligibilityCheck('SupportTopicEnabledForCXPChat', `${supportTopicIdToCheck} is ${!returnValue ? 'not ' : ''}enabled.`);
+      this.logChatEligibilityCheck(supportTopicIdToCheck, 'SupportTopicEnabledForCXPChat', `${supportTopicIdToCheck} is ${!returnValue ? 'not ' : ''}enabled.`);
 
       return returnValue;
     }
   }
 
-  public generateTrackingId(): string {
+   /**
+ * @param supportTopicId  Support Topic id for which the chat is being initiated for.
+ * @returns a Guid that can be used as a tracking id.
+ */
+  public generateTrackingId(supportTopicId: string): string {
     let generatedGuid: string = '';
     try {
       generatedGuid = Guid.newGuid();
-      this.logChatEligibilityCheck('GenerateCXPChatTrackingId', generatedGuid);
+      this.logChatEligibilityCheck(supportTopicId, 'GenerateCXPChatTrackingId', generatedGuid);
       return generatedGuid;
     } catch (error) {
-      this.logChatEligibilityCheck('GenerateCXPChatTrackingId', `Error while generating tracking ID : ${JSON.stringify(error)}`);
+      this.logChatEligibilityCheck(supportTopicId, 'GenerateCXPChatTrackingId', `Error while generating tracking ID : ${JSON.stringify(error)}`);
       return '';
     }
   }
@@ -97,7 +101,7 @@ export class CXPChatCallerService {
 
   /**
  * @param supportTopicId  Support Topic id for which the chat is being initiated for.
- * @param trackingIdGuid  Guid used for tracking. Get this by calling generateTrackingId().
+ * @param trackingIdGuid  Guid used for tracking. Get this by calling `generateTrackingId(supportTopicId:string)`.
  * @returns CXP Chat type. If no engineer is available, it will return None, else it will return the type of chat that can be initiated for this support topic.
  */
   public getChatAvailability(supportTopicId: string, trackingIdGuid: string): ReplaySubject<any> {
@@ -132,7 +136,7 @@ export class CXPChatCallerService {
   /**
  * @param cxpChatType  Get this from the output of cxpChatService.getChatAvailability call.
  * @param queueForSupportTopic This is the output of getChatAvailability call.
- * @param trackingIdGuid  Guid used for tracking. Get this by calling generateTrackingId().
+ * @param trackingIdGuid  Guid used for tracking. Get this by calling `generateTrackingId(supportTopicId:string)`.
  * @returns Chat URL string. This can be an empty string if no agents are available or if the queue is not found. Always handle for empty string.
  */
   public buildChatUrl(cxpChatType: string, queueForSupportTopic: any, trackingIdGuid: string): Observable<string> {
@@ -193,8 +197,8 @@ export class CXPChatCallerService {
 
   /**
    * @param supportTopicId  Support Topic id for which the chat is being initiated for.
-   * @param trackingIdGuid  Guid used for tracking. Get this by calling generateTrackingId().
-   * @param forceFetch Optional boolean. If set to true, will force fetch the ChatURK ignoring the one currently cached.
+   * @param trackingIdGuid  Guid used for tracking. Get this by calling `generateTrackingId(supportTopicId:string)`.
+   * @param forceFetch Optional boolean. If set to true, will force fetch the ChatURL ignoring the one currently cached.
    * @returns Chat URL string. This can be an empty string if no agents are available or if the queue is not found. Always handle for empty string.
    */
   public getChatURL(supportTopicId: string, trackingIdGuid: string, forceFetch: boolean = false): Observable<string> {
@@ -358,15 +362,20 @@ export class CXPChatCallerService {
   }
 
   /**
+   * @param supportTopicId  Support Topic id for which the chat is being initiated for.
    * @param checkType Which button did the user click on
    * @param checkOutcome  Guid used for tracking. This is the trackingId for which the Chat was initiated.
    */
-  public logChatEligibilityCheck(checkType: string, checkOutcome: string): void {
-    let notificationMessage = {
-      "checkType": checkType,
-      "checkOutcome": checkOutcome
-    };
-
-    this._telemetryService.logEvent(TelemetryEventNames.CXPChatEligibilityCheck, notificationMessage);
+  public logChatEligibilityCheck(supportTopicId: string, checkType: string, checkOutcome: string): void {
+      //Currently CXP chat is enabled only in case submission so the logging should work inly in case submission
+      //To reduce telemetry noise, log only if we have a non empty support topic id. Support topic id will be empty for non case submission scenarios.
+    if(!!supportTopicId && supportTopicId.length > 1) {
+      let notificationMessage = {
+        "checkType": checkType,
+        "checkOutcome": checkOutcome
+      };
+  
+      this._telemetryService.logEvent(TelemetryEventNames.CXPChatEligibilityCheck, notificationMessage);
+    }
   }
 }
