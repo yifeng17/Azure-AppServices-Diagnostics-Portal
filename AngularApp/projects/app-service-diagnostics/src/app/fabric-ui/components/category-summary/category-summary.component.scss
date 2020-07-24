@@ -4,7 +4,7 @@
     }
 
   section.sidebar {
-      width: 20%;
+      min-width: 265px;
       position: fixed;
       top: 0px;
       bottom: 0px;
@@ -15,10 +15,11 @@
 
   section.content {
     position: fixed;
+    min-width: calc(100% - 265px);
     width: 80%;
     top: 0px;
     bottom: 0px;
-    left: 20%;
+    left: 256px;
     overflow-y: auto;
     overflow-x: hidden;
   }
