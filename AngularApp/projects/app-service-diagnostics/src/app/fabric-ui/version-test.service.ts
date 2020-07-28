@@ -49,7 +49,7 @@ export class VersionTestService {
 
     private isWindowsWebAppResource(site: Site, resourceType: ResourceType): boolean {
         let isLinuxPlatform = site && site.kind && site.kind.toLowerCase().indexOf('linux') >= 0;
-        return resourceType === ResourceType.Site && site && site.appType === AppType.WebApp && !isLinuxPlatform;
+        return resourceType === ResourceType.Site && site && (site.appType === AppType.WebApp || site.appType == AppType.FunctionApp) && !isLinuxPlatform;
     }
 
     private isVnextSubscription(subscriptionId: string, percentageToRelease: number = 0.1): boolean {

@@ -104,7 +104,7 @@ export class SitesCategoryService extends CategoryService {
       sku: Sku.All,
       hostingEnvironmentKind: HostingEnvironmentKind.All,
       item: {
-        id: 'FunctionsAvailabilityAndPerformance',
+        id: 'AvailabilityAndPerformanceFunctionApp',
         name: 'Availability and Performance',
         description: 'Is your Function App performing slower than normal? Investigate performance issues or just check the health of your Function App.',
         keywords: ['Downtime', '5xx Errors', '4xx Errors', 'CPU', 'Memory', 'Slowness'],
