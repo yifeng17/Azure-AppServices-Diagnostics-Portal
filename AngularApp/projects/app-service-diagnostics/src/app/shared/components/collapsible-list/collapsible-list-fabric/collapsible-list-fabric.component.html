@@ -1,0 +1,16 @@
+<div *ngIf="title" class="row collapsable-list">
+  <button class="btn-outer" [attr.aria-expanded]="collapsed ?'false':'true'" (click)="collapsed = !collapsed"
+    class="list-header">
+    <span class="btn-inner" tabindex="-1">
+      <i class="ms-Icon ms-Icon--ChevronDown custom-caret" [class.custom-caret-down]="collapsed"></i>
+      <span class="pl-3">{{title}}</span>
+    </span>
+  </button>
+
+  <div *ngIf="collapsed">
+    <ng-content select="[header]"></ng-content>
+  </div>
+  <div *ngIf="!collapsed" class="list-items-container">
+    <ng-content select="[body]"></ng-content>
+  </div>
+</div>
