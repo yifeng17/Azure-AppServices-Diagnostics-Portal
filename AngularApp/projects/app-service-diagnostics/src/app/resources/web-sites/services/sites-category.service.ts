@@ -112,7 +112,23 @@ export class SitesCategoryService extends CategoryService {
         createFlowForCategory: true,
         chatEnabled: false
       }
-    }
+    },
+    {
+        appType: AppType.FunctionApp,
+        platform: OperatingSystem.windows | OperatingSystem.linux,
+        stack: '',
+        sku: Sku.All,
+        hostingEnvironmentKind: HostingEnvironmentKind.All,
+        item: {
+          id: 'ConfigurationAndManagementFunctionApp',
+          name: 'Configuration And Management',
+          description: 'Are you having issues with something that you configured specifically for your app? Find out if you misconfigured App Service features, such as backups, deployment slots, and scaling.',
+          keywords: ['Scaling', 'Swaps', 'Failed Backups', 'IPs', 'Migration'],
+          color: 'rgb(249, 213, 180)',
+          createFlowForCategory: true,
+          chatEnabled: false
+        }
+      }
   ];
 
   constructor(private _resourceService: WebSitesService, private _websiteFilter: WebSiteFilter, private _armService: ArmService) {
@@ -137,7 +153,7 @@ export class SitesCategoryService extends CategoryService {
               overridePath: `resource${this._resourceService.resourceIdForRouting}/detectors/navigator`
           }
       }
-      );      
+      );
     }
     this._sitesCategories.push(this._getDiagnosticToolsCategory(this._resourceService.resourceIdForRouting));
     this._addCategories(
