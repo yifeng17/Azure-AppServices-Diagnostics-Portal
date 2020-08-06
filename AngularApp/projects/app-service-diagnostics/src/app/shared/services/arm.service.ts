@@ -27,6 +27,7 @@ export class ArmService {
     private readonly usGovernmentAzureArmUrl = 'https://management.usgovcloudapi.net';
     private readonly blackforestAzureArmUrl = 'https://management.microsoftazure.de';
     private readonly usnatAzureArmUrl = 'https://management.azure.eaglex.ic.gov';
+    private readonly ussecAzureArmUrl = 'https://management.azure.microsoft.scloud';
     private diagRoleVersion: string = '';
     private readonly routeToLiberation = '2';
     private readonly routeToDiagnosticRole = '1';
@@ -63,8 +64,12 @@ export class ArmService {
         return this.armUrl === this.usnatAzureArmUrl;
     }
 
+    get isUssec(): boolean {
+        return this.armUrl === this.ussecAzureArmUrl;
+    }
+
     get isNationalCloud(): boolean {
-        return this.isMooncake || this.isFairfax || this.isBlackforest || this.isUsnat;
+        return this.isMooncake || this.isFairfax || this.isBlackforest || this.isUsnat || this.isUssec;
     }
 
     get armUrl(): string {
