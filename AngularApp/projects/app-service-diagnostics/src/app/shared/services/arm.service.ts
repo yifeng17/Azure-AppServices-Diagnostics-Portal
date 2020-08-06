@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { Subscription } from '../models/subscription';
 import { ResponseMessageEnvelope, ResponseMessageCollectionEnvelope } from '../models/responsemessageenvelope';
 import { AuthService } from '../../startup/services/auth.service';
-import { CacheService, LogInfo } from './cache.service';
+import { CacheService } from './cache.service';
 import { catchError, retry, map, retryWhen, delay } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { GenericArmConfigService } from './generic-arm-config.service';
@@ -14,6 +14,7 @@ import { VersioningHelper } from '../../../app/shared/utilities/versioningHelper
 import { PortalKustoTelemetryService } from './portal-kusto-telemetry.service';
 import { Guid } from '../utilities/guid';
 import { Router } from '@angular/router';
+import { TelemetryPayload } from 'diagnostic-data';
 
 @Injectable()
 export class ArmService {
@@ -151,9 +152,9 @@ export class ArmService {
         };
 
         let logData = {
-            eventMessage: "RequestRoutingDetails",
-            properties: eventProps
-        } as LogInfo;
+            eventIdentifier: "RequestRoutingDetails",
+            eventPayload: eventProps
+        } as TelemetryPayload;
 
         let requestHeaders = this.getHeaders(null, additionalHeaders);
         const request = this._http.get<ResponseMessageEnvelope<T>>(url, {
@@ -424,9 +425,9 @@ export class ArmService {
         };
 
         let logData = {
-            eventMessage: "RequestRoutingDetails",
-            properties: eventProps
-        } as LogInfo;
+            eventIdentifier: "RequestRoutingDetails",
+            eventPayload: eventProps
+        } as TelemetryPayload;
 
         const request = this._http.get(url, { headers: this.getHeaders(null, additionalHeaders) }).pipe(
             map<ResponseMessageCollectionEnvelope<ResponseMessageEnvelope<T>>, ResponseMessageEnvelope<T>[]>(r => r.value),

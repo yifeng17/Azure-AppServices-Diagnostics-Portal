@@ -3,16 +3,10 @@ import { throwError as observableThrowError, Observable, Subject, of } from 'rxj
 import { Injectable } from '@angular/core';
 import { tap, finalize } from 'rxjs/operators';
 import { PortalKustoTelemetryService } from './portal-kusto-telemetry.service';
+import { TelemetryPayload } from 'diagnostic-data';
 
 interface CacheContent {
     value: any;
-}
-
-export interface LogInfo {
-    eventMessage: string,
-    properties: {
-        [name: string]: string
-    }
 }
 
 @Injectable()
@@ -25,7 +19,7 @@ export class CacheService {
 
     constructor(private telemetryService?: PortalKustoTelemetryService) { }
 
-    get(key: string, fallback?: Observable<any>, invalidateCache: boolean = false, logDataForActualCall?: LogInfo): Observable<any> | Subject<any> {
+    get(key: string, fallback?: Observable<any>, invalidateCache: boolean = false, logDataForActualCall?: TelemetryPayload): Observable<any> | Subject<any> {
 
         if (this.has(key)) {
             if (invalidateCache) {
@@ -42,8 +36,8 @@ export class CacheService {
         } else if (fallback && fallback instanceof Observable) {
             this.inFlightObservables.set(key, new Subject());
             this.log(`%c Calling api for ${key}`, 'color: purple');
-            if (!!logDataForActualCall && !!logDataForActualCall.eventMessage && !!logDataForActualCall.properties) {
-                this.telemetryService.logEvent(logDataForActualCall.eventMessage, logDataForActualCall.properties);
+            if (!!logDataForActualCall && !!logDataForActualCall.eventIdentifier && !!logDataForActualCall.eventPayload) {
+                this.telemetryService.logEvent(logDataForActualCall.eventIdentifier, logDataForActualCall.eventPayload);
             }
             return fallback.pipe(
                 tap(

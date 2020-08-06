@@ -1,5 +1,5 @@
 import { AdalService } from 'adal-angular4';
-import { DetectorMetaData, DetectorResponse, QueryResponse, TelemetryService } from 'diagnostic-data';
+import { DetectorMetaData, DetectorResponse, QueryResponse } from 'diagnostic-data';
 import { map, retry, catchError, tap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
@@ -7,9 +7,10 @@ import { Observable, throwError as observableThrowError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { HttpMethod } from '../models/http';
 import { Package } from '../models/package';
-import { CacheService, LogInfo } from './cache.service';
+import { CacheService } from './cache.service';
 import { Guid } from 'projects/app-service-diagnostics/src/app/shared/utilities/guid';
 import { Router } from '@angular/router';
+import { TelemetryPayload } from 'diagnostic-data';
 
 @Injectable()
 export class DiagnosticApiService {
@@ -19,8 +20,7 @@ export class DiagnosticApiService {
   public GeomasterName: string = null;
   public Location: string = null;
 
-  constructor(private _httpClient: HttpClient, private _cacheService: CacheService,
-    private _adalService: AdalService, private _telemetryService: TelemetryService, private _router: Router) { }
+  constructor(private _httpClient: HttpClient, private _cacheService: CacheService, private _adalService: AdalService, private _router: Router) { }
 
   public get diagnosticApi(): string {
     return environment.production ? '' : this.localDiagnosticApi;
@@ -243,9 +243,9 @@ export class DiagnosticApiService {
     };
 
     let logData = {
-      eventMessage: "RequestRoutingDetails",
-      properties: eventProps
-    } as LogInfo;
+      eventIdentifier: "RequestRoutingDetails",
+      eventPayload: eventProps
+    } as TelemetryPayload;
 
     if (getFullResponse) {
       request = this._httpClient.post<T>(url, body, {
