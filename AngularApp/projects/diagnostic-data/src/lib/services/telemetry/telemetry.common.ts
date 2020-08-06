@@ -59,10 +59,17 @@ export const TelemetryEventNames = {
     CategoryNavItemClicked: 'CategoryNavItemClicked',
     DowntimeInteraction: 'DowntimeInteraction',
     DowntimeListPassedByDetector: 'DowntimePassedByDetector',
-    CrashMonitoringEnabled:'CrashMonitoringEnabled',
-    CrashMonitoringStopped:'CrashMonitoringStopped',
-    CrashMonitoringAgentDisabled:'CrashMonitoringAgentDisabled'
+    CrashMonitoringEnabled: 'CrashMonitoringEnabled',
+    CrashMonitoringStopped: 'CrashMonitoringStopped',
+    CrashMonitoringAgentDisabled: 'CrashMonitoringAgentDisabled'
 };
+
+export interface TelemetryPayload {
+    eventIdentifier: string,
+    eventPayload: {
+        [name: string]: string
+    }
+}
 
 export interface ITelemetryProvider {
     // Log a user action or other occurrence.

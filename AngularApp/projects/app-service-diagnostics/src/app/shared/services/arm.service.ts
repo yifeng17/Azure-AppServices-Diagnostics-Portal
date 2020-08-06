@@ -14,6 +14,7 @@ import { VersioningHelper } from '../../../app/shared/utilities/versioningHelper
 import { PortalKustoTelemetryService } from './portal-kusto-telemetry.service';
 import { Guid } from '../utilities/guid';
 import { Router } from '@angular/router';
+import { TelemetryPayload } from 'diagnostic-data';
 
 @Injectable()
 export class ArmService {
@@ -149,7 +150,11 @@ export class ArmService {
             'routerUrl': this._router.url,
             'targetRuntime': this.diagRoleVersion == this.routeToLiberation ? "Liberation" : "DiagnosticRole"
         };
-        this.telemetryService.logEvent("RequestRoutingDetails", eventProps);
+
+        let logData = {
+            eventIdentifier: "RequestRoutingDetails",
+            eventPayload: eventProps
+        } as TelemetryPayload;
 
         let requestHeaders = this.getHeaders(null, additionalHeaders);
         const request = this._http.get<ResponseMessageEnvelope<T>>(url, {
@@ -177,7 +182,7 @@ export class ArmService {
             catchError(this.handleError)
         );
 
-        return this._cache.get(url, request, invalidateCache);
+        return this._cache.get(url, request, invalidateCache, logData);
     }
 
     getArmResource<T>(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Observable<T> {
@@ -418,13 +423,18 @@ export class ArmService {
             'routerUrl': this._router.url,
             'targetRuntime': this.diagRoleVersion == this.routeToLiberation ? "Liberation" : "DiagnosticRole"
         };
-        this.telemetryService.logEvent("RequestRoutingDetails", eventProps);
+
+        let logData = {
+            eventIdentifier: "RequestRoutingDetails",
+            eventPayload: eventProps
+        } as TelemetryPayload;
+
         const request = this._http.get(url, { headers: this.getHeaders(null, additionalHeaders) }).pipe(
             map<ResponseMessageCollectionEnvelope<ResponseMessageEnvelope<T>>, ResponseMessageEnvelope<T>[]>(r => r.value),
             catchError(this.handleError)
         );
 
-        return this._cache.get(url, request, invalidateCache);
+        return this._cache.get(url, request, invalidateCache, logData);
     }
 
     getSubscriptionLocation(subscriptionId: string): Observable<HttpResponse<any>> {
