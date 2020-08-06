@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { Subscription } from '../models/subscription';
 import { ResponseMessageEnvelope, ResponseMessageCollectionEnvelope } from '../models/responsemessageenvelope';
 import { AuthService } from '../../startup/services/auth.service';
-import { CacheService } from './cache.service';
+import { CacheService, LogInfo } from './cache.service';
 import { catchError, retry, map, retryWhen, delay } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { GenericArmConfigService } from './generic-arm-config.service';
@@ -149,7 +149,11 @@ export class ArmService {
             'routerUrl': this._router.url,
             'targetRuntime': this.diagRoleVersion == this.routeToLiberation ? "Liberation" : "DiagnosticRole"
         };
-        this.telemetryService.logEvent("RequestRoutingDetails", eventProps);
+
+        let logData = {
+            eventMessage: "RequestRoutingDetails",
+            properties: eventProps
+        } as LogInfo;
 
         let requestHeaders = this.getHeaders(null, additionalHeaders);
         const request = this._http.get<ResponseMessageEnvelope<T>>(url, {
@@ -177,7 +181,7 @@ export class ArmService {
             catchError(this.handleError)
         );
 
-        return this._cache.get(url, request, invalidateCache);
+        return this._cache.get(url, request, invalidateCache, logData);
     }
 
     getArmResource<T>(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Observable<T> {
@@ -418,13 +422,18 @@ export class ArmService {
             'routerUrl': this._router.url,
             'targetRuntime': this.diagRoleVersion == this.routeToLiberation ? "Liberation" : "DiagnosticRole"
         };
-        this.telemetryService.logEvent("RequestRoutingDetails", eventProps);
+
+        let logData = {
+            eventMessage: "RequestRoutingDetails",
+            properties: eventProps
+        } as LogInfo;
+
         const request = this._http.get(url, { headers: this.getHeaders(null, additionalHeaders) }).pipe(
             map<ResponseMessageCollectionEnvelope<ResponseMessageEnvelope<T>>, ResponseMessageEnvelope<T>[]>(r => r.value),
             catchError(this.handleError)
         );
 
-        return this._cache.get(url, request, invalidateCache);
+        return this._cache.get(url, request, invalidateCache, logData);
     }
 
     getSubscriptionLocation(subscriptionId: string): Observable<HttpResponse<any>> {
