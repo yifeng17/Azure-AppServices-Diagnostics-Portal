@@ -1,5 +1,5 @@
 import { AdalService } from 'adal-angular4';
-import { DetectorMetaData, DetectorResponse, QueryResponse } from 'diagnostic-data';
+import { DetectorMetaData, DetectorResponse, QueryResponse, TelemetryService } from 'diagnostic-data';
 import { map, retry, catchError, tap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
@@ -20,7 +20,8 @@ export class DiagnosticApiService {
   public GeomasterName: string = null;
   public Location: string = null;
 
-  constructor(private _httpClient: HttpClient, private _cacheService: CacheService, private _adalService: AdalService, private _router: Router) { }
+  constructor(private _httpClient: HttpClient, private _cacheService: CacheService,
+    private _adalService: AdalService, private _telemetryService: TelemetryService, private _router: Router) { }
 
   public get diagnosticApi(): string {
     return environment.production ? '' : this.localDiagnosticApi;
@@ -259,7 +260,13 @@ export class DiagnosticApiService {
     }
 
     let keyPostfix = internalClient === true ? "-true" : "-false";
-    return useCache ? this._cacheService.get(this.getCacheKey(method, path + keyPostfix), request, invalidateCache, logData) : request;
+    if (useCache) {
+      return this._cacheService.get(this.getCacheKey(method, path + keyPostfix), request, invalidateCache, logData);
+    }
+    else {
+      this._telemetryService.logEvent(logData.eventIdentifier, logData.eventPayload);
+      return request;
+    }
   }
 
   public get<T>(path: string, invalidateCache: boolean = false): Observable<T> {
