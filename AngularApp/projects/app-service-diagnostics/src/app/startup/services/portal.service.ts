@@ -148,6 +148,7 @@ export class PortalService {
 
     private iframeReceivedMsg(event: Event): void {
         if (!event || !event.data || event.data.signature !== this.portalSignature) {
+            console.log("[iFrame] validation failed, return event", event);
             return;
         }
 
