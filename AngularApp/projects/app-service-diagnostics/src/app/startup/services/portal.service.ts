@@ -160,6 +160,9 @@ export class PortalService {
             const info = <StartupInfo>data;
             this.sessionId = info.sessionId;
             this.startupInfoObservable.next(info);
+            console.log("[iFrame] Received send-startupinfo, event", event);
+            console.log("[iFrame] Sending log message now, event", event);
+            this.logMessage(LogEntryLevel.Warning, 'Sending log message from Iframe');
         } else if (methodName === Verbs.sendAppInsightsResource) {
             const aiResource = data;
             this.appInsightsResourceObservable.next(aiResource);
@@ -193,6 +196,7 @@ export class PortalService {
                 kind: verb,
                 data: data
             }, this.shellSrc);
+            console.log("[IFrame] post message", verb, data);
         }
     }
 
