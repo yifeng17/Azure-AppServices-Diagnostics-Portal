@@ -110,7 +110,6 @@ export class FeatureService {
   }
 
   getFeaturesForCategory(category: Category) {
-    console.log("features", this._features, category.name);
     return this._features.filter(feature => feature.category === category.name);
   }
 

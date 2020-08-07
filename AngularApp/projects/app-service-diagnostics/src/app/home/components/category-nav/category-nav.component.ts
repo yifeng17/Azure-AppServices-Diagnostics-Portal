@@ -222,7 +222,6 @@ export class CategoryNavComponent implements OnInit {
 
                 // Get all the detector list under this category
                 this.siteFeatureService.getFeaturesForCategorySub(this.category).subscribe(features => {
-                    console.log("Got features", features);
                     if (!this.isDiagnosticTools) {
                         features.forEach(feature => {
                             let onClick = () => {
@@ -237,8 +236,6 @@ export class CategoryNavComponent implements OnInit {
                             this.detectorList.push(menuItem);
                         });
                     }
-
-                    console.log("detectorList", this.detectorList);
                 });
 
 
