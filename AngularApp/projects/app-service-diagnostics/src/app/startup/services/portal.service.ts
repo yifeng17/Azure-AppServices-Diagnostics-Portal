@@ -89,8 +89,8 @@ export class PortalService {
         window.addEventListener(Verbs.message, this.iframeReceivedMsg.bind(this), false);
 
         // This is a required message. It tells the shell that your iframe is ready to receive messages.
-        this.postMessage(Verbs.ready, null);
-        this.postMessage(Verbs.getStartupInfo, null);
+        this.postMessage(Verbs.ready, JSON.stringify({eventType: "ready"}));
+        this.postMessage(Verbs.getStartupInfo, JSON.stringify({eventType: "get-startup-info"}));
 
         this._broadcastService.subscribe<ErrorEvent>(BroadcastEvent.Error, error => {
             if (error.details) {
@@ -118,7 +118,8 @@ export class PortalService {
     }
 
     logAction(subcomponent: string, action: string, data?: any): void {
-        const actionStr = JSON.stringify(<Action>{
+        const actionStr = JSON.stringify({
+            eventType: "log-action",
             subcomponent: subcomponent,
             action: action,
             data: data
