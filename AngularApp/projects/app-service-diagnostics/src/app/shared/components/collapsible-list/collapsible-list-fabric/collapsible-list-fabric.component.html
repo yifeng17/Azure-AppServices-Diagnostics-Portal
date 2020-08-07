@@ -2,8 +2,12 @@
   <button class="btn-outer" [attr.aria-expanded]="collapsed ?'false':'true'" (click)="collapsed = !collapsed"
     class="list-header">
     <span class="btn-inner" tabindex="-1">
-      <i class="ms-Icon ms-Icon--ChevronDown custom-caret" [class.custom-caret-down]="collapsed"></i>
-      <span class="pl-3">{{title}}</span>
+      <div style="float:left" class="custom-caret" [class.custom-caret-down]="collapsed">
+        <fab-icon iconName="ChevronDown" ariaLabel="ChevronDown"></fab-icon>
+      </div>
+      <div style="float:left">
+        <span class="pl-3">{{title}}</span>
+      </div>
     </span>
   </button>
 

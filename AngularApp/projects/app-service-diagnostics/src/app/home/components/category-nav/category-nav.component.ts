@@ -135,7 +135,7 @@ export class CategoryNavComponent implements OnInit {
                 title: 'Proactive Tools',
                 tools: this.siteFeatureService.proactiveTools.map(tool => {
                     let isSelected = () => {
-                        return this._route.url.includes("/" + tool.item.id);
+                        return this._route.url.endsWith("/" + tool.item.id);
                     };
                     let icon = this.getIconImagePath(tool.item.id);
                     return new CollapsibleMenuItem(tool.item.name, tool.item.clickAction, isSelected, icon);
@@ -153,7 +153,7 @@ export class CategoryNavComponent implements OnInit {
                 title: 'Diagnostic Tools',
                 tools: this.siteFeatureService.diagnosticTools.filter(tool => this.stackMatchedForTools(tool)).map(tool => {
                     let isSelected = () => {
-                        return this._route.url.includes("/" + tool.item.id);
+                        return this._route.url.endsWith("/" + tool.item.id);
                     };
                     let icon = this.getIconImagePath(tool.item.id);
                     return new CollapsibleMenuItem(tool.item.name, tool.item.clickAction, isSelected, icon);
@@ -171,7 +171,7 @@ export class CategoryNavComponent implements OnInit {
                 title: 'Support Tools',
                 tools: this.siteFeatureService.supportTools.filter(tool => this.stackMatchedForTools(tool)).map(tool => {
                     let isSelected = () => {
-                        return this._route.url.includes("/" + tool.item.id);
+                        return this._route.url.endsWith("/" + tool.item.id);
                     };
                     let icon = this.getIconImagePath(tool.item.id);
                     return new CollapsibleMenuItem(tool.item.name, tool.item.clickAction, isSelected, icon);
@@ -191,7 +191,7 @@ export class CategoryNavComponent implements OnInit {
                     title: 'Premium Tools',
                     tools: this.siteFeatureService.premiumTools.filter(tool => this.stackMatchedForTools(tool)).map(tool => {
                         let isSelected = () => {
-                            return this._route.url.includes("/" + tool.item.id);
+                            return this._route.url.endsWith("/" + tool.item.id);
                         };
                         let icon = this.getIconImagePath(tool.item.id);
                         return new CollapsibleMenuItem(tool.item.name, tool.item.clickAction, isSelected, icon);

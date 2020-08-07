@@ -1,11 +1,11 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges, OnDestroy, Output, EventEmitter } from '@angular/core';
-import { DiagnosticService, RenderingType, DataTableResponseObject, TelemetryEventNames } from 'diagnostic-data';
+import { DiagnosticService, RenderingType, DataTableResponseObject, TelemetryEventNames, DiagnosticData } from 'diagnostic-data';
 import { DaasService } from '../../../../services/daas.service';
 import { SiteService } from '../../../../services/site.service';
 import * as momentNs from 'moment';
-import { CrashMonitoringSettings } from '../../../../models/daas';
+import { CrashMonitoringSettings, DaasSettings } from '../../../../models/daas';
 import moment = require('moment');
-import { Subscription, interval } from 'rxjs';
+import { Subscription, interval, Observable } from 'rxjs';
 import { SiteDaasInfo } from '../../../../models/solution-metadata';
 import { Globals } from '../../../../../globals'
 import { TelemetryService } from 'diagnostic-data';
@@ -39,6 +39,7 @@ export class CrashMonitoringAnalysisComponent implements OnInit, OnChanges, OnDe
   savingSettings: boolean = false;
   crashMonitoringHistory: CrashMonitoringData[] = [];
   refreshingHistory: boolean = true;
+  blobSasUriObservable: Observable<DaasSettings>;
 
   // For tooltip display
   directionalHint = DirectionalHint.rightTopEdge;
@@ -64,9 +65,11 @@ export class CrashMonitoringAnalysisComponent implements OnInit, OnChanges, OnDe
     private _siteService: SiteService) { }
 
   ngOnInit() {
+
     this._siteService.getSiteDaasInfoFromSiteMetadata().subscribe(site => {
       this.siteToBeDiagnosed = site;
-      this._daasService.getBlobSasUri(site).subscribe(resp => {
+      this.blobSasUriObservable = this._daasService.getBlobSasUri(site);
+      this.blobSasUriObservable.subscribe(resp => {
         if (resp.BlobSasUri) {
           this.blobSasUri = resp.BlobSasUri;
         }
@@ -103,16 +106,30 @@ export class CrashMonitoringAnalysisComponent implements OnInit, OnChanges, OnDe
 
       this._diagnosticService.getDetector(crashMonitoringDetectorName, _startTime.format(this.stringFormat), _endTime.format(this.stringFormat), true, false, null, null).subscribe(detectorResponse => {
         let rawTable = detectorResponse.dataset.find(x => x.renderingProperties.type === RenderingType.Table) // && x.table.tableName === "CrashMonitoring");
-        this.loading = false;
-        if (rawTable != null && rawTable.table != null && rawTable.table.rows != null && rawTable.table.rows.length > 0) {
-          let crashMonitoringDatas = this.parseData(rawTable.table);
-          this.dumpsCollected = crashMonitoringDatas.length;
-          this.populateInsights(crashMonitoringDatas);
-          if (this.dumpsCollected === this.crashMonitoringSettings.MaxDumpCount) {
-            this.monitoringEnabled = false;
-          }
+        if (this.blobSasUri) {
+          this.loadDetectorData(rawTable);
+        } else {
+          this.blobSasUriObservable.subscribe(resp => {
+            if (resp.BlobSasUri) {
+              this.blobSasUri = resp.BlobSasUri;
+              this.loadDetectorData(rawTable);
+            }
+          })
         }
+
       });
+    }
+  }
+
+  loadDetectorData(rawTable: DiagnosticData) {
+    this.loading = false;
+    if (rawTable != null && rawTable.table != null && rawTable.table.rows != null && rawTable.table.rows.length > 0) {
+      let crashMonitoringDatas = this.parseData(rawTable.table);
+      this.dumpsCollected = crashMonitoringDatas.length;
+      this.populateInsights(crashMonitoringDatas);
+      if (this.dumpsCollected === this.crashMonitoringSettings.MaxDumpCount) {
+        this.monitoringEnabled = false;
+      }
     }
   }
 
