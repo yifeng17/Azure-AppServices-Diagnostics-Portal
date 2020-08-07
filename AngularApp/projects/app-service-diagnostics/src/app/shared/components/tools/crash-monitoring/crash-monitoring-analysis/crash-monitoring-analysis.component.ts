@@ -112,8 +112,8 @@ export class CrashMonitoringAnalysisComponent implements OnInit, OnChanges, OnDe
           this.blobSasUriObservable.subscribe(resp => {
             if (resp.BlobSasUri) {
               this.blobSasUri = resp.BlobSasUri;
+              this.loadDetectorData(rawTable);
             }
-            this.loadDetectorData(rawTable);
           })
         }
 
