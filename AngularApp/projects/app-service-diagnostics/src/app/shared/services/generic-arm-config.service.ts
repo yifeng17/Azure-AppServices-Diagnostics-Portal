@@ -101,6 +101,7 @@ export class GenericArmConfigService {
           categories: [{
             id: '',
             name: '',
+            overviewDetectorId: '',
             description: '',
             keywords: [],
             color: '',
@@ -182,26 +183,26 @@ export class GenericArmConfigService {
 
             //Process supported support topics for live chat
             let currMergedSupportTopicIds:string[] = [];
-            
-            if(this.overrideConfig.liveChatConfig.supportTopicIds && this.overrideConfig.liveChatConfig.supportTopicIds.length > 0 && 
-              (!this.resourceConfig.liveChatConfig.supportTopicIds 
-                ||  (this.resourceConfig.liveChatConfig.supportTopicIds && this.resourceConfig.liveChatConfig.supportTopicIds.length < 1)  
-              ) 
+
+            if(this.overrideConfig.liveChatConfig.supportTopicIds && this.overrideConfig.liveChatConfig.supportTopicIds.length > 0 &&
+              (!this.resourceConfig.liveChatConfig.supportTopicIds
+                ||  (this.resourceConfig.liveChatConfig.supportTopicIds && this.resourceConfig.liveChatConfig.supportTopicIds.length < 1)
+              )
               ) {
                 //Valid support topics exist only in overrideConfig
                 currMergedSupportTopicIds = this.overrideConfig.liveChatConfig.supportTopicIds;
             }
             else {
-              if(this.resourceConfig.liveChatConfig.supportTopicIds && this.resourceConfig.liveChatConfig.supportTopicIds.length > 0 && 
-                (!this.overrideConfig.liveChatConfig.supportTopicIds 
-                  ||  (this.overrideConfig.liveChatConfig.supportTopicIds && this.overrideConfig.liveChatConfig.supportTopicIds.length < 1)  
-                ) 
+              if(this.resourceConfig.liveChatConfig.supportTopicIds && this.resourceConfig.liveChatConfig.supportTopicIds.length > 0 &&
+                (!this.overrideConfig.liveChatConfig.supportTopicIds
+                  ||  (this.overrideConfig.liveChatConfig.supportTopicIds && this.overrideConfig.liveChatConfig.supportTopicIds.length < 1)
+                )
                 ) {
                   //Valid support topics exist only in resourceConfig
                   currMergedSupportTopicIds = this.resourceConfig.liveChatConfig.supportTopicIds;
               }
               else {
-                if(this.overrideConfig.liveChatConfig.supportTopicIds && this.resourceConfig.liveChatConfig.supportTopicIds && 
+                if(this.overrideConfig.liveChatConfig.supportTopicIds && this.resourceConfig.liveChatConfig.supportTopicIds &&
                   this.overrideConfig.liveChatConfig.supportTopicIds.length > 0 && this.resourceConfig.liveChatConfig.supportTopicIds.length > 0
                   ) {
                     //Support topics exist in both resourceConfig and overrideConfig, merge them
@@ -221,7 +222,7 @@ export class GenericArmConfigService {
                     currMergedSupportTopicIds.filter((value:string, index: number, self: string[]) => {
                       self[index] = self[index].toLowerCase();
                     });
-                    
+
                 } //Else of this means that support topics do not exist in either and it is fine since we already initialize currMergedSupportTopicIds as an empty array.
               }
             }
@@ -245,6 +246,7 @@ export class GenericArmConfigService {
             let currMergedCategory: Category = {
               id: '',
               name: '',
+              overviewDetectorId: '',
               description: '',
               keywords: [],
               color: '',
