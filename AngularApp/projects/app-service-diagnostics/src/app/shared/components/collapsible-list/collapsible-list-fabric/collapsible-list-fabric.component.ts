@@ -6,7 +6,7 @@ import { CollapsibleListItemComponent } from '../collapsible-list-item.component
   templateUrl: './collapsible-list-fabric.component.html',
   styleUrls: ['./collapsible-list-fabric.component.scss']
 })
-export class CollapsibleListFabricComponent  {
+export class CollapsibleListFabricComponent {
 
   @Input() title: string;
   @Input() collapsed: boolean;
