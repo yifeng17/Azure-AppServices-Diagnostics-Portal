@@ -69,9 +69,7 @@ export class CrashMonitoringAnalysisComponent implements OnInit, OnChanges, OnDe
     this._siteService.getSiteDaasInfoFromSiteMetadata().subscribe(site => {
       this.siteToBeDiagnosed = site;
       this.blobSasUriObservable = this._daasService.getBlobSasUri(site);
-      console.log ("Firing first observable");
       this.blobSasUriObservable.subscribe(resp => {
-        console.log ("first observable finished");
         if (resp.BlobSasUri) {
           this.blobSasUri = resp.BlobSasUri;
         }
@@ -111,9 +109,7 @@ export class CrashMonitoringAnalysisComponent implements OnInit, OnChanges, OnDe
         if (this.blobSasUri) {
           this.loadDetectorData(rawTable);
         } else {
-          console.log ("second observable call");
           this.blobSasUriObservable.subscribe(resp => {
-            console.log ("second observable call finished");
             if (resp.BlobSasUri) {
               this.blobSasUri = resp.BlobSasUri;
             }
