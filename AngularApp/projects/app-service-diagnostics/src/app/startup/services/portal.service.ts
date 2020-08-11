@@ -154,13 +154,12 @@ export class PortalService {
 
         const data = event.data.data;
         const methodName = event.data.kind;
-        console.log('[iFrame] Received mesg: ' + methodName, event);
+        console.log('[iFrame] Received validated mesg: ' + methodName, event);
 
         if (methodName === Verbs.sendStartupInfo) {
             const info = <StartupInfo>data;
             this.sessionId = info.sessionId;
             this.startupInfoObservable.next(info);
-            this.logMessage(LogEntryLevel.Warning, 'Sending log message from Iframe');
         } else if (methodName === Verbs.sendAppInsightsResource) {
             const aiResource = data;
             this.appInsightsResourceObservable.next(aiResource);
