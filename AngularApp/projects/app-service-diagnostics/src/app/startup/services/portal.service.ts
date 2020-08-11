@@ -147,7 +147,6 @@ export class PortalService {
     }
 
     private iframeReceivedMsg(event: Event): void {
-        console.log("[iFrame] Received messsage", event);
         if (!event || !event.data || event.data.signature !== this.portalSignature) {
             return;
         }
