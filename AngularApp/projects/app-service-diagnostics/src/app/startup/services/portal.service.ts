@@ -147,9 +147,8 @@ export class PortalService {
     }
 
     private iframeReceivedMsg(event: Event): void {
-        console.log("[iFrame] Receiving messsage", event);
+        console.log("[iFrame] Received messsage", event);
         if (!event || !event.data || event.data.signature !== this.portalSignature) {
-            console.log("[iFrame] validation failed, return event", event);
             return;
         }
 
@@ -161,8 +160,6 @@ export class PortalService {
             const info = <StartupInfo>data;
             this.sessionId = info.sessionId;
             this.startupInfoObservable.next(info);
-            console.log("[iFrame] Received send-startupinfo, event", event);
-            console.log("[iFrame] Sending log message now, event", event);
             this.logMessage(LogEntryLevel.Warning, 'Sending log message from Iframe');
         } else if (methodName === Verbs.sendAppInsightsResource) {
             const aiResource = data;
@@ -197,7 +194,6 @@ export class PortalService {
                 kind: verb,
                 data: data
             }, this.shellSrc);
-            console.log("[IFrame] post message", verb, data);
         }
     }
 
