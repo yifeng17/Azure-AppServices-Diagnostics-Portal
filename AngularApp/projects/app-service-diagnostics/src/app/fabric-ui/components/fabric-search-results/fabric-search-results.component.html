@@ -1,6 +1,6 @@
 <div role="search" class="search-result-container" #fabSearchResult>
   <div class="search-box">
-    <fab-search-box id="fabSearchBox" tabindex="0" type="search" placeholder="Search" [value]="searchValue" [ariaLabel]="inputAriaLabel"
+    <fab-search-box id="fabSearchBox" type="search" placeholder="Search" [value]="searchValue" [ariaLabel]="inputAriaLabel"
       (onChange)="updateSearchValue($event)" (onFocus)="onSearchBoxFocus()" (onBlur)="onBlurHandler()" 
       (onEscape)="clearSearchWithKey()" aria-controls="search-results">
     </fab-search-box>
@@ -11,7 +11,7 @@
 
       <!-- for search results in home page -->
       <fab-details-list *ngIf="!isInCategory" [items]="features" [isHeaderVisible]="false"
-        [selectionMode]="selectionMode" (onItemInvoked)="invokeHandler($event)">
+        [selectionMode]="selectionMode" (onItemInvoked)="invokeHandler($event)" [ariaLabel]="'Search Results, use arrow up and down key to go through each result'">
         <columns>
           <fab-details-list-column>
             <render>
