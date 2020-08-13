@@ -79,7 +79,7 @@
   <markdown *ngIf="supportDocumentContent.length>0" #markdownDiv [data]="supportDocumentContent"></markdown>
 </data-container>
 
-<div *ngIf="isAnalysisView && supportsDownTime && downTimes.length > 0" class="dynamic-data-container" tabindex="0"
+<div *ngIf="isAnalysisView && supportsDownTime && downTimes.length > 0 && !!selectedDownTime && !!selectedDownTime.StartTime && !!selectedDownTime.EndTime" class="dynamic-data-container" tabindex="0"
   role="text"
   attr.aria-label="Showing results from {{ getTimestampAsString(selectedDownTime.StartTime) }} to {{ getTimestampAsString(selectedDownTime.EndTime) }}">
   <h2 aria-hidden="true">Showing results from {{ getTimestampAsString(selectedDownTime.StartTime) }} to
