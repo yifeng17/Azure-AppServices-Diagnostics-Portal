@@ -9,6 +9,7 @@ import { BroadcastEvent } from '../models/broadcast-event';
 export class PortalService {
     public sessionId = '';
     private portalSignature: string = 'FxFrameBlade';
+    private iFrameSignature: string = 'AppServiceDiagnosticsIFrame';
     private startupInfoObservable: ReplaySubject<StartupInfo>;
     private appInsightsResourceObservable: ReplaySubject<any>;
 
