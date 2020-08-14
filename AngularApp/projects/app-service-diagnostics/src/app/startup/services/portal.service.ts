@@ -190,6 +190,7 @@ export class PortalService {
             try {
                 var dataJsonObject = data === null ? {} : JSON.parse(data);
                 const dataObjectWithEventType = {
+                    signature: this.iFrameSignature,
                     eventType: verb,
                     ...dataJsonObject,
                 }
