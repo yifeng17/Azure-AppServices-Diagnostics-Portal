@@ -6,10 +6,13 @@
     <ng-template ngFor let-formInput [ngForOf]="element.formInputs">
       <div class="form-group row" *ngIf="isText(formInput.inputType)">
         <div class="col-sm-8">
-          <label class="col-sm-4 col-md-2 col-form-label"> {{formInput.inputLabel}} </label>
+          <label class="col-sm-4 col-md-4 col-form-label"> {{formInput.inputLabel}}
+            <span class="fa form-tooltip fa-info-circle" *ngIf="formInput.tooltip != ''"> <span class="form-tooltiptext"> {{formInput.tooltip}} </span> </span>
+          </label>
           <div class="col-sm-8 col-md-6">
             <input type="text" class="form-control" [id]=formInput.internalId [(ngModel)]="formInput.inputValue"
               (keyup)="inputChanged(formInput)" maxlength="150">
+
             <div class="text-danger" *ngIf="formInput.displayValidation">Please provide a value.</div>
           </div>
 
@@ -17,12 +20,14 @@
       </div>
       <div class="form-group row" *ngIf="isRadioButtonList(formInput.inputType)">
         <div class="col-sm-8">
-          <label class="col-sm-4 col-md-2 col-form-label"> {{formInput.inputLabel}} </label>
+          <label class="col-sm-4 col-md-4 col-form-label" [class.col-md-4]="formInput.tooltip != ''" [class.col-md-2]="formInput.tooltip == ''"> {{formInput.inputLabel}}
+          <span class="fa form-tooltip fa-info-circle" style="display: inline;" *ngIf="formInput.tooltip != ''" > <span class="form-tooltiptext"> {{formInput.tooltip}}  </span></span>
+          </label>
           <div class="col-sm-8 col-md-6">
             <ng-container *ngFor="let entry of formInput.items">
               <div class="radio">
                 <label><input type="radio" [name]=formInput.internalId [(ngModel)]="formInput.inputValue"
-                    [value]="entry.value">{{ entry.text }}</label>
+                    [value]="entry.value">{{ entry.text }}   <span class="fa form-tooltip fa-info-circle" *ngIf="entry.tooltip != ''"> <span class="form-tooltiptext"> {{entry.tooltip}}  </span></span> </label>
               </div>
             </ng-container>
           </div>

@@ -10,3 +10,25 @@
 .form-title {
     margin-bottom: 20px;
 }
+.form-tooltip{
+    margin-left: 5px;
+}
+.form-tooltiptext {
+    visibility: hidden;
+    background: #2d2d2d;
+  }
+
+  .fa-info-circle:hover .form-tooltiptext{
+    visibility: visible;
+    opacity: 1;
+    width: 100%;
+    white-space: nowrap;
+    z-index: 999;
+    margin-top: 6px;
+    position: relative;
+    border: 1px solid black;
+    padding: 3px;
+    font-size: 12px;
+    color: #fff;
+  }
+

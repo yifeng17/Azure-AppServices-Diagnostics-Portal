@@ -17,29 +17,30 @@ export class FormInput {
     inputValue: any;
     isRequired: boolean = false;
     displayValidation: boolean = false;
+    tooltip: string;
 
-    constructor(internalId: string, id: number, inputType: InputType, label: string, isRequired: boolean) {
+    constructor(internalId: string, id: number, inputType: InputType, label: string, isRequired: boolean, tooltip: string) {
         this.internalId = internalId;
         this.inputId = id;
         this.inputType = inputType;
         this.inputLabel = label;
         this.isRequired = isRequired;
-
+        this.tooltip = tooltip;
     }
 }
 
 export class FormButton extends FormInput {
     buttonStyle: ButtonStyles;
     constructor(internalId: string, id: number, inputType: InputType, label: string, isRequired: boolean, buttonStyle?: ButtonStyles) {
-        super(internalId, id, inputType, label, isRequired);
+        super(internalId, id, inputType, label, isRequired, "");
         this.buttonStyle = buttonStyle != undefined ? buttonStyle : ButtonStyles.Primary;
     }
 }
 
 export class RadioButtonList extends FormInput {
     items: ListItem[] = [];
-    constructor(internalId: string, id: number, inputType: InputType, label: string, items: ListItem[]) {
-        super(internalId, id, inputType, label, false);
+    constructor(internalId: string, id: number, inputType: InputType, label: string, items: ListItem[], tooltip: string) {
+        super(internalId, id, inputType, label, false, tooltip);
         this.items = items;
         items.forEach(x => {
             if (x.isSelected) {

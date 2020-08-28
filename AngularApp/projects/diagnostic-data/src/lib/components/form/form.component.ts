@@ -79,7 +79,8 @@ export class FormComponent extends DataRenderBaseComponent {
               formInputs[ip]["inputId"],
               formInputs[ip]["inputType"],
               formInputs[ip]["label"],
-              formInputs[ip]["items"]));
+              formInputs[ip]["items"],
+              formInputs[ip]["toolTip"]));
           }
           else {
             this.detectorForms[i].formInputs.push(new FormInput(
@@ -87,7 +88,8 @@ export class FormComponent extends DataRenderBaseComponent {
               formInputs[ip]["inputId"],
               formInputs[ip]["inputType"],
               formInputs[ip]["label"],
-              formInputs[ip]["isRequired"]));
+              formInputs[ip]["isRequired"],
+              formInputs[ip]["toolTip"]));
           }
         }
       }
