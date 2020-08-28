@@ -8,7 +8,7 @@
         <div class="col-sm-8">
           <label class="col-sm-4 col-md-2 col-form-label"> {{formInput.inputLabel}}
             <fab-tooltip-host  *ngIf="formInput.tooltip != ''" [content]="formInput.tooltip" [directionalHint]="directionalHint">
-              <span class="fa form-tooltip fa-info-circle"></span>
+              <span class="fa form-tooltip" [ngClass]="formInput.tooltipIcon"></span>
             </fab-tooltip-host>
           </label>
           <div class="col-sm-8 col-md-6">
@@ -24,7 +24,7 @@
         <div class="col-sm-8">
           <label class="col-sm-4 col-md-2 col-form-label" [class.col-md-4]="formInput.tooltip != ''" [class.col-md-2]="formInput.tooltip == ''"> {{formInput.inputLabel}}
             <fab-tooltip-host  *ngIf="formInput.tooltip != ''" [content]="formInput.tooltip" [directionalHint]="directionalHint">
-              <span class="fa form-tooltip fa-info-circle" style="display: inline;"></span>
+              <span class="fa form-tooltip" [ngClass]="formInput.tooltipIcon" style="display: inline;"></span>
             </fab-tooltip-host>
           </label>
           <div class="col-sm-8 col-md-6">
@@ -33,7 +33,7 @@
                 <label><input type="radio" [name]=formInput.internalId [(ngModel)]="formInput.inputValue"
                     [value]="entry.value">{{ entry.text }}
                     <fab-tooltip-host *ngIf="entry.tooltip != ''" [content]="entry.tooltip" [directionalHint]="directionalHint">
-                      <span class="fa form-tooltip fa-info-circle" >
+                      <span class="fa form-tooltip" [ngClass]="entry.tooltipIcon" >
                       </span>
                     </fab-tooltip-host>
                     </label>

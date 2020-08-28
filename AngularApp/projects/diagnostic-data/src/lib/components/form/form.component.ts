@@ -81,7 +81,9 @@ export class FormComponent extends DataRenderBaseComponent {
               formInputs[ip]["inputType"],
               formInputs[ip]["label"],
               formInputs[ip]["items"],
-              formInputs[ip]["toolTip"]));
+              formInputs[ip]["toolTip"],
+              formInputs[ip]["tooltipIcon"] != "" ? formInputs[ip]["tooltipIcon"] : "fa-info-circle"
+              ));
           }
           else {
             this.detectorForms[i].formInputs.push(new FormInput(
@@ -90,7 +92,8 @@ export class FormComponent extends DataRenderBaseComponent {
               formInputs[ip]["inputType"],
               formInputs[ip]["label"],
               formInputs[ip]["isRequired"],
-              formInputs[ip]["toolTip"]));
+              formInputs[ip]["toolTip"],
+              formInputs[ip]["tooltipIcon"] != "" ? formInputs[ip]["tooltipIcon"] : "fa-info-circle"));
           }
         }
       }
