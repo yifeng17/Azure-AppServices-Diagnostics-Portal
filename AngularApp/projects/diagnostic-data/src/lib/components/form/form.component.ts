@@ -81,7 +81,7 @@ export class FormComponent extends DataRenderBaseComponent {
               formInputs[ip]["inputType"],
               formInputs[ip]["label"],
               formInputs[ip]["items"],
-              formInputs[ip]["toolTip"],
+              formInputs[ip]["toolTip"] != undefined ? formInputs[ip]["toolTip"] : "",
               formInputs[ip]["tooltipIcon"] != "" ? formInputs[ip]["tooltipIcon"] : "fa-info-circle"
               ));
           }
@@ -92,7 +92,7 @@ export class FormComponent extends DataRenderBaseComponent {
               formInputs[ip]["inputType"],
               formInputs[ip]["label"],
               formInputs[ip]["isRequired"],
-              formInputs[ip]["toolTip"],
+              formInputs[ip]["toolTip"] != undefined ? formInputs[ip]["toolTip"] : "",
               formInputs[ip]["tooltipIcon"] != "" ? formInputs[ip]["tooltipIcon"] : "fa-info-circle"));
           }
         }
