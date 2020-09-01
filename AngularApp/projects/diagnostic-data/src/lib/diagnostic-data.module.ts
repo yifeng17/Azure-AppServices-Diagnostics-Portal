@@ -99,6 +99,7 @@ import { InViewportModule } from "ng-in-viewport";
 import { ParseResourceService } from './services/parse-resource.service';
 import { MarkdownTextComponent } from './components/markdown-text/markdown-text.component';
 import { DataTableV4Component } from './components/data-table-v4/data-table-v4.component';
+import { NetworkGraphComponent } from './components/network-graph/network-graph.component';
 
 @NgModule({
   imports: [
@@ -152,7 +153,8 @@ import { DataTableV4Component } from './components/data-table-v4/data-table-v4.c
     RenderFilterPipe,
     DynamicInsightV4Component,
     MarkdownTextComponent,
-    DataTableV4Component
+    DataTableV4Component,
+    NetworkGraphComponent
   ],
   entryComponents: [DetectorListAnalysisComponent],
   exports: [
