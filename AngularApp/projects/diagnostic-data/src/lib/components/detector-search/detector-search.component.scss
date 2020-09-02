@@ -106,3 +106,12 @@
     font-weight: bold;
     margin-bottom: 5px;
 }
+
+.more-results-button{
+    position: fixed;
+    right: 20px;
+    bottom: 5px;
+    cursor: pointer;
+    z-index: 1000;
+    color: white;
+}

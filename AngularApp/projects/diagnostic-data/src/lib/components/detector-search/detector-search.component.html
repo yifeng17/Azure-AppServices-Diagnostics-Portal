@@ -1,4 +1,4 @@
-<div inViewport [inViewportOptions]="{ threshold: [0.3, 0.7] }" (inViewportAction)="listenVisibility($event)" role="search">
+<div inViewport [inViewportOptions]="{ threshold: [0.3, 0.7] }" (inViewportAction)="listenVisibility($event)" role="search" class="search-container-for-scroll">
 <div *ngIf="showSearchBar && (searchConfiguration.DetectorSearchEnabled || searchConfiguration.WebSearchEnabled)">
     <div style="display:block;margin-bottom:10px;margin-top:10px;" tabindex="0">
         <span class="span-h1">Didn't find a solution? Give us more details and we'll recommend diagnostics & docs:</span>
@@ -170,4 +170,8 @@
 <div style="margin-left:20px;margin-top:20px;" *ngIf="searchConfiguration.WebSearchEnabled">
     <web-search [searchTerm]="searchTerm" [searchId]="searchId" [isChildComponent]="true" [(searchResults)]="webSearchResults" [webSearchConfig]="searchConfiguration.WebSearchConfiguration"></web-search>
 </div>
+<div *ngIf="showScrollButton && (detectors.length>0 || !(!webSearchResults || webSearchResults.length==0))" class="more-results-button">
+    <fab-primary-button
+        text='More Results' [iconProps]="moreResultsIconProps" [styles]="moreResultsButtonStyles" (onClick)="scrollToResults()">
+    </fab-primary-button>
 </div>

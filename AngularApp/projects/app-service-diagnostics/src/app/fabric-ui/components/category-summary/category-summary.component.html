@@ -4,7 +4,7 @@
     <section *ngIf="category" class="sidebar" id="sidebar">
       <category-nav></category-nav>
     </section>
-    <section [ngClass]="{'content' : category,'content-hide-nav' : !category}">
+    <section [ngClass]="{'content' : category,'content-hide-nav' : !category}" class="mainContentSection">
       <div class="col-md col-ms col-lg" style="width:98%; display: inline-block;">
         <detector-command-bar (openPanel)="setFocusOnCallpsibleButton()"></detector-command-bar>
         <router-outlet></router-outlet>

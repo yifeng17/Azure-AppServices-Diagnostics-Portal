@@ -76,6 +76,7 @@ export class DetectorSearchComponent extends DataRenderBaseComponent implements 
     
     initialDelay: number = 5000;
     isVisible: boolean = false;
+    showScrollButton: boolean = true;
     isListening: boolean = true;
     componentStartTime: number;
     showCharAlert: boolean = false;
@@ -174,6 +175,37 @@ export class DetectorSearchComponent extends DataRenderBaseComponent implements 
             ts: Math.floor(new Date().getTime() / 1000).toString(),
         });
     }
+
+    scrollToResults() {
+        this.logEvent(TelemetryEventNames.MoreResultsButtonClicked, {
+            parentDetectorId: this.detector,
+            searchId: this.searchId,
+            ts: Math.floor(new Date().getTime() / 1000).toString(),
+        });
+        var elementToScroll = (document.querySelector(".mainContentSection") || document.getElementById("app-content") || document.body);
+        var elementToScrollTo = document.querySelector(".search-container-for-scroll") as HTMLElement;
+        if (elementToScroll && elementToScrollTo) {
+            elementToScroll.scrollTop = elementToScrollTo.offsetTop;
+            this.showScrollButton = false;
+        }
+    }
+
+    moreResultsIconProps: any = {
+        iconName: "Down",
+        styles: {
+            root: {
+                fontSize: "13px",
+                fontWeight: 600
+            }
+        }
+    };
+
+    moreResultsButtonStyles: any = {
+        root: { height: "28px"},
+        flexContainer: {
+            flexDirection: "row-reverse"
+        }
+    };
 
     announceAlert() {
         this.showCharAlert = true;

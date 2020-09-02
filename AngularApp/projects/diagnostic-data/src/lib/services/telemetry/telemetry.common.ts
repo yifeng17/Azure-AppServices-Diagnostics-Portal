@@ -28,6 +28,7 @@ export const TelemetryEventNames = {
     ChangeAnalysisChangeClicked: 'ChangeAnalysisChangeClicked',
     ChangeAnalysisChangeFeedbackClicked: 'ChangeAnalysisChangeFeedbackClicked',
     SearchResultsLoaded: 'SearchResultsLoaded',
+    MoreResultsButtonClicked: 'MoreResultsButtonClicked',
     SearchQueryResults: 'SearchQueryResults',
     SearchResultClicked: 'SearchResultClicked',
     SearchResultFeedback: 'SearchResultFeedback',
