@@ -96,7 +96,7 @@ export class SequenceDiagram{
     addRoles(roles:Role[]):void{
         const y = 20, interval = 200;
       
-        roles.forEach(role=>{
+        roles.sort((a,b)=>a.position-b.position).forEach(role=>{
             let sdRole = new joint.shapes.sd.Role({ position: { x: this.currentRoleXPosition, y: y }})
             this.currentRoleXPosition += interval;
             sdRole.setName(role.name);
@@ -110,7 +110,7 @@ export class SequenceDiagram{
     }
 
     addMessages(messages:Message[]):void{
-        const interval = 100;
+        const interval = 75;
         messages.forEach(msg=>{
             var message = new joint.shapes.sd.Message();
             let lifeline1 = this.RoleMap[msg.startRoleId];
@@ -134,7 +134,7 @@ export class SequenceDiagram{
 
 export class Role{
     name:string;
-    //position: number;
+    position: number;
     id:number;
 
     public constructor(init?:Partial<Role>) {
