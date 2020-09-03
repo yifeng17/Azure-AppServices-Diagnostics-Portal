@@ -29,7 +29,7 @@ export class NetworkGraphComponent  extends DataRenderBaseComponent implements O
 
    protected processData(data: DiagnosticData) {
     super.processData(data);
-    let dia = joint.dia;
+    /*let dia = joint.dia;
     let graph = new joint.dia.Graph;
 
     let paper = new joint.dia.Paper({
@@ -62,7 +62,7 @@ export class NetworkGraphComponent  extends DataRenderBaseComponent implements O
   private sequence(){
     let dia = joint.dia;
     let sd = joint.shapes.sd;
-    let paperElement = jQuery("#paper");
+    let paperElement = jQuery("#network-graph-paper");
     var paperWidth = 800;
     var paperHeight = 600;
 
@@ -145,8 +145,10 @@ export class NetworkGraphComponent  extends DataRenderBaseComponent implements O
 
     var message1 = new sd.Message();
     message1.setFromTo(lifeline1, lifeline2);
+   
     message1.setStart(50);
     message1.setDescription('HTTP GET Request');
+    message1.setColor("red");
     message1.addTo(graph);
 
     var message2 = new sd.Message();

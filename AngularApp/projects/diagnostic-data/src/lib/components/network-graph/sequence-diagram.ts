@@ -25,6 +25,7 @@ declare module 'jointjs' {
                 setStart(y:number):void;
                 setFromTo(from:any, to:any):void;
                 setDescription(description:string):void;
+                setColor(color:string):void;
             }
         }
     }
@@ -152,7 +153,8 @@ const Message = joint.shapes.standard.Link.define('sd.Message', {
             strokeWidth: 20,
             cursor: 'grab'
         },
-    }
+    },
+    color: "#4666E5"
 }, {
     defaultLabel: {
         markup: [{
@@ -195,7 +197,13 @@ const Message = joint.shapes.standard.Link.define('sd.Message', {
         });
     },
     setDescription: function(description) {
-        this.labels([{ attrs: { labelText: { text: description }}}]);
+        this.labels([{ attrs: { labelBody: {fill: this.attributes.color}, labelText: { text: description }}}]);
+    },
+    setColor: function(color: string){
+        this.prop({attrs:{line:{stroke: color}}, color: color});
+        for(let i in this.attributes.labels){
+            this.attributes.labels[i].attrs.labelBody = {fill: color};
+        }
     }
 });
 
