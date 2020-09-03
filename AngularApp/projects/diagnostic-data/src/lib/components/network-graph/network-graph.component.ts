@@ -9,6 +9,7 @@ import AccessibilityModule from 'highcharts/modules/accessibility';
 import  HighchartsNetworkgraph from "highcharts/modules/networkgraph";
 import * as jQuery from 'jquery';
 import * as joint from 'jointjs';
+import {SequenceDiagram, Role, Message} from './sequence-diagram'
 import './sequence-diagram'
 
 
@@ -29,7 +30,8 @@ export class NetworkGraphComponent  extends DataRenderBaseComponent implements O
 
    protected processData(data: DiagnosticData) {
     super.processData(data);
-    /*let dia = joint.dia;
+    /*//simple sample jointjs diagram
+    let dia = joint.dia;
     let graph = new joint.dia.Graph;
 
     let paper = new joint.dia.Paper({
@@ -55,11 +57,30 @@ export class NetworkGraphComponent  extends DataRenderBaseComponent implements O
     });
 
     graph.addCells([rect, rect2, link]);//*/
-    this.sequence();
+    //this.sequence();
+
+    let roles = [
+      new Role({name:"Browser", id:1}),
+      new Role({name:"FrontEnd", id:2}),
+      new Role({name:"Worker", id:3})
+    ];
+
+    let messages = [
+      new Message({text:"Get /home", status:1, startRoleId:1, endRoleId:2}),
+      new Message({text:"ServerRouted 10.3.15.9", status:1, startRoleId:2, endRoleId:3}),
+      new Message({text:"HTTP Response 500", status:0, startRoleId:3, endRoleId:2}),
+      new Message({text:"ServerError", status:0, startRoleId:2, endRoleId:1})
+    ];
+
+    let diagram = new SequenceDiagram();
+    diagram.addRoles(roles);
+    diagram.addMessages(messages);
+    diagram.unfreeze();//*/
   }
 
 
   private sequence(){
+    //sample sequence diagram
     let dia = joint.dia;
     let sd = joint.shapes.sd;
     let paperElement = jQuery("#network-graph-paper");
@@ -114,7 +135,7 @@ export class NetworkGraphComponent  extends DataRenderBaseComponent implements O
     role1.setName('Browser');
     role1.addTo(graph);
 
-    var role2 = new sd.Role({ position: { x: 400, y: 20 }});
+    /*var role2 = new sd.Role({ position: { x: 400, y: 20 }});
     role2.setName('Web Server');
     role2.addTo(graph);
 
@@ -129,13 +150,13 @@ export class NetworkGraphComponent  extends DataRenderBaseComponent implements O
     backend.fitRoles();
     backend.listenTo(graph, 'change:position', function(cell) {
         if (cell.isEmbeddedIn(this)) this.fitRoles();
-    });
+    });//*/
 
     var lifeline1 = new sd.Lifeline();
     lifeline1.attachToRole(role1, paperHeight);
     lifeline1.addTo(graph);
 
-    var lifeline2 = new sd.Lifeline();
+    /*var lifeline2 = new sd.Lifeline();
     lifeline2.attachToRole(role2, paperHeight);
     lifeline2.addTo(graph);
 
@@ -171,7 +192,7 @@ export class NetworkGraphComponent  extends DataRenderBaseComponent implements O
 
     var lifespan1 = new sd.LifeSpan();
     lifespan1.attachToMessages(message2, message3);
-    lifespan1.addTo(graph);
+    lifespan1.addTo(graph);//*/
 
     paper.unfreeze();
   }
