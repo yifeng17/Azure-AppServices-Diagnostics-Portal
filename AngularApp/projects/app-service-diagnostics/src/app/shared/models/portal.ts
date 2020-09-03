@@ -34,6 +34,7 @@ export enum AppType {
 
 export interface Event {
     data: Data;
+    srcElement: any;
 }
 
 export interface Data {

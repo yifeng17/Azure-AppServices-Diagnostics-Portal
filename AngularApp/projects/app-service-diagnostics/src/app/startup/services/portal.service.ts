@@ -153,7 +153,12 @@ export class PortalService {
 
         const data = event.data.data;
         const methodName = event.data.kind;
-        console.log('[iFrame] Received validated mesg: ' + methodName, event);
+        console.log('[iFrame] Received validated mesg: ' + methodName, event, event.srcElement, event.srcElement.location, event.srcElement.location.host);
+
+        if (event.srcElement.location.host.toString().includes("appservice-diagnostics-am2"))
+        {
+            console.log('[iFrame]: Called from feature flag Iframe');
+        }
 
         if (methodName === Verbs.sendStartupInfo) {
             const info = <StartupInfo>data;
