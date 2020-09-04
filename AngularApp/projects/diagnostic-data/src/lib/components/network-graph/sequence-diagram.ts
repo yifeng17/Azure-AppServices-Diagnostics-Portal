@@ -23,7 +23,7 @@ declare module 'jointjs' {
             class Message extends joint.shapes.standard.Link {
                 setStart(y:number):void;
                 setFromTo(from:any, to:any):void;
-                setDescription(description:string):void;
+                setDescription(description:string, limit:number):void;
                 setColor(color:string):void;
             }
         }
@@ -142,7 +142,7 @@ export class SequenceDiagram{
             if(msg.status==0){
                 message.setColor("red");
             }
-            message.setDescription(msg.text.length>msgLimitLength?msg.text.substr(0,msgLimitLength-3)+"...":msg.text);
+            message.setDescription(msg.text, msgLimitLength);
             message.addTo(this.graph);
         });
 
@@ -351,7 +351,11 @@ export class Message{
                 target: { id: to.id }
             });
         },
-        setDescription: function(description) {
+        setDescription: function(description:string, limit:number) {
+            if(description.length>limit){
+                this.prop({attrs:{root:{title: description}}});
+                description = description.substr(0,limit-3)+"...";
+            }
             this.labels([{ attrs: { labelBody: {fill: this.attributes.color}, labelText: { text: description }}}]);
         },
         setColor: function(color: string){
