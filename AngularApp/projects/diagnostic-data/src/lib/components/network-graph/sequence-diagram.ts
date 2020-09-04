@@ -8,7 +8,8 @@ declare module 'jointjs' {
             }
 
             class Role extends joint.shapes.standard.Rectangle {
-                setName(name:string): void;
+                setName(name:string):void;
+                setIcon(filename:string):void;
             }
 
             class Lifeline extends joint.shapes.standard.Link {
@@ -30,15 +31,17 @@ declare module 'jointjs' {
 }
 
 export class SequenceDiagram{
-    readonly paperWidth = 800;
-    readonly paperHeight = 600;
+    private paperWidth:number;
+    private paperHeight:number;
     paper:joint.dia.Paper;
     graph:joint.dia.Graph;
-    currentRoleXPosition = 100;
+    currentRoleXPosition = 25;
     currentMsgYPosition = 50;
     RoleMap: Map<number, joint.shapes.sd.Lifeline>;
 
-    constructor(){
+    constructor(width = 800, height = 600){
+        this.paperWidth = width;
+        this.paperHeight = height;
         let dia = joint.dia;
         let sd = joint.shapes.sd;
         let paperElement = jQuery("#network-graph-paper");
@@ -94,10 +97,26 @@ export class SequenceDiagram{
     addRoles(roles:Role[]):void{
         const y = 20, interval = 200;
       
-        roles.sort((a,b)=>a.position-b.position).forEach(role=>{
+        roles.map((i, idx):[Role, number]=>[i, idx])
+            .sort((a,b)=>a[0].position==b[0].position?a[1]-b[1]:a[0].position-b[0].position) //stable sort
+            .map(t=>t[0])
+            .forEach(role=>{
             let sdRole = new joint.shapes.sd.Role({ position: { x: this.currentRoleXPosition, y: y }})
             this.currentRoleXPosition += interval;
-            sdRole.setName(role.name);
+            let charCnt = 0, name = "";
+            role.name.split(" ").forEach(n=>{
+                if(name.length + n.length > 20 + charCnt){
+                    charCnt = name.length;
+                    name += "\r\n" + n;
+                }
+                else{
+                    name += " " + n;
+                }
+            });
+            if(role.roleType == 1){
+                sdRole.setIcon("browser.svg");
+            }
+            sdRole.setName(name);
             sdRole.addTo(this.graph);
 
             let lifeline = new joint.shapes.sd.Lifeline();
@@ -105,10 +124,13 @@ export class SequenceDiagram{
             lifeline.addTo(this.graph);
             this.RoleMap[role.id] = lifeline;
         });
+
+        this.paperWidth = this.currentRoleXPosition - 65;
+        this.paper.setDimensions(this.paperWidth, this.paperHeight);
     }
 
     addMessages(messages:Message[]):void{
-        const interval = 75, msgLimitLength = 25;
+        const interval = 45, msgLimitLength = 35;
         messages.forEach(msg=>{
             var message = new joint.shapes.sd.Message();
             let lifeline1 = this.RoleMap[msg.startRoleId];
@@ -123,6 +145,9 @@ export class SequenceDiagram{
             message.setDescription(msg.text.length>msgLimitLength?msg.text.substr(0,msgLimitLength-3)+"...":msg.text);
             message.addTo(this.graph);
         });
+
+        this.paperHeight = this.currentMsgYPosition + 100;
+        this.paper.setDimensions(this.paperWidth, this.paperHeight);
     }
 
     unfreeze():void{
@@ -134,6 +159,7 @@ export class Role{
     name:string;
     position: number;
     id:number;
+    roleType:number;
 
     public constructor(init?:Partial<Role>) {
         Object.assign(this, init);
@@ -193,6 +219,9 @@ export class Message{
     }, {
         setName: function(name) {
             this.attr(['label', 'text'], name);
+        },
+        setIcon: function(filename:string){
+            this.attributes.attrs.image.xlinkHref = `assets/img/${filename}`;
         }
     });
     
@@ -305,7 +334,7 @@ export class Message{
                 },
                 labelText: {
                     fill: '#FFFFFF',
-                    fontSize: 12,
+                    fontSize: 8,
                     fontFamily: 'sans-serif',
                     textAnchor: 'middle',
                     textVerticalAnchor: 'middle',
