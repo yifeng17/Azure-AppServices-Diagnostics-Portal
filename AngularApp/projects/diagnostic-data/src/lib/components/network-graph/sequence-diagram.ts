@@ -195,11 +195,12 @@ export class Message{
     
     const Role = joint.shapes.standard.EmbeddedImage.define('sd.Role', {
         z: 2,
-        size: { width: 100, height: 80 },
+        size: { width: 100, height: 70 },
         attrs: {
             image:{
                 xlinkHref: "assets/img/server.svg",
-                refWidth:"80%"
+                refWidth:"80%",
+                refY: 10
             },
             body: {
                 stroke: 'none',
@@ -355,6 +356,7 @@ export class Message{
             if(description.length>limit){
                 this.prop({attrs:{root:{title: description}}});
                 description = description.substr(0,limit-3)+"...";
+                //description = description.match(new RegExp(`.{1,${limit}}`, 'g')).reduce((s, i)=> s+"\r\n"+i);
             }
             this.labels([{ attrs: { labelBody: {fill: this.attributes.color}, labelText: { text: description }}}]);
         },
