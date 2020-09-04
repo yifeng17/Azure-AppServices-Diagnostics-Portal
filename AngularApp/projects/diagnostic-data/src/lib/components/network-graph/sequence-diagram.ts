@@ -1,7 +1,5 @@
 import * as joint from 'jointjs';
 
-
-
 declare module 'jointjs' {
     namespace shapes {
         namespace sd {
@@ -110,7 +108,7 @@ export class SequenceDiagram{
     }
 
     addMessages(messages:Message[]):void{
-        const interval = 75;
+        const interval = 75, msgLimitLength = 25;
         messages.forEach(msg=>{
             var message = new joint.shapes.sd.Message();
             let lifeline1 = this.RoleMap[msg.startRoleId];
@@ -122,7 +120,7 @@ export class SequenceDiagram{
             if(msg.status==0){
                 message.setColor("red");
             }
-            message.setDescription(msg.text);            
+            message.setDescription(msg.text.length>msgLimitLength?msg.text.substr(0,msgLimitLength-3)+"...":msg.text);
             message.addTo(this.graph);
         });
     }
@@ -169,22 +167,27 @@ export class Message{
         }
     });
     
-    const Role = joint.shapes.standard.Rectangle.define('sd.Role', {
+    const Role = joint.shapes.standard.EmbeddedImage.define('sd.Role', {
         z: 2,
         size: { width: 100, height: 80 },
         attrs: {
+            image:{
+                xlinkHref: "assets/img/server.svg",
+                refWidth:"80%"
+            },
             body: {
-                stroke: '#A0A0A0',
-                strokeWidth: 1,
+                stroke: 'none',
+                strokeWidth: 0,
+                fill: 'none',
                 rx: 2,
                 ry: 2
             },
             label: {
-                fontSize: 18,
+                fontSize: 12,
                 fontFamily: 'sans-serif',
-                textWrap: {
-                    width: -10
-                }
+                textAnchor: 'middle',
+                refY:70,
+                fontWeight:"bold"
             }
         }
     }, {

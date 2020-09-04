@@ -30,23 +30,23 @@ export class NetworkGraphComponent extends DataRenderBaseComponent implements On
 
    protected processData(data: DiagnosticData) {
     super.processData(data);
-    /* dummy roles and messages
+    // dummy roles and messages
 
-    let roles = [
+    /*let roles = [
       new Role({name:"Browser", id:1}),
       new Role({name:"FrontEnd", id:2}),
       new Role({name:"Worker", id:3})
     ];
 
     let messages = [
-      new Message({text:"Get /home", status:1, startRoleId:1, endRoleId:2}),
+      new Message({text:"Get /home123123123123131231231231231231312312312312312312", status:1, startRoleId:1, endRoleId:2}),
       new Message({text:"ServerRouted 10.3.15.9", status:1, startRoleId:2, endRoleId:3}),
       new Message({text:"HTTP Response 500", status:0, startRoleId:3, endRoleId:2}),
       new Message({text:"ServerError", status:0, startRoleId:2, endRoleId:1})
     ];//*/
 
     let roles = <Role[]>data.table.rows[0][0];
-    let messages = <Message[]>data.table.rows[0][1];
+    let messages = <Message[]>data.table.rows[0][1];//*/
     let diagram = new SequenceDiagram();
     diagram.addRoles(roles);
     diagram.addMessages(messages);
