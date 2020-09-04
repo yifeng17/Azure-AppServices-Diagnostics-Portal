@@ -77,7 +77,7 @@ export class SequenceDiagram{
             }
         });
 
-        this.paper.el.style.border = '1px solid #E5E5E5';
+        //this.paper.el.style.border = '1px solid #E5E5E5';
 
         this.paper.on('link:pointermove', function(linkView, _evt, _x, y) {
             var link = linkView.model;
@@ -95,7 +95,7 @@ export class SequenceDiagram{
     }
 
     addRoles(roles:Role[]):void{
-        const y = 20, interval = 200;
+        const y = 10, interval = 200;
       
         roles.map((i, idx):[Role, number]=>[i, idx])
             .sort((a,b)=>a[0].position==b[0].position?a[1]-b[1]:a[0].position-b[0].position) //stable sort
