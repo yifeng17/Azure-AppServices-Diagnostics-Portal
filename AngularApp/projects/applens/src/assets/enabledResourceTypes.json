@@ -12,7 +12,8 @@
             "altIcons": {
                 "Xenon": "assets/img/WebAppForContainers.svg"
             },
-            "searchSuffix": "AZURE WEB APP"
+            "searchSuffix": "AZURE WEB APP",
+            "emergingIssuesICMLookupEnabled": true
         },
         {
             "service": "AseService",
@@ -23,7 +24,8 @@
             "azureCommImpactedServicesList": "appservice",
             "pesId": "16533",
             "staticSelfHelpContent": "microsoft.ase",
-            "searchSuffix": "AZURE APP SERVICE ENVIRONMENT"
+            "searchSuffix": "AZURE APP SERVICE ENVIRONMENT",
+            "emergingIssuesICMLookupEnabled": true
         },
         {
             "service": "ResourceService",

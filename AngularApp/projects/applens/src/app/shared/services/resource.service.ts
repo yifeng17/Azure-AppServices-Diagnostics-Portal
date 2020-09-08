@@ -14,6 +14,7 @@ export class ResourceService {
   public staticSelfHelpContent: string;
   public altIcons: { [path: string]: string };
   public searchSuffix: string;
+  public emergingIssuesICMLookupEnabled: boolean;
 
   protected _observerResource: any = null;
   protected _armResource: ArmResource;
@@ -29,6 +30,7 @@ export class ResourceService {
     this.staticSelfHelpContent = inputs.staticSelfHelpContent;
     this.altIcons = inputs.altIcons;
     this.searchSuffix = inputs.searchSuffix;
+    this.emergingIssuesICMLookupEnabled = (inputs.emergingIssuesICMLookupEnabled !== undefined && inputs.emergingIssuesICMLookupEnabled) || false;
   }
 
   public startInitializationObservable() {

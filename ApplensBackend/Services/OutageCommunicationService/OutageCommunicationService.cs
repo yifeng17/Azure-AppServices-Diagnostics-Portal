@@ -167,7 +167,7 @@ namespace AppLensV3.Services
             return new Communication()
             {
                 CommunicationId = Guid.NewGuid().ToString(),
-                PublishedTime = DateTimeHelper.GetDateTimeInUtcFormat(DateTime.Parse(activeIssue["CreatedDate"].ToString())),
+                PublishedTime = DateTimeHelper.GetDateTimeInUtcFormat(DateTime.Parse(activeIssue["ModifiedDate"].ToString())),
                 Title = $"[Detected Emerging Issue] : {activeIssue["Title"].ToString()}",
                 RichTextMessage = activeIssue["Details"].ToString().Truncate(500, true),
                 Status = activeIssue["Title"].ToString().Equals("Active", StringComparison.OrdinalIgnoreCase) ? CommunicationStatus.Active : CommunicationStatus.Resolved,
