@@ -49,6 +49,7 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
   }
 
   ngOnInit() {
+    console.log("[generic analysis]: Loading isCaseSubmissionSolutionIFrame", this.isCaseSubmissionSolutionIFrame);
     if (this.isPublic) {
       this.renderCXPChatButton();
     }

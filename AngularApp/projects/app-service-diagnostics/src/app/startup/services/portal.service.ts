@@ -13,6 +13,8 @@ export class PortalService {
     private startupInfoObservable: ReplaySubject<StartupInfo>;
     private appInsightsResourceObservable: ReplaySubject<any>;
 
+    private isIFrameForCaseSubmissionSolution: ReplaySubject<boolean>;
+
     private sendChatAvailabilityObservable: ReplaySubject<any>;
     private sendbuiltChatUrlObservable: ReplaySubject<any>;
     private sendChatUrlObservable: ReplaySubject<any>;
@@ -30,6 +32,8 @@ export class PortalService {
         this.tokenObservable = new ReplaySubject<string>(1);
         this.appInsightsResourceObservable = new ReplaySubject<any>(1);
 
+        this.isIFrameForCaseSubmissionSolution = new ReplaySubject<boolean>(1);
+
         //CXP Chat messages
         this.sendChatAvailabilityObservable = new ReplaySubject<any>(1);
         this.sendbuiltChatUrlObservable = new ReplaySubject<any>(1);
@@ -45,6 +49,10 @@ export class PortalService {
 
     getStartupInfo(): ReplaySubject<StartupInfo> {
         return this.startupInfoObservable;
+    }
+
+    isWithinCaseSubmissionSolution(): ReplaySubject<boolean> {
+        return this.isIFrameForCaseSubmissionSolution;
     }
 
     getToken(): ReplaySubject<string> {
@@ -155,6 +163,7 @@ export class PortalService {
         const methodName = event.data.kind;
         console.log('[iFrame] Received validated mesg: ' + methodName, event, event.srcElement, event.srcElement.location, event.srcElement.location.host);
 
+        const isIFrameForCaseSubmissionSolution = event.srcElement.location.host.toString().includes("appservice-diagnostics-am2");
         if (event.srcElement.location.host.toString().includes("appservice-diagnostics-am2"))
         {
             console.log('[iFrame]: Called from feature flag Iframe');
@@ -163,7 +172,11 @@ export class PortalService {
         if (methodName === Verbs.sendStartupInfo) {
             const info = <StartupInfo>data;
             this.sessionId = info.sessionId;
+            info.isIFrameForCaseSubmissionSolution = isIFrameForCaseSubmissionSolution;
             this.startupInfoObservable.next(info);
+            console.log('[IFrame]: Get startup info', info);
+            console.log('[IFrame]: releasing case submission flag withinCaseSubmissionSolutionIFrame: ', isIFrameForCaseSubmissionSolution);
+            this.isIFrameForCaseSubmissionSolution.next(isIFrameForCaseSubmissionSolution);
         } else if (methodName === Verbs.sendAppInsightsResource) {
             const aiResource = data;
             this.appInsightsResourceObservable.next(aiResource);

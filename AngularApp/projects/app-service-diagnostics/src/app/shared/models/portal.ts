@@ -20,6 +20,7 @@ export interface StartupInfo {
     additionalParameters?: any;
     optionalParameters?: Array<KeyValuePair>;
     effectiveLocale: string;
+    isIFrameForCaseSubmissionSolution: boolean;
 }
 
 export enum ResourceType {
