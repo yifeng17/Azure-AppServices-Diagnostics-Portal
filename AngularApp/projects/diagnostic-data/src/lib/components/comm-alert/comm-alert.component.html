@@ -35,7 +35,7 @@
       </div>
       </div>
 
-      <div *ngIf="!isPublic" class="comm-info-row">
+      <div *ngIf="!isPublic && commAlertToShow.commType !== 2" class="comm-info-row">
           <div style="display:inline-block;width:30%;vertical-align: top">
               <div class="comm-info-label">Impacted Region(s)</div>
               <div class="comm-info-data">{{impactedRegions}}</div>
