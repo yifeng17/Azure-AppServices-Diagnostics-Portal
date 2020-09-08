@@ -63,8 +63,6 @@ export class GenericDetectorComponent implements OnDestroy {
             const sessionId = startUpInfo.sessionId ? startUpInfo.sessionId : '';
             this.isCaseSubmissionSolutionIFrame = startUpInfo.isIFrameForCaseSubmissionSolution != undefined? startUpInfo.isIFrameForCaseSubmissionSolution : false;
 
-            console.log("[generic detector]: Loading isCaseSubmissionSolutionIFrame", this.isCaseSubmissionSolutionIFrame);
-
             const eventProperties: { [name: string]: string } = {
               'ResourceId': resourceId,
               'TicketBladeWorkflowId': ticketBladeWorkflowId,

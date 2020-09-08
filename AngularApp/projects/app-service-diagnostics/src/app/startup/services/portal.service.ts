@@ -164,18 +164,12 @@ export class PortalService {
         console.log('[iFrame] Received validated mesg: ' + methodName, event, event.srcElement, event.srcElement.location, event.srcElement.location.host);
 
         const isIFrameForCaseSubmissionSolution = event.srcElement.location.host.toString().includes("appservice-diagnostics-am2");
-        if (event.srcElement.location.host.toString().includes("appservice-diagnostics-am2"))
-        {
-            console.log('[iFrame]: Called from feature flag Iframe');
-        }
 
         if (methodName === Verbs.sendStartupInfo) {
             const info = <StartupInfo>data;
             this.sessionId = info.sessionId;
             info.isIFrameForCaseSubmissionSolution = isIFrameForCaseSubmissionSolution;
             this.startupInfoObservable.next(info);
-            console.log('[IFrame]: Get startup info', info);
-            console.log('[IFrame]: releasing case submission flag withinCaseSubmissionSolutionIFrame: ', isIFrameForCaseSubmissionSolution);
             this.isIFrameForCaseSubmissionSolution.next(isIFrameForCaseSubmissionSolution);
         } else if (methodName === Verbs.sendAppInsightsResource) {
             const aiResource = data;
