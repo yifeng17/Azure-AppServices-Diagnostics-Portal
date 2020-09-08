@@ -19,6 +19,7 @@ export class GenericDetectorComponent implements OnDestroy {
   analysisDetector: string;
   navigateSub: Subscription;
   analysisMode: boolean = false;
+  isCaseSubmissionSolutionIFrame: boolean = false;
 
   constructor(private _activatedRoute: ActivatedRoute, private _diagnosticService: DiagnosticService, private _resourceService: ResourceService, private _authServiceInstance: AuthService, private _telemetryService: TelemetryService,
     private _navigator: FeatureNavigationService, private _router: Router) {
@@ -48,7 +49,7 @@ export class GenericDetectorComponent implements OnDestroy {
             } else if (detectorMetaData.type === DetectorType.Analysis) {
               this._router.navigate([`../../analysis/${detector}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge' });
             }
-    
+
           }
         });
 
@@ -60,7 +61,8 @@ export class GenericDetectorComponent implements OnDestroy {
             const ticketBladeWorkflowId = startUpInfo.workflowId ? startUpInfo.workflowId : '';
             const supportTopicId = startUpInfo.supportTopicId ? startUpInfo.supportTopicId : '';
             const sessionId = startUpInfo.sessionId ? startUpInfo.sessionId : '';
-    
+            this.isCaseSubmissionSolutionIFrame = startUpInfo.isIFrameForCaseSubmissionSolution != undefined? startUpInfo.isIFrameForCaseSubmissionSolution : false;
+
             const eventProperties: { [name: string]: string } = {
               'ResourceId': resourceId,
               'TicketBladeWorkflowId': ticketBladeWorkflowId,

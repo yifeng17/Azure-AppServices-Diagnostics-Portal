@@ -20,6 +20,7 @@ export interface StartupInfo {
     additionalParameters?: any;
     optionalParameters?: Array<KeyValuePair>;
     effectiveLocale: string;
+    isIFrameForCaseSubmissionSolution: boolean;
 }
 
 export enum ResourceType {
@@ -34,6 +35,7 @@ export enum AppType {
 
 export interface Event {
     data: Data;
+    srcElement: any;
 }
 
 export interface Data {
