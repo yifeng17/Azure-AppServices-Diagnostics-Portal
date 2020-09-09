@@ -30,7 +30,7 @@ export class ResourceService {
     this.staticSelfHelpContent = inputs.staticSelfHelpContent;
     this.altIcons = inputs.altIcons;
     this.searchSuffix = inputs.searchSuffix;
-    this.emergingIssuesICMLookupEnabled = (inputs.emergingIssuesICMLookupEnabled !== undefined && inputs.emergingIssuesICMLookupEnabled) || false;
+    this.emergingIssuesICMLookupEnabled = (inputs.emergingIssuesICMLookupEnabled !== undefined && inputs.emergingIssuesICMLookupEnabled);
   }
 
   public startInitializationObservable() {
