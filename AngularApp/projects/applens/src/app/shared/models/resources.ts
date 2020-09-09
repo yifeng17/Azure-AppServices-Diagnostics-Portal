@@ -44,6 +44,7 @@ export interface ResourceServiceInputs {
     staticSelfHelpContent: string;
     altIcons?: { [path: string]: string };
     searchSuffix: string;
+    emergingIssuesICMLookupEnabled?: boolean;
 }
 
 export const RESOURCE_SERVICE_INPUTS = new InjectionToken<ResourceServiceInputs>('ResourceServiceInputs');

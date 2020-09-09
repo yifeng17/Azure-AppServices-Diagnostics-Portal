@@ -11,5 +11,19 @@ namespace AppLensV3
             string responseString = await value.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<T>(responseString);
         }
+
+        public static string Truncate(this string source, int length, bool addTruncatedIndicatorAtEnd = false)
+        {
+            if (source.Length > length)
+            {
+                source = source.Substring(0, length);
+                if (addTruncatedIndicatorAtEnd)
+                {
+                    source = $"{source} ...";
+                }
+            }
+
+            return source;
+        }
     }
 }

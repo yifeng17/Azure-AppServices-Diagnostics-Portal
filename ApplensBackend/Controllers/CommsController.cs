@@ -22,7 +22,7 @@ namespace AppLensV3
 
         [HttpGet("comms/{subscriptionId}")]
         [HttpOptions("comms/{subscriptionId}")]
-        public async Task<IActionResult> Invoke(string subscriptionId, string startTime = null, string endTime = null, string impactedServices = null)
+        public async Task<IActionResult> Invoke(string subscriptionId, string startTime = null, string endTime = null, string impactedService = null, bool checkForEmergingIssues = false)
         {
             if (string.IsNullOrWhiteSpace(subscriptionId))
             {
@@ -33,8 +33,8 @@ namespace AppLensV3
             {
                 return BadRequest(errorMessage);
             }
-            
-            List<Communication> comms = await _outageService.GetCommunicationsAsync(subscriptionId, startTimeUtc, endTimeUtc);
+                        
+            List<Communication> comms = await _outageService.GetCommunicationsAsync(subscriptionId, startTimeUtc, endTimeUtc, checkForEmergingIssues, impactedService);
             return Ok(comms);
         }
     }
