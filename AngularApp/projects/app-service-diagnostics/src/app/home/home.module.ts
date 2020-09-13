@@ -51,6 +51,7 @@ import { GenieModule } from '../genie/genie.module';
 import { FabricModule } from '../fabric-ui/fabric.module';
 import { ResourceService } from '../shared-v2/services/resource.service';
 import { JavaFlightRecorderToolComponent } from '../shared/components/tools/java-flight-recorder-tool/java-flight-recorder-tool.component';
+import { CrashMonitoringComponent } from '../shared/components/tools/crash-monitoring/crash-monitoring.component';
 
 export const HomeRoutes = RouterModule.forChild([
     {
@@ -100,15 +101,19 @@ export const HomeRoutes = RouterModule.forChild([
                 path: 'analysis/:analysisId',
                 component: GenericAnalysisComponent,
                 data: {
-                    cacheComponent: true
+                    cacheComponent: false
                 },
-                children: [
+                children: [                    
                     {
-                        path: '',
+                        path: 'detectors/:detectorName',
                         component: GenericDetectorComponent,
                         data: {
                             analysisMode: true,
-                            cacheComponent: true
+                            cacheComponent: false
+                        },                        
+                        resolve: {
+                            time: TimeControlResolver,
+                            navigationTitle: TabTitleResolver,
                         }
                     }
                 ],
@@ -152,27 +157,6 @@ export const HomeRoutes = RouterModule.forChild([
             },
             {
                 path: 'analysis/:analysisId/search/detectors/:detectorName',
-                component: GenericAnalysisComponent,
-                data: {
-                    cacheComponent: true
-                },
-                children: [
-                    {
-                        path: '',
-                        component: GenericDetectorComponent,
-                        data: {
-                            analysisMode: true,
-                            cacheComponent: true
-                        }
-                    }
-                ],
-                resolve: {
-                    time: TimeControlResolver,
-                    navigationTitle: TabTitleResolver,
-                }
-            },
-            {
-                path: 'analysis/:analysisId/detectors/:detectorName',
                 component: GenericAnalysisComponent,
                 data: {
                     cacheComponent: true
@@ -281,6 +265,15 @@ export const HomeRoutes = RouterModule.forChild([
                     cacheComponent: true
                 }
             },
+            // Crash Monitoring tool
+            {
+                path: 'tools/crashmonitoring',
+                component: CrashMonitoringComponent,
+                data: {
+                    navigationTitle: ToolNames.CrashMonitoring,
+                    cacheComponent: true
+                }
+            },
             // Autohealing
             {
                 path: 'tools/mitigate',
@@ -385,41 +378,24 @@ export const HomeRoutes = RouterModule.forChild([
         }
     },
     {
-        path: 'analysis/:analysisId/detectors/:detectorName',
-        component: GenericAnalysisComponent,
-        data: {
-            cacheComponent: true
-        },
-        children: [
-            {
-                path: '',
-                component: GenericDetectorComponent,
-                data: {
-                    analysisMode: true,
-                    cacheComponent: true
-                }
-            }
-        ],
-        resolve: {
-            time: TimeControlResolver,
-            navigationTitle: TabTitleResolver,
-        }
-    },
-    {
         path: 'analysis/:analysisId',
         component: GenericAnalysisComponent,
         data: {
-            cacheComponent: true
+            cacheComponent: false
         },
         children: [
             {
-                path: '',
+                path: 'detectors/:detectorName',
                 component: GenericDetectorComponent,
                 data: {
                     analysisMode: true,
-                    cacheComponent: true
+                    cacheComponent: false
+                },
+                resolve: {
+                    time: TimeControlResolver,
+                    navigationTitle: TabTitleResolver,
                 }
-            }
+            },
         ],
         resolve: {
             time: TimeControlResolver,

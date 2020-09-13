@@ -1,6 +1,8 @@
-import { Component, OnInit, OnChanges } from '@angular/core';
+import { Component, OnInit, OnChanges, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApplensDiagnosticService } from '../../services/applens-diagnostic.service';
+import { DetectorListAnalysisComponent } from 'diagnostic-data';
+import { DownTime } from 'diagnostic-data';
 
 @Component({
   selector: 'tab-analysis',
@@ -11,28 +13,34 @@ import { ApplensDiagnosticService } from '../../services/applens-diagnostic.serv
 export class TabAnalysisComponent implements OnInit {
 
   analysisId: string;
-  detectorId: string;
   detectorName: string;
+  downTime: DownTime;
+  readonly stringFormat: string = 'YYYY-MM-DDTHH:mm';
 
-  constructor(private _activatedRoute: ActivatedRoute, private _diagnosticService: ApplensDiagnosticService) {
+  @ViewChild('detectorListAnalysis', { static: true }) detectorListAnalysis: DetectorListAnalysisComponent
+
+  constructor(private _activatedRoute: ActivatedRoute, private _router: Router, private _diagnosticService: ApplensDiagnosticService) {
     this._activatedRoute.paramMap.subscribe(params => {
       this.analysisId = params.get('analysisId');
-      this.detectorId = params.get('detector') === null ? "" : params.get('detector');
     });
 
   }
 
   ngOnInit() {
-    this._diagnosticService.getDetectors().subscribe(detectorList => {
-      if (detectorList) {
-        if (this.detectorId !== "") {
-          let currentDetector = detectorList.find(detector => detector.id == this.detectorId)
-          this.detectorName = currentDetector.name;
-        }
-      }
-    });
   }
   onActivate(event) {
     window.scroll(0, 0);
+  }
+
+  onDowntimeChanged(event: DownTime) {
+    this.detectorListAnalysis.downTime = event;
+    if (this._activatedRoute == null || this._activatedRoute.firstChild == null || !this._activatedRoute.firstChild.snapshot.paramMap.has('detector') || this._activatedRoute.firstChild.snapshot.paramMap.get('detector').length < 1) {
+      this._router.navigate([`./`], {
+        relativeTo: this._activatedRoute,
+        queryParams: { startTimeChildDetector: event.StartTime.format(this.stringFormat), endTimeChildDetector: event.EndTime.format(this.stringFormat) },
+        queryParamsHandling: 'merge',
+        replaceUrl: true
+      });
+    }
   }
 }

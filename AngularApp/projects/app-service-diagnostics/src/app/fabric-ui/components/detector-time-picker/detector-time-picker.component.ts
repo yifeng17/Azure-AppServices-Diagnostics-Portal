@@ -70,7 +70,7 @@ export class DetectorTimePickerComponent implements OnInit {
       const timePicker = document.getElementById('timePicker');
       //Get time text div in command bar
       const commandBar = document.querySelector('.ms-CommandBar-secondaryCommand');
-      if (!timePicker.contains(clickElement) && !commandBar.contains(clickElement)) {
+      if (timePicker && commandBar && !timePicker.contains(clickElement) && !commandBar.contains(clickElement)) {
         this.closeTimePicker();
       }
     })
@@ -232,8 +232,8 @@ export class DetectorTimePickerComponent implements OnInit {
 
   private convertDateTimeToString(date:Date,time:string): string {
     const dateString = momentNs(date).format('YYYY-MM-DD');
-    const hour = Number.parseInt(time.split(':')[0]) ? `0${Number.parseInt(time.split(':')[0])}` : `${Number.parseInt(time.split(':')[0])}`;
-    const minute = Number.parseInt(time.split(':')[1]) ? `0${Number.parseInt(time.split(':')[1])}` : `${Number.parseInt(time.split(':')[1])}`;
+    const hour = Number.parseInt(time.split(':')[0]) < 10 ? `0${Number.parseInt(time.split(':')[0])}` : `${Number.parseInt(time.split(':')[0])}`;
+    const minute = Number.parseInt(time.split(':')[1]) < 10 ? `0${Number.parseInt(time.split(':')[1])}` : `${Number.parseInt(time.split(':')[1])}`;
     return `${dateString} ${hour}:${minute}`;
   }
 

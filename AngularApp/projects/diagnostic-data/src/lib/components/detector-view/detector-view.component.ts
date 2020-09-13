@@ -1,17 +1,25 @@
 import { Moment } from 'moment';
 import { BehaviorSubject } from 'rxjs';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, Inject, Input, OnInit, Pipe, PipeTransform } from '@angular/core';
+import { Component, Inject, Input, OnInit, Output, EventEmitter, Pipe, PipeTransform, SimpleChanges } from '@angular/core';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
-import { DetectorResponse, Rendering, RenderingType, DetectorMetaData, DetectorType, DiagnosticData } from '../../models/detector';
+import { DetectorResponse, Rendering, RenderingType, DataTableResponseObject, DownTime, DowntimeInteractionSource, DetectorMetaData, DetectorType, DiagnosticData } from '../../models/detector';
 import { DetectorControlService } from '../../services/detector-control.service';
 import { TelemetryEventNames } from '../../services/telemetry/telemetry.common';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
-import { CompilationProperties} from '../../models/compilation-properties';
-import {GenericSupportTopicService} from '../../services/generic-support-topic.service';
+import { CompilationProperties } from '../../models/compilation-properties';
+import { GenericSupportTopicService } from '../../services/generic-support-topic.service';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { VersionService } from '../../services/version.service';
-import { CXPChatService } from '../../services/cxp-chat.service'
+import { CXPChatService } from '../../services/cxp-chat.service';
+import * as momentNs from 'moment';
+import { xAxisPlotBand, xAxisPlotBandStyles, zoomBehaviors, XAxisSelection } from '../../models/time-series';
+import { IDropdownOption } from 'office-ui-fabric-react';
+
+const moment = momentNs;
+const minSupportedDowntimeDuration: number = 10;
+const defaultDowntimeSelectionError: string = 'Downtimes less than 10 minutes are not supported. Select a time duration spanning at least 10 minutes.';
+
 @Component({
   selector: 'detector-view',
   templateUrl: './detector-view.component.html',
@@ -52,11 +60,17 @@ export class DetectorViewComponent implements OnInit {
   emailToAuthor: string = '';
   emailToApplensTeam: string = '';
 
-  cxpChatTrackingId:string= '';
-  cxpChatUrl:string = '';
+  cxpChatTrackingId: string = '';
+  supportTopicId: string = '';
+  cxpChatUrl: string = '';
+
+  fabOptions: IDropdownOption[] = [];
+  selectedKey: string = '';
+  fabDropdownWidth: number
 
   @Input()
   set detectorResponse(value: DetectorResponse) {
+    this.resetGlobals();
     this.detectorResponseSubject.next(value);
   }
 
@@ -79,13 +93,48 @@ export class DetectorViewComponent implements OnInit {
   @Input() compilationPackage: CompilationProperties;
   @Input() analysisMode: boolean = false;
   @Input() isAnalysisView: boolean = false;
+  @Input() isPopoutFromAnalysis: boolean = false;
   @Input() hideDetectorHeader: boolean = false;
-  @Input() isCategoryOverview:boolean = false;
+  @Input() isCategoryOverview: boolean = false;
   feedbackButtonLabel: string = 'Send Feedback';
+
+  downTimes: DownTime[] = [];
+  supportsDownTime: boolean = false;
+  selectedDownTime: DownTime;
+  downtimeSelectionErrorStr: string = '';
+  public xAxisPlotBands: xAxisPlotBand[] = null;
+  public zoomBehavior: zoomBehaviors = zoomBehaviors.Zoom;
+  @Output() XAxisSelection: EventEmitter<XAxisSelection> = new EventEmitter<XAxisSelection>();
+  public onXAxisSelection(event: XAxisSelection) {
+    let downTime = new DownTime();
+    downTime.StartTime = event.fromTime;
+    downTime.EndTime = event.toTime;
+    downTime.downTimeLabel = this.prepareCustomDowntimeLabel(event.fromTime, event.toTime);
+    downTime.isSelected = true;
+
+    if (this.validateDowntimeEntry(downTime)) {
+      this.XAxisSelection.emit(event);
+      this.downTimes = this.downTimes.filter(currDownTime =>
+        !(!!currDownTime.downTimeLabel && currDownTime.downTimeLabel.length > 0 && currDownTime.downTimeLabel.startsWith('Custom selection')) &&
+        !(!!currDownTime.downTimeLabel && currDownTime.downTimeLabel.length > 0 && currDownTime.downTimeLabel == this.getDefaultDowntimeEntry().downTimeLabel)
+      );
+      this.downTimes.forEach(d => { d.isSelected = false; });
+      this.downTimes.push(downTime);
+      this.populateFabricDowntimeDropDown(this.downTimes);
+      this.onDownTimeChange(downTime, DowntimeInteractionSource.Graph);
+    }
+    else {
+      this.downtimeTriggerLog(downTime, DowntimeInteractionSource.Graph, false, `Downtime valdation failed. Selected downtime is less than ${minSupportedDowntimeDuration} minutes`);
+      this.updateDownTimeErrorMessage(defaultDowntimeSelectionError);
+    }
+  }
+
+  @Output() downTimeChanged: EventEmitter<DownTime> = new EventEmitter<DownTime>();
   hideDetectorControl: boolean = false;
-  private isLegacy:boolean;
+  private isLegacy: boolean;
+
   constructor(@Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig, private telemetryService: TelemetryService,
-    private detectorControlService: DetectorControlService, private _supportTopicService: GenericSupportTopicService, private _cxpChatService: CXPChatService, protected _route: ActivatedRoute,private versionService:VersionService) {
+    private detectorControlService: DetectorControlService, private _supportTopicService: GenericSupportTopicService, private _cxpChatService: CXPChatService, protected _route: ActivatedRoute, private versionService: VersionService) {
     this.isPublic = config && config.isPublic;
     this.feedbackButtonLabel = this.isPublic ? 'Send Feedback' : 'Rate Detector';
   }
@@ -114,47 +163,53 @@ export class DetectorViewComponent implements OnInit {
 
   protected loadDetector() {
     this.detectorResponseSubject.subscribe((data: DetectorResponse) => {
-      let metadata: DetectorMetaData = data? data.metadata: null;
+      let metadata: DetectorMetaData = data ? data.metadata : null;
       this.detectorDataLocalCopy = data;
       if (data) {
         this.detectorEventProperties = {
-          'StartTime': String(this.startTime),
-          'EndTime': String(this.endTime),
+          'StartTime': this.startTime.toISOString(),
+          'EndTime': this.endTime.toISOString(),
           'DetectorId': data.metadata.id,
           'ParentDetectorId': this.parentDetectorId,
           'Url': window.location.href
         };
 
-        if (data.metadata.supportTopicList && data.metadata.supportTopicList.findIndex(supportTopic => supportTopic.id === this._supportTopicService.supportTopicId) >= 0){
+        if (data.metadata.supportTopicList && data.metadata.supportTopicList.findIndex(supportTopic => supportTopic.id === this._supportTopicService.supportTopicId) >= 0) {
           this.populateSupportTopicDocument();
-          if(this.isPublic && !this.isAnalysisView && data.metadata.type === DetectorType.Detector) {
+          if (this.isPublic && !this.isAnalysisView && data.metadata.type === DetectorType.Detector) {
             //Since the analysis view is already showing the chat button, no need to show the chat button on the detector (csx) implementing the analysis view.
             this.renderCXPChatButton();
           }
           else {
-                var checkOutcome = {
-                  _supportTopicServiceObj: !!this._supportTopicService,
-                  supportTopicId: (!!this._supportTopicService)? this._supportTopicService.supportTopicId : '_supportTopicService is NULL',
-                  _cxpChatService: !!this._cxpChatService,
-                  isSupportTopicEnabledForLiveChat:  (!!this._supportTopicService && !!this._cxpChatService)? this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId): null,
-                  isPublic: !!this.isPublic,
-                  isAnalysisView: !!this.isAnalysisView,
-                  DetectorMetadata: data.metadata
-                };
-                this._cxpChatService.logChatEligibilityCheck('Call to CXP Chat API skipped for analysis', JSON.stringify(checkOutcome));            
-          }          
+            var checkOutcome = {
+              _supportTopicServiceObj: !!this._supportTopicService,
+              supportTopicId: (!!this._supportTopicService) ? this._supportTopicService.supportTopicId : '_supportTopicService is NULL',
+              _cxpChatService: !!this._cxpChatService,
+              isSupportTopicEnabledForLiveChat: (!!this._supportTopicService && !!this._cxpChatService) ? this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId) : null,
+              isPublic: !!this.isPublic,
+              isAnalysisView: !!this.isAnalysisView,
+              DetectorMetadata: data.metadata
+            };
+            this._cxpChatService.logChatEligibilityCheck(
+              ((!!this._supportTopicService && !!this._supportTopicService.supportTopicId) ? this._supportTopicService.supportTopicId : ''),
+              'Call to CXP Chat API skipped for analysis',
+              JSON.stringify(checkOutcome));
+          }
         }
         else {
-                    var checkOutcome = {
+          var checkOutcome = {
             _supportTopicServiceObj: !!this._supportTopicService,
-            supportTopicId: (!!this._supportTopicService)? this._supportTopicService.supportTopicId : '_supportTopicService is NULL',
+            supportTopicId: (!!this._supportTopicService) ? this._supportTopicService.supportTopicId : '_supportTopicService is NULL',
             _cxpChatService: !!this._cxpChatService,
-            isSupportTopicEnabledForLiveChat:  (!!this._supportTopicService && !!this._cxpChatService)? this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId): null,
+            isSupportTopicEnabledForLiveChat: (!!this._supportTopicService && !!this._cxpChatService) ? this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId) : null,
             isPublic: !!this.isPublic,
             isAnalysisView: !!this.isAnalysisView,
             DetectorMetadata: data.metadata
-          };          
-          this._cxpChatService.logChatEligibilityCheck('Call to CXP Chat API skipped. Detector does not match support Topic', JSON.stringify(checkOutcome));   
+          };
+          this._cxpChatService.logChatEligibilityCheck(
+            ((!!this._supportTopicService && !!this._supportTopicService.supportTopicId) ? this._supportTopicService.supportTopicId : ''),
+            'Call to CXP Chat API skipped. Detector does not match support Topic',
+            JSON.stringify(checkOutcome));
         }
 
         this.ratingEventProperties = {
@@ -189,9 +244,281 @@ export class DetectorViewComponent implements OnInit {
 
         this.logInsights(data);
 
-        // this.hideDetectorHeader = data.dataset.findIndex(set => (<Rendering>set.renderingProperties).type === RenderingType.Cards) >= 0;
+        if (this.isAnalysisView) {
+          let downTime = data.dataset.find(set => (<Rendering>set.renderingProperties).type === RenderingType.DownTime);
+          if (!!downTime) {
+            this.zoomBehavior = zoomBehaviors.CancelZoom | zoomBehaviors.FireXAxisSelectionEvent;
+            this.supportsDownTime = true;
+            this.parseDownTimeData(downTime.table);
+            let defaultDowntime = null;
+            let defaultDowntimeTriggerSource: string = '';
+            if (this._route.snapshot.queryParamMap.has('startTimeChildDetector') && !!this._route.snapshot.queryParams['startTimeChildDetector']
+              && this._route.snapshot.queryParamMap.has('endTimeChildDetector') && !!this._route.snapshot.queryParams['endTimeChildDetector']) {
+              //Query string contains downtime. This is when the analysis is opened via a shared link
+              if (!moment.utc(this._route.snapshot.queryParams['startTimeChildDetector']).isValid() || !moment.utc(this._route.snapshot.queryParams['endTimeChildDetector']).isValid()) {
+                this.downtimeTriggerLog(defaultDowntime, DowntimeInteractionSource.DefaultFromQueryParams, false, 'Supplied downtime is of invalid format.');
+              }
+              else {
+                let qStartTime = moment.utc(this._route.snapshot.queryParams['startTimeChildDetector']);
+                let qEndTime = moment.utc(this._route.snapshot.queryParams['endTimeChildDetector']);
+
+                if (this.startTime.isSameOrBefore(qStartTime) && this.endTime.isSameOrAfter(qEndTime)) {
+                  //Make sure the passed in downtime is within the start and end time range of the detector
+                  defaultDowntime = this.downTimes.find(x => x.StartTime.isSame(qStartTime) && x.EndTime.isSame(qEndTime));
+                  if (!!defaultDowntime) {
+                    //The downtime that was shared in the link is a part of the detector identified downtime
+                    defaultDowntime.isSelected = true;
+                    this.downTimes.forEach(downtime => {
+                      downtime.isSelected = this.isDowntimeSame(downtime, defaultDowntime);
+                    });
+                  }
+                  else {
+                    //The downtime that was shared in the link is a custom downtime selected by the user. Add a custom downtime to the list
+                    this.downTimes.forEach(downtime => {
+                      downtime.isSelected = false;
+                    });
+
+                    defaultDowntime = {
+                      StartTime: qStartTime,
+                      EndTime: qEndTime,
+                      downTimeLabel: this.prepareCustomDowntimeLabel(qStartTime, qEndTime),
+                      isSelected: true
+                    } as DownTime;
+                    this.downTimes.push(defaultDowntime);
+                  }
+                  defaultDowntimeTriggerSource = DowntimeInteractionSource.DefaultFromQueryParams;
+                }
+                else {
+                  this.downtimeTriggerLog(defaultDowntime, DowntimeInteractionSource.DefaultFromQueryParams, false, 'Supplied downtime is out of bounds.');
+                }
+              }
+            }
+
+            if (defaultDowntime == null) {
+              //Query string did not contain a downtime or was out of bounds
+              defaultDowntime = this.downTimes.find(x => x.isSelected);
+              if (defaultDowntime == null && this.downTimes.length > 0) {
+                this.downTimes[0].isSelected = true;
+                defaultDowntime = this.downTimes[0];
+                defaultDowntimeTriggerSource = DowntimeInteractionSource.DefaultFromDetector;
+              }
+              else {
+                if (this.downTimes.length > 0) {
+                  defaultDowntimeTriggerSource = DowntimeInteractionSource.DefaultFromDetector;
+                }
+                else {
+                  this.downtimeTriggerLog(defaultDowntime, DowntimeInteractionSource.DefaultFromDetector, false, 'No downtimes detected by the detector.');
+                }
+              }
+            }
+
+            if (!!defaultDowntime) {
+              this.populateFabricDowntimeDropDown(this.downTimes);
+              this.onDownTimeChange(defaultDowntime, defaultDowntimeTriggerSource);
+            }
+          }
+          else {
+            this.resetGlobals();
+          }
+        }
+
+        //After loading detectors, foucs indicator will land into detector title
+        //For now asynchronouslly to foucs after render, it should have better solution
+        setTimeout(() => {
+          if (document.getElementById("detector-name")) {
+            document.getElementById("detector-name").focus();
+          }
+        });
       }
     });
+  }
+
+  resetGlobals() {
+    this.downTimes = [];
+    this.selectedDownTime = null;
+    this.supportsDownTime = false;
+    this.xAxisPlotBands = [];
+    this.zoomBehavior = zoomBehaviors.Zoom;
+    this.populateFabricDowntimeDropDown(this.downTimes);
+  }
+
+  getTimestampAsString(dateTime: Moment) {
+    return dateTime.format('DD-MMM-YY hh:mm A') + ' UTC';
+  }
+
+  getDowntimeLabel(d: DownTime) {
+    return d.downTimeLabel;
+  }
+
+  private setxAxisPlotBands(includeAllBands: boolean = false, customDownTime?: DownTime): void {
+    if (customDownTime == null && this.downTimes.length < 1 && this.selectedDownTime == null) {
+      this.xAxisPlotBands = [];
+    }
+    else {
+      this.xAxisPlotBands = [];
+      if (!!customDownTime) {
+        var currentPlotBand: xAxisPlotBand = {
+          color: '#FCFFC5',
+          from: customDownTime.StartTime,
+          to: customDownTime.EndTime,
+          style: xAxisPlotBandStyles.BehindPlotLines,
+          borderWidth: 1,
+          borderColor: 'red'
+        };
+        this.xAxisPlotBands.push(currentPlotBand);
+      }
+      else {
+        if (includeAllBands) {
+          this.downTimes.forEach(downtime => {
+            if (!!downtime && !!downtime.StartTime && !!downtime.EndTime) {
+              var currentPlotBand: xAxisPlotBand = {
+                color: downtime.isSelected ? '#FFCAC4' : '#FCFFC5',
+                from: downtime.StartTime,
+                to: downtime.EndTime,
+                style: xAxisPlotBandStyles.BehindPlotLines
+              };
+              this.xAxisPlotBands.push(currentPlotBand);
+            }
+          });
+        }
+        else {
+          if (!!this.selectedDownTime && !!this.selectedDownTime.StartTime && !!this.selectedDownTime.EndTime) {
+            var currentPlotBand: xAxisPlotBand = {
+              color: '#FCFFC5',
+              from: this.selectedDownTime.StartTime,
+              to: this.selectedDownTime.EndTime,
+              style: xAxisPlotBandStyles.BehindPlotLines,
+              borderWidth: 1,
+              borderColor: 'red'
+            };
+            this.xAxisPlotBands.push(currentPlotBand);
+          }
+        }
+      }
+    }
+  }
+
+  calculateFabWidth(options: IDropdownOption[]): number {
+    //each char 7px  
+    let length = 0;
+    options.forEach(option => {
+      length = Math.max(length, option.text.length);
+    });
+    return (length * 7) + 50;
+  }
+
+  selectFabricKey(event: { option: IDropdownOption }) {
+    this.selectedKey = this.getKeyForDownTime(event.option.data);
+    this.onDownTimeChange(event.option.data, DowntimeInteractionSource.Dropdown);
+  }
+
+  private getKeyForDownTime(d: DownTime): string {
+    if (!!d && !!d.StartTime && !!d.EndTime) {
+      return `${this.getTimestampAsString(d.StartTime)}-${this.getTimestampAsString(d.EndTime)}`
+    }
+    else {
+      return '';
+    }
+  }
+
+  getDefaultFabricDownTimeEntry(): IDropdownOption {
+    let d = this.getDefaultDowntimeEntry();
+    return {
+      key: this.getKeyForDownTime(d),
+      text: this.getDowntimeLabel(d),
+      ariaLabel: this.getDowntimeLabel(d),
+      data: d,
+      isSelected: d.isSelected
+    } as IDropdownOption;
+  }
+
+  prepareCustomDowntimeLabel(startTime: Moment, endTime: Moment): string {
+    return `Custom selection from ${this.getTimestampAsString(startTime)} to ${this.getTimestampAsString(endTime)}`;
+  }
+
+  getDefaultDowntimeEntry(): DownTime {
+    return {
+      StartTime: momentNs.utc('1990-01-01 00:00:00'),
+      EndTime: momentNs.utc('1990-01-01 00:00:00'),
+      isSelected: false,
+      downTimeLabel: 'Drag and select a time window on the graph'
+    } as DownTime;
+  }
+
+  private populateFabricDowntimeDropDown(downTimes: DownTime[]): void {
+    if (!!downTimes) {
+      this.fabOptions = [];
+      downTimes.forEach(d => {
+        this.fabOptions.push({
+          key: this.getKeyForDownTime(d),
+          text: this.getDowntimeLabel(d),
+          ariaLabel: this.getDowntimeLabel(d),
+          data: d,
+          isSelected: d.isSelected
+        });
+
+        if (d.isSelected) {
+          this.selectedKey = this.getKeyForDownTime(d);
+        }
+
+      });
+
+      this.fabOptions.push(this.getDefaultFabricDownTimeEntry());
+
+      let defaultOption = this.fabOptions.find(x => x.isSelected);
+      if (defaultOption == null && this.fabOptions.length > 0) {
+        this.fabOptions[0].isSelected = true;
+        this.selectedKey = this.getKeyForDownTime(this.fabOptions[0].data);
+      }
+
+      this.fabDropdownWidth = this.calculateFabWidth(this.fabOptions);
+
+    }
+  }
+
+  private parseDownTimeData(table: DataTableResponseObject) {
+
+    if (!(table.rows === undefined || table.rows.length < 1)) {
+
+      const startTimeIndex = 0;
+      const endTimeIndex = 1;
+      const downtimeLabelIndex = 2;
+      const isSelectedIndex = 3;
+
+      this.downTimes = [];
+      for (let i: number = 0; i < table.rows.length; i++) {
+        const row = table.rows[i];
+        let d = new DownTime();
+        d.StartTime = moment.utc(row[startTimeIndex]);
+        d.EndTime = moment.utc(row[endTimeIndex]);
+        d.downTimeLabel = row[downtimeLabelIndex];
+        d.isSelected = row[isSelectedIndex];
+        if (d.isSelected) {
+          this.selectedDownTime = d;
+        }
+        if (this.validateDowntimeEntry(d)) {
+          this.downTimes.push(d);
+        }
+      }
+      let selectedDownTime = this.downTimes.find(downtime => downtime.isSelected == true);
+      if (selectedDownTime == null && this.downTimes.length > 0) {
+        this.downTimes[0].isSelected = true;
+        this.selectedDownTime = this.downTimes[0];
+      }
+      let downtimeListForLogging = {
+        'DowntimesIdentifiedCount': this.downTimes.length,
+        'DowntimesIdentifiedList': JSON.stringify(this.downTimes)
+      };
+
+      this.logEvent(TelemetryEventNames.DowntimeListPassedByDetector, downtimeListForLogging);
+
+      this.populateFabricDowntimeDropDown(this.downTimes);
+      this.setxAxisPlotBands(false);
+    }
+  }
+
+  isDowntimeSame(downtime1: DownTime, downtime2: DownTime): boolean {
+    return downtime1.StartTime.isSame(downtime2.StartTime) && downtime1.EndTime.isSame(downtime2.EndTime);
   }
 
   toggleButtonView(feature: string) {
@@ -284,7 +611,65 @@ export class DetectorViewComponent implements OnInit {
     }
   }
 
+  updateDownTimeErrorMessage(msg: string) {
+    this.downtimeSelectionErrorStr = msg;
+  }
 
+  validateDowntimeEntry(selectedDownTime: DownTime): boolean {
+    if (!!selectedDownTime && !!selectedDownTime.StartTime && !!selectedDownTime.EndTime) {
+      if (momentNs.duration(selectedDownTime.EndTime.diff(selectedDownTime.StartTime)).asMinutes() < minSupportedDowntimeDuration) {
+        return false;
+      }
+      else {
+        return true;
+      }
+    }
+    else {
+      return false;
+    }
+  }
+
+  downtimeTriggerLog(downtime: DownTime, downtimeInteractionSource: string, downtimeTriggerred: boolean, text: string) {
+    const downtimeListForLogging = {
+      'DowntimeInteractionSource': downtimeInteractionSource,
+      'Downtime': JSON.stringify(downtime),
+      'DowntimeTriggered': downtimeTriggerred,
+      'DetectorStartTime': `${this.startTime.format("YYYY-MM-DDTHH:mm:ss")}Z`,
+      'DetectorEndTime': `${this.endTime.format("YYYY-MM-DDTHH:mm:ssZ")}Z`,
+      'Reason': text
+    };
+    this.logEvent(TelemetryEventNames.DowntimeInteraction, downtimeListForLogging);
+  }
+
+  onDownTimeChange(selectedDownTime: DownTime, downtimeInteractionSource: string) {
+    if (!!selectedDownTime && !!selectedDownTime.StartTime && !!selectedDownTime.EndTime &&
+      selectedDownTime.downTimeLabel != this.getDefaultDowntimeEntry().downTimeLabel &&
+      momentNs.duration(selectedDownTime.StartTime.diff(this.startTime)).asMinutes() > -5 && //Allow a 5 min variance since backend normalizes starttime in 5 min timegrain
+      momentNs.duration(this.endTime.diff(selectedDownTime.EndTime)).asMinutes() > -5 //Allow a 5 min variance since backend normalizes endtime in 5 min timegrain
+    ) {
+      if (this.validateDowntimeEntry(selectedDownTime)) {
+        this.updateDownTimeErrorMessage('');
+        this.selectedDownTime = selectedDownTime;
+        this.downTimeChanged.emit(this.selectedDownTime);
+        this.setxAxisPlotBands(false);
+        this.downtimeTriggerLog(selectedDownTime, downtimeInteractionSource, true, '');
+      }
+      else {
+        this.downtimeTriggerLog(selectedDownTime, downtimeInteractionSource, false, `Downtime valdation failed. Selected downtime is less than ${minSupportedDowntimeDuration} minutes`);
+        this.updateDownTimeErrorMessage(defaultDowntimeSelectionError);
+      }
+    }
+    else {
+      let reason = '';
+      if (!!selectedDownTime && !!selectedDownTime.downTimeLabel) {
+        reason = selectedDownTime.downTimeLabel === this.getDefaultDowntimeEntry().downTimeLabel ? 'Placeholder downtime entry selected' : 'Selected downtime is out of bounds';
+      }
+      else {
+        reason = (!!selectedDownTime) ? 'Empty downtime label' : 'Null downtime selected';
+      }
+      this.downtimeTriggerLog(selectedDownTime, downtimeInteractionSource, false, reason);
+    }
+  }
   protected logEvent(eventMessage: string, eventProperties?: any, measurements?: any) {
     for (const id of Object.keys(this.detectorEventProperties)) {
       if (this.detectorEventProperties.hasOwnProperty(id)) {
@@ -294,51 +679,59 @@ export class DetectorViewComponent implements OnInit {
     this.telemetryService.logEvent(eventMessage, eventProperties, measurements);
   }
 
-  showChatButton():boolean {
+  showChatButton(): boolean {
     return this.isPublic && !this.isAnalysisView && this.cxpChatTrackingId != '' && this.cxpChatUrl != '';
   }
 
+  isInCaseSubmission(): boolean {
+    return !!this._supportTopicService && !!this._supportTopicService.supportTopicId && this._supportTopicService.supportTopicId != '';
+  }
 
-  renderCXPChatButton(){
-    if(this.cxpChatTrackingId === '' && this.cxpChatUrl === '') {
-      if(this._supportTopicService && this._cxpChatService && this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId)) {
-          this.cxpChatTrackingId = this._cxpChatService.generateTrackingId();
-          this._cxpChatService.getChatURL(this._supportTopicService.supportTopicId, this.cxpChatTrackingId).subscribe((chatApiResponse:any)=>{
-            if (chatApiResponse && chatApiResponse != '') {
-              this.cxpChatUrl = chatApiResponse;
-            }
-          });               
+
+  renderCXPChatButton() {
+    if (this.cxpChatTrackingId === '' && this.cxpChatUrl === '') {
+      if (this._supportTopicService && this._cxpChatService && this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId)) {
+        this.cxpChatTrackingId = this._cxpChatService.generateTrackingId( ((!!this._supportTopicService && !!this._supportTopicService.supportTopicId) ? this._supportTopicService.supportTopicId : ''));
+        this.supportTopicId = this._supportTopicService.supportTopicId;
+        this._cxpChatService.getChatURL(this._supportTopicService.supportTopicId, this.cxpChatTrackingId).subscribe((chatApiResponse: any) => {
+          if (chatApiResponse && chatApiResponse != '') {
+            this.cxpChatUrl = chatApiResponse;
+          }
+        });
       }
       else {
         var checkOutcome = {
           _supportTopicServiceObj: !!this._supportTopicService,
-          supportTopicId: (!!this._supportTopicService)? this._supportTopicService.supportTopicId : '_supportTopicService is NULL',
+          supportTopicId: (!!this._supportTopicService) ? this._supportTopicService.supportTopicId : '_supportTopicService is NULL',
           _cxpChatService: !!this._cxpChatService,
-          isSupportTopicEnabledForLiveChat:  (!!this._supportTopicService && !!this._cxpChatService)? this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId): null
+          isSupportTopicEnabledForLiveChat: (!!this._supportTopicService && !!this._cxpChatService) ? this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId) : null
         };
 
-        this._cxpChatService.logChatEligibilityCheck('Call to CXP Chat API skipped', JSON.stringify(checkOutcome));
+        this._cxpChatService.logChatEligibilityCheck(
+          ((!!this._supportTopicService && !!this._supportTopicService.supportTopicId) ? this._supportTopicService.supportTopicId : ''),
+          'Call to CXP Chat API skipped',
+          JSON.stringify(checkOutcome));
       }
     }
   }
 
-  populateSupportTopicDocument(){
-    if (!this.supportDocumentRendered){
+  populateSupportTopicDocument() {
+    if (!this.supportDocumentRendered) {
       this._supportTopicService.getSelfHelpContentDocument().subscribe(res => {
-        if (res && res.length>0){
+        if (res && res.length > 0) {
           var htmlContent = res[0]["htmlContent"];
           // Custom javascript code to remove top header from support document html string
           var tmp = document.createElement("DIV");
           tmp.innerHTML = htmlContent;
           var h2s = tmp.getElementsByTagName("h2");
-          if (h2s && h2s.length>0){
+          if (h2s && h2s.length > 0) {
             h2s[0].remove();
           }
 
           // Set the innter html for support document display
           this.supportDocumentContent = tmp.innerHTML;
           this.supportDocumentRendered = true;
-          
+
         }
       });
     }
@@ -352,12 +745,12 @@ export class DetectorViewComponent implements OnInit {
 })
 export class RenderFilterPipe implements PipeTransform {
   transform(items: DiagnosticData[], isAnalysisView: any): any {
-      if (!items || !isAnalysisView) {
-          return items;
-      }
-      if (isAnalysisView)
+    if (!items || !isAnalysisView) {
+      return items;
+    }
+    if (isAnalysisView)
       return items.filter(item => item.renderingProperties.type !== RenderingType.SearchComponent);
-      else
+    else
       return items;
   }
 }

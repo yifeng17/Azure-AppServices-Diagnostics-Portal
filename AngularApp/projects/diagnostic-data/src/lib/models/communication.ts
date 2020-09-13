@@ -9,6 +9,7 @@ export interface Communication {
     isExpanded: boolean;
     impactedServices: ImpactedService[];
     icmId: string;
+    commType: number;
 }
 
 export interface ImpactedService {

@@ -27,11 +27,14 @@ namespace AppLensV3.Models
 
         public string IcmId { get; set; }
 
+        public CommunicationType CommType { get; set; }
+
         public Communication()
         {
             ImpactedServices = new List<ImpactedService>();
             IsAlert = false;
             IsExpanded = false;
+            CommType = CommunicationType.ServiceIssue;
         }
     }
     
@@ -57,6 +60,13 @@ namespace AppLensV3.Models
     {
         ServiceHealth = 0,
         AppServiceAdvisor = 1
+    }
+
+    public enum CommunicationType
+    {
+        ServiceIssue = 0,
+        PlannedMaintenance = 1,
+        EmergingIssue = 2
     }
 
 }

@@ -50,8 +50,15 @@ export class CommAlertComponent implements OnInit {
           this.commAlertTitle = this.resolvedAlertTitle;
         }
 
-        this.commAlertTitle = this.commAlertTitle.replace('{title}', commAlert.title);
-        this._getImpactedServices();
+        if(commAlert.commType === 2)  // Emerging Issue
+        {
+          this.commAlertTitle = commAlert.title;
+        }
+        else
+        {
+          this.commAlertTitle = this.commAlertTitle.replace('{title}', commAlert.title);
+          this._getImpactedServices();
+        }
       }
     });
   }

@@ -5,13 +5,16 @@ import { Subscription } from '../models/subscription';
 import { ResponseMessageEnvelope, ResponseMessageCollectionEnvelope } from '../models/responsemessageenvelope';
 import { AuthService } from '../../startup/services/auth.service';
 import { CacheService } from './cache.service';
-import { catchError, retry, map } from 'rxjs/operators';
+import { catchError, retry, map, retryWhen, delay } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { GenericArmConfigService } from './generic-arm-config.service';
 import { StartupInfo } from '../models/portal';
 import { DemoSubscriptions } from '../../betaSubscriptions';
 import { VersioningHelper } from '../../../app/shared/utilities/versioningHelper';
 import { PortalKustoTelemetryService } from './portal-kusto-telemetry.service';
+import { Guid } from '../utilities/guid';
+import { Router } from '@angular/router';
+import { TelemetryPayload } from 'diagnostic-data';
 
 @Injectable()
 export class ArmService {
@@ -25,15 +28,16 @@ export class ArmService {
     private readonly usGovernmentAzureArmUrl = 'https://management.usgovcloudapi.net';
     private readonly blackforestAzureArmUrl = 'https://management.microsoftazure.de';
     private readonly usnatAzureArmUrl = 'https://management.azure.eaglex.ic.gov';
+    private readonly ussecAzureArmUrl = 'https://management.azure.microsoft.scloud';
     private diagRoleVersion: string = '';
     private readonly routeToLiberation = '2';
     private readonly routeToDiagnosticRole = '1';
-    private armEndpoint:string = '';
-    constructor(private _http: HttpClient, private _authService: AuthService, private _cache: CacheService, private _genericArmConfigService?: GenericArmConfigService,
-        private telemetryService?: PortalKustoTelemetryService ) {
+    private armEndpoint: string = '';
+    constructor(private _http: HttpClient, private _authService: AuthService, private _cache: CacheService, private _router: Router, private _genericArmConfigService?: GenericArmConfigService,
+        private telemetryService?: PortalKustoTelemetryService) {
         this._authService.getStartupInfo().subscribe((startupInfo: StartupInfo) => {
-            if(!!startupInfo.armEndpoint && startupInfo.armEndpoint !='' && startupInfo.armEndpoint.length > 1) {
-                this.armEndpoint = startupInfo.armEndpoint ;
+            if (!!startupInfo.armEndpoint && startupInfo.armEndpoint != '' && startupInfo.armEndpoint.length > 1) {
+                this.armEndpoint = startupInfo.armEndpoint;
             }
             let resourceId = startupInfo.resourceId;
             let subscriptionId = resourceId.split('/')[2];
@@ -41,7 +45,7 @@ export class ArmService {
         });
     }
 
-    get isPublicAzure():boolean {
+    get isPublicAzure(): boolean {
         return this.armUrl === this.publicAzureArmUrl;
     }
 
@@ -54,35 +58,48 @@ export class ArmService {
     }
 
     get isMooncake(): boolean {
-        return this.armUrl ===  this.chinaAzureArmUrl;
+        return this.armUrl === this.chinaAzureArmUrl;
     }
 
     get isUsnat(): boolean {
-        return this.armUrl ===  this.usnatAzureArmUrl;
+        return this.armUrl === this.usnatAzureArmUrl;
+    }
+
+    get isUssec(): boolean {
+        return this.armUrl === this.ussecAzureArmUrl;
     }
 
     get isNationalCloud(): boolean {
-        return this.isMooncake || this.isFairfax || this.isBlackforest || this.isUsnat;
+        return this.isMooncake || this.isFairfax || this.isBlackforest || this.isUsnat || this.isUssec;
     }
 
     get armUrl(): string {
-        if(this.armEndpoint !='' && this.armEndpoint.length > 1 ) {
-            return  this.armEndpoint;
+        if (this.armEndpoint != '' && this.armEndpoint.length > 1) {
+            return this.armEndpoint;
         }
         else {
             let browserUrl = (window.location != window.parent.location) ? document.referrer : document.location.href;
             let armUrl = this.publicAzureArmUrl;
 
-            if (browserUrl.includes("azure.cn")){
+            if (browserUrl.includes("azure.cn")) {
                 armUrl = this.chinaAzureArmUrl;
             }
-            else if(browserUrl.includes("azure.us")){
+            else if (browserUrl.includes("azure.us")) {
                 armUrl = this.usGovernmentAzureArmUrl;
-            } else if(browserUrl.includes("azure.de")) {
+            } else if (browserUrl.includes("azure.de")) {
                 armUrl = this.blackforestAzureArmUrl;
             }
 
             return armUrl;
+        }
+    }
+
+    get storageUrl(): string {
+        if (this.isNationalCloud) {
+            let storageUrl = this.armUrl.replace("management", "core").replace("https://", "");
+            return storageUrl;
+        } else {
+            return "core.windows.net";
         }
     }
 
@@ -123,22 +140,53 @@ export class ArmService {
         //If the value is set to other than 1 or if the header is not present at all, requests will go to runtimehost
         additionalHeaders.set('x-ms-diagversion', this.diagRoleVersion);
         // This is just for logs so that we know requests are coming from Portal.
-        if(this.diagRoleVersion === this.routeToLiberation) {
+        if (this.diagRoleVersion === this.routeToLiberation) {
             additionalHeaders.set('x-ms-azureportal', 'true');
         }
+
+        let requestId: string = Guid.newGuid();
+        additionalHeaders.set('x-ms-request-id', requestId);
+
         let eventProps = {
-            'resourceId' : resourceUri,
+            'resourceId': resourceUri,
+            'requestId': requestId,
+            'requestUrl': url,
+            'routerUrl': this._router.url,
             'targetRuntime': this.diagRoleVersion == this.routeToLiberation ? "Liberation" : "DiagnosticRole"
         };
-        this.telemetryService.logEvent("RequestRoutingDetails", eventProps);
+
+        let logData = {
+            eventIdentifier: "RequestRoutingDetails",
+            eventPayload: eventProps
+        } as TelemetryPayload;
+
+        let requestHeaders = this.getHeaders(null, additionalHeaders);
         const request = this._http.get<ResponseMessageEnvelope<T>>(url, {
-            headers: this.getHeaders(null, additionalHeaders)
+            headers: requestHeaders
         }).pipe(
-            retry(2),
+            retryWhen(err => {
+                let requestId: string = Guid.newGuid();
+                additionalHeaders.set('x-ms-request-id', requestId);
+                requestHeaders = this.getHeaders(null, additionalHeaders);
+
+                let retryCount = 0;
+                eventProps.requestId = requestId;
+                eventProps["retryCount"] = retryCount;
+
+                return err.pipe(delay(1000), map(err => {
+                    if (retryCount++ >= 2) {
+                        this.telemetryService.logEvent("RetryRequestFailed", eventProps);
+                        throw err;
+                    }
+                    this.telemetryService.logEvent("RetryRequestRoutingDetails", eventProps);
+                    return err;
+                }));
+
+            }),
             catchError(this.handleError)
         );
 
-        return this._cache.get(url, request, invalidateCache);
+        return this._cache.get(url, request, invalidateCache, logData);
     }
 
     getArmResource<T>(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Observable<T> {
@@ -258,7 +306,9 @@ export class ArmService {
         const request = this._http.post<T>(url, body, {
             headers: this.getHeaders(),
             observe: 'response'
-        });
+        }).pipe(
+            catchError(this.handleError)
+        );
 
         return this._cache.get(resourceUri, request, invalidateCache);
     }
@@ -269,7 +319,9 @@ export class ArmService {
         const request = this._http.put<T>(url, body, {
             headers: this.getHeaders(),
             observe: 'response'
-        });
+        }).pipe(
+            catchError(this.handleError)
+        );
 
         return this._cache.get(resourceUri, request, invalidateCache);
     }
@@ -280,7 +332,9 @@ export class ArmService {
         const request = this._http.patch<T>(url, body, {
             headers: this.getHeaders(),
             observe: 'response'
-        });
+        }).pipe(
+            catchError(this.handleError)
+        );
 
         return this._cache.get(resourceUri, request, invalidateCache);
     }
@@ -291,7 +345,9 @@ export class ArmService {
         const request = this._http.get<T>(url, {
             headers: this.getHeaders(),
             observe: 'response'
-        });
+        }).pipe(
+            catchError(this.handleError)
+        );
 
         return this._cache.get(resourceUri, request, invalidateCache);
     }
@@ -299,9 +355,33 @@ export class ArmService {
     getResourceFullUrl<T>(resourceUri: string, invalidateCache: boolean = false): Observable<T> {
         const request = this._http.get<T>(resourceUri, {
             headers: this.getHeaders()
-        });
+        }).pipe(
+            catchError(this.handleError)
+        );
 
         return this._cache.get(resourceUri, request, invalidateCache);
+    }
+
+    static prettifyError(error: any): string {
+        let errorReturn = '';
+
+        if (error.code) {
+            errorReturn = "Code:" + error.code;
+        } else if (error.StatusCode) {
+            errorReturn = "StatusCode:" + error.StatusCode;
+        }
+        if (error.message) {
+            errorReturn += ' ' + error.message;
+        } else if (error.description) {
+            errorReturn += ' ' + error.description;
+        } else if (error.Description) {
+            errorReturn += ' ' + error.Description;
+        }
+
+        if (errorReturn === '') {
+            errorReturn = JSON.stringify(error);
+        }
+        return errorReturn;
     }
 
     private handleError(error: HttpErrorResponse): any {
@@ -311,18 +391,23 @@ export class ArmService {
 
         if (error) {
             if (error.error) {
-                actualError = JSON.stringify(error.error);
+                if (error.error.error) {
+                    actualError = ArmService.prettifyError(error.error.error);
+                } else {
+                    actualError = ArmService.prettifyError(error.error);
+                }
+
                 if (error.error instanceof ErrorEvent) {
                     loggingError.message = error.error.message;
-                    loggingProps['reason']= "A client-side or network error occured.";
+                    loggingProps['reason'] = "A client-side or network error occured.";
                 }
             }
             else if (error.message) {
-                loggingProps['reason']= "Server side unsuccessful response code.";
+                loggingProps['reason'] = "Server side unsuccessful response code.";
             } else {
                 actualError = 'Server Error';
             }
-            loggingProps['url']= error.url;
+            loggingProps['url'] = error.url;
             loggingProps['status'] = error.status.toString();
             loggingProps['statusText'] = error.statusText;
         }
@@ -331,8 +416,7 @@ export class ArmService {
             loggingError.message = actualError;
         }
 
-        if (this.telemetryService)
-        {
+        if (this.telemetryService) {
             this.telemetryService.logException(loggingError, null, loggingProps);
         }
 
@@ -351,22 +435,33 @@ export class ArmService {
         // When x-ms-diagversion is set to 1, the requests will be sent to DiagnosticRole.
         //If the value is set to other than 1 or if the header is not present at all, requests will go to runtimehost
         additionalHeaders.set('x-ms-diagversion', this.diagRoleVersion);
-         // This is just for logs so that we know requests are coming from Portal.
-         if(this.diagRoleVersion === this.routeToLiberation) {
+        // This is just for logs so that we know requests are coming from Portal.
+        if (this.diagRoleVersion === this.routeToLiberation) {
             additionalHeaders.set('x-ms-azureportal', 'true');
         }
 
+        let requestId: string = Guid.newGuid();
+        additionalHeaders.set('x-ms-request-id', requestId);
+
         let eventProps = {
-            'resourceId' : resourceId,
+            'resourceId': resourceId,
+            'requestId': requestId,
+            'requestUrl': url,
+            'routerUrl': this._router.url,
             'targetRuntime': this.diagRoleVersion == this.routeToLiberation ? "Liberation" : "DiagnosticRole"
         };
-        this.telemetryService.logEvent("RequestRoutingDetails", eventProps);
+
+        let logData = {
+            eventIdentifier: "RequestRoutingDetails",
+            eventPayload: eventProps
+        } as TelemetryPayload;
+
         const request = this._http.get(url, { headers: this.getHeaders(null, additionalHeaders) }).pipe(
             map<ResponseMessageCollectionEnvelope<ResponseMessageEnvelope<T>>, ResponseMessageEnvelope<T>[]>(r => r.value),
             catchError(this.handleError)
         );
 
-        return this._cache.get(url, request, invalidateCache);
+        return this._cache.get(url, request, invalidateCache, logData);
     }
 
     getSubscriptionLocation(subscriptionId: string): Observable<HttpResponse<any>> {
@@ -383,9 +478,9 @@ export class ArmService {
             headers = headers.set('If-None-Match', etag);
         }
 
-        if(additionalHeaders) {
+        if (additionalHeaders) {
             additionalHeaders.forEach((headerVal: string, headerKey: string) => {
-                if(headerVal.length > 0 && headerKey.length > 0) {
+                if (headerVal.length > 0 && headerKey.length > 0) {
                     headers = headers.set(headerKey, headerVal);
                 }
             });

@@ -1,6 +1,6 @@
 <!-- This is the default template for the header, but you can pass in a custom header as well -->
 <ng-template #defaultHeader>
-  <span tabindex="0" role="contentinfo" attr.aria-label="{{title}}">{{title}}</span>
+  <span attr.aria-label="{{title}}">{{title}}</span>
 </ng-template>
 
 <ng-template #content>
@@ -15,7 +15,7 @@
       </ng-container>
     </div>
     <div *ngIf="description" class="panel-heading text-muted card-description" [class.with-top-border]="!title">
-      {{description}}
+      <markdown-text [markdownData]="description"></markdown-text>
     </div>
     <div class="panel-body" [class.data-container-body]="applicationInsightContainerStyle === 0" [class.data-container-body-appinsight]="applicationInsightContainerStyle === 1"
       [class.no-padding]="noBodyPadding" [class.with-top-border]="!title && !description">

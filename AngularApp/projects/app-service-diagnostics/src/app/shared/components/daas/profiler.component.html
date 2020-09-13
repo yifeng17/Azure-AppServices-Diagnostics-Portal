@@ -6,7 +6,7 @@
     </div>
     <div class="action-box" *ngIf="siteToBeDiagnosed && !checkingAppInfo">
         <div>
-            <table style="border:none;">
+            <table role="presentation" class="table table-borderless">
                 <tr>
                     <th tabindex="0" class="unbold" scope="row">App: </th>
                     <td tabindex="0" class="highlight-blue">
@@ -63,7 +63,7 @@
                         </span>
                     </div>
                     <div class="panel-body" *ngIf="aspnetCoreWarningExpanded">
-                        We detected that the app is using <strong>ASP.NET Core {{ appInfo.AspNetCoreVersion }}</strong>
+                        We detected that the app is using <strong>ASP.NET Core {{ netCoreVersion }}</strong>
                         and to use this profiler effectively with ASP.NET Core apps, you need to do two things :-
                         <ol style="margin-top:10px">
                             <li>

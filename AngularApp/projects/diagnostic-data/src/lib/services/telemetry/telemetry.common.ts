@@ -28,6 +28,7 @@ export const TelemetryEventNames = {
     ChangeAnalysisChangeClicked: 'ChangeAnalysisChangeClicked',
     ChangeAnalysisChangeFeedbackClicked: 'ChangeAnalysisChangeFeedbackClicked',
     SearchResultsLoaded: 'SearchResultsLoaded',
+    MoreResultsButtonClicked: 'MoreResultsButtonClicked',
     SearchQueryResults: 'SearchQueryResults',
     SearchResultClicked: 'SearchResultClicked',
     SearchResultFeedback: 'SearchResultFeedback',
@@ -56,8 +57,20 @@ export const TelemetryEventNames = {
     SummaryCardClicked: 'SummaryCardClicked',
     ToolCardClicked: 'ToolCardClicked',
     TimePickerApplied: 'TimePickerApplied',
-    CategoryNavItemClicked: 'CategoryNavItemClicked'
+    CategoryNavItemClicked: 'CategoryNavItemClicked',
+    DowntimeInteraction: 'DowntimeInteraction',
+    DowntimeListPassedByDetector: 'DowntimePassedByDetector',
+    CrashMonitoringEnabled: 'CrashMonitoringEnabled',
+    CrashMonitoringStopped: 'CrashMonitoringStopped',
+    CrashMonitoringAgentDisabled: 'CrashMonitoringAgentDisabled'
 };
+
+export interface TelemetryPayload {
+    eventIdentifier: string,
+    eventPayload: {
+        [name: string]: string
+    }
+}
 
 export interface ITelemetryProvider {
     // Log a user action or other occurrence.

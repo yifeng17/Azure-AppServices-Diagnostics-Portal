@@ -70,17 +70,17 @@ export class DetectorSearchComponent extends DataRenderBaseComponent implements 
     loadingMessageTimer: any;
     showLoadingMessage: boolean = false;
 
-    showSuccessfulChecks: boolean = false;
-
     webSearchResults: any[] = [];
     
     searchConfiguration: SearchConfiguration = null;
     
     initialDelay: number = 5000;
     isVisible: boolean = false;
+    showScrollButton: boolean = true;
     isListening: boolean = true;
     componentStartTime: number;
     showCharAlert: boolean = false;
+    autoFocus: boolean = false;
     
     @Input()
     withinDiagnoseAndSolve: boolean = false;
@@ -89,6 +89,7 @@ export class DetectorSearchComponent extends DataRenderBaseComponent implements 
     @Input() visibleLogging: boolean = true;
     @Input() showSearchBar: boolean = true;
     @Input() forceShowSearchPractices: boolean = false;
+    @Input() showSuccessfulChecks: boolean = false;
 
     constructor(@Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig, private _diagnosticService: DiagnosticService, public telemetryService: TelemetryService,
         private detectorControlService: DetectorControlService, private _activatedRoute: ActivatedRoute, private _router: Router, private _resourceService: GenericResourceService) {
@@ -176,19 +177,53 @@ export class DetectorSearchComponent extends DataRenderBaseComponent implements 
         });
     }
 
+    scrollToResults() {
+        this.logEvent(TelemetryEventNames.MoreResultsButtonClicked, {
+            parentDetectorId: this.detector,
+            searchId: this.searchId,
+            ts: Math.floor(new Date().getTime() / 1000).toString(),
+        });
+        var elementToScroll = (document.querySelector(".mainContentSection") || document.getElementById("app-content") || document.body);
+        var elementToScrollTo = document.querySelector(".search-container-for-scroll") as HTMLElement;
+        if (elementToScroll && elementToScrollTo) {
+            elementToScroll.scrollTop = elementToScrollTo.offsetTop;
+            this.showScrollButton = false;
+        }
+    }
+
+    moreResultsIconProps: any = {
+        iconName: "Down",
+        styles: {
+            root: {
+                fontSize: "13px",
+                fontWeight: 600
+            }
+        }
+    };
+
+    moreResultsButtonStyles: any = {
+        root: { height: "28px"},
+        flexContainer: {
+            flexDirection: "row-reverse"
+        }
+    };
+
     announceAlert() {
-        this.showCharAlert = true;
-        setTimeout(() => {this.charAlertRef.nativeElement.focus();this.charAlertRef.nativeElement.click();}, 500);
-        setTimeout(() => {
-            this.searchInputBox.nativeElement.focus();
-        }, 5000);
+        if (this.autoFocus) {
+            this.showCharAlert = true;
+            setTimeout(() => {this.charAlertRef.nativeElement.focus();this.charAlertRef.nativeElement.click();}, 500);
+            setTimeout(() => {
+                this.searchInputBox.nativeElement.focus();
+            }, 5000);
+        }
     }
     
     resetAlert() {
         this.showCharAlert = false;
     }
 
-    hitSearch(){
+    hitSearch(autofocus: boolean=false){
+        if (autofocus) {this.autoFocus = true;}
         this.resetAlert();
         if (this.searchTerm && this.searchTerm.length > 1){
             const queryParams: Params = { searchTerm: this.searchTerm };
@@ -236,7 +271,9 @@ export class DetectorSearchComponent extends DataRenderBaseComponent implements 
         }));
         this.showPreLoader = true;
         observableForkJoin([searchTask, detectorsTask, childrenTask]).subscribe(results => {
-            setTimeout(() => {this.searchResultsSection.nativeElement.click();}, 2000);
+            if (this.autoFocus) {
+                setTimeout(() => {this.searchResultsSection.nativeElement.click();this.searchResultsSection.nativeElement.focus();}, 2000);
+            }
             this.showPreLoader = false;
             var searchResults: DetectorMetaData[] = results[0];
             this.logEvent(TelemetryEventNames.SearchQueryResults, { parentDetectorId: this.detector, searchId: this.searchId, query: this.searchTerm, results: JSON.stringify(searchResults.map((det: DetectorMetaData) => new Object({ id: det.id, score: det.score }))), ts: Math.floor((new Date()).getTime() / 1000).toString() });

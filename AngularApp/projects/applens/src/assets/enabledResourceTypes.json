@@ -12,7 +12,8 @@
             "altIcons": {
                 "Xenon": "assets/img/WebAppForContainers.svg"
             },
-            "searchSuffix": "AZURE WEB APP"
+            "searchSuffix": "AZURE WEB APP",
+            "emergingIssuesICMLookupEnabled": true
         },
         {
             "service": "AseService",
@@ -23,7 +24,8 @@
             "azureCommImpactedServicesList": "appservice",
             "pesId": "16533",
             "staticSelfHelpContent": "microsoft.ase",
-            "searchSuffix": "AZURE APP SERVICE ENVIRONMENT"
+            "searchSuffix": "AZURE APP SERVICE ENVIRONMENT",
+            "emergingIssuesICMLookupEnabled": true
         },
         {
             "service": "ResourceService",
@@ -306,6 +308,24 @@
             "pesId": "",
             "staticSelfHelpContent": "",
             "searchSuffix": "AZURE SIGNAL SERVICE"
+        },
+        { 
+            "service": "ResourceService",  
+            "resourceType": "Microsoft.NetApp/netAppAccounts",  
+            "templateFileName": "NetAppAccounts",  
+            "imgSrc": "assets/img/Azure-NetApp-Logo.png",  
+            "versionPrefix": "", 
+            "pesId": "16469",  
+            "azureCommImpactedServicesList": "Azure NetApp Files"  
+        },
+        { 
+            "service": "ResourceService",  
+            "resourceType": "Microsoft.Compute/virtualMachines",  
+            "templateFileName": "VirtualMachines",  
+            "imgSrc": "assets/img/Icon-compute-21-Virtual-Machine.svg",  
+            "versionPrefix": "", 
+            "pesId": "14749",  
+            "azureCommImpactedServicesList": "Azure Virtual Machines"  
         }
     ]
 }

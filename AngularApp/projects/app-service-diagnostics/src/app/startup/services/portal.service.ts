@@ -1,6 +1,6 @@
 import { Injectable, isDevMode } from '@angular/core';
 import { ReplaySubject } from 'rxjs';
-import { StartupInfo, Event, Data, Verbs, Action, LogEntryLevel, Message, OpenBladeInfo } from '../../shared/models/portal';
+import { StartupInfo, Event, Data, Verbs, Action, LogEntryLevel, Message, OpenBladeInfo, KeyValuePair } from '../../shared/models/portal';
 import { ErrorEvent } from '../../shared/models/error-event';
 import { BroadcastService } from './broadcast.service';
 import { BroadcastEvent } from '../models/broadcast-event';
@@ -9,35 +9,54 @@ import { BroadcastEvent } from '../models/broadcast-event';
 export class PortalService {
     public sessionId = '';
     private portalSignature: string = 'FxFrameBlade';
+    private iFrameSignature: string = 'AppServiceDiagnosticsIFrame';
     private startupInfoObservable: ReplaySubject<StartupInfo>;
     private appInsightsResourceObservable: ReplaySubject<any>;
+
+    private isIFrameForCaseSubmissionSolution: ReplaySubject<boolean>;
 
     private sendChatAvailabilityObservable: ReplaySubject<any>;
     private sendbuiltChatUrlObservable: ReplaySubject<any>;
     private sendChatUrlObservable: ReplaySubject<any>;
-    private notifyChatOpenedObservable: ReplaySubject<any>;
+    private getBladeReturnValueObservable: ReplaySubject<KeyValuePair>;
+    private setBladeReturnValueObservable: ReplaySubject<any>;
 
 
     private shellSrc: string;
+    private tokenObservable: ReplaySubject<string>;
 
     constructor(private _broadcastService: BroadcastService) {
         this.sessionId = '';
 
         this.startupInfoObservable = new ReplaySubject<StartupInfo>(1);
+        this.tokenObservable = new ReplaySubject<string>(1);
         this.appInsightsResourceObservable = new ReplaySubject<any>(1);
-        
+
+        this.isIFrameForCaseSubmissionSolution = new ReplaySubject<boolean>(1);
+
         //CXP Chat messages
         this.sendChatAvailabilityObservable = new ReplaySubject<any>(1);
         this.sendbuiltChatUrlObservable = new ReplaySubject<any>(1);
         this.sendChatUrlObservable = new ReplaySubject<any>(1);
 
+        this.getBladeReturnValueObservable = new ReplaySubject<KeyValuePair>(1);
+        this.setBladeReturnValueObservable = new ReplaySubject<any>(1);
+
         if (this.inIFrame()) {
             this.initializeIframe();
-        }        
+        }
     }
 
     getStartupInfo(): ReplaySubject<StartupInfo> {
         return this.startupInfoObservable;
+    }
+
+    isWithinCaseSubmissionSolution(): ReplaySubject<boolean> {
+        return this.isIFrameForCaseSubmissionSolution;
+    }
+
+    getToken(): ReplaySubject<string> {
+        return this.tokenObservable;
     }
 
     getAppInsightsResourceInfo(): ReplaySubject<any> {
@@ -56,9 +75,22 @@ export class PortalService {
         return this.sendChatUrlObservable;
     }
 
-    notifyChatOpened():ReplaySubject<any> {
-        return this.notifyChatOpenedObservable;
+    getBladeReturnValue(): ReplaySubject<KeyValuePair> {
+        return this.getBladeReturnValueObservable;
     }
+
+    public setBladeReturnValue(dataToSet: KeyValuePair): ReplaySubject<any> {
+        if (!!dataToSet) {
+            this.postMessage(Verbs.setBladeReturnValue, JSON.stringify(dataToSet));
+            return this.setBladeReturnValueObservable;
+        }
+        else {
+            this.logMessage(LogEntryLevel.Error, 'NULL data cannot be set as blade return value.');
+            return null;
+        }
+    }
+
+
 
     initializeIframe(): void {
         this.shellSrc = this.getQueryStringParameter('trustedAuthority');
@@ -123,43 +155,69 @@ export class PortalService {
     }
 
     private iframeReceivedMsg(event: Event): void {
-
         if (!event || !event.data || event.data.signature !== this.portalSignature) {
             return;
         }
 
         const data = event.data.data;
         const methodName = event.data.kind;
-        console.log('[iFrame] Received mesg: ' + methodName, event);
+        console.log('[iFrame] Received validated mesg: ' + methodName, event, event.srcElement, event.srcElement.location, event.srcElement.location.host);
+
+        const isIFrameForCaseSubmissionSolution = event.srcElement.location.host.toString().includes("appservice-diagnostics-am2");
 
         if (methodName === Verbs.sendStartupInfo) {
             const info = <StartupInfo>data;
             this.sessionId = info.sessionId;
+            info.isIFrameForCaseSubmissionSolution = isIFrameForCaseSubmissionSolution;
             this.startupInfoObservable.next(info);
+            this.isIFrameForCaseSubmissionSolution.next(isIFrameForCaseSubmissionSolution);
         } else if (methodName === Verbs.sendAppInsightsResource) {
             const aiResource = data;
             this.appInsightsResourceObservable.next(aiResource);
         } else if (methodName === Verbs.sendChatAvailability) {
             const chatAvailability = data;
             this.sendChatAvailabilityObservable.next(chatAvailability);
-        } else if(methodName === Verbs.sendbuiltChatUrl) {
+        } else if (methodName === Verbs.sendbuiltChatUrl) {
             const chatUrl = data;
             this.sendbuiltChatUrlObservable.next(chatUrl);
-        } else if(methodName === Verbs.sendChatUrl) {
+        } else if (methodName === Verbs.sendChatUrl) {
             const chatUrlAfterAvailability = data;
             this.sendChatUrlObservable.next(chatUrlAfterAvailability);
-        } else if (methodName == Verbs.notifyChatOpenedResponse) {
-            const notifyChatOpenedResponse = data;
-            this.notifyChatOpenedObservable.next(notifyChatOpenedResponse);
+        } else if (methodName == Verbs.getBladeReturnValueResponse) {
+            const getBladeReturnValueResponse = data;
+            this.getBladeReturnValueObservable.next(getBladeReturnValueResponse);
+        } else if (methodName == Verbs.setBladeReturnValueResponse) {
+            const setBladeReturnValueResponse = data;
+            this.setBladeReturnValueObservable.next(setBladeReturnValueResponse);
+        } else if (methodName == Verbs.sendToken) {
+            const token = data;
+            this.tokenObservable.next(token);
         }
     }
 
+
+
     public postMessage(verb: string, data: string) {
         if (this.inIFrame()) {
+            let dataString = data;
+            try {
+                var dataJsonObject = data === null ? {} : JSON.parse(data);
+                const dataObjectWithEventType = {
+                    signature: this.iFrameSignature,
+                    eventType: verb,
+                    ...dataJsonObject,
+                }
+
+                dataString = JSON.stringify(dataObjectWithEventType);
+            }
+            catch (error) {
+                // If Json is misformatted, log json string without verb in data only.
+            }
+
             window.parent.postMessage(<Data>{
                 signature: this.portalSignature,
                 kind: verb,
-                data: data
+                data: dataString
             }, this.shellSrc);
         }
     }
