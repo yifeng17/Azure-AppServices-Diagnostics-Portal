@@ -170,7 +170,7 @@ namespace AppLensV3.Services
                 PublishedTime = DateTimeHelper.GetDateTimeInUtcFormat(DateTime.Parse(activeIssue["ModifiedDate"].ToString())),
                 Title = $"[Detected Emerging Issue] : {activeIssue["Title"].ToString()}",
                 RichTextMessage = activeIssue["Details"].ToString().Truncate(500, true),
-                Status = activeIssue["Title"].ToString().Equals("Active", StringComparison.OrdinalIgnoreCase) ? CommunicationStatus.Active : CommunicationStatus.Resolved,
+                Status = activeIssue["Status"].ToString().Equals("Active", StringComparison.OrdinalIgnoreCase) ? CommunicationStatus.Active : CommunicationStatus.Resolved,
                 IncidentId = string.Empty,
                 IcmId = activeIssue["IncidentId"].ToString(),
                 IsAlert = true,
