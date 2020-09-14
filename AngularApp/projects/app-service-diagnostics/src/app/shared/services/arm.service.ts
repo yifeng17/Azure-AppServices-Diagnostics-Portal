@@ -132,7 +132,7 @@ export class ArmService {
         const url = this.createUrl(resourceUri, apiVersion);
         let subscriptionLocation = '';
         this.getSubscriptionLocation(resourceUri.split("subscriptions/")[1].split("/")[0]).subscribe(response => {
-            subscriptionLocation = response.body['subscriptionPolicies']['locationPlacementId'];
+            subscriptionLocation = response.body['subscriptionPolicies'] ? response.body['subscriptionPolicies']['locationPlacementId'] : '';
         });
         let additionalHeaders = new Map<string, string>();
         additionalHeaders.set('x-ms-subscription-location-placementid', subscriptionLocation);
