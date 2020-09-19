@@ -238,6 +238,10 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
         }
     }
 
+    isInCaseSubmission(): boolean {
+        return !!this._supportTopicService && !!this._supportTopicService.supportTopicId && this._supportTopicService.supportTopicId != '';
+    }
+
     analysisContainsDowntime(): Observable<boolean> {
         if (this.analysisId === 'searchResultsAnalysis') {
             return of(false);
@@ -245,7 +249,8 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
         return this._diagnosticService.getDetector(this.analysisId, this._detectorControl.startTimeString, this._detectorControl.endTimeString).pipe(
             map((response: DetectorResponse) => {
                 let downTimeRenderingType = response.dataset.find(set => (<Rendering>set.renderingProperties).type === RenderingType.DownTime);
-                if (!!downTimeRenderingType) {
+                if (!!downTimeRenderingType && !this.isInCaseSubmission()) {
+                    //Allow downtimes only when not in case submission.
                     return true;
                 }
                 else {
