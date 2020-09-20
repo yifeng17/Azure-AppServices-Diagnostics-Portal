@@ -1,6 +1,6 @@
 {
     "homePageText": {
-        "title": "Azure Kubernetes Services Diagnostics",
+        "title": "Azure SignalR Services Diagnostics",
         "description": "Use Azure SignalR Service Diagnostics to investigate how your service is performing, diagnose issues, and discover how to improve its reliability. Select the problem category that best matches the information or tool that you're interested in:",
         "searchBarPlaceHolder": "Search for common problems, tools and more"
     },
@@ -13,21 +13,30 @@
     "isApplicableForLiveChat": false,
     "categories": [
         {
-            "id": "Control Plane",
-            "name": "Control Plane",
-            "description": "Investigate issues with the control plane of your cluster. Find out the common causes and investigate in detail.",
+            "id": "OverallCheck",
+            "name": "Overall Check",
+            "description": "An overall check run to help quickly identify some possible common issues. ",
+            "keywords": [ "Overall Check" ],
+            "color": "rgb(186, 211, 245)",
+            "createFlowForCategory": false,
+            "chatEnabled": false
+        },
+        {
+            "id": "AvailabilityAndPerformance",
+            "name": "Availability And Performance",
+            "description": "Investigate issues with your azure signalr service. Find out the common causes and investigate in detail. ",
             "keywords": [ "Config Sever", "App Health", "Availability" ],
             "color": "rgb(186, 211, 245)",
             "createFlowForCategory": false,
             "chatEnabled": false
         },
         {
-            "id": "Customer",
-            "name": "Customer",
-            "description": "Are you having issues exploring platform logs or metrics? Are you having issue with some settings that you configured for your app? Find out if your signalr service is at a good state.",
+            "id": "ResourcesUsage",
+            "name": "Resources Usage",
+            "description": "Are you trying to figure out your resource usage? You can see your SKU plan and your resource usage here. ",
             "keywords": [ "Resources" ],
             "color": "rgb(249, 213, 180)",
-            "createFlowForCategory": true,
+            "createFlowForCategory": false,
             "chatEnabled": false
         }
     ],
