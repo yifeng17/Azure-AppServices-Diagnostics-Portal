@@ -53,7 +53,5 @@ export const icons: Set<string> = new Set(
         ToolIds.EventViewer,
         ToolIds.FrebViewer,
         ToolIds.AdvancedAppRestart,
-        //Premium Tools
-        ToolIds.SecurityScanning
     ]
 );

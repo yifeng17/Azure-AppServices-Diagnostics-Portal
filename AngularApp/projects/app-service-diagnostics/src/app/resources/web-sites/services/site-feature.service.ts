@@ -27,7 +27,6 @@ export class SiteFeatureService extends FeatureService {
   public diagnosticTools: SiteFilteredItem<Feature>[];
   public proactiveTools: SiteFilteredItem<Feature>[];
   public supportTools: SiteFilteredItem<Feature>[];
-  public premiumTools: SiteFilteredItem<Feature>[];
   public subscriptionId: string;
   constructor(protected _diagnosticApiService: DiagnosticService, protected _resourceService: WebSitesService, protected _contentService: ContentService, protected _router: Router,
     protected _authService: AuthService, protected _portalActionService: PortalActionService, private _websiteFilter: WebSiteFilter, protected _logger: TelemetryService, protected armService: ArmService,
@@ -46,7 +45,6 @@ export class SiteFeatureService extends FeatureService {
       this.subscriptionId = startupInfo.resourceId.split("subscriptions/")[1].split("/")[0];
       this.addDiagnosticTools(startupInfo.resourceId);
       this.addProactiveTools(startupInfo.resourceId);
-      this.addPremiumTools(startupInfo.resourceId);
     });
   }
 
@@ -150,38 +148,6 @@ export class SiteFeatureService extends FeatureService {
         })
       }
     ];
-  }
-
-  addPremiumTools(resourceId: string) {
-    this.premiumTools = [];
-    this._resourceService.getSitePremierAddOns(resourceId).subscribe(data => {
-      if (data && data.value) {
-        let premierAddOns: any[] = data.value;
-        let TinfoilAddOn = premierAddOns.find(x => (x.product_name === "TinfoilScanning"));
-        if (TinfoilAddOn) {
-          this.premiumTools.push({
-            appType: AppType.WebApp,
-            platform: OperatingSystem.windows,
-            sku: Sku.NotDynamic,
-            hostingEnvironmentKind: HostingEnvironmentKind.All,
-            stack: '',
-            item: {
-              id: ToolIds.SecurityScanning,
-              name: ToolNames.SecurityScanning,
-              category: 'Premium Tools',
-              description: '',
-              featureType: FeatureTypes.Tool,
-              clickAction: this._createFeatureAction(ToolIds.SecurityScanning, 'Premium Tools', () => {
-                this._portalActionService.openTifoilSecurityBlade();
-              })
-            }
-          });
-        }
-      }
-    });
-    this._websiteFilter.transform(this.premiumTools).forEach(tool => {
-      this._features.push(tool);
-    });
   }
 
   addProactiveTools(resourceId: string) {
@@ -596,7 +562,7 @@ export class SiteFeatureService extends FeatureService {
 
   private navigateTo(resourceId: string, toolId: string) {
     const isHomepage = this._router.url.endsWith(resourceId);
-    //If in homepage then open second blade for Diagnostic Tool and second blade will continue to open third blade for 
+    //If in homepage then open second blade for Diagnostic Tool and second blade will continue to open third blade for
     if (isHomepage) {
       this._portalActionService.openBladeDiagnosticToolId(toolId);
     } else {

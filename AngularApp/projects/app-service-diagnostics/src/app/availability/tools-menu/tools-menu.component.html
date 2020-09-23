@@ -10,9 +10,4 @@
             <!--<a *ngIf="tool.title === 'Mitigate'" href="{{mitigateLink}}" target="_blank">{{tool.title}}</a>-->
         </li>
     </ul>
-
-    <h5>Premium Tools</h5>
-    <ul style="list-style-type: none; padding: 0px;" >
-        <li *ngFor="let tool of premiumTools"><a (click)="tool.action()">{{tool.title}}</a></li>
-    </ul>
 </div>
