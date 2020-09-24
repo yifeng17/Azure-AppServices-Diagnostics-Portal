@@ -18,10 +18,9 @@ import { LoggingService } from '../../shared/services/logging/logging.service';
 export class ToolsMenuComponent  {
 
     public supportTools: any[];
-    public premiumTools: any[];
 
     public mitigateLink: string;
-    
+
     currentSite: Site;
     hasReadAccessToServerFarm: boolean;
     initialized: boolean = false;
@@ -30,7 +29,6 @@ export class ToolsMenuComponent  {
 
     constructor(private _portalActionService: PortalActionService, private _armService: ArmService, private _authService: AuthService, private _rbacService: RBACService, private _logger: LoggingService) {
         this.supportTools = [];
-        this.premiumTools = [];
 
         this._authService.getStartupInfo().pipe(
             mergeMap((startUpInfo: StartupInfo) => {

@@ -19,7 +19,6 @@ export class SupportToolsComponent {
     @Input() collapsed: boolean = false;
 
     public supportTools: any[];
-    public premiumTools: any[];
 
     public mitigateLink: string;
     public diagnosticsLink: string;
@@ -30,7 +29,6 @@ export class SupportToolsComponent {
 
     constructor(private _portalActionService: PortalActionService, private _armService: ArmService, private _authService: AuthService, private _rbacService: RBACService, private _logger: LoggingService) {
         this.supportTools = [];
-        this.premiumTools = [];
 
         this._authService.getStartupInfo()
             .subscribe((startUpInfo: StartupInfo) => {

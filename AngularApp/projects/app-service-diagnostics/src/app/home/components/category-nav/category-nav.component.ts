@@ -181,27 +181,6 @@ export class CategoryNavComponent implements OnInit {
             }
         });
 
-        if (this.siteFeatureService.premiumTools && this.siteFeatureService.premiumTools.length > 0)
-        {
-            this.toolCategories.push(<SiteFilteredItem<any>>{
-                appType: AppType.WebApp,
-                platform: OperatingSystem.windows,
-                sku: Sku.NotDynamic,
-                hostingEnvironmentKind: HostingEnvironmentKind.All,
-                stack: '',
-                item: {
-                    title: 'Premium Tools',
-                    tools: this.siteFeatureService.premiumTools.filter(tool => this.stackMatchedForTools(tool)).map(tool => {
-                        let isSelected = () => {
-                            return this._route.url.endsWith("/" + tool.item.id);
-                        };
-                        let icon = this.getIconImagePath(tool.item.id);
-                        return new CollapsibleMenuItem(tool.item.name, tool.item.clickAction, isSelected, icon);
-                    })
-                }
-            });
-        }
-
         this.toolCategoriesFilteredByStack = this.transform(this.toolCategories);
 
         this.categoryService.categories.subscribe(categories => {
