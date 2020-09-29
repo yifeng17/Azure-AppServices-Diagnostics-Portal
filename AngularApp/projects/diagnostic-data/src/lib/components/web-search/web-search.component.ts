@@ -10,19 +10,26 @@ import { GenericContentService } from '../../services/generic-content.service';
 import { of, Observable } from 'rxjs';
 import { ISubscription } from "rxjs/Subscription";
 import { WebSearchConfiguration } from '../../models/search';
+import { GenericDocumentsSearchService } from '../../services/generic-documents-search.service';
+
 @Component({
     selector: 'web-search',
     templateUrl: './web-search.component.html',
     styleUrls: ['./web-search.component.scss']
 })
+
 export class WebSearchComponent extends DataRenderBaseComponent implements OnInit {
     isPublic: boolean = false;
+    viewRemainingArticles : boolean = false;
+    deepSearchEnabled : boolean = false;
     @Input() searchTerm: string = '';
     @Input() searchId: string = '';
     @Input() isChildComponent: boolean = true;
     @Input('webSearchConfig') webSearchConfig: WebSearchConfiguration = new WebSearchConfiguration();
     @Input() searchResults: any[] = [];
+    @Input() numArticlesExpanded : number = 2;
     @Output() searchResultsChange: EventEmitter<any[]> = new EventEmitter<any[]>();
+
     searchTermDisplay: string = '';
     showSearchTermPractices: boolean = false;
     showPreLoader: boolean = false;
@@ -31,11 +38,13 @@ export class WebSearchComponent extends DataRenderBaseComponent implements OnIni
     subscription: ISubscription;
     
     constructor(@Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig, public telemetryService: TelemetryService,
-        private _activatedRoute: ActivatedRoute, private _router: Router, private _contentService: GenericContentService) {
+        private _activatedRoute: ActivatedRoute, private _router: Router, private _contentService: GenericContentService,
+        private _documentsSearchService : GenericDocumentsSearchService,) {
         super(telemetryService);
         this.isPublic = config && config.isPublic;
         const subscription = this._activatedRoute.queryParamMap.subscribe(qParams => {
             this.searchTerm = qParams.get('searchTerm') === null ? "" || this.searchTerm : qParams.get('searchTerm');
+            this.checkIfDeepSearchIsEnabled ();
             this.refresh();
         });
         this.subscription = subscription;
@@ -140,4 +149,52 @@ export class WebSearchComponent extends DataRenderBaseComponent implements OnIni
         this.showSearchTermPractices = false;
         this.searchTermDisplay = "";
     }
-}
+
+    viewOrHideAnchorTagText(viewRemainingArticles: boolean , 
+                            totalDocuments : number,
+                            numDocumentsExpanded : number){
+    
+        let remainingDocuments: string = "";
+        if (totalDocuments && numDocumentsExpanded){
+        remainingDocuments = `${totalDocuments - numDocumentsExpanded}`;
+        remainingDocuments = viewRemainingArticles ?  `last ${remainingDocuments} ` : remainingDocuments
+        }
+    
+        return !viewRemainingArticles ? `View ${remainingDocuments} more documents` : 
+                        `Hide ${remainingDocuments} documents`;
+    
+     }
+    
+
+    showRemainingArticles(){
+        this.viewRemainingArticles =!this.viewRemainingArticles
+      }
+    
+    checkIfDeepSearchIsEnabled () {
+    let checkStatusTask = this._documentsSearchService
+                            .IsEnabled()
+                            .pipe( map((res) => res), 
+                                retryWhen(errors => {
+                                let numRetries = 0;
+                                return errors.pipe(delay(1000), map(err => {
+                                    if(numRetries++ === 3){
+                                        throw err;
+                                    }
+                                    return err;
+                                    }));
+                                }), 
+                                catchError(e => {
+                                    this.deepSearchEnabled = false;
+                                    return Observable.throw(e);
+                                })
+                                );
+    checkStatusTask.subscribe(
+        (status) => {   this.deepSearchEnabled = status;
+                    },
+        () => {  this.deepSearchEnabled = false;
+
+                });
+    
+    }
+
+}  
