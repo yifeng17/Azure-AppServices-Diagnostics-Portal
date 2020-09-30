@@ -148,6 +148,7 @@ export class HighchartsGraphComponent implements OnInit {
                 var textStr = statusToSet ? "All": "None";
                 var ariaLabel= statusToSet ? "Select all the series" : "Deselect all the series";
                 this.attr({
+                    role: 'button',
                     text: textStr,
                     "aria-label": ariaLabel,
                 });
