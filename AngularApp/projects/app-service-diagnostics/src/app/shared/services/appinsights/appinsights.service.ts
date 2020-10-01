@@ -217,9 +217,7 @@ export class AppInsightsService {
     }
 
     getRandomNumbers() {
-        const typedArray = new Uint8Array(10);
-        const randomValues = window.crypto.getRandomValues(typedArray);
-        return randomValues.join('');
+        return Math.floor(Math.random() * 100000000).toString();
     }
 
     getAppInsightsKeyName() {
