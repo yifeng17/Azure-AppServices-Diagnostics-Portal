@@ -45,12 +45,12 @@ export class ApplensDocumentsSearchService {
           this.featureEnabledForProduct = true;
     }
 
-   let deepSearchEnabled = this._backendApi.get<string>(`api/appsettings/DeepSearch:isEnabled`)
+    return this._backendApi.get<string>(`api/appsettings/DeepSearch:isEnabled`)
                             // Value in App Service Application Settings are returned as strings 
                             // converting this to boolean
                             .map(status =>  ( status.toLowerCase() == "true" && this.featureEnabledForProduct) );    
     
-    return  deepSearchEnabled;
+    
   }
 
   private constructUrl(query: Query) : string{
