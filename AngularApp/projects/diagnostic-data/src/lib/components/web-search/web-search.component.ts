@@ -11,6 +11,7 @@ import { of, Observable } from 'rxjs';
 import { ISubscription } from "rxjs/Subscription";
 import { WebSearchConfiguration } from '../../models/search';
 import { GenericDocumentsSearchService } from '../../services/generic-documents-search.service';
+import { GenericResourceService } from '../../services/generic-resource-service';
 
 @Component({
     selector: 'web-search',
@@ -29,6 +30,7 @@ export class WebSearchComponent extends DataRenderBaseComponent implements OnIni
     @Input() searchResults: any[] = [];
     @Input() numArticlesExpanded : number = 2;
     @Output() searchResultsChange: EventEmitter<any[]> = new EventEmitter<any[]>();
+    pesId : string = "";
 
     searchTermDisplay: string = '';
     showSearchTermPractices: boolean = false;
@@ -39,12 +41,14 @@ export class WebSearchComponent extends DataRenderBaseComponent implements OnIni
     
     constructor(@Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig, public telemetryService: TelemetryService,
         private _activatedRoute: ActivatedRoute, private _router: Router, private _contentService: GenericContentService,
-        private _documentsSearchService : GenericDocumentsSearchService,) {
+        private _documentsSearchService : GenericDocumentsSearchService,
+        private _resourceService: GenericResourceService  ) {
         super(telemetryService);
         this.isPublic = config && config.isPublic;
         const subscription = this._activatedRoute.queryParamMap.subscribe(qParams => {
             this.searchTerm = qParams.get('searchTerm') === null ? "" || this.searchTerm : qParams.get('searchTerm');
-            this.checkIfDeepSearchIsEnabled ();
+            this.getPesId();
+            this.checkIfDeepSearchIsEnabled();
             this.refresh();
         });
         this.subscription = subscription;
@@ -169,10 +173,17 @@ export class WebSearchComponent extends DataRenderBaseComponent implements OnIni
     showRemainingArticles(){
         this.viewRemainingArticles =!this.viewRemainingArticles
       }
+
+    getPesId(){
+    this._resourceService.getPesId().subscribe(pesId => {
+        this.pesId = pesId;
+    });
+    
+    }
     
     checkIfDeepSearchIsEnabled () {
     let checkStatusTask = this._documentsSearchService
-                            .IsEnabled()
+                            .IsEnabled(this.pesId, this.isPublic )
                             .pipe( map((res) => res), 
                                 retryWhen(errors => {
                                 let numRetries = 0;
