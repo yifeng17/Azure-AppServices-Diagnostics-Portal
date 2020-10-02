@@ -11,6 +11,7 @@ import { v4 as uuid } from 'uuid';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
 import { GenericDocumentsSearchService } from '../../services/generic-documents-search.service';
 import { Query } from '../../models/documents-search-models';
+import { GenericResourceService } from '../../services/generic-resource-service';
 
 
 @Component({
@@ -28,7 +29,7 @@ export class DocumentsSearchComponent extends DataRenderBaseComponent  implement
   viewResultsFromCSSWikionly : boolean = true;
   viewRemainingDocuments : boolean = false;
   isPublic : boolean = true;
-
+  pesId : string = "";
   searchTermDisplay = ""
   preLoadingErrorMessage: string = "Some error occurred while fetching Deep Search results. "
   subscription: ISubscription;
@@ -45,12 +46,14 @@ export class DocumentsSearchComponent extends DataRenderBaseComponent  implement
               private _documentsSearchService : GenericDocumentsSearchService,
               public telemetryService: TelemetryService,
               private _activatedRoute: ActivatedRoute ,
-              private _router: Router   ) {
+              private _router: Router,
+              private _resourceService: GenericResourceService   ) {
     super(telemetryService);
  
     this.isPublic = config && config.isPublic;
     const subscription = this._activatedRoute.queryParamMap.subscribe(qParams => {
       this.searchTerm = qParams.get('searchTerm') === null ? "" || this.searchTerm : qParams.get('searchTerm');
+      this.getPesId();
       this.checkIfEnabled();
   });
 
@@ -66,9 +69,16 @@ export class DocumentsSearchComponent extends DataRenderBaseComponent  implement
     this.subscription.unsubscribe();
   }
 
+  getPesId(){
+    this._resourceService.getPesId().subscribe(pesId => {
+      this.pesId = pesId;
+    });
+    
+  }
+
   checkIfEnabled () {
     let checkStatusTask = this._documentsSearchService
-                         .IsEnabled()
+                         .IsEnabled(this.pesId, this.isPublic )
                          .pipe( map((res) => res), 
                                 retryWhen(errors => {
                                 let numRetries = 0;

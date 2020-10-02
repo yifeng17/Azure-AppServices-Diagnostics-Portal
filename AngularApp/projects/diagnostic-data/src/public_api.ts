@@ -37,6 +37,7 @@ export * from './lib/models/compilation-properties';
 export * from './lib/models/solution-type-tag';
 export * from './lib/models/resource-descriptor';
 export * from './lib/models/documents-search-models';
+export * from './lib/models/documents-search-config';
 
 export * from './lib/components/detector-list-analysis/detector-list-analysis.component'
 

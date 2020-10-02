@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http"
 import { Observable } from 'rxjs';
-import { Query, Document } from 'diagnostic-data';
+import { Query, Document , DocumentSearchConfiguration } from 'diagnostic-data';
 import { BackendCtrlService } from '../../shared/services/backend-ctrl.service';
 
 
@@ -11,11 +11,17 @@ import { BackendCtrlService } from '../../shared/services/backend-ctrl.service';
 export class DocumentSearchService {
   private authKey: string = "";
   private url : string = "";
+  private _config : DocumentSearchConfiguration;
+  private featureEnabledForProduct: boolean = false;
+
   httpOptions = {}
 
   constructor(  private http: HttpClient,
-                private _backendApi :BackendCtrlService
+                private _backendApi :BackendCtrlService                
               ) { 
+      
+      this._config = new DocumentSearchConfiguration();;
+
       this._backendApi.get<string>(`api/appsettings/DeepSearch:Endpoint`).subscribe((value: string) =>{
         this.url = value;
       });
@@ -32,12 +38,21 @@ export class DocumentSearchService {
         
   }
   
-  public IsEnabled() : Observable<boolean> {
+  public IsEnabled(pesId : string, isPublic : boolean) : Observable<boolean> {
+    // featureEnabledForProduct is disabled by default
+    if ( pesId.length >0 && ( (isPublic && this._config.documentSearchEnabledPesIds.findIndex(x => x==pesId)>=0) || 
+                              (!isPublic && this._config.documentSearchEnabledPesIdsInternal.findIndex(x => x==pesId)>=0)
+                            ) 
+        ){
+          this.featureEnabledForProduct = true;
+    }
+
     return this._backendApi.get<string>(`api/appsettings/DeepSearch:isEnabled`)
                             // Value in App Service Application Settings are returned as strings 
                             // converting this to boolean
-                            .map(status =>  ( status.toLowerCase() == "true") );    
-                            
+                            .map(status =>  ( status.toLowerCase() == "true" && this.featureEnabledForProduct) );    
+    
+    
   }
 
   private constructUrl(query: Query) : string{
