@@ -105,9 +105,9 @@ export class DetectorSearchComponent extends DataRenderBaseComponent implements 
         setTimeout(() => {
             this.controlListening();
         }, this.initialDelay);
-        var searchConf = new SearchConfiguration(this.diagnosticData? this.diagnosticData.table: null);
-        this.searchConfiguration = searchConf;
         this._resourceService.getPesId().subscribe(pesId => {
+            var searchConf = new SearchConfiguration(this.diagnosticData? this.diagnosticData.table: null, pesId);
+            this.searchConfiguration = searchConf;
             if ((this.isPublic && this.detectorSearchEnabledPesIds.findIndex(x => x==pesId)<0) || (!this.isPublic && this.detectorSearchEnabledPesIdsInternal.findIndex(x => x==pesId)<0)){
                 this.searchConfiguration.DetectorSearchEnabled = false;
             }
