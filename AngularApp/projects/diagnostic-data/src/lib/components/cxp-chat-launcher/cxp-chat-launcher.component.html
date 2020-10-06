@@ -44,7 +44,7 @@
 
   <div *ngIf="showChatConfDialog" class="arrow-bottom"></div>
 
-  <div class='chatBubble' (click)="toggleChatConfDialog()">
+  <div class='chatBubble' *ngIf="showChatBubble" (click)="toggleChatConfDialog()">
     <i class="fa fa-comments chatIcon" aria-hidden="true"></i>
   </div>
 </div>

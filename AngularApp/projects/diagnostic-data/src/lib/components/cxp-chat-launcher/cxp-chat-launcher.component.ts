@@ -23,6 +23,9 @@ export class CxpChatLauncherComponent implements OnInit {
   public readonly windowFeatures: string = 'menubar=no,location=no,resizable=no,scrollbars=no,status=no,height=550,width=450';
   private chatUrlRefreshTimerHandle: number = 0;
   private readonly chatUrlTimeout: number = 1800000; //30 minutes
+  private readonly chatBubbleConfirmationDisplayDelay: number = 10000; //10 seconds
+  private readonly chatBubbleDisplayDelay: number = 40000; //40 seconds
+  public showChatBubble:boolean = false;
 
   constructor(private _cxpChatService: CXPChatService) {
     this.chatWelcomeMessage = "I'd love to help you out with your issue and connect you with our quick help chat team.";
@@ -31,12 +34,33 @@ export class CxpChatLauncherComponent implements OnInit {
 
   ngOnInit() {
     window.setTimeout(() => {
-      if (!this.chatConfDialogOpenedAtleastOnce && !this.showChatConfDialog) {
-        this.showChatConfDialog = true;
-        this.chatConfDialogOpenedAtleastOnce = true;
-        this._cxpChatService.logUserActionOnChat('ChatConfDialogShownBySystem', this.trackingId, this.chatUrl);
+      
+
+      //Have to check for first time due to the way our components are structured.
+      //This gets called multiple times for each detector, specifically for child detectors that are collapsed and then expanded later.
+      //This will also avoid telemetry noise.
+      if (!this.isComponentInitialized() && this.firstTimeCheck) {
+        //We do not have a chat URL, no need to show the chat bubble
+        this._cxpChatService.logUserActionOnChat('ChatBubbleNotShown', this.trackingId, this.chatUrl);
       }
-    }, 10000);
+      else if (this.isComponentInitialized() && this.firstTimeCheck) {
+        this.showChatBubble = true;
+        this._cxpChatService.logUserActionOnChat('ChatBubbleShown', this.trackingId, this.chatUrl);
+
+        //Initialize blade return value indicating that the chat was not engaged.
+        this._cxpChatService.notifyChatOpened(this.trackingId, this.chatUrl, false);
+      }
+      this.firstTimeCheck = false;
+
+      window.setTimeout(() => {
+        if (!this.chatConfDialogOpenedAtleastOnce && !this.showChatConfDialog) {
+          this.showChatConfDialog = true;
+          this.chatConfDialogOpenedAtleastOnce = true;
+          this._cxpChatService.logUserActionOnChat('ChatConfDialogShownBySystem', this.trackingId, this.chatUrl);
+        }
+      }, this.chatBubbleConfirmationDisplayDelay);
+      
+    }, this.chatBubbleDisplayDelay);    
 
     this.refreshChatUrl();
   }
@@ -88,22 +112,7 @@ In case chat did not start in a pop up window, disable your pop up blocker and c
 
   public isComponentInitialized(): boolean {
 
-    let initializedTestResult: boolean = !!this.chatUrl && this.chatUrl != '' && !!this.trackingId && this.trackingId != '';
-
-    //Have to check for first time due to the way our components are structured.
-    //This gets called multiple times for each detector, specifically for child detectors that are collapsed and then expanded later.
-    //This will also avoid telemetry noise.
-    if (!initializedTestResult && this.firstTimeCheck) {
-      this._cxpChatService.logUserActionOnChat('ChatBubbleNotShown', this.trackingId, this.chatUrl);
-    }
-    else if (initializedTestResult && this.firstTimeCheck) {
-      this._cxpChatService.logUserActionOnChat('ChatBubbleShown', this.trackingId, this.chatUrl);
-
-      //Initialize blade return value indicating that the chat was not engaged.
-      this._cxpChatService.notifyChatOpened(this.trackingId, this.chatUrl, false);
-    }
-
-    this.firstTimeCheck = false;
+    let initializedTestResult: boolean = !!this.chatUrl && this.chatUrl != '' && !!this.trackingId && this.trackingId != '';    
 
     return initializedTestResult;
   }
