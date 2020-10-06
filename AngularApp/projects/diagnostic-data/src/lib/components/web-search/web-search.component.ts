@@ -7,7 +7,7 @@ import { TelemetryEventNames } from '../../services/telemetry/telemetry.common';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 import { GenericContentService } from '../../services/generic-content.service';
-import { of, Observable } from 'rxjs';
+import { of, Observable, forkJoin } from 'rxjs';
 import { ISubscription } from "rxjs/Subscription";
 import { WebSearchConfiguration } from '../../models/search';
 import { GenericDocumentsSearchService } from '../../services/generic-documents-search.service';
@@ -26,9 +26,9 @@ export class WebSearchComponent extends DataRenderBaseComponent implements OnIni
     @Input() searchTerm: string = '';
     @Input() searchId: string = '';
     @Input() isChildComponent: boolean = true;
-    @Input('webSearchConfig') webSearchConfig: WebSearchConfiguration = new WebSearchConfiguration();
+    @Input('webSearchConfig') webSearchConfig: WebSearchConfiguration;
     @Input() searchResults: any[] = [];
-    @Input() numArticlesExpanded : number = 2;
+    @Input() numArticlesExpanded : number = 5;
     @Output() searchResultsChange: EventEmitter<any[]> = new EventEmitter<any[]>();
     pesId : string = "";
 
@@ -81,6 +81,49 @@ export class WebSearchComponent extends DataRenderBaseComponent implements OnIni
         this.showSearchTermPractices = false;
     }
 
+    mergeResults(results) {
+        var finalResults = results[0];
+        if (!(finalResults.webPages && finalResults.webPages.value && finalResults.webPages.value.length > 0)) {
+            finalResults = {
+                webPages: {
+                    value: []
+                }
+            };
+        }
+        if (results.length>1) {
+            if (results[1].webPages && results[1].webPages.value && results[1].webPages.value.length > 0) {
+                results[1].webPages.value.forEach(result => {
+                    var idx = finalResults.webPages.value.findIndex(x => x.url==result.url);
+                    if (idx<0) {
+                        finalResults.webPages.value.push(result);
+                    }
+                });
+            }
+        }
+        return finalResults;
+    }
+
+    rankResultsBySource(resultsList) {
+        if (!resultsList || resultsList.length == 0) {
+            return [];
+        }
+        var seenSources = {};
+        var part1 = [];
+        var part2 = [];
+        resultsList.forEach(item => {
+            let itemUrl = new URL(item.link);
+            let itemSource = itemUrl.hostname;
+            if (seenSources.hasOwnProperty(itemSource)) {
+                part2.push(item);
+            }
+            else {
+                part1.push(item);
+                seenSources[itemSource] = true;
+            }
+        });
+        return part1.concat(part2);
+    }
+
     triggerSearch() {
         if (!this.isChildComponent){
             const queryParams: Params = { searchTerm: this.searchTerm };
@@ -95,29 +138,50 @@ export class WebSearchComponent extends DataRenderBaseComponent implements OnIni
         }
         this.resetGlobals();
         if (!this.isChildComponent || !this.searchId || this.searchId.length <1) this.searchId = uuid();
-        let searchTask = this._contentService.searchWeb(this.searchTerm, this.webSearchConfig.MaxResults.toString(), this.webSearchConfig.UseStack, this.webSearchConfig.PreferredSites).pipe(map((res) => res), retryWhen(errors => {
-            let numRetries = 0;
-            return errors.pipe(delay(1000), map(err => {
-                if(numRetries++ === 3){
-                    throw err;
-                }
-                return err;
-            }));
-        }), catchError(e => {
-            this.handleRequestFailure();
-            return Observable.throw(e);
-        }));
+        if (!this.webSearchConfig) {
+            this.webSearchConfig = new WebSearchConfiguration(this.pesId);
+        }
+        let searchTasks = [];
+        if (this.webSearchConfig && this.webSearchConfig.PreferredSites && this.webSearchConfig.PreferredSites.length>0) {
+            searchTasks.push(
+                this._contentService.searchWeb(this.searchTerm, this.webSearchConfig.MaxResults.toString(), this.webSearchConfig.UseStack, this.webSearchConfig.PreferredSites).pipe(map((res) => res), retryWhen(errors => {
+                    let numRetries = 0;
+                    return errors.pipe(delay(1000), map(err => {
+                        if(numRetries++ === 3){
+                            throw err;
+                        }
+                        return err;
+                    }));
+                }), catchError(e => {
+                    throw e;
+                }))
+            );
+        }
+        searchTasks.push(
+            this._contentService.searchWeb(this.searchTerm, this.webSearchConfig.MaxResults.toString(), this.webSearchConfig.UseStack, []).pipe(map((res) => res), retryWhen(errors => {
+                let numRetries = 0;
+                return errors.pipe(delay(1000), map(err => {
+                    if(numRetries++ === 3){
+                        throw err;
+                    }
+                    return err;
+                }));
+            }), catchError(e => {
+                throw e;
+            }))
+        );
         this.showPreLoader = true;
-        searchTask.subscribe(results => {
+        let onSearch = forkJoin(searchTasks).pipe(map(resultList => {
             this.showPreLoader = false;
+            let results = this.mergeResults(resultList);
             if (results && results.webPages && results.webPages.value && results.webPages.value.length > 0) {
-                this.searchResults = results.webPages.value.map(result => {
+                this.searchResults = this.rankResultsBySource(results.webPages.value.map(result => {
                     return {
                         title: result.name,
                         description: result.snippet,
                         link: result.url
                     };
-                });
+                }));
                 this.searchResultsChange.emit(this.searchResults);
             }
             else {
@@ -131,9 +195,13 @@ export class WebSearchComponent extends DataRenderBaseComponent implements OnIni
                     link: result.link
                 };
             })), ts: Math.floor((new Date()).getTime() / 1000).toString() });
-        },
-        (err) => {
-            this.handleRequestFailure();
+        }),
+        catchError(err => {
+            throw err;
+        }));
+        onSearch.subscribe(res => {}, (err) => {this.handleRequestFailure();});
+        searchTasks.forEach(x => {
+            x.complete();
         });
     }
 
@@ -175,37 +243,38 @@ export class WebSearchComponent extends DataRenderBaseComponent implements OnIni
       }
 
     getPesId(){
-    this._resourceService.getPesId().subscribe(pesId => {
-        this.pesId = pesId;
-    });
-    
+        this._resourceService.getPesId().subscribe(pesId => {
+            this.pesId = pesId;
+        });    
     }
     
     checkIfDeepSearchIsEnabled () {
-    let checkStatusTask = this._documentsSearchService
-                            .IsEnabled(this.pesId, this.isPublic )
-                            .pipe( map((res) => res), 
-                                retryWhen(errors => {
-                                let numRetries = 0;
-                                return errors.pipe(delay(1000), map(err => {
-                                    if(numRetries++ === 3){
-                                        throw err;
-                                    }
-                                    return err;
-                                    }));
-                                }), 
-                                catchError(e => {
-                                    this.deepSearchEnabled = false;
-                                    return Observable.throw(e);
-                                })
-                                );
-    checkStatusTask.subscribe(
-        (status) => {   this.deepSearchEnabled = status;
-                    },
-        () => {  this.deepSearchEnabled = false;
-
-                });
-    
+        let checkStatusTask = this._documentsSearchService
+                                .IsEnabled(this.pesId, this.isPublic )
+                                .pipe( map((res) => res), 
+                                    retryWhen(errors => {
+                                    let numRetries = 0;
+                                    return errors.pipe(delay(1000), map(err => {
+                                        if(numRetries++ === 3){
+                                            throw err;
+                                        }
+                                        return err;
+                                        }));
+                                    }), 
+                                    catchError(e => {
+                                        throw e;
+                                    })
+                                    );
+        checkStatusTask.subscribe((status) => {
+                this.deepSearchEnabled = status;
+                if (this.deepSearchEnabled) {
+                    this.numArticlesExpanded = 2;
+                }
+            },
+            (err) => {
+                this.deepSearchEnabled = false;
+            }
+        );    
     }
 
 }  
