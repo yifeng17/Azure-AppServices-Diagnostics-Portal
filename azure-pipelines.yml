@@ -21,3 +21,21 @@ steps:
     npm install
     npm run build
   displayName: 'npm install and build'
+
+  # This task runs the tests specified by jest.config.js, including our example accessibility tests.
+  #
+  # If your project already uses npm instead of yarn, or if your project already runs "jest" directly here,
+  # those are both fine.
+  #
+  # The 2>&1 is a workaround for facebook/jest#5064
+  - script: npm run test -- --ci 2>&1 # or "npm run test -- --ci 2>&1"
+    displayName: npm test
+    workingDirectory: $(Build.SourcesDirectory)/AngularApp
+
+    # This task is how the "Tests" tab in our Azure Pipelines build results page gets its data
+  - task: PublishTestResults@2
+    displayName: publish test results
+    inputs:
+      testResultsFiles: $(Build.SourcesDirectory)/AngularApp/test-results/junit.xml
+      testRunTitle: AngularApp ($(imageName) $(browser))
+    condition: succeededOrFailed()

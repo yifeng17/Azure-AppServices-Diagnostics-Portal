@@ -34,7 +34,7 @@ export class GenieChatFlow extends IMessageFlowProvider {
 
     const welcomeMessageGroup: MessageGroup = new MessageGroup('welcome', [], () => '');
     welcomeMessageGroup.messages.push(new TextMessage(welcomeMessage, MessageSender.System, 200));
- 
+
     const feedbackMessageGroup: MessageGroup = new MessageGroup('feedback', [], () => '');
     feedbackMessageGroup.messages.push(new FeedbackButtonListMessage('Did this information help you solve the issue?',this._getButtonListDidYouFindHelpfulinNewGenie(), 'Availability and Performance'));
    const helpfulGroup: MessageGroup = new MessageGroup('feedback-helpful', [], () => 'feedback-textbox');
@@ -73,7 +73,7 @@ export class GenieChatFlow extends IMessageFlowProvider {
       });
     let analysisMessages: Message[]  = [];
     let keywordTextMessage = new TextMessage(keyword, MessageSender.User, 500);
-    let systemResponseTextMessage = new TextMessage('Okay give me a moment while I analyze your app for any issues related to this.', MessageSender.System, 500);
+    let systemResponseTextMessage = new TextMessage('Okay give me a moment while I analyze your app for any issues related to this.', MessageSender.System, 1000);
     resourceId = this.resourceId;
     let dynamicAnalysisMessage = new DynamicAnalysisMessage(keyword, resourceId);
 

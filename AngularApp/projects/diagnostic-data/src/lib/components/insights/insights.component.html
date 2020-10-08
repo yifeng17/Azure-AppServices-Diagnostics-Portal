@@ -59,7 +59,7 @@
               </div>
             </h5>
           </div>
-    
+
           <div class="panel-body" [hidden]="!(insight.isExpanded && insight.hasData())">
             <table>
               <tbody>
@@ -71,7 +71,7 @@
                     <markdown-text [markdownData]="insight.data[key]" [detector]="detector"></markdown-text>
                   </td>
                 </tr>
-    
+
                 <ng-container *ngIf="hasSolutions(insight)">
                   <tr>
                     <td class="table-key">
@@ -85,17 +85,17 @@
               </tbody>
             </table>
           </div>
-    
+
         </div>
       </div>
     </ng-template>
-    
+
     <!-- If there is title wrap it in container -->
     <data-container *ngIf="renderingProperties.title; else noContainer" [title]="renderingProperties.title"
       [description]="renderingProperties.description">
       <ng-container *ngTemplateOutlet="insightView"></ng-container>
     </data-container>
-    
+
     <!-- If there is no title, do not use container. Note this is called from the else statement in the *ngIf above -->
     <ng-template #noContainer>
       <ng-container *ngTemplateOutlet="insightView"></ng-container>
