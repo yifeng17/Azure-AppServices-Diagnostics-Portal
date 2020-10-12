@@ -1,9 +1,20 @@
 import { Injectable, isDevMode } from '@angular/core';
-import { ReplaySubject } from 'rxjs';
+import { Observable, of, ReplaySubject } from 'rxjs';
 import { StartupInfo, Event, Data, Verbs, Action, LogEntryLevel, Message, OpenBladeInfo, KeyValuePair } from '../../shared/models/portal';
 import { ErrorEvent } from '../../shared/models/error-event';
 import { BroadcastService } from './broadcast.service';
 import { BroadcastEvent } from '../models/broadcast-event';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from '../../../../src/environments/environment';
+import { map } from 'rxjs/operators';
+
+const publicOrigins = [
+    'portal.azure.com',
+    'portal.microsoftazure.de',
+    'portal.azure.cn',
+    'portal.azure.us',
+];
+
 
 @Injectable()
 export class PortalService {
@@ -25,7 +36,9 @@ export class PortalService {
     private shellSrc: string;
     private tokenObservable: ReplaySubject<string>;
 
-    constructor(private _broadcastService: BroadcastService) {
+    private acceptedOriginsSuffix:string[] = [];
+
+    constructor(private _broadcastService: BroadcastService, private _http: HttpClient) {
         this.sessionId = '';
 
         this.startupInfoObservable = new ReplaySubject<StartupInfo>(1);
@@ -95,11 +108,11 @@ export class PortalService {
     initializeIframe(): void {
         this.shellSrc = this.getQueryStringParameter('trustedAuthority');
 
-        window.addEventListener(Verbs.message, this.iframeReceivedMsg.bind(this), false);
-
         // This is a required message. It tells the shell that your iframe is ready to receive messages.
         this.postMessage(Verbs.ready, null);
         this.postMessage(Verbs.getStartupInfo, null);
+
+        window.addEventListener(Verbs.message, this.iframeReceivedMsg.bind(this), false);
 
         this._broadcastService.subscribe<ErrorEvent>(BroadcastEvent.Error, error => {
             if (error.details) {
@@ -161,38 +174,46 @@ export class PortalService {
 
         const data = event.data.data;
         const methodName = event.data.kind;
+
+        
         console.log('[iFrame] Received validated mesg: ' + methodName, event, event.srcElement, event.srcElement.location, event.srcElement.location.host);
 
-        const isIFrameForCaseSubmissionSolution = event.srcElement.location.host.toString().includes("appservice-diagnostics-am2");
+        this._checkAcceptOrigins(event).subscribe(foundOrigin => {
+            if(!foundOrigin){
+                return;
+            }
+            
+            const isIFrameForCaseSubmissionSolution = event.srcElement.location.host.toString().includes("appservice-diagnostics-am2");
 
-        if (methodName === Verbs.sendStartupInfo) {
-            const info = <StartupInfo>data;
-            this.sessionId = info.sessionId;
-            info.isIFrameForCaseSubmissionSolution = isIFrameForCaseSubmissionSolution;
-            this.startupInfoObservable.next(info);
-            this.isIFrameForCaseSubmissionSolution.next(isIFrameForCaseSubmissionSolution);
-        } else if (methodName === Verbs.sendAppInsightsResource) {
-            const aiResource = data;
-            this.appInsightsResourceObservable.next(aiResource);
-        } else if (methodName === Verbs.sendChatAvailability) {
-            const chatAvailability = data;
-            this.sendChatAvailabilityObservable.next(chatAvailability);
-        } else if (methodName === Verbs.sendbuiltChatUrl) {
-            const chatUrl = data;
-            this.sendbuiltChatUrlObservable.next(chatUrl);
-        } else if (methodName === Verbs.sendChatUrl) {
-            const chatUrlAfterAvailability = data;
-            this.sendChatUrlObservable.next(chatUrlAfterAvailability);
-        } else if (methodName == Verbs.getBladeReturnValueResponse) {
-            const getBladeReturnValueResponse = data;
-            this.getBladeReturnValueObservable.next(getBladeReturnValueResponse);
-        } else if (methodName == Verbs.setBladeReturnValueResponse) {
-            const setBladeReturnValueResponse = data;
-            this.setBladeReturnValueObservable.next(setBladeReturnValueResponse);
-        } else if (methodName == Verbs.sendToken) {
-            const token = data;
-            this.tokenObservable.next(token);
-        }
+            if (methodName === Verbs.sendStartupInfo) {
+                const info = <StartupInfo>data;
+                this.sessionId = info.sessionId;
+                info.isIFrameForCaseSubmissionSolution = isIFrameForCaseSubmissionSolution;
+                this.startupInfoObservable.next(info);
+                this.isIFrameForCaseSubmissionSolution.next(isIFrameForCaseSubmissionSolution);
+            } else if (methodName === Verbs.sendAppInsightsResource) {
+                const aiResource = data;
+                this.appInsightsResourceObservable.next(aiResource);
+            } else if (methodName === Verbs.sendChatAvailability) {
+                const chatAvailability = data;
+                this.sendChatAvailabilityObservable.next(chatAvailability);
+            } else if (methodName === Verbs.sendbuiltChatUrl) {
+                const chatUrl = data;
+                this.sendbuiltChatUrlObservable.next(chatUrl);
+            } else if (methodName === Verbs.sendChatUrl) {
+                const chatUrlAfterAvailability = data;
+                this.sendChatUrlObservable.next(chatUrlAfterAvailability);
+            } else if (methodName == Verbs.getBladeReturnValueResponse) {
+                const getBladeReturnValueResponse = data;
+                this.getBladeReturnValueObservable.next(getBladeReturnValueResponse);
+            } else if (methodName == Verbs.setBladeReturnValueResponse) {
+                const setBladeReturnValueResponse = data;
+                this.setBladeReturnValueObservable.next(setBladeReturnValueResponse);
+            } else if (methodName == Verbs.sendToken) {
+                const token = data;
+                this.tokenObservable.next(token);
+            }
+        });
     }
 
 
@@ -239,5 +260,55 @@ export class PortalService {
             map[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
         }
         return map;
+    }
+
+    private _getAcceptOrigins(event: Event):Observable<string[]> {
+        const apiEndPoint = environment.backendHost;
+        const path = "api/appsettings/AcceptOriginSuffix:Origins"
+        const url = `${apiEndPoint}${path}`;
+        if(this.acceptedOriginsSuffix.length > 0){
+            return of(this.acceptedOriginsSuffix);
+        }
+        
+        if(event.data.kind === Verbs.sendStartupInfo){
+            const startupInfo = <StartupInfo>event.data.data;
+            const request = this._http.get<string>(url, {
+                headers: this._getHeaders(startupInfo)
+            }).pipe(map(res => {
+                const s = res.replace(/\s/g,"");
+                const originList = s.split(",");
+                this.acceptedOriginsSuffix = originList;
+                return originList;
+            }));
+    
+            return request;
+        }
+
+        return of([]);
+    }
+
+    private _getHeaders(startupInfo: StartupInfo) {
+        let headers = new HttpHeaders({
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${startupInfo.token}`
+        });
+        return headers;
+    }
+
+    private _checkAcceptOrigins(event:Event):Observable<boolean>{
+        if(!event.origin){
+            return of(false);
+        }
+
+        //If can find from public origins,no need backend call
+        if(publicOrigins.findIndex(o => event.origin.toLocaleLowerCase().endsWith(o.toLowerCase())) > -1){
+            return of(true);
+        }
+
+        return this._getAcceptOrigins(event).pipe(map(originsSuffix => {
+
+            return originsSuffix.findIndex(o => event.origin.toLowerCase().endsWith(o.toLowerCase())) > -1;
+        }));
     }
 }
