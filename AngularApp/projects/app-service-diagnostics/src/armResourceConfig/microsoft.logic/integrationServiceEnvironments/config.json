@@ -17,7 +17,7 @@
 			"id": "Provisioning Diagnostics",
 			"name": "Provisioning Diagnostics",
 			"description": "Is your ISE experiencing problems during provisioning? Select this category for a step-by-step analysis of the provisioning process.",
-			"keywords": [["Provisioning Failures", "Deployment", "VNet", "Debug Logs"],
+			"keywords": ["Provisioning Failures", "Deployment", "VNet", "Debug Logs"],
 			"color": "rgb(186, 211, 245)",
 			"createFlowForCategory": true,
 			"chatEnabled": false		
