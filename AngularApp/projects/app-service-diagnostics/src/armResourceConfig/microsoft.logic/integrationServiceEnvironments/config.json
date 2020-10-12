@@ -1,0 +1,36 @@
+{
+	"homePageText": {
+		"title": "ISE Diagnostics (Preview)",
+		"description": "Use ISE Diagnostics to investigate common issues. Select the problem category that best matches the information or tool that you're interested in:",
+		"searchBarPlaceHolder": "Search ISE Diagnostics"
+	},
+	"matchRegEx": "/Microsoft.Logic/integrationServiceEnvironments/",
+	"searchSuffix": "ISE",
+	"azureServiceName": "Integration Service Environments",
+	"armApiVersion": "2016-06-01",
+	"isSearchEnabled": true,
+	"liveChatConfig": {
+		"isApplicableForLiveChat": false,
+		"supportTopicIds": []
+	},
+	"categories": [{
+			"id": "Provisioning Diagnostics",
+			"name": "Provisioning Diagnostics",
+			"description": "Is your ISE experiencing problems during provisioning? Select this category for a step-by-step analysis of the provisioning process.",
+			"keywords": [["Provisioning", "Deployment"],
+			"color": "rgb(186, 211, 245)",
+			"createFlowForCategory": true,
+			"chatEnabled": false
+		},
+		{
+			"id": "Connector Actions Health",
+			"name": "Connector Actions Health",
+			"description": "Are you seeing any action failures in your logic app? Review connector actions health to get the details on connector errors, timeouts, or any other unexpected behavior.",
+			"keywords": ["Actions", "Timeouts", "Connector", "4xx Errors", "5xx Errors", "SQL, Storage, and more"],
+			"color": "rgb(249, 213, 180)",
+			"createFlowForCategory": true,
+			"chatEnabled": false
+		}
+	],
+	"pesId": "17030"
+}
