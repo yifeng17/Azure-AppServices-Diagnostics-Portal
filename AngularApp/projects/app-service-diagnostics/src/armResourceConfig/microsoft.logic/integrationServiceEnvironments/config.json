@@ -1,0 +1,27 @@
+{
+	"homePageText": {
+		"title": "ISE Diagnostics (Preview)",
+		"description": "Use ISE Diagnostics (Preview) to investigate common issues. Select the problem category that best matches the information or tool that you're interested in:",
+		"searchBarPlaceHolder": "Search ISE Diagnostics"
+	},
+	"matchRegEx": "/Microsoft.Logic/integrationServiceEnvironments/",
+	"searchSuffix": "ISE",
+	"azureServiceName": "Integration Service Environments",
+	"armApiVersion": "2016-06-01",
+	"isSearchEnabled": true,
+	"liveChatConfig": {
+		"isApplicableForLiveChat": false,
+		"supportTopicIds": []
+	},
+	"categories": [{
+			"id": "Provisioning Diagnostics",
+			"name": "Provisioning Diagnostics",
+			"description": "Is your ISE experiencing problems during provisioning? Select this category for a step-by-step analysis of the provisioning process.",
+			"keywords": ["Provisioning Failures", "Deployment", "VNet", "Debug Logs"],
+			"color": "rgb(186, 211, 245)",
+			"createFlowForCategory": true,
+			"chatEnabled": false		
+		}
+	],
+	"pesId": "17030"
+}
