@@ -3,10 +3,18 @@ interface preferredSitesConfig {
 }
 
 var productPreferredSitesConfig: preferredSitesConfig = {
-    "14748": ["github.com/Azure-App-Service", "stackoverflow.com"],
+    //WEB APP WINDOWS
+    "14748": ["github.com/Azure-App-Service", "stackoverflow.com", "azure.github.io/AppService"],
+    //FUNCTION APPS
     "16072": ["github.com/Azure/Azure-Functions", "stackoverflow.com"],
-    "16170": ["azureossd.github.io", "stackoverflow.com"],
-    "16450": ["github.com/Azure/AKS", "kubernetes.io/docs", "kubernetes.io/blog", "stackoverflow.com"]
+    //WEB APP LINUX
+    "16170": ["azureossd.github.io", "stackoverflow.com", "azure.github.io/AppService"],
+    //AZURE KUBERNETES SERVICES
+    "16450": ["github.com/Azure/AKS", "kubernetes.io/docs", "kubernetes.io/blog", "stackoverflow.com"],
+    //LOGIC APPS
+    "15791": ["github.com/logicappsio", "github.com/Azure/logicapps", "stackoverflow.com"],
+    //API Management
+    "15551": ["github.com/Azure/api-management-samples", "github.com/Azure/azure-api-management-devops-resource-kit", "github.com/Azure/api-management-developer-portal", "stackoverflow.com"]
 };
 
 export class SearchConfiguration{
