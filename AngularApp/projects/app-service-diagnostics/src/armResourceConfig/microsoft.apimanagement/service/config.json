@@ -5,7 +5,7 @@
 		"searchBarPlaceHolder": "Search Azure API Management Services"
 	},
 	"matchRegEx": "/Microsoft.ApiManagement/service/",
-	"searchSuffix": "APIM",
+	"searchSuffix": "AZURE API MANAGEMENT SERVICE",
 	"azureServiceName": "Azure API Management Service",
 	"armApiVersion": "2018-06-01-preview",
 	"isSearchEnabled": true,

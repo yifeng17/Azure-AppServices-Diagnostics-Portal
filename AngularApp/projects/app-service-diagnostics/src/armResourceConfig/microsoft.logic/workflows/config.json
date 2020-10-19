@@ -5,7 +5,7 @@
 		"searchBarPlaceHolder": "Search Logic Apps Diagnostics"
 	},
 	"matchRegEx": "/Microsoft.Logic/workflows/",
-	"searchSuffix": "LA",
+	"searchSuffix": "AZURE LOGIC APPS",
 	"azureServiceName": "Logic Apps",
 	"armApiVersion": "2016-06-01",
 	"isSearchEnabled": true,
