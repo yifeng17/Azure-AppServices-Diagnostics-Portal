@@ -30,6 +30,8 @@ export class Globals {
   openSessionPanel: boolean = false;
   openCreateStorageAccountPanel: boolean = false;
   openCallStackPanel: boolean = false;
+  openReliabilityChecksPanel: boolean = false;
+  reliabilityChecksDetailsBehaviorSubject: BehaviorSubject<any>= new BehaviorSubject<any> ({numberofCriticalChecks: 0, autoHealEnabled: false, healthCheckEnabled: false, workerDistributionEnabled: false, appDensityHealthy: false});
   callStackDetails = { managedException: "", callStack: "" };
 
   private localStorageKey: string = "genieChat";
@@ -63,6 +65,9 @@ export class Globals {
     return detectorName;
   }
 
+  updatereliabilityChecksDetails(reliabilityChecks: any) {
+      this.reliabilityChecksDetailsBehaviorSubject.next(reliabilityChecks);
+  }
   updateTimePickerInfo(updatedInfo: TimePickerInfo) {
     this.timePickerInfoSub.next(updatedInfo);
   }

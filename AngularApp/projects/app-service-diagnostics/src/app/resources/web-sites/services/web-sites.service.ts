@@ -4,12 +4,14 @@ import { OperatingSystem, Site, HostingEnvironmentKind } from '../../../shared/m
 import { AppType } from '../../../shared/models/portal';
 import { AppAnalysisService } from '../../../shared/services/appanalysis.service';
 import { ArmService } from '../../../shared/services/arm.service';
-import { Sku } from '../../../shared/models/server-farm';
+import { ServerFarm, Sku } from '../../../shared/models/server-farm';
 import { IDiagnosticProperties } from '../../../shared/models/diagnosticproperties';
 import { flatMap } from 'rxjs/operators';
 import { PortalReferrerMap } from '../../../shared/models/portal-referrer-map';
 import { DetectorType } from 'diagnostic-data';
 import { of,  Observable, BehaviorSubject } from 'rxjs';
+import { ArmResource } from '../../../shared-v2/models/arm';
+import { forkJoin } from 'rxjs/internal/observable/forkJoin';
 
 @Injectable({providedIn: 'root'})
 export class WebSitesService extends ResourceService {
@@ -23,6 +25,8 @@ export class WebSitesService extends ResourceService {
     public appType: AppType = AppType.WebApp;
     public sku: Sku = Sku.All;
     public hostingEnvironmentKind: HostingEnvironmentKind = HostingEnvironmentKind.All;
+    public numberofCriticalChecks: number = 0;
+    public reliabilityChecksResults: any = {};
 
     constructor(protected _armService: ArmService, private _appAnalysisService: AppAnalysisService) {
         super(_armService);
@@ -141,13 +145,124 @@ export class WebSitesService extends ResourceService {
         return this._armService.getArmResource(`${resourceUri}/premieraddons`, '2018-02-01');
     }
 
+    public getReliablityCheckResult():Observable<any> {
+
+
+        return this.warmUpCallFinished.pipe(flatMap( ()=>{
+
+            let resourceUri = this.resource.id;
+            let serverFarmId = this.resource.properties.serverFarmId;
+            let healthCheckEnabled = false;
+            let autoHealEnabled = false;
+
+            const resourceTasks = forkJoin(
+                this._armService.getArmResource(`${resourceUri}/config/web`, '2018-02-01'),
+                this._armService.getResourceWithoutEnvelope<ServerFarm>(serverFarmId)
+            );
+
+            return resourceTasks;
+        }  ));
+
+
+        // resourceTasks.subscribe(results => {
+        //     let res: any = results[0];
+        //     autoHealEnabled = res.properties.autoHealEnabled;
+        //     healthCheckEnabled = res.properties.healthCheckPath != null && res.properties.healthCheckPath.toString() !== '' && res.properties.healthCheckPath.toString().length >= 1;
+        //     this.numberofCriticalChecks = autoHealEnabled ? this.numberofCriticalChecks : this.numberofCriticalChecks+1;
+        //     this.numberofCriticalChecks = healthCheckEnabled ? this.numberofCriticalChecks : this.numberofCriticalChecks+1;
+        //     console.log("webconfiginfo", res, res.properties, res.properties.autoHealEnabled);
+        //     console.log("this.numberofCriticalChecks", this.numberofCriticalChecks, autoHealEnabled, healthCheckEnabled);
+
+        //     let severfarmResource: any = results[1];
+        //     let numberOfWorkers = severfarmResource.properties.numberOfWorkers;
+        //     let numberOfSites = severfarmResource.properties.numberOfSites;
+
+        //     this.numberofCriticalChecks = numberOfWorkers > 1 ? this.numberofCriticalChecks : this.numberofCriticalChecks+1;
+
+
+        //     var a = {
+        //         "numberofCriticalChecks": this.numberofCriticalChecks,
+        //         "autoHealEnabled": autoHealEnabled,
+        //         "healthCheckEnabled": healthCheckEnabled,
+        //         "numberOfWorkers": numberOfWorkers,
+        //         "numberOfSites": numberOfSites
+        //     };
+
+
+
+        //     console.log("resourceTasksInfo", results, a);
+
+        //     return a;
+       // });
+
+
+
+        // this._authService.getStartupInfo().pipe(
+        //     mergeMap((startUpInfo: StartupInfo) => {
+        //         return this._armService.getResource<Site>(startUpInfo.resourceId);
+        //     }),
+        //     mergeMap((site: ResponseMessageEnvelope<Site>) => {
+        //         this.currentSite = site.properties;
+        //         return this._rbacService.hasPermission(this.currentSite.serverFarmId, [this._rbacService.readScope]);
+        //     }))
+        //     .subscribe((hasPermission: boolean) => {
+        //         this.hasReadAccessToServerFarm = hasPermission;
+        //         this.initialize();
+        //     })
+
+    }
+
+    // public getServiceHealthCommunications(): Observable<any[]> {
+
+    //     return this._authService.getStartupInfo().pipe(
+    //       mergeMap((startupInfo: StartupInfo) => {
+
+    //         var subscriptionId: string = ResourceDescriptor.parseResourceUri(startupInfo.resourceId).subscription;
+    //         return this._armService.getArmResource<any>(`/subscriptions/${subscriptionId}/providers/Microsoft.ResourceHealth/events`, '2018-07-01').pipe(
+    //           map((response: any) => {
+
+    //             var commsList = new Array();
+    //             var alertFound: boolean = false;
+    //             response.value.forEach((item: any) => {
+    //               if (item.properties && item.properties.eventType && item.properties.eventType === 'ServiceIssue') {
+    //                 var comm = {
+    //                   publishedTime: item.properties['lastUpdateTime'],
+    //                   title: item.properties['title'],
+    //                   richTextMessage: item.properties['description'],
+    //                   status: item.properties['status'] === 'Active' ? CommunicationStatus.Active : CommunicationStatus.Resolved,
+    //                   incidentId: item.name,
+    //                   isAlert: false,
+    //                   isExpanded: false,
+    //                   commType: 0
+    //                 };
+
+    //                 commsList.push(comm);
+    //               }
+    //             });
+
+    //             var activeComm = commsList.find(item => item.status === CommunicationStatus.Active);
+    //             if(activeComm){
+    //               activeComm.isAlert = true;
+    //               this._logger.LogAzureCommShown(activeComm.incidentId, activeComm.title, 'ServiceHealth', activeComm.isExpanded, activeComm.status === 0, activeComm.publishedTime);
+    //             }
+
+    //             return commsList;
+    //           })
+    //         );
+    //       })
+    //     );
+    //   }
+
+
     protected makeWarmUpCalls() {
         super.makeWarmUpCalls();
         this._populateSiteInfo();
         this.warmUpCallFinished.next(true);
+        this.reliabilityChecksResults = this.getReliablityCheckResult();
     }
 
     private _populateSiteInfo(): void {
+        console.log("resourceInfo", this.resource, this.resource.properties.serverFarmId);
         const pieces = this.resource.id.toLowerCase().split('/');
         this._subscription = pieces[pieces.indexOf('subscriptions') + 1];
         this._resourceGroup = pieces[pieces.indexOf('resourcegroups') + 1];

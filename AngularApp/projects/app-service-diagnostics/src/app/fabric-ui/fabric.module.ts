@@ -73,7 +73,7 @@ import { CallstackPanelComponent } from './components/callstack-panel/callstack-
         SearchMatchPipe,
         DiagosticSessionsPanelComponent,
         CreateStorageAccountPanelComponent,
-        CallstackPanelComponent
+        CallstackPanelComponent,
     ],
     imports: [
         CommonModule,

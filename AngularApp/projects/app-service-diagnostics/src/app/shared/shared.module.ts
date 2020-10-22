@@ -131,6 +131,10 @@ import {
 } from '@angular-react/fabric';
 import { CrashMonitoringAnalysisComponent } from './components/tools/crash-monitoring/crash-monitoring-analysis/crash-monitoring-analysis.component';
 import { CollapsibleListFabricComponent } from './components/collapsible-list/collapsible-list-fabric/collapsible-list-fabric.component';
+import { ReliablityChecksNotificationComponent } from './components/reliablity-checks-notification/reliablity-checks-notification.component';
+import { ReliabilityChecksPanelComponent } from './components/reliability-checks-panel/reliability-checks-panel.component';
+import { BladeClosingNotificationComponent } from './components/blade-closing-notification/blade-closing-notification.component';
+
 @NgModule({
     declarations: [
         LimitToFilter,
@@ -199,7 +203,10 @@ import { CollapsibleListFabricComponent } from './components/collapsible-list/co
         JavaFlightRecorderToolComponent,
         CrashMonitoringComponent,
         CrashMonitoringAnalysisComponent,
-        CollapsibleListFabricComponent
+        CollapsibleListFabricComponent,
+        ReliablityChecksNotificationComponent,
+        ReliabilityChecksPanelComponent,
+        BladeClosingNotificationComponent
     ],
     imports: [
         HttpClientModule,
@@ -297,6 +304,8 @@ import { CollapsibleListFabricComponent } from './components/collapsible-list/co
         TileListComponent,
         GenericCommsComponent,
         GenericAnalysisComponent,
+        ReliablityChecksNotificationComponent,
+        ReliabilityChecksPanelComponent
     ],
     entryComponents: [GenericAnalysisComponent, GenericDetectorComponent]
 })

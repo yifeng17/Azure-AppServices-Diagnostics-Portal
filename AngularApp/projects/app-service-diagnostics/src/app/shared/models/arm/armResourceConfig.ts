@@ -10,7 +10,8 @@ export class ArmResourceConfig {
 	isSearchEnabled?: boolean;
 	liveChatConfig?: LiveChatConfig
 	categories?: Array<Category>;
-	pesId?: string;
+    pesId?: string;
+    liabilityCheckConfig?: LiabilityCheckConfig;
 }
 
 export interface LiveChatConfig {
@@ -27,4 +28,9 @@ export class HomePageText {
 	title: string;
 	description: string;
 	searchBarPlaceHolder: string;
+}
+
+// Define whether liablity check is enabled and what checks should be done
+export interface LiabilityCheckConfig {
+    isLiabilityCheckEnabled?: boolean;
 }

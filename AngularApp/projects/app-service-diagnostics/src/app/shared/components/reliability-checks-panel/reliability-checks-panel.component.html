@@ -1,0 +1,41 @@
+<fab-panel [isOpen]="globals.openReliabilityChecksPanel" [type]="type" [customWidth]="width" [isHiddenOnDismiss]="true"
+  [isLightDismiss]="true" [hasCloseButton]="true" [closeButtonAriaLabel]="'close'" (onDismissed)="dismissedHandler()">
+  <div>
+    <div class="row">
+      <div>
+        <div style="margin-bottom: 10px">
+          <div
+            style="position: absolute; left:25px; right: 32px; top:0px; height: 32px; font-family: 'segoe UI'; font-size: 18px; line-height: 24px; font-weight: 600;display: flex; align-items: flex-end"
+            tabindex="0" aria-label="Hi my name is genie">
+            Reliability Check Details</div>
+
+          </div>
+          </div>
+        </div>
+      <fab-message-bar [messageBarType]="autoHealMessageType" [isMultiline]="false" dismissButtonAriaLabel="Close" [truncated]="true"
+  overflowButtonAriaLabel="See more"><p><b>{{autoHealTitle}} </b> </p>{{autoHealTitleDescription}}
+  <br />
+  <b>Learn More:</b> <a href="https://azure.github.io/AppService/2018/09/10/Announcing-the-New-Auto-Healing-Experience-in-App-Service-Diagnostics.html" target='_blank'>
+    Auto-Healing Experience in App Service Diagnostics</a></fab-message-bar>
+  <br />
+  <fab-message-bar [messageBarType]="healthCheckMessageType" [isMultiline]="false" dismissButtonAriaLabel="Close" [truncated]="true"
+  overflowButtonAriaLabel="See more"><p><b>{{healthCheckTitle}} </b> </p>{{healthCheckDescription}}
+  <br />
+  <b>Learn More:</b> <a href="https://github.com/projectkudu/kudu/wiki/Health-Check-%28Preview%29" target='_blank'>
+    Health Check (Preview)</a></fab-message-bar>
+    <br />
+  <br />
+  <fab-message-bar [messageBarType]="distributedWorkerMessageType" [isMultiline]="false" dismissButtonAriaLabel="Close" [truncated]="true"
+  overflowButtonAriaLabel="See more"><p><b>{{workerDistributionTitle}} </b> </p>{{workerDistributionDescription}}
+  <br />
+  <b>Learn More:</b> <a href="https://docs.microsoft.com/en-us/azure/azure-monitor/platform/autoscale-get-started" target='_blank'>
+    Scale instance count manually or automatically</a></fab-message-bar>
+    <br />
+    <fab-message-bar [messageBarType]="appDensityHealthyMessageType" [isMultiline]="false" dismissButtonAriaLabel="Close" [truncated]="true"
+    overflowButtonAriaLabel="See more"><p><b>{{appDensityHealthyTitle}} </b> </p>{{appDensityHealthyDescription}}
+    <br />
+    <b>Learn More:</b> <a href="https://docs.microsoft.com/en-us/azure/app-service/overview-hosting-plans" target='_blank'>
+      Azure App Service plan overview</a>
+  </fab-message-bar>
+  </div>
+</fab-panel>

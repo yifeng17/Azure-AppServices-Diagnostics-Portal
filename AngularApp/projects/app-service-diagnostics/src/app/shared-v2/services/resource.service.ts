@@ -19,6 +19,8 @@ export class ResourceService {
   public warmUpCallFinished: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
   public error: any;
 
+  public reliabilityChecksResults: any = {};
+
   constructor(protected _armService: ArmService, private _genericArmConfigService?: GenericArmConfigService) { }
 
   private _initialize() {
@@ -84,6 +86,25 @@ export class ResourceService {
     return this._subscription;
   }
 
+  public get isLiabilityCheckEnabled(): boolean {
+    if (this._genericArmConfigService) {
+      let currConfig: ArmResourceConfig = this._genericArmConfigService.getArmResourceConfig(this.resource.id);
+      if (currConfig.liabilityCheckConfig && typeof currConfig.liabilityCheckConfig.isLiabilityCheckEnabled == 'boolean') {
+        return currConfig.liabilityCheckConfig.isLiabilityCheckEnabled;
+      }
+      else {
+        return false;
+      }
+    }
+    else {
+      return false;
+    }
+  }
+
+  public getReliablityCheckResult(): Observable<any> {
+    return of({});
+  }
+
   public get isApplicableForLiveChat(): boolean {
     if (this._genericArmConfigService) {
       let currConfig: ArmResourceConfig = this._genericArmConfigService.getArmResourceConfig(this.resource.id);
@@ -104,7 +125,7 @@ export class ResourceService {
       let currConfig: ArmResourceConfig = this._genericArmConfigService.getArmResourceConfig(this.resource.id);
       if(this.isApplicableForLiveChat === true) {
         if ( currConfig.liveChatConfig && currConfig.liveChatConfig.supportTopicIds
-          &&  currConfig.liveChatConfig.supportTopicIds instanceof Array  
+          &&  currConfig.liveChatConfig.supportTopicIds instanceof Array
           && currConfig.liveChatConfig.supportTopicIds.length > 0 ) {
           return currConfig.liveChatConfig.supportTopicIds;
         }
@@ -142,7 +163,7 @@ export class ResourceService {
         }));
     }
   }
-  
+
   protected makeWarmUpCalls() {
     //No warm up calls in base
   }

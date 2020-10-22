@@ -1,3 +1,5 @@
+<blade-closing-notification></blade-closing-notification>
+<reliablity-checks-notification></reliablity-checks-notification>
 <detector-container *ngIf="displayDetectorContainer" [detector]="analysisDetector" [hideDetectorControl]='isCaseSubmissionSolutionIFrame' [isAnalysisView]="true" (downTimeChanged)="onDowntimeChanged($event)"></detector-container>
 <div *ngIf="showSearchBar" class="search-box">
     <span>Diagnostics based on </span>
