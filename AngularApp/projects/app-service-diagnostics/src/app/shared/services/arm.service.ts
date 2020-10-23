@@ -189,7 +189,7 @@ export class ArmService {
             catchError(this.handleError)
         );
 
-        return this._cache.get(url, request, invalidateCache, logData);
+        return this._cache.get(url, request, invalidateCache, logData);``
     }
 
     getArmResource<T>(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Observable<T> {

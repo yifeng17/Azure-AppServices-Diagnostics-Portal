@@ -17,8 +17,12 @@ export class ReliablityChecksNotificationComponent implements OnInit {
   reliabilityChecksResults: any = {};
   text: string = "";
   styles: IMessageBarStyles = {
-      content: {
-          height: '50px',
+      root: {
+          height: '49px',
+          backgroundColor: '#FEF0F1',
+          marginLeft: '20px',
+          marginRight: '20px',
+          marginBottom: '13px'
       }
   }
   constructor(private _resourceService: ResourceService, private globals: Globals) { }
