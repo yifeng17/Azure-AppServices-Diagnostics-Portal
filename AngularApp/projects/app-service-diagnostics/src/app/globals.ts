@@ -30,7 +30,7 @@ export class Globals {
   openSessionPanel: boolean = false;
   openCreateStorageAccountPanel: boolean = false;
   openCallStackPanel: boolean = false;
-  openReliabilityChecksPanel: boolean = false;
+  openRiskAlertsPanel: boolean = false;
   reliabilityChecksDetailsBehaviorSubject: BehaviorSubject<any>= new BehaviorSubject<any> ({numberofCriticalChecks: 0, autoHealEnabled: false, healthCheckEnabled: false, workerDistributionEnabled: false, appDensityHealthy: false});
   callStackDetails = { managedException: "", callStack: "" };
 

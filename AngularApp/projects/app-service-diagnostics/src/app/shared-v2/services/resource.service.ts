@@ -101,7 +101,7 @@ export class ResourceService {
     }
   }
 
-  public getReliablityCheckResult(): Observable<any> {
+  public getRiskAlertsResult(): Observable<any> {
     return of({});
   }
 

@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { MessageBarType, PanelType } from 'office-ui-fabric-react';
+import { IPanelProps,IPanelStyles, MessageBarType, PanelType } from 'office-ui-fabric-react';
 import { Globals } from '../../../globals';
 
 @Component({
-  selector: 'reliability-checks-panel',
-  templateUrl: './reliability-checks-panel.component.html',
-  styleUrls: ['./reliability-checks-panel.component.scss']
+  selector: 'risk-alerts-panel',
+  templateUrl: './risk-alerts-panel.component.html',
+  styleUrls: ['./risk-alerts-panel.component.scss']
 })
-export class ReliabilityChecksPanelComponent implements OnInit {
+export class RiskAlertsPanelComponent implements OnInit {
 
 type: PanelType = PanelType.custom;
 autoHealMessageType: MessageBarType = MessageBarType.severeWarning;
@@ -30,6 +30,12 @@ width: string = "850px";
   healthCheckEnabled: boolean = false;
   workerDistributionEnabled: boolean = false;
   appDensityHealthy: boolean = false;
+
+  styles: any = {
+    root: {
+        marginTop: '50px',
+    }
+}
 
   constructor(public globals: Globals) { }
 
@@ -78,7 +84,7 @@ width: string = "850px";
 //   this.globals.reliabilityChecksDetails.appDensityHealthy = true;
 
   dismissedHandler() {
-    this.globals.openReliabilityChecksPanel = false;
+    this.globals.openRiskAlertsPanel = false;
   }
 
 }

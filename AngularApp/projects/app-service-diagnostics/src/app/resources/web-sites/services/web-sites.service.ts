@@ -145,15 +145,10 @@ export class WebSitesService extends ResourceService {
         return this._armService.getArmResource(`${resourceUri}/premieraddons`, '2018-02-01');
     }
 
-    public getReliablityCheckResult():Observable<any> {
-
-
+    public getRiskAlertsResult():Observable<any> {
         return this.warmUpCallFinished.pipe(flatMap( ()=>{
-
             let resourceUri = this.resource.id;
             let serverFarmId = this.resource.properties.serverFarmId;
-            let healthCheckEnabled = false;
-            let autoHealEnabled = false;
 
             const resourceTasks = forkJoin(
                 this._armService.getArmResource(`${resourceUri}/config/web`, '2018-02-01'),
@@ -258,7 +253,7 @@ export class WebSitesService extends ResourceService {
         super.makeWarmUpCalls();
         this._populateSiteInfo();
         this.warmUpCallFinished.next(true);
-        this.reliabilityChecksResults = this.getReliablityCheckResult();
+        this.reliabilityChecksResults = this.getRiskAlertsResult();
     }
 
     private _populateSiteInfo(): void {

@@ -6,11 +6,11 @@ import { ResourceService } from '../../../shared-v2/services/resource.service';
 
 
 @Component({
-  selector: 'reliablity-checks-notification',
-  templateUrl: './reliablity-checks-notification.component.html',
-  styleUrls: ['./reliablity-checks-notification.component.scss']
+  selector: 'risk-alerts-notification',
+  templateUrl: './risk-alerts-notification.component.html',
+  styleUrls: ['./risk-alerts-notification.component.scss']
 })
-export class ReliablityChecksNotificationComponent implements OnInit {
+export class RiskAlertsNotificationComponent implements OnInit {
   type: MessageBarType = MessageBarType.error;
   criticalCount: string = "4";
   numberofCriticalChecks: number = 0;
@@ -37,7 +37,7 @@ export class ReliablityChecksNotificationComponent implements OnInit {
         //     "numberOfWorkers": numberOfWorkers,
         //     "numberOfSites": numberOfSites
         // };
-         this._resourceService.getReliablityCheckResult().subscribe(results => {
+         this._resourceService.getRiskAlertsResult().subscribe(results => {
             let res: any = results[0];
             let autoHealEnabled = res.properties.autoHealEnabled;
             let healthCheckEnabled = res.properties.healthCheckPath != null && res.properties.healthCheckPath.toString() !== '' && res.properties.healthCheckPath.toString().length >= 1;
@@ -83,9 +83,9 @@ export class ReliablityChecksNotificationComponent implements OnInit {
     //}
   }
 
-  openReliabilityChecksPanel() {
-      console.log("openReliabilityChecksPanel", this.globals.openReliabilityChecksPanel);
-      this.globals.openReliabilityChecksPanel = true;
+  openRiskAlertsPanel() {
+      console.log("openRiskAlertsPanel", this.globals.openRiskAlertsPanel);
+      this.globals.openRiskAlertsPanel = true;
   }
 
 }

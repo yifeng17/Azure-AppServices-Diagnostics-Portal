@@ -21,7 +21,7 @@ export class SupportTopicRedirectComponent implements OnInit {
 
       this._authService.getStartupInfo().subscribe(startupInfo => {
         if (startupInfo.source && startupInfo.source.toLowerCase() == ('CaseSubmissionV2-NonContext').toLowerCase() && !startupInfo.isIFrameForCaseSubmissionSolution) {
-          const notification = new Notification('To continue with case submission, please close this view.', null, 'fa-info-circle', undefined, true);
+          const notification = new Notification('To continue with case submission, please click on the "X" in the upper right corner.', null, 'fa-info-circle', undefined, true);
           this._notificationService.pushNotification(notification);
         }
       });
