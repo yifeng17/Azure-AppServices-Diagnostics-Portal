@@ -1,10 +1,10 @@
 <ng-container *ngIf="commAlertToShow">
-  <fab-message-bar [messageBarType]="commAlertStatus" dismissable="true" isMultiline="false"
-    dismissButtonAriaLabel="Close" [truncated]="true" [styles]="styles" overflowButtonAriaLabel="See more">
-    {{commAlertTitle}} <a (click)="isAlertExpanded = !isAlertExpanded">More info.</a>.</fab-message-bar>
+  <fab-message-bar [messageBarType]="commAlertStatus" isMultiline="false"
+    dismissButtonAriaLabel="Close" [truncated]="true" [styles]="messageBarStyles" overflowButtonAriaLabel="See more">
+    {{commAlertTitle}} <a (click)="isAlertExpanded = !isAlertExpanded">View more</a>.</fab-message-bar>
 </ng-container>
 
-<fab-panel [isOpen]="isAlertExpanded" [type]="type" [customWidth]="width" [isHiddenOnDismiss]="true" [styles]="styles"
+<fab-panel [isOpen]="isAlertExpanded" [type]="type" [customWidth]="width" [isHiddenOnDismiss]="true" [styles]="panelStyles"
   [isLightDismiss]="true" [hasCloseButton]="true" [closeButtonAriaLabel]="'close'">
   <div>
     <div class="row">
@@ -58,7 +58,6 @@
                 <div class="comm-info-data"><b>{{commAlertToShow.incidentId}}</b></div>
               </div>
             </div>
-
             <div class="comm-info-row">
               <div class="comm-info-label">Details</div>
               <div class="comm-info-data">

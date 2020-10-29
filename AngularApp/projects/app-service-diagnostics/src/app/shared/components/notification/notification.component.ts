@@ -16,8 +16,6 @@ export class NotificationComponent implements OnInit {
     root: {
         height: '49px',
         backgroundColor: '#F0F6FF',
-        marginLeft: '10px',
-        marginRight: '10px',
         marginBottom: '13px'
     }
 }

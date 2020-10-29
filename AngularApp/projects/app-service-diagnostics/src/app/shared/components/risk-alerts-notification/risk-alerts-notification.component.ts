@@ -13,17 +13,14 @@ import { AuthService } from '../../../startup/services/auth.service';
     styleUrls: ['./risk-alerts-notification.component.scss']
 })
 export class RiskAlertsNotificationComponent implements OnInit {
-    showRiskAlertsNotification: boolean = true;
+    showRiskAlertsNotification: boolean = false;
     type: MessageBarType = MessageBarType.error;
     riskAlertChecksHealthy: boolean = false;
     reliabilityChecksResults: any = {};
-    text: string = "";
     styles: IMessageBarStyles = {
         root: {
             height: '49px',
             backgroundColor: '#FEF0F1',
-            marginLeft: '10px',
-            marginRight: '10px',
             marginBottom: '13px'
         }
     }
@@ -121,7 +118,7 @@ export class RiskAlertsNotificationComponent implements OnInit {
                             appDensityStatus = MessageBarType.severeWarning;
                             appDensityDetailTitle = appDensityWarningorCriticalTitle;
                         }
-                        else if (numberOfSites >= ASPDensityLimit.LargeLimit) {
+                        else if (numberOfSites >= ASPDensityLimit.LargeSoftLimit) {
                             appDensityStatus = MessageBarType.warning;
                             appDensityDetailTitle = appDensityWarningorCriticalTitle;
                         }
@@ -132,10 +129,10 @@ export class RiskAlertsNotificationComponent implements OnInit {
                 }
 
                 let addDensityWarningorCriticalDescriptionPostfix = `We detected your app is running on a ${currentWorkerString} sized worker and the current App Service Plan,  on an average, is running ${numberOfSites} simultaneously active apps. Apps that are a part of the same App Service Plan, compete for the same set of resources. Our data indicates that ${currentPlanSoftLimit}+ active apps in an App Service Plan running on a ${currentWorkerString}sized worker deterioates apps performance. It causes CPU and memory contention resulting in availability and reliablity loss.`;
-                if (appDensityStatus = MessageBarType.warning) {
+                if (appDensityStatus === MessageBarType.warning) {
                     appDensityDetailDescription = 'Your App Service Plan is nearing saturation.' + addDensityWarningorCriticalDescriptionPostfix;
                 }
-                else if (appDensityStatus = MessageBarType.severeWarning) {
+                else if (appDensityStatus === MessageBarType.severeWarning) {
                     appDensityDetailDescription = 'Your App Service Plan is currently saturated.' + addDensityWarningorCriticalDescriptionPostfix;
                 }
 
@@ -143,11 +140,10 @@ export class RiskAlertsNotificationComponent implements OnInit {
 
                 this.riskAlertChecksHealthy = autoHealEnabled && healthCheckEnabled && workDistributionCheckPassed && appDensityCheckPassed;
 
-                this._authService.getStartupInfo().subscribe(startupInfo => {
-                    if (startupInfo.source && startupInfo.source.toLowerCase() == ('CaseSubmissionV2-NonContext').toLowerCase() && !startupInfo.isIFrameForCaseSubmissionSolution) {
-                        this.showRiskAlertsNotification = !this.riskAlertChecksHealthy;
-                    }
-                });
+                this._authService.getStartupInfo().subscribe((startupInfo) => {
+                    // For now, only showing alert in case submission when there is at least one risk check fails
+                    this.showRiskAlertsNotification = (startupInfo.supportTopicId && startupInfo.supportTopicId != '' && !this.riskAlertChecksHealthy);
+                  });
 
                 var riskAlertCheckDetails = {
                     "riskAlertChecksHealthy": this.riskAlertChecksHealthy,
@@ -158,8 +154,6 @@ export class RiskAlertsNotificationComponent implements OnInit {
                 };
 
                 this.globals.updatereliabilityChecksDetails(riskAlertCheckDetails);
-
-                this.text = JSON.stringify(riskAlertCheckDetails);
             }
         });
     }
@@ -167,15 +161,13 @@ export class RiskAlertsNotificationComponent implements OnInit {
     openRiskAlertsPanel() {
         this.globals.openRiskAlertsPanel = true;
     }
-
 }
 
 export class riskAlertDetail {
-    messageType: MessageBarType = MessageBarType.info;
+    messageType: MessageBarType = MessageBarType.success;
     title: string = "";
     description: string = "";
     learnMore: string = "";
-
 
     constructor(messageType: MessageBarType, title: string = "", description: string = "", learnMore: string = "") {
         this.messageType = messageType;
@@ -184,7 +176,6 @@ export class riskAlertDetail {
         this.learnMore = learnMore;
     }
 }
-
 
 export enum ASPDensityLimit {
     SmallSoftLimit = 8,

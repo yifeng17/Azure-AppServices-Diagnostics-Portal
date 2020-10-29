@@ -10,7 +10,6 @@ import { riskAlertDetail } from '../risk-alerts-notification/risk-alerts-notific
     styleUrls: ['./risk-alerts-panel.component.scss']
 })
 export class RiskAlertsPanelComponent implements OnInit {
-
     type: PanelType = PanelType.custom;
     width: string = "850px";
     styles: any = {
@@ -33,7 +32,6 @@ export class RiskAlertsPanelComponent implements OnInit {
             this.workDistributionDetail = reliabilityChecks.workerDistribution;
             this.appDensityCheckDetail = reliabilityChecks.appDensity;
         })
-
     }
 
     dismissedHandler() {

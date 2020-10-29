@@ -1,5 +1,5 @@
 <ng-container *ngIf="showRiskAlertsNotification">
-  <fab-message-bar [messageBarType]="type" dismissable="true" isMultiline="false" dismissButtonAriaLabel="Close"
+  <fab-message-bar [messageBarType]="type" isMultiline="false" dismissButtonAriaLabel="Close"
     [truncated]="true" [styles]="styles" overflowButtonAriaLabel="See more">We detected missing configurations in your
     application that will increase risk of a downtime. Please check <a (click)="openRiskAlertsPanel()">Availability risk
       alerts</a>.</fab-message-bar>

@@ -22,12 +22,11 @@ export class SupportTopicRedirectComponent implements OnInit {
 
       this._authService.getStartupInfo().subscribe(startupInfo => {
         if (startupInfo.source && startupInfo.source.toLowerCase() == ('CaseSubmissionV2-NonContext').toLowerCase() && !startupInfo.isIFrameForCaseSubmissionSolution) {
-          const notification = new Notification('To continue with support request creation, please click on the last navigation link next to "Home" in the top left corner.', null, MessageBarType.info, 'fa-info-circle', undefined, true);
+          const notification = new Notification('To continue with support request creation, please click on the "X" in the upper right corner.', null, MessageBarType.info, 'fa-info-circle', undefined, true);
           this._notificationService.pushNotification(notification);
         }
       });
     });
-
 
     // Logging subscription location placement id in case detector opened from Case Submission flow directly
     let subscriptionid = this._activatedRoute.snapshot.params['subscriptionid'];
