@@ -1,5 +1,6 @@
-<fab-panel [isOpen]="globals.openRiskAlertsPanel" [type]="type" [customWidth]="width" [isHiddenOnDismiss]="true" [styles]="styles"
-  [isLightDismiss]="true" [hasCloseButton]="true" [closeButtonAriaLabel]="'close'" (onDismissed)="dismissedHandler()">
+<fab-panel [isOpen]="globals.openRiskAlertsPanel" [type]="type" [customWidth]="width" [isHiddenOnDismiss]="true"
+  [styles]="styles" [isLightDismiss]="true" [hasCloseButton]="true" [closeButtonAriaLabel]="'close'"
+  (onDismissed)="dismissedHandler()">
   <div>
     <div class="row">
       <div>
@@ -8,45 +9,52 @@
             style="position: absolute; left:25px; right: 32px; top:0px; height: 32px; font-family: 'segoe UI'; font-size: 18px; line-height: 24px; font-weight: 600;display: flex; align-items: flex-end"
             tabindex="0" aria-label="Availability risk alerts">
             Availability risk alerts</div>
-
         </div>
       </div>
     </div>
-    <fab-message-bar [messageBarType]="autoHealMessageType" [isMultiline]="false" dismissButtonAriaLabel="Close"
-      [truncated]="true" overflowButtonAriaLabel="See more">
-      <p><b>{{autoHealTitle}} </b> </p>{{autoHealTitleDescription}}
-      <br /><br />
-      <b>Learn More:</b> <a
-        href="https://azure.github.io/AppService/2018/09/10/Announcing-the-New-Auto-Healing-Experience-in-App-Service-Diagnostics.html"
-        target='_blank'>
-        Auto-Healing Experience in App Service Diagnostics</a>
-    </fab-message-bar>
-    <br />
-    <fab-message-bar [messageBarType]="healthCheckMessageType" [isMultiline]="false" dismissButtonAriaLabel="Close"
-      [truncated]="true" overflowButtonAriaLabel="See more">
-      <p><b>{{healthCheckTitle}} </b> </p>{{healthCheckDescription}}
+    <ng-container *ngIf="autoHealDetail">
+      <fab-message-bar [messageBarType]="autoHealDetail.messageType" [isMultiline]="false"
+        dismissButtonAriaLabel="Close" [truncated]="true" overflowButtonAriaLabel="See more">
+        <p><b>{{autoHealDetail.title}} </b> </p>{{autoHealDetail.description}}
+        <br /><br />
+        <b>Learn More:</b> <a
+          href="https://azure.github.io/AppService/2018/09/10/Announcing-the-New-Auto-Healing-Experience-in-App-Service-Diagnostics.html"
+          target='_blank'>
+          Auto-Healing Experience in App Service Diagnostics</a>
+      </fab-message-bar>
       <br />
-      <b>Learn More:</b> <a href="https://github.com/projectkudu/kudu/wiki/Health-Check-%28Preview%29" target='_blank'>
-        Health Check (Preview)</a>
-    </fab-message-bar>
-    <br />
-    <br />
-    <fab-message-bar [messageBarType]="distributedWorkerMessageType" [isMultiline]="false"
-      dismissButtonAriaLabel="Close" [truncated]="true" overflowButtonAriaLabel="See more">
-      <p><b>{{workerDistributionTitle}} </b> </p>{{workerDistributionDescription}}
+    </ng-container>
+    <ng-container *ngIf="healthCheckDetail">
+      <fab-message-bar [messageBarType]="healthCheckDetail.messageType" [isMultiline]="false"
+        dismissButtonAriaLabel="Close" [truncated]="true" overflowButtonAriaLabel="See more">
+        <p><b>{{healthCheckDetail.title}} </b> </p>{{healthCheckDetail.description}}
+        <br /><br />
+        <b>Learn More:</b> <a href="https://github.com/projectkudu/kudu/wiki/Health-Check-%28Preview%29"
+          target='_blank'>
+          Health Check (Preview)</a>
+      </fab-message-bar>
       <br />
-      <b>Learn More:</b> <a href="https://docs.microsoft.com/en-us/azure/azure-monitor/platform/autoscale-get-started"
-        target='_blank'>
-        Scale instance count manually or automatically</a>
-    </fab-message-bar>
-    <br />
-    <fab-message-bar [messageBarType]="appDensityHealthyMessageType" [isMultiline]="false"
-      dismissButtonAriaLabel="Close" [truncated]="true" overflowButtonAriaLabel="See more">
-      <p><b>{{appDensityHealthyTitle}} </b> </p>{{appDensityHealthyDescription}}
+    </ng-container>
+    <ng-container *ngIf="workDistributionDetail">
+      <fab-message-bar [messageBarType]="workDistributionDetail.messageType" [isMultiline]="false"
+        dismissButtonAriaLabel="Close" [truncated]="true" overflowButtonAriaLabel="See more">
+        <p><b>{{workDistributionDetail.title}} </b> </p>{{workDistributionDetail.description}}
+        <br /><br />
+        <b>Learn More:</b> <a href="https://docs.microsoft.com/en-us/azure/azure-monitor/platform/autoscale-get-started"
+          target='_blank'>
+          Scale instance count manually or automatically</a>
+      </fab-message-bar>
       <br />
-      <b>Learn More:</b> <a href="https://docs.microsoft.com/en-us/azure/app-service/overview-hosting-plans"
-        target='_blank'>
-        Azure App Service plan overview</a>
-    </fab-message-bar>
+    </ng-container>
+    <ng-container *ngIf="appDensityCheckDetail">
+      <fab-message-bar [messageBarType]="appDensityCheckDetail.MessageType" [isMultiline]="false"
+        dismissButtonAriaLabel="Close" [truncated]="true" overflowButtonAriaLabel="See more">
+        <p><b>{{appDensityCheckDetail.title}} </b> </p>{{appDensityCheckDetail.description}}
+        <br /><br />
+        <b>Learn More:</b> <a href="https://docs.microsoft.com/en-us/azure/app-service/overview-hosting-plans"
+          target='_blank'>
+          Azure App Service plan overview</a>
+      </fab-message-bar>
+    </ng-container>
   </div>
 </fab-panel>

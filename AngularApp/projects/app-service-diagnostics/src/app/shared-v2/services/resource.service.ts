@@ -102,7 +102,7 @@ export class ResourceService {
   }
 
   public getRiskAlertsResult(): Observable<any> {
-    return of({});
+    return of(null);
   }
 
   public get isApplicableForLiveChat(): boolean {

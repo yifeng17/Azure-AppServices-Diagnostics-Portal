@@ -9,11 +9,11 @@ import { IDiagnosticProperties } from '../../../shared/models/diagnosticproperti
 import { flatMap } from 'rxjs/operators';
 import { PortalReferrerMap } from '../../../shared/models/portal-referrer-map';
 import { DetectorType } from 'diagnostic-data';
-import { of,  Observable, BehaviorSubject } from 'rxjs';
+import { of, Observable, BehaviorSubject } from 'rxjs';
 import { ArmResource } from '../../../shared-v2/models/arm';
 import { forkJoin } from 'rxjs/internal/observable/forkJoin';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class WebSitesService extends ResourceService {
 
     private _resourceGroup: string;
@@ -25,16 +25,15 @@ export class WebSitesService extends ResourceService {
     public appType: AppType = AppType.WebApp;
     public sku: Sku = Sku.All;
     public hostingEnvironmentKind: HostingEnvironmentKind = HostingEnvironmentKind.All;
-    public numberofCriticalChecks: number = 0;
     public reliabilityChecksResults: any = {};
 
     constructor(protected _armService: ArmService, private _appAnalysisService: AppAnalysisService) {
         super(_armService);
     }
 
-    public getIbizaBladeToDetectorMapings():Observable<PortalReferrerMap[]> {
-        return this.warmUpCallFinished.pipe(flatMap( ()=>{
-            let bladeToDetectorMap:PortalReferrerMap[];
+    public getIbizaBladeToDetectorMapings(): Observable<PortalReferrerMap[]> {
+        return this.warmUpCallFinished.pipe(flatMap(() => {
+            let bladeToDetectorMap: PortalReferrerMap[];
 
             bladeToDetectorMap = [{
                 ReferrerExtensionName: 'Websites',
@@ -52,7 +51,7 @@ export class WebSitesService extends ResourceService {
             }];
 
 
-            if(this.appType == AppType.WebApp) {
+            if (this.appType == AppType.WebApp) {
                 bladeToDetectorMap.push({
                     ReferrerExtensionName: 'Websites',
                     ReferrerBladeName: 'BackupSummaryBlade',
@@ -62,21 +61,21 @@ export class WebSitesService extends ResourceService {
                 });
             }
             return of(bladeToDetectorMap);
-        }  ));
+        }));
     }
 
     public getPesId(): Observable<string> {
-        return this.warmUpCallFinished.pipe(flatMap(() => {
-            if (this.appType == AppType.WebApp && this.platform == OperatingSystem.windows){
+        return this.warmUpCallFinished.pipe(flatMap((res) => {
+            if (this.appType == AppType.WebApp && this.platform == OperatingSystem.windows) {
                 return of("14748");
             }
-            else if (this.appType == AppType.WebApp && this.platform == OperatingSystem.linux){
+            else if (this.appType == AppType.WebApp && this.platform == OperatingSystem.linux) {
                 return of("16170");
             }
-            else if (this.appType == AppType.FunctionApp){
+            else if (this.appType == AppType.FunctionApp) {
                 return of("16072");
             }
-            else{
+            else {
                 return of(null);
             }
         }));
@@ -97,13 +96,13 @@ export class WebSitesService extends ResourceService {
             ) > 0;
     }
 
-    public get liveChatEnabledSupportTopicIds():string[] {
-        if(this.isApplicableForLiveChat) {
-            if(this.appType === AppType.FunctionApp) {
+    public get liveChatEnabledSupportTopicIds(): string[] {
+        if (this.isApplicableForLiveChat) {
+            if (this.appType === AppType.FunctionApp) {
                 return [];
             }
             else if (this.appType === AppType.WebApp) {
-                if(this.platform === OperatingSystem.windows) {
+                if (this.platform === OperatingSystem.windows) {
                     return [
                         '32583701', //Availability and Performance/Web App experiencing High CPU
                         '32542218', //Availability and Performance/Web App Down
@@ -119,7 +118,7 @@ export class WebSitesService extends ResourceService {
                         '32589281', //How Do I/IP Configuration
                         '32588774', // Deployment/Visual Studio
                         '32589276' //How Do I/Backup and Restore
-                      ];
+                    ];
                 }
                 else if (this.platform === OperatingSystem.linux) {
                     return [
@@ -129,7 +128,7 @@ export class WebSitesService extends ResourceService {
                         '32440122', //Configuration and Management/Configuring custom domain names
                         '32542208', //Configuration and Management/Backup and Restore
                         '32542210' //Configuration and Management/IP Configuration
-                      ];
+                    ];
                 }
                 else {
                     return [];
@@ -145,119 +144,35 @@ export class WebSitesService extends ResourceService {
         return this._armService.getArmResource(`${resourceUri}/premieraddons`, '2018-02-01');
     }
 
-    public getRiskAlertsResult():Observable<any> {
-        return this.warmUpCallFinished.pipe(flatMap( ()=>{
-            let resourceUri = this.resource.id;
-            let serverFarmId = this.resource.properties.serverFarmId;
 
-            const resourceTasks = forkJoin(
-                this._armService.getArmResource(`${resourceUri}/config/web`, '2018-02-01'),
-                this._armService.getResourceWithoutEnvelope<ServerFarm>(serverFarmId)
-            );
+    public getRiskAlertsResult(): Observable<any> {
+        return this.warmUpCallFinished.pipe(flatMap((res) => {
+            if (this.resource) {
+                let resourceUri = this.resource.id;
+                let serverFarmId = this.resource.properties.serverFarmId;
 
-            return resourceTasks;
-        }  ));
+                const resourceTasks = forkJoin(
+                    this._armService.getArmResource(`${resourceUri}/config/web`, '2018-02-01'),
+                    this._armService.getResourceWithoutEnvelope<ServerFarm>(serverFarmId)
+                );
 
+                return resourceTasks;
+            }
+            else {
+                return of(null);
+            }
 
-        // resourceTasks.subscribe(results => {
-        //     let res: any = results[0];
-        //     autoHealEnabled = res.properties.autoHealEnabled;
-        //     healthCheckEnabled = res.properties.healthCheckPath != null && res.properties.healthCheckPath.toString() !== '' && res.properties.healthCheckPath.toString().length >= 1;
-        //     this.numberofCriticalChecks = autoHealEnabled ? this.numberofCriticalChecks : this.numberofCriticalChecks+1;
-        //     this.numberofCriticalChecks = healthCheckEnabled ? this.numberofCriticalChecks : this.numberofCriticalChecks+1;
-        //     console.log("webconfiginfo", res, res.properties, res.properties.autoHealEnabled);
-        //     console.log("this.numberofCriticalChecks", this.numberofCriticalChecks, autoHealEnabled, healthCheckEnabled);
-
-        //     let severfarmResource: any = results[1];
-        //     let numberOfWorkers = severfarmResource.properties.numberOfWorkers;
-        //     let numberOfSites = severfarmResource.properties.numberOfSites;
-
-        //     this.numberofCriticalChecks = numberOfWorkers > 1 ? this.numberofCriticalChecks : this.numberofCriticalChecks+1;
-
-
-        //     var a = {
-        //         "numberofCriticalChecks": this.numberofCriticalChecks,
-        //         "autoHealEnabled": autoHealEnabled,
-        //         "healthCheckEnabled": healthCheckEnabled,
-        //         "numberOfWorkers": numberOfWorkers,
-        //         "numberOfSites": numberOfSites
-        //     };
-
-
-
-        //     console.log("resourceTasksInfo", results, a);
-
-        //     return a;
-       // });
-
-
-
-        // this._authService.getStartupInfo().pipe(
-        //     mergeMap((startUpInfo: StartupInfo) => {
-        //         return this._armService.getResource<Site>(startUpInfo.resourceId);
-        //     }),
-        //     mergeMap((site: ResponseMessageEnvelope<Site>) => {
-        //         this.currentSite = site.properties;
-        //         return this._rbacService.hasPermission(this.currentSite.serverFarmId, [this._rbacService.readScope]);
-        //     }))
-        //     .subscribe((hasPermission: boolean) => {
-        //         this.hasReadAccessToServerFarm = hasPermission;
-        //         this.initialize();
-        //     })
-
+        }));
     }
-
-    // public getServiceHealthCommunications(): Observable<any[]> {
-
-    //     return this._authService.getStartupInfo().pipe(
-    //       mergeMap((startupInfo: StartupInfo) => {
-
-    //         var subscriptionId: string = ResourceDescriptor.parseResourceUri(startupInfo.resourceId).subscription;
-    //         return this._armService.getArmResource<any>(`/subscriptions/${subscriptionId}/providers/Microsoft.ResourceHealth/events`, '2018-07-01').pipe(
-    //           map((response: any) => {
-
-    //             var commsList = new Array();
-    //             var alertFound: boolean = false;
-    //             response.value.forEach((item: any) => {
-    //               if (item.properties && item.properties.eventType && item.properties.eventType === 'ServiceIssue') {
-    //                 var comm = {
-    //                   publishedTime: item.properties['lastUpdateTime'],
-    //                   title: item.properties['title'],
-    //                   richTextMessage: item.properties['description'],
-    //                   status: item.properties['status'] === 'Active' ? CommunicationStatus.Active : CommunicationStatus.Resolved,
-    //                   incidentId: item.name,
-    //                   isAlert: false,
-    //                   isExpanded: false,
-    //                   commType: 0
-    //                 };
-
-    //                 commsList.push(comm);
-    //               }
-    //             });
-
-    //             var activeComm = commsList.find(item => item.status === CommunicationStatus.Active);
-    //             if(activeComm){
-    //               activeComm.isAlert = true;
-    //               this._logger.LogAzureCommShown(activeComm.incidentId, activeComm.title, 'ServiceHealth', activeComm.isExpanded, activeComm.status === 0, activeComm.publishedTime);
-    //             }
-
-    //             return commsList;
-    //           })
-    //         );
-    //       })
-    //     );
-    //   }
 
 
     protected makeWarmUpCalls() {
         super.makeWarmUpCalls();
         this._populateSiteInfo();
         this.warmUpCallFinished.next(true);
-        this.reliabilityChecksResults = this.getRiskAlertsResult();
     }
 
     private _populateSiteInfo(): void {
-        console.log("resourceInfo", this.resource, this.resource.properties.serverFarmId);
         const pieces = this.resource.id.toLowerCase().split('/');
         this._subscription = pieces[pieces.indexOf('subscriptions') + 1];
         this._resourceGroup = pieces[pieces.indexOf('resourcegroups') + 1];

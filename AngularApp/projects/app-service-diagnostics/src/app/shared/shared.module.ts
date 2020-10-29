@@ -133,7 +133,6 @@ import { CrashMonitoringAnalysisComponent } from './components/tools/crash-monit
 import { CollapsibleListFabricComponent } from './components/collapsible-list/collapsible-list-fabric/collapsible-list-fabric.component';
 import { RiskAlertsNotificationComponent } from './components/risk-alerts-notification/risk-alerts-notification.component';
 import { RiskAlertsPanelComponent } from './components/risk-alerts-panel/risk-alerts-panel.component';
-import { BladeClosingNotificationComponent } from './components/blade-closing-notification/blade-closing-notification.component';
 
 @NgModule({
     declarations: [
@@ -205,8 +204,7 @@ import { BladeClosingNotificationComponent } from './components/blade-closing-no
         CrashMonitoringAnalysisComponent,
         CollapsibleListFabricComponent,
         RiskAlertsNotificationComponent,
-        RiskAlertsPanelComponent,
-        BladeClosingNotificationComponent
+        RiskAlertsPanelComponent
     ],
     imports: [
         HttpClientModule,
@@ -247,7 +245,6 @@ import { BladeClosingNotificationComponent } from './components/blade-closing-no
         FabPeoplePickerModule,
         FabTagPickerModule,
         FabProgressIndicatorModule,
-        // FabNavModule,
         FabContextualMenuModule,
     ],
     exports: [

@@ -3,6 +3,7 @@ import { Component, Inject, Input, OnInit } from '@angular/core';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
 import { Communication, CommunicationStatus } from '../../models/communication';
 import { CommsService } from '../../services/comms.service';
+import { MessageBarType, PanelType } from 'office-ui-fabric-react';
 const moment = momentNs;
 
 @Component({
@@ -20,11 +21,22 @@ export class CommAlertComponent implements OnInit {
   @Input() autoExpand: boolean = false;
   commAlertTitle: string;
   commAlertToShow: Communication = null;
+  commAlertStatus: MessageBarType = MessageBarType.success;
   isAlertExpanded: boolean = false;
   commPublishedTime: string;
   impactedServices: string;
   impactedRegions: string;
   isPublic: boolean;
+
+
+    type: PanelType = PanelType.custom;
+    width: string = "850px";
+    styles: any = {
+        root: {
+            marginLeft: '10px',
+            marginRight: '10px'
+        }
+    }
 
   constructor(private commsService: CommsService, @Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig) {
     this.commAlertToShow = null;
@@ -46,6 +58,7 @@ export class CommAlertComponent implements OnInit {
 
         if (commAlert.status === CommunicationStatus.Active) {
           this.commAlertTitle = this.activeAlertTitle;
+          this.commAlertStatus = MessageBarType.severeWarning;
         } else {
           this.commAlertTitle = this.resolvedAlertTitle;
         }
