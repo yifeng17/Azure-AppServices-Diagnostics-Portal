@@ -65,7 +65,7 @@ export class WebSitesService extends ResourceService {
     }
 
     public getPesId(): Observable<string> {
-        return this.warmUpCallFinished.pipe(flatMap((res) => {
+        return this.warmUpCallFinished.pipe(flatMap(() => {
             if (this.appType == AppType.WebApp && this.platform == OperatingSystem.windows) {
                 return of("14748");
             }
