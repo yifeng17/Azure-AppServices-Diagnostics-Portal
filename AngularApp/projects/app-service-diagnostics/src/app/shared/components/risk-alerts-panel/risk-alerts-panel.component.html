@@ -13,7 +13,7 @@
       </div>
     </div>
     <ng-container *ngIf="autoHealDetail">
-      <fab-message-bar [messageBarType]="autoHealDetail.messageType" [isMultiline]="false"
+      <fab-message-bar [messageBarType]="autoHealDetail.messageType" [isMultiline]="autoHealDetail.expand"
         dismissButtonAriaLabel="Close" [truncated]="true" overflowButtonAriaLabel="See more">
         <p><b>{{autoHealDetail.title}} </b> </p>{{autoHealDetail.description}}
         <br /><br />
@@ -25,7 +25,7 @@
       <br />
     </ng-container>
     <ng-container *ngIf="healthCheckDetail">
-      <fab-message-bar [messageBarType]="healthCheckDetail.messageType" [isMultiline]="false"
+      <fab-message-bar [messageBarType]="healthCheckDetail.messageType" [isMultiline]="healthCheckDetail.expand"
         dismissButtonAriaLabel="Close" [truncated]="true" overflowButtonAriaLabel="See more">
         <p><b>{{healthCheckDetail.title}} </b> </p>{{healthCheckDetail.description}}
         <br /><br />
@@ -36,7 +36,7 @@
       <br />
     </ng-container>
     <ng-container *ngIf="workDistributionDetail">
-      <fab-message-bar [messageBarType]="workDistributionDetail.messageType" [isMultiline]="false"
+      <fab-message-bar [messageBarType]="workDistributionDetail.messageType" [isMultiline]="workDistributionDetail.expand"
         dismissButtonAriaLabel="Close" [truncated]="true" overflowButtonAriaLabel="See more">
         <p><b>{{workDistributionDetail.title}} </b> </p>{{workDistributionDetail.description}}
         <br /><br />
@@ -47,7 +47,7 @@
       <br />
     </ng-container>
     <ng-container *ngIf="appDensityCheckDetail">
-      <fab-message-bar [messageBarType]="appDensityCheckDetail.messageType" [isMultiline]="false"
+      <fab-message-bar [messageBarType]="appDensityCheckDetail.messageType" [isMultiline]="appDensityCheckDetail.expand"
         dismissButtonAriaLabel="Close" [truncated]="true" overflowButtonAriaLabel="See more">
         <p><b>{{appDensityCheckDetail.title}} </b> </p>{{appDensityCheckDetail.description}}
         <br /><br />

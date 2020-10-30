@@ -14,7 +14,7 @@ import { AuthService } from '../../../startup/services/auth.service';
 })
 export class RiskAlertsNotificationComponent implements OnInit {
     showRiskAlertsNotification: boolean = false;
-    type: MessageBarType = MessageBarType.error;
+    type: MessageBarType = MessageBarType.severeWarning;
     riskAlertChecksHealthy: boolean = false;
     reliabilityChecksResults: any = {};
     styles: IMessageBarStyles = {
@@ -30,7 +30,7 @@ export class RiskAlertsNotificationComponent implements OnInit {
         const autoHealEnabledTitle: string = "Auto-Heal is enabled.";
         const autoHealEnabledDescription: string = "Auto-Heal is highly recommended for production applications that need to ensure high availability and resilience. Although Auto-Heal is not an eventual fix for issues your application may encounter, it allows your application to quickly recover from unexpected issues whether they be platform or application and stay available for customers. If Auto-Heal is being triggerred repeatedly. Re-examine the rule and ensure trigger values aren't too aggressive. Investigate the cause for a proper fix.";
         const autoHealDisabledTitle: string = "Auto-Heal is not enabled.";
-        const autoHealDisabledDescription: string = "Auto-Heal is highly recommended for production applications that need to ensure high availability and resilience. Although Auto-Heal is not an eventual fix for issues your application may encounter, it allows your application to quickly recover from unexpected issues whether they be platform or application and stay available for customers. If Auto-Heal is being triggerred repeatedly. Re-examine the rule and ensure trigger values aren't too aggressive <li/>Investigate the cause for a proper fix. Note: Please ignore this message if you have Auto-Heal enabled in web.config but not via configuration settings. This checks the current Auto-Heal setttings.";
+        const autoHealDisabledDescription: string = "Auto-Heal is highly recommended for production applications that need to ensure high availability and resilience. Although Auto-Heal is not an eventual fix for issues your application may encounter, it allows your application to quickly recover from unexpected issues whether they be platform or application and stay available for customers. If Auto-Heal is being triggerred repeatedly. Re-examine the rule and ensure trigger values aren't too aggressive. Investigate the cause for a proper fix. Note: Please ignore this message if you have Auto-Heal enabled in web.config but not via configuration settings. This checks the current Auto-Heal setttings.";
         const autoHealLearnMore: string = "https://azure.github.io/AppService/2018/09/10/Announcing-the-New-Auto-Healing-Experience-in-App-Service-Diagnostics.html";
 
         const healthCheckDisabledTitle = "Health Check is not enabled.";
@@ -168,12 +168,14 @@ export class riskAlertDetail {
     title: string = "";
     description: string = "";
     learnMore: string = "";
+    expand: boolean = false;
 
-    constructor(messageType: MessageBarType, title: string = "", description: string = "", learnMore: string = "") {
+    constructor(messageType: MessageBarType, title: string = "", description: string = "", learnMore: string = "", expand: boolean = false) {
         this.messageType = messageType;
         this.title = title;
         this.description = description;
         this.learnMore = learnMore;
+        this.expand = this.messageType !== MessageBarType.info && this.messageType !== MessageBarType.success;
     }
 }
 

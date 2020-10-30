@@ -62,7 +62,7 @@ export class CommAlertComponent implements OnInit {
 
                 if (commAlert.status === CommunicationStatus.Active) {
                     this.commAlertTitle = this.activeAlertTitle;
-                    this.commAlertStatus = MessageBarType.severeWarning;
+                    this.commAlertStatus = MessageBarType.error;
                 } else {
                     this.commAlertTitle = this.resolvedAlertTitle;
                 }
