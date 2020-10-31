@@ -40,14 +40,20 @@ export class ApplensContentService {
         return of(searchResults);
     }
 
-    public searchWeb(questionString: string, resultsCount: string = '3', useStack: boolean = true, preferredSites: string[] = []): Observable<any> {
+    public searchWeb(questionString: string, resultsCount: string = '3', useStack: boolean = true, preferredSites: string[] = [], excludedSites: string[] = []): Observable<any> {
 
         const searchSuffix = this._resourceService.searchSuffix;
         var preferredSitesSuffix = preferredSites.map(site => `site:${site}`).join(" OR ");
         if (preferredSitesSuffix && preferredSitesSuffix.length>0){
             preferredSitesSuffix = ` AND (${preferredSitesSuffix})`;
         }
-        const query = encodeURIComponent(`${questionString} AND ${searchSuffix}${preferredSitesSuffix}`);
+
+        var excludedSitesSuffix = excludedSites.map(site => `NOT (site:${site})`).join(" AND ");
+        if (excludedSitesSuffix && excludedSitesSuffix.length>0){
+            excludedSitesSuffix = ` AND (${excludedSitesSuffix})`;
+        }
+
+        const query = encodeURIComponent(`${questionString} AND ${searchSuffix}${preferredSitesSuffix}${excludedSitesSuffix}`);
         const url = `https://api.cognitive.microsoft.com/bing/v7.0/search?q='${query}'&count=${resultsCount}`;
 
         return this.ocpApimKeySubject.pipe(mergeMap((key: string) => {

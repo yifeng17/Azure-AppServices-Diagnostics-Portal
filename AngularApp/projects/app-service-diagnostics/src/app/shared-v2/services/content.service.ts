@@ -31,7 +31,7 @@ export class ContentService {
     return of(searchResults);
   }
 
-  searchWeb(questionString: string, resultsCount: string = '3', useStack: boolean = true, preferredSites: string[] = []): Observable<any> {
+  searchWeb(questionString: string, resultsCount: string = '3', useStack: boolean = true, preferredSites: string[] = [], excludedSites: string[] = []): Observable<any> {
 
     const searchSuffix = this._resourceService.searchSuffix;
 
@@ -48,8 +48,14 @@ export class ContentService {
     var preferredSitesSuffix = preferredSites.map(site => `site:${site}`).join(" OR ");
     if (preferredSitesSuffix && preferredSitesSuffix.length>0){
       preferredSitesSuffix = ` AND (${preferredSitesSuffix})`;
-    }    
-    const query = encodeURIComponent(`${questionString}${useStack? stackTypeSuffix: ''} AND ${searchSuffix}${preferredSitesSuffix}`);
+    }
+    
+    var excludedSitesSuffix = excludedSites.map(site => `NOT (site:${site})`).join(" AND ");
+    if (excludedSitesSuffix && excludedSitesSuffix.length>0){
+      excludedSitesSuffix = ` AND (${excludedSitesSuffix})`;
+    }
+
+    const query = encodeURIComponent(`${questionString}${useStack? stackTypeSuffix: ''} AND ${searchSuffix}${preferredSitesSuffix}${excludedSitesSuffix}`);
     const url = `https://api.cognitive.microsoft.com/bing/v7.0/search?q='${query}'&count=${resultsCount}`;
 
     return this.ocpApimKeySubject.pipe(mergeMap((key:string)=>{

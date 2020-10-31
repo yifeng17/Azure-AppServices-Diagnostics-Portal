@@ -1,8 +1,10 @@
-interface preferredSitesConfig {
+interface PreferredSitesConfig {
     [index: string]: string[];
 }
 
-var productPreferredSitesConfig: preferredSitesConfig = {
+var globalExcludedSites = ["aws.amazon.com", "twitter.com"];
+
+var productPreferredSitesConfig: PreferredSitesConfig = {
     //WEB APP WINDOWS
     "14748": ["github.com/Azure-App-Service", "stackoverflow.com", "azure.github.io/AppService"],
     //FUNCTION APPS
@@ -15,6 +17,21 @@ var productPreferredSitesConfig: preferredSitesConfig = {
     "15791": ["docs.microsoft.com/azure/logic-apps", "github.com/logicappsio", "github.com/Azure/logicapps", "techcommunity.microsoft.com/t5/integrations-on-azure", "stackoverflow.com"],
     //API Management
     "15551": ["github.com/Azure/api-management-samples", "github.com/Azure/azure-api-management-devops-resource-kit", "github.com/Azure/api-management-developer-portal", "stackoverflow.com"]
+};
+
+var productExcludedSitesConfig: PreferredSitesConfig = {
+    //WEB APP WINDOWS
+    "14748": [],
+    //FUNCTION APPS
+    "16072": [],
+    //WEB APP LINUX
+    "16170": [],
+    //AZURE KUBERNETES SERVICES
+    "16450": [],
+    //LOGIC APPS
+    "15791": [],
+    //API Management
+    "15551": []
 };
 
 export class SearchConfiguration{
@@ -38,6 +55,7 @@ export class SearchConfiguration{
             var webSearchConfigData = table.rows[0][table.columns.findIndex(x => x.columnName=="WebSearchConfiguration")];
             var webSearchConfig: WebSearchConfiguration = webSearchConfigData? JSON.parse(webSearchConfigData): this.WebSearchConfiguration;
             this.WebSearchConfiguration.PreferredSites = webSearchConfig.PreferredSites && webSearchConfig.PreferredSites.length>0? webSearchConfig.PreferredSites: this.WebSearchConfiguration.PreferredSites;
+            this.WebSearchConfiguration.ExcludedSites = webSearchConfig.ExcludedSites && webSearchConfig.ExcludedSites.length>0? Array.from(new Set(webSearchConfig.ExcludedSites.concat(this.WebSearchConfiguration.ExcludedSites))): this.WebSearchConfiguration.ExcludedSites;
         }
     }
 }
@@ -55,10 +73,13 @@ export class WebSearchConfiguration {
     public MaxResults: number;
     public UseStack: boolean;
     public PreferredSites: string[];
+    public ExcludedSites: string[];
     public constructor(pesId: string){
         this.MaxResults = 5;
         this.UseStack = true;
         var productPreferredSites = productPreferredSitesConfig[pesId]? productPreferredSitesConfig[pesId]: [];
         this.PreferredSites = productPreferredSites;
+        var productExcludedSites = productExcludedSitesConfig[pesId]? productExcludedSitesConfig[pesId]: [];
+        this.ExcludedSites = Array.from(new Set(globalExcludedSites.concat(productExcludedSites)));
     }
 }

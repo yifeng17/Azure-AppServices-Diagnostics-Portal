@@ -114,11 +114,17 @@ export class WebSearchComponent extends DataRenderBaseComponent implements OnIni
             let itemUrl = new URL(item.link);
             let itemSource = itemUrl.hostname;
             if (seenSources.hasOwnProperty(itemSource)) {
+                if (seenSources[itemSource]>2)
                 part2.push(item);
+                else
+                {
+                    part1.push(item);
+                    seenSources[itemSource]++;
+                }
             }
             else {
                 part1.push(item);
-                seenSources[itemSource] = true;
+                seenSources[itemSource] = 1;
             }
         });
         return part1.concat(part2);
@@ -171,7 +177,7 @@ export class WebSearchComponent extends DataRenderBaseComponent implements OnIni
         let searchTaskPrefs = null;
         let searchTaskResult = null;
         let searchTaskPrefsResult = null;
-        let searchTask = this._contentService.searchWeb(this.searchTerm, this.webSearchConfig.MaxResults.toString(), this.webSearchConfig.UseStack, []).pipe(map((res) => res), retryWhen(errors => {
+        let searchTask = this._contentService.searchWeb(this.searchTerm, this.webSearchConfig.MaxResults.toString(), this.webSearchConfig.UseStack, [], this.webSearchConfig.ExcludedSites).pipe(map((res) => res), retryWhen(errors => {
             let numRetries = 0;
             return errors.pipe(delay(1000), map(err => {
                 if(numRetries++ === 3){
@@ -183,7 +189,7 @@ export class WebSearchComponent extends DataRenderBaseComponent implements OnIni
             throw e;
         }));
         if (this.webSearchConfig && this.webSearchConfig.PreferredSites && this.webSearchConfig.PreferredSites.length>0) {
-            searchTaskPrefs = this._contentService.searchWeb(this.searchTerm, this.webSearchConfig.MaxResults.toString(), this.webSearchConfig.UseStack, this.webSearchConfig.PreferredSites).pipe(map((res) => res), retryWhen(errors => {
+            searchTaskPrefs = this._contentService.searchWeb(this.searchTerm, this.webSearchConfig.MaxResults.toString(), this.webSearchConfig.UseStack, this.webSearchConfig.PreferredSites, this.webSearchConfig.ExcludedSites).pipe(map((res) => res), retryWhen(errors => {
                 let numRetries = 0;
                 return errors.pipe(delay(1000), map(err => {
                     if(numRetries++ === 3){

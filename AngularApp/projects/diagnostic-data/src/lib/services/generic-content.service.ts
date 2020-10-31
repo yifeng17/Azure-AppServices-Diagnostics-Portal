@@ -8,7 +8,7 @@ export class GenericContentService {
     return null;
   }
 
-  public searchWeb(questionString: string, resultsCount: string = '3', useStack: boolean = true, preferredSites: string[] = []): Observable<any> {
+  public searchWeb(questionString: string, resultsCount: string = '3', useStack: boolean = true, preferredSites: string[] = [], excludedSites: string[] = []): Observable<any> {
     return null;
   }
 }
