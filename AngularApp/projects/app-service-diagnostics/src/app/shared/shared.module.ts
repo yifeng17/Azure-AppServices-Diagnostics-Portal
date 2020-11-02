@@ -131,6 +131,9 @@ import {
 } from '@angular-react/fabric';
 import { CrashMonitoringAnalysisComponent } from './components/tools/crash-monitoring/crash-monitoring-analysis/crash-monitoring-analysis.component';
 import { CollapsibleListFabricComponent } from './components/collapsible-list/collapsible-list-fabric/collapsible-list-fabric.component';
+import { RiskAlertsNotificationComponent } from './components/risk-alerts-notification/risk-alerts-notification.component';
+import { RiskAlertsPanelComponent } from './components/risk-alerts-panel/risk-alerts-panel.component';
+
 @NgModule({
     declarations: [
         LimitToFilter,
@@ -199,7 +202,9 @@ import { CollapsibleListFabricComponent } from './components/collapsible-list/co
         JavaFlightRecorderToolComponent,
         CrashMonitoringComponent,
         CrashMonitoringAnalysisComponent,
-        CollapsibleListFabricComponent
+        CollapsibleListFabricComponent,
+        RiskAlertsNotificationComponent,
+        RiskAlertsPanelComponent
     ],
     imports: [
         HttpClientModule,
@@ -240,7 +245,6 @@ import { CollapsibleListFabricComponent } from './components/collapsible-list/co
         FabPeoplePickerModule,
         FabTagPickerModule,
         FabProgressIndicatorModule,
-        // FabNavModule,
         FabContextualMenuModule,
     ],
     exports: [
@@ -297,6 +301,8 @@ import { CollapsibleListFabricComponent } from './components/collapsible-list/co
         TileListComponent,
         GenericCommsComponent,
         GenericAnalysisComponent,
+        RiskAlertsNotificationComponent,
+        RiskAlertsPanelComponent
     ],
     entryComponents: [GenericAnalysisComponent, GenericDetectorComponent]
 })

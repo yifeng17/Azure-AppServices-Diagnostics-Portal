@@ -25,6 +25,7 @@ import { ApplensCommsService } from './services/applens-comms.service';
 import { ApplensSupportTopicService } from './services/applens-support-topic.service';
 import { ApplensContentService } from './services/applens-content.service';
 import { DiagnosticService, DiagnosticDataModule, CommsService, DetectorControlService, GenericSupportTopicService, GenericContentService , GenericDocumentsSearchService  } from 'diagnostic-data';
+import { FabPanelModule } from '@angular-react/fabric';
 import { CollapsibleMenuModule } from '../../collapsible-menu/collapsible-menu.module';
 import { ObserverService } from '../../shared/services/observer.service';
 import { TabDataSourcesComponent } from './tabs/tab-data-sources/tab-data-sources.component';
@@ -125,7 +126,7 @@ export const DashboardModuleRoutes: ModuleWithProviders = RouterModule.forChild(
             },
             {
                 path: 'analysis/:analysisId/popout/:detector',
-                component: TabCommonComponent,               
+                component: TabCommonComponent,
                 children:[
                     {
                         path:'',
@@ -144,7 +145,7 @@ export const DashboardModuleRoutes: ModuleWithProviders = RouterModule.forChild(
                         data:{
                             analysisMode: true
                         },
-                    }, 
+                    },
                     {
                         path: 'changelist',
                         component: TabChangelistComponent,
@@ -250,7 +251,7 @@ export const DashboardModuleRoutes: ModuleWithProviders = RouterModule.forChild(
                                 component:TabDataSourcesComponent
                             }
                         ]
-                    },                    
+                    },
                     {
                         path: 'data',
                         redirectTo: ''
@@ -288,7 +289,8 @@ export const DashboardModuleRoutes: ModuleWithProviders = RouterModule.forChild(
         NgxSmartModalModule.forRoot(),
         NgSelectModule,
         MarkdownModule.forRoot(),
-        HighchartsChartModule
+        HighchartsChartModule,
+        FabPanelModule
     ],
     providers: [
         ApplensDiagnosticService,

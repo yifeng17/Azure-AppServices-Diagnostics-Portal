@@ -4,14 +4,16 @@ import { OperatingSystem, Site, HostingEnvironmentKind } from '../../../shared/m
 import { AppType } from '../../../shared/models/portal';
 import { AppAnalysisService } from '../../../shared/services/appanalysis.service';
 import { ArmService } from '../../../shared/services/arm.service';
-import { Sku } from '../../../shared/models/server-farm';
+import { ServerFarm, Sku } from '../../../shared/models/server-farm';
 import { IDiagnosticProperties } from '../../../shared/models/diagnosticproperties';
 import { flatMap } from 'rxjs/operators';
 import { PortalReferrerMap } from '../../../shared/models/portal-referrer-map';
 import { DetectorType } from 'diagnostic-data';
-import { of,  Observable, BehaviorSubject } from 'rxjs';
+import { of, Observable, BehaviorSubject } from 'rxjs';
+import { ArmResource } from '../../../shared-v2/models/arm';
+import { forkJoin } from 'rxjs/internal/observable/forkJoin';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class WebSitesService extends ResourceService {
 
     private _resourceGroup: string;
@@ -23,14 +25,15 @@ export class WebSitesService extends ResourceService {
     public appType: AppType = AppType.WebApp;
     public sku: Sku = Sku.All;
     public hostingEnvironmentKind: HostingEnvironmentKind = HostingEnvironmentKind.All;
+    public reliabilityChecksResults: any = {};
 
     constructor(protected _armService: ArmService, private _appAnalysisService: AppAnalysisService) {
         super(_armService);
     }
 
-    public getIbizaBladeToDetectorMapings():Observable<PortalReferrerMap[]> {
-        return this.warmUpCallFinished.pipe(flatMap( ()=>{
-            let bladeToDetectorMap:PortalReferrerMap[];
+    public getIbizaBladeToDetectorMapings(): Observable<PortalReferrerMap[]> {
+        return this.warmUpCallFinished.pipe(flatMap(() => {
+            let bladeToDetectorMap: PortalReferrerMap[];
 
             bladeToDetectorMap = [{
                 ReferrerExtensionName: 'Websites',
@@ -48,7 +51,7 @@ export class WebSitesService extends ResourceService {
             }];
 
 
-            if(this.appType == AppType.WebApp) {
+            if (this.appType == AppType.WebApp) {
                 bladeToDetectorMap.push({
                     ReferrerExtensionName: 'Websites',
                     ReferrerBladeName: 'BackupSummaryBlade',
@@ -58,21 +61,21 @@ export class WebSitesService extends ResourceService {
                 });
             }
             return of(bladeToDetectorMap);
-        }  ));
+        }));
     }
 
     public getPesId(): Observable<string> {
         return this.warmUpCallFinished.pipe(flatMap(() => {
-            if (this.appType == AppType.WebApp && this.platform == OperatingSystem.windows){
+            if (this.appType == AppType.WebApp && this.platform == OperatingSystem.windows) {
                 return of("14748");
             }
-            else if (this.appType == AppType.WebApp && this.platform == OperatingSystem.linux){
+            else if (this.appType == AppType.WebApp && this.platform == OperatingSystem.linux) {
                 return of("16170");
             }
-            else if (this.appType == AppType.FunctionApp){
+            else if (this.appType == AppType.FunctionApp) {
                 return of("16072");
             }
-            else{
+            else {
                 return of(null);
             }
         }));
@@ -93,13 +96,13 @@ export class WebSitesService extends ResourceService {
             ) > 0;
     }
 
-    public get liveChatEnabledSupportTopicIds():string[] {
-        if(this.isApplicableForLiveChat) {
-            if(this.appType === AppType.FunctionApp) {
+    public get liveChatEnabledSupportTopicIds(): string[] {
+        if (this.isApplicableForLiveChat) {
+            if (this.appType === AppType.FunctionApp) {
                 return [];
             }
             else if (this.appType === AppType.WebApp) {
-                if(this.platform === OperatingSystem.windows) {
+                if (this.platform === OperatingSystem.windows) {
                     return [
                         '32583701', //Availability and Performance/Web App experiencing High CPU
                         '32542218', //Availability and Performance/Web App Down
@@ -115,7 +118,7 @@ export class WebSitesService extends ResourceService {
                         '32589281', //How Do I/IP Configuration
                         '32588774', // Deployment/Visual Studio
                         '32589276' //How Do I/Backup and Restore
-                      ];
+                    ];
                 }
                 else if (this.platform === OperatingSystem.linux) {
                     return [
@@ -125,7 +128,7 @@ export class WebSitesService extends ResourceService {
                         '32440122', //Configuration and Management/Configuring custom domain names
                         '32542208', //Configuration and Management/Backup and Restore
                         '32542210' //Configuration and Management/IP Configuration
-                      ];
+                    ];
                 }
                 else {
                     return [];
@@ -140,6 +143,28 @@ export class WebSitesService extends ResourceService {
     public getSitePremierAddOns(resourceUri: string): Observable<any> {
         return this._armService.getArmResource(`${resourceUri}/premieraddons`, '2018-02-01');
     }
+
+
+    public getRiskAlertsResult(): Observable<any> {
+        return this.warmUpCallFinished.pipe(flatMap((res) => {
+            if (this.resource && this.azureServiceName === 'Web App (Windows)') {
+                let resourceUri = this.resource.id;
+                let serverFarmId = this.resource.properties.serverFarmId;
+
+                const resourceTasks = forkJoin(
+                    this._armService.getArmResource(`${resourceUri}/config/web`, '2018-02-01'),
+                    this._armService.getResourceWithoutEnvelope<ServerFarm>(serverFarmId)
+                );
+
+                return resourceTasks;
+            }
+            else {
+                return of(null);
+            }
+
+        }));
+    }
+
 
     protected makeWarmUpCalls() {
         super.makeWarmUpCalls();
