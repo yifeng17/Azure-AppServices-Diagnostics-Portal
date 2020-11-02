@@ -6,7 +6,6 @@ import * as momentNs from 'moment';
 import { DetectorControlService, FeatureNavigationService, DetectorMetaData, DetectorType } from 'diagnostic-data';
 import { ApplensDiagnosticService } from '../services/applens-diagnostic.service';
 import { Router, ActivatedRoute, NavigationExtras, NavigationEnd, Params } from '@angular/router';
-import { NgxSmartModalService } from 'ngx-smart-modal';
 import { UserInfo } from '../user-profile/user-profile.component';
 import { StartupService } from '../../../shared/services/startup.service';
 import { SearchService } from '../services/search.service';
@@ -14,6 +13,7 @@ import { v4 as uuid } from 'uuid';
 import { environment } from '../../../../environments/environment';
 import {DiagnosticApiService} from '../../../shared/services/diagnostic-api.service';
 import { ObserverService } from '../../../shared/services/observer.service';
+import { PanelType } from 'office-ui-fabric-react';
 
 @Component({
   selector: 'dashboard',
@@ -39,10 +39,19 @@ export class DashboardComponent implements OnDestroy {
   showUserInformation: boolean;
   resourceReady: Observable<any>;
   resourceDetailsSub: Subscription;
+  openResourceInfoPanel: boolean = false;
+  type: PanelType = PanelType.custom;
+  width: string = "850px";
+
+  panelStyles: any = {
+      root: {
+          marginTop: '50px',
+      }
+  }
 
   constructor(public resourceService: ResourceService, private _detectorControlService: DetectorControlService,
     private _router: Router, private _activatedRoute: ActivatedRoute, private _navigator: FeatureNavigationService,
-    private _diagnosticService: ApplensDiagnosticService, private _adalService: AdalService, public ngxSmartModalService: NgxSmartModalService, private startupService: StartupService, public _searchService: SearchService, private _diagnosticApiService: DiagnosticApiService, private _observerService: ObserverService) {
+    private _diagnosticService: ApplensDiagnosticService, private _adalService: AdalService, private startupService: StartupService, public _searchService: SearchService, private _diagnosticApiService: DiagnosticApiService, private _observerService: ObserverService) {
     this.contentHeight = (window.innerHeight - 50) + 'px';
 
     this.navigateSub = this._navigator.OnDetectorNavigate.subscribe((detector: string) => {
@@ -76,7 +85,6 @@ export class DashboardComponent implements OnDestroy {
         this._searchService.searchTerm = this._activatedRoute.snapshot.queryParams['searchTerm'];
         routeParams['searchTerm'] = this._activatedRoute.snapshot.queryParams['searchTerm'];
       }
-
 
       this._router.navigate([], { queryParams: routeParams, queryParamsHandling: 'merge', relativeTo: this._activatedRoute });
     }
@@ -174,7 +182,7 @@ export class DashboardComponent implements OnDestroy {
         }
       });
     }
-    this.ngxSmartModalService.getModal('resourceInfoModal').open();
+    this.openResourceInfoPanel = true;
   }
 
   copyToClipboard(item, event) {
@@ -192,6 +200,10 @@ export class DashboardComponent implements OnDestroy {
       event.target.src = "/assets/img/copy-icon.png";
     }, 3000);
   }
+
+  dismissedHandler() {
+    this.openResourceInfoPanel = false;
+}
 
   ngOnDestroy() {
     this.navigateSub.unsubscribe();

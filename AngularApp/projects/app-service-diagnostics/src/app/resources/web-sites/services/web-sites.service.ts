@@ -147,7 +147,7 @@ export class WebSitesService extends ResourceService {
 
     public getRiskAlertsResult(): Observable<any> {
         return this.warmUpCallFinished.pipe(flatMap((res) => {
-            if (this.resource) {
+            if (this.resource && this.azureServiceName === 'Web App (Windows)') {
                 let resourceUri = this.resource.id;
                 let serverFarmId = this.resource.properties.serverFarmId;
 
