@@ -12,6 +12,19 @@
         </div>
       </div>
     </div>
+    <ng-container *ngIf="workDistributionDetail">
+      <fab-message-bar [messageBarType]="workDistributionDetail.messageType"
+        [isMultiline]="workDistributionDetail.expand" dismissButtonAriaLabel="Close" [truncated]="true"
+        overflowButtonAriaLabel="See more">
+        <p><b>{{workDistributionDetail.title}} </b> </p>{{workDistributionDetail.description}}
+        <br /><br />
+        <b>Learn More:</b> <a
+          href="https://azure.github.io/AppService/2020/05/15/Robust-Apps-for-the-cloud.html#use-multiple-instances"
+          target='_blank'>
+          Scale instance count manually or automatically</a>
+      </fab-message-bar>
+      <br />
+    </ng-container>
     <ng-container *ngIf="autoHealDetail">
       <fab-message-bar [messageBarType]="autoHealDetail.messageType" [isMultiline]="autoHealDetail.expand"
         dismissButtonAriaLabel="Close" [truncated]="true" overflowButtonAriaLabel="See more">
@@ -35,17 +48,6 @@
       </fab-message-bar>
       <br />
     </ng-container>
-    <ng-container *ngIf="workDistributionDetail">
-      <fab-message-bar [messageBarType]="workDistributionDetail.messageType" [isMultiline]="workDistributionDetail.expand"
-        dismissButtonAriaLabel="Close" [truncated]="true" overflowButtonAriaLabel="See more">
-        <p><b>{{workDistributionDetail.title}} </b> </p>{{workDistributionDetail.description}}
-        <br /><br />
-        <b>Learn More:</b> <a href="https://docs.microsoft.com/en-us/azure/azure-monitor/platform/autoscale-get-started"
-          target='_blank'>
-          Scale instance count manually or automatically</a>
-      </fab-message-bar>
-      <br />
-    </ng-container>
     <ng-container *ngIf="appDensityCheckDetail">
       <fab-message-bar [messageBarType]="appDensityCheckDetail.messageType" [isMultiline]="appDensityCheckDetail.expand"
         dismissButtonAriaLabel="Close" [truncated]="true" overflowButtonAriaLabel="See more">
@@ -55,6 +57,13 @@
           target='_blank'>
           Azure App Service plan overview</a>
       </fab-message-bar>
+      <br />
     </ng-container>
+    <fab-message-bar [messageBarType]="summaryType" dismissButtonAriaLabel="Close" [truncated]="true"
+      overflowButtonAriaLabel="See more">
+      <b>Learn about more configurations for high availability:</b>
+      <a href="https://azure.github.io/AppService/2020/05/15/Robust-Apps-for-the-cloud.html" target='_blank'>
+        The Ultimate Guide to Running Healthy Apps in the Cloud</a>
+    </fab-message-bar>
   </div>
 </fab-panel>

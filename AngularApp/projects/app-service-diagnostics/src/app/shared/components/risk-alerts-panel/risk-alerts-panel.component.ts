@@ -22,6 +22,7 @@ export class RiskAlertsPanelComponent implements OnInit {
     healthCheckDetail: riskAlertDetail;
     workDistributionDetail: riskAlertDetail;
     appDensityCheckDetail: riskAlertDetail;
+    summaryType: MessageBarType = MessageBarType.info;
 
     constructor(public globals: Globals, public notificationService: NotificationService) { }
 
