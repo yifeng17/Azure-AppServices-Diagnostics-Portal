@@ -24,6 +24,8 @@ import { SearchAnalysisMode } from '../../models/search-mode';
 import { GenieGlobals } from '../../services/genie.service';
 import { SolutionService } from '../../services/solution.service';
 import { PortalActionGenericService } from '../../services/portal-action.service';
+import {detectorSearchEnabledPesIds, detectorSearchEnabledPesIdsInternal } from '../../models/search';
+import { GenericResourceService } from '../../services/generic-resource-service';
 
 @Component({
     selector: 'detector-list-analysis',
@@ -103,7 +105,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
         private _diagnosticService: DiagnosticService, private _detectorControl: DetectorControlService,
         protected telemetryService: TelemetryService, public _appInsightsService: AppInsightsQueryService,
         private _supportTopicService: GenericSupportTopicService, protected _globals: GenieGlobals, private _solutionService: SolutionService,
-        @Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig, private portalActionService: PortalActionGenericService) {
+        @Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig, private portalActionService: PortalActionGenericService, private _resourceService: GenericResourceService) {
         super(telemetryService);
         this.isPublic = config && config.isPublic;
 
@@ -410,50 +412,54 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
 
 
     renderInsightsFromSearch(downTime: DownTime) {
-        this.searchId = uuid();
-        let searchTask = this._diagnosticService.getDetectorsSearch(this.searchTerm).pipe(map((res) => res), catchError(e => of([])));
-        let detectorsTask = this._diagnosticService.getDetectors().pipe(map((res) => res), catchError(e => of([])));
-        this.showPreLoader = true;
-        observableForkJoin([searchTask, detectorsTask]).subscribe(results => {
-            this.showPreLoader = false;
-            this.showPreLoadingError = false;
-            var searchResults: DetectorMetaData[] = results[0];
-            this.logEvent(TelemetryEventNames.SearchQueryResults, {
-                searchMode: this.searchMode,
-                searchId: this.searchId,
-                query: this.searchTerm, results: JSON.stringify(searchResults.map((det: DetectorMetaData) => new Object({
-                    id: det.id,
-                    score: det.score
-                }))), ts: Math.floor((new Date()).getTime() / 1000).toString()
-            });
-            var detectorList = results[1];
-            if (detectorList) {
-                searchResults.forEach(result => {
-                    if (result.type === DetectorType.Detector) {
-                        this.insertInDetectorArray({ name: result.name, id: result.id, score: result.score });
-                    }
-                    else if (result.type === DetectorType.Analysis) {
-                        var childList = this.getChildrenOfAnalysis(result.id, detectorList);
-                        if (childList && childList.length > 0) {
-                            childList.forEach((child: DetectorMetaData) => {
-                                this.insertInDetectorArray({ name: child.name, id: child.id, score: result.score });
-                            });
-                        }
-                        else {
-                            this.insertInDetectorArray({ name: result.name, id: result.id, score: result.score });
-                        }
-                    }
-                });
-                this.analysisContainsDowntime().subscribe(containsDownTime => {
-                    this.startDetectorRendering(detectorList, downTime, containsDownTime);
-                });
+        this._resourceService.getPesId().subscribe(pesId => {
+            if (!((this.isPublic && detectorSearchEnabledPesIds.findIndex(x => x==pesId)<0) || (!this.isPublic && detectorSearchEnabledPesIdsInternal.findIndex(x => x==pesId)<0))){
+                this.searchId = uuid();
+                let searchTask = this._diagnosticService.getDetectorsSearch(this.searchTerm).pipe(map((res) => res), catchError(e => of([])));
+                let detectorsTask = this._diagnosticService.getDetectors().pipe(map((res) => res), catchError(e => of([])));
+                this.showPreLoader = true;
+                observableForkJoin([searchTask, detectorsTask]).subscribe(results => {
+                    this.showPreLoader = false;
+                    this.showPreLoadingError = false;
+                    var searchResults: DetectorMetaData[] = results[0];
+                    this.logEvent(TelemetryEventNames.SearchQueryResults, {
+                        searchMode: this.searchMode,
+                        searchId: this.searchId,
+                        query: this.searchTerm, results: JSON.stringify(searchResults.map((det: DetectorMetaData) => new Object({
+                            id: det.id,
+                            score: det.score
+                        }))), ts: Math.floor((new Date()).getTime() / 1000).toString()
+                    });
+                    var detectorList = results[1];
+                    if (detectorList) {
+                        searchResults.forEach(result => {
+                            if (result.type === DetectorType.Detector) {
+                                this.insertInDetectorArray({ name: result.name, id: result.id, score: result.score });
+                            }
+                            else if (result.type === DetectorType.Analysis) {
+                                var childList = this.getChildrenOfAnalysis(result.id, detectorList);
+                                if (childList && childList.length > 0) {
+                                    childList.forEach((child: DetectorMetaData) => {
+                                        this.insertInDetectorArray({ name: child.name, id: child.id, score: result.score });
+                                    });
+                                }
+                                else {
+                                    this.insertInDetectorArray({ name: result.name, id: result.id, score: result.score });
+                                }
+                            }
+                        });
+                        this.analysisContainsDowntime().subscribe(containsDownTime => {
+                            this.startDetectorRendering(detectorList, downTime, containsDownTime);
+                        });
 
+                    }
+                },
+                    (err) => {
+                        this.showPreLoader = false;
+                        this.showPreLoadingError = true;
+                    });
             }
-        },
-            (err) => {
-                this.showPreLoader = false;
-                this.showPreLoadingError = true;
-            });
+        });
     }
 
     checkSearchEmbedded(response: DetectorResponse) {

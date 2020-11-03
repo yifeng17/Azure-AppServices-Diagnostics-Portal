@@ -16,7 +16,7 @@ import { ActivatedRoute, Router, Params } from '@angular/router';
 import { Solution } from '../solution/solution';
 import { InsightUtils, Insight } from '../../models/insight';
 import { StatusStyles } from '../../models/styles';
-import { SearchConfiguration } from '../../models/search';
+import { SearchConfiguration, detectorSearchEnabledPesIds, detectorSearchEnabledPesIdsInternal } from '../../models/search';
 import { GenericResourceService } from '../../services/generic-resource-service';
 @Component({
     selector: 'detector-search',
@@ -41,8 +41,6 @@ export class DetectorSearchComponent extends DataRenderBaseComponent implements 
     @ViewChild ('charAlertRef', {static: false}) charAlertRef: ElementRef;
     @ViewChild ('searchInputBox', {static: false}) searchInputBox: ElementRef;
     @ViewChild ('searchResultsSection', {static: false}) searchResultsSection: ElementRef;
-    detectorSearchEnabledPesIds: string[] = ["14748", "16072", "16170"];
-    detectorSearchEnabledPesIdsInternal: string[] = ["14748", "16072", "16170", "16450", "15791", "15551"];
     startTime: Moment;
     endTime: Moment;
     isPublic: boolean = false;
@@ -108,7 +106,7 @@ export class DetectorSearchComponent extends DataRenderBaseComponent implements 
         this._resourceService.getPesId().subscribe(pesId => {
             var searchConf = new SearchConfiguration(this.diagnosticData? this.diagnosticData.table: null, pesId);
             this.searchConfiguration = searchConf;
-            if ((this.isPublic && this.detectorSearchEnabledPesIds.findIndex(x => x==pesId)<0) || (!this.isPublic && this.detectorSearchEnabledPesIdsInternal.findIndex(x => x==pesId)<0)){
+            if ((this.isPublic && detectorSearchEnabledPesIds.findIndex(x => x==pesId)<0) || (!this.isPublic && detectorSearchEnabledPesIdsInternal.findIndex(x => x==pesId)<0)){
                 this.searchConfiguration.DetectorSearchEnabled = false;
             }
             this.detectorControlService.update.subscribe(isValidUpdate => {
