@@ -41,7 +41,7 @@ export class DetectorSearchComponent extends DataRenderBaseComponent implements 
     @ViewChild ('charAlertRef', {static: false}) charAlertRef: ElementRef;
     @ViewChild ('searchInputBox', {static: false}) searchInputBox: ElementRef;
     @ViewChild ('searchResultsSection', {static: false}) searchResultsSection: ElementRef;
-    detectorSearchEnabledPesIds: string[] = ["14748", "16072", "16170", "15791", "15551"];
+    detectorSearchEnabledPesIds: string[] = ["14748", "16072", "16170"];
     detectorSearchEnabledPesIdsInternal: string[] = ["14748", "16072", "16170", "16450", "15791", "15551"];
     startTime: Moment;
     endTime: Moment;
