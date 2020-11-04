@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { TelemetryService } from 'diagnostic-data';
 import { MessageBarType, IMessageBarProps, IMessageBarStyles } from 'office-ui-fabric-react';
 import { Globals } from '../../../globals';
 import { WebSitesService } from '../../../resources/web-sites/services/web-sites.service';
@@ -24,7 +25,7 @@ export class RiskAlertsNotificationComponent implements OnInit {
             marginBottom: '13px'
         }
     }
-    constructor(private _resourceService: ResourceService, private globals: Globals, private _authService: AuthService) { }
+    constructor(private _resourceService: ResourceService, private globals: Globals, private _authService: AuthService, public telemetryService: TelemetryService) { }
 
     ngOnInit() {
         const autoHealEnabledTitle: string = "Auto-Heal is enabled.";
@@ -45,7 +46,7 @@ export class RiskAlertsNotificationComponent implements OnInit {
         const workerDistributionWarningDescription: string = "The webapp is currently configured to run on two instances.<br/><br/>Since you have only two instances you can expect a downtime of upto 50% because when the App Service platform is upgraded, the instance on which your web app is hosted will be upgraded. Therefore, your web app process will be restarted and may experience some downtime as each instance is restarted sequentially.";
         const workerDistributionSuccessTitle: string = "Distritubting your web app accross multiple instances";
         const workerDistributionSuccessDescription: string = "Great, your web app is running on more than two instances. This is optimal because instances in different upgrade domains will not be upgraded at the same time. While one worker instance is getting upgraded the other is still active to serve web requests.";
-        const workerDistributionLearnMore: string = "https://docs.microsoft.com/en-us/azure/monitoring-and-diagnostics/insights-how-to-scale";
+        const workerDistributionLearnMore: string = "https://azure.github.io/AppService/2020/05/15/Robust-Apps-for-the-cloud.html#use-multiple-instances";
 
         const appDensityWarningorCriticalTitle: string = "App Service Plan hosts more than the recommended active sites";
         const appDensityCriticalDescription: string = "Apps that are a part of the same App Service Plan, compete for the same set of resources. Our data indicates that you have more than recommended number of sites running on your App Service Plan.";
@@ -61,7 +62,7 @@ export class RiskAlertsNotificationComponent implements OnInit {
                 let healthCheckEnabled = webconfig.properties.healthCheckPath != null && webconfig.properties.healthCheckPath.toString() !== '' && webconfig.properties.healthCheckPath.toString().length >= 1;
 
                 let autoHealDetail = autoHealEnabled ? new riskAlertDetail(MessageBarType.success, autoHealEnabledTitle, autoHealEnabledDescription, autoHealLearnMore) : new riskAlertDetail(MessageBarType.severeWarning, autoHealDisabledTitle, autoHealDisabledDescription, autoHealLearnMore);
-                let healthCheckDetail = healthCheckEnabled ? new riskAlertDetail(MessageBarType.success, healthCheckEnabledTitle, healthCheckEnabledDescription, healthCheckLearnMore) : new riskAlertDetail(MessageBarType.severeWarning, healthCheckDisabledTitle, healthCheckDisabledDescription, autoHealLearnMore);
+                let healthCheckDetail = healthCheckEnabled ? new riskAlertDetail(MessageBarType.success, healthCheckEnabledTitle, healthCheckEnabledDescription, healthCheckLearnMore) : new riskAlertDetail(MessageBarType.severeWarning, healthCheckDisabledTitle, healthCheckDisabledDescription, healthCheckLearnMore);
 
                 // Worker distribution check
                 let severfarmResource: any = results[1];
@@ -160,6 +161,7 @@ export class RiskAlertsNotificationComponent implements OnInit {
 
     openRiskAlertsPanel() {
         this.globals.openRiskAlertsPanel = true;
+        this.telemetryService.logEvent("openRiskAlertsPanel");
     }
 }
 

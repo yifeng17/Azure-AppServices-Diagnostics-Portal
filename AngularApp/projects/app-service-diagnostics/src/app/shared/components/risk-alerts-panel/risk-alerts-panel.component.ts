@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { TelemetryService } from 'diagnostic-data';
 import { IPanelProps, IPanelStyles, MessageBarType, PanelType } from 'office-ui-fabric-react';
 import { Globals } from '../../../globals';
 import { NotificationService } from '../../../shared-v2/services/notification.service';
@@ -24,7 +25,7 @@ export class RiskAlertsPanelComponent implements OnInit {
     appDensityCheckDetail: riskAlertDetail;
     summaryType: MessageBarType = MessageBarType.info;
 
-    constructor(public globals: Globals, public notificationService: NotificationService) { }
+    constructor(public globals: Globals, public notificationService: NotificationService, public telemetryService: TelemetryService) { }
 
     ngOnInit() {
         this.globals.reliabilityChecksDetailsBehaviorSubject.subscribe((reliabilityChecks) => {
@@ -37,5 +38,10 @@ export class RiskAlertsPanelComponent implements OnInit {
 
     dismissedHandler() {
         this.globals.openRiskAlertsPanel = false;
+        this.telemetryService.logEvent("closeRiskAlertsPanel");
+    }
+
+    logOpenLinkEvent(linkDescription: string, linkAddress: string) {
+        this.telemetryService.logEvent("openRiskAlertLink", {Description: linkDescription, link: linkAddress});
     }
 }

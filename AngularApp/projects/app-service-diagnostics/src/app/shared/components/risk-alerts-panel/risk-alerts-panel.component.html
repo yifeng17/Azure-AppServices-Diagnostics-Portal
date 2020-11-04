@@ -19,8 +19,8 @@
         <p><b>{{workDistributionDetail.title}} </b> </p>{{workDistributionDetail.description}}
         <br /><br />
         <b>Learn More:</b> <a
-          href="https://azure.github.io/AppService/2020/05/15/Robust-Apps-for-the-cloud.html#use-multiple-instances"
-          target='_blank'>
+          href='{{workDistributionDetail.learnMore}}'
+          target='_blank' (click)="logOpenLinkEvent('Worker Distribution', workDistributionDetail.learnMore)">
           Scale instance count manually or automatically</a>
       </fab-message-bar>
       <br />
@@ -31,8 +31,8 @@
         <p><b>{{autoHealDetail.title}} </b> </p>{{autoHealDetail.description}}
         <br /><br />
         <b>Learn More:</b> <a
-          href="https://azure.github.io/AppService/2018/09/10/Announcing-the-New-Auto-Healing-Experience-in-App-Service-Diagnostics.html"
-          target='_blank'>
+          href='{{autoHealDetail.learnMore}}'
+          target='_blank' (click)="logOpenLinkEvent('Auto Heal', autoHealDetail.learnMore)">
           Auto-Healing Experience in App Service Diagnostics</a>
       </fab-message-bar>
       <br />
@@ -42,8 +42,8 @@
         dismissButtonAriaLabel="Close" [truncated]="true" overflowButtonAriaLabel="See more">
         <p><b>{{healthCheckDetail.title}} </b> </p>{{healthCheckDetail.description}}
         <br /><br />
-        <b>Learn More:</b> <a href="https://github.com/projectkudu/kudu/wiki/Health-Check-%28Preview%29"
-          target='_blank'>
+        <b>Learn More:</b> <a href='{{healthCheckDetail.learnMore}}'
+          target='_blank' (click)="logOpenLinkEvent('Health Check', healthCheckDetail.learnMore)">
           Health Check (Preview)</a>
       </fab-message-bar>
       <br />
@@ -53,8 +53,8 @@
         dismissButtonAriaLabel="Close" [truncated]="true" overflowButtonAriaLabel="See more">
         <p><b>{{appDensityCheckDetail.title}} </b> </p>{{appDensityCheckDetail.description}}
         <br /><br />
-        <b>Learn More:</b> <a href="https://docs.microsoft.com/en-us/azure/app-service/overview-hosting-plans"
-          target='_blank'>
+        <b>Learn More:</b> <a href='{{appDensityCheckDetail.learnMore}}'
+          target='_blank' (click)="logOpenLinkEvent('App Density Check', appDensityCheckDetail.learnMore)">
           Azure App Service plan overview</a>
       </fab-message-bar>
       <br />
@@ -62,7 +62,7 @@
     <fab-message-bar [messageBarType]="summaryType" dismissButtonAriaLabel="Close" [truncated]="true"
       overflowButtonAriaLabel="See more">
       <b>Learn about more configurations for high availability:</b>
-      <a href="https://azure.github.io/AppService/2020/05/15/Robust-Apps-for-the-cloud.html" target='_blank'>
+      <a href="https://azure.github.io/AppService/2020/05/15/Robust-Apps-for-the-cloud.html" target='_blank' (click)="logOpenLinkEvent('Best practice summary', 'https://azure.github.io/AppService/2020/05/15/Robust-Apps-for-the-cloud.html')">
         The Ultimate Guide to Running Healthy Apps in the Cloud</a>
     </fab-message-bar>
   </div>
