@@ -26,6 +26,8 @@ import { GeniePanelComponent } from '../fabric-ui/components/genie-panel/genie-p
 import { GenieDynamicComponent} from './dynamic-component/genie-dynamic.component';
 import { CommonModule } from '@angular/common';
 import { FabPanelModule } from '@angular-react/fabric';
+import { GenericResourceService } from 'diagnostic-data';
+import { ResourceService } from '../shared-v2/services/resource.service';
 
 @NgModule({
     declarations: [
@@ -66,7 +68,8 @@ import { FabPanelModule } from '@angular-react/fabric';
     providers: [
         StartupMessages,
         GenieMessageProcessor,
-        GenieChatFlow
+        GenieChatFlow,
+        { provide: GenericResourceService, useExisting: ResourceService}
     ]
 })
 export class GenieModule {
