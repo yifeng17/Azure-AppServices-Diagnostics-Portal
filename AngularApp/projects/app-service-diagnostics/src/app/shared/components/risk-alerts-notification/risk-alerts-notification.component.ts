@@ -38,7 +38,7 @@ export class RiskAlertsNotificationComponent implements OnInit {
         const healthCheckDisabledDescription = "This feature will ping the specified health check path on all instances of your webapp every 2 minutes. If an instance does not respond within 10 minutes (5 pings), the instance is determined to be unhealthy and our service will stop routing requests to it. It is highly recommended for production apps to utilize this feature and minimize any potential downtime caused due to a faulty instance.";
         const healthCheckEnabledTitle = "Health Check is enabled.";
         const healthCheckEnabledDescription = "Health Check feature is currently configured for this web app. This will help minimize potential downtime.";
-        const healthCheckLearnMore: string = "https://github.com/projectkudu/kudu/wiki/Health-Check-%28Preview%29"
+        const healthCheckLearnMore: string = "https://docs.microsoft.com/en-us/azure/azure-monitor/platform/autoscale-get-started#route-traffic-to-healthy-instances-app-service"
 
         const workerDistributionCriticalTitle: string = "Distritubting your web app accross multiple instances";
         const workerDistributionCriticalDescription: string = "The webapp is currently configured to run on only one instance. Since you have only one instance you can expect downtime because when the App Service platform is upgraded, the instance on which your web app is running will be upgraded. Therefore, your web app process will be restarted and will experience downtime. ";
