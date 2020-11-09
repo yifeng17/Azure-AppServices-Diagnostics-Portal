@@ -1,0 +1,31 @@
+.risk-tile {
+    padding: 10px 20px 0px 20px;
+    width: 300px;
+    height: 100%;
+    border: 1px solid rgba(204, 204, 204, 0.5);
+    border-radius: 2px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    margin-right: 15px;
+    margin-top: 7px;
+    margin-bottom: 7px;
+  }
+  
+.risk-title {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.risk-section {
+  margin-bottom : 10px;
+  display: flex;
+}
+
+.risk-icon {
+  height : 14px;
+  width: 14px;
+  margin-right : 5px;
+}
+
+.risk-icon-section {
+  margin-right : 20px;
+}

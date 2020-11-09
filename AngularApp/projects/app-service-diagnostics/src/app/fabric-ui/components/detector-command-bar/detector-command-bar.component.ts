@@ -2,7 +2,7 @@ import { Component, AfterViewInit } from '@angular/core';
 import { Globals } from '../../../globals';
 import { DetectorControlService } from 'projects/diagnostic-data/src/lib/services/detector-control.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TelemetryService } from 'diagnostic-data';
+import { TelemetryService,TelemetryEventNames, TelemetrySource } from 'diagnostic-data';
 
 @Component({
   selector: 'detector-command-bar',
@@ -13,10 +13,16 @@ export class DetectorCommandBarComponent implements AfterViewInit{
   time: string;
   constructor(private globals: Globals, private detectorControlService: DetectorControlService, private _route: ActivatedRoute, private router: Router, private telemetryService:TelemetryService) { }
   toggleOpenState() {
+    this.telemetryService.logEvent(TelemetryEventNames.OpenGenie,{
+      'Location':TelemetrySource.CategoryPage
+    })
     this.globals.openGeniePanel = !this.globals.openGeniePanel;
   }
 
   sendFeedback() {
+    this.telemetryService.logEvent(TelemetryEventNames.OpenFeedbackPanel,{
+      'Location': TelemetrySource.CategoryPage
+    });
     this.globals.openFeedback = !this.globals.openFeedback;
   }
 
@@ -28,7 +34,8 @@ export class DetectorCommandBarComponent implements AfterViewInit{
     let isDiagnosticToolUIPage = this._route.snapshot.params["category"] === "DiagnosticTools" && childRouteType !== "overview" && instanceId !== "eventviewer" && instanceId !== "freblogs";
 
     const eventProperties = {
-      'Category':this._route.snapshot.params['category']
+      'Category':this._route.snapshot.params['category'],
+      'Location': TelemetrySource.CategoryPage
     };
     if (childRouteType === "detectors") {
       eventProperties['Detector'] = childRouteSnapshot.params['detectorName'];
@@ -43,7 +50,7 @@ export class DetectorCommandBarComponent implements AfterViewInit{
         eventProperties['Tool'] = instanceId ? instanceId : "";
     }
 
-    this.telemetryService.logEvent('RefreshClicked',eventProperties);
+    this.telemetryService.logEvent(TelemetryEventNames.RefreshClicked,eventProperties);
     if (isDiagnosticToolUIPage)
     {
         // Currently there is no easy way to force reloading the static UI child component under DiagnosticTools Category

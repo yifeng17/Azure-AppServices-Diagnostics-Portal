@@ -44,6 +44,8 @@ import { VersionTestService } from './fabric-ui/version-test.service';
 import { BackendCtrlService } from './shared/services/backend-ctrl.service';
 import { GenieModule } from './genie/genie.module';
 import { PortalActionService} from './shared/services/portal-action.service';
+import { FabricModule } from './fabric-ui/fabric.module';
+import { QuickLinkService } from './shared-v2/services/quick-link.service';
 
 @NgModule({
   imports: [
@@ -72,7 +74,8 @@ import { PortalActionService} from './shared/services/portal-action.service';
     ),
     CustomMaterialModule,
     HighchartsChartModule,
-    GenieModule
+    GenieModule,
+    FabricModule
   ],
   declarations: [
     AppComponent,
@@ -104,7 +107,8 @@ import { PortalActionService} from './shared/services/portal-action.service';
     ResourceResolver,
     { provide: VersionService, useExisting: VersionTestService },
     { provide: BackendCtrlQueryService, useExisting: BackendCtrlService },
-    { provide: PortalActionGenericService, useExisting: PortalActionService}
+    { provide: PortalActionGenericService, useExisting: PortalActionService},
+    QuickLinkService
   ],
   bootstrap: [AppComponent]
 })

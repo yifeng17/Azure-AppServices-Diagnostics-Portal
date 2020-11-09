@@ -1,17 +1,4 @@
-<ng-container *ngIf="initializedPortalVersion === 'v3'&&!isVnextOnlyResourceType">
-  <div *ngIf="useLegacy" class="switch2new-context-text">
-    <i class="fa fa-info-circle info-banner-icon"></i>
-    We have recently launched the new version of App Service Diagnostics.
-    <a (click)="switchView()" tabindex="0" (keyup.enter)="switchView()" aria-label="switch to the new version">Click here to checkout the new version.</a>
-  </div>
-  <div *ngIf="!useLegacy" class="switch2old-context-text">
-    <i class="fa fa-info-circle info-banner-icon"></i>
-    Welcome to the new App Service Diagnostics. Simply explore or check out the <a
-      href='https://aka.ms/New-Diagnostics-and-Genie' target="_blank">documentation</a> on the new updates.
-    <a (click)="switchView()" class="old-version-link" tabindex="0" (keyup.enter)="switchView()" aria-label="switch to the old version">Click here to go back to the old version.</a>
-  </div>
-</ng-container>
-<div *ngIf="useLegacy else newSolution" class="home-container">
+<div *ngIf="useLegacy else newHomePage" class="home-container">
   <div class="input-group input-group-lg search-input-group" (keyup.escape)="clearSearch()" role="search"
     *ngIf="!isAKSOnNationalCloud">
     <input tabindex="0" type="search" class="form-control" placeholder="{{searchPlaceHolder}}" [ngModel]="searchValue"
@@ -35,7 +22,7 @@
   </div>
   <div class="main-area">
     <h2>{{homePageText.title}}</h2>
-    <p id="page-description" >{{homePageText.description}}</p>
+    <p id="page-description">{{homePageText.description}}</p>
     <div *ngIf="categories && !useStaticAksText " class="category-container">
       <div *ngFor="let category of categories" style="display: inline-block;padding: 20px 40px 20px 0px">
         <category-tile [category]="category"></category-tile>
@@ -111,30 +98,68 @@
   </div>
 </div>
 
-<ng-template #newSolution>
-  <div class="main-area-v4">
-    <div class="home-content">
-      <h2 class="home-title">{{homePageText.title}}</h2>
-      <p class="home-description-v4">{{homePageText.description}}</p>
-      <p class="home-description-v4">If you would like to look at the health check then
-        <a id="healthCheck"(click)="openAvaAndPerf()" tabindex="0" aria-label="Open health check"
-          (keydown.enter)="openAvaAndPerf()">click here.</a> You can also ask our interactive chatbot
-        <a (click)="openGeniePanel()" tabindex="0" aria-label="Open Genie" (keydown.enter)="openGeniePanel()">Genie</a>
-        any questions you may have</p>
-    </div>
-    <div class="home-container-v4">
-      <div>
+
+<ng-template #newHomePage>
+  <fab-command-bar id="homepage-command-bar" tabindex="0" contentClass="fab-command-bar-class">
+    <items>
+      <fab-command-bar-item key="askGenie" text="Ask Genie" [iconProps]="{ iconName: 'ChatInviteFriend' }"
+        (click)="openGeniePanel()" data-track-type="run"></fab-command-bar-item>
+      <fab-command-bar-item key="refresh1" text="Refresh" [iconProps]="{ iconName: 'Refresh' }" (click)="refreshPage()">
+      </fab-command-bar-item>
+      <fab-command-bar-item key="sendFeedback" text="Feedback" [iconProps]="{ iconName: 'Emoji2' }"
+        (click)="openFeedbackPanel()"></fab-command-bar-item>
+    </items>
+  </fab-command-bar>
+
+  <div class="home-main-area">
+    <div class="section-container">
+      <h3><span class="section-title">{{homePageText.title}}</span><span class="home-title-text"> - {{homePageText.description}}
+          </span>
+      </h3>
+      <div class="home-search">
         <fabric-search-results></fabric-search-results>
+        <div class="home-search-text">Have questions? <a tabindex="0" (click)="openGeniePanel()"
+            (keyup.enter)="openGeniePanel()">Ask Genie</a></div>
       </div>
     </div>
-    <div *ngIf="categories" class="category-container">
-      <div *ngFor="let category of categories" style="display: inline-block;padding: 10px 40px 10px 0px"
-        class="col-md-4">
-        <category-tile-v4 [category]="category"></category-tile-v4>
+
+
+    <div *ngIf="showRiskSection" class="section-container">
+      <h3 class="section-title">Risk alerts</h3>
+      <div class="home-tiles">
+        <ng-container *ngFor="let risk of risks">
+          <risk-tile [risk]="risk"></risk-tile>
+        </ng-container>
       </div>
     </div>
+
+    <div class="section-container">
+      <h3 class="section-title">Troubleshooting categories</h3>
+      <div *ngIf="categories" class="home-tiles">
+        <div *ngFor="let category of categories" class="home-tile-wrapper">
+          <category-tile-v4 [category]="category"></category-tile-v4>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-container" >
+      <h3 class="section-title">Popular troubleshooting tools</h3>
+      <div *ngIf="!loadingQuickLinks else loading">
+        <div class="quick-link" *ngFor="let feature of quickLinkFeatures">
+          <a tabindex="0" (click)="clickQuickLink(feature)" (keyup.enter)="clickQuickLink(feature)">{{feature.name}}</a>
+        </div>
+      </div>
+    </div>
+
     <div class="privacy-statement">
       <a href="https://azure.microsoft.com/support/legal/?amp%3Bclcid=0x9" target="_blank">Privacy</a>
     </div>
+  </div>
+</ng-template>
+
+
+<ng-template #loading>
+  <div class="home-spinner">
+    <fab-spinner [ariaLabel]="'Loading Quick Links'"></fab-spinner>
   </div>
 </ng-template>

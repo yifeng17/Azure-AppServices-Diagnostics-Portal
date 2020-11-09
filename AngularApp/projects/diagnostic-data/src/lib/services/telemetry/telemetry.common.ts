@@ -67,8 +67,19 @@ export const TelemetryEventNames = {
     CrashMonitoringStopped: 'CrashMonitoringStopped',
     CrashMonitoringAgentDisabled: 'CrashMonitoringAgentDisabled',
     LoadingDetectorViewStarted: 'LoadingDetectorViewStarted',
-    LoadingDetectorViewEnded: 'LoadingDetectorViewEnded'
+    LoadingDetectorViewEnded: 'LoadingDetectorViewEnded',
+    OpenGenie: 'OpenGenie',
+    OpenFeedbackPanel: 'OpenFeedbackPanel',
+    RefreshClicked: 'RefreshClicked',
+    QuickLinkClicked: 'QuickLinkClicked',
+    RiskTileClicked: 'RiskTileClicked',
+    RiskTileLoaded: 'RiskTileLoaded',
 };
+
+export const TelemetrySource = {
+    LandingPage: 'LandingPage',
+    CategoryPage: 'CategoryPage'
+}
 
 export interface TelemetryPayload {
     eventIdentifier: string,

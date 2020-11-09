@@ -1,4 +1,4 @@
-import { DetectorControlService, FeatureNavigationService, DetectorResponse, TelemetryEventNames, ResourceDescriptor } from 'diagnostic-data';
+import { DetectorControlService, FeatureNavigationService, DetectorResponse, TelemetryEventNames, ResourceDescriptor, TelemetrySource } from 'diagnostic-data';
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Category } from '../../../shared-v2/models/category';
@@ -19,6 +19,11 @@ import { Globals } from '../../../globals';
 import { PortalActionService } from '../../../shared/services/portal-action.service';
 import { VersionTestService } from '../../../fabric-ui/version-test.service';
 import { SubscriptionPropertiesService } from '../../../shared/services/subscription-properties.service';
+import { Feature } from '../../../shared-v2/models/features';
+import { QuickLinkService } from '../../../shared-v2/services/quick-link.service';
+import { delay, map } from 'rxjs/operators';
+import { RiskHelper, RiskTile } from '../../models/risk';
+import { OperatingSystem } from '../../../shared/models/site';
 
 @Component({
     selector: 'home',
@@ -27,8 +32,6 @@ import { SubscriptionPropertiesService } from '../../../shared/services/subscrip
 })
 export class HomeComponent implements OnInit, AfterViewInit {
     useLegacy: boolean = true;
-    initializedPortalVersion: string = "v2";
-    isVnextOnlyResourceType: boolean = false;
     resourceName: string;
     categories: Category[];
     searchValue = '';
@@ -40,6 +43,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
     homePageText: HomePageText;
     searchPlaceHolder: string;
     providerRegisterUrl: string;
+    quickLinkFeatures: Feature[] = [];
+    risks: RiskTile[] = [];
+    loadingQuickLinks: boolean = true;
+    showRiskSection: boolean = true;
     get inputAriaLabel(): string {
         return this.searchValue !== '' ?
             `${this.searchResultCount} Result` + (this.searchResultCount !== 1 ? 's' : '') :
@@ -57,19 +64,17 @@ export class HomeComponent implements OnInit, AfterViewInit {
     constructor(private _resourceService: ResourceService, private _categoryService: CategoryService, private _notificationService: NotificationService, private _router: Router,
         private _detectorControlService: DetectorControlService, private _featureService: FeatureService, private _logger: LoggingV2Service, private _authService: AuthService,
         private _navigator: FeatureNavigationService, private _activatedRoute: ActivatedRoute, private armService: ArmService, private _telemetryService: TelemetryService, private _diagnosticService: DiagnosticService, private _portalService: PortalActionService, private globals: Globals,
-        private versionTestService: VersionTestService, private subscriptionPropertiesService: SubscriptionPropertiesService) {
+        private versionTestService: VersionTestService, private subscriptionPropertiesService: SubscriptionPropertiesService, private _quickLinkService: QuickLinkService) {
 
         this.subscriptionId = this._activatedRoute.snapshot.params['subscriptionid'];
         this.versionTestService.isLegacySub.subscribe(isLegacy => this.useLegacy = isLegacy);
-
-        this.versionTestService.initializedPortalVersion.subscribe(version => this.initializedPortalVersion = version);
-        this.versionTestService.isVnextOnlyResource.subscribe(isVnextOnly => this.isVnextOnlyResourceType = isVnextOnly);
+        
         this.resourceName = this._resourceService.resource.name;
         let eventProps = {
             subscriptionId: this.subscriptionId,
             resourceName: this.resourceName,
         };
-        this._telemetryService.logEvent('DiagnosticsViewLoaded',eventProps);
+        this._telemetryService.logEvent('DiagnosticsViewLoaded', eventProps);
 
         if (_resourceService.armResourceConfig && _resourceService.armResourceConfig.homePageText
             && _resourceService.armResourceConfig.homePageText.title && _resourceService.armResourceConfig.homePageText.title.length > 1
@@ -92,10 +97,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
             else {
                 if (this._resourceService && this._resourceService instanceof WebSitesService && (this._resourceService as WebSitesService).appType === AppType.FunctionApp) {
                     this.homePageText = {
-                        title: 'Azure Functions Diagnostics',
-                        description: 'Use Azure Functions Diagnostics to investigate how your function app is performing, diagnose issues, and discover how to\
-            improve your function app. Select the problem category that best matches the information or tool that you\'re\
-            interested in:',
+                        title: 'Function App Diagnostics (Preview)',
+                        description: 'Investigate how your app is performing, diagnose issues and discover how to improve your application.',
                         searchBarPlaceHolder: 'Search Azure Functions Diagnostics'
                     };
                     this.searchPlaceHolder = this.homePageText.searchBarPlaceHolder;
@@ -103,9 +106,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 else {
                     this.homePageText = {
                         title: 'App Service Diagnostics (Preview)',
-                        description: 'Use App Service Diagnostics to investigate how your app is performing, diagnose issues, and discover how to\
-            improve your application. Select the problem category that best matches the information or tool that you\'re\
-            interested in:',
+                        description: 'Investigate how your app is performing, diagnose issues, and discover how to improve your application.' ,
                         searchBarPlaceHolder: 'Search App Service Diagnostics'
                     };
                     this.searchPlaceHolder = this.homePageText.searchBarPlaceHolder;
@@ -123,6 +124,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
         if (_resourceService.armResourceConfig) {
             this._categoryService.initCategoriesForArmResource(_resourceService.resource.id);
+            this._quickLinkService.initQuickLinksForArmResource(_resourceService.resource.id);
         }
 
         this._categoryService.categories.subscribe(categories => this.categories = categories);
@@ -137,17 +139,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
             }
         });
 
-    }
-
-    switchView() {
-        this.useLegacy = !this.useLegacy;
-        this.versionTestService.setLegacyFlag(this.useLegacy === true ? 1 : 2);
-        let eventProps = {
-            subscriptionId: this.subscriptionId,
-            resourceName: this.resourceName,
-            switchToLegacy: this.useLegacy.toString(),
-        };
-        this._telemetryService.logEvent('SwitchView',eventProps);
+        this._featureService.featureSub.subscribe(features => {
+            this._quickLinkService.quickLinksSub.subscribe(quickLinks => {
+                if (features !== null && quickLinks !== null) {
+                    this.quickLinkFeatures = this._filterFeaturesWithQuickLinks(quickLinks, features);
+                    this.loadingQuickLinks = false;
+                }
+            });
+        })
     }
 
     ngOnInit() {
@@ -190,22 +189,24 @@ export class HomeComponent implements OnInit, AfterViewInit {
             this._detectorControlService.setDefault();
         }
 
+        this._initializeRiskTiles();
+
         this._telemetryService.logEvent("telemetry service logging", {});
     };
 
     ngAfterViewInit() {
-        this._telemetryService.logPageView(TelemetryEventNames.HomePageLoaded, {"numCategories": this.categories.length.toString()});
-        if (document.getElementById("healthCheck"))
-        {
-            document.getElementById("healthCheck").focus();
+        this._telemetryService.logPageView(TelemetryEventNames.HomePageLoaded, { "numCategories": this.categories.length.toString() });
+        
+        if (document.getElementById("homepage-command-bar")) {
+            document.getElementById("homepage-command-bar").focus();
         }
     }
 
 
-    public get useStaticAksText() : boolean {
+    public get useStaticAksText(): boolean {
         return this.armService.isMooncake
             && ResourceDescriptor.parseResourceUri(this._resourceService.resourceIdForRouting).provider.toLowerCase() == 'microsoft.containerservice';
-  }
+    }
 
     public get isAKSOnNationalCloud(): boolean {
         return this.armService.isNationalCloud
@@ -274,21 +275,69 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this._telemetryService.logTrace('HTTP error in ' + methodName, errorLoggingProps);
     }
 
-    openAvaAndPerf() {
-        const category = this.categories.find(category => category.name === "Availability and Performance");
-        if (category) {
-            this._portalService.openBladeDiagnoseCategoryBlade(category.id);
+    private _initializeRiskTiles() {
+        this.risks = [
+            {
+                title: "Availability",
+                action: () => {
+                    this._portalService.openBladeDiagnoseDetectorId("RiskAssessments","ParentAvailabilityAndPerformance");
+                },
+                linkText: "Click here to run all checks",
+                infoObserverable: this.globals.reliabilityChecksDetailsBehaviorSubject.pipe(map(info => RiskHelper.convertToRiskInfo(info))),
+                showTile: this._checkIsWindowsWebApp()
+            }
+        ];
+
+        //Only show risk section if at least one tile will display
+        this.showRiskSection = this.risks.findIndex(risk => risk.showTile === true) > -1;
+    }
+
+    private _checkIsWindowsWebApp(): boolean {
+        let isWindowsWebApp = false;
+        if (this._resourceService && this._resourceService instanceof WebSitesService && (this._resourceService as WebSitesService).appType === AppType.WebApp && (this._resourceService as WebSitesService).platform === OperatingSystem.windows) {
+            isWindowsWebApp = true;
         }
-        this._telemetryService.logEvent('OpenAviPerf',{
-            'Location':'LandingPage'
-        });
+        return isWindowsWebApp;
+    }
+
+    private _filterFeaturesWithQuickLinks(quickLinks: string[], features: Feature[]): Feature[] {
+        let res: Feature[] = [];
+        for (let link of quickLinks) {
+            const feature = features.find(feature => feature.id === link);
+            if (feature) {
+                res.push(feature);
+            }
+        }
+        return res;
     }
 
     openGeniePanel() {
         this.globals.openGeniePanel = true;
-        this._telemetryService.logEvent('OpenGenie',{
-            'Location':'LandingPage'
+        this._telemetryService.logEvent(TelemetryEventNames.OpenGenie, {
+            'Location': TelemetrySource.LandingPage
         });
+    }
+
+    openFeedbackPanel() {
+        this._telemetryService.logEvent(TelemetryEventNames.OpenFeedbackPanel),{
+            'Location': TelemetrySource.LandingPage
+        }
+        this.globals.openFeedback = true;
+    }
+
+    clickQuickLink(feature: Feature) {
+        this._telemetryService.logEvent(TelemetryEventNames.QuickLinkClicked,{
+            'id': feature.id,
+            'name': feature.name
+        });
+        feature.clickAction();
+    }
+
+    refreshPage() {
+        this._telemetryService.logEvent(TelemetryEventNames.RefreshClicked,{
+            'Location': TelemetrySource.LandingPage
+        });
+        window.location.reload();
     }
 }
 

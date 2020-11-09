@@ -27,7 +27,7 @@ import { MarkdownModule } from 'ngx-markdown';
 import { CXPChatService } from 'diagnostic-data';
 import { PortalReferrerResolverComponent } from '../shared/components/portal-referrer-resolver/portal-referrer-resolver.component';
 import { CXPChatCallerService } from '../shared-v2/services/cxp-chat-caller.service';
-import { FabSearchBoxModule } from '@angular-react/fabric';
+import { FabCommandBarModule, FabSearchBoxModule, FabSpinnerModule } from '@angular-react/fabric';
 import { UncategorizedDetectorsResolver } from './resolvers/uncategorized-detectors.resolver';
 import { DetectorCategorizationService } from '../shared/services/detector-categorized.service';
 import { ToolNames } from '../shared/models/tools-constants';
@@ -53,6 +53,7 @@ import { FabricModule } from '../fabric-ui/fabric.module';
 import { ResourceService } from '../shared-v2/services/resource.service';
 import { JavaFlightRecorderToolComponent } from '../shared/components/tools/java-flight-recorder-tool/java-flight-recorder-tool.component';
 import { CrashMonitoringComponent } from '../shared/components/tools/crash-monitoring/crash-monitoring.component';
+import { RiskTileComponent } from './components/risk-tile/risk-tile.component';
 
 export const HomeRoutes = RouterModule.forChild([
     {
@@ -500,9 +501,11 @@ export const HomeRoutes = RouterModule.forChild([
         FabricModule,
         FormsModule,
         MarkdownModule.forRoot(),
-        FabSearchBoxModule
+        FabSearchBoxModule,
+        FabCommandBarModule,
+        FabSpinnerModule
     ],
-    declarations: [HomeComponent, CategoryChatComponent, CategoryTileComponent, SearchResultsComponent, SupportTopicRedirectComponent, DiagnosticsSettingsComponent, CategoryTileV4Component],
+    declarations: [HomeComponent, CategoryChatComponent, CategoryTileComponent, SearchResultsComponent, SupportTopicRedirectComponent, DiagnosticsSettingsComponent, CategoryTileV4Component, RiskTileComponent],
     providers:
         [
             CategoryTabResolver,
@@ -519,7 +522,7 @@ export const HomeRoutes = RouterModule.forChild([
             { provide: GenericContentService, useExisting: ContentService },
             { provide: GenericDocumentsSearchService, useExisting: DocumentSearchService },
             { provide: CXPChatService, useExisting: CXPChatCallerService },
-            { provide: GenericResourceService, useExisting: ResourceService},
+            { provide: GenericResourceService, useExisting: ResourceService}
         ],
 })
 export class HomeModule { }

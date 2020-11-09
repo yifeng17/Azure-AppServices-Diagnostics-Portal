@@ -1,24 +1,12 @@
-<!-- <div class="category-container" (click)="navigateToCategory()" (keyup.enter)="navigateToCategory()" -->
-  <div class="category-container" (click)="openBladeDiagnoseCategoryBlade()" (keyup.enter)="openBladeDiagnoseCategoryBlade()"
-  (keyup.space)="openBladeDiagnoseCategoryBlade()" tabindex="0" role="button">
-  <!-- <div class="title-container" [style.background-color]="category.color">
-    {{category.name}}
-  </div> -->
-  <!-- <div class="category-body"> -->
+<div (click)="openBladeDiagnoseCategoryBlade()" (keyup.enter)="openBladeDiagnoseCategoryBlade()"
+  (keyup.space)="openBladeDiagnoseCategoryBlade()" tabindex="0" role="button" class="category-tile">
   <div>
-    <div class="image-container"><img [src]="categoryImgPath" /></div>
-    <h2 class="category-title">{{category.name}}</h2>
-    <p class="category-description">{{category.description}}</p>
-    <div>
-    <span class="keyword-label">Keywords:</span>
-    <div class="keywords">
-          <!-- <div class="keyword"  *ngFor="let keyword of category.keywords">
-            {{keyword}}
-          </div> -->
-          <div class="keyword">
-            {{keywords}}
-          </div>
-        </div>
-    </div>
+    <img class="tile-image" [src]="categoryImgPath">
+  </div>
+  <div class="tile-content">
+    <h3 class="tile-title">{{category.name}}</h3>
+    <p class="tile-description">{{category.description}}</p>
+    <p class="tile-keywords">Ex: {{keywords}}</p>
+    <a>Troubleshoot</a>
   </div>
 </div>
