@@ -196,9 +196,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit() {
         this._telemetryService.logPageView(TelemetryEventNames.HomePageLoaded, { "numCategories": this.categories.length.toString() });
-        
-        if (document.getElementById("homepage-command-bar")) {
-            document.getElementById("homepage-command-bar").focus();
+        if(document.getElementById("homepage-title")){
+            document.getElementById("homepage-title").focus();
         }
     }
 
@@ -337,7 +336,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this._telemetryService.logEvent(TelemetryEventNames.RefreshClicked,{
             'Location': TelemetrySource.LandingPage
         });
-        window.location.reload();
+        this._resourceService.updateRiskAlertResult();
     }
 }
 
