@@ -46,10 +46,6 @@ export class SupportTopicService {
     this.supportTopicId = supportTopicId;
     return this._webSiteService.getPesId().pipe(flatMap(pesId => {
       this.pesId = pesId;
-      if (this.supportTopicConfig.hasOwnProperty(this.pesId) && this.supportTopicConfig[this.pesId].findIndex(spId => spId===supportTopicId)>=0){
-          return observableOf({path: `/analysis/searchResultsAnalysis/search`, queryParams: {"searchTerm": searchTerm}});
-      }
-      else{
           this.detectorTask = this._diagnosticService.getDetectors();
           return this.detectorTask.pipe(map(detectors => {
             let detectorPath = '';
@@ -66,10 +62,12 @@ export class SupportTopicService {
                   detectorPath = `/analysis/${matchingDetector.id}`;
                 }
               }
+              else if (this.supportTopicConfig.hasOwnProperty(this.pesId) && this.supportTopicConfig[this.pesId].findIndex(spId => spId===supportTopicId)>=0){
+                  detectorPath = `/analysis/searchResultsAnalysis/search`;
+              }
             }    
             return {path: detectorPath, queryParams: {"searchTerm": searchTerm}};
           }));
-      }
     }));
   }
 }
