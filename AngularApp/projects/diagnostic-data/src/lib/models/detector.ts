@@ -108,7 +108,8 @@ export enum RenderingType {
     DownTime,
     SummaryCard,
     SearchComponent,
-    AppInsightEnablement
+    AppInsightEnablement,
+    KeystoneComponent
 }
 
 export enum TimeSeriesType {
