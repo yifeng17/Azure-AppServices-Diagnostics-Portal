@@ -35,15 +35,6 @@ export class DaasValidatorComponent implements OnInit {
   daasAppSettingsCheck: DaasAppSettingsCheck;
 
   constructor(private _serverFarmService: ServerFarmDataService, private _siteService: SiteService, private _daasService: DaasService) {
-
-    //
-    // Temporary fix to unblock users in national clouds.
-    // Should be removed after DAAS 1.40 update
-    //
-
-    if (this._daasService.isNationalCloud) {
-      this.diagnosersRequiringStorageAccount = [];
-    }
   }
 
   validateDaasSettings() {
