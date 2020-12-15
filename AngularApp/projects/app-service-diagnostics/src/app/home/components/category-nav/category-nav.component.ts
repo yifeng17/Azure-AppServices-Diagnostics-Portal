@@ -92,7 +92,6 @@ export class CategoryNavComponent implements OnInit {
     detectorDataLocalCopy: DetectorMetaData[] = [];
     detectorList: CollapsibleMenuItem[] = [];
     orphanDetectorList: CollapsibleMenuItem[] = [];
-    orphanDetectorList1: CollapsibleMenuItem[] = [];
     currentDetectorId: string = null;
     private getCurrentRoutePath() {
         this.currentRoutePath = this._activatedRoute.firstChild.snapshot.url.map(urlSegment => urlSegment.path);
@@ -185,7 +184,7 @@ export class CategoryNavComponent implements OnInit {
                 this.categoryId = this.category.id;
                 this.isDiagnosticTools = this.category.id === "DiagnosticTools";
 
-                this.orphanDetectorList = this._detectorCategorization.detectorlistCategories[this.category.id];
+                this.orphanDetectorList = this._detectorCategorization.detectorlistCategories[this.category.id] ? this._detectorCategorization.detectorlistCategories[this.category.id]: [];
 
                 this._authService.getStartupInfo().subscribe(startupInfo => {
                     this.resourceId = startupInfo.resourceId;
@@ -243,7 +242,7 @@ export class CategoryNavComponent implements OnInit {
                                     };
                                     let orphanMenuItem = new CollapsibleMenuItem(item.name, onClick, isSelected, icon);
 
-                                    if (!this.orphanDetectorList.find((item1 => item1.label === orphanMenuItem.label))) {
+                                    if (!this.orphanDetectorList || !this.orphanDetectorList.find((item1 => item1.label === orphanMenuItem.label))) {
                                         this._detectorCategorization.detectorlistCategories[this.category.id].push(orphanMenuItem);
                                     }
                                     this.orphanDetectorList = this._detectorCategorization.detectorlistCategories[this.category.id];
@@ -262,12 +261,12 @@ export class CategoryNavComponent implements OnInit {
         return `${this.imageRootPath}/${fileName}.svg`;
     }
 
-    private stackMatchedForTools(item: SiteFilteredItem<any>): boolean {	
-        return (item.appType & this._webSiteService.appType) > 0 &&	
-            (item.platform & this._webSiteService.platform) > 0 &&	
-            (item.sku & this._webSiteService.sku) > 0 &&	
-            (item.hostingEnvironmentKind & this._webSiteService.hostingEnvironmentKind) > 0 &&	
-            (!this.toolsAlreadyAdded(item.item));	
+    private stackMatchedForTools(item: SiteFilteredItem<any>): boolean {
+        return (item.appType & this._webSiteService.appType) > 0 &&
+            (item.platform & this._webSiteService.platform) > 0 &&
+            (item.sku & this._webSiteService.sku) > 0 &&
+            (item.hostingEnvironmentKind & this._webSiteService.hostingEnvironmentKind) > 0 &&
+            (!this.toolsAlreadyAdded(item.item));
     }
 
     private checkIsSelected(id:string) {
