@@ -8,6 +8,9 @@ import { SiteDaasInfo } from '../../../../shared/models/solution-metadata';
 import { AppType } from '../../../../shared/models/portal';
 import { OperatingSystem, HostingEnvironmentKind } from '../../../../shared/models/site';
 import { Sku } from '../../../../shared/models/server-farm';
+import { ResourceService } from '../../../../shared-v2/services/resource.service';
+import { AuthService } from '../../../../startup/services/auth.service';
+import { TelemetryService } from 'diagnostic-data';
 
 
 @Component({
@@ -33,7 +36,7 @@ export class DiagnosticToolsComponent {
     'All'
   ];
 
-  constructor(private _sitesFeatureService: SiteFeatureService, public webSiteService: WebSitesService, private _siteService: SiteService) {
+  constructor(private _sitesFeatureService: SiteFeatureService, public webSiteService: WebSitesService, private _siteService: SiteService, private _resourceService: ResourceService, private _authServiceInstance: AuthService, private _telemetryService: TelemetryService) {
     this._siteService.getSiteDaasInfoFromSiteMetadata().subscribe(site => {
       this.siteToBeDiagnosed = site;
     });
@@ -115,6 +118,24 @@ export class DiagnosticToolsComponent {
     if (this.webSiteService.appStack && this.webSiteService.appStack != '') {
       this.selectStack(this.webSiteService.appStack);
     }
+
+    this._authServiceInstance.getStartupInfo().subscribe(startUpInfo => {
+        if (startUpInfo) {
+          const resourceId = startUpInfo.resourceId ? startUpInfo.resourceId : '';
+          const ticketBladeWorkflowId = startUpInfo.workflowId ? startUpInfo.workflowId : '';
+          const supportTopicId = startUpInfo.supportTopicId ? startUpInfo.supportTopicId : '';
+          const sessionId = startUpInfo.sessionId ? startUpInfo.sessionId : '';
+
+          const eventProperties: { [name: string]: string } = {
+            'ResourceId': resourceId,
+            'TicketBladeWorkflowId': ticketBladeWorkflowId,
+            'SupportTopicId': supportTopicId,
+            'PortalSessionId': sessionId,
+            'AzureServiceName': this._resourceService.azureServiceName,
+          };
+          this._telemetryService.eventPropertiesSubject.next(eventProperties);
+        }
+      });
   }
 
   selectStack(stack: string) {
