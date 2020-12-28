@@ -25,7 +25,8 @@ export interface StartupInfo {
 
 export enum ResourceType {
     Site = 0,
-    HostingEnvironment = 1
+    HostingEnvironment = 1,
+    Other = 2
 }
 
 export enum AppType {

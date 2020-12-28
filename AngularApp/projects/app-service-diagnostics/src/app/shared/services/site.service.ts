@@ -237,7 +237,7 @@ export class SiteService {
                             }
                         }
                     } else {
-                        
+
                         //
                         // Temporary fix till ANT 92 to handle crashes due to exit Code 0x800703e9
                         // as that translates internally to Win32 exception code E053534F

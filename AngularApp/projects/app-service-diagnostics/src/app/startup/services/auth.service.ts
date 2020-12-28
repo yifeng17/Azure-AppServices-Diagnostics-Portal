@@ -66,9 +66,9 @@ export class AuthService {
                     if (!this.currentToken){
                         this.currentToken = info.token;
                     }
-                    
+
                     if (!this.resourceType) {
-                        this.resourceType = info.resourceId.toLowerCase().indexOf('hostingenvironments') > 0 ? ResourceType.HostingEnvironment : ResourceType.Site;
+                        this.resourceType = info.resourceId.toLowerCase().indexOf('/providers/microsoft.web/hostingenvironments/')> 0 ? ResourceType.HostingEnvironment : info.resourceId.toLowerCase().includes("/providers/microsoft.web/sites/") ? ResourceType.Site : ResourceType.Other;
                     }
 
                     info.resourceType = this.resourceType;
