@@ -91,7 +91,7 @@ export class WebSitesService extends ResourceService {
 
     public get isApplicableForLiveChat(): boolean {
         return this.resource
-            && (this.appType & AppType.WebApp) > 0 //Do not enable chat for Function apps
+            && (this.appType & (AppType.WebApp | AppType.FunctionApp)) > 0 //Enable chat for Function apps
             && (this.platform & (OperatingSystem.windows | OperatingSystem.linux)
             ) > 0;
     }
