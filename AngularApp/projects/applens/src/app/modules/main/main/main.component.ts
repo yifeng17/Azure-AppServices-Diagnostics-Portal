@@ -24,6 +24,7 @@ export class MainComponent implements OnInit {
   resourceTypes: ResourceTypeState[] = [
     {
       resourceType: ResourceType.Site,
+      resourceTypeLabel: 'App Name',
       routeName: (name) => `sites/${name}`,
       displayName: 'App',
       enabled: true,
@@ -31,6 +32,7 @@ export class MainComponent implements OnInit {
     },
     {
       resourceType: ResourceType.AppServiceEnvironment,
+      resourceTypeLabel: 'ASE Name',
       routeName: (name) => `hostingEnvironments/${name}`,
       displayName: 'App Service Environment',
       enabled: true,
@@ -38,17 +40,27 @@ export class MainComponent implements OnInit {
     },
     {
       resourceType: null,
+      resourceTypeLabel: 'ARM Resource ID',
       routeName: (name) => `${name}`,
-      displayName: 'ARM Resource ID',
+      displayName: 'ARM Resource ID',      
       enabled: true,
       caseId: false
     },
     {
       resourceType: null,
-      routeName: () => 'srid',
-      displayName: 'Support Request ID',
+      resourceTypeLabel: 'Session Id',
+      routeName: (name) =>  this.getFakeArmResource('Microsoft.AzurePortal', 'sessions', name),
+      displayName: 'Azure Portal Session',
       enabled: true,
-      caseId: true
+      caseId: false
+    },
+    {
+      resourceType: null,
+      resourceTypeLabel: 'Virtual Machine Id',
+      routeName: (name) => this.getFakeArmResource('Microsoft.Compute', 'virtualMachines', name),
+      displayName: 'Azure Virutal Machine',
+      enabled: true,
+      caseId: false
     }
   ];
 
@@ -71,10 +83,6 @@ export class MainComponent implements OnInit {
     this._http.get<ResourceServiceInputsJsonResponse>('assets/enabledResourceTypes.json').subscribe(jsonResponse =>{
       this.enabledResourceTypes = <ResourceServiceInputs[]>jsonResponse.enabledResourceTypes;
     });
-
-    if (_adalService.userInfo.userName === 'cmaher@microsoft.com' || _adalService.userInfo.userName === "shgup@microsoft.com"){
-      this.showCaseCleansingOption = true;
-    }
   }
 
   ngOnInit() {
@@ -160,6 +168,11 @@ export class MainComponent implements OnInit {
 
   caseCleansingNavigate() {
     this._router.navigate(["caseCleansing"]);
+  }
+
+  private getFakeArmResource(rpName: string, serviceName: string, resourceName: string): string {
+    let fakeRes = `/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Fake-RG/providers/${rpName}/${serviceName}/${resourceName}`;
+    return fakeRes;
   }
 
 }

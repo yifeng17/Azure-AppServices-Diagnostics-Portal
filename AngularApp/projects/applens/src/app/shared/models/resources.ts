@@ -11,6 +11,7 @@ export interface ResourceTypeState {
     displayName: string;
     routeName: Function;
     resourceType: ResourceType;
+    resourceTypeLabel?: string;
     enabled: boolean;
     caseId: boolean;
 }
