@@ -23,6 +23,15 @@ export class SupportTopicService {
     "15551": ["32632390","32632389","32632430","32632396","32632397","32632401","32632431","32632436","32632434","32632406","32632389","32632390","32632430","32632393","32632398","32632403","32632409","32632413","32632414","32632415","32632385","32632418","32632419","32632422","32632424","32632438","32632399","32632408","32632421","32632426","32632405","32683732","32632427","32632386","32632387","32632388","32632395","32632404","32632416","32632402","32632420","32632425","32632428","32632432","32632437","32632407","32740235","32740236","32740237","32740238","32740239","32740240","32740234"]
   };
 
+  private keywordBasedSolutionConfig = {
+    "14748" : [
+        {
+            keywords: ["tls 1.3", "tls1.3", "premium v3", "premiumv3", "p3v3", "pv3", "sendgrid", "sitecore"],
+            keywordsDetectorId: "test_keystone_detector"
+        }
+    ]
+  };
+
   constructor(protected _http: HttpClient, protected _authService: AuthService, protected _diagnosticService: DiagnosticService, protected _webSiteService: ResourceService) {
   }
 
@@ -49,6 +58,7 @@ export class SupportTopicService {
           this.detectorTask = this._diagnosticService.getDetectors();
           return this.detectorTask.pipe(map(detectors => {
             let detectorPath = '';
+            let queryParamsDic = {"searchTerm": searchTerm};
 
             if (detectors) {
               const matchingDetector = detectors.find(detector =>
@@ -65,9 +75,42 @@ export class SupportTopicService {
               else if (this.supportTopicConfig.hasOwnProperty(this.pesId) && this.supportTopicConfig[this.pesId].findIndex(spId => spId===supportTopicId)>=0){
                   detectorPath = `/analysis/searchResultsAnalysis/search`;
               }
-            }    
-            return {path: detectorPath, queryParams: {"searchTerm": searchTerm}};
+
+              let keywordsItem = undefined;
+              if (this.keywordBasedSolutionConfig.hasOwnProperty(this.pesId))
+              {
+                keywordsItem = this.keywordBasedSolutionConfig[this.pesId].find((item) => {
+                    if (searchTerm)
+                      return item.keywords.findIndex((keyword) => searchTerm.toLowerCase().indexOf(keyword) !== -1) !== -1;
+                });
+                console.log("Find keywordsItem", keywordsItem);
+              }
+
+              if (keywordsItem != undefined)
+              {
+                queryParamsDic["keywordsDetectorId"] = keywordsItem.keywordsDetectorId;
+              }
+            }
+
+            console.log("keywordsItem in queryParamsDic", queryParamsDic);
+            return {path: detectorPath, queryParams: queryParamsDic};
           }));
     }));
   }
+
+//   getCategoryImagePath(supportTopicL2Name: string): string {
+//     let imagePath = "";
+
+//     let item = this.categoryKeywordsImagePathMapping.find((item) => {
+//         if (supportTopicL2Name)
+//             return item.keyWords.findIndex((keyword) => {
+//                 return supportTopicL2Name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1;
+//             }) !== -1;
+//     });
+
+//     if (item != undefined) {
+//         imagePath = item.path;
+//     }
+//     return imagePath;
+// }
 }

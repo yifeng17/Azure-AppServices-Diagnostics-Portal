@@ -17,6 +17,7 @@ import { GenericSupportTopicService } from '../../../../../../diagnostic-data/sr
 })
 export class GenericAnalysisComponent extends GenericDetectorComponent implements OnInit {
   @Input() analysisId: string = "";
+  @Input() keywordsDetectorId = "";
   @Input() searchTerm: string = "";
   @Input() searchMode: SearchAnalysisMode = SearchAnalysisMode.CaseSubmission;
   @Input() resourceId: string = "";
@@ -26,6 +27,8 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
   @Input() showSearchBar: boolean = undefined;
   @Output() onComplete = new EventEmitter<any>();
 
+  keywordsSolutionView: boolean = false;
+  keystoneDetectorTitle: string = "Option 2: View diagnostic analysis";
   SearchAnalysisMode = SearchAnalysisMode;
   displayDetectorContainer: boolean = true;
   searchBarFocus: boolean = false;
@@ -71,6 +74,10 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
       this.analysisDetector = this.analysisId;
       this.detectorId = params.get('detectorName') === null ? "" : params.get('detectorName');
       this._activatedRouteLocal.queryParamMap.subscribe(qParams => {
+      this.keywordsDetectorId = qParams.get('keywordsDetectorId');
+      this.keywordsSolutionView = !!this.keywordsDetectorId;
+      console.log("keywrodsSolutionView", this.keywordsSolutionView);
+
         this.searchTerm = qParams.get('searchTerm') === null ? this.searchTerm : qParams.get('searchTerm');
         if (this.analysisId === "searchResultsAnalysis" && this.searchTerm && this.searchTerm.length > 0) {
           this.showSearchBar = this.searchMode === SearchAnalysisMode.CaseSubmission ? true : this.showSearchBar;

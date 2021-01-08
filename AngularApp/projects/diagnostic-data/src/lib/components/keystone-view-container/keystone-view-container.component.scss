@@ -1,0 +1,51 @@
+.keyword-solution-container {
+    padding: 13px;
+    border: 1px solid #C8C6C4;
+    box-sizing: border-box;
+    margin-top: 18px;
+}
+
+.keyword-container-title {
+    font-family: Segoe UI;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    /* or 143% */
+    display: flex;
+    align-items: center;
+
+    color: #000000;
+}
+
+.keyword-title-label {
+    font-family: Segoe UI;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 33px;
+    /* or 279% */
+
+    margin-left: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+    color: #000000;
+    background: #F0F6FF;
+}
+
+.keyword-title {
+    padding-left:5px;
+}
+
+.keystone-feedback-message {
+    text-align: right;
+}
+
+.keystone-feedback-label {
+    margin-right: 10px;
+}
+
+.keystone-feedback-button {
+    margin-right: 5px;
+    text-decoration: none;
+}

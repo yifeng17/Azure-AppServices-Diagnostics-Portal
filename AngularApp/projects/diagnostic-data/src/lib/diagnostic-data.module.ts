@@ -102,6 +102,8 @@ import { MarkdownTextComponent } from './components/markdown-text/markdown-text.
 import { DataTableV4Component } from './components/data-table-v4/data-table-v4.component';
 import { DocumentsSearchComponent } from './components/documents-search/documents-search.component';
 import { LoaderDetectorViewComponent } from './components/loader-detector-view/loader-detector-view.component';
+import { KeystoneInsightComponent } from './components/keystone-insight/keystone-insight.component';
+import { KeystoneViewContainerComponent } from './components/keystone-view-container/keystone-view-container.component';
 
 @NgModule({
   imports: [
@@ -159,7 +161,9 @@ import { LoaderDetectorViewComponent } from './components/loader-detector-view/l
     MarkdownTextComponent,
     DataTableV4Component,
     DocumentsSearchComponent,
-    LoaderDetectorViewComponent
+    LoaderDetectorViewComponent,
+    KeystoneInsightComponent,
+    KeystoneViewContainerComponent
   ],
   entryComponents: [DetectorListAnalysisComponent],
   exports: [
@@ -177,7 +181,8 @@ import { LoaderDetectorViewComponent } from './components/loader-detector-view/l
     CxpChatLauncherComponent,
     AppInsightsEnablementComponent,
     ConnectAppInsightsComponent,
-    WebSearchComponent
+    WebSearchComponent,
+    KeystoneViewContainerComponent
   ],
 })
 export class DiagnosticDataModule {

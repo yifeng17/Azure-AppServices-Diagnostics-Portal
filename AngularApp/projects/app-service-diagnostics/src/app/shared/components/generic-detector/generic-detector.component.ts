@@ -24,6 +24,7 @@ export class GenericDetectorComponent implements OnDestroy {
   constructor(private _activatedRoute: ActivatedRoute, private _diagnosticService: DiagnosticService, private _resourceService: ResourceService, private _authServiceInstance: AuthService, private _telemetryService: TelemetryService,
     private _navigator: FeatureNavigationService, private _router: Router) {
       this._activatedRoute.paramMap.subscribe(params =>{
+          console.log("output current paramMap", params);
         let currAnalysisId = params.get('analysisId');
         let currDetetctor = params.get('detectorName');
         if(!!currAnalysisId) {
@@ -62,6 +63,7 @@ export class GenericDetectorComponent implements OnDestroy {
             const supportTopicId = startUpInfo.supportTopicId ? startUpInfo.supportTopicId : '';
             const sessionId = startUpInfo.sessionId ? startUpInfo.sessionId : '';
             this.isCaseSubmissionSolutionIFrame = startUpInfo.isIFrameForCaseSubmissionSolution != undefined? startUpInfo.isIFrameForCaseSubmissionSolution : false;
+            console.log("get casesubmission boolean", startUpInfo, this.isCaseSubmissionSolutionIFrame);
 
             const eventProperties: { [name: string]: string } = {
               'ResourceId': resourceId,

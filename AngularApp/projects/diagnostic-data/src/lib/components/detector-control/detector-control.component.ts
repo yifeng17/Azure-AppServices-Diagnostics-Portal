@@ -45,6 +45,7 @@ export class DetectorControlComponent implements OnInit {
       this._router.navigate([], { queryParams: routeParams, queryParamsHandling: 'merge', relativeTo: this._activatedRoute });
 
     });
+    console.log("control service duration", this.detectorControlService.duration)
   }
 
   setManualDate() {
