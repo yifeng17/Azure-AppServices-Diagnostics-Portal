@@ -6,7 +6,7 @@ import { RenderingType, InsightsRendering, HealthStatus, DiagnosticData, Renderi
 import { Insight, InsightUtils } from "../../models/insight";
 import { TelemetryService } from "../../services/telemetry/telemetry.service";
 import { TelemetryEventNames } from "../../services/telemetry/telemetry.common";
-import { Solution } from 'dist/diagnostic-data/lib/components/solution/solution';
+import { Solution } from '../solution/solution';
 
 @Component({
     selector: 'keystone-insight',
