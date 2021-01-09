@@ -27,7 +27,7 @@ export class SupportTopicService {
     "14748" : [
         {
             keywords: ["tls 1.3", "tls1.3", "premium v3", "premiumv3", "p3v3", "pv3", "sendgrid", "sitecore"],
-            keywordsDetectorId: "test_keystone_detector"
+            keystoneDetectorId: "test_keystone_detector"
         }
     ]
   };
@@ -83,34 +83,16 @@ export class SupportTopicService {
                     if (searchTerm)
                       return item.keywords.findIndex((keyword) => searchTerm.toLowerCase().indexOf(keyword) !== -1) !== -1;
                 });
-                console.log("Find keywordsItem", keywordsItem);
               }
 
               if (keywordsItem != undefined)
               {
-                queryParamsDic["keywordsDetectorId"] = keywordsItem.keywordsDetectorId;
+                queryParamsDic["keystoneDetectorId"] = keywordsItem.keystoneDetectorId;
               }
             }
 
-            console.log("keywordsItem in queryParamsDic", queryParamsDic);
             return {path: detectorPath, queryParams: queryParamsDic};
           }));
     }));
   }
-
-//   getCategoryImagePath(supportTopicL2Name: string): string {
-//     let imagePath = "";
-
-//     let item = this.categoryKeywordsImagePathMapping.find((item) => {
-//         if (supportTopicL2Name)
-//             return item.keyWords.findIndex((keyword) => {
-//                 return supportTopicL2Name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1;
-//             }) !== -1;
-//     });
-
-//     if (item != undefined) {
-//         imagePath = item.path;
-//     }
-//     return imagePath;
-// }
 }

@@ -18,7 +18,6 @@ export class SupportTopicRedirectComponent implements OnInit {
 
   ngOnInit() {
     this._supportTopicService.getPathForSupportTopic(this._activatedRoute.snapshot.queryParams.supportTopicId, this._activatedRoute.snapshot.queryParams.pesId, this._activatedRoute.snapshot.queryParams.caseSubject).subscribe(res => {
-        console.log("navigate to ", res.path);
         this._router.navigate([`../${res.path}`], { relativeTo: this._activatedRoute, queryParams: res.queryParams });
 
       this._authService.getStartupInfo().subscribe(startupInfo => {

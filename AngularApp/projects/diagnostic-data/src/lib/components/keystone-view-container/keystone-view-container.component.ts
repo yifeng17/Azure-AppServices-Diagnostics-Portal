@@ -32,7 +32,6 @@ export class KeystoneViewContainerComponent implements OnInit {
             'IsAnalysisView': String(this.isAnalysisView)
           };
 
-        console.log("loggingevent KeystoneSolutionLoaded", this.eventProps);
         this.telemetryService.logEvent('KeystoneSolutionLoaded', this.eventProps);
     }
 
@@ -48,8 +47,6 @@ export class KeystoneViewContainerComponent implements OnInit {
             ...this.eventProps,
             'IsHelpful': String(helpful)
         }
-
-        console.log("loggingevent KeystoneFeedback", feedbackEventProps);
 
         this.telemetryService.logEvent("KeystoneFeedback", feedbackEventProps);
         this.showThanksMessage = this.yesSelected || this.noSelected;

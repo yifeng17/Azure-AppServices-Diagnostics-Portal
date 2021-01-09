@@ -56,6 +56,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
     @Input() targetedScore: number = 0.5;
     @Output() onComplete = new EventEmitter<any>();
     @Input() searchTerm: string = "";
+    @Input() keystoneSolutionView: boolean = false;
     detectorViewModels: any[];
     detectorId: string;
     detectorName: string = '';
@@ -136,6 +137,8 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
 
     ngOnInit() {
         this.withinGenie = this.analysisId === "searchResultsAnalysis" && this.searchMode === SearchAnalysisMode.Genie && this.searchTerm != "" && this.searchTerm.length > 0;
+        this._activatedRoute.queryParamMap.subscribe(qParams => {
+        })
         if (this.analysisId === "searchResultsAnalysis" && this.searchTerm && this.searchTerm.length > 0) {
             this.refresh();
         }
@@ -263,7 +266,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
         if (this.analysisId === 'searchResultsAnalysis') {
             return of(false);
         }
-        return this._diagnosticService.getDetector(this.analysisId, this._detectorControl.startTimeString, this._detectorControl.endTimeString, 
+        return this._diagnosticService.getDetector(this.analysisId, this._detectorControl.startTimeString, this._detectorControl.endTimeString,
             false, this._detectorControl.isInternalView, this.getQueryParamsForAnalysisDetector()).pipe(
             map((response: DetectorResponse) => {
                 let downTimeRenderingType = response.dataset.find(set => (<Rendering>set.renderingProperties).type === RenderingType.DownTime);
@@ -322,7 +325,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                         }
                         else {
                             // Add application insights analysis data
-                            this._diagnosticService.getDetector(this.analysisId, this._detectorControl.startTimeString, this._detectorControl.endTimeString, 
+                            this._diagnosticService.getDetector(this.analysisId, this._detectorControl.startTimeString, this._detectorControl.endTimeString,
                                 false, this._detectorControl.isInternalView, this.getQueryParamsForAnalysisDetector())
                                 .subscribe((response: DetectorResponse) => {
                                     this.checkSearchEmbedded(response);
@@ -803,7 +806,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                                     this._router.navigate([`./detectors/${detectorId}`], {
                                         relativeTo: this._activatedRoute,
                                         queryParams: { startTime: viewModel.model.startTime, endTime: viewModel.model.endTime },
-                                        queryParamsHandling: '',
+                                        queryParamsHandling: 'merge',
                                         replaceUrl: true
                                     });
                                 }

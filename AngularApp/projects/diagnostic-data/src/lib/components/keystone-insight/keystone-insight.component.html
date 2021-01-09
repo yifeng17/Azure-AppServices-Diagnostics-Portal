@@ -1,15 +1,12 @@
-<!-- <div *ngIf="keystoneInsight" class="keyword-solution-container">
-  <div class="keyword-container-title">
-    <img [src]="solutionTitleImageSrc">
-    <span class="keyword-title">{{keystoneInsight.Title}}</span>
-    <span *ngIf="isRecommended" class="keyword-title-label">Recommended</span></div>
-  <div class="keystone-insight-description">
+<keystone-view-container *ngIf="keystoneInsight" [solutionTitle]="keystoneInsight.Title" [isRecommended]="isRecommended"
+  [detector]="detector" [isAnalysisView]="false" [isKeystoneDetector]="true">
+  <div class="keystone-content">
     <markdown-text [markdownData]="keystoneInsight.Description" [detector]="detector"></markdown-text>
   </div>
-</div> -->
-
-<keystone-view-container *ngIf="keystoneInsight" [solutionTitle]="keystoneInsight.Title" [isRecommended]="isRecommended" [detector]="detector" [isAnalysisView]="false" [isKeystoneDetector]="true">
-<div class="keystone-insight-description">
-  <markdown-text [markdownData]="keystoneInsight.Description" [detector]="detector"></markdown-text>
-</div>
+  <ng-container *ngIf="keystoneSolution">
+    <div class="keystone-content">
+      <div class="keystone-solution-title">Suggested Solution:</div>
+      <solution [data]="keystoneSolution"></solution>
+    </div>
+  </ng-container>
 </keystone-view-container>

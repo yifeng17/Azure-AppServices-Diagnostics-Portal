@@ -96,6 +96,7 @@ export class DetectorViewComponent implements OnInit {
   @Input() isPopoutFromAnalysis: boolean = false;
   @Input() hideDetectorHeader: boolean = false;
   @Input() isCategoryOverview: boolean = false;
+  @Input() isKeystoneView: boolean = false;
   feedbackButtonLabel: string = 'Send Feedback';
 
   downTimes: DownTime[] = [];
@@ -404,7 +405,7 @@ export class DetectorViewComponent implements OnInit {
   }
 
   calculateFabWidth(options: IDropdownOption[]): number {
-    //each char 7px  
+    //each char 7px
     let length = 0;
     options.forEach(option => {
       length = Math.max(length, option.text.length);
