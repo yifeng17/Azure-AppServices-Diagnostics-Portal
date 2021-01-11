@@ -146,7 +146,7 @@ export class SitesCategoryService extends CategoryService {
           id: 'SSLandDomainsFunctionApp',
           name: 'SSL and Domains',
           overviewDetectorId:'SSLandDomainsFunctionApp',
-          description: 'Investigate issues related to SSL certificates, authentication, and domain management.',
+          description: 'Investigate issues with certificates, authentication, and custom domains.',
           keywords: ['4xx Errors', 'SSL', 'Domains', 'Permissions', 'Auth', 'Cert'],
           color: 'rgb(186, 211, 245)',
           createFlowForCategory: true,
@@ -164,7 +164,7 @@ export class SitesCategoryService extends CategoryService {
           name: 'Risk Assessments',
           overviewDetectorId: 'BestPracticesFunctionApp',
           description: 'Analyze your app for optimal performance and configuration.',
-          keywords: ['BestPractices', 'AlwaysOn', 'Async Pattern'],
+          keywords: ['BestPractices', 'AlwaysOn', 'Async Pattern', 'Deployment Settings'],
           color: 'rgb(208, 228, 176)',
           createFlowForCategory: true,
           chatEnabled: false
