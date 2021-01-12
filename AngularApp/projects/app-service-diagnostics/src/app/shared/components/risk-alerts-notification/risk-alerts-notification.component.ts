@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { TelemetryService } from 'diagnostic-data';
 import { MessageBarType, IMessageBarProps, IMessageBarStyles } from 'office-ui-fabric-react';
 import { throwError } from 'rxjs';
@@ -27,7 +28,7 @@ export class RiskAlertsNotificationComponent implements OnInit {
             marginBottom: '13px'
         }
     }
-    constructor(private _resourceService: ResourceService, private globals: Globals, private _authService: AuthService, public telemetryService: TelemetryService) { }
+    constructor(private _resourceService: ResourceService, private globals: Globals, private _authService: AuthService, public telemetryService: TelemetryService, public _activatedRoute: ActivatedRoute) { }
 
     ngOnInit() {
         const autoHealEnabledTitle: string = "Auto-Heal is enabled.";
@@ -144,8 +145,13 @@ export class RiskAlertsNotificationComponent implements OnInit {
                 this.riskAlertChecksHealthy = autoHealEnabled && healthCheckEnabled && workDistributionCheckPassed && appDensityCheckPassed;
 
                 this._authService.getStartupInfo().subscribe((startupInfo) => {
-                    // For now, only showing alert in case submission when there is at least one risk check fails
-                    this.showRiskAlertsNotification = (startupInfo.supportTopicId && startupInfo.supportTopicId != '' && !this.riskAlertChecksHealthy);
+                    // Only show risk alert when:
+                    // 1. In case submission
+                    // 2. There is at least one risk check fails
+                    // 3. No keystone solution is shown
+                    this._activatedRoute.queryParamMap.subscribe(qParams => {
+                        this.showRiskAlertsNotification = (startupInfo.supportTopicId && startupInfo.supportTopicId != ''&& !qParams.get('keystoneDetectorId') && !this.riskAlertChecksHealthy);
+                    });
                   });
 
                 var riskAlertCheckDetails = {
