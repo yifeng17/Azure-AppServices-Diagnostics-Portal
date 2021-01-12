@@ -83,7 +83,7 @@ export class WebSitesService extends ResourceService {
 
     public getKeystoneDetectorId(): Observable<string>{
         return this.warmUpCallFinished.pipe(flatMap(() => {
-            if (this.appType == AppType.WebApp && this.platform == OperatingSystem.windows) {
+            if (this.appType !== AppType.FunctionApp && this.platform == OperatingSystem.windows) {
                 return of("test_keystone_detector");
             }
             else {
