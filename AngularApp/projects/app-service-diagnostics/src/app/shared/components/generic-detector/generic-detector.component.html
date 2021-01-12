@@ -1,5 +1,4 @@
 <div *ngIf="keystoneSolutionView&&!analysisMode else genericDetectorView" class="keyword-solution-container">
-  <detector-control></detector-control>
   <div class="solution-header">We think we found you a solution!</div>
   <div class="solution-description">Customers with similar issues recently were able to solve it by following the
     solutions below.</div>
@@ -9,7 +8,7 @@
   <keystone-view-container [solutionTitle]="keystoneDetectorTitle" [isRecommended]="false" [detector]="detector"
     [isAnalysisView]="false" [isKeystoneDetector]="false">
     <div [ngClass]="{'detector-padding': analysisMode === false}">
-      <detector-container [analysisMode]="analysisMode" [detector]="detector" [hideDetectorControl]=true>
+      <detector-container [analysisMode]="analysisMode" [detector]="detector">
       </detector-container>
     </div>
   </keystone-view-container>

@@ -12,7 +12,8 @@ export class ArmResourceConfig {
 	categories?: Array<Category>;
     pesId?: string;
     liabilityCheckConfig?: LiabilityCheckConfig;
-	quickLinks?: string[];
+    quickLinks?: string[];
+    keystoneDetectorId?: string;
 }
 
 export interface LiveChatConfig {

@@ -202,7 +202,7 @@ import { RiskAlertsPanelComponent } from './components/risk-alerts-panel/risk-al
         CrashMonitoringAnalysisComponent,
         CollapsibleListFabricComponent,
         RiskAlertsNotificationComponent,
-        RiskAlertsPanelComponent,
+        RiskAlertsPanelComponent
     ],
     imports: [
         HttpClientModule,

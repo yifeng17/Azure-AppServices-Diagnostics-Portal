@@ -1,12 +1,11 @@
 <div *ngIf="keystoneSolutionView else genericAnalysisView" class="keyword-solution-container">
-  <detector-control></detector-control>
   <div class="solution-header">We think we found you a solution!</div>
   <div class="solution-description">Customers with similar issues recently were able to solve it by following the solutions below.</div>
   <detector-container [detector]="keystoneDetectorId"
     [hideDetectorControl]="true" [isKeystoneSolution]="true" [isAnalysisView]="true"></detector-container>
 
 <keystone-view-container [solutionTitle]="keystoneDetectorTitle" [isRecommended]="false" [detector]="analysisDetector" [isAnalysisView]="true" [isKeystoneDetector]="false">
-  <detector-container *ngIf="displayDetectorContainer" [detector]="analysisDetector" [hideDetectorControl]=true
+  <detector-container *ngIf="displayDetectorContainer" [detector]="analysisDetector" [hideDetectorControl]='isCaseSubmissionSolutionIFrame'
     [isAnalysisView]="true" (downTimeChanged)="onDowntimeChanged($event)"></detector-container>
   <div *ngIf="showSearchBar" class="search-box">
     <span>Diagnostics based on </span>

@@ -1,7 +1,7 @@
 import { WebSitesService } from './web-sites.service';
 import { Injectable } from '@angular/core';
 import { SupportTopicService } from '../../../shared-v2/services/support-topic.service';
-import { DiagnosticService } from 'diagnostic-data';
+import { DiagnosticService, TelemetryService } from 'diagnostic-data';
 import { ResourceService } from '../../../shared-v2/services/resource.service';
 import { Observable, of } from 'rxjs';
 import { OperatingSystem } from '../../../shared/models/site';
@@ -14,8 +14,8 @@ export class SiteSupportTopicService extends SupportTopicService {
 
   private _hardCodedSupportTopicIdMapping = [];
 
-  constructor(protected _http: HttpClient, protected _authService: AuthService, protected _diagnosticService: DiagnosticService, protected _webSiteService: WebSitesService) {
-    super(_http, _authService, _diagnosticService, _webSiteService);
+  constructor(protected _http: HttpClient, protected _authService: AuthService, protected _diagnosticService: DiagnosticService, protected _webSiteService: WebSitesService, protected _telemetryService: TelemetryService) {
+    super(_http, _authService, _diagnosticService, _webSiteService, _telemetryService);
 
     if (!VersioningHelper.isV2Subscription(_webSiteService.subscriptionId)) {
 
