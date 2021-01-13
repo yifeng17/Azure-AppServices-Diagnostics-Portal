@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TelemetryService } from 'diagnostic-data';
 import { MessageBarType, IMessageBarProps, IMessageBarStyles } from 'office-ui-fabric-react';
 import { throwError } from 'rxjs';
@@ -28,7 +28,7 @@ export class RiskAlertsNotificationComponent implements OnInit {
             marginBottom: '13px'
         }
     }
-    constructor(private _resourceService: ResourceService, private globals: Globals, private _authService: AuthService, public telemetryService: TelemetryService, public _activatedRoute: ActivatedRoute) { }
+    constructor(private _resourceService: ResourceService, private globals: Globals, private _authService: AuthService, public telemetryService: TelemetryService, public _activatedRoute: ActivatedRoute, protected _router: Router) { }
 
     ngOnInit() {
         const autoHealEnabledTitle: string = "Auto-Heal is enabled.";
@@ -149,10 +149,9 @@ export class RiskAlertsNotificationComponent implements OnInit {
                     // 1. In case submission
                     // 2. There is at least one risk check fails
                     // 3. No keystone solution is shown
-                    this._activatedRoute.queryParamMap.subscribe(qParams => {
-                        this.showRiskAlertsNotification = (startupInfo.supportTopicId && startupInfo.supportTopicId != ''&& !qParams.get('keystoneDetectorId') && !this.riskAlertChecksHealthy);
-                    });
-                  });
+                    let isTargetSolutionReady = (this._router.url.includes("/analysis/") || this._router.url.includes("/detectors/")) && !this._router.url.includes("/integratedSolutions/");
+                    this.showRiskAlertsNotification = (startupInfo.supportTopicId && startupInfo.supportTopicId != ''&&  isTargetSolutionReady && !this.riskAlertChecksHealthy);
+                });
 
                 var riskAlertCheckDetails = {
                     "riskAlertChecksHealthy": this.riskAlertChecksHealthy,

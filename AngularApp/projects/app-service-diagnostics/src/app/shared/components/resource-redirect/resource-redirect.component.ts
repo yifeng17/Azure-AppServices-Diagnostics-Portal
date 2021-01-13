@@ -5,7 +5,7 @@ import { WindowService } from '../../../startup/services/window.service';
 import { environment } from '../../../../environments/environment';
 import { StartupInfo } from '../../models/portal';
 import { DemoSubscriptions } from '../../../betaSubscriptions';
-import { DetectorType } from 'diagnostic-data';
+import { DetectorType, TelemetryService } from 'diagnostic-data';
 import { VersionTestService } from '../../../fabric-ui/version-test.service';
 
 @Component({
@@ -16,7 +16,7 @@ import { VersionTestService } from '../../../fabric-ui/version-test.service';
 export class ResourceRedirectComponent implements OnInit {
   private _newVersionEnabled = true;
   private _useLegacyVersion = true;
-  constructor(private _authService: AuthService, private _router: Router, private _windowService: WindowService, private _versionTestService: VersionTestService) { }
+  constructor(private _authService: AuthService, private _router: Router, private _windowService: WindowService, private _versionTestService: VersionTestService, private _telemetryService: TelemetryService) { }
 
   ngOnInit() {
     this._versionTestService.isLegacySub.subscribe(useLegacyVersion => this._useLegacyVersion = useLegacyVersion);
@@ -26,6 +26,21 @@ export class ResourceRedirectComponent implements OnInit {
   navigateToExperience() {
     this._authService.getStartupInfo()
       .subscribe(info => {
+        if (info) {
+            const resourceId = info.resourceId ? info.resourceId : '';
+            const ticketBladeWorkflowId = info.workflowId ? info.workflowId : '';
+            const supportTopicId = info.supportTopicId ? info.supportTopicId : '';
+            const sessionId = info.sessionId ? info.sessionId : '';
+
+            const eventProperties: { [name: string]: string } = {
+                'ResourceId': resourceId,
+                'TicketBladeWorkflowId': ticketBladeWorkflowId,
+                'SupportTopicId': supportTopicId,
+                'PortalSessionId': sessionId,
+            };
+            this._telemetryService.eventPropertiesSubject.next(eventProperties);
+        }
+
         if (info && info.resourceId && info.token) {
           if (info.optionalParameters && info.optionalParameters.find(param => param.key === "categoryId")) {
             //  Open the new experience since we are navigating to a specific category

@@ -1,0 +1,16 @@
+<div *ngIf="keystoneSolutionView else genericSolutionView" class="keystone-solution-container">
+  <div class="solution-header">We think we found you a solution!</div>
+  <div class="solution-description">Customers with similar issues recently were able to solve it by following the
+    solutions below.</div>
+  <detector-container *ngIf="keystoneSolutionView" [detector]="keystoneDetectorId" [hideDetectorControl]="true"
+    [isKeystoneSolution]="true" [isAnalysisView]="true"></detector-container>
+
+  <solution-view-container [solutionTitle]="keystoneDetectorTitle" [isRecommended]="false" [detector]="detector"
+    [isAnalysisView]="isAnalysisView" [isKeystoneDetector]="false">
+    <router-outlet></router-outlet>
+  </solution-view-container>
+</div>
+
+<ng-template #genericSolutionView>
+  <router-outlet></router-outlet>
+</ng-template>

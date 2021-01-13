@@ -103,7 +103,7 @@ import { DataTableV4Component } from './components/data-table-v4/data-table-v4.c
 import { DocumentsSearchComponent } from './components/documents-search/documents-search.component';
 import { LoaderDetectorViewComponent } from './components/loader-detector-view/loader-detector-view.component';
 import { KeystoneInsightComponent } from './components/keystone-insight/keystone-insight.component';
-import { KeystoneViewContainerComponent } from './components/keystone-view-container/keystone-view-container.component';
+import { SolutionViewContainerComponent } from './components/solution-view-container/solution-view-container.component';
 
 @NgModule({
   imports: [
@@ -163,7 +163,7 @@ import { KeystoneViewContainerComponent } from './components/keystone-view-conta
     DocumentsSearchComponent,
     LoaderDetectorViewComponent,
     KeystoneInsightComponent,
-    KeystoneViewContainerComponent
+    SolutionViewContainerComponent
   ],
   entryComponents: [DetectorListAnalysisComponent],
   exports: [
@@ -182,7 +182,7 @@ import { KeystoneViewContainerComponent } from './components/keystone-view-conta
     AppInsightsEnablementComponent,
     ConnectAppInsightsComponent,
     WebSearchComponent,
-    KeystoneViewContainerComponent
+    SolutionViewContainerComponent
   ],
 })
 export class DiagnosticDataModule {

@@ -132,6 +132,7 @@ import { CrashMonitoringAnalysisComponent } from './components/tools/crash-monit
 import { CollapsibleListFabricComponent } from './components/collapsible-list/collapsible-list-fabric/collapsible-list-fabric.component';
 import { RiskAlertsNotificationComponent } from './components/risk-alerts-notification/risk-alerts-notification.component';
 import { RiskAlertsPanelComponent } from './components/risk-alerts-panel/risk-alerts-panel.component';
+import { IntegratedSolutionsViewComponent } from './components/integrated-solutions-view/integrated-solutions-view.component';
 
 @NgModule({
     declarations: [
@@ -202,7 +203,8 @@ import { RiskAlertsPanelComponent } from './components/risk-alerts-panel/risk-al
         CrashMonitoringAnalysisComponent,
         CollapsibleListFabricComponent,
         RiskAlertsNotificationComponent,
-        RiskAlertsPanelComponent
+        RiskAlertsPanelComponent,
+        IntegratedSolutionsViewComponent
     ],
     imports: [
         HttpClientModule,

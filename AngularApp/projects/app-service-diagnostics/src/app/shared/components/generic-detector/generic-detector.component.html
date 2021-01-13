@@ -1,21 +1,3 @@
-<div *ngIf="keystoneSolutionView&&!analysisMode else genericDetectorView" class="keyword-solution-container">
-  <div class="solution-header">We think we found you a solution!</div>
-  <div class="solution-description">Customers with similar issues recently were able to solve it by following the
-    solutions below.</div>
-  <detector-container *ngIf="keystoneSolutionView" [detector]="keystoneDetectorId" [hideDetectorControl]="true"
-    [isKeystoneSolution]="true" [isAnalysisView]="true"></detector-container>
-
-  <keystone-view-container [solutionTitle]="keystoneDetectorTitle" [isRecommended]="false" [detector]="detector"
-    [isAnalysisView]="false" [isKeystoneDetector]="false">
-    <div [ngClass]="{'detector-padding': analysisMode === false}">
-      <detector-container [analysisMode]="analysisMode" [detector]="detector">
-      </detector-container>
-    </div>
-  </keystone-view-container>
+<div [ngClass]="{'detector-padding': analysisMode === false}">
+  <detector-container [analysisMode]="analysisMode" [detector]="detector"></detector-container>
 </div>
-
-<ng-template #genericDetectorView>
-  <div [ngClass]="{'detector-padding': analysisMode === false}">
-    <detector-container [analysisMode]="analysisMode" [detector]="detector"></detector-container>
-  </div>
-</ng-template>

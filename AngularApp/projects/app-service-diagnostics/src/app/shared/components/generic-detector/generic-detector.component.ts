@@ -15,10 +15,6 @@ import { ResourceService } from '../../../shared-v2/services/resource.service';
     ]
 })
 export class GenericDetectorComponent implements OnDestroy {
-    @Input() keystoneDetectorId = "";
-    keystoneSolutionView: boolean = false;
-    keystoneDetectorTitle: string = "Option 2: View diagnostic analysis";
-
     detector: string;
     analysisDetector: string;
     navigateSub: Subscription;
@@ -45,11 +41,6 @@ export class GenericDetectorComponent implements OnDestroy {
                 }
             }
 
-            this._activatedRoute.queryParamMap.subscribe((queryParams) => {
-                this.keystoneDetectorId = queryParams.get('keystoneDetectorId');
-                this.keystoneSolutionView = !!this.keystoneDetectorId;
-            })
-
             this.navigateSub = this._navigator.OnDetectorNavigate.subscribe((detector: string) => {
                 if (detector) {
                     let detectorMetaData: DetectorMetaData = this._diagnosticService.getDetectorById(detector);
@@ -67,29 +58,14 @@ export class GenericDetectorComponent implements OnDestroy {
 
             this._authServiceInstance.getStartupInfo().subscribe(startUpInfo => {
                 if (startUpInfo) {
-                    const resourceId = startUpInfo.resourceId ? startUpInfo.resourceId : '';
-                    const ticketBladeWorkflowId = startUpInfo.workflowId ? startUpInfo.workflowId : '';
-                    const supportTopicId = startUpInfo.supportTopicId ? startUpInfo.supportTopicId : '';
-                    const sessionId = startUpInfo.sessionId ? startUpInfo.sessionId : '';
                     this.isCaseSubmissionSolutionIFrame = startUpInfo.isIFrameForCaseSubmissionSolution != undefined ? startUpInfo.isIFrameForCaseSubmissionSolution : false;
-
-                    const eventProperties: { [name: string]: string } = {
-                        'ResourceId': resourceId,
-                        'TicketBladeWorkflowId': ticketBladeWorkflowId,
-                        'SupportTopicId': supportTopicId,
-                        'PortalSessionId': sessionId,
-                        'AzureServiceName': this._resourceService.azureServiceName
-                    };
-                    this._telemetryService.eventPropertiesSubject.next(eventProperties);
-
-                    this._telemetryService.logEvent("GenericDetectorViewLoaded", {
-                        'AnalysisMode': String(this.analysisMode),
-                        'DetectorId': this.detector,
-                        'AnalysisDetector': this.analysisDetector,
-                        'IsKeystoneView': String(this.keystoneSolutionView),
-                        'KeystoneDetctorId': this.keystoneDetectorId,
-                    });
                 }
+            });
+
+            this._telemetryService.logEvent("GenericDetectorViewLoaded", {
+                'AnalysisMode': String(this.analysisMode),
+                'DetectorId': this.detector,
+                'AnalysisDetector': this.analysisDetector,
             });
         });
     }

@@ -1,12 +1,13 @@
+
 import { Component, Input, OnInit } from '@angular/core';
 import { TelemetryService } from "../../services/telemetry/telemetry.service";
 
 @Component({
-    selector: 'keystone-view-container',
-    templateUrl: './keystone-view-container.component.html',
-    styleUrls: ['./keystone-view-container.component.scss']
+  selector: 'solution-view-container',
+  templateUrl: './solution-view-container.component.html',
+  styleUrls: ['./solution-view-container.component.scss']
 })
-export class KeystoneViewContainerComponent implements OnInit {
+export class SolutionViewContainerComponent implements OnInit {
     @Input() solutionTitle: string = "";
     @Input() isRecommended: boolean = false;
     @Input() detector: string = "";
@@ -32,7 +33,7 @@ export class KeystoneViewContainerComponent implements OnInit {
             'IsAnalysisView': String(this.isAnalysisView)
           };
 
-        this.telemetryService.logEvent('KeystoneSolutionLoaded', this.eventProps);
+        this.telemetryService.logEvent('SolutionLoaded', this.eventProps);
     }
 
     private getIconImagePath() {
@@ -48,9 +49,10 @@ export class KeystoneViewContainerComponent implements OnInit {
             'IsHelpful': String(helpful)
         }
 
-        this.telemetryService.logEvent("KeystoneFeedback", feedbackEventProps);
+        this.telemetryService.logEvent("SolutionFeedback", feedbackEventProps);
         this.showThanksMessage = this.yesSelected || this.noSelected;
     }
+
 }
 
 

@@ -1,4 +1,4 @@
-<keystone-view-container *ngIf="keystoneInsight" [solutionTitle]="keystoneInsight.Title" [isRecommended]="isRecommended"
+<solution-view-container *ngIf="keystoneInsight" [solutionTitle]="keystoneInsight.Title" [isRecommended]="isRecommended"
   [detector]="detector" [isAnalysisView]="false" [isKeystoneDetector]="true">
   <div class="keystone-content">
     <markdown-text [markdownData]="keystoneInsight.Description" [detector]="detector"></markdown-text>
@@ -9,4 +9,4 @@
       <solution [data]="keystoneSolution"></solution>
     </div>
   </ng-container>
-</keystone-view-container>
+</solution-view-container>

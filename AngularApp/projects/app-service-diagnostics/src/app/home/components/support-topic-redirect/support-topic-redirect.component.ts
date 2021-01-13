@@ -5,7 +5,7 @@ import { AuthService } from '../../../startup/services/auth.service';
 import { NotificationService, Notification } from '../../../shared-v2/services/notification.service';
 import { PortalKustoTelemetryService } from '../../../shared/services/portal-kusto-telemetry.service';
 import { SubscriptionPropertiesService } from '../../../shared/services/subscription-properties.service';
-import { MessageBarType } from 'office-ui-fabric-react';
+
 @Component({
   selector: 'support-topic-redirect',
   templateUrl: './support-topic-redirect.component.html',

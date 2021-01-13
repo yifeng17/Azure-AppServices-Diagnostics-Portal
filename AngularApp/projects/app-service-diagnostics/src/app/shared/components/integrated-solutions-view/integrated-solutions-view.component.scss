@@ -1,0 +1,51 @@
+.detector-padding {
+    padding:5px 10%;
+}
+
+@media screen and (max-width: 1200px) {
+    .detector-padding {
+        padding:5px 10px;
+    }
+}
+
+.keystone-solution-container {
+    margin: 20px;
+}
+
+.solution-header {
+    width: 250px;
+    height: 22px;
+    left: 20px;
+    top: 552px;
+    font-family: Segoe UI;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 22px;
+    display: flex;
+    align-items: center;
+    color: #323130;
+}
+
+.solution-description {
+    width: 858px;
+    height: 44px;
+    left: 20px;
+    top: 570px;
+
+    /* msportalfx-text- / body */
+
+    font-family: Segoe UI;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 13px;
+    line-height: 18px;
+    /* or 138% */
+
+    display: flex;
+    align-items: center;
+
+    /* Light Theme / Text colors / Primary */
+
+    color: #323130;
+}

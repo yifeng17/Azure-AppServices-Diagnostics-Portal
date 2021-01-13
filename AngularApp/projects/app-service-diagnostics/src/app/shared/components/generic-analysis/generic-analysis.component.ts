@@ -17,7 +17,6 @@ import { GenericSupportTopicService } from '../../../../../../diagnostic-data/sr
 })
 export class GenericAnalysisComponent extends GenericDetectorComponent implements OnInit {
     @Input() analysisId: string = "";
-    @Input() keystoneDetectorId = "";
     @Input() searchTerm: string = "";
     @Input() searchMode: SearchAnalysisMode = SearchAnalysisMode.CaseSubmission;
     @Input() resourceId: string = "";
@@ -73,9 +72,6 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
             this.analysisDetector = this.analysisId;
             this.detectorId = params.get('detectorName') === null ? "" : params.get('detectorName');
             this._activatedRouteLocal.queryParamMap.subscribe(qParams => {
-                this.keystoneDetectorId = qParams.get('keystoneDetectorId');
-                this.keystoneSolutionView = !!this.keystoneDetectorId;
-
                 this.searchTerm = qParams.get('searchTerm') === null ? this.searchTerm : qParams.get('searchTerm');
                 if (this.analysisId === "searchResultsAnalysis" && this.searchTerm && this.searchTerm.length > 0) {
                     this.showSearchBar = this.searchMode === SearchAnalysisMode.CaseSubmission ? true : this.showSearchBar;
@@ -88,8 +84,6 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
                 this._telemetryService.logEvent("GenericAnalysisViewLoaded", {
                     'AnalysisId': this.analysisId,
                     'DetectorId': this.detectorId,
-                    'IsKeystoneView': String(this.keystoneSolutionView),
-                    'KeystoneDetctorId': this.keystoneDetectorId,
                 });
 
                 this._diagnosticServiceLocal.getDetectors().subscribe(detectorList => {
