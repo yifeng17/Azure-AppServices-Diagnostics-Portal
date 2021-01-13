@@ -83,12 +83,21 @@ export class SupportTopicService {
                             if (keystoneRes != undefined) {
                                 let keystoneData = keystoneRes.dataset.find((data) => data.renderingProperties.type === RenderingType.KeystoneComponent);
                                 let keystoneInsight: KeystoneInsight = JSON.parse(keystoneData.table.rows[0][0]);
+                                let keystoneSolutionApplied: boolean = false;
                                 keywordsList = JSON.parse(keystoneInsight["Title"]);
+
                                 if (keywordsList && keywordsList.findIndex((keyword) => searchTerm.toLowerCase().indexOf(keyword) !== -1) !== -1) {
                                     detectorPath = `/integratedSolutions` + detectorPath;
                                     queryParamsDic["keystoneDetectorId"] = keystoneDetectorId;
+                                    keystoneSolutionApplied = true;
                                 }
+
+                                this._telemetryService.logEvent("KeywordsListForKeyStone", {
+                                    "Keywords": keystoneInsight["Title"],
+                                    "KeystoneSolutionApplied": String(keystoneSolutionApplied)
+                                });
                             }
+
                             return { path: detectorPath, queryParams: queryParamsDic };
                         }),
                             catchError(err => {
