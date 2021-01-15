@@ -53,6 +53,7 @@ import { ResourceService } from '../shared-v2/services/resource.service';
 import { JavaFlightRecorderToolComponent } from '../shared/components/tools/java-flight-recorder-tool/java-flight-recorder-tool.component';
 import { CrashMonitoringComponent } from '../shared/components/tools/crash-monitoring/crash-monitoring.component';
 import { RiskTileComponent } from './components/risk-tile/risk-tile.component';
+import { IntegratedSolutionsViewComponent } from '../shared/components/integrated-solutions-view/integrated-solutions-view.component';
 
 export const HomeRoutes = RouterModule.forChild([
     {
@@ -104,14 +105,14 @@ export const HomeRoutes = RouterModule.forChild([
                 data: {
                     cacheComponent: false
                 },
-                children: [                    
+                children: [
                     {
                         path: 'detectors/:detectorName',
                         component: GenericDetectorComponent,
                         data: {
                             analysisMode: true,
                             cacheComponent: false
-                        },                        
+                        },
                         resolve: {
                             time: TimeControlResolver,
                             navigationTitle: TabTitleResolver,
@@ -358,6 +359,112 @@ export const HomeRoutes = RouterModule.forChild([
             // messageList: CategoryChatResolver
         }
     },
+    {
+        path: 'integratedSolutions',
+        component: IntegratedSolutionsViewComponent,
+        children: [
+            {
+                path: 'detectors/:detectorName',
+                component: GenericDetectorComponent,
+                data: {
+                    cacheComponent: true
+                },
+                resolve: {
+                    time: TimeControlResolver,
+                    navigationTitle: TabTitleResolver,
+                }
+            },
+            {
+                path: 'analysis/:analysisId',
+                component: GenericAnalysisComponent,
+                data: {
+                    cacheComponent: false
+                },
+                children: [
+                    {
+                        path: 'detectors/:detectorName',
+                        component: GenericDetectorComponent,
+                        data: {
+                            analysisMode: true,
+                            cacheComponent: false
+                        },
+                        resolve: {
+                            time: TimeControlResolver,
+                            navigationTitle: TabTitleResolver,
+                        }
+                    },
+                ],
+                resolve: {
+                    time: TimeControlResolver,
+                    navigationTitle: TabTitleResolver,
+                }
+            },
+            {
+                path: 'analysis/:analysisId/search',
+                component: GenericAnalysisComponent,
+                data: {
+                    cacheComponent: true
+                },
+                children: [
+                    {
+                        path: '',
+                        component: GenericDetectorComponent,
+                        data: {
+                            analysisMode: true,
+                            cacheComponent: true
+                        }
+                    }
+                ],
+                resolve: {
+                    time: TimeControlResolver,
+                    navigationTitle: TabTitleResolver,
+                }
+            },
+            {
+                path: 'analysis/:analysisId/search/detectors/:detectorName',
+                component: GenericAnalysisComponent,
+                data: {
+                    cacheComponent: true
+                },
+                children: [
+                    {
+                        path: '',
+                        component: GenericDetectorComponent,
+                        data: {
+                            analysisMode: true,
+                            cacheComponent: true
+                        }
+                    }
+                ],
+                resolve: {
+                    time: TimeControlResolver,
+                    navigationTitle: TabTitleResolver,
+                }
+            },
+            {
+                path: 'analysis/:analysisId/detectors',
+                component: GenericAnalysisComponent,
+                data: {
+                    cacheComponent: true
+                },
+                children: [
+                    {
+                        path: '',
+                        component: GenericDetectorComponent,
+                        data: {
+                            analysisMode: true,
+                            cacheComponent: true
+                        }
+                    }
+                ],
+                resolve: {
+                    time: TimeControlResolver,
+                    navigationTitle: TabTitleResolver,
+                }
+            },
+        ]
+    }
+    ,
     {
         path: 'detectors/:detectorName',
         component: GenericDetectorComponent,

@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { TelemetryService } from 'diagnostic-data';
 import { MessageBarType, IMessageBarProps, IMessageBarStyles } from 'office-ui-fabric-react';
 import { throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, filter, map } from 'rxjs/operators';
 import { Globals } from '../../../globals';
 import { WebSitesService } from '../../../resources/web-sites/services/web-sites.service';
 import { NotificationService } from '../../../shared-v2/services/notification.service';
@@ -27,7 +28,7 @@ export class RiskAlertsNotificationComponent implements OnInit {
             marginBottom: '13px'
         }
     }
-    constructor(private _resourceService: ResourceService, private globals: Globals, private _authService: AuthService, public telemetryService: TelemetryService) { }
+    constructor(private _resourceService: ResourceService, private globals: Globals, private _authService: AuthService, public telemetryService: TelemetryService, public _activatedRoute: ActivatedRoute, protected _router: Router) { }
 
     ngOnInit() {
         const autoHealEnabledTitle: string = "Auto-Heal is enabled.";
@@ -144,22 +145,33 @@ export class RiskAlertsNotificationComponent implements OnInit {
                 this.riskAlertChecksHealthy = autoHealEnabled && healthCheckEnabled && workDistributionCheckPassed && appDensityCheckPassed;
 
                 this._authService.getStartupInfo().subscribe((startupInfo) => {
-                    // For now, only showing alert in case submission when there is at least one risk check fails
-                    this.showRiskAlertsNotification = (startupInfo.supportTopicId && startupInfo.supportTopicId != '' && !this.riskAlertChecksHealthy);
-                  });
+                    // Only show risk alert when:
+                    // 1. In case submission
+                    // 2. There is at least one risk check fails
+                    // 3. No keystone solution is presented
 
-                var riskAlertCheckDetails = {
-                    "riskAlertChecksHealthy": this.riskAlertChecksHealthy,
-                    "autoHeal": autoHealDetail,
-                    "healthCheck": healthCheckDetail,
-                    "workerDistribution": workDistributionDetail,
-                    "appDensity": appDensityCheckDetail
-                };
+                    this._router.events.subscribe(event => {
+                        if (event instanceof NavigationEnd) {
+                            let currentUrlPath = event.url;
+                            let isTargetSolutionReady = (currentUrlPath.includes("/analysis/") || currentUrlPath.includes("/detectors/")) && !currentUrlPath.includes("/integratedSolutions/");
+                            this.showRiskAlertsNotification = (startupInfo.supportTopicId && startupInfo.supportTopicId != '' && isTargetSolutionReady && !this.riskAlertChecksHealthy);
+                        }
+                    });
 
-                this.globals.updatereliabilityChecksDetails(riskAlertCheckDetails);
+                    var riskAlertCheckDetails = {
+                        "riskAlertChecksHealthy": this.riskAlertChecksHealthy,
+                        "autoHeal": autoHealDetail,
+                        "healthCheck": healthCheckDetail,
+                        "workerDistribution": workDistributionDetail,
+                        "appDensity": appDensityCheckDetail
+                    };
+
+                    this.globals.updatereliabilityChecksDetails(riskAlertCheckDetails);
+
+                }, e => {
+                    this.globals.reliabilityChecksDetailsBehaviorSubject.error(e);
+                });
             }
-        },e =>{
-            this.globals.reliabilityChecksDetailsBehaviorSubject.error(e);
         });
     }
 

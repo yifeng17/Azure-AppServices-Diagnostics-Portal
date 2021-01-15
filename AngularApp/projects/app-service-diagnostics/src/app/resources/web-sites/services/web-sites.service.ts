@@ -81,6 +81,17 @@ export class WebSitesService extends ResourceService {
         }));
     }
 
+    public getKeystoneDetectorId(): Observable<string>{
+        return this.warmUpCallFinished.pipe(flatMap(() => {
+            if (this.appType !== AppType.FunctionApp && this.platform == OperatingSystem.windows) {
+                return of("test_keystone_detector");
+            }
+            else {
+                return of(null);
+            }
+        }));
+    }
+
     public get searchSuffix(): string {
         return this.appType === AppType.WebApp ? this.platform === OperatingSystem.windows ? 'Azure Web App' : 'Azure Web App(Linux)' : 'Azure Function';
     }
@@ -125,7 +136,7 @@ export class WebSitesService extends ResourceService {
 
     public getRiskAlertsResult(): Observable<any> {
         const riskCheckSignal = merge(this.warmUpCallFinished,this._refreshReliabilityCheck);
-        return riskCheckSignal.pipe(flatMap((res) => 
+        return riskCheckSignal.pipe(flatMap((res) =>
         {
             if (this.resource && this.azureServiceName === 'Web App (Windows)') {
                 let resourceUri = this.resource.id;

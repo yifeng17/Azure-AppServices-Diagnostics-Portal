@@ -5,7 +5,7 @@ import { AuthService } from '../../../startup/services/auth.service';
 import { NotificationService, Notification } from '../../../shared-v2/services/notification.service';
 import { PortalKustoTelemetryService } from '../../../shared/services/portal-kusto-telemetry.service';
 import { SubscriptionPropertiesService } from '../../../shared/services/subscription-properties.service';
-import { MessageBarType } from 'office-ui-fabric-react';
+
 @Component({
   selector: 'support-topic-redirect',
   templateUrl: './support-topic-redirect.component.html',
@@ -18,14 +18,15 @@ export class SupportTopicRedirectComponent implements OnInit {
 
   ngOnInit() {
     this._supportTopicService.getPathForSupportTopic(this._activatedRoute.snapshot.queryParams.supportTopicId, this._activatedRoute.snapshot.queryParams.pesId, this._activatedRoute.snapshot.queryParams.caseSubject).subscribe(res => {
-      this._router.navigate([`../${res.path}`], { relativeTo: this._activatedRoute, queryParams: res.queryParams });
+        this._router.navigate([`../${res.path}`], { relativeTo: this._activatedRoute, queryParams: res.queryParams });
 
-      this._authService.getStartupInfo().subscribe(startupInfo => {
-        if (startupInfo.source && startupInfo.source.toLowerCase() == ('CaseSubmissionV2-NonContext').toLowerCase() && !startupInfo.isIFrameForCaseSubmissionSolution) {
-          const notification = new Notification('To continue with support request creation, please click on the "X" in the upper right corner.', null, MessageBarType.info, 'fa-info-circle', undefined, true);
-          this._notificationService.pushNotification(notification);
-        }
-      });
+    // Discussed with the team and we decide to disable the notification for now
+    //   this._authService.getStartupInfo().subscribe(startupInfo => {
+    //     if (startupInfo.source && startupInfo.source.toLowerCase() == ('CaseSubmissionV2-NonContext').toLowerCase() && !startupInfo.isIFrameForCaseSubmissionSolution) {
+    //       const notification = new Notification('To continue with support request creation, please click on the "X" in the upper right corner.', null, MessageBarType.info, 'fa-info-circle', undefined, true);
+    //       this._notificationService.pushNotification(notification);
+    //     }
+    //   });
     });
 
     // Logging subscription location placement id in case detector opened from Case Submission flow directly

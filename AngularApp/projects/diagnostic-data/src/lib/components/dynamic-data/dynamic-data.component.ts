@@ -38,6 +38,7 @@ import { xAxisPlotBand, zoomBehaviors, XAxisSelection } from '../../models/time-
 import { DynamicInsightV4Component } from '../dynamic-insight-v4/dynamic-insight-v4.component';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { DataTableV4Component } from '../data-table-v4/data-table-v4.component';
+import { KeystoneInsightComponent } from '../keystone-insight/keystone-insight.component';
 
 @Component({
   selector: 'dynamic-data',
@@ -47,7 +48,7 @@ import { DataTableV4Component } from '../data-table-v4/data-table-v4.component';
     TimeSeriesGraphComponent, DataTableComponent, DataSummaryComponent, EmailComponent,
     InsightsComponent, TimeSeriesInstanceGraphComponent, DynamicInsightComponent, MarkdownViewComponent,
     DetectorListComponent, DropdownComponent, CardSelectionComponent, SolutionComponent, GuageControlComponent, FormComponent,
-    ChangeAnalysisOnboardingComponent, ChangesetsViewComponent, AppDependenciesComponent, AppInsightsMarkdownComponent, DetectorListAnalysisComponent, ConnectAppInsightsComponent, DetectorSearchComponent, SummaryCardsComponent, InsightsV4Component, DropdownV4Component, CardSelectionV4Component,DynamicInsightV4Component,DataTableV4Component
+    ChangeAnalysisOnboardingComponent, ChangesetsViewComponent, AppDependenciesComponent, AppInsightsMarkdownComponent, DetectorListAnalysisComponent, ConnectAppInsightsComponent, DetectorSearchComponent, SummaryCardsComponent, InsightsV4Component, DropdownV4Component, CardSelectionV4Component,DynamicInsightV4Component,DataTableV4Component, KeystoneInsightComponent,
   ]
 })
 export class DynamicDataComponent implements OnInit {
@@ -72,9 +73,9 @@ export class DynamicDataComponent implements OnInit {
     if(!!value) {
       this._xAxisPlotBands = value;
       if(this._instanceRef != null) {
-        this._instanceRef.xAxisPlotBands = value;      
-      }      
-    }    
+        this._instanceRef.xAxisPlotBands = value;
+      }
+    }
   }
   public get xAxisPlotBands() {
     return this._xAxisPlotBands;
@@ -85,7 +86,7 @@ export class DynamicDataComponent implements OnInit {
     if(!!value) {
       this._zoomBehavior = value;
       if(this._instanceRef != null) {
-        this._instanceRef.zoomBehavior = value;      
+        this._instanceRef.zoomBehavior = value;
       }
     }
   }
@@ -93,7 +94,7 @@ export class DynamicDataComponent implements OnInit {
       return this._zoomBehavior;
   }
 
-  @Output() XAxisSelection:EventEmitter<XAxisSelection> = new EventEmitter<XAxisSelection>();	
+  @Output() XAxisSelection:EventEmitter<XAxisSelection> = new EventEmitter<XAxisSelection>();
 
   @ViewChild('dynamicDataContainer', { read: ViewContainerRef, static: true }) dynamicDataContainer: ViewContainerRef;
   private isLegacy: boolean;
@@ -125,7 +126,7 @@ export class DynamicDataComponent implements OnInit {
       instance.compilationPackage = this.compilationPackage;
       instance.isAnalysisView = this.isAnalysisView;
       instance.xAxisPlotBands = this.xAxisPlotBands;
-      instance.zoomBehavior = this.zoomBehavior;      
+      instance.zoomBehavior = this.zoomBehavior;
       instance.XAxisSelection.subscribe(XAxisSelectionEventArgs => {
         this.XAxisSelection.emit(XAxisSelectionEventArgs);
       });
@@ -177,6 +178,8 @@ export class DynamicDataComponent implements OnInit {
         return DetectorSearchComponent;
       case RenderingType.AppInsightEnablement:
         return ConnectAppInsightsComponent;
+      case RenderingType.KeystoneComponent:
+          return KeystoneInsightComponent;
       default:
         return null;
     }

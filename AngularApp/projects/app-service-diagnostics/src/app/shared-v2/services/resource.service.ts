@@ -53,6 +53,13 @@ export class ResourceService {
     return of(null);
   }
 
+  public getKeystoneDetectorId(): Observable<string>{
+      if (this.armResourceConfig) {
+          return of(this.armResourceConfig.keystoneDetectorId);
+      }
+      return of(null);
+  }
+
   public get searchSuffix(): string {
     if (this._genericArmConfigService) {
       let currConfig: ArmResourceConfig = this._genericArmConfigService.getArmResourceConfig(this.resource.id);

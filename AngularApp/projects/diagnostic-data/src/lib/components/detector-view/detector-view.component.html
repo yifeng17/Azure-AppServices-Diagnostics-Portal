@@ -50,7 +50,7 @@
     <hr>
   </div>
 
-  <br *ngIf="isInCaseSubmission()">
+  <br *ngIf="isInCaseSubmission() && !isKeystoneView">
 
   <div *ngIf="isAnalysisView && supportsDownTime" class="dynamic-data-container">
     <div class="downtime-container">
