@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { TelemetryService } from 'diagnostic-data';
 import { MessageBarType, IMessageBarProps, IMessageBarStyles } from 'office-ui-fabric-react';
 import { throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, filter, map } from 'rxjs/operators';
 import { Globals } from '../../../globals';
 import { WebSitesService } from '../../../resources/web-sites/services/web-sites.service';
 import { NotificationService } from '../../../shared-v2/services/notification.service';
@@ -148,23 +148,30 @@ export class RiskAlertsNotificationComponent implements OnInit {
                     // Only show risk alert when:
                     // 1. In case submission
                     // 2. There is at least one risk check fails
-                    // 3. No keystone solution is shown
-                    let isTargetSolutionReady = (this._router.url.includes("/analysis/") || this._router.url.includes("/detectors/")) && !this._router.url.includes("/integratedSolutions/");
-                    this.showRiskAlertsNotification = (startupInfo.supportTopicId && startupInfo.supportTopicId != ''&&  isTargetSolutionReady && !this.riskAlertChecksHealthy);
+                    // 3. No keystone solution is presented
+
+                    this._router.events.subscribe(event => {
+                        if (event instanceof NavigationEnd) {
+                            let currentUrlPath = event.url;
+                            let isTargetSolutionReady = (currentUrlPath.includes("/analysis/") || currentUrlPath.includes("/detectors/")) && !currentUrlPath.includes("/integratedSolutions/");
+                            this.showRiskAlertsNotification = (startupInfo.supportTopicId && startupInfo.supportTopicId != '' && isTargetSolutionReady && !this.riskAlertChecksHealthy);
+                        }
+                    });
+
+                    var riskAlertCheckDetails = {
+                        "riskAlertChecksHealthy": this.riskAlertChecksHealthy,
+                        "autoHeal": autoHealDetail,
+                        "healthCheck": healthCheckDetail,
+                        "workerDistribution": workDistributionDetail,
+                        "appDensity": appDensityCheckDetail
+                    };
+
+                    this.globals.updatereliabilityChecksDetails(riskAlertCheckDetails);
+
+                }, e => {
+                    this.globals.reliabilityChecksDetailsBehaviorSubject.error(e);
                 });
-
-                var riskAlertCheckDetails = {
-                    "riskAlertChecksHealthy": this.riskAlertChecksHealthy,
-                    "autoHeal": autoHealDetail,
-                    "healthCheck": healthCheckDetail,
-                    "workerDistribution": workDistributionDetail,
-                    "appDensity": appDensityCheckDetail
-                };
-
-                this.globals.updatereliabilityChecksDetails(riskAlertCheckDetails);
             }
-        },e =>{
-            this.globals.reliabilityChecksDetailsBehaviorSubject.error(e);
         });
     }
 
