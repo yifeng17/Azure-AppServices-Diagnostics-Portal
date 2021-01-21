@@ -123,10 +123,12 @@ export class AutohealingCustomActionComponent implements OnInit, OnChanges, Afte
   }
 
   chooseDiagnoser(val) {
-    this.diagnoser = val;
-    this.daasValidatorRef.diagnoserName = this.diagnoser.Name;
-    this.daasValidatorRef.validateDiagnoser();
-    this.updateDaasAction(false);
+    if (val != null) {
+      this.diagnoser = val;
+      this.daasValidatorRef.diagnoserName = this.diagnoser.Name;
+      this.daasValidatorRef.validateDiagnoser();
+      this.updateDaasAction(false);
+    }
   }
 
   chooseDiagnoserAction(val) {
@@ -166,7 +168,7 @@ export class AutohealingCustomActionComponent implements OnInit, OnChanges, Afte
   updateDaasAction(emitEvent: boolean) {
     if (this.validationResult.Validated) {
       this.updatedCustomAction.exe = daasConsolePath;
-      this.updatedCustomAction.parameters = this.validationResult.BlobSasUri.length > 0 ? `-${this.diagnoserOption.option} "${this.diagnoser.Name}" -BlobSasUri:"${this.validationResult.BlobSasUri}" 60` : `-${this.diagnoserOption.option} "${this.diagnoser.Name}"  60`;
+      this.updatedCustomAction.parameters = this.validationResult.BlobSasUri.length > 0 ? `-${this.diagnoserOption.option} "${this.diagnoser.Name}" -BlobSasUri:"${this.validationResult.BlobSasUri}"` : `-${this.diagnoserOption.option} "${this.diagnoser.Name}"`;
     } else {
       this.updatedCustomAction.exe = '';
       this.updatedCustomAction.parameters = '';
