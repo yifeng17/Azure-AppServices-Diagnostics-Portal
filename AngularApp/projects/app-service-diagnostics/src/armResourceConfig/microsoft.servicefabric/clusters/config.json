@@ -9,7 +9,10 @@
 	"azureServiceName": "Service Fabric",
 	"armApiVersion": "2020-03-01",
 	"isSearchEnabled": true,
-	"isApplicableForLiveChat": false,
+	"liveChatConfig": {
+        "isApplicableForLiveChat": false,
+        "supportTopicIds": []
+    },
 	"categories": [{
 			"id": "ClusterAnalysis",
 			"name": "Cluster Insights",
