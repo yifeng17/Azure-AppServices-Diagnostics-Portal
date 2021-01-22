@@ -65,7 +65,7 @@ export class GenericArmConfigService {
     return null;
   }
 
-  public distinctStringValues(value:string, index: number, self: string[]): boolean {
+  public distinctStringValues(value: string, index: number, self: string[]): boolean {
     return self.indexOf(value) === index;
   }
 
@@ -112,99 +112,152 @@ export class GenericArmConfigService {
         }
 
         //currConfig.homePageText.title
-        if (
-          (this.overrideConfig.homePageText && this.overrideConfig.homePageText.title) ||
-          (this.resourceConfig.homePageText && this.resourceConfig.homePageText.title)
-        ) {
-          currConfig.homePageText.title = this.getValue(this.resourceConfig.homePageText.title, this.overrideConfig.homePageText.title);
+        try {
+          if (
+            (this.overrideConfig.homePageText && this.overrideConfig.homePageText.title) ||
+            (this.resourceConfig.homePageText && this.resourceConfig.homePageText.title)
+          ) {
+            currConfig.homePageText.title = this.getValue(this.resourceConfig.homePageText.title, this.overrideConfig.homePageText.title);
+          }
+        } catch (error) {
+          console.log(`Error while merging title for resource ${resourceUri}. Error : ${error}`);
+          throw error;
         }
 
+
         //currConfig.homePageText.description
-        if (
-          (this.overrideConfig.homePageText && this.overrideConfig.homePageText.description) ||
-          (this.resourceConfig.homePageText && this.resourceConfig.homePageText.description)
-        ) {
-          currConfig.homePageText.description = this.getValue(this.resourceConfig.homePageText.description, this.overrideConfig.homePageText.description);
+        try {
+          if (
+            (this.overrideConfig.homePageText && this.overrideConfig.homePageText.description) ||
+            (this.resourceConfig.homePageText && this.resourceConfig.homePageText.description)
+          ) {
+            currConfig.homePageText.description = this.getValue(this.resourceConfig.homePageText.description, this.overrideConfig.homePageText.description);
+          }
+        } catch (error) {
+          console.log(`Error while merging description for resource ${resourceUri}. Error : ${error}`);
+          throw error;
         }
 
         //currConfig.homePageText.searchBarPlaceHolder
-        if (
-          (this.overrideConfig.homePageText && this.overrideConfig.homePageText.searchBarPlaceHolder) ||
-          (this.resourceConfig.homePageText && this.resourceConfig.homePageText.searchBarPlaceHolder)
-        ) {
-          currConfig.homePageText.searchBarPlaceHolder = this.getValue(this.resourceConfig.homePageText.searchBarPlaceHolder, this.overrideConfig.homePageText.searchBarPlaceHolder);
+        try {
+          if (
+            (this.overrideConfig.homePageText && this.overrideConfig.homePageText.searchBarPlaceHolder) ||
+            (this.resourceConfig.homePageText && this.resourceConfig.homePageText.searchBarPlaceHolder)
+          ) {
+            currConfig.homePageText.searchBarPlaceHolder = this.getValue(this.resourceConfig.homePageText.searchBarPlaceHolder, this.overrideConfig.homePageText.searchBarPlaceHolder);
+          }
+        } catch (error) {
+          console.log(`Error while merging searchBarPlaceHolder for resource ${resourceUri}. Error : ${error}`);
+          throw error;
         }
 
         //currConfig.matchRegEx
-        if (this.getValue(this.resourceConfig.matchRegEx, this.overrideConfig.matchRegEx) != null) {
-          currConfig.matchRegEx = this.getValue(this.resourceConfig.matchRegEx, this.overrideConfig.matchRegEx);
+        try {
+          if (this.getValue(this.resourceConfig.matchRegEx, this.overrideConfig.matchRegEx) != null) {
+            currConfig.matchRegEx = this.getValue(this.resourceConfig.matchRegEx, this.overrideConfig.matchRegEx);
+          }
+        } catch (error) {
+          console.log(`Error while merging matchRegEx for resource ${resourceUri}. Error : ${error}`);
+          throw error;
         }
+
 
         //currConfig.searchSuffix
-        if (this.getValue(this.resourceConfig.searchSuffix, this.overrideConfig.searchSuffix) != null) {
-          currConfig.searchSuffix = this.getValue(this.resourceConfig.searchSuffix, this.overrideConfig.searchSuffix);
+        try {
+          if (this.getValue(this.resourceConfig.searchSuffix, this.overrideConfig.searchSuffix) != null) {
+            currConfig.searchSuffix = this.getValue(this.resourceConfig.searchSuffix, this.overrideConfig.searchSuffix);
+          }
+        } catch (error) {
+          console.log(`Error while merging searchSuffix for resource ${resourceUri}. Error : ${error}`);
+          throw error;
         }
+
 
         //currConfig.azureServiceName
-        if (this.getValue(this.resourceConfig.azureServiceName, this.overrideConfig.azureServiceName) != null) {
-          currConfig.azureServiceName = this.getValue(this.resourceConfig.azureServiceName, this.overrideConfig.azureServiceName);
+        try {
+          if (this.getValue(this.resourceConfig.azureServiceName, this.overrideConfig.azureServiceName) != null) {
+            currConfig.azureServiceName = this.getValue(this.resourceConfig.azureServiceName, this.overrideConfig.azureServiceName);
+          }
+        } catch (error) {
+          console.log(`Error while merging azureServiceName for resource ${resourceUri}. Error : ${error}`);
+          throw error;
         }
+
 
         //currConfig.armApiVersion
-        if (this.getValue(this.resourceConfig.armApiVersion, this.overrideConfig.armApiVersion) != null) {
-          currConfig.armApiVersion = this.getValue(this.resourceConfig.armApiVersion, this.overrideConfig.armApiVersion);
+        try {
+          if (this.getValue(this.resourceConfig.armApiVersion, this.overrideConfig.armApiVersion) != null) {
+            currConfig.armApiVersion = this.getValue(this.resourceConfig.armApiVersion, this.overrideConfig.armApiVersion);
+          }
+        } catch (error) {
+          console.log(`Error while merging armApiVersion for resource ${resourceUri}. Error : ${error}`);
+          throw error;
         }
+
 
         //currConfig.isSearchEnabled
-        if (this.getValue(this.resourceConfig.isSearchEnabled, this.overrideConfig.isSearchEnabled) != null) {
-          currConfig.isSearchEnabled = this.getValue(this.resourceConfig.isSearchEnabled, this.overrideConfig.isSearchEnabled);
+        try {
+          if (this.getValue(this.resourceConfig.isSearchEnabled, this.overrideConfig.isSearchEnabled) != null) {
+            currConfig.isSearchEnabled = this.getValue(this.resourceConfig.isSearchEnabled, this.overrideConfig.isSearchEnabled);
+          }
+        } catch (error) {
+          console.log(`Error while merging isSearchEnabled for resource ${resourceUri}. Error : ${error}`);
+          throw error;
         }
+
 
         //currConfig.pesId
-        if (this.getValue(this.resourceConfig.pesId, this.overrideConfig.pesId) != null) {
-          currConfig.pesId = this.getValue(this.resourceConfig.pesId, this.overrideConfig.pesId);
+        try {
+          if (this.getValue(this.resourceConfig.pesId, this.overrideConfig.pesId) != null) {
+            currConfig.pesId = this.getValue(this.resourceConfig.pesId, this.overrideConfig.pesId);
+          }
+        } catch (error) {
+          console.log(`Error while merging pesId for resource ${resourceUri}. Error : ${error}`);
+          throw error;
         }
+
 
         //currConfig.liveChatConfig
-        if(this.overrideConfig.liveChatConfig && !this.resourceConfig.liveChatConfig) {
-          currConfig.liveChatConfig = this.overrideConfig.liveChatConfig;
-        }
-        else {
-          if(!this.overrideConfig.liveChatConfig && this.resourceConfig.liveChatConfig) {
-            currConfig.liveChatConfig = this.resourceConfig.liveChatConfig;
+        try {
+          if (this.overrideConfig.liveChatConfig && !this.resourceConfig.liveChatConfig) {
+            currConfig.liveChatConfig = this.overrideConfig.liveChatConfig;
           }
           else {
-            let currLiveChatConfig: LiveChatConfig = {
-              isApplicableForLiveChat: false,
-              supportTopicIds: []
+            if (!this.overrideConfig.liveChatConfig && this.resourceConfig.liveChatConfig) {
+              currConfig.liveChatConfig = this.resourceConfig.liveChatConfig;
             }
-            if(this.getValue(this.resourceConfig.liveChatConfig.isApplicableForLiveChat, this.overrideConfig.liveChatConfig.isApplicableForLiveChat)) {
-              currLiveChatConfig.isApplicableForLiveChat = this.getValue(this.resourceConfig.liveChatConfig.isApplicableForLiveChat, this.overrideConfig.liveChatConfig.isApplicableForLiveChat);
-            }
+            else {
+              let currLiveChatConfig: LiveChatConfig = {
+                isApplicableForLiveChat: false,
+                supportTopicIds: []
+              }
+              if (this.getValue(this.resourceConfig.liveChatConfig.isApplicableForLiveChat, this.overrideConfig.liveChatConfig.isApplicableForLiveChat)) {
+                currLiveChatConfig.isApplicableForLiveChat = this.getValue(this.resourceConfig.liveChatConfig.isApplicableForLiveChat, this.overrideConfig.liveChatConfig.isApplicableForLiveChat);
+              }
 
-            //Process supported support topics for live chat
-            let currMergedSupportTopicIds:string[] = [];
+              //Process supported support topics for live chat
+              let currMergedSupportTopicIds: string[] = [];
 
-            if(this.overrideConfig.liveChatConfig.supportTopicIds && this.overrideConfig.liveChatConfig.supportTopicIds.length > 0 &&
-              (!this.resourceConfig.liveChatConfig.supportTopicIds
-                ||  (this.resourceConfig.liveChatConfig.supportTopicIds && this.resourceConfig.liveChatConfig.supportTopicIds.length < 1)
-              )
+              if (this.overrideConfig.liveChatConfig.supportTopicIds && this.overrideConfig.liveChatConfig.supportTopicIds.length > 0 &&
+                (!this.resourceConfig.liveChatConfig.supportTopicIds
+                  || (this.resourceConfig.liveChatConfig.supportTopicIds && this.resourceConfig.liveChatConfig.supportTopicIds.length < 1)
+                )
               ) {
                 //Valid support topics exist only in overrideConfig
                 currMergedSupportTopicIds = this.overrideConfig.liveChatConfig.supportTopicIds;
-            }
-            else {
-              if(this.resourceConfig.liveChatConfig.supportTopicIds && this.resourceConfig.liveChatConfig.supportTopicIds.length > 0 &&
-                (!this.overrideConfig.liveChatConfig.supportTopicIds
-                  ||  (this.overrideConfig.liveChatConfig.supportTopicIds && this.overrideConfig.liveChatConfig.supportTopicIds.length < 1)
-                )
+              }
+              else {
+                if (this.resourceConfig.liveChatConfig.supportTopicIds && this.resourceConfig.liveChatConfig.supportTopicIds.length > 0 &&
+                  (!this.overrideConfig.liveChatConfig.supportTopicIds
+                    || (this.overrideConfig.liveChatConfig.supportTopicIds && this.overrideConfig.liveChatConfig.supportTopicIds.length < 1)
+                  )
                 ) {
                   //Valid support topics exist only in resourceConfig
                   currMergedSupportTopicIds = this.resourceConfig.liveChatConfig.supportTopicIds;
-              }
-              else {
-                if(this.overrideConfig.liveChatConfig.supportTopicIds && this.resourceConfig.liveChatConfig.supportTopicIds &&
-                  this.overrideConfig.liveChatConfig.supportTopicIds.length > 0 && this.resourceConfig.liveChatConfig.supportTopicIds.length > 0
+                }
+                else {
+                  if (this.overrideConfig.liveChatConfig.supportTopicIds && this.resourceConfig.liveChatConfig.supportTopicIds &&
+                    this.overrideConfig.liveChatConfig.supportTopicIds.length > 0 && this.resourceConfig.liveChatConfig.supportTopicIds.length > 0
                   ) {
                     //Support topics exist in both resourceConfig and overrideConfig, merge them
                     currMergedSupportTopicIds = this.overrideConfig.liveChatConfig.supportTopicIds.concat(this.resourceConfig.liveChatConfig.supportTopicIds);
@@ -212,7 +265,7 @@ export class GenericArmConfigService {
                     //Make sure that we have distinct values after merging.
                     currMergedSupportTopicIds = currMergedSupportTopicIds.filter(this.distinctStringValues);
 
-                    if(currMergedSupportTopicIds.findIndex((currEntry:string)=> { return currEntry === '*'  }) > -1) {
+                    if (currMergedSupportTopicIds.findIndex((currEntry: string) => { return currEntry === '*' }) > -1) {
                       currMergedSupportTopicIds = [];
                       //* means enabled for all support topics. So if we find it, make sure it is the only entry.
                       //This will help with perf later.
@@ -220,160 +273,176 @@ export class GenericArmConfigService {
                     }
 
                     //Convert each entry to lowercase
-                    currMergedSupportTopicIds.filter((value:string, index: number, self: string[]) => {
+                    currMergedSupportTopicIds.filter((value: string, index: number, self: string[]) => {
                       self[index] = self[index].toLowerCase();
                     });
 
-                } //Else of this means that support topics do not exist in either and it is fine since we already initialize currMergedSupportTopicIds as an empty array.
+                  } //Else of this means that support topics do not exist in either and it is fine since we already initialize currMergedSupportTopicIds as an empty array.
+                }
               }
+              currLiveChatConfig.supportTopicIds = currMergedSupportTopicIds;
+              currConfig.liveChatConfig = currLiveChatConfig;
             }
-            currLiveChatConfig.supportTopicIds = currMergedSupportTopicIds;
-            currConfig.liveChatConfig = currLiveChatConfig;
           }
+        } catch (error) {
+          console.log(`Error while merging liveChatConfig for resource ${resourceUri}. Error : ${error}`);
+          throw error;
         }
+
 
         //currConfig.categories
-        if (this.overrideConfig.categories && !this.resourceConfig.categories) {
-          currConfig.categories = this.overrideConfig.categories.filter(cat => { return cat.id !== '' });
-        }
-        else {
-          if (!this.overrideConfig.categories && this.resourceConfig.categories) {
-            currConfig.categories = this.resourceConfig.categories.filter(cat => { return cat.id !== '' });
+        try {
+          if (this.overrideConfig.categories && !this.resourceConfig.categories) {
+            currConfig.categories = this.overrideConfig.categories.filter(cat => { return cat.id !== '' });
           }
           else {
+            if (!this.overrideConfig.categories && this.resourceConfig.categories) {
+              currConfig.categories = this.resourceConfig.categories.filter(cat => { return cat.id !== '' });
+            }
+            else {
 
-            var processedCategories: string[] = [];
-            let mergedCategories: Category[] = [];
-            let currMergedCategory: Category = {
-              id: '',
-              name: '',
-              overviewDetectorId: '',
-              description: '',
-              keywords: [],
-              color: '',
-              createFlowForCategory: true,
-              chatEnabled: false
-            };
+              var processedCategories: string[] = [];
+              let mergedCategories: Category[] = [];
+              let currMergedCategory: Category = {
+                id: '',
+                name: '',
+                overviewDetectorId: '',
+                description: '',
+                keywords: [],
+                color: '',
+                createFlowForCategory: true,
+                chatEnabled: false
+              };
 
-            this.resourceConfig.categories.forEach(currCat => {
+              this.resourceConfig.categories.forEach(currCat => {
 
-              var categoryToCompare: Category = null;
-              this.overrideConfig.categories.some(overrideCat => {
-                if (overrideCat.id === currCat.id) {
-                  categoryToCompare = overrideCat;
-                  return true;
+                var categoryToCompare: Category = null;
+                this.overrideConfig.categories.some(overrideCat => {
+                  if (overrideCat.id === currCat.id) {
+                    categoryToCompare = overrideCat;
+                    return true;
+                  }
+                })
+
+                if (categoryToCompare) {
+                  //currConfig.categories[x].id
+                  currMergedCategory.id = categoryToCompare.id;
+
+                  //currConfig.categories[x].name
+                  if (categoryToCompare.name || currCat.name) {
+                    currMergedCategory.name = this.getValue(currCat.name, categoryToCompare.name);
+                  }
+
+                  //currConfig.categories[x].description
+                  if (categoryToCompare.description || currCat.description) {
+                    currMergedCategory.description = this.getValue(currCat.description, categoryToCompare.description);
+                  }
+
+                  //currConfig.categories[x].keywords
+                  if (categoryToCompare.keywords || currCat.keywords) {
+                    currMergedCategory.keywords = this.getValue(currCat.keywords, categoryToCompare.keywords);
+                  }
+
+                  //currConfig.categories[x].color
+                  if (categoryToCompare.color || currCat.color) {
+                    currMergedCategory.color = this.getValue(currCat.color, categoryToCompare.color);
+                  }
+
+                  //currConfig.categories[x].createFlowForCategory
+                  if (this.getValue(currCat.createFlowForCategory, categoryToCompare.createFlowForCategory) != null) {
+                    currMergedCategory.createFlowForCategory = this.getValue(currCat.createFlowForCategory, categoryToCompare.createFlowForCategory);
+                  }
+
+                  //currConfig.categories[x].chatEnabled
+                  if (this.getValue(currCat.chatEnabled, categoryToCompare.chatEnabled) != null) {
+                    currMergedCategory.chatEnabled = this.getValue(currCat.chatEnabled, categoryToCompare.chatEnabled);
+                  }
+
+                  mergedCategories.push(currMergedCategory);
+                  processedCategories.push(currMergedCategory.id);
                 }
-              })
-
-              if (categoryToCompare) {
-                //currConfig.categories[x].id
-                currMergedCategory.id = categoryToCompare.id;
-
-                //currConfig.categories[x].name
-                if (categoryToCompare.name || currCat.name) {
-                  currMergedCategory.name = this.getValue(currCat.name, categoryToCompare.name);
-                }
-
-                //currConfig.categories[x].description
-                if (categoryToCompare.description || currCat.description) {
-                  currMergedCategory.description = this.getValue(currCat.description, categoryToCompare.description);
-                }
-
-                //currConfig.categories[x].keywords
-                if (categoryToCompare.keywords || currCat.keywords) {
-                  currMergedCategory.keywords = this.getValue(currCat.keywords, categoryToCompare.keywords);
-                }
-
-                //currConfig.categories[x].color
-                if (categoryToCompare.color || currCat.color) {
-                  currMergedCategory.color = this.getValue(currCat.color, categoryToCompare.color);
-                }
-
-                //currConfig.categories[x].createFlowForCategory
-                if (this.getValue(currCat.createFlowForCategory, categoryToCompare.createFlowForCategory) != null) {
-                  currMergedCategory.createFlowForCategory = this.getValue(currCat.createFlowForCategory, categoryToCompare.createFlowForCategory);
-                }
-
-                //currConfig.categories[x].chatEnabled
-                if (this.getValue(currCat.chatEnabled, categoryToCompare.chatEnabled) != null) {
-                  currMergedCategory.chatEnabled = this.getValue(currCat.chatEnabled, categoryToCompare.chatEnabled);
-                }
-
-                mergedCategories.push(currMergedCategory);
-                processedCategories.push(currMergedCategory.id);
-              }
-              else {
-                mergedCategories.push(currCat);
-                processedCategories.push(currCat.id);
-              }
-            });
-
-            //Check to see if there was a config placed in the override that we haven't alrady processed
-
-            this.overrideConfig.categories.forEach(currCat => {
-              if (currCat.id != '') {
-                if (processedCategories.indexOf(currCat.id) < 0) {
+                else {
                   mergedCategories.push(currCat);
                   processedCategories.push(currCat.id);
                 }
-              }
-            });
+              });
 
-            //Override the default for all categories. Look for a category with empty id in override and then use it to override every category value in merged categories
+              //Check to see if there was a config placed in the override that we haven't already processed
 
-            this.overrideConfig.categories.some(currCat => {
-              if (currCat.id == '') {
-                mergedCategories.forEach(mergedCat => {
-
-                  //Check to see if this overriding was already processed.
-                  //If an element with the same id is found, then it was already processed. No need to apply the global rules here.
-                  var tempCat: Category;
-                  tempCat = this.overrideConfig.categories.find((element) => {
-                    return element.id === mergedCat.id;
-                  });
-                  if (!tempCat) {
-                    //Override keywords
-                    if (currCat.keywords && currCat.keywords.length > 0) {
-                      var mergedArray: string[];
-                      mergedArray = (mergedCat.keywords.join(',') + ',' + currCat.keywords.join(',')).split(',');
-                      mergedArray.forEach(strElement => {
-                        if (mergedCat.keywords.indexOf(strElement) < 0) {
-                          mergedCat.keywords.push(strElement);
-                        }
-                      });
-                    }
-
-                    //Override color
-                    if (!mergedCat.color) {
-                      mergedCat.color = this.getValue(mergedCat.color, currCat.color);
-                    }
-
-                    //Override createFlowForCategory
-                    if (this.getValue(mergedCat.createFlowForCategory, currCat.createFlowForCategory) != null) {
-                      mergedCat.createFlowForCategory = this.getValue(mergedCat.createFlowForCategory, currCat.createFlowForCategory);
-                    }
-
-                    //Override chatEnabled
-                    if (this.getValue(mergedCat.chatEnabled, currCat.chatEnabled) != null) {
-                      mergedCat.chatEnabled = this.getValue(mergedCat.chatEnabled, currCat.chatEnabled);
-                    }
+              this.overrideConfig.categories.forEach(currCat => {
+                if (currCat.id != '') {
+                  if (processedCategories.indexOf(currCat.id) < 0) {
+                    mergedCategories.push(currCat);
+                    processedCategories.push(currCat.id);
                   }
-                });
+                }
+              });
 
-                return true;
+              //Override the default for all categories. Look for a category with empty id in override and then use it to override every category value in merged categories
+
+              this.overrideConfig.categories.some(currCat => {
+                if (currCat.id == '') {
+                  mergedCategories.forEach(mergedCat => {
+
+                    //Check to see if this overriding was already processed.
+                    //If an element with the same id is found, then it was already processed. No need to apply the global rules here.
+                    var tempCat: Category;
+                    tempCat = this.overrideConfig.categories.find((element) => {
+                      return element.id === mergedCat.id;
+                    });
+                    if (!tempCat) {
+                      //Override keywords
+                      if (currCat.keywords && currCat.keywords.length > 0) {
+                        var mergedArray: string[];
+                        mergedArray = (mergedCat.keywords.join(',') + ',' + currCat.keywords.join(',')).split(',');
+                        mergedArray.forEach(strElement => {
+                          if (mergedCat.keywords.indexOf(strElement) < 0) {
+                            mergedCat.keywords.push(strElement);
+                          }
+                        });
+                      }
+
+                      //Override color
+                      if (!mergedCat.color) {
+                        mergedCat.color = this.getValue(mergedCat.color, currCat.color);
+                      }
+
+                      //Override createFlowForCategory
+                      if (this.getValue(mergedCat.createFlowForCategory, currCat.createFlowForCategory) != null) {
+                        mergedCat.createFlowForCategory = this.getValue(mergedCat.createFlowForCategory, currCat.createFlowForCategory);
+                      }
+
+                      //Override chatEnabled
+                      if (this.getValue(mergedCat.chatEnabled, currCat.chatEnabled) != null) {
+                        mergedCat.chatEnabled = this.getValue(mergedCat.chatEnabled, currCat.chatEnabled);
+                      }
+                    }
+                  });
+
+                  return true;
+                }
+              });
+              if (mergedCategories.length > 0) {
+                currConfig.categories = mergedCategories;
               }
-            });
-            if (mergedCategories.length > 0) {
-              currConfig.categories = mergedCategories;
             }
           }
+        } catch (error) {
+          console.log(`Error while merging categories for resource ${resourceUri}. Error : ${error}`);
+          throw error;
         }
 
+
         //currConfig.quickLinks
-        if(this.getValue(this.resourceConfig.quickLinks,this.overrideConfig.quickLinks) != null){
-                  currConfig.quickLinks = this.getValue(this.resourceConfig.quickLinks,this.overrideConfig.quickLinks);
+        try {
+          if (this.getValue(this.resourceConfig.quickLinks, this.overrideConfig.quickLinks) != null) {
+            currConfig.quickLinks = this.getValue(this.resourceConfig.quickLinks, this.overrideConfig.quickLinks);
+          }
+        } catch (error) {
+          console.log(`Error while merging quickLinks for resource ${resourceUri}. Error : ${error}`);
+          throw error;
         }
-        
+
         this.resourceMap.push(currConfig);
         return currConfig;
       })
