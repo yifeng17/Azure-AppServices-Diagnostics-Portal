@@ -74,6 +74,7 @@ export const TelemetryEventNames = {
     QuickLinkClicked: 'QuickLinkClicked',
     RiskTileClicked: 'RiskTileClicked',
     RiskTileLoaded: 'RiskTileLoaded',
+    ArmConfigMergeError: 'ArmConfigMergeError',
 };
 
 export const TelemetrySource = {
