@@ -4,7 +4,8 @@ import { HttpClient } from '@angular/common/http';
 import { map, catchError } from 'rxjs/operators';
 import { Category } from "../../shared-v2/models/category";
 import { Observable, of, forkJoin } from 'rxjs';
-import { ResourceDescriptor } from 'diagnostic-data';
+import { AppInsightsTelemetryService, ResourceDescriptor, TelemetryEventNames } from 'diagnostic-data';
+import { PortalKustoTelemetryService } from './portal-kusto-telemetry.service';
 
 @Injectable()
 export class GenericArmConfigService {
@@ -69,8 +70,36 @@ export class GenericArmConfigService {
     return self.indexOf(value) === index;
   }
 
+  logEvent(eventMessage: string, properties: { [name: string]: string }, measurements?: any) {
+    try
+    {
+      if(!!this._telemetryService) {
+        this._telemetryService.logEvent(eventMessage, properties, measurements);
+      }
 
-  constructor(private _http: HttpClient) { }
+      if(!!this._appInsightsTelemetryService) {
+        this._appInsightsTelemetryService.logEvent(eventMessage, properties, measurements);
+      }
+    }
+    catch(error) {}
+  }
+
+  logException(exception: Error, handledAt?: string, properties?: { [name: string]: string }, measurements?: any, severityLevel?: any) {
+    try
+    {
+      if(!!this._telemetryService) {
+        this._telemetryService.logException(exception, handledAt, properties, measurements, severityLevel);
+      }
+
+      if(!!this._appInsightsTelemetryService) {
+        this._appInsightsTelemetryService.logException(exception, handledAt, properties, severityLevel);
+      }
+    }
+    catch(error) {}
+  }
+
+
+  constructor(private _http: HttpClient, private _telemetryService?: PortalKustoTelemetryService, private _appInsightsTelemetryService?:AppInsightsTelemetryService) { }
 
   public initArmConfig(resourceUri: string): Observable<ArmResourceConfig> {
     if (!resourceUri.startsWith('/')) {
@@ -98,6 +127,7 @@ export class GenericArmConfigService {
             description: '',
             searchBarPlaceHolder: ''
           },
+          isSearchEnabled:true,
           categories: [{
             id: '',
             name: '',
@@ -120,7 +150,11 @@ export class GenericArmConfigService {
             currConfig.homePageText.title = this.getValue(this.resourceConfig.homePageText.title, this.overrideConfig.homePageText.title);
           }
         } catch (error) {
-          console.log(`Error while merging title for resource ${resourceUri}. Error : ${error}`);
+          this.logException(error, null, {
+            "resourceUri": resourceUri,
+            "reason": `${TelemetryEventNames.ArmConfigMergeError}: Error while merging armConfig.`,
+            "field": "homePageText.title" 
+          });
           throw error;
         }
 
@@ -134,7 +168,11 @@ export class GenericArmConfigService {
             currConfig.homePageText.description = this.getValue(this.resourceConfig.homePageText.description, this.overrideConfig.homePageText.description);
           }
         } catch (error) {
-          console.log(`Error while merging description for resource ${resourceUri}. Error : ${error}`);
+          this.logException(error, null, {
+            "resourceUri": resourceUri,
+            "reason": `${TelemetryEventNames.ArmConfigMergeError}: Error while merging armConfig.`,
+            "field": "homePageText.description" 
+          });          
           throw error;
         }
 
@@ -147,7 +185,11 @@ export class GenericArmConfigService {
             currConfig.homePageText.searchBarPlaceHolder = this.getValue(this.resourceConfig.homePageText.searchBarPlaceHolder, this.overrideConfig.homePageText.searchBarPlaceHolder);
           }
         } catch (error) {
-          console.log(`Error while merging searchBarPlaceHolder for resource ${resourceUri}. Error : ${error}`);
+          this.logException(error, null, {
+            "resourceUri": resourceUri,
+            "reason": `${TelemetryEventNames.ArmConfigMergeError}: Error while merging armConfig.`,
+            "field": "homePageText.searchBarPlaceHolder" 
+          });
           throw error;
         }
 
@@ -157,7 +199,11 @@ export class GenericArmConfigService {
             currConfig.matchRegEx = this.getValue(this.resourceConfig.matchRegEx, this.overrideConfig.matchRegEx);
           }
         } catch (error) {
-          console.log(`Error while merging matchRegEx for resource ${resourceUri}. Error : ${error}`);
+          this.logException(error, null, {
+            "resourceUri": resourceUri,
+            "reason": `${TelemetryEventNames.ArmConfigMergeError}: Error while merging armConfig.`,
+            "field": "matchRegEx" 
+          });
           throw error;
         }
 
@@ -168,7 +214,11 @@ export class GenericArmConfigService {
             currConfig.searchSuffix = this.getValue(this.resourceConfig.searchSuffix, this.overrideConfig.searchSuffix);
           }
         } catch (error) {
-          console.log(`Error while merging searchSuffix for resource ${resourceUri}. Error : ${error}`);
+          this.logException(error, null, {
+            "resourceUri": resourceUri,
+            "reason": `${TelemetryEventNames.ArmConfigMergeError}: Error while merging armConfig.`,
+            "field": "searchSuffix" 
+          });          
           throw error;
         }
 
@@ -179,7 +229,11 @@ export class GenericArmConfigService {
             currConfig.azureServiceName = this.getValue(this.resourceConfig.azureServiceName, this.overrideConfig.azureServiceName);
           }
         } catch (error) {
-          console.log(`Error while merging azureServiceName for resource ${resourceUri}. Error : ${error}`);
+          this.logException(error, null, {
+            "resourceUri": resourceUri,
+            "reason": `${TelemetryEventNames.ArmConfigMergeError}: Error while merging armConfig.`,
+            "field": "azureServiceName" 
+          });
           throw error;
         }
 
@@ -190,7 +244,11 @@ export class GenericArmConfigService {
             currConfig.armApiVersion = this.getValue(this.resourceConfig.armApiVersion, this.overrideConfig.armApiVersion);
           }
         } catch (error) {
-          console.log(`Error while merging armApiVersion for resource ${resourceUri}. Error : ${error}`);
+          this.logException(error, null, {
+            "resourceUri": resourceUri,
+            "reason": `${TelemetryEventNames.ArmConfigMergeError}: Error while merging armConfig.`,
+            "field": "armApiVersion" 
+          });
           throw error;
         }
 
@@ -201,7 +259,11 @@ export class GenericArmConfigService {
             currConfig.isSearchEnabled = this.getValue(this.resourceConfig.isSearchEnabled, this.overrideConfig.isSearchEnabled);
           }
         } catch (error) {
-          console.log(`Error while merging isSearchEnabled for resource ${resourceUri}. Error : ${error}`);
+          this.logException(error, null, {
+            "resourceUri": resourceUri,
+            "reason": `${TelemetryEventNames.ArmConfigMergeError}: Error while merging armConfig.`,
+            "field": "isSearchEnabled" 
+          });
           throw error;
         }
 
@@ -212,7 +274,11 @@ export class GenericArmConfigService {
             currConfig.pesId = this.getValue(this.resourceConfig.pesId, this.overrideConfig.pesId);
           }
         } catch (error) {
-          console.log(`Error while merging pesId for resource ${resourceUri}. Error : ${error}`);
+          this.logException(error, null, {
+            "resourceUri": resourceUri,
+            "reason": `${TelemetryEventNames.ArmConfigMergeError}: Error while merging armConfig.`,
+            "field": "pesId" 
+          });
           throw error;
         }
 
@@ -285,7 +351,11 @@ export class GenericArmConfigService {
             }
           }
         } catch (error) {
-          console.log(`Error while merging liveChatConfig for resource ${resourceUri}. Error : ${error}`);
+          this.logException(error, null, {
+            "resourceUri": resourceUri,
+            "reason": `${TelemetryEventNames.ArmConfigMergeError}: Error while merging armConfig.`,
+            "field": "liveChatConfig" 
+          });
           throw error;
         }
 
@@ -428,7 +498,11 @@ export class GenericArmConfigService {
             }
           }
         } catch (error) {
-          console.log(`Error while merging categories for resource ${resourceUri}. Error : ${error}`);
+          this.logException(error, null, {
+            "resourceUri": resourceUri,
+            "reason": `${TelemetryEventNames.ArmConfigMergeError}: Error while merging armConfig.`,
+            "field": "categories" 
+          });
           throw error;
         }
 
@@ -439,7 +513,11 @@ export class GenericArmConfigService {
             currConfig.quickLinks = this.getValue(this.resourceConfig.quickLinks, this.overrideConfig.quickLinks);
           }
         } catch (error) {
-          console.log(`Error while merging quickLinks for resource ${resourceUri}. Error : ${error}`);
+          this.logException(error, null, {
+            "resourceUri": resourceUri,
+            "reason": `${TelemetryEventNames.ArmConfigMergeError}: Error while merging armConfig.`,
+            "field": "quickLinks" 
+          });
           throw error;
         }
 
