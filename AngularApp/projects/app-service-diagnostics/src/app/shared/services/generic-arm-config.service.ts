@@ -620,14 +620,14 @@ export class GenericArmConfigService {
 
   getApiVersion(resourceUri: string): string {
     let apiVersion = '';
-    if (!!this.getArmApiConfig(resourceUri) && !!this.getArmApiConfig(resourceUri).armApiVersion && this.getArmApiConfig(resourceUri).armApiVersion !== '') {
+    if (!!this.getArmApiConfig(resourceUri) && !!this.getArmApiConfig(resourceUri).armApiVersion) {
       apiVersion = this.getArmApiConfig(resourceUri).armApiVersion;
     }
     return apiVersion;
   }  
 
   isArmApiResponseBase64Encoded(resourceUri:string):boolean {
-    if (!!this.getArmApiConfig(resourceUri) && !!this.getArmApiConfig(resourceUri).isArmApiResponseBase64Encoded && this.getArmApiConfig(resourceUri).isArmApiResponseBase64Encoded === true) {
+    if (!!this.getArmApiConfig(resourceUri) && !!this.getArmApiConfig(resourceUri).isArmApiResponseBase64Encoded) {
        return true;
     }
     else {
