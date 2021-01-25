@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ArmResourceConfig, LiveChatConfig } from '../models/arm/armResourceConfig'
+import { ArmApiConfig, ArmResourceConfig, LiveChatConfig } from '../models/arm/armResourceConfig'
 import { HttpClient } from '@angular/common/http';
 import { map, catchError } from 'rxjs/operators';
 import { Category } from "../../shared-v2/models/category";
@@ -127,6 +127,10 @@ export class GenericArmConfigService {
             description: '',
             searchBarPlaceHolder: ''
           },
+          armApiConfig: {
+            armApiVersion: '',
+            isArmApiResponseBase64Encoded:false
+          },
           isSearchEnabled:true,
           categories: [{
             id: '',
@@ -238,16 +242,64 @@ export class GenericArmConfigService {
         }
 
 
-        //currConfig.armApiVersion
+        //currConfig.armApiConfig
         try {
-          if (this.getValue(this.resourceConfig.armApiVersion, this.overrideConfig.armApiVersion) != null) {
-            currConfig.armApiVersion = this.getValue(this.resourceConfig.armApiVersion, this.overrideConfig.armApiVersion);
+          if(this.overrideConfig.armApiConfig && !this.resourceConfig.armApiConfig) {
+            //armApiConfig present only in override.json
+            currConfig.armApiConfig = this.overrideConfig.armApiConfig;
+          }
+          else {
+            if(!this.overrideConfig.armApiConfig && this.resourceConfig.armApiConfig) {
+              //armApiConfig present only in config.json
+              currConfig.armApiConfig = this.resourceConfig.armApiConfig;
+            }
+            else {
+              let currArmApiConfig:ArmApiConfig = {
+                armApiVersion:'',
+                isArmApiResponseBase64Encoded:false
+              };
+              if(this.overrideConfig.armApiConfig && this.resourceConfig.armApiConfig) {
+                //armApiConfig is not present in both configs. Merge.
+
+                //armApiConfig.armApiVersion
+                try{
+                  if (!!this.getValue(this.resourceConfig.armApiConfig.armApiVersion, this.overrideConfig.armApiConfig.armApiVersion)) {
+                    currArmApiConfig.armApiVersion = this.getValue(this.resourceConfig.armApiConfig.armApiVersion, this.overrideConfig.armApiConfig.armApiVersion);
+                  }
+                }
+                catch(error) {
+                  this.logException(error, null, {
+                    "resourceUri": resourceUri,
+                    "reason": `${TelemetryEventNames.ArmConfigMergeError}: Error while merging armConfig.`,
+                    "field": "armApiConfig.armApiVersion" 
+                  });
+                  throw error;
+                }
+
+                //armApiConfig.isArmApiResponseBase64Encoded
+                try{
+                  if (!!this.getValue(this.resourceConfig.armApiConfig.isArmApiResponseBase64Encoded, this.overrideConfig.armApiConfig.isArmApiResponseBase64Encoded)) {
+                    currArmApiConfig.isArmApiResponseBase64Encoded = this.getValue(this.resourceConfig.armApiConfig.isArmApiResponseBase64Encoded, this.overrideConfig.armApiConfig.isArmApiResponseBase64Encoded);
+                  }
+                }
+                catch(error) {
+                  this.logException(error, null, {
+                    "resourceUri": resourceUri,
+                    "reason": `${TelemetryEventNames.ArmConfigMergeError}: Error while merging armConfig.`,
+                    "field": "armApiConfig.isArmApiResponseBase64Encoded" 
+                  });
+                  throw error;
+                }
+              }
+              //Update the merged config.
+              currConfig.armApiConfig = currArmApiConfig;
+            }
           }
         } catch (error) {
           this.logException(error, null, {
             "resourceUri": resourceUri,
             "reason": `${TelemetryEventNames.ArmConfigMergeError}: Error while merging armConfig.`,
-            "field": "armApiVersion" 
+            "field": "armApiConfig" 
           });
           throw error;
         }
@@ -296,7 +348,7 @@ export class GenericArmConfigService {
               let currLiveChatConfig: LiveChatConfig = {
                 isApplicableForLiveChat: false,
                 supportTopicIds: []
-              }
+              };
               if (this.getValue(this.resourceConfig.liveChatConfig.isApplicableForLiveChat, this.overrideConfig.liveChatConfig.isApplicableForLiveChat)) {
                 currLiveChatConfig.isApplicableForLiveChat = this.getValue(this.resourceConfig.liveChatConfig.isApplicableForLiveChat, this.overrideConfig.liveChatConfig.isApplicableForLiveChat);
               }
@@ -557,12 +609,30 @@ export class GenericArmConfigService {
     return returnValue;
   }
 
+  getArmApiConfig(resourceUri: string): ArmApiConfig {
+    if (this.getArmResourceConfig(resourceUri) && !!this.getArmResourceConfig(resourceUri).armApiConfig) {
+      return this.getArmResourceConfig(resourceUri).armApiConfig;
+    }
+    else {
+      return null;
+    }
+  }
+
   getApiVersion(resourceUri: string): string {
     let apiVersion = '';
-    if (this.getArmResourceConfig(resourceUri)) {
-      apiVersion = this.getArmResourceConfig(resourceUri).armApiVersion;
+    if (!!this.getArmApiConfig(resourceUri) && !!this.getArmApiConfig(resourceUri).armApiVersion && this.getArmApiConfig(resourceUri).armApiVersion !== '') {
+      apiVersion = this.getArmApiConfig(resourceUri).armApiVersion;
     }
     return apiVersion;
+  }  
+
+  isArmApiResponseBase64Encoded(resourceUri:string):boolean {
+    if (!!this.getArmApiConfig(resourceUri) && !!this.getArmApiConfig(resourceUri).isArmApiResponseBase64Encoded && this.getArmApiConfig(resourceUri).isArmApiResponseBase64Encoded === true) {
+       return true;
+    }
+    else {
+      return false;
+    }
   }
 
 }
