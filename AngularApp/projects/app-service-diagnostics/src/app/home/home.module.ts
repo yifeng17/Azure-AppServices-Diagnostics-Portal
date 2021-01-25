@@ -32,6 +32,7 @@ import { UncategorizedDetectorsResolver } from './resolvers/uncategorized-detect
 import { DetectorCategorizationService } from '../shared/services/detector-categorized.service';
 import { ToolNames } from '../shared/models/tools-constants';
 import { ProfilerToolComponent } from '../shared/components/tools/profiler-tool/profiler-tool.component';
+import { NetworkCheckComponent } from '../shared/components/tools/network-checks/network-checks.component';
 import { MemoryDumpToolComponent } from '../shared/components/tools/memorydump-tool/memorydump-tool.component';
 import { JavaThreadDumpToolComponent } from '../shared/components/tools/java-threaddump-tool/java-threaddump-tool.component';
 import { JavaMemoryDumpToolComponent } from '../shared/components/tools/java-memorydump-tool/java-memorydump-tool.component';
@@ -183,6 +184,14 @@ export const HomeRoutes = RouterModule.forChild([
                 component: ProfilerToolComponent,
                 data: {
                     navigationTitle: ToolNames.Profiler,
+                    cacheComponent: true
+                }
+            },
+            {
+                path: 'tools/networkchecks',
+                component: NetworkCheckComponent,
+                data: {
+                    navigationTitle: ToolNames.NetworkChecks,
                     cacheComponent: true
                 }
             },

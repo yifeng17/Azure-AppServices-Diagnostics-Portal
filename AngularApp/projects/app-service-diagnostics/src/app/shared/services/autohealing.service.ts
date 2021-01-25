@@ -39,8 +39,10 @@ export class AutohealingService {
 
     isProactiveAutohealEnabled(site: SiteInfoMetaData): Observable<boolean> {
         let isProactiveEnabled: boolean = true;
+        debugger;
         return this._siteService.getSiteAppSettings(site.subscriptionId, site.resourceGroupName, site.siteName, site.slot).pipe(
             map(settingsResponse => {
+                debugger;
                 if (settingsResponse && settingsResponse.properties) {
                     if (settingsResponse.properties['WEBSITE_PROACTIVE_AUTOHEAL_ENABLED']) {
                         const settingValue: string = settingsResponse.properties['WEBSITE_PROACTIVE_AUTOHEAL_ENABLED'];

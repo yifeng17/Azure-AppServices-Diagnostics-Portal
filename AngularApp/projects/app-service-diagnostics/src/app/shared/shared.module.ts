@@ -133,6 +133,7 @@ import { CollapsibleListFabricComponent } from './components/collapsible-list/co
 import { RiskAlertsNotificationComponent } from './components/risk-alerts-notification/risk-alerts-notification.component';
 import { RiskAlertsPanelComponent } from './components/risk-alerts-panel/risk-alerts-panel.component';
 import { IntegratedSolutionsViewComponent } from './components/integrated-solutions-view/integrated-solutions-view.component';
+import { NetworkCheckComponent } from './components/tools/network-checks/network-checks.component';
 
 @NgModule({
     declarations: [
@@ -164,6 +165,7 @@ import { IntegratedSolutionsViewComponent } from './components/integrated-soluti
         DaasSessionsComponent,
         ProfilerComponent,
         ProfilerToolComponent,
+        NetworkCheckComponent,
         MemoryDumpToolComponent,
         DaasComponent,
         JavaMemoryDumpToolComponent,
