@@ -9,6 +9,7 @@
     "azureServiceName": "",
     "armApiVersion": "",
     "isSearchEnabled": true,
+	"keystoneDetectorId": "",
     "liveChatConfig": {
         "isApplicableForLiveChat": false,
         "supportTopicIds": []

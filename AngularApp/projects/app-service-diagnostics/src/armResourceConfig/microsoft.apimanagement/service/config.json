@@ -9,6 +9,7 @@
 	"azureServiceName": "Azure API Management Service",
 	"armApiVersion": "2018-06-01-preview",
 	"isSearchEnabled": true,
+	"keystoneDetectorId": "",
 	"liveChatConfig": {
 		"isApplicableForLiveChat": false,
 		"supportTopicIds": []

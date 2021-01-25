@@ -9,6 +9,7 @@
 	"azureServiceName": "Logic Apps",
 	"armApiVersion": "2016-06-01",
 	"isSearchEnabled": true,
+	"keystoneDetectorId": "",
 	"liveChatConfig": {
 		"isApplicableForLiveChat": false,
 		"supportTopicIds": []

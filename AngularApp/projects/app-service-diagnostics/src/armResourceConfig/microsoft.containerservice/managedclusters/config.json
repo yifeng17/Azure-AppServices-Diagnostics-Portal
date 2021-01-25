@@ -9,6 +9,7 @@
 	"azureServiceName": "Azure Kubernetes Service",
 	"armApiVersion": "2019-04-01",
 	"isSearchEnabled": true,
+	"keystoneDetectorId": "",
 	"liveChatConfig": {
 		"isApplicableForLiveChat": false,
 		"supportTopicIds": []

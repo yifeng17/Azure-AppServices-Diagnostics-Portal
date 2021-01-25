@@ -9,6 +9,7 @@
 	"azureServiceName": "Azure Spring Cloud",
 	"armApiVersion": "2019-05-01-preview",
 	"isSearchEnabled": true,
+	"keystoneDetectorId": "",
 	"liveChatConfig": {
 		"isApplicableForLiveChat": false,
 		"supportTopicIds": []

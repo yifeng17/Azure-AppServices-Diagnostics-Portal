@@ -10,6 +10,7 @@
     "azureServiceName": "Azure SignalR Services",
     "armApiVersion": "2020-05-01",
     "isSearchEnabled": true,
+	"keystoneDetectorId": "",
     "liveChatConfig": {
         "isApplicableForLiveChat": false,
         "supportTopicIds": []

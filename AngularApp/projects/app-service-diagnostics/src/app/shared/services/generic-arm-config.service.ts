@@ -521,6 +521,20 @@ export class GenericArmConfigService {
           throw error;
         }
 
+        //currConfig.keystoneDetectorId
+        try {
+          if (this.getValue(this.resourceConfig.keystoneDetectorId, this.overrideConfig.keystoneDetectorId) != null) {
+            currConfig.keystoneDetectorId = this.getValue(this.resourceConfig.keystoneDetectorId, this.overrideConfig.keystoneDetectorId);
+          }
+        } catch (error) {
+          this.logException(error, null, {
+            "resourceUri": resourceUri,
+            "reason": `${TelemetryEventNames.ArmConfigMergeError}: Error while merging armConfig.`,
+            "field": "keystoneDetectorId" 
+          });
+          throw error;
+        }
+
         this.resourceMap.push(currConfig);
         return currConfig;
       })
