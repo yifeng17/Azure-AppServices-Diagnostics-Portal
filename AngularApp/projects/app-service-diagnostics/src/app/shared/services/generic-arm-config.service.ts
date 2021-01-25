@@ -543,18 +543,18 @@ export class GenericArmConfigService {
 
 
   getArmResourceConfig(resourceUri: string, recurse?: boolean): ArmResourceConfig {
-    let returlValue: ArmResourceConfig = new ArmResourceConfig();
+    let returnValue: ArmResourceConfig = new ArmResourceConfig();
     if (this.resourceMap.length > 0) {
       this.resourceMap.some((resource: ArmResourceConfig) => {
         const matchPattern: RegExp = new RegExp(`${resource.matchRegEx.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}`, "i");
         var result = resourceUri.match(matchPattern);
         if (result && result.length > 0) {
-          returlValue = resource;
+          returnValue = resource;
           return true;
         }
       });
     }
-    return returlValue;
+    return returnValue;
   }
 
   getApiVersion(resourceUri: string): string {
