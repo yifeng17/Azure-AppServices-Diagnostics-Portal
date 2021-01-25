@@ -7,7 +7,9 @@
 	"matchRegEx": "/Microsoft.ServiceFabric/clusters/",
 	"searchSuffix": "SF",
 	"azureServiceName": "Service Fabric",
-	"armApiVersion": "2020-03-01",
+	"armApiConfig": {
+		"armApiVersion": "2020-03-01"
+	},
 	"isSearchEnabled": true,
 	"keystoneDetectorId": "",
 	"liveChatConfig": {

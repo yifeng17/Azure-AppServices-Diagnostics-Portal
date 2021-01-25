@@ -7,7 +7,9 @@
 	"matchRegEx": "/Microsoft.Logic/workflows/",
 	"searchSuffix": "AZURE LOGIC APPS",
 	"azureServiceName": "Logic Apps",
-	"armApiVersion": "2016-06-01",
+	"armApiConfig": {
+		"armApiVersion": "2016-06-01"
+	},
 	"isSearchEnabled": true,
 	"keystoneDetectorId": "",
 	"liveChatConfig": {

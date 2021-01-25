@@ -7,7 +7,9 @@
 	"matchRegEx": "/Microsoft.Logic/integrationServiceEnvironments/",
 	"searchSuffix": "ISE",
 	"azureServiceName": "Integration Service Environments",
-	"armApiVersion": "2016-06-01",
+	"armApiConfig": {
+		"armApiVersion": "2016-06-01"
+	},
 	"isSearchEnabled": true,
 	"keystoneDetectorId": "",
 	"liveChatConfig": {

@@ -7,7 +7,9 @@
 	"matchRegEx": "/Microsoft.ContainerService/managedClusters/",
 	"searchSuffix": "AKS",
 	"azureServiceName": "Azure Kubernetes Service",
-	"armApiVersion": "2019-04-01",
+	"armApiConfig": {
+		"armApiVersion": "2019-04-01"
+	},
 	"isSearchEnabled": true,
 	"keystoneDetectorId": "",
 	"liveChatConfig": {
