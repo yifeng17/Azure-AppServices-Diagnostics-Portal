@@ -8,8 +8,11 @@
     "matchRegEx": "/Microsoft.SignalRService/SignalR/",
     "searchSuffix": "signalr",
     "azureServiceName": "Azure SignalR Services",
-    "armApiVersion": "2020-05-01",
+    "armApiConfig": {
+		"armApiVersion": "2020-05-01"
+	},
     "isSearchEnabled": true,
+	"keystoneDetectorId": "",
     "liveChatConfig": {
         "isApplicableForLiveChat": false,
         "supportTopicIds": []

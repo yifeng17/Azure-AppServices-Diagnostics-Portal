@@ -6,7 +6,7 @@ export class ArmResourceConfig {
 	matchRegEx?: string;
 	searchSuffix?: string;
 	azureServiceName?: string;
-	armApiVersion?: string;
+	armApiConfig?: ArmApiConfig;
 	isSearchEnabled?: boolean;
 	liveChatConfig?: LiveChatConfig
 	categories?: Array<Category>;
@@ -14,6 +14,11 @@ export class ArmResourceConfig {
     liabilityCheckConfig?: LiabilityCheckConfig;
     quickLinks?: string[];
     keystoneDetectorId?: string;
+}
+
+export interface ArmApiConfig {
+	armApiVersion?:string;
+	isArmApiResponseBase64Encoded?:boolean;
 }
 
 export interface LiveChatConfig {

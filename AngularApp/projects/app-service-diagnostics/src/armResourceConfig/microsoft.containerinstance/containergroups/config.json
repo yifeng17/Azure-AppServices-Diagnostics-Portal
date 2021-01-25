@@ -7,8 +7,11 @@
 	"matchRegEx": "/Microsoft.ContainerInstance/containerGroups/",
 	"searchSuffix": "ACI",
 	"azureServiceName": "Azure Container Instances",
-	"armApiVersion": "2019-12-01",
+	"armApiConfig": {
+		"armApiVersion": "2019-12-01"
+	},
 	"isSearchEnabled": true,
+	"keystoneDetectorId": "",
 	"liveChatConfig": {
 		"isApplicableForLiveChat": false,
 		"supportTopicIds": []
