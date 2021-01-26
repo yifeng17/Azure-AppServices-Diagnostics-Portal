@@ -76,10 +76,6 @@ export class GenericArmConfigService {
       if(!!this._telemetryService) {
         this._telemetryService.logEvent(eventMessage, properties, measurements);
       }
-
-      if(!!this._appInsightsTelemetryService) {
-        this._appInsightsTelemetryService.logEvent(eventMessage, properties, measurements);
-      }
     }
     catch(error) {}
   }
@@ -90,16 +86,12 @@ export class GenericArmConfigService {
       if(!!this._telemetryService) {
         this._telemetryService.logException(exception, handledAt, properties, measurements, severityLevel);
       }
-
-      if(!!this._appInsightsTelemetryService) {
-        this._appInsightsTelemetryService.logException(exception, handledAt, properties, severityLevel);
-      }
     }
     catch(error) {}
   }
 
 
-  constructor(private _http: HttpClient, private _telemetryService?: PortalKustoTelemetryService, private _appInsightsTelemetryService?:AppInsightsTelemetryService) { }
+  constructor(private _http: HttpClient, private _telemetryService?: PortalKustoTelemetryService) { }
 
   public initArmConfig(resourceUri: string): Observable<ArmResourceConfig> {
     if (!resourceUri.startsWith('/')) {
