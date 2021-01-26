@@ -9,9 +9,9 @@
 
     </div>
 
-    <h3>What you should know before running the check</h3>
+    <h3>Check Results</h3>
     <ul>
-        <li *ngFor="let statement of thingsToKnowBefore">{{statement}}</li>
+        <li *ngFor="let result of checkResults">{{result.name}}: {{result.level}} <br/> {{result.info}}<br/></li>
     </ul>
 
     <!--<div class="sessions">
