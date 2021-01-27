@@ -2,7 +2,7 @@
   "homePageText": {
     "title": "API Management Diagnostics",
     "description": "Investigate how your API is performing, diagnose issues, and discover how to improve its reliability. Select the problem category that best matches the information or tool that you're interested in:",
-    "searchBarPlaceHolder": "Search Azure API Management Services"
+    "searchBarPlaceHolder": "Search for common problems or tools"
   },
   "matchRegEx": "/Microsoft.ApiManagement/service/",
   "searchSuffix": "API Management",
