@@ -1,11 +1,11 @@
 {
   "homePageText": {
-    "title": "API Management Service Diagnostics",
-    "description": "Use API Management Service Diagnostics to investigate how your API is performing, diagnose issues, and discover how to improve its reliability. Select the problem category that best matches the information or tool that you're interested in:",
+    "title": "API Management Diagnostics",
+    "description": "Investigate how your API is performing, diagnose issues, and discover how to improve its reliability. Select the problem category that best matches the information or tool that you're interested in:",
     "searchBarPlaceHolder": "Search Azure API Management Services"
   },
   "matchRegEx": "/Microsoft.ApiManagement/service/",
-  "searchSuffix": "AZURE API MANAGEMENT SERVICE",
+  "searchSuffix": "API Management",
   "azureServiceName": "Azure API Management Service",
   "armApiConfig": {
     "armApiVersion": "2018-06-01-preview"
@@ -22,7 +22,7 @@
       "name": "Performance and Availability",
       "description": "Check your API service's health and discover performance issues",
       "keywords": [
-        "Service down",
+        "Service Down",
         "Platform Health",
         "Backend 5xx",
         "SNAT"
@@ -34,7 +34,7 @@
     {
       "id": "proxyandpolicyapim",
       "name": "Proxy and Policies",
-      "description": "Found out if your API proxy and policy are misconfigured",
+      "description": "Find out if your API proxy and policy are misconfigured",
       "keywords": [
         "Caching",
         "Policy Expressions",
@@ -64,8 +64,8 @@
       "name": "Service Upgrade",
       "description": "Check your service SKU and discover your service upgrade events",
       "keywords": [
-        "Service Upgrade",
-        "Service SKU",
+        "Upgrade",
+        "SKU",
         "Latency",
         "Resource Deployment Failure"
       ],
