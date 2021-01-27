@@ -1,12 +1,12 @@
 {
   "homePageText": {
     "title": "API Management Diagnostics",
-    "description": "Investigate how your API is performing, diagnose issues, and discover how to improve its reliability. Select the problem category that best matches the information or tool that you're interested in:",
+    "description": "Investigate how your API is performing, diagnose issues, and discover how to improve its reliability.",
     "searchBarPlaceHolder": "Search for common problems or tools"
   },
   "matchRegEx": "/Microsoft.ApiManagement/service/",
   "searchSuffix": "API Management",
-  "azureServiceName": "Azure API Management Service",
+  "azureServiceName": "API Management Service",
   "armApiConfig": {
     "armApiVersion": "2018-06-01-preview"
   },
@@ -53,7 +53,7 @@
         "Gateway Responses",
         "4xx",
         "5xx",
-        "Gateway Request"
+        "Gateway Requests"
       ],
       "color": "rgb(186, 211, 245)",
       "createFlowForCategory": true,
