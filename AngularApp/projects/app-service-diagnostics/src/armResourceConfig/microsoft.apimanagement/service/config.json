@@ -1,7 +1,7 @@
 {
   "homePageText": {
-    "title": "Azure API Management Service Diagnostics",
-    "description": "Use Azure API Management Service Diagnostics to investigate how your service is performing, diagnose issues, and discover how to improve its reliability. Select the problem category that best matches the information or tool that you're interested in:",
+    "title": "API Management Service Diagnostics",
+    "description": "Use API Management Service Diagnostics to investigate how your API is performing, diagnose issues, and discover how to improve its reliability. Select the problem category that best matches the information or tool that you're interested in:",
     "searchBarPlaceHolder": "Search Azure API Management Services"
   },
   "matchRegEx": "/Microsoft.ApiManagement/service/",
@@ -18,7 +18,7 @@
   },
   "categories": [
     {
-      "id": "PerformanceandAvailabilityAPIM",
+      "id": "performanceandavailabilityapim",
       "name": "Performance and Availability",
       "description": "Check your API service's health and discover performance issues",
       "keywords": [
@@ -32,12 +32,12 @@
       "chatEnabled": false
     },
     {
-      "id": "ProxyandPoliciesAPIM",
+      "id": "proxyandpolicyapim",
       "name": "Proxy and Policies",
       "description": "Found out if your API proxy and policy are misconfigured",
       "keywords": [
         "Caching",
-        "Policy expressions",
+        "Policy Expressions",
         "Validate JWT",
         "CORS"
       ],
@@ -46,28 +46,28 @@
       "chatEnabled": false
     },
     {
-      "id": "GatewayPerformanceAPIM",
+      "id": "gatewayperformanceapim",
       "name": "Gateway Performance",
       "description": "Analyze your API Gateway performance and discover issues",
       "keywords": [
-        "Gateway responses",
+        "Gateway Responses",
         "4xx",
         "5xx",
-        "Gateway request"
+        "Gateway Request"
       ],
       "color": "rgb(186, 211, 245)",
       "createFlowForCategory": true,
       "chatEnabled": false
     },
     {
-      "id": "ServiceUpgradeAPIM",
+      "id": "serviceupgradeapim",
       "name": "Service Upgrade",
       "description": "Check your service SKU and discover your service upgrade events",
       "keywords": [
-        "Service upgrade",
+        "Service Upgrade",
         "Service SKU",
         "Latency",
-        "Resource deployment failure"
+        "Resource Deployment Failure"
       ],
       "color": "rgb(186, 211, 245)",
       "createFlowForCategory": true,
