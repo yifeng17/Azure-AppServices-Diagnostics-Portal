@@ -6,7 +6,7 @@
   },
   "matchRegEx": "/Microsoft.ApiManagement/service/",
   "searchSuffix": "API Management",
-  "azureServiceName": "API Management Service",
+  "azureServiceName": "API Management",
   "armApiConfig": {
     "armApiVersion": "2018-06-01-preview"
   },
