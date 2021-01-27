@@ -145,6 +145,15 @@ export class DetectorViewComponent implements OnInit {
     this.loadDetector();
     this.errorSubject.subscribe((data: any) => {
       this.errorState = data;
+      if (!!this.errorState)
+      {
+        let errorDetails = {
+            'isPublic': this.isPublic.toString(),
+            'errorDetails': JSON.stringify(this.errorState)
+          };
+
+        this.logEvent("DetectorLoadingError", errorDetails);
+      }
     });
 
     // If it is using the new route, don't show those buttons
