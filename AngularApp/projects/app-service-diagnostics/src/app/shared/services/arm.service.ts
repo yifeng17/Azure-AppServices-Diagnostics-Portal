@@ -218,10 +218,6 @@ export class ArmService {
         return this._cache.get(url, request, invalidateCache);
     }
 
-    getArmResourceAsync<T>(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Promise<T> {
-        return this.getArmResource<T>(resourceUri, apiVersion, invalidateCache).toPromise();
-    }
-
     getResourceWithoutEnvelope<T>(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Observable<{} | T> {
         const url = this.createUrl(resourceUri, apiVersion);
 
@@ -249,10 +245,6 @@ export class ArmService {
         let cacheKey: string = appendBodyToCacheKey ? url + bodyString : url;
 
         return this._cache.get(cacheKey, request, invalidateCache);
-    }
-
-    postResourceAsync<T, S>(resourceUri: string, body?: S, apiVersion?: string, invalidateCache: boolean = false, appendBodyToCacheKey: boolean = false): Promise<boolean | {} | ResponseMessageEnvelope<T>>{
-        return this.postResource<T, S>(resourceUri, body, apiVersion, invalidateCache, appendBodyToCacheKey).toPromise();
     }
 
     deleteResource<T>(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Observable<any> {

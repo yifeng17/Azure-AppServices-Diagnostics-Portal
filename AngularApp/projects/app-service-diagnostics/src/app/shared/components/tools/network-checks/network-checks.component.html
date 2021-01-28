@@ -11,7 +11,18 @@
 
     <h3>Check Results</h3>
     <ul>
-        <li *ngFor="let result of checkResults">{{result.name}}: {{result.level}} <br/> {{result.info}}<br/></li>
+        <li *ngFor="let result of checkResultViews; index as i">
+            <div *ngIf="result.interactivePayload == null; else interactive">{{result.name}}: {{result.level}} <br/> Description: {{result.description}} <br/> Markdown: {{result.info}}<br/><br/></div>
+            <ng-template #interactive>            
+                <div [ngSwitch]="result.interactivePayload.type">
+                    {{result.name}}: {{result.level}} <br/> Description: {{result.description}} <br/> Markdown: {{result.info}}<br/>
+                    <div *ngSwitchCase="0"> <input #text><button (click)="interactiveCallBack(text.value, result.interactivePayload.callBack, i)">submit</button></div>
+                    <div *ngSwitchCase="1">interactive 1</div>
+                    <br/>
+                </div>
+            </ng-template>
+            
+        </li>
     </ul>
 
     <!--<div class="sessions">
