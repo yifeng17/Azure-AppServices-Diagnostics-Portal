@@ -10,6 +10,8 @@ import { ArmService } from '../../../services/arm.service';
 import {jsTestChecks} from './test-check.js'
 import { ResponseMessageEnvelope } from '../../../models/responsemessageenvelope';
 
+declare var jsDynamicImportChecks: any;
+
 function Delay(x: number): Promise<void>{
     return new Promise(resolve => 
         setTimeout(resolve, x));
@@ -51,13 +53,13 @@ class ArmServiceWrapper{
     }
 }
 
-async function sampleCheck(appSettings: Map<string, string>, armService: ArmService): Promise<CheckResult>{
+async function sampleCheck(siteInfo: SiteInfoMetaData, appSettings: Map<string, string>, armService: ArmService): Promise<CheckResult>{
     console.log("appSettings", appSettings);
     var s = Object.keys(appSettings).map(key => key + ":" + appSettings[key]);
     return {description: "TS sample check", level: 0, info: s.join(";")};
 }
 
-async function interactiveSampleCheck(appSettings: Map<string, string>, armService: ArmService): Promise<CheckResult>{
+async function interactiveSampleCheck(siteInfo: SiteInfoMetaData, appSettings: Map<string, string>, armService: ArmService): Promise<CheckResult>{
     var result: CheckResult = {description: "interactive sample check", level: 4, info: "please input"};
     result.interactivePayload = {type:0, data:"test", callBack: async (userInput:string) => { return {description: "your input is", level: 0, info: userInput}}}
     return result;
@@ -106,7 +108,7 @@ export class NetworkCheckComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        /*var siteInfo = this._siteService.currentSiteMetaData.value;
+        /*
         this.scmPath = this._siteService.currentSiteStatic.enabledHostNames.find(hostname => hostname.indexOf('.scm.') > 0);
         this._siteService.getSiteAppSettings(siteInfo.subscriptionId, siteInfo.resourceGroupName, siteInfo.siteName, siteInfo.slot).toPromise().then(val=>{
             debugger;
@@ -132,6 +134,34 @@ export class NetworkCheckComponent implements OnInit {
         if(castedWindow.hasOwnProperty("diagNetworkChecks") && castedWindow.diagNetworkChecks!=null){
             this.checks = this.checks.concat(castedWindow.diagNetworkChecks);
         }
+
+        var remoteChecks = await this.loadRemoteCheckAsync();
+        console.log(remoteChecks);
+        debugger;
+        this.checks = this.checks.concat(remoteChecks);
+    }
+
+    loadRemoteCheckAsync(): Promise<any[]>{
+        var promise = new Promise<any[]>((resolve, reject) => {
+            var script = document.createElement("script");
+            script.setAttribute('type', 'text/javascript');
+            script.setAttribute('src', 'http://127.0.0.1:8000/test-check.js');
+            script.onload = () => {
+                console.log("remote script loaded!");
+                console.log(script);
+                if (typeof jsDynamicImportChecks != 'undefined') {
+                    resolve(jsDynamicImportChecks);
+                }
+                else{
+                    resolve([]);
+                }
+            }
+            script.onerror = () => {
+                resolve([]);
+            }
+            document.head.appendChild(script);
+        });
+        return promise;
     }
 
     async runChecksAsync():Promise<void>{
@@ -140,7 +170,7 @@ export class NetworkCheckComponent implements OnInit {
 
         await Promise.all(this.checks.map(async check => {
             try{
-                var result = await check(appSettings, this.armServiceWrapper);
+                var result = await check(siteInfo, appSettings, this.armServiceWrapper);
                 this.pushCheckResult(check.name, result);
             }
             catch(error){

@@ -1,11 +1,11 @@
 export const jsTestChecks = [sampleJsCheck, checkVnetRouteAllConfig];
 
-async function sampleJsCheck(appSettings, armService){
+async function sampleJsCheck(siteInfo, appSettings, armService){
     var s = Object.keys(appSettings).map(key => key + ":" + appSettings[key]);
     return {description: "JS Sample Check",level: 0, info: s.join(";")};
 }
 
-async function checkVnetRouteAllConfig(appSettings, armService){
+async function checkVnetRouteAllConfig(siteInfo, appSettings, armService){
     var desc = "Checking WEBSITE_VNET_ROUTE_ALL configuration";
     var msg, level;
     if("WEBSITE_VNET_ROUTE_ALL" in appSettings){
