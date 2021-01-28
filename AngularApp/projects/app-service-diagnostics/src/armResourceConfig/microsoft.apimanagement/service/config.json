@@ -27,7 +27,7 @@
         "Backend 5xx",
         "SNAT"
       ],
-      "color": "rgb(186, 211, 245)",
+      "color": "rgb(208, 175, 239)",
       "createFlowForCategory": true,
       "chatEnabled": false
     },
@@ -41,7 +41,7 @@
         "Validate JWT",
         "CORS"
       ],
-      "color": "rgb(186, 211, 245)",
+      "color": "rgb(249, 213, 180)",
       "createFlowForCategory": true,
       "chatEnabled": false
     },
@@ -55,7 +55,7 @@
         "5xx",
         "Gateway Requests"
       ],
-      "color": "rgb(186, 211, 245)",
+      "color": "rgb(208, 228, 176)",
       "createFlowForCategory": true,
       "chatEnabled": false
     },
