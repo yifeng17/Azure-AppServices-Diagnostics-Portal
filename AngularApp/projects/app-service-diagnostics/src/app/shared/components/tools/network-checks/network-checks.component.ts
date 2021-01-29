@@ -1,9 +1,7 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { SiteDaasInfo } from '../../../models/solution-metadata';
-import { Session } from '../../../models/daas';
 import { SiteInfoMetaData } from '../../../models/site';
 import { SiteService } from '../../../services/site.service';
-import { DaasService } from '../../../services/daas.service';
 import { WindowService } from '../../../../startup/services/window.service';
 import { AvailabilityLoggingService } from '../../../services/logging/availability.logging.service';
 import { ArmService } from '../../../services/arm.service';
@@ -90,19 +88,11 @@ export class NetworkCheckComponent implements OnInit {
     armServiceWrapper: ArmServiceWrapper;
     checkResultViews: CheckResultView[] = [];
 
-    siteToBeDiagnosed: SiteDaasInfo;
-    scmPath: string;
-    couldNotFindSite: boolean = false;
-
-    refreshSessions: boolean = false;
     checks: any[];
 
     constructor(private _siteService: SiteService,private _armService: ArmService, private _windowService: WindowService, private _logger: AvailabilityLoggingService) {
 
         this.armServiceWrapper = new ArmServiceWrapper(_armService);
-        this._siteService.getSiteDaasInfoFromSiteMetadata().subscribe(site => {
-            this.siteToBeDiagnosed = site;
-        });
         this.loadChecksAsync()
             .then(()=> this.runChecksAsync());
     }
@@ -117,10 +107,6 @@ export class NetworkCheckComponent implements OnInit {
         debugger;
         this._armService.postResourceAsync(siteInfo.resourceUri + "/config/appsettings/list")
             .then(val => console.log("getArmResource", val));//*/
-    }
-
-    updateSessions(event) {
-        this.refreshSessions = event;
     }
 
     async loadChecksAsync():Promise<void>{

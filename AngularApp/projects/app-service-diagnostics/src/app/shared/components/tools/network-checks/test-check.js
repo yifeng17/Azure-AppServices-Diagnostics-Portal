@@ -5,6 +5,16 @@ async function sampleJsCheck(siteInfo, appSettings, armService){
     return {description: "JS Sample Check",level: 0, info: s.join(";")};
 }
 
+async function sampleJsCheck2(siteInfo, appSettings, armService){
+    console.log(appSettings);
+    console.log(siteInfo);
+    var armResource = await armService.postResourceAsync("/subscriptions/6ae79ddd-3eea-4ceb-8460-a86a469c69db/resourceGroups/NetworkingRG/providers/Microsoft.Web/sites/winswift/config/appsettings/list");
+    console.log(armResource);
+    
+    return {description: "JS Sample Check",level: 0, info: "ok"};
+}
+
+
 async function checkVnetRouteAllConfig(siteInfo, appSettings, armService){
     var desc = "Checking WEBSITE_VNET_ROUTE_ALL configuration";
     var msg, level;
