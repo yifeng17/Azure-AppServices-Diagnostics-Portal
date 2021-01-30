@@ -134,6 +134,8 @@ import { RiskAlertsNotificationComponent } from './components/risk-alerts-notifi
 import { RiskAlertsPanelComponent } from './components/risk-alerts-panel/risk-alerts-panel.component';
 import { IntegratedSolutionsViewComponent } from './components/integrated-solutions-view/integrated-solutions-view.component';
 import { NetworkCheckComponent } from './components/tools/network-checks/network-checks.component';
+import { MarkdownModule } from 'ngx-markdown';
+import { CheckerListComponent } from 'projects/diagnostic-data/src/lib/components/checker-list/checker-list.component';
 
 @NgModule({
     declarations: [
@@ -166,6 +168,7 @@ import { NetworkCheckComponent } from './components/tools/network-checks/network
         ProfilerComponent,
         ProfilerToolComponent,
         NetworkCheckComponent,
+        CheckerListComponent,
         MemoryDumpToolComponent,
         DaasComponent,
         JavaMemoryDumpToolComponent,
@@ -206,7 +209,7 @@ import { NetworkCheckComponent } from './components/tools/network-checks/network
         CollapsibleListFabricComponent,
         RiskAlertsNotificationComponent,
         RiskAlertsPanelComponent,
-        IntegratedSolutionsViewComponent
+        IntegratedSolutionsViewComponent,
     ],
     imports: [
         HttpClientModule,
@@ -248,6 +251,7 @@ import { NetworkCheckComponent } from './components/tools/network-checks/network
         FabTagPickerModule,
         FabProgressIndicatorModule,
         FabContextualMenuModule,
+        MarkdownModule.forRoot(),
     ],
     exports: [
         CommonModule,

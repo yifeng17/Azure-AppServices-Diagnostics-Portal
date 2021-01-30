@@ -7,7 +7,9 @@ import { AvailabilityLoggingService } from '../../../services/logging/availabili
 import { ArmService } from '../../../services/arm.service';
 import {jsTestChecks} from './test-check.js'
 import { ResponseMessageEnvelope } from '../../../models/responsemessageenvelope';
-
+import { HealthStatus, LoadingStatus } from 'diagnostic-data';
+import { CheckerListComponent } from 'projects/diagnostic-data/src/lib/components/checker-list/checker-list.component';
+//import { MarkdownTextComponent } from 'projects/diagnostic-data/src/lib/components/markdown-text/markdown-text.component';
 declare var jsDynamicImportChecks: any;
 
 function Delay(x: number): Promise<void>{
@@ -22,18 +24,22 @@ class InteractiveCheckPayload{
 }
 
 class CheckResult{
-    public description:string;
+    public title:string;
     public level:number;
-    public info:string;
+    public markdown:string;
     public interactivePayload?:InteractiveCheckPayload;
 }
 
-class CheckResultView{
+export class CheckResultView{
     public name:string;
-    public description:string; 
+    public title:string; 
     public level:string; 
-    public info:string;
+    public markdown:string;
     public interactivePayload?:InteractiveCheckPayload;
+    public expanded:boolean;
+    public status:HealthStatus;
+    public loadingStatus:LoadingStatus;
+
 }
 
 class ArmServiceWrapper{
@@ -53,13 +59,18 @@ class ArmServiceWrapper{
 
 async function sampleCheck(siteInfo: SiteInfoMetaData, appSettings: Map<string, string>, armService: ArmService): Promise<CheckResult>{
     console.log("appSettings", appSettings);
-    var s = Object.keys(appSettings).map(key => key + ":" + appSettings[key]);
-    return {description: "TS sample check", level: 0, info: s.join(";")};
+    var s = `
+    # Markdown test
+    Test [hyperlink](https://ms.portal.azure.com) <- TODO: open link in new tab
+    ## Subtitle
+    abcabcabc 
+    `
+    return {title: "TS sample check", level: 0, markdown: s};
 }
 
 async function interactiveSampleCheck(siteInfo: SiteInfoMetaData, appSettings: Map<string, string>, armService: ArmService): Promise<CheckResult>{
-    var result: CheckResult = {description: "interactive sample check", level: 4, info: "please input"};
-    result.interactivePayload = {type:0, data:"test", callBack: async (userInput:string) => { return {description: "your input is", level: 0, info: userInput}}}
+    var result: CheckResult = {title: "interactive sample check", level: 3, markdown: "please input"};
+    result.interactivePayload = {type:0, data:"test", callBack: async (userInput:string) => { return {title: "your input is " + userInput, level: 0, markdown: userInput}}}
     return result;
 }
 
@@ -77,7 +88,8 @@ enum interactiveCheckType{
 
 @Component({
     templateUrl: 'network-checks.component.html',
-    styleUrls: ['../styles/daasstyles.scss']
+    styleUrls: ['../styles/daasstyles.scss'],
+    entryComponents: [CheckerListComponent]
 })
 
 export class NetworkCheckComponent implements OnInit {
@@ -87,7 +99,6 @@ export class NetworkCheckComponent implements OnInit {
 
     armServiceWrapper: ArmServiceWrapper;
     checkResultViews: CheckResultView[] = [];
-
     checks: any[];
 
     constructor(private _siteService: SiteService,private _armService: ArmService, private _windowService: WindowService, private _logger: AvailabilityLoggingService) {
@@ -95,6 +106,7 @@ export class NetworkCheckComponent implements OnInit {
         this.armServiceWrapper = new ArmServiceWrapper(_armService);
         this.loadChecksAsync()
             .then(()=> this.runChecksAsync());
+
     }
 
     ngOnInit(): void {
@@ -123,7 +135,7 @@ export class NetworkCheckComponent implements OnInit {
 
         var remoteChecks = await this.loadRemoteCheckAsync();
         console.log(remoteChecks);
-        debugger;
+        //debugger;
         this.checks = this.checks.concat(remoteChecks);
     }
 
@@ -168,18 +180,50 @@ export class NetworkCheckComponent implements OnInit {
     }
 
     pushCheckResult(funcName:string, result: CheckResult){
-        this.checkResultViews.push({name: funcName, description: result.description, level:checkResultLevel[result.level], info:result.info, interactivePayload: result.interactivePayload})
+        this.checkResultViews.push({
+            name: funcName, 
+            title: result.title, 
+            level:checkResultLevel[result.level], 
+            markdown:result.markdown, 
+            interactivePayload: result.interactivePayload,
+            status: this.convertLevelToHealthStatus(result.level),
+            loadingStatus: LoadingStatus.Success,
+            expanded:false
+        })
     }
 
     async interactiveCallBack(userInput:any, callBack:(userInput: any) => Promise<CheckResult>, resultViewIdx: number){
         try{
-            var result = await callBack(userInput)
-            this.checkResultViews[resultViewIdx] = {name: callBack.name, description: result.description, level:checkResultLevel[result.level], info:result.info, interactivePayload: result.interactivePayload};
+            var result = await callBack(userInput);
+            this.checkResultViews[resultViewIdx] = {
+                name: callBack.name, 
+                title: result.title, 
+                level: checkResultLevel[result.level], 
+                markdown:result.markdown, 
+                interactivePayload: result.interactivePayload,
+                status: this.convertLevelToHealthStatus(result.level),
+                loadingStatus: LoadingStatus.Success,
+                expanded:false
+            };
         }
         catch(error){
             console.log("error:", error);
             debugger;
         }
 
+    }
+
+    convertLevelToHealthStatus(level:checkResultLevel):HealthStatus{
+        switch(level){
+            case checkResultLevel.pass:
+                return HealthStatus.Success;
+            case checkResultLevel.fail:
+                return HealthStatus.Critical;
+            case checkResultLevel.warning:
+                return HealthStatus.Warning;
+            case checkResultLevel.pending:
+                return HealthStatus.Info;
+        }
+        return HealthStatus.None;
     }
 }

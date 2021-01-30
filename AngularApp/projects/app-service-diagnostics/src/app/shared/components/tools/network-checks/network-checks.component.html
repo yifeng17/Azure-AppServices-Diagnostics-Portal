@@ -8,22 +8,21 @@
         </profiler>-->
 
     </div>
-
-    <h3>Check Results</h3>
-    <ul>
-        <li *ngFor="let result of checkResultViews; index as i">
-            <div *ngIf="result.interactivePayload == null; else interactive">{{result.name}}: {{result.level}} <br/> Description: {{result.description}} <br/> Markdown: {{result.info}}<br/><br/></div>
+    <!-- markdown https://stackblitz.com/edit/ngx-markdown?file=src%2Fapp%2Fapp.component.html -->
+    <div class="checker-container" *ngFor="let viewModel of checkResultViews; index as i">
+        <checker-list [viewModel]= "viewModel">
+            <div *ngIf="viewModel.interactivePayload == null; else interactive">
+                <markdown ngPreserveWhitespaces [data]="viewModel.markdown"></markdown> </div>
             <ng-template #interactive>            
-                <div [ngSwitch]="result.interactivePayload.type">
-                    {{result.name}}: {{result.level}} <br/> Description: {{result.description}} <br/> Markdown: {{result.info}}<br/>
-                    <div *ngSwitchCase="0"> <input #text><button (click)="interactiveCallBack(text.value, result.interactivePayload.callBack, i)">submit</button></div>
+                <div [ngSwitch]="viewModel.interactivePayload.type">
+                    <markdown ngPreserveWhitespaces [data]="viewModel.markdown"> </markdown>
+                    <div *ngSwitchCase="0"> <input #text><button (click)="interactiveCallBack(text.value, viewModel.interactivePayload.callBack, i)">submit</button></div>
                     <div *ngSwitchCase="1">interactive 1</div>
-                    <br/>
                 </div>
             </ng-template>
-            
-        </li>
-    </ul>
+        </checker-list>
+        
+    </div>
 
     <!--<div class="sessions">
         <daas-sessions [refreshSessions]="refreshSessions" diagnoserNameLookup="CLR Profiler" [scmPath]="scmPath" [siteToBeDiagnosed]="siteToBeDiagnosed"></daas-sessions>

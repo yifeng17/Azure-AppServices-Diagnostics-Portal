@@ -2,7 +2,7 @@ export const jsTestChecks = [sampleJsCheck, checkVnetRouteAllConfig];
 
 async function sampleJsCheck(siteInfo, appSettings, armService){
     var s = Object.keys(appSettings).map(key => key + ":" + appSettings[key]);
-    return {description: "JS Sample Check",level: 0, info: s.join(";")};
+    return {title: "JS Sample Check",level: 0, markdown: s.join(";")};
 }
 
 async function sampleJsCheck2(siteInfo, appSettings, armService){
@@ -11,7 +11,7 @@ async function sampleJsCheck2(siteInfo, appSettings, armService){
     var armResource = await armService.postResourceAsync("/subscriptions/6ae79ddd-3eea-4ceb-8460-a86a469c69db/resourceGroups/NetworkingRG/providers/Microsoft.Web/sites/winswift/config/appsettings/list");
     console.log(armResource);
     
-    return {description: "JS Sample Check",level: 0, info: "ok"};
+    return {title: "JS Sample Check",level: 0, markdown: "ok"};
 }
 
 
@@ -32,5 +32,5 @@ async function checkVnetRouteAllConfig(siteInfo, appSettings, armService){
         level = 1;
     }
 
-    return {description:desc, level: level, info: msg};
+    return {title:desc, level: level, markdown: msg};
 }
