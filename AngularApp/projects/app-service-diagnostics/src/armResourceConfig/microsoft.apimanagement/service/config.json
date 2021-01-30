@@ -18,8 +18,8 @@
   },
   "categories": [
     {
-      "id": "performanceandavailabilityapim",
-      "name": "Performance and Availability",
+      "id": "Availability and Performance",
+      "name": "Availability and Performance",
       "description": "Check your API service's health and discover performance issues",
       "keywords": [
         "Service Down",
@@ -32,7 +32,7 @@
       "chatEnabled": false
     },
     {
-      "id": "proxyandpolicyapim",
+      "id": "Proxy and Policies",
       "name": "Proxy and Policies",
       "description": "Find out if your API proxy and policy are misconfigured",
       "keywords": [
@@ -46,7 +46,7 @@
       "chatEnabled": false
     },
     {
-      "id": "gatewayperformanceapim",
+      "id": "Gateway Performance",
       "name": "Gateway Performance",
       "description": "Analyze your API Gateway performance and discover issues",
       "keywords": [
@@ -60,7 +60,7 @@
       "chatEnabled": false
     },
     {
-      "id": "serviceupgradeapim",
+      "id": "Service Upgrade",
       "name": "Service Upgrade",
       "description": "Check your service SKU and discover your service upgrade events",
       "keywords": [
