@@ -99,13 +99,12 @@ export class NetworkCheckComponent implements OnInit {
 
     armServiceWrapper: ArmServiceWrapper;
     checkResultViews: CheckResultView[] = [];
-    checks: any[];
+    //checks: any[];
 
     constructor(private _siteService: SiteService,private _armService: ArmService, private _windowService: WindowService, private _logger: AvailabilityLoggingService) {
 
         this.armServiceWrapper = new ArmServiceWrapper(_armService);
-        this.loadChecksAsync()
-            .then(()=> this.runChecksAsync());
+        this.loadChecksAsync();
 
     }
 
@@ -122,21 +121,31 @@ export class NetworkCheckComponent implements OnInit {
     }
 
     async loadChecksAsync():Promise<void>{
-        this.checks = [sampleCheck, interactiveSampleCheck];
+        var sampleChecks = [sampleCheck, interactiveSampleCheck];
+        
+        var taskList:Promise<void>[] = [];
+        taskList.push(this.runChecksAsync(sampleChecks));
+
         if(jsTestChecks!=null){
-            this.checks = this.checks.concat(jsTestChecks);
+            //this.checks = this.checks.concat(jsTestChecks);
+            taskList.push(this.runChecksAsync(jsTestChecks));
         }
         var castedWindow:any = window;
 
         console.log("use window.diagNetworkChecks array to debug your check, e.g. window.diagNetworkChecks = [testCheck]");
         if(castedWindow.hasOwnProperty("diagNetworkChecks") && castedWindow.diagNetworkChecks!=null){
-            this.checks = this.checks.concat(castedWindow.diagNetworkChecks);
+            //this.checks = this.checks.concat(castedWindow.diagNetworkChecks);
+            taskList.push(this.runChecksAsync(castedWindow.diagNetworkChecks));
         }
 
-        var remoteChecks = await this.loadRemoteCheckAsync();
-        console.log(remoteChecks);
-        //debugger;
-        this.checks = this.checks.concat(remoteChecks);
+        this.loadRemoteCheckAsync().then(remoteChecks => {
+            console.log(remoteChecks);
+            //debugger;
+            //this.checks = this.checks.concat(remoteChecks);
+            (this.runChecksAsync(remoteChecks));
+        });
+
+        await Promise.all(taskList);
     }
 
     loadRemoteCheckAsync(): Promise<any[]>{
@@ -162,11 +171,11 @@ export class NetworkCheckComponent implements OnInit {
         return promise;
     }
 
-    async runChecksAsync():Promise<void>{
+    async runChecksAsync(checks: any[]):Promise<void>{
         var siteInfo = this._siteService.currentSiteMetaData.value;
         var appSettings = (await this._siteService.getSiteAppSettings(siteInfo.subscriptionId, siteInfo.resourceGroupName, siteInfo.siteName, siteInfo.slot).toPromise()).properties;
 
-        await Promise.all(this.checks.map(async check => {
+        await Promise.all(checks.map(async check => {
             try{
                 var result = await check(siteInfo, appSettings, this.armServiceWrapper);
                 this.pushCheckResult(check.name, result);
