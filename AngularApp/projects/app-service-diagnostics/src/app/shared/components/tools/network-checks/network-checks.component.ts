@@ -61,7 +61,7 @@ async function sampleCheck(siteInfo: SiteInfoMetaData, appSettings: Map<string, 
     console.log("appSettings", appSettings);
     var s = `
     # Markdown test
-    Test [hyperlink](https://ms.portal.azure.com) <- TODO: open link in new tab
+    Test [hyperlink](https://ms.portal.azure.com)
     ## Subtitle
     abcabcabc 
     `
@@ -88,7 +88,7 @@ enum interactiveCheckType{
 
 @Component({
     templateUrl: 'network-checks.component.html',
-    styleUrls: ['../styles/daasstyles.scss'],
+    styleUrls: ['../styles/daasstyles.scss', './network-checks.component.scss'],
     entryComponents: [CheckerListComponent]
 })
 
@@ -193,12 +193,17 @@ export class NetworkCheckComponent implements OnInit {
             name: funcName, 
             title: result.title, 
             level:checkResultLevel[result.level], 
-            markdown:result.markdown, 
+            markdown:this.markdownPreprocess(result.markdown), 
             interactivePayload: result.interactivePayload,
             status: this.convertLevelToHealthStatus(result.level),
             loadingStatus: LoadingStatus.Success,
             expanded:false
         })
+    }
+
+    markdownPreprocess(markdown:string):string{
+        var result = markdown.replace(/(?<!\!)\[(.*?)]\((.*?)\)/g,`<a target="_blank"  href="$2">$1</a>`);
+        return result;
     }
 
     async interactiveCallBack(userInput:any, callBack:(userInput: any) => Promise<CheckResult>, resultViewIdx: number){

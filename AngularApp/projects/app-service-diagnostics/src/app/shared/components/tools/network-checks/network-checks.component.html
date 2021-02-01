@@ -12,7 +12,7 @@
     <div class="checker-container" *ngFor="let viewModel of checkResultViews; index as i">
         <checker-list [viewModel]= "viewModel">
             <div *ngIf="viewModel.interactivePayload == null; else interactive">
-                <markdown ngPreserveWhitespaces [data]="viewModel.markdown"></markdown> </div>
+                <markdown class="check-markdown " ngPreserveWhitespaces [data]="viewModel.markdown"></markdown> </div>
             <ng-template #interactive>            
                 <div [ngSwitch]="viewModel.interactivePayload.type">
                     <markdown ngPreserveWhitespaces [data]="viewModel.markdown"> </markdown>

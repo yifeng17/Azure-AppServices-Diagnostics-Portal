@@ -20,7 +20,7 @@ async function checkVnetRouteAllConfig(siteInfo, appSettings, armService){
     var msg, level;
     if("WEBSITE_VNET_ROUTE_ALL" in appSettings){
         if(appSettings["WEBSITE_VNET_ROUTE_ALL"] == "0"){
-            msg = "WEBSITE_VNET_ROUTE_ALL is set to 0, only private outbound traffic will be routed to VNet! Set WEBSITE_VNET_ROUTE_ALL to 1 to route all traffic to VNet";
+            msg = "**WEBSITE_VNET_ROUTE_ALL** is set to 0, only **private outbound traffic** will be routed to VNet! Click [here](https://www.microsoft.com) to set **WEBSITE_VNET_ROUTE_ALL** to 1 to route all traffic to VNet";
             level = 1; // warning
         }else{
             msg = "WEBSITE_VNET_ROUTE_ALL is set to 1, all traffic will be routed to VNet. Change to 0 if this behavior is not expected.";
@@ -28,7 +28,7 @@ async function checkVnetRouteAllConfig(siteInfo, appSettings, armService){
         }
     }
     else{
-        msg = "WEBSITE_VNET_ROUTE_ALL is not set, only private outbound traffic will be routed to VNet! Set WEBSITE_VNET_ROUTE_ALL to 1 to route all traffic to VNet";
+        msg = "**WEBSITE_VNET_ROUTE_ALL** is not set, only **private outbound traffic** will be routed to VNet! Click [here](https://www.microsoft.com) to set **WEBSITE_VNET_ROUTE_ALL** to 1 to **route all traffic** to VNet";
         level = 1;
     }
 
