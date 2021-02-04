@@ -23,13 +23,13 @@
   </div>
 </div>-->
 <div class="container">
-  <div class="detector-header" (click)="toggleCheckerHeaderStatus(viewModel)"
+  <div class="check-header" (click)="toggleCheckerHeaderStatus(viewModel)"
     tabindex="0" role="button"
     attr.aria-expanded="{{viewModel.expanded}}" attr.aria-label="Check title {{viewModel.name}}">
     <div class="status-icon">
       <status-icon [loading]="viewModel.loadingStatus" [status]="viewModel.status" [size]="20"></status-icon>
     </div>
-    <div class="detector-title">
+    <div class="check-title">
       {{viewModel.title}}
     </div>
     <div class="expand-icon" role="button" attr.aria-expanded="{{viewModel.expanded}}">

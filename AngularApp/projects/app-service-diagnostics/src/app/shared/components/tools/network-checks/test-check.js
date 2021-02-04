@@ -18,15 +18,19 @@ var sampleJsCheck2 = {
     }
 }
 
+
 var kuduApiTestCheck = {
     title: "kudu api check",
-    func:async function kuduApiTestCheck(siteInfo, appSettings, armService){
-        var command = "nameresolver www.microsoft.com";
-        var a = await armService.postKudoApiAsync(siteInfo.siteName, "command", {
-        "command": command
-    });
+    func:async function kuduApiTestCheck(siteInfo, appSettings, diagProvider){
+        var markdown = "";
+        var a = await diagProvider.runKudoCommand(siteInfo.siteName,  "nameresolver www.microsoft.com"); // runKudoCommand(siteName: string, command: string, dir?: string, instance?:string)
         console.log(a);
-        return {level: 0, markdown: "command is: "+command+"\r\n```\r\n"+a.Output+"\r\n```"};
+        markdown+= `nameresolver www.microsoft.com\r\n${a}\r\n`;
+        var task1 = diagProvider.runKudoCommand(siteInfo.siteName, "hostname", null, "c928c594b76bcadc7aed310ccf07d9bf9e9cceaa720c7166e8c8b2ff6aecb2fa");
+        var task2 = diagProvider.runKudoCommand(siteInfo.siteName, "hostname", null, "ea583f4b41400bd1135d0ee050604b634f37be5c0fd221c3214cb855b06bc1ea");
+        var [x,y] = await Promise.all([task1, task2]);
+        markdown += `hostname (on two instance)\r\ninstance1: ${x}instance2: ${y}\r\n`;
+        return {level: 0, markdown: "```\r\n"+markdown+"\r\n```"};
     }
 }
 
@@ -36,8 +40,19 @@ var connectionCheck = {
     func: async function connectionCheck(siteInfo, appSettings, diagProvider){
         var hostName = "www.microsoft.com";
         var port = 443;
+        var output =`check connection to ${hostName}:${port}\r\n`;
         var result = await diagProvider.checkConnectionAsync(hostName, port);
-        return {level: 0, markdown: `check connection to ${hostName}:${port}\r\nresult:${JSON.stringify(result)}`};
+        output += `on one instance count = 1: result = ${JSON.stringify(result)}\r\n`;
+
+        result = await diagProvider.checkConnectionAsync(hostName, port, 4);
+        output += `on one instance count = 4: result = ${JSON.stringify(result)}\r\n`;
+
+        var p1 = diagProvider.checkConnectionAsync(hostName, port, 1, "c928c594b76bcadc7aed310ccf07d9bf9e9cceaa720c7166e8c8b2ff6aecb2fa");
+        var p2 = diagProvider.checkConnectionAsync(hostName, port, 1, "ea583f4b41400bd1135d0ee050604b634f37be5c0fd221c3214cb855b06bc1ea");
+        result = await Promise.all([p1, p2]);
+        output += `on two instances count = 4: result = ${JSON.stringify(result)}\r\n`;
+
+        return {level: 0, markdown: "```\r\n"+output+"\r\n```"};
     }
 }
 

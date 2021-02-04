@@ -1,18 +1,18 @@
-.detector-container {
+.check-container {
     width: 100%;
     margin-bottom: 15px;
 }
 
-.detector-header {
-    font-size: 18px;
+.check-header {
+    font-size: 15px;
     cursor: pointer;
     display: flex;
     align-items: baseline;
     border-bottom: 1px solid #b5b5b5;
-    min-height: 40px;
+    min-height: 30px;
 }
 
-.detector-body {
+.check-body {
     padding: 15px;
 }
 
@@ -20,27 +20,34 @@
     padding: 0px 30px;
 }
 
-.detector-title {
+.check-title {
     height: 100%;
     display: flex;
     align-items: center;
     flex-grow: 1;
+    margin-left:-30px;
 }
 
+.fa-exclamation-triangle{
+    margin-left: -1px;
+}
+
+
 .status-icon {
+    margin-top: 3px;
     width: fit-content;
     display: flex;
     align-items: center;
     padding-left: 10px;
     width: 70px;
     height:100%;
-    
 }
 
 .fa-circle-o-notch {
     color: #828282;
     font-size: 16px;
 }
+
 
 .list-wrapper {
     position: relative;

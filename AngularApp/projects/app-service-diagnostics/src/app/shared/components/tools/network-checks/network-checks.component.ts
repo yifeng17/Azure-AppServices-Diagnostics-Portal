@@ -70,22 +70,23 @@ class DiagProvider{
         return this._armService.get<T>(`https://${siteName}.scm.azurewebsites.net/api/${uri}`).toPromise();
     }
 
-    public postKudoApiAsync<T, S>(siteName:string, uri: string, body?: S): Promise<boolean | {} | ResponseMessageEnvelope<T>>{
-        return this._armService.post<T, S>(`https://${siteName}.scm.azurewebsites.net/api/${uri}`, body).toPromise();
+    public postKudoApiAsync<T, S>(siteName:string, uri: string, body?: S, instance?: string): Promise<boolean | {} | ResponseMessageEnvelope<T>>{
+        var postfix = (instance == null ? "" : `?instance=${instance}`);
+        return this._armService.post<T, S>(`https://${siteName}.scm.azurewebsites.net/api/${uri}${postfix}`, body).toPromise();
     }
 
-    public async runKudoCommand(siteName: string, command: string, dir?: string): Promise<any>{
-        var result: any = await this.postKudoApiAsync(siteName, "command", {"command": command, "dir": dir});
+    public async runKudoCommand(siteName: string, command: string, dir?: string, instance?:string): Promise<any>{
+        var result: any = await this.postKudoApiAsync(siteName, "command", {"command": command, "dir": dir}, instance);
         return result.Output;
     }
 
     public async checkConnectionAsync(hostname:string, port:number, count:number = 1, instance?:string): Promise<{status: ConnectionCheckStatus, ip: string, statuses: ConnectionCheckStatus[]}>{
         var siteName = this._siteInfo.siteName;
-        var nameResolverPromise = this.runKudoCommand(siteName, `nameresolver ${hostname}`).catch(e=>{
+        var nameResolverPromise = this.runKudoCommand(siteName, `nameresolver ${hostname}`, undefined, instance).catch(e=>{
             console.log("nameresolver failed", e);
             return null;
         });
-        var pingPromise = this.runKudoCommand(siteName, `tcpping -n ${count} ${hostname}:${port}`).catch(e=>{
+        var pingPromise = this.runKudoCommand(siteName, `tcpping -n ${count} ${hostname}:${port}`, undefined, instance).catch(e=>{
             console.log("tcpping failed", e);
             return null;
         });
@@ -257,7 +258,7 @@ export class NetworkCheckComponent implements OnInit {
                     .then(result =>{
                         checkResult.level = checkResultLevel[result.level];
                         checkResult.status = this.convertLevelToHealthStatus(result.level);
-                        checkResult.markdown = result.markdown;
+                        checkResult.markdown = this.markdownPreprocess(result.markdown);
                         checkResult.loadingStatus = LoadingStatus.Success;
                         checkResult.interactivePayload = result.interactivePayload;
                     })
@@ -292,18 +293,6 @@ export class NetworkCheckComponent implements OnInit {
         return this.checkResultViews[this.checkResultViews.length-1];
     }
 
-    pushCheckResultx(funcName:string, title:string, result: CheckResult){
-        this.checkResultViews.push({
-            name: funcName, 
-            title: title, 
-            level:checkResultLevel[result.level], 
-            markdown:this.markdownPreprocess(result.markdown), 
-            interactivePayload: result.interactivePayload,
-            status: this.convertLevelToHealthStatus(result.level),
-            loadingStatus: LoadingStatus.Success,
-            expanded:false
-        })
-    }
 
     markdownPreprocess(markdown:string):string{
         var result = markdown.replace(/(?<!\!)\[(.*?)]\((.*?)\)/g,`<a target="_blank"  href="$2">$1</a>`);
@@ -318,7 +307,7 @@ export class NetworkCheckComponent implements OnInit {
                 name: callBack.name, 
                 title: title, 
                 level: checkResultLevel[result.level], 
-                markdown:result.markdown, 
+                markdown:this.markdownPreprocess(result.markdown), 
                 interactivePayload: result.interactivePayload,
                 status: this.convertLevelToHealthStatus(result.level),
                 loadingStatus: LoadingStatus.Success,
