@@ -79,13 +79,13 @@ class DiagProvider{
         return result.Output;
     }
 
-    public async checkConnectionAsync(hostname:string, port:number): Promise<{status: ConnectionCheckStatus, ip: string}>{
+    public async checkConnectionAsync(hostname:string, port:number, count:number = 1, instance?:string): Promise<{status: ConnectionCheckStatus, ip: string, statuses: ConnectionCheckStatus[]}>{
         var siteName = this._siteInfo.siteName;
         var nameResolverPromise = this.runKudoCommand(siteName, `nameresolver ${hostname}`).catch(e=>{
             console.log("nameresolver failed", e);
             return null;
         });
-        var pingPromise = this.runKudoCommand(siteName, `tcpping -n 2 ${hostname}:${port}`).catch(e=>{
+        var pingPromise = this.runKudoCommand(siteName, `tcpping -n ${count} ${hostname}:${port}`).catch(e=>{
             console.log("tcpping failed", e);
             return null;
         });
@@ -95,24 +95,31 @@ class DiagProvider{
         console.log(nameResovlerResult, pingResult);
         var ip:string = null;
         if(nameResovlerResult!=null){
-            var match = nameResovlerResult.match(/Addresses: \t(.*)\b/);
+            var match = nameResovlerResult.match(/Addresses:\s*(.*)\b/);
             if(match!=null){
                 ip = match[1];
             }
         }
-        var status:ConnectionCheckStatus = null;
+        var statuses:ConnectionCheckStatus[] = [];
         if(pingResult!=null){
-            if(pingResult.includes("Connected to ")){
-                status = ConnectionCheckStatus.success;
-            }else if(pingResult.includes("No such host is known")){
-                status = ConnectionCheckStatus.hostNotFound;
-            }else if(pingResult.includes("Connection timed out"))
-                status = ConnectionCheckStatus.timeout;
-            }else{
-                throw new Error(`checkConnectionAsync: unknown status ${pingResult}`);
+            var splited = pingResult.split("\r\n");
+            for(var i in splited){
+                var line = splited[i];
+                if(line.startsWith("Connected to ")){
+                    statuses.push(ConnectionCheckStatus.success);
+                }else if(line.includes("No such host is known")){
+                    statuses.push(ConnectionCheckStatus.hostNotFound);
+                }else if(line.includes("Connection timed out")){
+                    statuses.push(ConnectionCheckStatus.timeout);
+                }else if(line.startsWith("Complete")){
+                    break;
+                }else{
+                    throw new Error(`checkConnectionAsync: unknown status ${pingResult}`);
+                }
             }
-
-        return {status:status, ip:ip};
+        }
+        var status:ConnectionCheckStatus = statuses.some(s=>s==ConnectionCheckStatus.success) ? ConnectionCheckStatus.success : statuses[0];
+        return {status:status, ip:ip, statuses:statuses};
     }
 }
 

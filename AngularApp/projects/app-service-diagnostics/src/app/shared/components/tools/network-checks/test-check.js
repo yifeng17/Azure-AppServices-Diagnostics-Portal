@@ -22,7 +22,7 @@ var kuduApiTestCheck = {
     title: "kudu api check",
     func:async function kuduApiTestCheck(siteInfo, appSettings, armService){
         var command = "nameresolver www.microsoft.com";
-        var a = await armService.postKudoApiAsync("jmvg", "command", {
+        var a = await armService.postKudoApiAsync(siteInfo.siteName, "command", {
         "command": command
     });
         console.log(a);
