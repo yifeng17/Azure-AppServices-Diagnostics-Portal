@@ -17,7 +17,6 @@ import { CheckResultView } from 'projects/app-service-diagnostics/src/app/shared
 })
 export class CheckerListComponent implements OnInit{
   @Input() viewModel: CheckResultView;
-  title: string = 'asdfasdfasdf';
   
   ngOnInit(): void {
   }
