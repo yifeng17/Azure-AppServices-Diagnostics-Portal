@@ -1,5 +1,5 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, Pipe, PipeTransform, Inject, OnInit, Input } from '@angular/core';
+import { Component, Pipe, PipeTransform, Inject, OnInit, Input, ViewEncapsulation } from '@angular/core';
 import { HealthStatus, LoadingStatus } from 'diagnostic-data';
 import { CheckResultView } from 'projects/app-service-diagnostics/src/app/shared/components/tools/network-checks/network-checks.component';
 
@@ -7,6 +7,7 @@ import { CheckResultView } from 'projects/app-service-diagnostics/src/app/shared
   selector: 'checker-list',
   templateUrl: './checker-list.component.html',
   styleUrls: ['./checker-list.component.scss'],
+  encapsulation: ViewEncapsulation.None,
   animations: [
     trigger('expand', [
       state('shown', style({ height: '*' })),
