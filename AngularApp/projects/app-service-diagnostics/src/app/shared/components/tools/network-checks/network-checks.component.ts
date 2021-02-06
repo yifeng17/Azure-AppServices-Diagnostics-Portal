@@ -63,6 +63,10 @@ class DiagProvider{
     }
 
     public postResourceAsync<T, S>(resourceUri: string, body?: S, apiVersion?: string, invalidateCache: boolean = false, appendBodyToCacheKey: boolean = false): Promise<boolean | {} | ResponseMessageEnvelope<T>>{
+        return this.postArmResourceAsync(resourceUri, body, apiVersion, invalidateCache, appendBodyToCacheKey);
+    }
+
+    public postArmResourceAsync<T, S>(resourceUri: string, body?: S, apiVersion?: string, invalidateCache: boolean = false, appendBodyToCacheKey: boolean = false): Promise<boolean | {} | ResponseMessageEnvelope<T>>{
         return this._armService.postResource<T, S>(resourceUri, body, apiVersion, invalidateCache, appendBodyToCacheKey).toPromise();
     }
 
@@ -228,9 +232,14 @@ export class NetworkCheckComponent implements OnInit {
 
     loadRemoteCheckAsync(): Promise<any[]>{
         var promise = new Promise<any[]>((resolve, reject) => {
+            var existedScript = document.getElementById("remoteChecks");
+            if(existedScript!=null){
+                document.head.removeChild(existedScript);
+            }
             var script = document.createElement("script");
             script.setAttribute('type', 'text/javascript');
             script.setAttribute('src', 'http://127.0.0.1:8000/test-check.js');
+            script.setAttribute('id', 'remoteChecks');
             script.onload = () => {
                 console.log("remote script loaded!");
                 console.log(script);
@@ -295,7 +304,7 @@ export class NetworkCheckComponent implements OnInit {
 
 
     markdownPreprocess(markdown:string):string{
-        var result = markdown.replace(/(?<!\!)\[(.*?)]\((.*?)\)/g,`<a target="_blank"  href="$2">$1</a>`);
+        var result = markdown.replace(/(?<!\!)\[(.*?)]\((.*?)( +\"(.*?)\")?\)/g,`<a target="_blank" href="$2" title="$4">$1</a>`);
         return result;
     }
 

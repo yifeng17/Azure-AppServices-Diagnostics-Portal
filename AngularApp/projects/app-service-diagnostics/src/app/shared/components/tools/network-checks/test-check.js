@@ -11,7 +11,7 @@ var sampleJsCheck2 = {
     func:async function sampleJsCheck2(siteInfo, appSettings, armService){
         console.log(appSettings);
         console.log(siteInfo);
-        var armResource = await armService.postResourceAsync("/subscriptions/6ae79ddd-3eea-4ceb-8460-a86a469c69db/resourceGroups/NetworkingRG/providers/Microsoft.Web/sites/winswift/config/appsettings/list");
+        var armResource = await armService.postArmResourceAsync("/subscriptions/6ae79ddd-3eea-4ceb-8460-a86a469c69db/resourceGroups/NetworkingRG/providers/Microsoft.Web/sites/winswift/config/appsettings/list");
         console.log(armResource);
         
         return {level: 0, markdown: "```\r\n"+ JSON.stringify(armResource) +"\r\n```"};
