@@ -53,9 +53,11 @@ enum ConnectionCheckStatus { success, timeout, hostNotFound, refused }
 class DiagProvider{
     private _siteInfo:SiteInfoMetaData;
     private _armService: ArmService;
+    private _fullSiteName: string;
     constructor(siteInfo:SiteInfoMetaData, armService:ArmService){
         this._siteInfo=siteInfo;
         this._armService = armService;
+        this._fullSiteName = siteInfo.siteName + (siteInfo.slot == "" ? "" : "-" + siteInfo.slot);
     }
 
     public getArmResourceAsync<T>(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Promise<T> {
@@ -81,16 +83,26 @@ class DiagProvider{
 
     public async runKudoCommand(siteName: string, command: string, dir?: string, instance?:string): Promise<any>{
         var result: any = await this.postKudoApiAsync(siteName, "command", {"command": command, "dir": dir}, instance);
-        return result.Output;
+        return result.Output.slice(0, -2);
+    }
+
+    public async getEnvironmentVariables(names: string[], instance?:string){
+        names = names.map(n=>`%${n}%`);
+        var echoPromise = this.runKudoCommand(this._fullSiteName, `echo ${names.join(";")}`, undefined, instance).catch(e=>{
+            console.log("getEnvironmentVariables failed", e);
+            return null;
+        });
+        var result = await echoPromise;
+        result = result.split(";").map((r, i) => r==names[i] ? null:r);
+        return result;
     }
 
     public async checkConnectionAsync(hostname:string, port:number, count:number = 1, instance?:string): Promise<{status: ConnectionCheckStatus, ip: string, aliases: string, statuses: ConnectionCheckStatus[]}>{
-        var siteName = this._siteInfo.siteName;
-        var nameResolverPromise = this.runKudoCommand(siteName, `nameresolver ${hostname} 168.63.129.16`, undefined, instance).catch(e=>{
+        var nameResolverPromise = this.runKudoCommand(this._fullSiteName, `nameresolver ${hostname} 168.63.129.16`, undefined, instance).catch(e=>{
             console.log("nameresolver failed", e);
             return null;
         });
-        var pingPromise = this.runKudoCommand(siteName, `tcpping -n ${count} ${hostname}:${port}`, undefined, instance).catch(e=>{
+        var pingPromise = this.runKudoCommand(this._fullSiteName, `tcpping -n ${count} ${hostname}:${port}`, undefined, instance).catch(e=>{
             console.log("tcpping failed", e);
             return null;
         });
