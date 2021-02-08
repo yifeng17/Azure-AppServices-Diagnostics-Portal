@@ -84,9 +84,9 @@ class DiagProvider{
         return result.Output;
     }
 
-    public async checkConnectionAsync(hostname:string, port:number, count:number = 1, instance?:string): Promise<{status: ConnectionCheckStatus, ip: string, statuses: ConnectionCheckStatus[]}>{
+    public async checkConnectionAsync(hostname:string, port:number, count:number = 1, instance?:string): Promise<{status: ConnectionCheckStatus, ip: string, aliases: string, statuses: ConnectionCheckStatus[]}>{
         var siteName = this._siteInfo.siteName;
-        var nameResolverPromise = this.runKudoCommand(siteName, `nameresolver ${hostname}`, undefined, instance).catch(e=>{
+        var nameResolverPromise = this.runKudoCommand(siteName, `nameresolver ${hostname} 168.63.129.16`, undefined, instance).catch(e=>{
             console.log("nameresolver failed", e);
             return null;
         });
@@ -98,11 +98,12 @@ class DiagProvider{
         var nameResovlerResult = await (nameResolverPromise.catch(e=>null));
         var pingResult = await (pingPromise.catch(e=>null));
         console.log(nameResovlerResult, pingResult);
-        var ip:string = null;
+        var ip:string = null, aliases:string = null;
         if(nameResovlerResult!=null){
-            var match = nameResovlerResult.match(/Addresses:\s*(.*)\b/);
+            var match = nameResovlerResult.match(/Addresses:\s*([\S\s]*)Aliases:\s*([\S\s]*)$/);
             if(match!=null){
-                ip = match[1];
+                ip = match[1].split("\r\n").filter(i=>i.length>0).join(";");
+                aliases = match[2].split("\r\n").filter(i=>i.length>0).join(";");
             }
         }
         var statuses:ConnectionCheckStatus[] = [];
@@ -124,7 +125,7 @@ class DiagProvider{
             }
         }
         var status:ConnectionCheckStatus = statuses.some(s=>s==ConnectionCheckStatus.success) ? ConnectionCheckStatus.success : statuses[0];
-        return {status:status, ip:ip, statuses:statuses};
+        return {status:status, ip:ip, aliases:aliases, statuses:statuses};
     }
 }
 
