@@ -1,64 +1,83 @@
 {
 	"homePageText": {
-		"title": "Azure API Management Service Diagnostics",
-		"description": "Use Azure API Management Service Diagnostics to investigate how your service is performing, diagnose issues, and discover how to improve its reliability. Select the problem category that best matches the information or tool that you're interested in:",
-		"searchBarPlaceHolder": "Search Azure API Management Services"
+	  "title": "API Management Diagnostics",
+	  "description": "Investigate how your API is performing, diagnose issues, and discover how to improve its reliability.",
+	  "searchBarPlaceHolder": "Search for common problems or tools"
 	},
 	"matchRegEx": "/Microsoft.ApiManagement/service/",
-	"searchSuffix": "AZURE API MANAGEMENT SERVICE",
-	"azureServiceName": "Azure API Management Service",
-	"armApiVersion": "2018-06-01-preview",
-	"isSearchEnabled": true,
-	"liveChatConfig": {
-		"isApplicableForLiveChat": false,
-		"supportTopicIds": []
+	"searchSuffix": "API Management",
+	"azureServiceName": "API Management",
+	"armApiConfig": {
+	  "armApiVersion": "2018-06-01-preview"
 	},
-	    "categories": [{
-			"id": "PerformanceandAvailabilityAPIM",
-			"name": "Performance and Availability",
-			"description": "Check your API service's health and discover performance issues",
-			"keywords": ["Service down", "Platform Health", "Backend 5xx", "SNAT"],
-			"color": "rgb(186, 211, 245)",
-			"createFlowForCategory": true,
-			"chatEnabled": false
-		}
+	"isSearchEnabled": true,
+	"keystoneDetectorId": "",
+	"liveChatConfig": {
+	  "isApplicableForLiveChat": false,
+	  "supportTopicIds": []
+	},
+	"categories": [
+	  {
+		"id": "Availability and Performance",
+		"name": "Availability and Performance",
+		"description": "Check your API service's health and discover performance issues",
+		"keywords": [
+		  "Service Down",
+		  "Platform Health",
+		  "Backend 5xx",
+		  "SNAT"
+		],
+		"color": "rgb(208, 175, 239)",
+		"createFlowForCategory": true,
+		"chatEnabled": false
+	  },
+	  {
+		"id": "API Policies",
+		"name": "API Policies",
+		"description": "Find out if your API policy are misconfigured",
+		"keywords": [
+		  "Caching",
+		  "Policy Expressions",
+		  "Validate JWT",
+		  "CORS"
+		],
+		"color": "rgb(249, 213, 180)",
+		"createFlowForCategory": true,
+		"chatEnabled": false
+	  },
+	  {
+		"id": "Gateway Performance",
+		"name": "Gateway Performance",
+		"description": "Analyze your API Gateway performance and discover issues",
+		"keywords": [
+		  "Gateway Responses",
+		  "4xx",
+		  "5xx",
+		  "Gateway Requests"
+		],
+		"color": "rgb(208, 228, 176)",
+		"createFlowForCategory": true,
+		"chatEnabled": false
+	  },
+	  {
+		"id": "Service Upgrade",
+		"name": "Service Upgrade",
+		"description": "Check your service SKU and discover your service upgrade events",
+		"keywords": [
+		  "Upgrade",
+		  "SKU",
+		  "Latency",
+		  "Resource Deployment Failure"
+		],
+		"color": "rgb(186, 211, 245)",
+		"createFlowForCategory": true,
+		"chatEnabled": false
+	  }
 	],
-
-	    "categories": [{
-			"id": "ProxyandPoliciesAPIM",
-			"name": "API Policies",
-			"description": "Found out if your API proxy and policy are misconfigured",
-			"keywords": ["Caching", "Policy expressions", "Validate JWT", "CORS"],
-			"color": "rgb(186, 211, 245)",
-			"createFlowForCategory": true,
-			"chatEnabled": false
-		}
+	"quickLinks": [
+	  "apim-platform-health",
+	  "apim-proxy-policy-errors",
+	  "apim-proxy-performance"
 	],
-
-		"categories": [{
-			"id": "GatewayPerformanceAPIM",
-			"name": "Gateway Performance",
-			"description": "Analyze your API Gateway performance and discover issues",
-			"keywords": ["Gateway responses", "4xx", "5xx", "Gateway request"],
-			"color": "rgb(186, 211, 245)",
-			"createFlowForCategory": true,
-			"chatEnabled": false
-		}
-	],
-
-		"categories": [{
-			"id": "ServiceUpgradeAPIM",
-			"name": "Service Upgrade",
-			"description": "Check your service SKU and discover your service upgrade events",
-			"keywords": ["Service upgrade", "Service SKU", "Latency", "Resource deployment failure"],
-			"color": "rgb(186, 211, 245)",
-			"createFlowForCategory": true,
-			"chatEnabled": false
-		}
-	],
-
-
-	"quickLinks": ["apim-platform-health", "apim-proxy-policy-errors", "apim-proxy-performance"],
-
-   	"pesId": "15551"
-}
+	"pesId": "15551"
+  }
