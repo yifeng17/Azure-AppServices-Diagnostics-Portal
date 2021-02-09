@@ -51,13 +51,11 @@ export class CheckResultView{
 enum ConnectionCheckStatus { success, timeout, hostNotFound, refused }
 
 class DiagProvider{
-    private _siteInfo:SiteInfoMetaData;
+    private _siteInfo:SiteInfoMetaData&Site&{fullSiteName:string};
     private _armService: ArmService;
-    private _fullSiteName: string;
-    constructor(siteInfo:SiteInfoMetaData, armService:ArmService){
+    constructor(siteInfo:SiteInfoMetaData&Site&{fullSiteName:string}, armService:ArmService){
         this._siteInfo=siteInfo;
         this._armService = armService;
-        this._fullSiteName = siteInfo.siteName + (siteInfo.slot == "" ? "" : "-" + siteInfo.slot);
     }
 
     public getArmResourceAsync<T>(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Promise<T> {
@@ -88,7 +86,7 @@ class DiagProvider{
 
     public async getEnvironmentVariables(names: string[], instance?:string){
         names = names.map(n=>`%${n}%`);
-        var echoPromise = this.runKudoCommand(this._fullSiteName, `echo ${names.join(";")}`, undefined, instance).catch(e=>{
+        var echoPromise = this.runKudoCommand(this._siteInfo.fullSiteName, `echo ${names.join(";")}`, undefined, instance).catch(e=>{
             console.log("getEnvironmentVariables failed", e);
             return null;
         });
@@ -97,27 +95,13 @@ class DiagProvider{
         return result;
     }
 
-    public async checkConnectionAsync(hostname:string, port:number, count:number = 1, instance?:string): Promise<{status: ConnectionCheckStatus, ip: string, aliases: string, statuses: ConnectionCheckStatus[]}>{
-        var nameResolverPromise = this.runKudoCommand(this._fullSiteName, `nameresolver ${hostname} 168.63.129.16`, undefined, instance).catch(e=>{
-            console.log("nameresolver failed", e);
-            return null;
-        });
-        var pingPromise = this.runKudoCommand(this._fullSiteName, `tcpping -n ${count} ${hostname}:${port}`, undefined, instance).catch(e=>{
+    public async tcpPingAsync(hostname:string, port:number, count:number = 1, instance?:string): Promise<{status: ConnectionCheckStatus, statuses: ConnectionCheckStatus[]}>{
+        var pingPromise = this.runKudoCommand(this._siteInfo.fullSiteName, `tcpping -n ${count} ${hostname}:${port}`, undefined, instance).catch(e=>{
             console.log("tcpping failed", e);
             return null;
         });
-        await Promise.all([nameResolverPromise.catch(e=>e), pingPromise.catch(e=>e)]);
-        var nameResovlerResult = await (nameResolverPromise.catch(e=>null));
-        var pingResult = await (pingPromise.catch(e=>null));
-        console.log(nameResovlerResult, pingResult);
-        var ip:string = null, aliases:string = null;
-        if(nameResovlerResult!=null){
-            var match = nameResovlerResult.match(/Addresses:\s*([\S\s]*)Aliases:\s*([\S\s]*)$/);
-            if(match!=null){
-                ip = match[1].split("\r\n").filter(i=>i.length>0).join(";");
-                aliases = match[2].split("\r\n").filter(i=>i.length>0).join(";");
-            }
-        }
+        var pingResult = await pingPromise;
+
         var statuses:ConnectionCheckStatus[] = [];
         if(pingResult!=null){
             var splited = pingResult.split("\r\n");
@@ -137,7 +121,29 @@ class DiagProvider{
             }
         }
         var status:ConnectionCheckStatus = statuses.some(s=>s==ConnectionCheckStatus.success) ? ConnectionCheckStatus.success : statuses[0];
-        return {status:status, ip:ip, aliases:aliases, statuses:statuses};
+        return {status, statuses};
+    }
+
+    public async checkConnectionAsync(hostname:string, port:number, count:number = 1, dns: string = "168.63.129.16", instance?:string): Promise<{status: ConnectionCheckStatus, ip: string, aliases: string, statuses: ConnectionCheckStatus[]}>{
+        var nameResolverPromise = this.runKudoCommand(this._siteInfo.fullSiteName, `nameresolver ${hostname} ${dns}`, undefined, instance).catch(e=>{
+            console.log("nameresolver failed", e);
+            return null;
+        });
+        var pingPromise = this.tcpPingAsync(hostname, port, count, instance);
+        await Promise.all([nameResolverPromise.catch(e=>e), pingPromise.catch(e=>e)]);
+        var nameResovlerResult = await (nameResolverPromise.catch(e=>null));
+        var pingResult = await (pingPromise.catch(e=>null));
+        console.log(nameResovlerResult, pingResult);
+        var ip:string = null, aliases:string = null;
+        if(nameResovlerResult!=null){
+            var match = nameResovlerResult.match(/Addresses:\s*([\S\s]*)Aliases:\s*([\S\s]*)$/);
+            if(match!=null){
+                ip = match[1].split("\r\n").filter(i=>i.length>0).join(";");
+                aliases = match[2].split("\r\n").filter(i=>i.length>0).join(";");
+            }
+        }
+
+        return {status: pingResult && pingResult.status, ip, aliases, statuses: pingResult && pingResult.statuses};
     }
 }
 
@@ -191,11 +197,14 @@ export class NetworkCheckComponent implements OnInit {
 
     diagProvider: DiagProvider;
     checkResultViews: CheckResultView[] = [];
+    siteInfo: SiteInfoMetaData&Site&{fullSiteName:string}
     //checks: any[];
 
     constructor(private _siteService: SiteService,private _armService: ArmService, private _windowService: WindowService, private _logger: AvailabilityLoggingService) {
-
-        this.diagProvider = new DiagProvider(this._siteService.currentSiteMetaData.value, _armService);
+        var siteInfo = this._siteService.currentSiteMetaData.value;
+        var fullSiteName = siteInfo.siteName + (siteInfo.slot == "" ? "" : "-" + siteInfo.slot);
+        this.siteInfo = {...this._siteService.currentSiteMetaData.value , ...this._siteService.currentSite.value, fullSiteName};
+        this.diagProvider = new DiagProvider(this.siteInfo, _armService);
         this.loadChecksAsync();
 
     }
@@ -213,7 +222,7 @@ export class NetworkCheckComponent implements OnInit {
     }
 
     async loadChecksAsync():Promise<void>{
-        var siteInfo = this._siteService.currentSiteMetaData.value;
+        var siteInfo = this.siteInfo;
         var appSettings = (await this._siteService.getSiteAppSettings(siteInfo.subscriptionId, siteInfo.resourceGroupName, siteInfo.siteName, siteInfo.slot).toPromise()).properties;
         var sampleChecks = [sampleCheck, interactiveSampleCheck];
         
@@ -272,7 +281,7 @@ export class NetworkCheckComponent implements OnInit {
     }
 
     async runChecksAsync(checks: Check[], appSettings:any):Promise<void>{
-        var siteInfo:SiteInfoMetaData&Site = {...this._siteService.currentSiteMetaData.value , ...this._siteService.currentSite.value};
+        var siteInfo = this.siteInfo;
         checks.map(check => {
             try{
                 var checkResult = this.pushCheckResult(check.func.name, check.title);
