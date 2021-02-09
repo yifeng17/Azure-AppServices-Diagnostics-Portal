@@ -59,7 +59,14 @@ class DiagProvider{
     }
 
     public getArmResourceAsync<T>(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Promise<T> {
-        return this._armService.getArmResource<T>(resourceUri, apiVersion, invalidateCache).toPromise();
+        var stack = new Error("replace_placeholder").stack;
+        return this._armService.getArmResource<T>(resourceUri, apiVersion, invalidateCache)
+            .toPromise()
+            .catch(e => {
+                var err = new Error(e);
+                err.stack = stack.replace("replace_placeholder", e);
+                throw err;
+            });
     }
 
     public postResourceAsync<T, S>(resourceUri: string, body?: S, apiVersion?: string, invalidateCache: boolean = false, appendBodyToCacheKey: boolean = false): Promise<boolean | {} | ResponseMessageEnvelope<T>>{
@@ -67,16 +74,37 @@ class DiagProvider{
     }
 
     public postArmResourceAsync<T, S>(resourceUri: string, body?: S, apiVersion?: string, invalidateCache: boolean = false, appendBodyToCacheKey: boolean = false): Promise<boolean | {} | ResponseMessageEnvelope<T>>{
-        return this._armService.postResource<T, S>(resourceUri, body, apiVersion, invalidateCache, appendBodyToCacheKey).toPromise();
+        var stack = new Error("replace_placeholder").stack;
+        return this._armService.postResource<T, S>(resourceUri, body, apiVersion, invalidateCache, appendBodyToCacheKey)
+            .toPromise()
+            .catch(e => {
+                var err = new Error(e);
+                err.stack = stack.replace("replace_placeholder", e);
+                throw err;
+            });
     }
 
     public getKudoApiAsync<T>(siteName:string, uri: string): Promise<T> {
-        return this._armService.get<T>(`https://${siteName}.scm.azurewebsites.net/api/${uri}`).toPromise();
+        var stack = new Error("replace_placeholder").stack;
+        return this._armService.get<T>(`https://${siteName}.scm.azurewebsites.net/api/${uri}`)
+            .toPromise()
+            .catch(e => {
+                var err = new Error(e);
+                err.stack = stack.replace("replace_placeholder", e);
+                throw err;
+            });
     }
 
     public postKudoApiAsync<T, S>(siteName:string, uri: string, body?: S, instance?: string): Promise<boolean | {} | ResponseMessageEnvelope<T>>{
         var postfix = (instance == null ? "" : `?instance=${instance}`);
-        return this._armService.post<T, S>(`https://${siteName}.scm.azurewebsites.net/api/${uri}${postfix}`, body).toPromise();
+        var stack = new Error("replace_placeholder").stack;
+        return this._armService.post<T, S>(`https://${siteName}.scm.azurewebsites.net/api/${uri}${postfix}`, body)
+            .toPromise()
+            .catch(e => {
+                var err = new Error(e);
+                err.stack = stack.replace("replace_placeholder", e);
+                throw err;
+            });
     }
 
     public async runKudoCommand(siteName: string, command: string, dir?: string, instance?:string): Promise<any>{
