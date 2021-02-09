@@ -26,7 +26,7 @@
 
 	    "categories": [{
 			"id": "ProxyandPoliciesAPIM",
-			"name": "Proxy and Policies",
+			"name": "API Policies",
 			"description": "Found out if your API proxy and policy are misconfigured",
 			"keywords": ["Caching", "Policy expressions", "Validate JWT", "CORS"],
 			"color": "rgb(186, 211, 245)",
