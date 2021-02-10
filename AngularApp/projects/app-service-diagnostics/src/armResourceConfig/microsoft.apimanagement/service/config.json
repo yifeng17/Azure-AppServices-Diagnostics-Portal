@@ -32,9 +32,9 @@
       "chatEnabled": false
     },
     {
-      "id": "Proxy and Policies",
-      "name": "Proxy and Policies",
-      "description": "Find out if your API proxy and policy are misconfigured",
+      "id": "API Policies",
+      "name": "API Policies",
+      "description": "Find out if your API policies are misconfigured",
       "keywords": [
         "Caching",
         "Policy Expressions",
