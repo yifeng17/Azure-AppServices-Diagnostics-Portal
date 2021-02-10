@@ -112,66 +112,94 @@ class DiagProvider{
         return result.Output.slice(0, -2);
     }
 
-    public async getEnvironmentVariables(names: string[], instance?:string){
-        names = names.map(n=>`%${n}%`);
-        var echoPromise = this.runKudoCommand(this._siteInfo.fullSiteName, `echo ${names.join(";")}`, undefined, instance).catch(e=>{
-            console.log("getEnvironmentVariables failed", e);
-            return null;
+    public getEnvironmentVariablesAsync(names: string[], instance?:string){
+        var stack = new Error("replace_placeholder").stack;
+        var promise = (async ()=>{
+            names = names.map(n=>`%${n}%`);
+            var echoPromise = this.runKudoCommand(this._siteInfo.fullSiteName, `echo ${names.join(";")}`, undefined, instance).catch(e=>{
+                console.log("getEnvironmentVariables failed", e);
+                e.message = "getEnvironmentVariablesAsync failed:" + e.message;
+                throw e;
+            });
+            var result = await echoPromise;
+            result = result.split(";").map((r, i) => r==names[i] ? null:r);
+            return result;
+        })();
+
+        return promise.catch(e => {
+            var err = new Error(e);
+            err.stack = stack.replace("replace_placeholder", e.message || e);
+            throw err;
         });
-        var result = await echoPromise;
-        result = result.split(";").map((r, i) => r==names[i] ? null:r);
-        return result;
     }
 
     public async tcpPingAsync(hostname:string, port:number, count:number = 1, instance?:string): Promise<{status: ConnectionCheckStatus, statuses: ConnectionCheckStatus[]}>{
-        var pingPromise = this.runKudoCommand(this._siteInfo.fullSiteName, `tcpping -n ${count} ${hostname}:${port}`, undefined, instance).catch(e=>{
-            console.log("tcpping failed", e);
-            return null;
-        });
-        var pingResult = await pingPromise;
-
-        var statuses:ConnectionCheckStatus[] = [];
-        if(pingResult!=null){
-            var splited = pingResult.split("\r\n");
-            for(var i in splited){
-                var line = splited[i];
-                if(line.startsWith("Connected to ")){
-                    statuses.push(ConnectionCheckStatus.success);
-                }else if(line.includes("No such host is known")){
-                    statuses.push(ConnectionCheckStatus.hostNotFound);
-                }else if(line.includes("Connection timed out")){
-                    statuses.push(ConnectionCheckStatus.timeout);
-                }else if(line.startsWith("Complete")){
-                    break;
-                }else{
-                    throw new Error(`checkConnectionAsync: unknown status ${pingResult}`);
+        var stack = new Error("replace_placeholder").stack;
+        var promise = (async ()=>{
+            var pingPromise = this.runKudoCommand(this._siteInfo.fullSiteName, `tcpping -n ${count} ${hostname}:${port}`, undefined, instance).catch(e=>{
+                console.log("tcpping failed", e);
+                return null;
+            });
+            var pingResult = await pingPromise;
+    
+            var statuses:ConnectionCheckStatus[] = [];
+            if(pingResult!=null){
+                var splited = pingResult.split("\r\n");
+                for(var i in splited){
+                    var line = splited[i];
+                    if(line.startsWith("Connected to ")){
+                        statuses.push(ConnectionCheckStatus.success);
+                    }else if(line.includes("No such host is known")){
+                        statuses.push(ConnectionCheckStatus.hostNotFound);
+                    }else if(line.includes("Connection timed out")){
+                        statuses.push(ConnectionCheckStatus.timeout);
+                    }else if(line.startsWith("Complete")){
+                        break;
+                    }else{
+                        throw new Error(`checkConnectionAsync: unknown status ${pingResult}`);
+                    }
                 }
             }
-        }
-        var status:ConnectionCheckStatus = statuses.some(s=>s==ConnectionCheckStatus.success) ? ConnectionCheckStatus.success : statuses[0];
-        return {status, statuses};
+            var status:ConnectionCheckStatus = statuses.some(s=>s==ConnectionCheckStatus.success) ? ConnectionCheckStatus.success : statuses[0];
+            return {status, statuses};
+        })();
+
+        return promise.catch(e => {
+            var err = new Error(e);
+            err.stack = stack.replace("replace_placeholder", e.message || e);
+            throw err;
+        });
     }
 
     public async checkConnectionAsync(hostname:string, port:number, count:number = 1, dns: string = "168.63.129.16", instance?:string): Promise<{status: ConnectionCheckStatus, ip: string, aliases: string, statuses: ConnectionCheckStatus[]}>{
-        var nameResolverPromise = this.runKudoCommand(this._siteInfo.fullSiteName, `nameresolver ${hostname} ${dns}`, undefined, instance).catch(e=>{
-            console.log("nameresolver failed", e);
-            return null;
-        });
-        var pingPromise = this.tcpPingAsync(hostname, port, count, instance);
-        await Promise.all([nameResolverPromise.catch(e=>e), pingPromise.catch(e=>e)]);
-        var nameResovlerResult = await (nameResolverPromise.catch(e=>null));
-        var pingResult = await (pingPromise.catch(e=>null));
-        console.log(nameResovlerResult, pingResult);
-        var ip:string = null, aliases:string = null;
-        if(nameResovlerResult!=null){
-            var match = nameResovlerResult.match(/Addresses:\s*([\S\s]*)Aliases:\s*([\S\s]*)$/);
-            if(match!=null){
-                ip = match[1].split("\r\n").filter(i=>i.length>0).join(";");
-                aliases = match[2].split("\r\n").filter(i=>i.length>0).join(";");
+        var stack = new Error("replace_placeholder").stack;
+        var promise = (async ()=>{
+            var nameResolverPromise = this.runKudoCommand(this._siteInfo.fullSiteName, `nameresolver ${hostname} ${dns}`, undefined, instance).catch(e=>{
+                console.log("nameresolver failed", e);
+                return null;
+            });
+            var pingPromise = this.tcpPingAsync(hostname, port, count, instance);
+            await Promise.all([nameResolverPromise.catch(e=>e), pingPromise.catch(e=>e)]);
+            var nameResovlerResult = await (nameResolverPromise.catch(e=>null));
+            var pingResult = await (pingPromise.catch(e=>null));
+            console.log(nameResovlerResult, pingResult);
+            var ip:string = null, aliases:string = null;
+            if(nameResovlerResult!=null){
+                var match = nameResovlerResult.match(/Addresses:\s*([\S\s]*)Aliases:\s*([\S\s]*)$/);
+                if(match!=null){
+                    ip = match[1].split("\r\n").filter(i=>i.length>0).join(";");
+                    aliases = match[2].split("\r\n").filter(i=>i.length>0).join(";");
+                }
             }
-        }
 
-        return {status: pingResult && pingResult.status, ip, aliases, statuses: pingResult && pingResult.statuses};
+            return {status: pingResult && pingResult.status, ip, aliases, statuses: pingResult && pingResult.statuses};
+        })();
+
+        return promise.catch(e => {
+            var err = new Error(e);
+            err.stack = stack.replace("replace_placeholder", e.message || e);
+            throw err;
+        });
     }
 }
 
@@ -326,7 +354,7 @@ export class NetworkCheckComponent implements OnInit {
                         checkResult.loadingStatus = LoadingStatus.Success;
                         checkResult.status = this.convertLevelToHealthStatus(checkResultLevel.error)
                         checkResult.title ="faulted: " + checkResult.title;
-                        checkResult.markdown = "```\r\n"+ (error.stack || error) +"\r\n```";
+                        checkResult.markdown = "```\r\n" + `message: ${error}\r\nstacktrace: `+ (error.stack || "none") +"\r\n```";
                         console.log(error)
                     });
             }
