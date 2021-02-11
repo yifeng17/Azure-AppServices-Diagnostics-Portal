@@ -12,7 +12,18 @@
         </div>
       </div>
     </div>
-    <ng-container *ngIf="workDistributionDetail">
+
+    <!-- <div>{{viewResponse.metadata.id}}</div> -->
+
+    <div *ngFor="let item of riskPanelContents | keyvalue">
+      <!-- *ngIf="item.key===riskAlertId" -->
+
+    <detector-view  *ngIf="viewResponse && viewResponse.metadata && viewResponse.metadata.id === item.key" [analysisMode]="false" [isKeystoneView]="false" [isAnalysisView]="false" [detectorResponse]="item.value" [error]="error" [startTime]="getStartTime" [endTime]="getEndTime"
+    [developmentMode]="false" [detector]="item.id" [hideDetectorHeader]="true" [isRiskAlertDetector]="true">
+   </detector-view>
+   </div>
+
+    <!-- <ng-container *ngIf="workDistributionDetail">
       <fab-message-bar [messageBarType]="workDistributionDetail.messageType"
         [isMultiline]="workDistributionDetail.expand" dismissButtonAriaLabel="Close" [truncated]="true"
         overflowButtonAriaLabel="See more">
@@ -71,6 +82,10 @@
       <b>Learn about more configurations for high availability:</b>
       <a href="https://azure.github.io/AppService/2020/05/15/Robust-Apps-for-the-cloud.html" target='_blank' (click)="logOpenLinkEvent('Best practice summary', 'https://azure.github.io/AppService/2020/05/15/Robust-Apps-for-the-cloud.html')">
         The Ultimate Guide to Running Healthy Apps in the Cloud</a>
-    </fab-message-bar>
+    </fab-message-bar> -->
   </div>
 </fab-panel>
+
+<detector-view [analysisMode]="false" [isKeystoneView]="false" [isAnalysisView]="false" [detectorResponse]="viewResponse" [error]="error" [startTime]="getStartTime" [endTime]="getEndTime"
+    [developmentMode]="false" [detector]="riskAlertId" [hideDetectorHeader]="false">
+   </detector-view>

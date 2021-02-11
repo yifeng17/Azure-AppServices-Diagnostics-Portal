@@ -1,11 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { TelemetryService } from 'diagnostic-data';
+import { DetectorResponse } from 'dist/diagnostic-data/public_api';
 import { IPanelProps, IPanelStyles, MessageBarType, PanelType } from 'office-ui-fabric-react';
 import { Globals } from '../../../globals';
 import { NotificationService } from '../../../shared-v2/services/notification.service';
+import { RiskAlertService } from '../../../shared-v2/services/risk-alert.service';
 import { AuthService } from '../../../startup/services/auth.service';
 import { PortalActionService } from '../../services/portal-action.service';
 import { riskAlertDetail } from '../risk-alerts-notification/risk-alerts-notification.component';
+
 
 @Component({
     selector: 'risk-alerts-panel',
@@ -20,18 +23,22 @@ export class RiskAlertsPanelComponent implements OnInit {
             marginTop: '50px',
         }
     }
-
+    @Input() riskPanelContents: any = {};
+    @Input() riskAlertId: string = "";
+    @Input() riskAlertTitle: string = "";
+    viewResponse: DetectorResponse;
     autoHealDetail: riskAlertDetail;
     healthCheckDetail: riskAlertDetail;
     workDistributionDetail: riskAlertDetail;
     appDensityCheckDetail: riskAlertDetail;
     summaryType: MessageBarType = MessageBarType.info;
     isInCaseSubmissionFlow: boolean = false;
-    constructor(public globals: Globals, public notificationService: NotificationService, public telemetryService: TelemetryService,private portalActionService:PortalActionService,private authService: AuthService) {
+
+    constructor(public globals: Globals, public notificationService: NotificationService, public telemetryService: TelemetryService,private portalActionService:PortalActionService,private authService: AuthService, private _riskAlertService: RiskAlertService) {
         if(authService) {
             this.authService.getStartupInfo().subscribe(startupInfo => {
                 this.isInCaseSubmissionFlow = startupInfo && startupInfo.source !== undefined && startupInfo.source.toLowerCase() === ("CaseSubmissionV2-NonContext").toLowerCase();
-    
+
                 if(!this.isInCaseSubmissionFlow) {
                     this.styles = {};
                 }
@@ -40,6 +47,34 @@ export class RiskAlertsPanelComponent implements OnInit {
     }
 
     ngOnInit() {
+        console.log("in risk panel, panel content", this.riskPanelContents, this.riskAlertId, this.viewResponse);
+        console.log("riskalertservice", this._riskAlertService);
+        for (const key of Object.keys(this.riskPanelContents))
+        {
+            if (key === this.riskAlertId)
+            {
+                this.viewResponse = this.riskPanelContents[key];
+                console.log("selected riskId and response", key, this.viewResponse);
+                break;
+            }
+        }
+
+        this._riskAlertService.getRiskTileResponse().subscribe(()=>
+        {
+
+            this.riskPanelContents = this._riskAlertService.risksPanelContents;
+            console.log("getrisks and get riskpanelcontents", this._riskAlertService.risks);
+        });
+
+
+        this._riskAlertService.riskPanelContentSub.subscribe(res => {
+            this.viewResponse = res;
+            console.log("viewResponseRisk", this.viewResponse);
+
+            console.log("in risk panel, panel content", this.riskPanelContents, this.riskAlertId, this.viewResponse);
+        });
+
+
         this.globals.reliabilityChecksDetailsBehaviorSubject.subscribe((reliabilityChecks) => {
             this.autoHealDetail = reliabilityChecks.autoHeal;
             this.healthCheckDetail = reliabilityChecks.healthCheck;

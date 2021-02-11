@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { HealthStatus, LoadingStatus, StatusStyles, TelemetryEventNames, TelemetryService } from 'diagnostic-data'
+import { RiskAlertService } from '../../../shared-v2/services/risk-alert.service';
 import { RiskTile, RiskInfo } from '../../models/risk';
 @Component({
   selector: 'risk-tile',
@@ -20,7 +21,7 @@ export class RiskTileComponent implements OnInit {
   }
 
   @Input() risk: RiskTile;
-  constructor(private telemetryService: TelemetryService) { }
+  constructor(private telemetryService: TelemetryService, private riskAlertService: RiskAlertService) { }
 
 
   ngOnInit() {
@@ -28,31 +29,47 @@ export class RiskTileComponent implements OnInit {
     this.riskProperties["Title"] = this.title;
     this.linkText = this.risk.linkText;
     this.showTile = this.risk.showTile;
-    this.risk.infoObserverable.subscribe(info => {
-      if (info !== null && info !== undefined && Object.keys(info).length > 0) {
-        this.infoList = this.processRiskInfo(info);
-        this.loading = LoadingStatus.Success;
-        this.riskProperties["TileLoaded"] = LoadingStatus[this.loading];
-        this.logEvent(TelemetryEventNames.RiskTileLoaded, {});
-      }
-    }, e => {
-      this.loading = LoadingStatus.Failed;
-      this.riskProperties["TileLoaded"] = LoadingStatus[this.loading];
-      this.infoList = [
-        {
-          message: "No data available",
-          status: HealthStatus.Info
-        }
-      ];
-      this.logEvent(TelemetryEventNames.RiskTileLoaded, {
-        "LoadingError":e
-      });
-    });
+    if (this.risk.riskInfo != null && Object.keys(this.risk.riskInfo).length > 0)
+    {
+        this.infoList = this.processRiskInfo(this.risk.riskInfo);
+    }
+    else
+    {
+        this.infoList =  [
+            {
+              message: "No data available",
+              status: HealthStatus.Info
+            }
+          ];
+    }
+    // this.risk.infoObserverable.subscribe(info => {
+    //   if (info !== null && info !== undefined && Object.keys(info).length > 0) {
+    //     this.infoList = this.processRiskInfo(info);
+    //     this.loading = LoadingStatus.Success;
+    //     this.riskProperties["TileLoaded"] = LoadingStatus[this.loading];
+    //     this.logEvent(TelemetryEventNames.RiskTileLoaded, {});
+    //   }
+    // }, e => {
+    //   this.loading = LoadingStatus.Failed;
+    //   this.riskProperties["TileLoaded"] = LoadingStatus[this.loading];
+    //   this.infoList = [
+    //     {
+    //       message: "No data available",
+    //       status: HealthStatus.Info
+    //     }
+    //   ];
+    //   this.logEvent(TelemetryEventNames.RiskTileLoaded, {
+    //     "LoadingError":e
+    //   });
+    // });
+
+    this.loading = this.risk.loadingStatus;
   }
 
   clickTileHandler() {
     this.logEvent(TelemetryEventNames.RiskTileClicked, {});
     this.risk.action();
+    // this.riskAlertService.riskPanelContentSub.next(this.risk.riskAlertResponse);
   }
 
   private processRiskInfo(info: RiskInfo): RiskInfoDisplay[] {

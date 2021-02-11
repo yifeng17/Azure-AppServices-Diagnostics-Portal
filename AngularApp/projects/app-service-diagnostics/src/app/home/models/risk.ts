@@ -1,4 +1,6 @@
-import { HealthStatus } from "diagnostic-data";
+import { DiagnosticData, HealthStatus, Insight, LoadingStatus, Rendering } from "diagnostic-data";
+import { Solution } from "dist/diagnostic-data/lib/components/solution/solution";
+import { DetectorResponse } from "dist/diagnostic-data/public_api";
 import { MessageBarType } from "office-ui-fabric-react";
 import { Observable } from "rxjs";
 
@@ -6,8 +8,11 @@ export interface RiskTile {
     title: string;
     action: () => void;
     linkText: string;
+    riskInfo: RiskInfo;
+    loadingStatus: LoadingStatus;
     infoObserverable: Observable<RiskInfo>;
     showTile:boolean;
+    riskAlertResponse: DetectorResponse;
 }
 
 export interface RiskInfo {
@@ -34,18 +39,118 @@ export class RiskHelper
             case MessageBarType.severeWarning:
             case MessageBarType.error:
                 return HealthStatus.Critical;
-            
+
             case MessageBarType.warning:
                 return HealthStatus.Warning;
-            
+
             case MessageBarType.info:
                 return HealthStatus.Info;
-            
+
             case MessageBarType.success:
                 return HealthStatus.Success;
-            
+
             default:
                 return HealthStatus.Info;
         }
+    }
+
+    public static convertResponseToRiskInfo(res: DetectorResponse): RiskInfo {
+        let riskInfo:RiskInfo = {};
+        let notificationList = res.dataset.filter(set => (<Rendering>set.renderingProperties).type === 7);
+     //   const keys = Object.keys(notificationList);
+
+        const statusColumnIndex = 0;
+        const insightColumnIndex = 1;
+        const nameColumnIndex = 2;
+        const valueColumnIndex = 3;
+        const isExpandedIndex = 4;
+        const solutionsIndex = 5;
+
+        for(let notification of notificationList){
+
+            const data = notification.table;
+
+            for (let i: number = 0; i < data.rows.length; i++) {
+                const row = data.rows[i];
+                const notificationStatus = row[statusColumnIndex];
+                const insightName = row[insightColumnIndex];
+                const nameColumnValue = row[nameColumnIndex];
+
+                if(notificationStatus !== undefined && notificationStatus !== null){
+                    let status = this.convertMessageTypeToHealthStatus(notificationStatus);
+                    riskInfo[insightName] = status;
+                }
+
+            }
+
+        }
+        return riskInfo;
+    }
+
+    public static parseRiskNotificationRendering(res: DetectorResponse): RiskInfo {
+        let riskInfo:RiskInfo = {};
+        let notificationList = res.dataset.filter(set => (<Rendering>set.renderingProperties).type === 26);
+     //   const keys = Object.keys(notificationList);
+
+        const statusColumnIndex = 0;
+        const insightColumnIndex = 1;
+        const nameColumnIndex = 2;
+        const valueColumnIndex = 3;
+        const isExpandedIndex = 4;
+        const solutionsIndex = 5;
+
+        for(let notification of notificationList){
+
+            const data = notification.table;
+
+            for (let i: number = 0; i < data.rows.length; i++) {
+                const row = data.rows[i];
+                const notificationStatus = row[statusColumnIndex];
+                const insightName = row[insightColumnIndex];
+                const nameColumnValue = row[nameColumnIndex];
+
+                if(notificationStatus !== undefined && notificationStatus !== null){
+                    let status = this.convertMessageTypeToHealthStatus(notificationStatus);
+                    riskInfo[insightName] = status;
+                }
+            }
+        }
+        return riskInfo;
+    }
+
+    static parseInsightRendering(diagnosticData: DiagnosticData): Insight[] {
+        const insights: Insight[] = [];
+        const data = diagnosticData.table;
+
+        const statusColumnIndex = 0;
+        const insightColumnIndex = 1;
+        const nameColumnIndex = 2;
+        const valueColumnIndex = 3;
+        const isExpandedIndex = 4;
+        const solutionsIndex = 5;
+
+        for (let i: number = 0; i < data.rows.length; i++) {
+            let insight: Insight;
+            const row = data.rows[i];
+            const insightName = row[insightColumnIndex];
+            const nameColumnValue = row[nameColumnIndex];
+
+            let solutionsValue = null;
+            if (solutionsIndex < row.length) {
+                solutionsValue = <Solution[]>JSON.parse(row[solutionsIndex]);
+            }
+
+            if ((insight = insights.find(ins => ins.title === insightName)) == null) {
+                const isExpanded: boolean = row.length > isExpandedIndex ? row[isExpandedIndex].toLowerCase() === 'true' : false;
+                insight = new Insight(row[statusColumnIndex], insightName, isExpanded, solutionsValue);
+                insights.push(insight);
+            }
+
+            if (nameColumnValue && nameColumnValue.length > 0) {
+                insight.data[nameColumnValue] = `${row[valueColumnIndex]}`;
+            }
+        }
+
+        return insights;
     }
 }

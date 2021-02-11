@@ -14,6 +14,8 @@ export class ArmResourceConfig {
     liabilityCheckConfig?: LiabilityCheckConfig;
     quickLinks?: string[];
     keystoneDetectorId?: string;
+    riskAlertConfigs?: RiskAlertConfig[];
+    notificationDetectorId?: string;
 }
 
 export interface ArmApiConfig {
@@ -40,4 +42,9 @@ export class HomePageText {
 // Define whether liablity check is enabled and what checks should be done
 export interface LiabilityCheckConfig {
     isLiabilityCheckEnabled?: boolean;
+}
+
+export class RiskAlertConfig {
+    title: string;
+    riskAlertId: string;
 }

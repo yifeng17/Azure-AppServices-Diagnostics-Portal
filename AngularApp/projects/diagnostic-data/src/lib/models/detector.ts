@@ -109,7 +109,8 @@ export enum RenderingType {
     SummaryCard,
     SearchComponent,
     AppInsightEnablement,
-    KeystoneComponent
+    KeystoneComponent,
+    Notifications
 }
 
 export enum TimeSeriesType {
