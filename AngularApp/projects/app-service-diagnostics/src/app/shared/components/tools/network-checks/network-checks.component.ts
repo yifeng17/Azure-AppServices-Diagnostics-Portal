@@ -25,9 +25,13 @@ class InteractiveCheckPayload{
 }
 
 class Check{
+    public id?:string;
     public title:string;
     public description?:string;
-    public func: (siteInfo: SiteInfoMetaData&Site, appSettings: Map<string, string>, diagProvider: DiagProvider) => Promise<CheckResult>;
+    public func: (siteInfo: SiteInfoMetaData&Site, appSettings: any, diagProvider: DiagProvider) => Promise<CheckResult>;
+    public tryGetSharedObject?: (key:string) => any;
+    public shareObject?: (key:string, value:any) => void;
+    public shareObjectWith?: string[]; // list of check ids
 }
 
 class CheckResult{
@@ -48,7 +52,7 @@ export class CheckResultView{
 
 }
 
-enum ConnectionCheckStatus { success, timeout, hostNotFound, refused }
+enum ConnectionCheckStatus { success, timeout, hostNotFound, blocked, refused }
 
 class DiagProvider{
     private _siteInfo:SiteInfoMetaData&Site&{fullSiteName:string};
@@ -153,6 +157,8 @@ class DiagProvider{
                         statuses.push(ConnectionCheckStatus.hostNotFound);
                     }else if(line.includes("Connection timed out")){
                         statuses.push(ConnectionCheckStatus.timeout);
+                    }else if(line.startsWith("Connection attempt failed: An attempt was made to access a socket")){
+                        statuses.push(ConnectionCheckStatus.blocked);
                     }else if(line.startsWith("Complete")){
                         break;
                     }else{
@@ -232,7 +238,8 @@ enum checkResultLevel{
     fail,
     pending,
     loading,
-    error
+    error,
+    unav
 }
 
 enum interactiveCheckType{
@@ -248,6 +255,9 @@ enum interactiveCheckType{
 
 export class NetworkCheckComponent implements OnInit {
 
+    private _objectMap: Map<string, Map<string, any>> = new Map<string, Map<string, any>>();
+    private _pivotCheck: Map<string, string> = new Map<string, string>(); // maintains the pivot relationship for check object sharing
+
     title: string = 'Run Network Checks';
     description: string = 'Run network checks';
 
@@ -262,7 +272,6 @@ export class NetworkCheckComponent implements OnInit {
         this.siteInfo = {...this._siteService.currentSiteMetaData.value , ...this._siteService.currentSite.value, fullSiteName};
         this.diagProvider = new DiagProvider(this.siteInfo, _armService);
         this.loadChecksAsync();
-
     }
 
     ngOnInit(): void {
@@ -338,9 +347,25 @@ export class NetworkCheckComponent implements OnInit {
 
     async runChecksAsync(checks: Check[], appSettings:any):Promise<void>{
         var siteInfo = this.siteInfo;
-        checks.map(check => {
+        var pivotCheck = this._pivotCheck;
+        checks.forEach(check =>{
+            check.id = check.id || check.func.name;
+            if(!pivotCheck.has[check.id]){
+                pivotCheck.set(check.id, check.id);
+            }
+            if(check.shareObjectWith!=null){
+                check.shareObjectWith.forEach(share => {
+                    var pivot = this.getPivotCheck(share);
+                    pivotCheck.set(pivot, check.id);
+                });
+            }
+            check.tryGetSharedObject = ((key) => this.tryGetObject(check.id, key));
+            check.shareObject = ((key, value) => this.setObject(check.id, key, value));
+        });
+        checks.forEach(check => {
             try{
                 var checkResult = this.pushCheckResult(check.func.name, check.title);
+                
                 check.func(siteInfo, appSettings, this.diagProvider)
                     .then(result =>{
                         checkResult.level = checkResultLevel[result.level];
@@ -422,5 +447,37 @@ export class NetworkCheckComponent implements OnInit {
                 return HealthStatus.Info;
         }
         return HealthStatus.None;
+    }
+
+    getPivotCheck(current: string):string{
+        var pivotCheck = this._pivotCheck;
+        if(pivotCheck.get(current) == current){
+            return current;
+        }
+        var pivot = this.getPivotCheck(pivotCheck.get(current));
+        pivotCheck.set(current, pivot);
+        return pivot;
+    }
+    
+    tryGetObject(checkId:string, key:string){
+        var pivot = this.getPivotCheck(checkId);
+        var objectMap = this._objectMap;
+        if(objectMap.has(pivot) && objectMap.get(pivot).has(key)){
+            return objectMap.get(pivot).get(key);
+        }
+        return null;
+    }
+
+    setObject(checkId:string, key:string, value:any){
+        if(checkId == null){
+            throw new Error("Check Id is not set! Cannot use share an object without a check id!");
+        }
+        var pivot = this.getPivotCheck(checkId);
+        var objectMap = this._objectMap;
+
+        if(!objectMap.has(pivot)){
+            objectMap.set(pivot, new Map<string,any>());
+        }
+        objectMap.get(pivot).set(key, value);
     }
 }
