@@ -47,4 +47,6 @@ export interface LiabilityCheckConfig {
 export class RiskAlertConfig {
     title: string;
     riskAlertId: string;
+    enableForCaseSubmissionFlow?: boolean = true;
+    notificationMessage?: string = "";
 }

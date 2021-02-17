@@ -5,6 +5,7 @@ import { MessageBarType } from "office-ui-fabric-react";
 import { Observable } from "rxjs";
 
 export interface RiskTile {
+    id: string;
     title: string;
     action: () => void;
     linkText: string;
@@ -27,7 +28,7 @@ export class RiskHelper
         for(let key of keys){
             const type = info[key].messageType;
             if(type !== undefined && type !== null){
-                let status = this.convertMessageTypeToHealthStatus(type);
+                let status = this.convertMessageTypeToHealthStatus1(type);
                 riskInfo[key] = status;
             }
         }
@@ -54,9 +55,30 @@ export class RiskHelper
         }
     }
 
+    private static convertMessageTypeToHealthStatus1(messageBarType:MessageBarType):HealthStatus{
+        switch (messageBarType) {
+            case MessageBarType.severeWarning:
+            case MessageBarType.error:
+                return HealthStatus.Critical;
+
+            case MessageBarType.warning:
+                return HealthStatus.Warning;
+
+            case MessageBarType.info:
+                return HealthStatus.Info;
+
+            case MessageBarType.success:
+                return HealthStatus.Success;
+
+            default:
+                return HealthStatus.Info;
+        }
+    }
+
     public static convertResponseToRiskInfo(res: DetectorResponse): RiskInfo {
         let riskInfo:RiskInfo = {};
         let notificationList = res.dataset.filter(set => (<Rendering>set.renderingProperties).type === 7);
+   //     let notificationList = res.dataset.filter(set => (<Rendering>set.renderingProperties).type === 26);
      //   const keys = Object.keys(notificationList);
 
         const statusColumnIndex = 0;
@@ -72,13 +94,14 @@ export class RiskHelper
 
             for (let i: number = 0; i < data.rows.length; i++) {
                 const row = data.rows[i];
-                const notificationStatus = row[statusColumnIndex];
+               // (<string>row[statusColumnIndex])
+                const notificationStatus = <string>row[statusColumnIndex];
+                console.log("notificationStatus", notificationStatus);
                 const insightName = row[insightColumnIndex];
                 const nameColumnValue = row[nameColumnIndex];
 
                 if(notificationStatus !== undefined && notificationStatus !== null){
-                    let status = this.convertMessageTypeToHealthStatus(notificationStatus);
-                    riskInfo[insightName] = status;
+                riskInfo[insightName] = HealthStatus[notificationStatus];
                 }
 
             }
@@ -105,13 +128,12 @@ export class RiskHelper
 
             for (let i: number = 0; i < data.rows.length; i++) {
                 const row = data.rows[i];
-                const notificationStatus = row[statusColumnIndex];
+                const notificationStatus = <string>row[statusColumnIndex];
                 const insightName = row[insightColumnIndex];
                 const nameColumnValue = row[nameColumnIndex];
 
                 if(notificationStatus !== undefined && notificationStatus !== null){
-                    let status = this.convertMessageTypeToHealthStatus(notificationStatus);
-                    riskInfo[insightName] = status;
+                    riskInfo[insightName] = HealthStatus[notificationStatus];
                 }
             }
         }

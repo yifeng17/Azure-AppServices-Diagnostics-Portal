@@ -46,7 +46,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     searchPlaceHolder: string;
     providerRegisterUrl: string;
     quickLinkFeatures: Feature[] = [];
-    risks: RiskTile[] = [];
+    risks: {} = {};
     riskResponses: DetectorResponse[] = [];
     risksDictionary={};
     risksPanelContents={};
@@ -133,7 +133,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         if (_resourceService.armResourceConfig) {
             this._categoryService.initCategoriesForArmResource(_resourceService.resource.id);
             this._quickLinkService.initQuickLinksForArmResource(_resourceService.resource.id);
-        //    this._riskAlertService.initRiskAlertsForArmResource(_resourceService.resource.id);
+            this._riskAlertService.initRiskAlertsForArmResource(_resourceService.resource.id);
         }
 
         this._categoryService.categories.subscribe(categories => this.categories = categories);
@@ -164,10 +164,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
             this._detectorControlService.setDefault();
         }
 
-        this._riskAlertService.riskPanelContentSub.subscribe(res => {
-            const viewResponse = res;
-            console.log("viewResponse", viewResponse);
-        });
+        // this._riskAlertService.riskPanelContentSub.subscribe(res => {
+        //     const viewResponse = res;
+        //     console.log("viewResponse", viewResponse);
+        // });
 
         let locationPlacementId = '';
         this.subscriptionPropertiesService.getSubscriptionProperties(this.subscriptionId).subscribe((response: HttpResponse<{}>) => {
@@ -203,50 +203,17 @@ export class HomeComponent implements OnInit, AfterViewInit {
             this._detectorControlService.setDefault();
         }
 
-        // this._riskAlertService.riskAlertsSub.subscribe(riskAlertConfigs =>
-        //     {
-        //     this.riskAlertConfigs = riskAlertConfigs;
-        //     riskAlertConfigs.forEach(config => {
-        //         this.processRiskResponse(config);
-        //         // this._diagnosticService.getDetector(riskAlertId, this._detectorControlService.startTimeString, this._detectorControlService.endTimeString).subscribe(riskRes => {
-        //         //     this.riskResponses.push(riskRes);
-        //         //     this.risksDictionary[riskAlertId] = this.processRiskResponse(riskAlertId);
-        //         // });
-        //     });
-        // }
-        // );
-
-        if (this._checkIsWindowsWebApp())
+        console.log("_riskAlertConfigs", this._riskAlertService._riskAlertConfigs, this._riskAlertService.riskAlertConfigs);
+        this._riskAlertService.getRiskAlertResponse().subscribe(()=>
         {
+            this._riskAlertService.riskPanelContentsSub.next(this._riskAlertService.risksPanelContents);
+            console.log("getrisks", this._riskAlertService.risks);
+          //  this.risks = this._riskAlertService.risks;
+        });
 
-            this.riskAlertConfigs = [
-                {
-                    title: "configuration",
-                    riskAlertId: "backupFailures"
-                },
-                {
-                    title: "ssl",
-                    riskAlertId: "availablityriskalert"
-                }
-            ];
-
-         //   this._riskAlertService._riskAlertConfigs = this.riskAlertConfigs;
-         this._riskAlertService._addRiskAlertIds(this.riskAlertConfigs);
-            console.log("_riskAlertConfigs", this._riskAlertService._riskAlertConfigs, this._riskAlertService.riskAlertConfigs);
-            this._riskAlertService.getRiskTileResponse().subscribe(()=>
-            {
-                console.log("getrisks", this._riskAlertService.risks);
-                this.risks = this._riskAlertService.risks;
-            });
-            //        riskAlertConfigs.forEach(config => {
-            //     this.processRiskResponse(config);
-            //     // this._diagnosticService.getDetector(riskAlertId, this._detectorControlService.startTimeString, this._detectorControlService.endTimeString).subscribe(riskRes => {
-            //     //     this.riskResponses.push(riskRes);
-            //     //     this.risksDictionary[riskAlertId] = this.processRiskResponse(riskAlertId);
-            //     // });
-            // });
-        }
-
+        console.log("getrisks", this._riskAlertService.risks);
+        this.risks = this._riskAlertService.risks;
+        this.riskAlertConfigs = this._riskAlertService.riskAlertConfigs;
         console.log("RiskalertConfigs", this.riskAlertConfigs);
 
         //this._initializeRiskTiles();
@@ -259,6 +226,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         let newRiskTile: RiskTile
          =
         {
+            id: riskAlertConfig.riskAlertId,
             title: riskAlertConfig.title,
             action: () => {
 
@@ -292,30 +260,30 @@ export class HomeComponent implements OnInit, AfterViewInit {
             riskAlertResponse: null
         };
 
-        let riskObservable = this._diagnosticService.getDetector(riskAlertConfig.riskAlertId, this._detectorControlService.startTimeString, this._detectorControlService.endTimeString)
-        .subscribe(res =>
-            {
-                console.log("get risk panel content",riskAlertConfig,  res);
-                this.risksPanelContents[riskAlertConfig.riskAlertId] = res;
-                console.log("risksPanelContents", this.risksPanelContents);
-                newRiskTile.riskInfo = RiskHelper.convertResponseToRiskInfo(res);
-                newRiskTile.action = () => {
-                    this.currentRiskPanelContentId = riskAlertConfig.riskAlertId;
-                    this.riskPanelContent = this.risksPanelContents[this.currentRiskPanelContentId];
-                    console.log("current risk panel content", this.riskPanelContent);
-                    this.globals.openRiskAlertsPanel = true;
+        // let riskObservable = this._diagnosticService.getDetector(riskAlertConfig.riskAlertId, this._detectorControlService.startTimeString, this._detectorControlService.endTimeString)
+        // .subscribe(res =>
+        //     {
+        //         console.log("get risk panel content",riskAlertConfig,  res);
+        //         this.risksPanelContents[riskAlertConfig.riskAlertId] = res;
+        //         console.log("risksPanelContents", this.risksPanelContents);
+        //         newRiskTile.riskInfo = RiskHelper.convertResponseToRiskInfo(res);
+        //         newRiskTile.action = () => {
+        //             this.currentRiskPanelContentId = riskAlertConfig.riskAlertId;
+        //             this.riskPanelContent = this.risksPanelContents[this.currentRiskPanelContentId];
+        //             console.log("current risk panel content", this.riskPanelContent);
+        //             this.globals.openRiskAlertsPanel = true;
 
 
-                    this._telemetryService.logEvent(TelemetryEventNames.OpenRiskAlertPanel,{
-                        "Location" : TelemetrySource.LandingPage
-                    });
-                }
-            },
-                e => {
-                    newRiskTile.riskInfo = null;
-                newRiskTile.loadingStatus = LoadingStatus.Failed;
-                }
-            );
+        //             this._telemetryService.logEvent(TelemetryEventNames.OpenRiskAlertPanel,{
+        //                 "Location" : TelemetrySource.LandingPage
+        //             });
+        //         }
+        //     },
+        //         e => {
+        //             newRiskTile.riskInfo = null;
+        //         newRiskTile.loadingStatus = LoadingStatus.Failed;
+        //         }
+        //     );
 
         // riskObservable.subscribe(info => {
         //     if (info !== null && info !== undefined && Object.keys(info).length > 0) {
@@ -343,7 +311,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         //   });
 
 
-        this.risks.push(newRiskTile);
+        // this.risks.push(newRiskTile);
         console.log("this risks,", this.risks);
         return newRiskTile;
 
@@ -365,7 +333,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         // ];
 
         //Only show risk section if at least one tile will display
-        this.showRiskSection = this.risks.findIndex(risk => risk.showTile === true) > -1;
+        // this.showRiskSection = this.risks.findIndex(risk => risk.showTile === true) > -1;
 
     }
 
@@ -467,7 +435,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         // ];
 
         //Only show risk section if at least one tile will display
-        this.showRiskSection = this.risks.findIndex(risk => risk.showTile === true) > -1;
+      //  this.showRiskSection = this.risks.findIndex(risk => risk.showTile === true) > -1;
     }
 
     private _checkIsWindowsWebApp(): boolean {

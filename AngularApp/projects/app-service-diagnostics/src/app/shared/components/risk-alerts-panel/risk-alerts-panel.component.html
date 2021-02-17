@@ -18,9 +18,15 @@
     <div *ngFor="let item of riskPanelContents | keyvalue">
       <!-- *ngIf="item.key===riskAlertId" -->
 
-    <detector-view  *ngIf="viewResponse && viewResponse.metadata && viewResponse.metadata.id === item.key" [analysisMode]="false" [isKeystoneView]="false" [isAnalysisView]="false" [detectorResponse]="item.value" [error]="error" [startTime]="getStartTime" [endTime]="getEndTime"
-    [developmentMode]="false" [detector]="item.id" [hideDetectorHeader]="true" [isRiskAlertDetector]="true">
+    <!-- <detector-view  *ngIf="viewResponse && viewResponse.metadata && viewResponse.metadata.id === item.key" [analysisMode]="false" [isKeystoneView]="false" [isAnalysisView]="false" [detectorResponse]="item.value" [error]="error" [startTime]="startTime" [endTime]="endTime"
+    [developmentMode]="false" [detector]="item.key" [hideDetectorHeader]="true" [isRiskAlertDetector]="true">
+   </detector-view> -->
+
+
+   <detector-view  *ngIf="currentRiskPanelContentId === item.key" [analysisMode]="false" [isKeystoneView]="false" [isAnalysisView]="false" [detectorResponse]="item.value" [error]="error" [startTime]="startTime" [endTime]="endTime"
+    [developmentMode]="false" [detector]="item.key" [hideDetectorHeader]="true" [isRiskAlertDetector]="true">
    </detector-view>
+
    </div>
 
     <!-- <ng-container *ngIf="workDistributionDetail">
@@ -85,7 +91,7 @@
     </fab-message-bar> -->
   </div>
 </fab-panel>
-
+<!--
 <detector-view [analysisMode]="false" [isKeystoneView]="false" [isAnalysisView]="false" [detectorResponse]="viewResponse" [error]="error" [startTime]="getStartTime" [endTime]="getEndTime"
     [developmentMode]="false" [detector]="riskAlertId" [hideDetectorHeader]="false">
-   </detector-view>
+   </detector-view> -->

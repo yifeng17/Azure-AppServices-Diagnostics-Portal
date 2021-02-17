@@ -31,9 +31,13 @@ export class NotificationComponent extends DataRenderBaseComponent {
     }
     toggleInsightStatus(insight: any) {
       insight.isExpanded = this.hasContent(insight) && !insight.isExpanded;
+      console.log("toggle insight to expand:, and has data", insight.isExpanded, insight.hasData());
       this.logInsightClickEvent(insight.title, insight.isExpanded, insight.status);
     }
 
+  getInsightExpandStatus(insight: any) {
+      return insight.isExpanded;
+  }
     hasContent(insight: Insight) {
       return insight.hasData() || this.hasSolutions(insight);
     }
@@ -63,5 +67,4 @@ export class NotificationComponent extends DataRenderBaseComponent {
         this.logEvent(TelemetryEventNames.InsightRated, eventProps);
       }
     }
-
 }

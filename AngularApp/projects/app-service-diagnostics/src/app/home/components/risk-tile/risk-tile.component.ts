@@ -1,7 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { HealthStatus, LoadingStatus, StatusStyles, TelemetryEventNames, TelemetryService } from 'diagnostic-data'
 import { RiskAlertService } from '../../../shared-v2/services/risk-alert.service';
+import { RiskAlertConfig } from '../../../shared/models/arm/armResourceConfig';
 import { RiskTile, RiskInfo } from '../../models/risk';
+import { Globals } from '../../../globals';
+
 @Component({
   selector: 'risk-tile',
   templateUrl: './risk-tile.component.html',
@@ -20,59 +23,55 @@ export class RiskTileComponent implements OnInit {
     return `loading ${this.title}`;
   }
 
-  @Input() risk: RiskTile;
-  constructor(private telemetryService: TelemetryService, private riskAlertService: RiskAlertService) { }
+  @Input() riskAlertConfig: RiskAlertConfig;
+  risk: RiskTile;
+  constructor(private telemetryService: TelemetryService, private _riskAlertService: RiskAlertService, public globals: Globals) { }
 
 
   ngOnInit() {
-    this.title = this.risk.title;
-    this.riskProperties["Title"] = this.title;
-    this.linkText = this.risk.linkText;
-    this.showTile = this.risk.showTile;
-    if (this.risk.riskInfo != null && Object.keys(this.risk.riskInfo).length > 0)
-    {
-        this.infoList = this.processRiskInfo(this.risk.riskInfo);
-    }
-    else
-    {
-        this.infoList =  [
-            {
-              message: "No data available",
-              status: HealthStatus.Info
-            }
-          ];
-    }
-    // this.risk.infoObserverable.subscribe(info => {
-    //   if (info !== null && info !== undefined && Object.keys(info).length > 0) {
-    //     this.infoList = this.processRiskInfo(info);
-    //     this.loading = LoadingStatus.Success;
-    //     this.riskProperties["TileLoaded"] = LoadingStatus[this.loading];
-    //     this.logEvent(TelemetryEventNames.RiskTileLoaded, {});
-    //   }
-    // }, e => {
-    //   this.loading = LoadingStatus.Failed;
-    //   this.riskProperties["TileLoaded"] = LoadingStatus[this.loading];
-    //   this.infoList = [
-    //     {
-    //       message: "No data available",
-    //       status: HealthStatus.Info
-    //     }
-    //   ];
-    //   this.logEvent(TelemetryEventNames.RiskTileLoaded, {
-    //     "LoadingError":e
-    //   });
-    // });
+    this.title = this.riskAlertConfig.title;
+    this._riskAlertService.riskPanelContentsSub.subscribe((riskAlertContents) =>{
+        this.risk = this._riskAlertService.risks[this.riskAlertConfig.riskAlertId];
 
-    this.loading = this.risk.loadingStatus;
+        this.riskProperties["Title"] = this.title;
+        this.linkText = this.risk.linkText;
+        this.showTile = this.risk.showTile;
+
+        if (this.risk.riskInfo != null && Object.keys(this.risk.riskInfo).length > 0)
+        {
+            this.infoList = this.processRiskInfo(this.risk.riskInfo);
+            this.loading = this.risk.loadingStatus;
+        }
+        else
+        {
+            this.infoList =  [
+                {
+                  message: "No data available",
+                  status: HealthStatus.Info
+                }
+              ];
+            this.loading = this.risk.loadingStatus;
+        }
+    });
+
   }
 
   clickTileHandler() {
     this.logEvent(TelemetryEventNames.RiskTileClicked, {});
-    this.risk.action();
+    if (this.risk && this.risk.riskInfo != null && Object.keys(this.risk.riskInfo).length > 0)
+    {
+        this.risk.action();
+    }
+this.globals.openRiskAlertsPanel = true;
+                     this._riskAlertService.currentRiskPanelContentIdSub.next(this.riskAlertConfig.riskAlertId);
+                     console.log("SelectRisk", this.riskAlertConfig.riskAlertId);
+              //  this.riskPanelContent = this.risksPanelContents[this.currentRiskPanelContentId];
+
     // this.riskAlertService.riskPanelContentSub.next(this.risk.riskAlertResponse);
   }
 
   private processRiskInfo(info: RiskInfo): RiskInfoDisplay[] {
+      console.log("Process riskinfo", info);
     const statuses = Object.values(info);
     const map = new Map<HealthStatus, number>();
 
@@ -87,6 +86,7 @@ export class RiskTileComponent implements OnInit {
     const sortedStatus = Array.from(map.keys());
     sortedStatus.sort((s1, s2) => s1 - s2);
 
+
     //get 2 most critical ones
     const res: RiskInfoDisplay[] = [];
     if (sortedStatus.length >= 1) {
@@ -96,6 +96,8 @@ export class RiskTileComponent implements OnInit {
     if (sortedStatus.length >= 2) {
       res.push(new RiskInfoDisplay(sortedStatus[1], map.get(sortedStatus[1])));
     }
+
+    console.log("Process riskinfo", res);
 
     return res;
   }

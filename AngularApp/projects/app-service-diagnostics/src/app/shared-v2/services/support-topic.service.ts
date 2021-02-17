@@ -97,7 +97,7 @@ export class SupportTopicService {
                                     "KeystoneSolutionApplied": String(keystoneSolutionApplied)
                                 });
                             }
-
+                            console.log("current path", detectorPath);
                             return { path: detectorPath, queryParams: queryParamsDic };
                         }),
                             catchError(err => {

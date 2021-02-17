@@ -54,7 +54,7 @@ export class ResourceRedirectComponent implements OnInit {
             queryParamsHandling: 'merge',
           };
 
-          let path = 'resource/' + info.resourceId.toLowerCase();
+          let path = 'resource' + info.resourceId.toLowerCase();
           var caseSubject = null;
           if (info.optionalParameters) {
             var caseSubjectParam = info.optionalParameters.find(param => param.key === "caseSubject");
@@ -113,6 +113,8 @@ export class ResourceRedirectComponent implements OnInit {
               }
             }
           }
+
+          console.log("redirect path", path);
         } else {
           if (!environment.production) {
             this._router.navigateByUrl('/test');

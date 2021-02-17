@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { TelemetryEventNames, TelemetryService,TelemetrySource } from 'diagnostic-data';
+import { HealthStatus, TelemetryEventNames, TelemetryService,TelemetrySource } from 'diagnostic-data';
 import { MessageBarType, IMessageBarProps, IMessageBarStyles } from 'office-ui-fabric-react';
 import { throwError } from 'rxjs';
 import { catchError, filter, map } from 'rxjs/operators';
@@ -8,6 +8,7 @@ import { Globals } from '../../../globals';
 import { WebSitesService } from '../../../resources/web-sites/services/web-sites.service';
 import { NotificationService } from '../../../shared-v2/services/notification.service';
 import { ResourceService } from '../../../shared-v2/services/resource.service';
+import { RiskAlertService } from '../../../shared-v2/services/risk-alert.service';
 import { AuthService } from '../../../startup/services/auth.service';
 
 
@@ -28,151 +29,165 @@ export class RiskAlertsNotificationComponent implements OnInit {
             marginBottom: '13px'
         }
     }
-    constructor(private _resourceService: ResourceService, private globals: Globals, private _authService: AuthService, public telemetryService: TelemetryService, public _activatedRoute: ActivatedRoute, protected _router: Router) { }
+    constructor(private _resourceService: ResourceService, private globals: Globals, private _authService: AuthService, public telemetryService: TelemetryService, public _activatedRoute: ActivatedRoute, protected _router: Router, private _riskAlertService: RiskAlertService) { }
 
     ngOnInit() {
-        const autoHealEnabledTitle: string = "Auto-Heal is enabled.";
-        const autoHealEnabledDescription: string = "Auto-Heal is highly recommended for production applications that need to ensure high availability and resilience. Although Auto-Heal is not an eventual fix for issues your application may encounter, it allows your application to quickly recover from unexpected issues whether they be platform or application and stay available for customers. If Auto-Heal is being triggerred repeatedly. Re-examine the rule and ensure trigger values aren't too aggressive. Investigate the cause for a proper fix.";
-        const autoHealDisabledTitle: string = "Auto-Heal is not enabled.";
-        const autoHealDisabledDescription: string = "Auto-Heal is highly recommended for production applications that need to ensure high availability and resilience. Although Auto-Heal is not an eventual fix for issues your application may encounter, it allows your application to quickly recover from unexpected issues whether they be platform or application and stay available for customers. If Auto-Heal is being triggerred repeatedly. Re-examine the rule and ensure trigger values aren't too aggressive. Investigate the cause for a proper fix. Note: Please ignore this message if you have Auto-Heal enabled in web.config but not via configuration settings. This checks the current Auto-Heal setttings.";
-        const autoHealLearnMore: string = "https://azure.github.io/AppService/2018/09/10/Announcing-the-New-Auto-Healing-Experience-in-App-Service-Diagnostics.html";
+        // const autoHealEnabledTitle: string = "Auto-Heal is enabled.";
+        // const autoHealEnabledDescription: string = "Auto-Heal is highly recommended for production applications that need to ensure high availability and resilience. Although Auto-Heal is not an eventual fix for issues your application may encounter, it allows your application to quickly recover from unexpected issues whether they be platform or application and stay available for customers. If Auto-Heal is being triggerred repeatedly. Re-examine the rule and ensure trigger values aren't too aggressive. Investigate the cause for a proper fix.";
+        // const autoHealDisabledTitle: string = "Auto-Heal is not enabled.";
+        // const autoHealDisabledDescription: string = "Auto-Heal is highly recommended for production applications that need to ensure high availability and resilience. Although Auto-Heal is not an eventual fix for issues your application may encounter, it allows your application to quickly recover from unexpected issues whether they be platform or application and stay available for customers. If Auto-Heal is being triggerred repeatedly. Re-examine the rule and ensure trigger values aren't too aggressive. Investigate the cause for a proper fix. Note: Please ignore this message if you have Auto-Heal enabled in web.config but not via configuration settings. This checks the current Auto-Heal setttings.";
+        // const autoHealLearnMore: string = "https://azure.github.io/AppService/2018/09/10/Announcing-the-New-Auto-Healing-Experience-in-App-Service-Diagnostics.html";
 
-        const healthCheckDisabledTitle = "Health Check is not enabled.";
-        const healthCheckDisabledDescription = "This feature will ping the specified health check path on all instances of your webapp every 2 minutes. If an instance does not respond within 10 minutes (5 pings), the instance is determined to be unhealthy and our service will stop routing requests to it. It is highly recommended for production apps to utilize this feature and minimize any potential downtime caused due to a faulty instance.";
-        const healthCheckEnabledTitle = "Health Check is enabled.";
-        const healthCheckEnabledDescription = "Health Check feature is currently configured for this web app. This will help minimize potential downtime.";
-        const healthCheckLearnMore: string = "https://docs.microsoft.com/en-us/azure/azure-monitor/platform/autoscale-get-started#route-traffic-to-healthy-instances-app-service"
+        // const healthCheckDisabledTitle = "Health Check is not enabled.";
+        // const healthCheckDisabledDescription = "This feature will ping the specified health check path on all instances of your webapp every 2 minutes. If an instance does not respond within 10 minutes (5 pings), the instance is determined to be unhealthy and our service will stop routing requests to it. It is highly recommended for production apps to utilize this feature and minimize any potential downtime caused due to a faulty instance.";
+        // const healthCheckEnabledTitle = "Health Check is enabled.";
+        // const healthCheckEnabledDescription = "Health Check feature is currently configured for this web app. This will help minimize potential downtime.";
+        // const healthCheckLearnMore: string = "https://docs.microsoft.com/en-us/azure/azure-monitor/platform/autoscale-get-started#route-traffic-to-healthy-instances-app-service"
 
-        const workerDistributionCriticalTitle: string = "Distributing your web app across multiple instances";
-        const workerDistributionCriticalDescription: string = "The webapp is currently configured to run on only one instance. Since you have only one instance you can expect downtime because when the App Service platform is upgraded, the instance on which your web app is running will be upgraded. Therefore, your web app process will be restarted and will experience downtime. ";
-        const workerDistributionWarningTitle: string = "Distributing your web app across multiple instances";
-        const workerDistributionWarningDescription: string = "The webapp is currently configured to run on two instances. Since you have only two instances you can expect a downtime of upto 50% because when the App Service platform is upgraded, the instance on which your web app is hosted will be upgraded. Therefore, your web app process will be restarted and may experience some downtime as each instance is restarted sequentially.";
-        const workerDistributionSuccessTitle: string = "Distributing your web app across multiple instances";
-        const workerDistributionSuccessDescription: string = "Great, your web app is running on more than two instances. This is optimal because instances in different upgrade domains will not be upgraded at the same time. While one worker instance is getting upgraded the other is still active to serve web requests.";
-        const workerDistributionLearnMore: string = "https://azure.github.io/AppService/2020/05/15/Robust-Apps-for-the-cloud.html#use-multiple-instances";
+        // const workerDistributionCriticalTitle: string = "Distributing your web app across multiple instances";
+        // const workerDistributionCriticalDescription: string = "The webapp is currently configured to run on only one instance. Since you have only one instance you can expect downtime because when the App Service platform is upgraded, the instance on which your web app is running will be upgraded. Therefore, your web app process will be restarted and will experience downtime. ";
+        // const workerDistributionWarningTitle: string = "Distributing your web app across multiple instances";
+        // const workerDistributionWarningDescription: string = "The webapp is currently configured to run on two instances. Since you have only two instances you can expect a downtime of upto 50% because when the App Service platform is upgraded, the instance on which your web app is hosted will be upgraded. Therefore, your web app process will be restarted and may experience some downtime as each instance is restarted sequentially.";
+        // const workerDistributionSuccessTitle: string = "Distributing your web app across multiple instances";
+        // const workerDistributionSuccessDescription: string = "Great, your web app is running on more than two instances. This is optimal because instances in different upgrade domains will not be upgraded at the same time. While one worker instance is getting upgraded the other is still active to serve web requests.";
+        // const workerDistributionLearnMore: string = "https://azure.github.io/AppService/2020/05/15/Robust-Apps-for-the-cloud.html#use-multiple-instances";
 
-        const appDensityWarningorCriticalTitle: string = "App Service Plan hosts more than the recommended active sites";
-        const appDensityCriticalDescription: string = "Apps that are a part of the same App Service Plan, compete for the same set of resources. Our data indicates that you have more than recommended number of sites running on your App Service Plan.";
-        const appDensitySuccessTitle: string = "Total active sites on the App Service Plan are within the recommended value";
-        const appDensitySuccessDescription: string = "Total active sites on the App Service Plan are within the recommended value. You are currently running recommended number of active app(s) within the App Service Plan.";
-        const appDensityLearnMore: string = "https://docs.microsoft.com/en-us/azure/app-service/overview-hosting-plans";
+        // const appDensityWarningorCriticalTitle: string = "App Service Plan hosts more than the recommended active sites";
+        // const appDensityCriticalDescription: string = "Apps that are a part of the same App Service Plan, compete for the same set of resources. Our data indicates that you have more than recommended number of sites running on your App Service Plan.";
+        // const appDensitySuccessTitle: string = "Total active sites on the App Service Plan are within the recommended value";
+        // const appDensitySuccessDescription: string = "Total active sites on the App Service Plan are within the recommended value. You are currently running recommended number of active app(s) within the App Service Plan.";
+        // const appDensityLearnMore: string = "https://docs.microsoft.com/en-us/azure/app-service/overview-hosting-plans";
 
 
-        this._resourceService.getRiskAlertsResult().subscribe(results => {
-            if (results) {
-                let webconfig: any = results[0];
-                let autoHealEnabled = webconfig.properties.autoHealEnabled;
-                let healthCheckEnabled = webconfig.properties.healthCheckPath != null && webconfig.properties.healthCheckPath.toString() !== '' && webconfig.properties.healthCheckPath.toString().length >= 1;
 
-                let autoHealDetail = autoHealEnabled ? new riskAlertDetail(MessageBarType.success, autoHealEnabledTitle, autoHealEnabledDescription, autoHealLearnMore) : new riskAlertDetail(MessageBarType.severeWarning, autoHealDisabledTitle, autoHealDisabledDescription, autoHealLearnMore);
-                let healthCheckDetail = healthCheckEnabled ? new riskAlertDetail(MessageBarType.success, healthCheckEnabledTitle, healthCheckEnabledDescription, healthCheckLearnMore) : new riskAlertDetail(MessageBarType.severeWarning, healthCheckDisabledTitle, healthCheckDisabledDescription, healthCheckLearnMore);
+        // this._resourceService.getRiskAlertsResult().subscribe(results => {
+        //     if (results) {
+        //         let webconfig: any = results[0];
+        //         let autoHealEnabled = webconfig.properties.autoHealEnabled;
+        //         let healthCheckEnabled = webconfig.properties.healthCheckPath != null && webconfig.properties.healthCheckPath.toString() !== '' && webconfig.properties.healthCheckPath.toString().length >= 1;
 
-                // Worker distribution check
-                let severfarmResource: any = results[1];
-                let numberOfWorkers = severfarmResource.properties.currentNumberOfWorkers;
-                let workDistributionCheckPassed = numberOfWorkers > 2;
-                let workDistributionDetail = numberOfWorkers == 1 ? new riskAlertDetail(MessageBarType.severeWarning, workerDistributionCriticalTitle, workerDistributionCriticalDescription, workerDistributionLearnMore) : numberOfWorkers === 2 ? new riskAlertDetail(MessageBarType.warning, workerDistributionWarningTitle, workerDistributionWarningDescription, workerDistributionLearnMore) : new riskAlertDetail(MessageBarType.success, workerDistributionSuccessTitle, workerDistributionSuccessDescription, workerDistributionLearnMore);
+        //         let autoHealDetail = autoHealEnabled ? new riskAlertDetail(MessageBarType.success, autoHealEnabledTitle, autoHealEnabledDescription, autoHealLearnMore) : new riskAlertDetail(MessageBarType.severeWarning, autoHealDisabledTitle, autoHealDisabledDescription, autoHealLearnMore);
+        //         let healthCheckDetail = healthCheckEnabled ? new riskAlertDetail(MessageBarType.success, healthCheckEnabledTitle, healthCheckEnabledDescription, healthCheckLearnMore) : new riskAlertDetail(MessageBarType.severeWarning, healthCheckDisabledTitle, healthCheckDisabledDescription, healthCheckLearnMore);
 
-                // App density check
-                let numberOfSites = severfarmResource.properties.numberOfSites;
-                let currentWorkerSize = severfarmResource.properties.currentWorkerSize;
-                let appDensityStatus = MessageBarType.success;
-                let appDensityDetailTitle = appDensitySuccessTitle;
-                let appDensityDetailDescription = appDensitySuccessDescription;
-                let currentWorkerString = "small";
-                let currentPlanSoftLimit = ASPDensityLimit.SmallSoftLimit;
-                let appDensityCheckPassed = false;
+        //         // Worker distribution check
+        //         let severfarmResource: any = results[1];
+        //         let numberOfWorkers = severfarmResource.properties.currentNumberOfWorkers;
+        //         let workDistributionCheckPassed = numberOfWorkers > 2;
+        //         let workDistributionDetail = numberOfWorkers == 1 ? new riskAlertDetail(MessageBarType.severeWarning, workerDistributionCriticalTitle, workerDistributionCriticalDescription, workerDistributionLearnMore) : numberOfWorkers === 2 ? new riskAlertDetail(MessageBarType.warning, workerDistributionWarningTitle, workerDistributionWarningDescription, workerDistributionLearnMore) : new riskAlertDetail(MessageBarType.success, workerDistributionSuccessTitle, workerDistributionSuccessDescription, workerDistributionLearnMore);
 
-                switch (currentWorkerSize) {
-                    // Small workers
-                    case 0:
-                        if (numberOfSites >= ASPDensityLimit.SmallLimit) {
-                            appDensityStatus = MessageBarType.severeWarning;
-                            appDensityDetailTitle = appDensityWarningorCriticalTitle;
-                        }
-                        else if (numberOfSites >= ASPDensityLimit.SmallSoftLimit) {
-                            appDensityStatus = MessageBarType.warning;
-                            appDensityDetailTitle = appDensityWarningorCriticalTitle;
-                        }
-                        else {
-                            appDensityCheckPassed = true;
-                        };
-                        break;
-                    // Medium workers
-                    case 1:
-                        currentWorkerString = "medium";
-                        currentPlanSoftLimit = ASPDensityLimit.MediumSoftLimit;
-                        if (numberOfSites >= ASPDensityLimit.MediumLimit) {
-                            appDensityStatus = MessageBarType.severeWarning;
-                            appDensityDetailTitle = appDensityWarningorCriticalTitle;
-                        }
-                        else if (numberOfSites >= ASPDensityLimit.MediumSoftLimit) {
-                            appDensityStatus = MessageBarType.warning;
-                            appDensityDetailTitle = appDensityWarningorCriticalTitle;
-                        }
-                        else {
-                            appDensityCheckPassed = true;
-                        };
-                        break;
-                    // Large workers
-                    case 2:
-                        currentWorkerString = "large";
-                        currentPlanSoftLimit = ASPDensityLimit.LargeSoftLimit;
-                        if (numberOfSites >= ASPDensityLimit.LargeLimit) {
-                            appDensityStatus = MessageBarType.severeWarning;
-                            appDensityDetailTitle = appDensityWarningorCriticalTitle;
-                        }
-                        else if (numberOfSites >= ASPDensityLimit.LargeSoftLimit) {
-                            appDensityStatus = MessageBarType.warning;
-                            appDensityDetailTitle = appDensityWarningorCriticalTitle;
-                        }
-                        else {
-                            appDensityCheckPassed = true;
-                        };
-                        break;
-                }
+        //         // App density check
+        //         let numberOfSites = severfarmResource.properties.numberOfSites;
+        //         let currentWorkerSize = severfarmResource.properties.currentWorkerSize;
+        //         let appDensityStatus = MessageBarType.success;
+        //         let appDensityDetailTitle = appDensitySuccessTitle;
+        //         let appDensityDetailDescription = appDensitySuccessDescription;
+        //         let currentWorkerString = "small";
+        //         let currentPlanSoftLimit = ASPDensityLimit.SmallSoftLimit;
+        //         let appDensityCheckPassed = false;
 
-                let addDensityWarningorCriticalDescriptionPostfix = `We detected your app is running on a ${currentWorkerString} sized worker and the current App Service Plan,  on an average, is running ${numberOfSites} simultaneously active apps. Apps that are a part of the same App Service Plan, compete for the same set of resources. Our data indicates that ${currentPlanSoftLimit}+ active apps in an App Service Plan running on a ${currentWorkerString}sized worker deterioates apps performance. It causes CPU and memory contention resulting in availability and reliablity loss.`;
-                if (appDensityStatus === MessageBarType.warning) {
-                    appDensityDetailDescription = 'Your App Service Plan is nearing saturation.' + addDensityWarningorCriticalDescriptionPostfix;
-                }
-                else if (appDensityStatus === MessageBarType.severeWarning) {
-                    appDensityDetailDescription = 'Your App Service Plan is currently saturated.' + addDensityWarningorCriticalDescriptionPostfix;
-                }
+        //         switch (currentWorkerSize) {
+        //             // Small workers
+        //             case 0:
+        //                 if (numberOfSites >= ASPDensityLimit.SmallLimit) {
+        //                     appDensityStatus = MessageBarType.severeWarning;
+        //                     appDensityDetailTitle = appDensityWarningorCriticalTitle;
+        //                 }
+        //                 else if (numberOfSites >= ASPDensityLimit.SmallSoftLimit) {
+        //                     appDensityStatus = MessageBarType.warning;
+        //                     appDensityDetailTitle = appDensityWarningorCriticalTitle;
+        //                 }
+        //                 else {
+        //                     appDensityCheckPassed = true;
+        //                 };
+        //                 break;
+        //             // Medium workers
+        //             case 1:
+        //                 currentWorkerString = "medium";
+        //                 currentPlanSoftLimit = ASPDensityLimit.MediumSoftLimit;
+        //                 if (numberOfSites >= ASPDensityLimit.MediumLimit) {
+        //                     appDensityStatus = MessageBarType.severeWarning;
+        //                     appDensityDetailTitle = appDensityWarningorCriticalTitle;
+        //                 }
+        //                 else if (numberOfSites >= ASPDensityLimit.MediumSoftLimit) {
+        //                     appDensityStatus = MessageBarType.warning;
+        //                     appDensityDetailTitle = appDensityWarningorCriticalTitle;
+        //                 }
+        //                 else {
+        //                     appDensityCheckPassed = true;
+        //                 };
+        //                 break;
+        //             // Large workers
+        //             case 2:
+        //                 currentWorkerString = "large";
+        //                 currentPlanSoftLimit = ASPDensityLimit.LargeSoftLimit;
+        //                 if (numberOfSites >= ASPDensityLimit.LargeLimit) {
+        //                     appDensityStatus = MessageBarType.severeWarning;
+        //                     appDensityDetailTitle = appDensityWarningorCriticalTitle;
+        //                 }
+        //                 else if (numberOfSites >= ASPDensityLimit.LargeSoftLimit) {
+        //                     appDensityStatus = MessageBarType.warning;
+        //                     appDensityDetailTitle = appDensityWarningorCriticalTitle;
+        //                 }
+        //                 else {
+        //                     appDensityCheckPassed = true;
+        //                 };
+        //                 break;
+        //         }
 
-                let appDensityCheckDetail = new riskAlertDetail(appDensityStatus, appDensityDetailTitle, appDensityDetailDescription, appDensityLearnMore);
+        //         let addDensityWarningorCriticalDescriptionPostfix = `We detected your app is running on a ${currentWorkerString} sized worker and the current App Service Plan,  on an average, is running ${numberOfSites} simultaneously active apps. Apps that are a part of the same App Service Plan, compete for the same set of resources. Our data indicates that ${currentPlanSoftLimit}+ active apps in an App Service Plan running on a ${currentWorkerString}sized worker deterioates apps performance. It causes CPU and memory contention resulting in availability and reliablity loss.`;
+        //         if (appDensityStatus === MessageBarType.warning) {
+        //             appDensityDetailDescription = 'Your App Service Plan is nearing saturation.' + addDensityWarningorCriticalDescriptionPostfix;
+        //         }
+        //         else if (appDensityStatus === MessageBarType.severeWarning) {
+        //             appDensityDetailDescription = 'Your App Service Plan is currently saturated.' + addDensityWarningorCriticalDescriptionPostfix;
+        //         }
 
-                this.riskAlertChecksHealthy = autoHealEnabled && healthCheckEnabled && workDistributionCheckPassed && appDensityCheckPassed;
+        //         let appDensityCheckDetail = new riskAlertDetail(appDensityStatus, appDensityDetailTitle, appDensityDetailDescription, appDensityLearnMore);
 
-                this._authService.getStartupInfo().subscribe((startupInfo) => {
-                    // Only show risk alert when:
-                    // 1. In case submission
-                    // 2. There is at least one risk check fails
-                    // 3. No keystone solution is presented
 
-                    this._router.events.subscribe(event => {
-                        if (event instanceof NavigationEnd) {
-                            let currentUrlPath = event.url;
-                            let isTargetSolutionReady = (currentUrlPath.includes("/analysis/") || currentUrlPath.includes("/detectors/")) && !currentUrlPath.includes("/integratedSolutions/");
-                            this.showRiskAlertsNotification = (startupInfo.supportTopicId && startupInfo.supportTopicId != '' && isTargetSolutionReady && !this.riskAlertChecksHealthy);
-                        }
-                    });
+        //       //  this.riskAlertChecksHealthy = autoHealEnabled && healthCheckEnabled && workDistributionCheckPassed && appDensityCheckPassed;
 
-                    var riskAlertCheckDetails = {
-                        "riskAlertChecksHealthy": this.riskAlertChecksHealthy,
-                        "autoHeal": autoHealDetail,
-                        "healthCheck": healthCheckDetail,
-                        "workerDistribution": workDistributionDetail,
-                        "appDensity": appDensityCheckDetail
-                    };
+        //     }
+        // });
 
-                    this.globals.updatereliabilityChecksDetails(riskAlertCheckDetails);
 
-                }, e => {
-                    this.globals.reliabilityChecksDetailsBehaviorSubject.error(e);
+        if (this._resourceService.armResourceConfig) {
+            this._riskAlertService.initRiskAlertsForArmResource(this._resourceService.resource.id);
+        }
+
+        this._riskAlertService.riskPanelContentsSub.subscribe((riskAlertContents) => {
+            console.log("get showing notificationId", this._riskAlertService.defaultNotificationId, this._riskAlertService.risksPanelContents);
+            this._riskAlertService.currentRiskPanelContentIdSub.next(this._riskAlertService.defaultNotificationId);
+            this.riskAlertChecksHealthy = this._riskAlertService.notificationStatus >= HealthStatus.Info;
+            this._authService.getStartupInfo().subscribe((startupInfo) => {
+                // Only show risk alert when:
+                // 1. In case submission
+                // 2. There is at least one risk check fails
+                // 3. No keystone solution is presented
+
+                this._router.events.subscribe(event => {
+                    if (event instanceof NavigationEnd) {
+                        let currentUrlPath = event.url;
+                        let isTargetSolutionReady = (currentUrlPath.includes("/analysis/") || currentUrlPath.includes("/detectors/")) && !currentUrlPath.includes("/integratedSolutions/");
+                        this.showRiskAlertsNotification = (startupInfo.supportTopicId && startupInfo.supportTopicId != '' && isTargetSolutionReady && !this.riskAlertChecksHealthy);
+                    }
                 });
-            }
+
+                // var riskAlertCheckDetails = {
+                //     "riskAlertChecksHealthy": this.riskAlertChecksHealthy,
+                //     "autoHeal": autoHealDetail,
+                //     "healthCheck": healthCheckDetail,
+                //     "workerDistribution": workDistributionDetail,
+                //     "appDensity": appDensityCheckDetail
+                // };
+
+                // this.globals.updatereliabilityChecksDetails(riskAlertCheckDetails);
+
+            }, e => {
+                this.globals.reliabilityChecksDetailsBehaviorSubject.error(e);
+            });
         });
+
     }
 
     openRiskAlertsPanel() {
