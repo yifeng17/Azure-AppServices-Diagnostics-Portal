@@ -13,9 +13,31 @@ import { json } from 'd3';
 //import { MarkdownTextComponent } from 'projects/diagnostic-data/src/lib/components/markdown-text/markdown-text.component';
 declare var jsDynamicImportChecks: any;
 
-function Delay(x: number): Promise<void>{
+function Delay(second: number): Promise<void>{
     return new Promise(resolve => 
-        setTimeout(resolve, x));
+        setTimeout(resolve, second * 1000));
+}
+
+class PromiseCompletionSource<T> extends Promise<T>{
+    private _resolve:(value: T | PromiseLike<T>) => void;
+    private _reject:(reason?: any) => void;
+
+    constructor(timeoutInSec?: number){
+        super((resolve, reject) => {
+            this._resolve = resolve;
+            this._reject = reject;
+        });
+
+        if(timeoutInSec != null){
+            Delay(timeoutInSec).then(()=> {
+                this._reject(`Timeout after ${timeoutInSec} seconds!`);
+            });
+        }
+    }
+
+    resolve(val: T){
+        this._resolve(val);
+    }
 }
 
 class InteractiveCheckPayload{
@@ -24,6 +46,8 @@ class InteractiveCheckPayload{
     public callBack: (userInput: any) => Promise<CheckResult>;
 }
 
+
+
 class Check{
     public id?:string;
     public title:string;
@@ -31,6 +55,7 @@ class Check{
     public func: (siteInfo: SiteInfoMetaData&Site, appSettings: any, diagProvider: DiagProvider) => Promise<CheckResult>;
     public tryGetSharedObject?: (key:string) => any;
     public shareObject?: (key:string, value:any) => void;
+    public waitObjectAsync?: (key:string) => Promise<any>;
     public shareObjectWith?: string[]; // list of check ids
 }
 
@@ -311,7 +336,7 @@ export class NetworkCheckComponent implements OnInit {
             console.log(remoteChecks);
             //debugger;
             //this.checks = this.checks.concat(remoteChecks);
-            taskList.push(this.runChecksAsync(remoteChecks, appSettings));
+            taskList.push(this.runChecksAsync(Object.values(remoteChecks), appSettings));
         }));
 
         await Promise.all(taskList);
@@ -361,6 +386,7 @@ export class NetworkCheckComponent implements OnInit {
             }
             check.tryGetSharedObject = ((key) => this.tryGetObject(check.id, key));
             check.shareObject = ((key, value) => this.setObject(check.id, key, value));
+            check.waitObjectAsync = ((key) => this.waitObjectAsync(check.id, key));
         });
         checks.forEach(check => {
             try{
@@ -468,6 +494,21 @@ export class NetworkCheckComponent implements OnInit {
         return null;
     }
 
+    async waitObjectAsync(checkId:string, key:string): Promise<any>{
+        var result = this.tryGetObject(checkId, key);
+        if(result != null){
+            if(result instanceof PromiseCompletionSource){
+                return result;
+            }else{
+                return Promise.resolve(result);
+            }
+        }else{
+            var promiseCompletion = new PromiseCompletionSource();
+            this.setObject(checkId, key, promiseCompletion);
+            return promiseCompletion;
+        }
+    }
+
     setObject(checkId:string, key:string, value:any){
         if(checkId == null){
             throw new Error("Check Id is not set! Cannot use share an object without a check id!");
@@ -477,6 +518,13 @@ export class NetworkCheckComponent implements OnInit {
 
         if(!objectMap.has(pivot)){
             objectMap.set(pivot, new Map<string,any>());
+        }
+
+        if(objectMap.get(pivot).has(key)){
+            var value = objectMap.get(pivot).get(key);
+            if(value instanceof PromiseCompletionSource){
+                value.resolve(value);
+            }
         }
         objectMap.get(pivot).set(key, value);
     }
