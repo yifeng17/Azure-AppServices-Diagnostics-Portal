@@ -23,10 +23,15 @@ class PromiseCompletionSource<T> extends Promise<T>{
     private _reject:(reason?: any) => void;
 
     constructor(timeoutInSec?: number){
+        var _resolve:(value: T | PromiseLike<T>) => void;
+        var _reject:(reason?: any) => void;
         super((resolve, reject) => {
-            this._resolve = resolve;
-            this._reject = reject;
+            _resolve = resolve;
+            _reject = reject;
         });
+
+        this._resolve = _resolve;
+        this._reject = _reject;
 
         if(timeoutInSec != null){
             Delay(timeoutInSec).then(()=> {
@@ -55,7 +60,7 @@ class Check{
     public func: (siteInfo: SiteInfoMetaData&Site, appSettings: any, diagProvider: DiagProvider) => Promise<CheckResult>;
     public tryGetSharedObject?: (key:string) => any;
     public shareObject?: (key:string, value:any) => void;
-    public waitObjectAsync?: (key:string) => Promise<any>;
+    public waitSharedObjectAsync?: (key:string) => Promise<any>;
     public shareObjectWith?: string[]; // list of check ids
 }
 
@@ -386,7 +391,7 @@ export class NetworkCheckComponent implements OnInit {
             }
             check.tryGetSharedObject = ((key) => this.tryGetObject(check.id, key));
             check.shareObject = ((key, value) => this.setObject(check.id, key, value));
-            check.waitObjectAsync = ((key) => this.waitObjectAsync(check.id, key));
+            check.waitSharedObjectAsync = ((key) => this.waitObjectAsync(check.id, key));
         });
         checks.forEach(check => {
             try{
@@ -489,24 +494,36 @@ export class NetworkCheckComponent implements OnInit {
         var pivot = this.getPivotCheck(checkId);
         var objectMap = this._objectMap;
         if(objectMap.has(pivot) && objectMap.get(pivot).has(key)){
-            return objectMap.get(pivot).get(key);
+            var val = objectMap.get(pivot).get(key);
+            if(val instanceof PromiseCompletionSource){
+                return null;
+            }
+            return val;
         }
         return null;
     }
 
-    async waitObjectAsync(checkId:string, key:string): Promise<any>{
+    waitObjectAsync(checkId:string, key:string): Promise<any>{
+        var stack = new Error("replace_placeholder").stack;
+        var promise:Promise<any> = null;
         var result = this.tryGetObject(checkId, key);
         if(result != null){
             if(result instanceof PromiseCompletionSource){
-                return result;
+                promise = result;
             }else{
-                return Promise.resolve(result);
+                promise = Promise.resolve(result);
             }
         }else{
-            var promiseCompletion = new PromiseCompletionSource();
+            var promiseCompletion = new PromiseCompletionSource(10);
             this.setObject(checkId, key, promiseCompletion);
-            return promiseCompletion;
+            promise = promiseCompletion;
         }
+
+        return promise.catch(e => {
+            var err = new Error(e);
+            err.stack = stack.replace("replace_placeholder", e.message || e);
+            throw err;
+        });
     }
 
     setObject(checkId:string, key:string, value:any){
@@ -521,9 +538,9 @@ export class NetworkCheckComponent implements OnInit {
         }
 
         if(objectMap.get(pivot).has(key)){
-            var value = objectMap.get(pivot).get(key);
-            if(value instanceof PromiseCompletionSource){
-                value.resolve(value);
+            var val = objectMap.get(pivot).get(key);
+            if(val instanceof PromiseCompletionSource){
+                val.resolve(value);
             }
         }
         objectMap.get(pivot).set(key, value);
