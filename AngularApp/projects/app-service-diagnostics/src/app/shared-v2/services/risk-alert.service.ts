@@ -37,15 +37,6 @@ export class RiskAlertService {
         this.riskAlertsSub.next(riskAlertConfigs);
     }
 
-    public setRiskAlertPanelId(riskAlertId: string) {
-        this.riskAlertPanelId.next(riskAlertId);
-        const curRes = this.risksPanelContents[riskAlertId];
-   //     this.riskPanelContentSub.next(this.risksPanelContents[riskAlertId]);
-
-        console.log("release new id and res", riskAlertId, curRes);
-    }
-
-
     constructor(protected _featureService: FeatureService, protected _diagnosticService: DiagnosticService, protected _detectorControlService: DetectorControlService, protected _telemetryService: TelemetryService, protected globals: Globals, protected _genericArmConfigService?: GenericArmConfigService) { }
 
     public initRiskAlertsForArmResource(resourceUri: string) {
@@ -117,7 +108,8 @@ export class RiskAlertService {
     }
 
     public getRiskAlertNotificationResponse() : Observable<any[]> {
-        if (this.riskAlertConfigs == null)
+        try {
+            if (this.riskAlertConfigs == null)
             return;
 
         const tasks = this.riskAlertConfigs.filter(config => config.enableForCaseSubmissionFlow != null && config.enableForCaseSubmissionFlow === true).map(riskAlertConfig => {
@@ -158,6 +150,12 @@ export class RiskAlertService {
         }
         );
         return forkJoin(tasks);
+
+    }
+    catch (err){
+        console.log("error", err);
+    }
+
     }
 
     public getRiskAlertResponse(): Observable<any[]> {

@@ -8,7 +8,6 @@ import { NotificationService } from '../../../shared-v2/services/notification.se
 import { RiskAlertService } from '../../../shared-v2/services/risk-alert.service';
 import { AuthService } from '../../../startup/services/auth.service';
 import { PortalActionService } from '../../services/portal-action.service';
-import { riskAlertDetail } from '../risk-alerts-notification/risk-alerts-notification.component';
 
 
 @Component({
@@ -18,7 +17,7 @@ import { riskAlertDetail } from '../risk-alerts-notification/risk-alerts-notific
 })
 export class RiskAlertsPanelComponent implements OnInit {
     type: PanelType = PanelType.custom;
-    width: string = "850px";
+    width: string = "525px";
     styles: any = {
         root: {
             marginTop: '50px',
@@ -30,12 +29,10 @@ export class RiskAlertsPanelComponent implements OnInit {
     error: string="";
     endTime: Moment = this.detectorControlService.endTime;
     startTime: Moment = this.detectorControlService.startTime;
+    riskPanelTitle: string = "Risk Alert Detail";
     currentRiskPanelContentId: string;
     viewResponse: DetectorResponse;
-    autoHealDetail: riskAlertDetail;
-    healthCheckDetail: riskAlertDetail;
-    workDistributionDetail: riskAlertDetail;
-    appDensityCheckDetail: riskAlertDetail;
+
     summaryType: MessageBarType = MessageBarType.info;
     isInCaseSubmissionFlow: boolean = false;
 
@@ -52,43 +49,17 @@ export class RiskAlertsPanelComponent implements OnInit {
     }
 
     ngOnInit() {
-        // console.log("in risk panel, panel content", this.riskPanelContents, this.riskAlertId, this.viewResponse);
-        // console.log("riskalertservice", this._riskAlertService);
-        // for (const key of Object.keys(this.riskPanelContents))
-        // {
-        //     if (key === this.riskAlertId)
-        //     {
-        //         this.viewResponse = this.riskPanelContents[key];
-        //         console.log("selected riskId and response", key, this.viewResponse);
-        //         break;
-        //     }
-        // }
-
         this._riskAlertService.riskPanelContentsSub.subscribe((risksPanelContents)=>
         {
             this.riskPanelContents = risksPanelContents;
             this._riskAlertService.currentRiskPanelContentIdSub.subscribe((currentRiskAlertId) => {
+                this.riskPanelTitle = this._riskAlertService.risks && this._riskAlertService.risks.hasOwnProperty(currentRiskAlertId) ? this._riskAlertService.risks[currentRiskAlertId].title: this.riskPanelTitle;
                 this.currentRiskPanelContentId = currentRiskAlertId;
                 console.log("In panel, current riskId, and res", this.currentRiskPanelContentId, this.riskPanelContents, this.riskPanelContents[this.currentRiskPanelContentId]);
             });
             console.log("getrisks and get riskpanelcontents", this._riskAlertService.risks);
         });
 
-
-        // this._riskAlertService.riskPanelContentSub.subscribe(res => {
-        //     this.viewResponse = res;
-        //     console.log("viewResponseRisk", this.viewResponse);
-
-        //     console.log("in risk panel, panel content", this.riskPanelContents, this.riskAlertId, this.viewResponse);
-        // });
-
-
-        this.globals.reliabilityChecksDetailsBehaviorSubject.subscribe((reliabilityChecks) => {
-            this.autoHealDetail = reliabilityChecks.autoHeal;
-            this.healthCheckDetail = reliabilityChecks.healthCheck;
-            this.workDistributionDetail = reliabilityChecks.workerDistribution;
-            this.appDensityCheckDetail = reliabilityChecks.appDensity;
-        })
     }
 
     dismissedHandler() {

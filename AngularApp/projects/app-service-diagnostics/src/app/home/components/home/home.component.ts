@@ -164,11 +164,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
             this._detectorControlService.setDefault();
         }
 
-        // this._riskAlertService.riskPanelContentSub.subscribe(res => {
-        //     const viewResponse = res;
-        //     console.log("viewResponse", viewResponse);
-        // });
-
         let locationPlacementId = '';
         this.subscriptionPropertiesService.getSubscriptionProperties(this.subscriptionId).subscribe((response: HttpResponse<{}>) => {
             let subscriptionProperties = response.body['subscriptionPolicies'];
@@ -214,128 +209,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
         console.log("getrisks", this._riskAlertService.risks);
         this.risks = this._riskAlertService.risks;
         this.riskAlertConfigs = this._riskAlertService.riskAlertConfigs;
+        this.showRiskSection = this._isRiskAlertEnabled();
         console.log("RiskalertConfigs", this.riskAlertConfigs);
-
-        //this._initializeRiskTiles();
 
         this._telemetryService.logEvent("telemetry service logging", {});
     };
-
-    processRiskResponse(riskAlertConfig: RiskAlertConfig): RiskTile
-    {
-        let newRiskTile: RiskTile
-         =
-        {
-            id: riskAlertConfig.riskAlertId,
-            title: riskAlertConfig.title,
-            action: () => {
-
-                // for (const id of Object.keys(this.ratingEventProperties)) {
-                //     if (this.ratingEventProperties.hasOwnProperty(id)) {
-                //       eventProperties[id] = String(this.ratingEventProperties[id]);
-                //     }
-                //   }
-
-                // for (const riskId of Object.keys(this.risksPanelStatus))
-                // {
-                //     this.risksPanelStatus[riskId] = false;
-                // }
-                // this.risksPanelStatus[riskAlertConfig.title] = true;
-                // this.currentRiskPanelContentId = riskAlertConfig.riskAlertId;
-                // this.riskPanelContent = this.risksPanelContents[this.currentRiskPanelContentId];
-                // console.log("current risk panel content", this.riskPanelContent);
-                // this.globals.openRiskAlertsPanel = true;
-
-
-                // this._telemetryService.logEvent(TelemetryEventNames.OpenRiskAlertPanel,{
-                //     "Location" : TelemetrySource.LandingPage
-                // });
-            },
-            linkText: "Click here to view more details",
-            riskInfo: null,
-            loadingStatus: LoadingStatus.Success,
-            infoObserverable: this._diagnosticService.getDetector(riskAlertConfig.riskAlertId, this._detectorControlService.startTimeString, this._detectorControlService.endTimeString).pipe(map(res => RiskHelper.convertResponseToRiskInfo(res))),
-            //this.globals.reliabilityChecksDetailsBehaviorSubject.pipe(map(info => RiskHelper.convertToRiskInfo(info))),
-            showTile: this._isRiskAlertEnabled(),
-            riskAlertResponse: null
-        };
-
-        // let riskObservable = this._diagnosticService.getDetector(riskAlertConfig.riskAlertId, this._detectorControlService.startTimeString, this._detectorControlService.endTimeString)
-        // .subscribe(res =>
-        //     {
-        //         console.log("get risk panel content",riskAlertConfig,  res);
-        //         this.risksPanelContents[riskAlertConfig.riskAlertId] = res;
-        //         console.log("risksPanelContents", this.risksPanelContents);
-        //         newRiskTile.riskInfo = RiskHelper.convertResponseToRiskInfo(res);
-        //         newRiskTile.action = () => {
-        //             this.currentRiskPanelContentId = riskAlertConfig.riskAlertId;
-        //             this.riskPanelContent = this.risksPanelContents[this.currentRiskPanelContentId];
-        //             console.log("current risk panel content", this.riskPanelContent);
-        //             this.globals.openRiskAlertsPanel = true;
-
-
-        //             this._telemetryService.logEvent(TelemetryEventNames.OpenRiskAlertPanel,{
-        //                 "Location" : TelemetrySource.LandingPage
-        //             });
-        //         }
-        //     },
-        //         e => {
-        //             newRiskTile.riskInfo = null;
-        //         newRiskTile.loadingStatus = LoadingStatus.Failed;
-        //         }
-        //     );
-
-        // riskObservable.subscribe(info => {
-        //     if (info !== null && info !== undefined && Object.keys(info).length > 0) {
-        //       newRiskTile.riskInfo = info;
-        //       newRiskTile.loadingStatus = LoadingStatus.Success;
-        //     //   this.infoList = this.processRiskInfo(info);
-        //     //   this.loading = LoadingStatus.Success;
-        //     //   this.riskProperties["TileLoaded"] = LoadingStatus[this.loading];
-        //     //   this.logEvent(TelemetryEventNames.RiskTileLoaded, {});
-        //     }
-        //   }, e => {
-        //     newRiskTile.riskInfo = null;
-        //     newRiskTile.loadingStatus = LoadingStatus.Failed;
-        //     // this.loading = LoadingStatus.Failed;
-        //     // this.riskProperties["TileLoaded"] = LoadingStatus[this.loading];
-        //     // this.infoList = [
-        //     //   {
-        //     //     message: "No data available",
-        //     //     status: HealthStatus.Info
-        //     //   }
-        //     // ];
-        //     // this.logEvent(TelemetryEventNames.RiskTileLoaded, {
-        //     //   "LoadingError":e
-        //     // });
-        //   });
-
-
-        // this.risks.push(newRiskTile);
-        console.log("this risks,", this.risks);
-        return newRiskTile;
-
-      //  let title = riskResponse.metadata.name;
-
-        // this.risks = [
-        //     {
-        //    //     title: riskResponse.metadata.name,
-        //         action: () => {
-        //             this.globals.openRiskAlertsPanel = true;
-        //             this._telemetryService.logEvent(TelemetryEventNames.OpenRiskAlertPanel,{
-        //                 "Location" : TelemetrySource.LandingPage
-        //             });
-        //         },
-        //         linkText: "Click here to view more details",
-        //         infoObserverable: this.globals.reliabilityChecksDetailsBehaviorSubject.pipe(map(info => RiskHelper.convertToRiskInfo(info))),
-        //         showTile: this._checkIsWindowsWebApp()
-        //     }
-        // ];
-
-        //Only show risk section if at least one tile will display
-        // this.showRiskSection = this.risks.findIndex(risk => risk.showTile === true) > -1;
-
-    }
 
     ngAfterViewInit() {
         this._telemetryService.logPageView(TelemetryEventNames.HomePageLoaded, { "numCategories": this.categories.length.toString() });
@@ -415,27 +293,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
             statusCode: error.status ? error.status : 500
         };
         this._telemetryService.logTrace('HTTP error in ' + methodName, errorLoggingProps);
-    }
-
-    private _initializeRiskTiles(riskResponses: DetectorResponse) {
-
-        // this.risks = [
-        //     {
-        //         title: "Availability",
-        //         action: () => {
-        //             this.globals.openRiskAlertsPanel = true;
-        //             this._telemetryService.logEvent(TelemetryEventNames.OpenRiskAlertPanel,{
-        //                 "Location" : TelemetrySource.LandingPage
-        //             });
-        //         },
-        //         linkText: "Click here to view more details",
-        //         infoObserverable: this.globals.reliabilityChecksDetailsBehaviorSubject.pipe(map(info => RiskHelper.convertToRiskInfo(info))),
-        //         showTile: this._checkIsWindowsWebApp()
-        //     }
-        // ];
-
-        //Only show risk section if at least one tile will display
-      //  this.showRiskSection = this.risks.findIndex(risk => risk.showTile === true) > -1;
     }
 
     private _checkIsWindowsWebApp(): boolean {

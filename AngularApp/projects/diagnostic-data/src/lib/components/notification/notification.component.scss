@@ -1,11 +1,3 @@
-.insight-container {
-    margin-bottom: 10px;
-}
-
-.insight-container:last-child {
-    margin-bottom: 0px;
-}
-
 .notification-container {
     margin-bottom: 0px;
 }
@@ -27,6 +19,12 @@
     width: 100%;
     font-family: 'Segoe UI','Open Sans','Helvetica Neue',sans-serif;
     color: #444;
+    border: 1px solid transparent;
+    border-bottom-color: #cccccbcc;
+}
+
+.notification-panel-heading {
+    padding: 10px 15px;
 }
 
 .notification-body {

@@ -11,6 +11,11 @@ import { delay, map } from 'rxjs/operators';
 import { mergeMap } from "rxjs-compat/operator/mergeMap";
 import { Globals } from "../../../globals";
 import { RiskAlertService } from "../../../shared-v2/services/risk-alert.service";
+import { SiteFilteredItem } from "../models/site-filter";
+import { AppType } from "../../../shared/models/portal";
+import { HostingEnvironmentKind, OperatingSystem } from "../../../shared/models/site";
+import { Sku } from "../../../shared/models/server-farm";
+import { WebSiteFilter } from "../pipes/site-filter.pipe";
 
 
 @Injectable({
@@ -34,21 +39,12 @@ export class SiteRiskAlertService extends  RiskAlertService{
         this.riskAlertsSub.next(riskAlertConfigs);
     }
 
-    public  setRiskAlertPanelId(riskAlertId: string) {
-        this.riskAlertPanelId.next(riskAlertId);
-        const curRes = this.risksPanelContents[riskAlertId];
-        this.riskPanelContentSub.next(this.risksPanelContents[riskAlertId]);
-
-        console.log("release new id and res", riskAlertId, curRes);
-    }
-
-
-    private _siteRiskAlertConfigs = [
+    private _webAppRiskAlertConfigs = [
         {
             title: "Configuration",
             riskAlertId: "backupFailures",
             enableForCaseSubmissionFlow: true,
-            notificationMessage: "We detected missing configuraions in your application that will increase risk of a downtime."
+            notificationMessage: "We detected missing configurations in your application that will increase risk of a downtime."
         },
         {
             title: "Availability",
@@ -58,14 +54,75 @@ export class SiteRiskAlertService extends  RiskAlertService{
         }
     ];
 
- //   this._riskAlertService._riskAlertConfigs = this.riskAlertConfigs;
+    private _functionAppRiskAlertConfigs = [
+        // {
+        //     title: "Configuration",
+        //     riskAlertId: "functionExecutionErrors",
+        //     enableForCaseSubmissionFlow: true,
+        //     notificationMessage: "We detected missing configurations in your application that will increase risk of a downtime."
+        // },
+        {
+            title: "Availability risk alert",
+            riskAlertId: "functionPerformance",
+            enableForCaseSubmissionFlow: true,
+            notificationMessage: "We detected you are not following best practices configuration that will increase risk of a downtime."
+        }
+    ];
+
+    private _linuxAppRiskAlertConfigs = [
+        {
+            title: "Configuration",
+            riskAlertId: "backupFailures",
+            enableForCaseSubmissionFlow: true,
+            notificationMessage: "We detected missing configuraions in your application that will increase risk of a downtime."
+        },
+        {
+            title: "Availability",
+            riskAlertId: "swap",
+            enableForCaseSubmissionFlow: true,
+            notificationMessage: "We detected you are not following best practices configuration that will increase risk of a downtime."
+        }
+    ];
+
+    private _siteRiskAlertConfigs: SiteFilteredItem<RiskAlertConfig[]>[] = [
+        {
+            appType: AppType.WebApp,
+            platform: OperatingSystem.windows,
+            stack: '',
+            sku: Sku.All,
+            hostingEnvironmentKind: HostingEnvironmentKind.All,
+            item: this._webAppRiskAlertConfigs,
+        },
+        {
+            appType: AppType.FunctionApp,
+            platform: OperatingSystem.windows | OperatingSystem.linux,
+            stack: '',
+            sku: Sku.All,
+            hostingEnvironmentKind: HostingEnvironmentKind.All,
+            item: this._functionAppRiskAlertConfigs
+        },
+        {
+            appType: AppType.WebApp,
+            platform: OperatingSystem.linux,
+            stack: '',
+            sku: Sku.All,
+            hostingEnvironmentKind: HostingEnvironmentKind.All,
+            item: this._linuxAppRiskAlertConfigs
+        }
+    ];
 
 
-    constructor(protected _featureService: FeatureService, protected _diagnosticService: DiagnosticService, protected _detectorControlService: DetectorControlService, protected _telemetryService: TelemetryService, protected globals: Globals, protected _genericArmConfigService?: GenericArmConfigService)
+    constructor(private _websiteFilter: WebSiteFilter, protected _featureService: FeatureService, protected _diagnosticService: DiagnosticService, protected _detectorControlService: DetectorControlService, protected _telemetryService: TelemetryService, protected globals: Globals, protected _genericArmConfigService?: GenericArmConfigService)
     {
         super(_featureService, _diagnosticService, _detectorControlService, _telemetryService, globals, _genericArmConfigService);
-        console.log("For siteriskalert, get config", this._siteRiskAlertConfigs);
-        this._addRiskAlertIds(this._siteRiskAlertConfigs);
+        const riskAlertConfigs = this._websiteFilter.transform(this._siteRiskAlertConfigs);
+        let siteRiskAlertConfigs: RiskAlertConfig[] = [];
+        for (const riskAlertConfig of riskAlertConfigs) {
+            siteRiskAlertConfigs = siteRiskAlertConfigs.concat(riskAlertConfig);
+        }
+
+        console.log("For siteriskalert, get config", siteRiskAlertConfigs);
+        this._addRiskAlertIds(siteRiskAlertConfigs);
       //  this.getRiskTileResponse();
     }
 

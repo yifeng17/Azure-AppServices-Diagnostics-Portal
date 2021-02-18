@@ -96,7 +96,6 @@ export class RiskHelper
                 const row = data.rows[i];
                // (<string>row[statusColumnIndex])
                 const notificationStatus = <string>row[statusColumnIndex];
-                console.log("notificationStatus", notificationStatus);
                 const insightName = row[insightColumnIndex];
                 const nameColumnValue = row[nameColumnIndex];
 
