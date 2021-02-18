@@ -12,9 +12,10 @@ export class UriElementsService {
     private _storageAccountResourceProviderPrefix: string = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Storage';
 
     private _listStorageAccounts: string = '/storageAccounts';
-    private _listAccountSas:string = '/ListAccountSas';
+    private _listAccountSas: string = '/ListAccountSas';
     private _listStorageKeys: string = '/listKeys';
     private _createStorageAccountFormatUrl: string = '/storageAccounts/{accountName}';
+    private _storageContainerFormatUrl: string = '/blobServices/default/containers/{containerName}';
 
     private _siteRestartUrlFormat: string = '/restart';
     private _listAppSettingsUrlFormat: string = '/config/appsettings/list';
@@ -231,6 +232,10 @@ export class UriElementsService {
     createStorageAccountsUrl(subscriptionId: string, resourceGroup: string, accountName: string): string {
         return this._storageAccountResourceProviderPrefix.replace('{subscriptionId}', subscriptionId)
             .replace('{resourceGroup}', resourceGroup) + this._createStorageAccountFormatUrl.replace('{accountName}', accountName);
+    }
+
+    getStorageContainerUrl(storageAccountId: string, containerName: string): string {
+        return storageAccountId+ this._storageContainerFormatUrl.replace('{containerName}', containerName);
     }
 
     createSasUri(storageResourceUri: string): string {
