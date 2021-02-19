@@ -22,10 +22,10 @@
     </div>
   </div>
 </div>-->
-<div class="container">
+<div class="check-container">
   <div class="check-header" (click)="toggleCheckerHeaderStatus(viewModel)"
     tabindex="0" role="button"
-    attr.aria-expanded="{{viewModel.expanded}}" attr.aria-label="Check title {{viewModel.name}}">
+    attr.aria-expanded="{{viewModel.expanded}}" attr.aria-label="Check title {{viewModel.id}}">
     <div class="status-icon">
       <status-icon [loading]="viewModel.loadingStatus" [status]="viewModel.status" [size]="20"></status-icon>
     </div>
@@ -36,7 +36,7 @@
       <span class="fa" [class.fa-angle-down]="!viewModel.expanded" [class.fa-angle-up]="viewModel.expanded"></span>
     </div>
   </div>
-  <div style="overflow-y: hidden;height:0px" [@expand]="viewModel.expanded ? 'shown' : 'hidden'">
+  <div [ngStyle]="{'overflow-y': 'hidden', 'height': (viewModel.expanded ? 'none':'0px')}" [@expand]="viewModel.expanded ? 'shown' : 'hidden'">
     <ng-content></ng-content>
   </div>
 </div>

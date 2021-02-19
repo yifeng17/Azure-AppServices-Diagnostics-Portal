@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" (mouseleave)="toggleFeedbackOnce()">
     <h2 tabindex="0">{{ title }}</h2>
     <p tabindex="0">{{ description }}</p>
 
@@ -11,21 +11,29 @@
     <!-- markdown https://stackblitz.com/edit/ngx-markdown?file=src%2Fapp%2Fapp.component.html -->
     <div class="checker-container" *ngFor="let viewModel of checkResultViews; index as i">
         <checker-list [viewModel]= "viewModel">
-            <div *ngIf="viewModel.interactivePayload == null; else interactive">
-                <markdown class="check-markdown " ngPreserveWhitespaces [data]="viewModel.markdown"></markdown> </div>
-            <ng-template #interactive>            
+            <div *ngIf="viewModel.interactivePayload != null">
                 <div [ngSwitch]="viewModel.interactivePayload.type">
-                    <markdown ngPreserveWhitespaces [data]="viewModel.markdown"> </markdown>
                     <div *ngSwitchCase="0"> <input #text><button (click)="interactiveCallBack(text.value, viewModel.interactivePayload.callBack, i)">submit</button></div>
                     <div *ngSwitchCase="1">interactive 1</div>
                 </div>
-            </ng-template>
+            </div>
+            <div class="step-container" *ngFor="let step of viewModel.stepResultViews">
+                <checker-list [viewModel]= "step">
+                    <markdown class="step-markdown" ngPreserveWhitespaces [data]="step.markdown"></markdown>
+                </checker-list>
+            </div>
+            <markdown class="check-markdown" ngPreserveWhitespaces [data]="viewModel.markdown"></markdown>
         </checker-list>
-        
     </div>
+
+    <checker-list [viewModel]= "{name:'feedback', title: 'Please give us your feedback!', status: 2, loadingStatus: 1, expanded: true}">
+        feedback!
+    </checker-list>
 
     <!--<div class="sessions">
         <daas-sessions [refreshSessions]="refreshSessions" diagnoserNameLookup="CLR Profiler" [scmPath]="scmPath" [siteToBeDiagnosed]="siteToBeDiagnosed"></daas-sessions>
     </div> -->
 
 </div>
+
+<networkcheck-feedback [openFeedback]="openFeedback"></networkcheck-feedback>

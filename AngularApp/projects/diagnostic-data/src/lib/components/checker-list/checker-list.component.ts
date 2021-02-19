@@ -1,7 +1,7 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, Pipe, PipeTransform, Inject, OnInit, Input, ViewEncapsulation } from '@angular/core';
-import { HealthStatus, LoadingStatus } from 'diagnostic-data';
-import { CheckResultView } from 'projects/app-service-diagnostics/src/app/shared/components/tools/network-checks/network-checks.component';
+import { HealthStatus, LoadingStatus, TelemetryService } from 'diagnostic-data';
+import { ResultView } from 'projects/app-service-diagnostics/src/app/shared/components/tools/network-checks/network-checks.component';
 
 @Component({
   selector: 'checker-list',
@@ -17,12 +17,20 @@ import { CheckResultView } from 'projects/app-service-diagnostics/src/app/shared
   ]
 })
 export class CheckerListComponent implements OnInit{
-  @Input() viewModel: CheckResultView;
+  @Input() viewModel: ResultView;
+  private _expanded = false;
+
+  constructor(private _telemetryService: TelemetryService){
+  }
   
   ngOnInit(): void {
   }
 
-  toggleCheckerHeaderStatus(viewModel: CheckResultView) {
+  toggleCheckerHeaderStatus(viewModel: ResultView) {
+    if(!this._expanded && !viewModel.expanded){
+      this._expanded = true;
+      this._telemetryService.logEvent("NetworkCheck.CheckExpanded", {checkId: viewModel.id});
+    }
     viewModel.expanded = viewModel.loadingStatus === LoadingStatus.Success && !viewModel.expanded;
   }
 }

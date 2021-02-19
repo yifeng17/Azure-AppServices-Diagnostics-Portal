@@ -136,6 +136,7 @@ import { IntegratedSolutionsViewComponent } from './components/integrated-soluti
 import { NetworkCheckComponent } from './components/tools/network-checks/network-checks.component';
 import { MarkdownModule } from 'ngx-markdown';
 import { CheckerListComponent } from 'projects/diagnostic-data/src/lib/components/checker-list/checker-list.component';
+import { NetworkCheckFeedbackComponent } from './components/networkcheck-feedback/networkcheck-feedback.component';
 
 @NgModule({
     declarations: [
@@ -168,6 +169,7 @@ import { CheckerListComponent } from 'projects/diagnostic-data/src/lib/component
         ProfilerComponent,
         ProfilerToolComponent,
         NetworkCheckComponent,
+        NetworkCheckFeedbackComponent,
         CheckerListComponent,
         MemoryDumpToolComponent,
         DaasComponent,
