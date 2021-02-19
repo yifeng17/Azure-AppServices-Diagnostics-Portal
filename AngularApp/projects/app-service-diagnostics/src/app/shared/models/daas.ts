@@ -199,3 +199,19 @@ export class CrashMonitoringSettings {
     MaxDumpCount: number;
     ExceptionFilter: string;
 }
+
+export interface ValidateSasUriResponse {
+    Exception: string;
+    IsValid: boolean;
+    StorageAccount:string;
+    SpecifiedAt: string;
+    ExtendedError: StorageExtendError;
+}
+
+export interface StorageExtendError {
+    HttpStatusCode: string;
+    HttpStatusMessage: string;
+    ErrorCode: string;
+    ErrorMessage: string;
+    AdditionalDetails: any;
+}
