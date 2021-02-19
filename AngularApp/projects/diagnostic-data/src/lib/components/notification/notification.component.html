@@ -1,38 +1,33 @@
      <ng-template #insightView>
-      <div *ngFor="let insight of insights" class="notification-container" attr.name="{{insight.title}}"
-        attr.aria-label="{{insight.title}}" attr.aria-expanded="{{insight.isExpanded}}" role="button"
-        (keyup.enter)="toggleInsightStatus(insight)">
+      <div *ngFor="let notification of notifications" class="notification-container" attr.name="{{notification.Title}}"
+        attr.aria-label="{{notification.Title}}" role="button">
         <div div class="notification-panel">
-          <div class="notification-panel-heading" (click)="toggleInsightStatus(insight)">
-            <h5 class="panel-title" [class.clickable-header]="hasContent(insight)">
+          <div class="notification-panel-heading">
+            <h5 class="panel-title">
               <div style="display: table;">
                 <div style="display: table-row">
                   <div style="display: table-cell">
-                    <span class="fa status-icon" [class.fa-exclamation-circle]="insight.status === InsightStatus.Critical"
-                      [class.fa-exclamation-triangle]="insight.status === InsightStatus.Warning"
-                      [class.fa-check-circle]="insight.status === InsightStatus.Success"
-                      [class.fa-info-circle]="insight.status === InsightStatus.Info"></span>
+                    <span class="fa status-icon" [class.fa-exclamation-circle]="notification.Status === NotificationStatus.Critical"
+                      [class.fa-exclamation-triangle]="notification.Status === NotificationStatus.Warning"
+                      [class.fa-check-circle]="notification.Status === NotificationStatus.Success"
+                      [class.fa-info-circle]="notification.Status === NotificationStatus.Info"></span>
                   </div>
                   <div style="display: table-cell;width:100%;font-size: 14px;">
-                    {{insight.title}}
+                    {{notification.Title}}
                   </div>
                 </div>
               </div>
             </h5>
           </div>
           <div class="notification-body">
-                <div *ngFor="let key of insight.getKeys()">
+                <div *ngIf="notification.Description">
                   <div class="width:100%; font-size:13px!important">
-                    <markdown-text [markdownData]="insight.data[key]" [detector]="detector"></markdown-text>
+                    <markdown-text [markdownData]="notification.Description" [detector]="detector"></markdown-text>
                   </div>
                 </div>
 
-                <ng-container *ngIf="hasSolutions(insight)">
-                  <!-- <div>
-                    <div class="table-value"> -->
-                      <solutions [solutions]="insight.solutions"></solutions>
-                    <!-- </div> -->
-                  <!-- </div> -->
+                <ng-container *ngIf="hasSolution(notification)">
+                      <solution [data]="notification.Solution" [isNewSolution]="true"></solution>
                 </ng-container>
           </div>
 

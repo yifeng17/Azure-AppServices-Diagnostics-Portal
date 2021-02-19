@@ -6,49 +6,10 @@
     margin-bottom: 0px;
 }
 
-.notification-container {
-    margin-bottom: 0px;
-}
-
-.notification-container:last-child {
-    margin-bottom: 0px;
-}
-
 .insight-panel {
     border-left-width: 4px;
     background-color: #f3f3f3;
     border-radius: 3px;
-}
-
-.notification-panel {
-    border-top-width: 1px;
-    border-top-style: solid;
-    padding: 0px 5px 10px 10px;
-    width: 100%;
-    font-family: 'Segoe UI','Open Sans','Helvetica Neue',sans-serif;
-    color: #444;
-}
-
-.notification-body {
-    font-size: 13px!important;
-    line-height: normal;
-    //display: block;
-    line-height: 18px;
-    max-height: 144px;
-    overflow: hidden;
-    position: relative;
-    padding-top: 5px;
-    text-overflow: ellipsis;
-    white-space: pre-wrap;
-    width: 100%;
-    font-family: 'Segoe UI','Open Sans','Helvetica Neue',sans-serif;
-    color: #444;
-}
-
-.fxs-notificationmenu-notification-title {
-    display: flex;
-    padding-bottom: 2px;
-    max-width: 450px;
 }
 
 .success-insight-panel {

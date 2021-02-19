@@ -109,36 +109,6 @@ export class RiskHelper
         return riskInfo;
     }
 
-    public static parseRiskNotificationRendering(res: DetectorResponse): RiskInfo {
-        let riskInfo:RiskInfo = {};
-        let notificationList = res.dataset.filter(set => (<Rendering>set.renderingProperties).type === 26);
-     //   const keys = Object.keys(notificationList);
-
-        const statusColumnIndex = 0;
-        const insightColumnIndex = 1;
-        const nameColumnIndex = 2;
-        const valueColumnIndex = 3;
-        const isExpandedIndex = 4;
-        const solutionsIndex = 5;
-
-        for(let notification of notificationList){
-
-            const data = notification.table;
-
-            for (let i: number = 0; i < data.rows.length; i++) {
-                const row = data.rows[i];
-                const notificationStatus = <string>row[statusColumnIndex];
-                const insightName = row[insightColumnIndex];
-                const nameColumnValue = row[nameColumnIndex];
-
-                if(notificationStatus !== undefined && notificationStatus !== null){
-                    riskInfo[insightName] = HealthStatus[notificationStatus];
-                }
-            }
-        }
-        return riskInfo;
-    }
-
     static parseInsightRendering(diagnosticData: DiagnosticData): Insight[] {
         const insights: Insight[] = [];
         const data = diagnosticData.table;

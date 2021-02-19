@@ -1,8 +1,6 @@
-<!-- <solution-display [showTitle]="false"> -->
-  <!-- <solution-display-item *ngFor="let solution of solutions; index as i"
-      [title]="solution.Title" [titleTag]="solution.TypeTag" [index]="i"> -->
-      <div  *ngFor="let solution of solutions; index as i">
+<solution-display [showTitle]="false">
+  <solution-display-item *ngFor="let solution of solutions; index as i"
+      [title]="solution.Title" [titleTag]="solution.TypeTag" [index]="i">
     <solution [data]="solution"></solution>
-  </div>
-  <!-- </solution-display-item> -->
-<!-- </solution-display> -->
+  </solution-display-item>
+</solution-display>

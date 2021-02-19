@@ -182,7 +182,7 @@ export class DynamicDataComponent implements OnInit {
         return ConnectAppInsightsComponent;
       case RenderingType.KeystoneComponent:
           return KeystoneInsightComponent;
-      case RenderingType.Notifications:
+      case RenderingType.Notification:
             return NotificationComponent;
       default:
         return null;

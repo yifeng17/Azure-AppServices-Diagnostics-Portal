@@ -62,6 +62,10 @@ export class RiskAlertsPanelComponent implements OnInit {
 
     }
 
+    isContentEmpty(contents: any) {
+        return contents == null || Object.keys(contents) == null || Object.keys(contents).length === 0;
+    }
+
     dismissedHandler() {
         this.globals.openRiskAlertsPanel = false;
         this.telemetryService.logEvent("closeRiskAlertsPanel");

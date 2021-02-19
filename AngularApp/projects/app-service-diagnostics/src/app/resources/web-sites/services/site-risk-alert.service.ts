@@ -41,17 +41,17 @@ export class SiteRiskAlertService extends  RiskAlertService{
 
     private _webAppRiskAlertConfigs = [
         {
-            title: "Configuration",
-            riskAlertId: "backupFailures",
-            enableForCaseSubmissionFlow: true,
-            notificationMessage: "We detected missing configurations in your application that will increase risk of a downtime."
-        },
-        {
             title: "Availability",
             riskAlertId: "availablityriskalert",
             enableForCaseSubmissionFlow: true,
-            notificationMessage: "We detected you are not following best practices configuration that will increase risk of a downtime."
-        }
+            notificationMessage: "We detected you are not following best practices configuration and that will increase risk of a downtime."
+        },
+        // {
+        //     title: "Configuration",
+        //     riskAlertId: "backupFailures",
+        //     enableForCaseSubmissionFlow: true,
+        //     notificationMessage: "We detected missing configurations in your application that will increase risk of a downtime."
+        // }
     ];
 
     private _functionAppRiskAlertConfigs = [

@@ -8,10 +8,11 @@
           <div
             style="position: absolute; left:25px; right: 32px; top:0px; height: 32px; font-family: 'segoe UI'; font-size: 18px; line-height: 24px; font-weight: 600;display: flex; align-items: flex-end"
             tabindex="0" aria-label="Availability risk alerts">
-            {{riskPanelTitle}}</div>
+            {{riskPanelTitle}} risk alerts</div>
         </div>
       </div>
     </div>
+    <ng-container *ngIf="!isContentEmpty(riskPanelContents) else loaderView">
     <div *ngFor="let item of riskPanelContents | keyvalue">
       <detector-view *ngIf="currentRiskPanelContentId === item.key" [analysisMode]="false" [isKeystoneView]="false"
         [isAnalysisView]="false" [detectorResponse]="item.value" [error]="error" [startTime]="startTime"
@@ -19,5 +20,9 @@
         [isRiskAlertDetector]="true">
       </detector-view>
     </div>
+    </ng-container>
+    <ng-template #loaderView>
+    <loader-detector-view  style="margin-top:300px"></loader-detector-view>
+  </ng-template>
   </div>
 </fab-panel>

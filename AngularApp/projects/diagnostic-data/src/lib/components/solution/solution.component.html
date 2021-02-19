@@ -1,5 +1,4 @@
-<div (click)="performAction()" type="button" class="custom-solution-button">{{solution.Title}}</div>
-<!-- <div class="solution-container">
+<div *ngIf="!isNewSolution else newSolution" class="solution-container">
 
   <div *ngIf="solution.DescriptionMarkdown" class="my-2 mx-0">
     <markdown [data]="solution.DescriptionMarkdown"></markdown>
@@ -56,4 +55,31 @@
     <span class="mr-3">App: <span class="app-name">{{appName}}</span></span>
     <button (click)="performAction()" type="button" class="custom-button">{{solution.Title}}</button>
   </div>
-</ng-template> -->
+</ng-template>
+
+
+<ng-template #newSolution>
+  <div (click)="performAction()" type="button" class="custom-solution-button"  style="
+  margin-left: 0px;
+  display: inline-block;
+  /* width: 100%; */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background-color: #0078d4;
+  border-color: #0078d4;
+  color: #fff;
+  fill: white;
+  font-size: 13px;
+  box-sizing: border-box;
+  height: 24px;
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid;
+  padding: 0 20px;
+  margin: 0;
+">{{solution.Title}} ></div>
+</ng-template>
+

@@ -22,6 +22,7 @@ export class RiskAlertsNotificationComponent implements OnInit {
     type: MessageBarType = MessageBarType.severeWarning;
     riskAlertChecksHealthy: boolean = false;
     reliabilityChecksResults: any = {};
+    notificationId: string = "";
     notificationMessage: string = "We detected missing configurations in your application that will increase risk of a downtime. Please check";
     styles: IMessageBarStyles = {
         root: {
@@ -56,6 +57,7 @@ export class RiskAlertsNotificationComponent implements OnInit {
                         console.log("notification: isriskAlertchecksHealthy",  this.riskAlertChecksHealthy, this._riskAlertService.notificationStatus, this._riskAlertService.notificationStatus >= HealthStatus.Info);
                         this.riskAlertChecksHealthy = this._riskAlertService.notificationStatus >= HealthStatus.Info;
                         console.log("notification: isriskAlertchecksHealthy after",  this.riskAlertChecksHealthy);
+                        this.notificationId = this._riskAlertService.defaultNotificationId;
                         this.notificationMessage = this._riskAlertService.riskAlertNotifications && this._riskAlertService.riskAlertNotifications.hasOwnProperty(this._riskAlertService.defaultNotificationId) ? this._riskAlertService.riskAlertNotifications[this._riskAlertService.defaultNotificationId].text : this.notificationMessage;
                         this.showRiskAlertsNotification = (startupInfo.supportTopicId && startupInfo.supportTopicId != '' && isTargetSolutionReady && !this.riskAlertChecksHealthy);
                         console.log("Show risk alert notification?", this.showRiskAlertsNotification, startupInfo.supportTopicId && startupInfo.supportTopicId != '', isTargetSolutionReady, !this.riskAlertChecksHealthy);
@@ -72,10 +74,20 @@ export class RiskAlertsNotificationComponent implements OnInit {
 
     }
 
+
+    ngAfterViewInit() {
+        if (this.showRiskAlertsNotification)
+        {
+            this.telemetryService.logPageView(TelemetryEventNames.RiskAlertNotificationLoaded, {"NotificationId": this.notificationId, "NotificationMessage": this.notificationMessage});
+        }
+    }
+
     openRiskAlertsPanel() {
         this.globals.openRiskAlertsPanel = true;
         this.telemetryService.logEvent(TelemetryEventNames.OpenRiskAlertPanel, {
-            'Location': TelemetrySource.CaseSubmissionFlow
+            'Location': TelemetrySource.CaseSubmissionFlow,
+            "NotificationId": this.notificationId,
+            "NotificationMessage": this.notificationMessage
         });
     }
 }
