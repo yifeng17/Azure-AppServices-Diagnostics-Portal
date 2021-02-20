@@ -3,7 +3,7 @@
     [hasCloseButton]="true" [closeButtonAriaLabel]="'close'" (onDismissed)="dismissedFeedbackHandler()"
     (onOpen)="onOpenFeedbackPanel()" (onOpened)="onOpened()" [renderFooterContent]="feedbackFooter" [isFooterAtBottom]="true" [styles]="{overlay:{visibility: hideOverlay ? 'hidden':'visible'}}">
     <!-- Feedback Panel Header -->
-    <div style="margin-bottom: 40px;">
+    <div style="margin-bottom: 25px;">
         <h3 class="feedback-panel-header" style="top: 0px; font-size: 24px; font-weight: 600;">Feedback</h3>
         <p class="feedback-panel-header" style="top: 35px">Network Checking Tool - {{siteName}}</p>
         <div class="hover-item panel-close" (click)="dismissedFeedbackHandler()">
@@ -39,7 +39,7 @@
         </div>
       </div>
       <label for="networkfeedback-textarea">Tell us about your experience.</label>
-      <textarea id="networkfeedback-textarea" [(ngModel)]="feedbackText" tabindex="0" rows="7" cols="35"></textarea>
+      <textarea id="networkfeedback-textarea" [(ngModel)]="feedbackText" tabindex="0" rows="10" cols="40"></textarea>
     </div>
   </fab-panel>
 

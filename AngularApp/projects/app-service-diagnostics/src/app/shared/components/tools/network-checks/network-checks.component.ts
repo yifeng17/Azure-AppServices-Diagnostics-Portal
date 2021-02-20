@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { Site, SiteInfoMetaData } from '../../../models/site';
 import { SiteService } from '../../../services/site.service';
 import { ArmService } from '../../../services/arm.service';
@@ -9,7 +9,7 @@ import { CheckerListComponent } from 'projects/diagnostic-data/src/lib/component
 //import { MarkdownTextComponent } from 'projects/diagnostic-data/src/lib/components/markdown-text/markdown-text.component';
 declare var jsDynamicImportChecks: any;
 
-function Delay(second: number): Promise<void> {
+function delay(second: number): Promise<void> {
     return new Promise(resolve =>
         setTimeout(resolve, second * 1000));
 }
@@ -30,7 +30,7 @@ class PromiseCompletionSource<T> extends Promise<T>{
         this._reject = _reject;
 
         if (timeoutInSec != null) {
-            Delay(timeoutInSec).then(() => {
+            delay(timeoutInSec).then(() => {
                 this._reject(`Timeout after ${timeoutInSec} seconds!`);
             });
         }
@@ -44,7 +44,7 @@ class PromiseCompletionSource<T> extends Promise<T>{
 class InteractiveCheckPayload {
     public type: number;
     public data: any;
-    public callBack: (userInput: any) => Promise<CheckResult>;
+    public callBack: (userInput: any) => Promise<CheckResult & { title: string }>;
 }
 
 
@@ -57,49 +57,101 @@ class Check {
     public tryGetSharedObject?: (key: string) => any;
     public shareObject?: (key: string, value: any) => void;
     public waitSharedObjectAsync?: (key: string) => Promise<any>;
-    public shareObjectWith?: string[]; // list of check ids
 }
 
 class CheckResult {
-    public level: number;
-    public markdown?: string;
-    public steps?: StepResult[];
-    public interactivePayload?: InteractiveCheckPayload;
-}
-
-class StepResult {
     public id?: string;
-    public title: string;
+    public title?: string;
     public level: number;
     public markdown?: string;
+    
+    public interactivePayload?: InteractiveCheckPayload;
+    public expanded?: boolean;
+    public steps?: CheckResult[];
+    public promise?: Promise<CheckResult>;
 }
 
 export class ResultView {
     public id: string;
     public title: string;
+    public level: string;
     public markdown: string;
     public status: HealthStatus;
     public loadingStatus: LoadingStatus;
     public expanded: boolean;
-}
-
-class CheckResultView extends ResultView {
-    public level: string;
     public interactivePayload?: InteractiveCheckPayload;
-    public stepResultViews?: StepResultView[];
-}
+    public expandable: boolean;
+    public stepResultViews?: ResultView[];
 
-class StepResultView extends ResultView {
-    constructor(id: string, result: StepResult) {
-        super();
-        this.loadingStatus = LoadingStatus.Success;
+    constructor(data?: {
+        id: string;
+        title: string;
+        level: string;
+        markdown: string;
+        status: HealthStatus;
+        loadingStatus: LoadingStatus;
+        expanded: boolean;
+        interactivePayload?: InteractiveCheckPayload;
+    }) {
+        if (data != null) {
+            this.id = data.id;
+            this.title = data.title;
+            this.level = data.level;
+            this.markdown = data.markdown;
+            this.status = data.status;
+            this.loadingStatus = data.loadingStatus;
+            this.expanded = data.expanded;
+            this.interactivePayload = data.interactivePayload;
+            this.expandable = (this.markdown!=null || this.interactiveCallBack!=null);
+        }
+    }
+
+    async interactiveCallBack(userInput: any) {
+        try {
+            var result = await this.interactivePayload.callBack(userInput);
+            this.fill(this.id + "CallBack", result);
+        }
+        catch (error) {
+            console.log("error:", error);
+            debugger;
+        }
+
+    }
+
+    fill(id: string, result: CheckResult) {
+        console.log(new Error().stack);
         this.id = id;
         this.title = result.title;
-        this.markdown = markdownPreprocess(result.markdown, id);
+        this.level = checkResultLevel[result.level];
         this.status = convertLevelToHealthStatus(result.level);
+        this.markdown = markdownPreprocess(result.markdown, id);
+        this.loadingStatus = LoadingStatus.Success;
+        this.interactivePayload = result.interactivePayload;
+        this.expanded = result.expanded;
+        this.loadingStatus = LoadingStatus.Success;
+        this.expandable = (this.markdown!=null || this.interactivePayload!=null);
+
+        if (result.promise != null) {
+            this.loadingStatus = LoadingStatus.Loading;
+            Promise.race([result.promise, delay(10).then((): CheckResult => null)]).then(t => {
+                this.loadingStatus = LoadingStatus.Success;
+                if (t == null) {
+                    this.status = convertLevelToHealthStatus(3);
+                    this.title = "timeout: " + this.title;
+                } else {
+                    this.fill(id, t);
+                }
+            });
+        }
+        if(result.steps!=null){
+            this.stepResultViews = result.steps.map((step, idx) => {
+                var resultView = new ResultView();
+                resultView.fill(`${id}-${idx}`, step);
+                return resultView;
+            });
+        }
     }
 }
-
 
 
 enum ConnectionCheckStatus { success, timeout, hostNotFound, blocked, refused }
@@ -227,7 +279,8 @@ class DiagProvider {
         });
     }
 
-    public async checkConnectionAsync(hostname: string, port: number, count: number = 1, dns: string = "168.63.129.16", instance?: string): Promise<{ status: ConnectionCheckStatus, ip: string, aliases: string, statuses: ConnectionCheckStatus[] }> {
+    //TODO need to read DNS setting of VNet
+    public async checkConnectionAsync(hostname: string, port: number, count: number = 1, dns: string = "", instance?: string): Promise<{ status: ConnectionCheckStatus, ip: string, aliases: string, statuses: ConnectionCheckStatus[] }> {
         var stack = new Error("replace_placeholder").stack;
         var promise = (async () => {
             var nameResolverPromise = this.runKudoCommand(this._siteInfo.fullSiteName, `nameresolver ${hostname} ${dns}`, undefined, instance).catch(e => {
@@ -241,10 +294,17 @@ class DiagProvider {
             console.log(nameResovlerResult, pingResult);
             var ip: string = null, aliases: string = null;
             if (nameResovlerResult != null) {
-                var match = nameResovlerResult.match(/Addresses:\s*([\S\s]*)Aliases:\s*([\S\s]*)$/);
-                if (match != null) {
-                    ip = match[1].split("\r\n").filter(i => i.length > 0).join(";");
-                    aliases = match[2].split("\r\n").filter(i => i.length > 0).join(";");
+                if(nameResovlerResult.includes("Aliases")){
+                    var match = nameResovlerResult.match(/Addresses:\s*([\S\s]*)Aliases:\s*([\S\s]*)$/);
+                    if (match != null) {
+                        ip = match[1].split("\r\n").filter(i => i.length > 0).join(";");
+                        aliases = match[2].split("\r\n").filter(i => i.length > 0).join(";");
+                    }
+                }else{
+                    var match = nameResovlerResult.match(/Addresses:\s*([\S\s]*)$/);
+                    if (match != null) {
+                        ip = match[1].split("\r\n").filter(i => i.length > 0).join(";");
+                    }
                 }
             }
 
@@ -291,20 +351,21 @@ enum interactiveCheckType {
 @Component({
     templateUrl: 'network-checks.component.html',
     styleUrls: ['../styles/daasstyles.scss', './network-checks.component.scss'],
+    encapsulation: ViewEncapsulation.None,
     entryComponents: [CheckerListComponent]
 })
 
 export class NetworkCheckComponent implements OnInit {
 
-    private _objectMap: Map<string, Map<string, any>> = new Map<string, Map<string, any>>();
-    private _pivotCheck: Map<string, string> = new Map<string, string>(); // maintains the pivot relationship for check object sharing
+    private _objectMap: Map<string, any> = new Map<string, any>();
 
     title: string = 'Run Network Checks';
     description: string = 'Run network checks';
 
     diagProvider: DiagProvider;
-    checkResultViews: CheckResultView[] = [];
+    checkResultViews: ResultView[] = [];
     siteInfo: SiteInfoMetaData & Site & { fullSiteName: string }
+    feedbackReady = false;
     openFeedback = false;
     isFeedbacktoggled = false;
     //checks: any[];
@@ -322,6 +383,7 @@ export class NetworkCheckComponent implements OnInit {
         this.siteInfo = { ...this._siteService.currentSiteMetaData.value, ...this._siteService.currentSite.value, fullSiteName };
         this.diagProvider = new DiagProvider(this.siteInfo, _armService);
         this.loadChecksAsync();
+        delay(10).then(() => this.feedbackReady = true);
     }
 
     ngOnInit(): void {
@@ -402,17 +464,7 @@ export class NetworkCheckComponent implements OnInit {
 
     async runChecksAsync(checks: Check[], appSettings: any): Promise<void> {
         var siteInfo = this.siteInfo;
-        var pivotCheck = this._pivotCheck;
         checks.forEach(check => {
-            if (!pivotCheck.has[check.id]) {
-                pivotCheck.set(check.id, check.id);
-            }
-            if (check.shareObjectWith != null) {
-                check.shareObjectWith.forEach(share => {
-                    var pivot = this.getPivotCheck(share);
-                    pivotCheck.set(pivot, check.id);
-                });
-            }
             check.tryGetSharedObject = ((key) => this.tryGetObject(check.id, key));
             check.shareObject = ((key, value) => this.setObject(check.id, key, value));
             check.waitSharedObjectAsync = ((key) => this.waitObjectAsync(check.id, key));
@@ -423,14 +475,8 @@ export class NetworkCheckComponent implements OnInit {
 
                 check.func(siteInfo, appSettings, this.diagProvider)
                     .then(result => {
-                        checkResult.level = checkResultLevel[result.level];
-                        checkResult.status = convertLevelToHealthStatus(result.level);
-                        checkResult.markdown = markdownPreprocess(result.markdown, check.id);
-                        checkResult.loadingStatus = LoadingStatus.Success;
-                        checkResult.interactivePayload = result.interactivePayload;
-                        if (result.steps != null) {
-                            checkResult.stepResultViews = result.steps.map((step, idx) => new StepResultView(`${check.id}-${idx}`, step));
-                        }
+                        result.title = check.title;
+                        checkResult.fill(check.id, result);
                     })
                     .catch(error => {
                         checkResult.level = checkResultLevel[checkResultLevel.error];
@@ -450,7 +496,7 @@ export class NetworkCheckComponent implements OnInit {
     }
 
     pushCheckResult(id: string, title: string) {
-        this.checkResultViews.push({
+        this.checkResultViews.push(new ResultView({
             id: id,
             title: title,
             level: checkResultLevel.loading.toString(),
@@ -459,52 +505,16 @@ export class NetworkCheckComponent implements OnInit {
             status: convertLevelToHealthStatus(checkResultLevel.loading),
             loadingStatus: LoadingStatus.Loading,
             expanded: false
-        })
+        }))
         return this.checkResultViews[this.checkResultViews.length - 1];
     }
 
 
 
-
-    async interactiveCallBack(userInput: any, callBack: (userInput: any) => Promise<CheckResult>, resultViewIdx: number) {
-        try {
-            var result = await callBack(userInput);
-            var title = this.checkResultViews[resultViewIdx].title;
-            this.checkResultViews[resultViewIdx] = {
-                id: callBack.name,
-                title: title,
-                level: checkResultLevel[result.level],
-                markdown: markdownPreprocess(result.markdown, callBack.name),
-                interactivePayload: result.interactivePayload,
-                status: convertLevelToHealthStatus(result.level),
-                loadingStatus: LoadingStatus.Success,
-                expanded: false
-            };
-        }
-        catch (error) {
-            console.log("error:", error);
-            debugger;
-        }
-
-    }
-
-
-
-    getPivotCheck(current: string): string {
-        var pivotCheck = this._pivotCheck;
-        if (pivotCheck.get(current) == current) {
-            return current;
-        }
-        var pivot = this.getPivotCheck(pivotCheck.get(current));
-        pivotCheck.set(current, pivot);
-        return pivot;
-    }
-
     tryGetObject(checkId: string, key: string) {
-        var pivot = this.getPivotCheck(checkId);
         var objectMap = this._objectMap;
-        if (objectMap.has(pivot) && objectMap.get(pivot).has(key)) {
-            var val = objectMap.get(pivot).get(key);
+        if (objectMap.has(key)) {
+            var val = objectMap.get(key);
             if (val instanceof PromiseCompletionSource) {
                 return null;
             }
@@ -540,24 +550,19 @@ export class NetworkCheckComponent implements OnInit {
         if (checkId == null) {
             throw new Error("Check Id is not set! Cannot use share an object without a check id!");
         }
-        var pivot = this.getPivotCheck(checkId);
         var objectMap = this._objectMap;
 
-        if (!objectMap.has(pivot)) {
-            objectMap.set(pivot, new Map<string, any>());
-        }
-
-        if (objectMap.get(pivot).has(key)) {
-            var val = objectMap.get(pivot).get(key);
+        if (objectMap.has(key)) {
+            var val = objectMap.get(key);
             if (val instanceof PromiseCompletionSource) {
                 val.resolve(value);
             }
         }
-        objectMap.get(pivot).set(key, value);
+        objectMap.set(key, value);
     }
 
-    toggleFeedbackOnce(){
-        if(!this.isFeedbacktoggled){
+    toggleFeedbackOnce() {
+        if (this.feedbackReady && !this.isFeedbacktoggled) {
             this.isFeedbacktoggled = true;
             this.openFeedback = true;
         }

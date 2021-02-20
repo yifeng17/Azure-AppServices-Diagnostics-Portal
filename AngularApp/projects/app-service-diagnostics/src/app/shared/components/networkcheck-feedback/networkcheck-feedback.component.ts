@@ -19,7 +19,9 @@ export class NetworkCheckFeedbackComponent implements AfterViewInit, OnInit,OnDe
   type: PanelType = PanelType.custom;
   siteName: string = "";
   ratingEventProperties: any;
-  feedbackText: string = "What was the issue?\r\ntest123";
+  feedbackText: string = "- What was the issue?\r\n\r\n\r\n" +
+    "- If the issue was not resolved, what can be the reason?\r\n\r\n\r\n" + 
+    "- What else do you expect from this tool?\r\n";
   panelWidth: string = "315px";
   feedbackIcons: { id: string, text: string }[] =
     [
@@ -54,6 +56,7 @@ export class NetworkCheckFeedbackComponent implements AfterViewInit, OnInit,OnDe
 
   submitFeedback() {
     const eventProps = {
+      IssueResolved: String(this.issueResolved),
       Rating: String(this.rating),
       Feedback: PIIUtilities.removePII(this.feedbackText)
     };
@@ -66,7 +69,7 @@ export class NetworkCheckFeedbackComponent implements AfterViewInit, OnInit,OnDe
       'MayContact': this.checked,
       'FeedbackId': Guid.newShortGuid()
     };
-    this.logEvent(TelemetryEventNames.StarRatingSubmitted, eventProps);
+    this.logEvent("NetworkCheck.Feedback", eventProps);
     
     this.reset();
     this.submitted = true;

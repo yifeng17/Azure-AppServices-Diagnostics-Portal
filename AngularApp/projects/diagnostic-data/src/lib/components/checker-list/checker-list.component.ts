@@ -18,6 +18,7 @@ import { ResultView } from 'projects/app-service-diagnostics/src/app/shared/comp
 })
 export class CheckerListComponent implements OnInit{
   @Input() viewModel: ResultView;
+  @Input() expandable: boolean;
   private _expanded = false;
 
   constructor(private _telemetryService: TelemetryService){

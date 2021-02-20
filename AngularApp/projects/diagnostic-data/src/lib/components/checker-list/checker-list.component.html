@@ -32,11 +32,27 @@
     <div class="check-title">
       {{viewModel.title}}
     </div>
-    <div class="expand-icon" role="button" attr.aria-expanded="{{viewModel.expanded}}">
+    <div *ngIf="expandable" class="expand-icon" role="button" attr.aria-expanded="{{viewModel.expanded}}">
       <span class="fa" [class.fa-angle-down]="!viewModel.expanded" [class.fa-angle-up]="viewModel.expanded"></span>
     </div>
   </div>
-  <div [ngStyle]="{'overflow-y': 'hidden', 'height': (viewModel.expanded ? 'none':'0px')}" [@expand]="viewModel.expanded ? 'shown' : 'hidden'">
-    <ng-content></ng-content>
+  <div *ngIf="expandable" [ngStyle]="{'overflow-y': 'hidden', 'height': (viewModel.expanded ? 'none':'0px')}" [@expand]="viewModel.expanded ? 'shown' : 'hidden'">
+    <div *ngIf="viewModel.interactivePayload != null">
+      <div [ngSwitch]="viewModel.interactivePayload.type">
+          <div *ngSwitchCase="0" class="interactive-section"> 
+              <input placeholder="{{viewModel.interactivePayload.data.placeholder}}" #text>
+                  <fab-primary-button class="interactive-check-button" (click)="viewModel.interactiveCallBack(text.value)">
+                      {{viewModel.interactivePayload.data.buttonText}}
+                  </fab-primary-button>
+          </div>
+          <div *ngSwitchCase="1">interactive 1</div>
+      </div>
+    </div>
+    <div class="step-container" *ngFor="let step of viewModel.stepResultViews">
+        <checker-list [viewModel]= "step" [expandable]="step.expandable">
+            <markdown class="check-markdown" ngPreserveWhitespaces [data]="step.markdown"></markdown>
+        </checker-list>
+    </div>
+    <markdown class="check-markdown" ngPreserveWhitespaces [data]="viewModel.markdown"></markdown>
   </div>
 </div>
