@@ -65,9 +65,6 @@ export class Globals {
     return detectorName;
   }
 
-  updatereliabilityChecksDetails(reliabilityChecks: any) {
-      this.reliabilityChecksDetailsBehaviorSubject.next(reliabilityChecks);
-  }
   updateTimePickerInfo(updatedInfo: TimePickerInfo) {
     this.timePickerInfoSub.next(updatedInfo);
   }

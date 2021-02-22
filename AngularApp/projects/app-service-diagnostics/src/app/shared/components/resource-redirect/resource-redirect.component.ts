@@ -114,7 +114,6 @@ export class ResourceRedirectComponent implements OnInit {
             }
           }
 
-          console.log("redirect path", path);
         } else {
           if (!environment.production) {
             this._router.navigateByUrl('/test');

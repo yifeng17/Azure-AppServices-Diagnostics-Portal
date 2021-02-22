@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { HealthStatus, TelemetryEventNames, TelemetryService, TelemetrySource } from 'diagnostic-data';
 import { MessageBarType, IMessageBarProps, IMessageBarStyles } from 'office-ui-fabric-react';
@@ -18,7 +18,9 @@ import { AuthService } from '../../../startup/services/auth.service';
     styleUrls: ['./risk-alerts-notification.component.scss']
 })
 export class RiskAlertsNotificationComponent implements OnInit {
+    @Input() isKeystoneSolutionView: boolean = false;
     showRiskAlertsNotification: boolean = false;
+    showEmergingNotification: boolean = false;
     type: MessageBarType = MessageBarType.severeWarning;
     riskAlertChecksHealthy: boolean = false;
     reliabilityChecksResults: any = {};
@@ -40,54 +42,49 @@ export class RiskAlertsNotificationComponent implements OnInit {
         }
 
         this._authService.getStartupInfo().subscribe((startupInfo) => {
-            // Only show risk alert when:
-            // 1. In case submission
-            // 2. There is at least one risk check fails
-            // 3. No keystone solution is presented
+                        this._riskAlertService.riskPanelContentsSub.subscribe((riskAlertContents) => {
+                        // Only show risk alert when:
+                        // 1. In case submission
+                        // 2. There is at least one risk check fails
+                        // 3. No keystone solution is presented
 
-            this._router.events.subscribe(event => {
-                if (event instanceof NavigationEnd) {
-                    console.log("event");
-                    let currentUrlPath = event.url;
-                    let isTargetSolutionReady = (currentUrlPath.includes("/analysis/") || currentUrlPath.includes("/detectors/"));
+                            this.riskAlertChecksHealthy = this._riskAlertService.notificationStatus >= HealthStatus.Info;
+                            this.notificationId = this._riskAlertService.caseSubmissionRiskNotificationId;
+                            this.notificationMessage = this._riskAlertService.riskAlertNotifications && this._riskAlertService.riskAlertNotifications.hasOwnProperty(this._riskAlertService.caseSubmissionRiskNotificationId) ? this._riskAlertService.riskAlertNotifications[this._riskAlertService.caseSubmissionRiskNotificationId].text : this.notificationMessage;
+                            this.showRiskAlertsNotification = (startupInfo.supportTopicId && startupInfo.supportTopicId != ''  && !this.riskAlertChecksHealthy && !this.isKeystoneSolutionView);
 
-                    this._riskAlertService.riskPanelContentsSub.subscribe((riskAlertContents) => {
-                        console.log("get showing notificationId", this._riskAlertService.defaultNotificationId, this._riskAlertService.risksPanelContents);
-                        this._riskAlertService.currentRiskPanelContentIdSub.next(this._riskAlertService.defaultNotificationId);
-                        console.log("notification: isriskAlertchecksHealthy",  this.riskAlertChecksHealthy, this._riskAlertService.notificationStatus, this._riskAlertService.notificationStatus >= HealthStatus.Info);
-                        this.riskAlertChecksHealthy = this._riskAlertService.notificationStatus >= HealthStatus.Info;
-                        console.log("notification: isriskAlertchecksHealthy after",  this.riskAlertChecksHealthy);
-                        this.notificationId = this._riskAlertService.defaultNotificationId;
-                        this.notificationMessage = this._riskAlertService.riskAlertNotifications && this._riskAlertService.riskAlertNotifications.hasOwnProperty(this._riskAlertService.defaultNotificationId) ? this._riskAlertService.riskAlertNotifications[this._riskAlertService.defaultNotificationId].text : this.notificationMessage;
-                        this.showRiskAlertsNotification = (startupInfo.supportTopicId && startupInfo.supportTopicId != '' && isTargetSolutionReady && !this.riskAlertChecksHealthy);
-                        console.log("Show risk alert notification?", this.showRiskAlertsNotification, startupInfo.supportTopicId && startupInfo.supportTopicId != '', isTargetSolutionReady, !this.riskAlertChecksHealthy);
-
-                    });
-                }
-            });
+                            // This is to determine whether we want to show emerging issue notification bar.
+                            this.showEmergingNotification = !!this._riskAlertService.emergingNotificationMessageBar && !!this._riskAlertService.emergingNotificationMessageBar.id;
+                        });
+                  //  }
+             //  });
+            //}
 
         }, e => {
             this.globals.reliabilityChecksDetailsBehaviorSubject.error(e);
         });
-
-
-
     }
 
 
     ngAfterViewInit() {
-        if (this.showRiskAlertsNotification)
-        {
-            this.telemetryService.logPageView(TelemetryEventNames.RiskAlertNotificationLoaded, {"NotificationId": this.notificationId, "NotificationMessage": this.notificationMessage});
+        if (this.showRiskAlertsNotification) {
+            this.telemetryService.logPageView(TelemetryEventNames.RiskAlertNotificationLoaded,
+                {
+                    "showEmergingNotification": this.showEmergingNotification.toString(),
+                    "emergingNotificationId": !!this._riskAlertService.emergingNotificationMessageBar && !!this._riskAlertService.emergingNotificationMessageBar.id ? this._riskAlertService.emergingNotificationMessageBar.id : "",
+                    "showRiskAlertsNotification": this.showRiskAlertsNotification.toString(),
+                    "RiskNotificationId": this.notificationId,
+                    "RiskNotificationMessage": this.notificationMessage,
+                });
         }
     }
 
-    openRiskAlertsPanel() {
+    openRiskAlertsPanel(id: string) {
         this.globals.openRiskAlertsPanel = true;
+        this._riskAlertService.currentRiskPanelContentIdSub.next(id);
         this.telemetryService.logEvent(TelemetryEventNames.OpenRiskAlertPanel, {
             'Location': TelemetrySource.CaseSubmissionFlow,
-            "NotificationId": this.notificationId,
-            "NotificationMessage": this.notificationMessage
+            "NotificationId": id
         });
     }
 }

@@ -55,6 +55,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     riskAlertConfigs: RiskAlertConfig[];
     loadingQuickLinks: boolean = true;
     showRiskSection: boolean = true;
+    showRiskNotificationMessage: boolean = false;
     get inputAriaLabel(): string {
         return this.searchValue !== '' ?
             `${this.searchResultCount} Result` + (this.searchResultCount !== 1 ? 's' : '') :
@@ -197,21 +198,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
         if (!this._detectorControlService.startTime) {
             this._detectorControlService.setDefault();
         }
-
-        console.log("_riskAlertConfigs", this._riskAlertService._riskAlertConfigs, this._riskAlertService.riskAlertConfigs);
+       this.showRiskNotificationMessage = this._riskAlertService.emergingNotificationMessageBar && !!this._riskAlertService.emergingNotificationMessageBar.id;
         this._riskAlertService.getRiskAlertResponse().subscribe(()=>
         {
             this._riskAlertService.riskPanelContentsSub.next(this._riskAlertService.risksPanelContents);
-            console.log("getrisks", this._riskAlertService.risks);
-          //  this.risks = this._riskAlertService.risks;
         });
 
-        console.log("getrisks", this._riskAlertService.risks);
         this.risks = this._riskAlertService.risks;
         this.riskAlertConfigs = this._riskAlertService.riskAlertConfigs;
         this.showRiskSection = this._isRiskAlertEnabled();
-        console.log("RiskalertConfigs", this.riskAlertConfigs);
-
         this._telemetryService.logEvent("telemetry service logging", {});
     };
 

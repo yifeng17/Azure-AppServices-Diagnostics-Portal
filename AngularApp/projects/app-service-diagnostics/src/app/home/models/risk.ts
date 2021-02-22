@@ -7,13 +7,17 @@ import { Observable } from "rxjs";
 export interface RiskTile {
     id: string;
     title: string;
-    action: () => void;
     linkText: string;
     riskInfo: RiskInfo;
     loadingStatus: LoadingStatus;
-    infoObserverable: Observable<RiskInfo>;
     showTile:boolean;
-    riskAlertResponse: DetectorResponse;
+}
+
+export interface NotificationMessageBar {
+    id: string;
+    title: string;
+    status: HealthStatus,
+    linkText: string;
 }
 
 export interface RiskInfo {
@@ -79,7 +83,6 @@ export class RiskHelper
         let riskInfo:RiskInfo = {};
         let notificationList = res.dataset.filter(set => (<Rendering>set.renderingProperties).type === 7);
    //     let notificationList = res.dataset.filter(set => (<Rendering>set.renderingProperties).type === 26);
-     //   const keys = Object.keys(notificationList);
 
         const statusColumnIndex = 0;
         const insightColumnIndex = 1;

@@ -1,3 +1,4 @@
+import { HealthStatus } from "diagnostic-data";
 import { Category } from "../../../shared-v2/models/category";
 import { MessageGroup } from "../../../supportbot/models/message-group";
 
@@ -15,6 +16,7 @@ export class ArmResourceConfig {
     quickLinks?: string[];
     keystoneDetectorId?: string;
     riskAlertConfigs?: RiskAlertConfig[];
+    notificationConfig?: RiskAlertConfig;
     notificationDetectorId?: string;
 }
 
@@ -49,4 +51,11 @@ export class RiskAlertConfig {
     riskAlertId: string;
     enableForCaseSubmissionFlow?: boolean = true;
     notificationMessage?: string = "";
+    renderingType?: RiskAlertRendering =  RiskAlertRendering.Card;
+    overrideStatus?: HealthStatus = HealthStatus.Info
+}
+
+export enum RiskAlertRendering {
+    Card = 0,
+    MessageBar = 1
 }

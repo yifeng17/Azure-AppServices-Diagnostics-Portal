@@ -23,25 +23,25 @@ export class RiskAlertsPanelComponent implements OnInit {
             marginTop: '50px',
         }
     }
-     riskPanelContents: any = {};
+    riskPanelContents: any = {};
     @Input() riskAlertId: string = "";
     @Input() riskAlertTitle: string = "";
-    error: string="";
+    error: string = "";
     endTime: Moment = this.detectorControlService.endTime;
     startTime: Moment = this.detectorControlService.startTime;
-    riskPanelTitle: string = "Risk Alert Detail";
+    riskPanelTitle: string = "";
     currentRiskPanelContentId: string;
     viewResponse: DetectorResponse;
 
     summaryType: MessageBarType = MessageBarType.info;
     isInCaseSubmissionFlow: boolean = false;
 
-    constructor(public globals: Globals, public notificationService: NotificationService, public telemetryService: TelemetryService,private portalActionService:PortalActionService,private authService: AuthService, private _riskAlertService: RiskAlertService,  public detectorControlService: DetectorControlService) {
-        if(authService) {
+    constructor(public globals: Globals, public notificationService: NotificationService, public telemetryService: TelemetryService, private portalActionService: PortalActionService, private authService: AuthService, private _riskAlertService: RiskAlertService, public detectorControlService: DetectorControlService) {
+        if (authService) {
             this.authService.getStartupInfo().subscribe(startupInfo => {
                 this.isInCaseSubmissionFlow = startupInfo && startupInfo.source !== undefined && startupInfo.source.toLowerCase() === ("CaseSubmissionV2-NonContext").toLowerCase();
 
-                if(!this.isInCaseSubmissionFlow) {
+                if (!this.isInCaseSubmissionFlow) {
                     this.styles = {};
                 }
             });
@@ -49,15 +49,12 @@ export class RiskAlertsPanelComponent implements OnInit {
     }
 
     ngOnInit() {
-        this._riskAlertService.riskPanelContentsSub.subscribe((risksPanelContents)=>
-        {
+        this._riskAlertService.riskPanelContentsSub.subscribe((risksPanelContents) => {
             this.riskPanelContents = risksPanelContents;
             this._riskAlertService.currentRiskPanelContentIdSub.subscribe((currentRiskAlertId) => {
-                this.riskPanelTitle = this._riskAlertService.risks && this._riskAlertService.risks.hasOwnProperty(currentRiskAlertId) ? this._riskAlertService.risks[currentRiskAlertId].title: this.riskPanelTitle;
+                this.riskPanelTitle = this._riskAlertService.risks && this._riskAlertService.risks.hasOwnProperty(currentRiskAlertId) ? this._riskAlertService.risks[currentRiskAlertId].title : this.riskPanelTitle;
                 this.currentRiskPanelContentId = currentRiskAlertId;
-                console.log("In panel, current riskId, and res", this.currentRiskPanelContentId, this.riskPanelContents, this.riskPanelContents[this.currentRiskPanelContentId]);
             });
-            console.log("getrisks and get riskpanelcontents", this._riskAlertService.risks);
         });
 
     }
@@ -72,12 +69,12 @@ export class RiskAlertsPanelComponent implements OnInit {
     }
 
     logOpenLinkEvent(linkDescription: string, linkAddress: string) {
-        this.telemetryService.logEvent("openRiskAlertLink", {Description: linkDescription, link: linkAddress});
+        this.telemetryService.logEvent("openRiskAlertLink", { Description: linkDescription, link: linkAddress });
     }
 
-    openRiskAlertDetector(event:Event) {
+    openRiskAlertDetector(event: Event) {
         event.preventDefault();
         this.telemetryService.logEvent("OpenRiskAlertDetector");
-        this.portalActionService.openBladeDiagnoseDetectorId("RiskAssessments","ParentAvailabilityAndPerformance");
+        this.portalActionService.openBladeDiagnoseDetectorId("RiskAssessments", "ParentAvailabilityAndPerformance");
     }
 }

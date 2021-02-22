@@ -39,7 +39,7 @@ import { DynamicInsightV4Component } from '../dynamic-insight-v4/dynamic-insight
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { DataTableV4Component } from '../data-table-v4/data-table-v4.component';
 import { KeystoneInsightComponent } from '../keystone-insight/keystone-insight.component';
-import { NotificationComponent } from '../notification/notification.component';
+import { NotificationRenderingComponent } from '../notification-rendering/notification-rendering.component';
 
 @Component({
   selector: 'dynamic-data',
@@ -49,7 +49,7 @@ import { NotificationComponent } from '../notification/notification.component';
     TimeSeriesGraphComponent, DataTableComponent, DataSummaryComponent, EmailComponent,
     InsightsComponent, TimeSeriesInstanceGraphComponent, DynamicInsightComponent, MarkdownViewComponent,
     DetectorListComponent, DropdownComponent, CardSelectionComponent, SolutionComponent, GuageControlComponent, FormComponent,
-    ChangeAnalysisOnboardingComponent, ChangesetsViewComponent, AppDependenciesComponent, AppInsightsMarkdownComponent, DetectorListAnalysisComponent, ConnectAppInsightsComponent, DetectorSearchComponent, SummaryCardsComponent, InsightsV4Component, DropdownV4Component, CardSelectionV4Component,DynamicInsightV4Component,DataTableV4Component, KeystoneInsightComponent, NotificationComponent
+    ChangeAnalysisOnboardingComponent, ChangesetsViewComponent, AppDependenciesComponent, AppInsightsMarkdownComponent, DetectorListAnalysisComponent, ConnectAppInsightsComponent, DetectorSearchComponent, SummaryCardsComponent, InsightsV4Component, DropdownV4Component, CardSelectionV4Component,DynamicInsightV4Component,DataTableV4Component, KeystoneInsightComponent, NotificationRenderingComponent
   ]
 })
 export class DynamicDataComponent implements OnInit {
@@ -147,7 +147,7 @@ export class DynamicDataComponent implements OnInit {
       case RenderingType.Email:
         return EmailComponent;
       case RenderingType.Insights:
-        return this.isLegacy ? InsightsComponent : !this.isRiskAlertDetector ? InsightsV4Component: NotificationComponent;
+        return this.isLegacy ? InsightsComponent : !this.isRiskAlertDetector ? InsightsV4Component: NotificationRenderingComponent;
       case RenderingType.TimeSeriesPerInstance:
         return TimeSeriesInstanceGraphComponent;
       case RenderingType.DynamicInsight:
@@ -183,7 +183,7 @@ export class DynamicDataComponent implements OnInit {
       case RenderingType.KeystoneComponent:
           return KeystoneInsightComponent;
       case RenderingType.Notification:
-            return NotificationComponent;
+            return NotificationRenderingComponent;
       default:
         return null;
     }

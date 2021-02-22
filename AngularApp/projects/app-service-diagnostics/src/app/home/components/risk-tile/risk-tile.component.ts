@@ -32,7 +32,6 @@ export class RiskTileComponent implements OnInit {
         this.title = this.riskAlertConfig.title;
         this._riskAlertService.riskPanelContentsSub.subscribe((riskAlertContents) => {
             this.risk = this._riskAlertService.risks[this.riskAlertConfig.riskAlertId];
-
             this.riskProperties["Title"] = this.title;
             this.linkText = this.risk.linkText;
             this.showTile = this.risk.showTile;
@@ -62,19 +61,11 @@ export class RiskTileComponent implements OnInit {
 
     clickTileHandler() {
         this.logEvent(TelemetryEventNames.RiskTileClicked, {});
-        if (this.risk && this.risk.riskInfo != null && Object.keys(this.risk.riskInfo).length > 0) {
-            this.risk.action();
-        }
         this.globals.openRiskAlertsPanel = true;
         this._riskAlertService.currentRiskPanelContentIdSub.next(this.riskAlertConfig.riskAlertId);
-        console.log("SelectRisk", this.riskAlertConfig.riskAlertId);
-        //  this.riskPanelContent = this.risksPanelContents[this.currentRiskPanelContentId];
-
-        // this.riskAlertService.riskPanelContentSub.next(this.risk.riskAlertResponse);
     }
 
     private processRiskInfo(info: RiskInfo): RiskInfoDisplay[] {
-        console.log("Process riskinfo", info);
         const statuses = Object.values(info);
         const map = new Map<HealthStatus, number>();
 
@@ -99,8 +90,6 @@ export class RiskTileComponent implements OnInit {
         if (sortedStatus.length >= 2) {
             res.push(new RiskInfoDisplay(sortedStatus[1], map.get(sortedStatus[1])));
         }
-
-        console.log("Process riskinfo", res);
 
         return res;
     }

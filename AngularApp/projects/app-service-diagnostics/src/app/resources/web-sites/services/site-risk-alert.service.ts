@@ -1,13 +1,11 @@
 import { Injectable } from "@angular/core";
-import { DetectorResponse, LoadingStatus, Rendering, TelemetryService } from "diagnostic-data";
+import { DetectorResponse, HealthStatus, LoadingStatus, Rendering, TelemetryService } from "diagnostic-data";
 import { DiagnosticService, DetectorControlService, TelemetryEventNames, TelemetrySource } from 'diagnostic-data';
 import { BehaviorSubject, forkJoin, Observable, observable } from "rxjs";
 import { RiskHelper, RiskInfo, RiskTile } from "../../../home/models/risk";
-import { ArmResourceConfig, RiskAlertConfig } from "../../../shared/models/arm/armResourceConfig";
+import { RiskAlertConfig, RiskAlertRendering } from "../../../shared/models/arm/armResourceConfig";
 import { GenericArmConfigService } from "../../../shared/services/generic-arm-config.service";
 import { FeatureService } from "../../../shared-v2/services/feature.service";
-import { delay, map } from 'rxjs/operators';
-import { mergeMap } from "rxjs-compat/operator/mergeMap";
 import { Globals } from "../../../globals";
 import { RiskAlertService } from "../../../shared-v2/services/risk-alert.service";
 import { SiteFilteredItem } from "../models/site-filter";
@@ -33,55 +31,20 @@ export class SiteRiskAlertService extends  RiskAlertService{
     riskPanelContent: DetectorResponse = null;
     riskAlertConfigs: RiskAlertConfig[];
 
-
-    public set _riskAlertConfigs(riskAlertConfigs: RiskAlertConfig[]) {
-        this.riskAlertsSub.next(riskAlertConfigs);
-    }
-
     private _webAppRiskAlertConfigs = [
         {
             title: "Availability",
             riskAlertId: "availablityriskalert",
             enableForCaseSubmissionFlow: true,
             notificationMessage: "We detected you are not following best practices configuration and that will increase risk of a downtime."
-        },
-        // {
-        //     title: "Configuration",
-        //     riskAlertId: "backupFailures",
-        //     enableForCaseSubmissionFlow: true,
-        //     notificationMessage: "We detected missing configurations in your application that will increase risk of a downtime."
-        // }
-    ];
-
-    private _functionAppRiskAlertConfigs = [
-        // {
-        //     title: "Configuration",
-        //     riskAlertId: "functionExecutionErrors",
-        //     enableForCaseSubmissionFlow: true,
-        //     notificationMessage: "We detected missing configurations in your application that will increase risk of a downtime."
-        // },
-        {
-            title: "Availability risk alert",
-            riskAlertId: "functionPerformance",
-            enableForCaseSubmissionFlow: true,
-            notificationMessage: "We detected you are not following best practices configuration that will increase risk of a downtime."
         }
     ];
 
-    private _linuxAppRiskAlertConfigs = [
-        {
-            title: "Configuration",
-            riskAlertId: "backupFailures",
-            enableForCaseSubmissionFlow: true,
-            notificationMessage: "We detected missing configuraions in your application that will increase risk of a downtime."
-        },
-        {
-            title: "Availability",
-            riskAlertId: "swap",
-            enableForCaseSubmissionFlow: true,
-            notificationMessage: "We detected you are not following best practices configuration that will increase risk of a downtime."
-        }
-    ];
+    private _consumptionFunctionAppRiskAlertConfigs = [];
+
+    private _dedicatedFunctionAppRiskAlertConfigs = [];
+
+    private _linuxAppRiskAlertConfigs = [];
 
     private _siteRiskAlertConfigs: SiteFilteredItem<RiskAlertConfig[]>[] = [
         {
@@ -96,9 +59,17 @@ export class SiteRiskAlertService extends  RiskAlertService{
             appType: AppType.FunctionApp,
             platform: OperatingSystem.windows | OperatingSystem.linux,
             stack: '',
-            sku: Sku.All,
+            sku: Sku.NotDynamic,
             hostingEnvironmentKind: HostingEnvironmentKind.All,
-            item: this._functionAppRiskAlertConfigs
+            item: this._dedicatedFunctionAppRiskAlertConfigs
+        },
+        {
+            appType: AppType.FunctionApp,
+            platform: OperatingSystem.windows | OperatingSystem.linux,
+            stack: '',
+            sku: Sku.Dynamic,
+            hostingEnvironmentKind: HostingEnvironmentKind.All,
+            item: this._consumptionFunctionAppRiskAlertConfigs
         },
         {
             appType: AppType.WebApp,
@@ -110,33 +81,47 @@ export class SiteRiskAlertService extends  RiskAlertService{
         }
     ];
 
+    private _webAppNotificationMessageConfig =
+        {
+            title: "A platform update recently may have impact on your app service.",
+            riskAlertId: "webappemergingnotification",
+            enableForCaseSubmissionFlow: true,
+            notificationMessage: "A platform update recently may have impact on your app service.",
+            renderingType: RiskAlertRendering.MessageBar,
+            status: HealthStatus.Warning
+        }
+    ;
+
+    // This is to show emerging platform level notification that we want to inform customers.
+    private _siteRiskNotificationMessageConfig: SiteFilteredItem<RiskAlertConfig>[] = [
+        {
+            appType: AppType.WebApp,
+            platform: OperatingSystem.windows,
+            stack: '',
+            sku: Sku.All,
+            hostingEnvironmentKind: HostingEnvironmentKind.All,
+            item: this._webAppNotificationMessageConfig,
+        }
+    ];
 
     constructor(private _websiteFilter: WebSiteFilter, protected _featureService: FeatureService, protected _diagnosticService: DiagnosticService, protected _detectorControlService: DetectorControlService, protected _telemetryService: TelemetryService, protected globals: Globals, protected _genericArmConfigService?: GenericArmConfigService)
     {
         super(_featureService, _diagnosticService, _detectorControlService, _telemetryService, globals, _genericArmConfigService);
         const riskAlertConfigs = this._websiteFilter.transform(this._siteRiskAlertConfigs);
+        const notificationConfigs = this._websiteFilter.transform(this._siteRiskNotificationMessageConfig);
         let siteRiskAlertConfigs: RiskAlertConfig[] = [];
+        let siteNotificationConfig: RiskAlertConfig = null;
         for (const riskAlertConfig of riskAlertConfigs) {
             siteRiskAlertConfigs = siteRiskAlertConfigs.concat(riskAlertConfig);
         }
 
-        console.log("For siteriskalert, get config", siteRiskAlertConfigs);
-        this._addRiskAlertIds(siteRiskAlertConfigs);
-      //  this.getRiskTileResponse();
+        if (notificationConfigs != null && notificationConfigs.length > 0)
+        {
+            siteNotificationConfig = notificationConfigs[0];
+        }
+
+        this._addRiskAlertIds(siteRiskAlertConfigs, siteNotificationConfig);
     }
-
-    // public _addRiskAlertIds(riskAlertConfigs: RiskAlertConfig[]) {
-    //     //Filter out duplicate links
-    //     const riskConfigSet = new Set<RiskAlertConfig>(this._riskAlertConfigs);
-    //     for (let config of riskAlertConfigs) {
-    //         riskConfigSet.add(config);
-    //     }
-    //     const riskAlertsArray = Array.from(riskConfigSet);
-    //     this._riskAlertConfigs = riskAlertsArray;
-    //     this.riskAlertConfigs = riskAlertsArray;
-    //     console.log("iamsolostbefore", riskAlertsArray, this._riskAlertConfigs, this.riskAlertConfigs);
-
-    // }
 
     protected _isRiskAlertEnabled(): boolean {
         return this.riskAlertConfigs != null && this.riskAlertConfigs.length > 0;

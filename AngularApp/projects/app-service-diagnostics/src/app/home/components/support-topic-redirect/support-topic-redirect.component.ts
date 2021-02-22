@@ -19,7 +19,6 @@ export class SupportTopicRedirectComponent implements OnInit {
 
   ngOnInit() {
     this._supportTopicService.getPathForSupportTopic(this._activatedRoute.snapshot.queryParams.supportTopicId, this._activatedRoute.snapshot.queryParams.pesId, this._activatedRoute.snapshot.queryParams.caseSubject).subscribe(res => {
-        console.log("Go to path", res.path, res.queryParams);
         this._router.navigate([`../${res.path}`], { relativeTo: this._activatedRoute, queryParams: res.queryParams });
 
     // Discussed with the team and we decide to disable the notification for now
@@ -32,7 +31,6 @@ export class SupportTopicRedirectComponent implements OnInit {
 
     this._riskAlertService.getRiskAlertNotificationResponse().subscribe((res)=>{
         this._riskAlertService.riskPanelContentsSub.next(this._riskAlertService.risksPanelContents);
-        console.log("riskAlertService", this._riskAlertService, this._riskAlertService.riskAlertConfigs, this._riskAlertService.riskAlertNotifications);
     });
     });
 

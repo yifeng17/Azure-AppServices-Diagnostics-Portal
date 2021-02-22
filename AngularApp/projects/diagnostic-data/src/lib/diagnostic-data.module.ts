@@ -104,7 +104,7 @@ import { DocumentsSearchComponent } from './components/documents-search/document
 import { LoaderDetectorViewComponent } from './components/loader-detector-view/loader-detector-view.component';
 import { KeystoneInsightComponent } from './components/keystone-insight/keystone-insight.component';
 import { SolutionViewContainerComponent } from './components/solution-view-container/solution-view-container.component';
-import { NotificationComponent } from './components/notification/notification.component';
+import { NotificationRenderingComponent } from './components/notification-rendering/notification-rendering.component';
 
 @NgModule({
   imports: [
@@ -165,7 +165,7 @@ import { NotificationComponent } from './components/notification/notification.co
     LoaderDetectorViewComponent,
     KeystoneInsightComponent,
     SolutionViewContainerComponent,
-    NotificationComponent
+    NotificationRenderingComponent
   ],
   entryComponents: [DetectorListAnalysisComponent],
   exports: [
