@@ -1,4 +1,4 @@
-import { DiagnosticData, HealthStatus, Insight, LoadingStatus, Rendering } from "diagnostic-data";
+import { DiagnosticData, HealthStatus, Insight, LoadingStatus, Rendering, RenderingType } from "diagnostic-data";
 import { Solution } from "dist/diagnostic-data/lib/components/solution/solution";
 import { DetectorResponse } from "diagnostic-data";
 import { MessageBarType } from "office-ui-fabric-react";
@@ -60,8 +60,7 @@ export class RiskHelper {
 
     public static convertResponseToRiskInfo(res: DetectorResponse): RiskInfo {
         let riskInfo: RiskInfo = {};
-        let notificationList = res.dataset.filter(set => (<Rendering>set.renderingProperties).type === 7);
-        //     let notificationList = res.dataset.filter(set => (<Rendering>set.renderingProperties).type === 26);
+        let notificationList = res.dataset.filter(set => (<Rendering>set.renderingProperties).type === RenderingType.Notification);
 
         const statusColumnIndex = 0;
         const titleColumnIndex = 1;
