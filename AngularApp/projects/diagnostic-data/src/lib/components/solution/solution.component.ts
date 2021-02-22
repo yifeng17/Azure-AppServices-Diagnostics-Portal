@@ -14,7 +14,7 @@ import { ActionType, Solution } from './solution';
 })
 export class SolutionComponent extends DataRenderBaseComponent {
     @Input("data") solution: Solution;
-    @Input() isNewSolution: boolean = false;
+    @Input() isIbizaSolution: boolean = false;
     renderingProperties: Rendering;
     actionStatus: string;
     confirmationMessage: string;

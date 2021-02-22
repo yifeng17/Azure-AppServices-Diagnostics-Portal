@@ -6,11 +6,6 @@
     margin-bottom: 0px;
 }
 
-.insight-panel {
-    border-left-width: 4px;
-    background-color: #f3f3f3;
-    border-radius: 3px;
-}
 
 .notification-panel {
     border-top-width: 1px;
@@ -46,31 +41,6 @@
     display: flex;
     padding-bottom: 2px;
     max-width: 450px;
-}
-
-.success-insight-panel {
-    border-left-color: #3da907;
-}
-
-.warning-insight-panel {
-    border-left-color: #ff9104;
-}
-
-.critical-insight-panel {
-    border-left-color: red;
-}
-
-.info-insight-panel {
-    border-left-color: #3a9bc7
-}
-
-.insight-expand-icon {
-    font-weight: bold;
-    float:left;
-    font-size:18px;
-    min-height: 1px;
-    min-width: 1.5%;
-    margin-right:10px;
 }
 
 .card-header {
@@ -202,10 +172,4 @@ td {
 
 .con-tooltip > a:visited{
     color: #015cda
-}
-
-.insight-rating {
-    padding-left: 10px;
-    padding-right: 10px;
-    display: inline-block;
 }

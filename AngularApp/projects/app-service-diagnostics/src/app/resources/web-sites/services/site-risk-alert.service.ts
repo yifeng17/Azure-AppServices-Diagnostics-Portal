@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { DetectorResponse, LoadingStatus, Rendering, TelemetryService } from "diagnostic-data";
 import { DiagnosticService, DetectorControlService, TelemetryEventNames, TelemetrySource } from 'diagnostic-data';
-//import { TelemetryEventNames, TelemetrySource } from "dist/diagnostic-data/diagnostic-data";
 import { BehaviorSubject, forkJoin, Observable, observable } from "rxjs";
 import { RiskHelper, RiskInfo, RiskTile } from "../../../home/models/risk";
 import { ArmResourceConfig, RiskAlertConfig } from "../../../shared/models/arm/armResourceConfig";

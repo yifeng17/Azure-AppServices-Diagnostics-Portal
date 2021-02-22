@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { DetectorControlService, TelemetryService } from 'diagnostic-data';
-import { DetectorResponse } from 'dist/diagnostic-data/public_api';
+import { DetectorResponse } from 'diagnostic-data';
 import { Moment } from 'moment';
 import { IPanelProps, IPanelStyles, MessageBarType, PanelType } from 'office-ui-fabric-react';
 import { Globals } from '../../../globals';

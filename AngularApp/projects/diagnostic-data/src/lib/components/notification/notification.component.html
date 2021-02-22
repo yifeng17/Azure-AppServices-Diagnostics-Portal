@@ -1,47 +1,35 @@
-     <ng-template #insightView>
-      <div *ngFor="let notification of notifications" class="notification-container" attr.name="{{notification.Title}}"
-        attr.aria-label="{{notification.Title}}" role="button">
-        <div div class="notification-panel">
-          <div class="notification-panel-heading">
-            <h5 class="panel-title">
-              <div style="display: table;">
-                <div style="display: table-row">
-                  <div style="display: table-cell">
-                    <span class="fa status-icon" [class.fa-exclamation-circle]="notification.Status === NotificationStatus.Critical"
-                      [class.fa-exclamation-triangle]="notification.Status === NotificationStatus.Warning"
-                      [class.fa-check-circle]="notification.Status === NotificationStatus.Success"
-                      [class.fa-info-circle]="notification.Status === NotificationStatus.Info"></span>
-                  </div>
-                  <div style="display: table-cell;width:100%;font-size: 14px;">
-                    {{notification.Title}}
-                  </div>
-                </div>
+<data-container [title]="renderingProperties.title" [description]="renderingProperties.description">
+  <div *ngFor="let notification of notifications" class="notification-container" attr.name="{{notification.Title}}"
+    attr.aria-label="{{notification.Title}}" role="button">
+    <div div class="notification-panel">
+      <div class="notification-panel-heading">
+        <h5 class="panel-title">
+          <div style="display: table;">
+            <div style="display: table-row">
+              <div style="display: table-cell">
+                <span class="fa status-icon"
+                  [class.fa-exclamation-circle]="notification.Status === NotificationStatus.Critical"
+                  [class.fa-exclamation-triangle]="notification.Status === NotificationStatus.Warning"
+                  [class.fa-check-circle]="notification.Status === NotificationStatus.Success"
+                  [class.fa-info-circle]="notification.Status === NotificationStatus.Info"></span>
               </div>
-            </h5>
+              <div style="display: table-cell;width:100%;font-size: 14px;">
+                {{notification.Title}}
+              </div>
+            </div>
           </div>
-          <div class="notification-body">
-                <div *ngIf="notification.Description">
-                  <div class="width:100%; font-size:13px!important">
-                    <markdown-text [markdownData]="notification.Description" [detector]="detector"></markdown-text>
-                  </div>
-                </div>
-
-                <ng-container *ngIf="hasSolution(notification)">
-                      <solution [data]="notification.Solution" [isNewSolution]="true"></solution>
-                </ng-container>
-          </div>
-
-        </div>
+        </h5>
       </div>
-    </ng-template>
-
-    <!-- If there is title wrap it in container -->
-    <data-container *ngIf="renderingProperties.title; else noContainer" [title]="renderingProperties.title"
-      [description]="renderingProperties.description">
-      <ng-container *ngTemplateOutlet="insightView"></ng-container>
-    </data-container>
-
-    <!-- If there is no title, do not use container. Note this is called from the else statement in the *ngIf above -->
-    <ng-template #noContainer>
-      <ng-container *ngTemplateOutlet="insightView"></ng-container>
-    </ng-template>
+      <div class="notification-body">
+        <div *ngIf="notification.Description">
+          <div class="width:100%; font-size:13px!important">
+            <markdown-text [markdownData]="notification.Description" [detector]="detector"></markdown-text>
+          </div>
+        </div>
+        <ng-container *ngIf="hasSolution(notification)">
+          <solution [data]="notification.Solution" [isIbizaSolution]="true"></solution>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</data-container>

@@ -27,9 +27,9 @@ export class NotificationComponent extends DataRenderBaseComponent {
     protected processData(data: DiagnosticData) {
       super.processData(data);
       this.renderingProperties = <NotificationRendering>data.renderingProperties;
-     // this.notifications = NotificationUtils.parseNotificationRendering(data);
+      this.notifications = NotificationUtils.parseNotificationRendering(data);
 
-      this.notifications = NotificationUtils.parseInsightRendering(data);
+     // this.notifications = NotificationUtils.parseInsightRendering(data);
       console.log("this.notifications", this.notifications);
     }
 

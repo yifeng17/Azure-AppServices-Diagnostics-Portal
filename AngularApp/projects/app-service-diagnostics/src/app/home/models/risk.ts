@@ -1,6 +1,6 @@
 import { DiagnosticData, HealthStatus, Insight, LoadingStatus, Rendering } from "diagnostic-data";
 import { Solution } from "dist/diagnostic-data/lib/components/solution/solution";
-import { DetectorResponse } from "dist/diagnostic-data/public_api";
+import { DetectorResponse } from "diagnostic-data";
 import { MessageBarType } from "office-ui-fabric-react";
 import { Observable } from "rxjs";
 
