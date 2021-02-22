@@ -102,7 +102,7 @@ export class ResultView {
             this.loadingStatus = data.loadingStatus;
             this.expanded = data.expanded;
             this.interactivePayload = data.interactivePayload;
-            this.expandable = (this.markdown!=null || this.interactiveCallBack!=null);
+            this.expandable = (this.markdown!=null || this.interactiveCallBack!=null || (this.stepResultViews!=null && this.stepResultViews.length > 0));
         }
     }
 
@@ -129,7 +129,7 @@ export class ResultView {
         this.interactivePayload = result.interactivePayload;
         this.expanded = result.expanded;
         this.loadingStatus = LoadingStatus.Success;
-        this.expandable = (this.markdown!=null || this.interactivePayload!=null);
+        this.expandable = (this.markdown!=null || this.interactivePayload!=null || (result.steps!=null && result.steps.length > 0));
 
         if (result.promise != null) {
             this.loadingStatus = LoadingStatus.Loading;
