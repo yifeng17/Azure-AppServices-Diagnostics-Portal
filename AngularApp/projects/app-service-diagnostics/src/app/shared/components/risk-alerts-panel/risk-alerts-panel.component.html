@@ -13,16 +13,16 @@
       </div>
     </div>
     <ng-container *ngIf="!isContentEmpty(riskPanelContents) else loaderView">
-    <div *ngFor="let item of riskPanelContents | keyvalue">
-      <detector-view *ngIf="currentRiskPanelContentId === item.key" [analysisMode]="false" [isKeystoneView]="false"
-        [isAnalysisView]="false" [detectorResponse]="item.value" [error]="error" [startTime]="startTime"
-        [endTime]="endTime" [developmentMode]="false" [detector]="item.key" [hideDetectorHeader]="true"
-        [isRiskAlertDetector]="true">
-      </detector-view>
-    </div>
+      <div *ngFor="let item of riskPanelContents | keyvalue">
+        <detector-view *ngIf="currentRiskPanelContentId === item.key" [analysisMode]="false" [isKeystoneView]="false"
+          [isAnalysisView]="false" [detectorResponse]="item.value" [error]="error" [startTime]="startTime"
+          [endTime]="endTime" [developmentMode]="false" [detector]="item.key" [hideDetectorHeader]="true"
+          [isRiskAlertDetector]="true">
+        </detector-view>
+      </div>
     </ng-container>
     <ng-template #loaderView>
-    <loader-detector-view  style="margin-top:300px"></loader-detector-view>
-  </ng-template>
+      <loader-detector-view style="margin-top:300px"></loader-detector-view>
+    </ng-template>
   </div>
 </fab-panel>

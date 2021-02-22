@@ -10,7 +10,7 @@ export interface RiskTile {
     linkText: string;
     riskInfo: RiskInfo;
     loadingStatus: LoadingStatus;
-    showTile:boolean;
+    showTile: boolean;
 }
 
 export interface NotificationMessageBar {
@@ -24,42 +24,21 @@ export interface RiskInfo {
     [propName: string]: HealthStatus;
 }
 
-export class RiskHelper
-{
-    public static convertToRiskInfo(info:any):RiskInfo {
-        let riskInfo:RiskInfo = {};
+export class RiskHelper {
+    public static convertToRiskInfo(info: any): RiskInfo {
+        let riskInfo: RiskInfo = {};
         const keys = Object.keys(info);
-        for(let key of keys){
+        for (let key of keys) {
             const type = info[key].messageType;
-            if(type !== undefined && type !== null){
-                let status = this.convertMessageTypeToHealthStatus1(type);
+            if (type !== undefined && type !== null) {
+                let status = this.convertMessageTypeToHealthStatus(type);
                 riskInfo[key] = status;
             }
         }
         return riskInfo;
     }
 
-    private static convertMessageTypeToHealthStatus(messageBarType:MessageBarType):HealthStatus{
-        switch (messageBarType) {
-            case MessageBarType.severeWarning:
-            case MessageBarType.error:
-                return HealthStatus.Critical;
-
-            case MessageBarType.warning:
-                return HealthStatus.Warning;
-
-            case MessageBarType.info:
-                return HealthStatus.Info;
-
-            case MessageBarType.success:
-                return HealthStatus.Success;
-
-            default:
-                return HealthStatus.Info;
-        }
-    }
-
-    private static convertMessageTypeToHealthStatus1(messageBarType:MessageBarType):HealthStatus{
+    private static convertMessageTypeToHealthStatus(messageBarType: MessageBarType): HealthStatus {
         switch (messageBarType) {
             case MessageBarType.severeWarning:
             case MessageBarType.error:
@@ -80,71 +59,28 @@ export class RiskHelper
     }
 
     public static convertResponseToRiskInfo(res: DetectorResponse): RiskInfo {
-        let riskInfo:RiskInfo = {};
+        let riskInfo: RiskInfo = {};
         let notificationList = res.dataset.filter(set => (<Rendering>set.renderingProperties).type === 7);
-   //     let notificationList = res.dataset.filter(set => (<Rendering>set.renderingProperties).type === 26);
+        //     let notificationList = res.dataset.filter(set => (<Rendering>set.renderingProperties).type === 26);
 
         const statusColumnIndex = 0;
-        const insightColumnIndex = 1;
-        const nameColumnIndex = 2;
-        const valueColumnIndex = 3;
-        const isExpandedIndex = 4;
-        const solutionsIndex = 5;
+        const titleColumnIndex = 1;
 
-        for(let notification of notificationList){
+        for (let notification of notificationList) {
 
             const data = notification.table;
 
             for (let i: number = 0; i < data.rows.length; i++) {
                 const row = data.rows[i];
-               // (<string>row[statusColumnIndex])
                 const notificationStatus = <string>row[statusColumnIndex];
-                const insightName = row[insightColumnIndex];
-                const nameColumnValue = row[nameColumnIndex];
+                const insightName = row[titleColumnIndex];
 
-                if(notificationStatus !== undefined && notificationStatus !== null){
-                riskInfo[insightName] = HealthStatus[notificationStatus];
+                if (notificationStatus !== undefined && notificationStatus !== null) {
+                    riskInfo[insightName] = HealthStatus[notificationStatus];
                 }
-
             }
 
         }
         return riskInfo;
-    }
-
-    static parseInsightRendering(diagnosticData: DiagnosticData): Insight[] {
-        const insights: Insight[] = [];
-        const data = diagnosticData.table;
-
-        const statusColumnIndex = 0;
-        const insightColumnIndex = 1;
-        const nameColumnIndex = 2;
-        const valueColumnIndex = 3;
-        const isExpandedIndex = 4;
-        const solutionsIndex = 5;
-
-        for (let i: number = 0; i < data.rows.length; i++) {
-            let insight: Insight;
-            const row = data.rows[i];
-            const insightName = row[insightColumnIndex];
-            const nameColumnValue = row[nameColumnIndex];
-
-            let solutionsValue = null;
-            if (solutionsIndex < row.length) {
-                solutionsValue = <Solution[]>JSON.parse(row[solutionsIndex]);
-            }
-
-            if ((insight = insights.find(ins => ins.title === insightName)) == null) {
-                const isExpanded: boolean = row.length > isExpandedIndex ? row[isExpandedIndex].toLowerCase() === 'true' : false;
-                insight = new Insight(row[statusColumnIndex], insightName, isExpanded, solutionsValue);
-                insights.push(insight);
-            }
-
-            if (nameColumnValue && nameColumnValue.length > 0) {
-                insight.data[nameColumnValue] = `${row[valueColumnIndex]}`;
-            }
-        }
-
-        return insights;
     }
 }

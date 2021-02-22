@@ -1,3 +1,4 @@
+import { JsonPipe } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { HealthStatus, TelemetryEventNames, TelemetryService, TelemetrySource } from 'diagnostic-data';
@@ -42,26 +43,26 @@ export class RiskAlertsNotificationComponent implements OnInit {
         }
 
         this._authService.getStartupInfo().subscribe((startupInfo) => {
-                        this._riskAlertService.riskPanelContentsSub.subscribe((riskAlertContents) => {
-                        // Only show risk alert when:
-                        // 1. In case submission
-                        // 2. There is at least one risk check fails
-                        // 3. No keystone solution is presented
+            this._riskAlertService.riskPanelContentsSub.subscribe((riskAlertContents) => {
+                // Only show risk alert when:
+                // 1. In case submission
+                // 2. There is at least one risk check fails
+                // 3. No keystone solution is presented
 
-                            this.riskAlertChecksHealthy = this._riskAlertService.notificationStatus >= HealthStatus.Info;
-                            this.notificationId = this._riskAlertService.caseSubmissionRiskNotificationId;
-                            this.notificationMessage = this._riskAlertService.riskAlertNotifications && this._riskAlertService.riskAlertNotifications.hasOwnProperty(this._riskAlertService.caseSubmissionRiskNotificationId) ? this._riskAlertService.riskAlertNotifications[this._riskAlertService.caseSubmissionRiskNotificationId].text : this.notificationMessage;
-                            this.showRiskAlertsNotification = (startupInfo.supportTopicId && startupInfo.supportTopicId != ''  && !this.riskAlertChecksHealthy && !this.isKeystoneSolutionView);
+                this.riskAlertChecksHealthy = this._riskAlertService.notificationStatus >= HealthStatus.Info;
+                this.notificationId = this._riskAlertService.caseSubmissionRiskNotificationId;
+                this.notificationMessage = this._riskAlertService.riskAlertNotifications && this._riskAlertService.riskAlertNotifications.hasOwnProperty(this._riskAlertService.caseSubmissionRiskNotificationId) ? this._riskAlertService.riskAlertNotifications[this._riskAlertService.caseSubmissionRiskNotificationId].text : this.notificationMessage;
+                this.showRiskAlertsNotification = (startupInfo.supportTopicId && startupInfo.supportTopicId != '' && !this.riskAlertChecksHealthy && !this.isKeystoneSolutionView);
 
-                            // This is to determine whether we want to show emerging issue notification bar.
-                            this.showEmergingNotification = !!this._riskAlertService.emergingNotificationMessageBar && !!this._riskAlertService.emergingNotificationMessageBar.id;
-                        });
-                  //  }
-             //  });
+                // This is to determine whether we want to show emerging issue notification bar.
+                this.showEmergingNotification = !!this._riskAlertService.emergingNotificationMessageBar && !!this._riskAlertService.emergingNotificationMessageBar.id;
+            });
+            //  }
+            //  });
             //}
 
         }, e => {
-            this.globals.reliabilityChecksDetailsBehaviorSubject.error(e);
+            this.telemetryService.logEvent("RiskNotificationLoadingFailure", { "error": JSON.stringify(e) });
         });
     }
 

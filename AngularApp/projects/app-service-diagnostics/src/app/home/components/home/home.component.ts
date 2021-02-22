@@ -47,11 +47,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     providerRegisterUrl: string;
     quickLinkFeatures: Feature[] = [];
     risks: {} = {};
-    riskResponses: DetectorResponse[] = [];
-    risksDictionary={};
     risksPanelContents={};
     currentRiskPanelContentId: string = null;
-    riskPanelContent: DetectorResponse = null;
     riskAlertConfigs: RiskAlertConfig[];
     loadingQuickLinks: boolean = true;
     showRiskSection: boolean = true;
@@ -198,7 +195,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         if (!this._detectorControlService.startTime) {
             this._detectorControlService.setDefault();
         }
-       this.showRiskNotificationMessage = this._riskAlertService.emergingNotificationMessageBar && !!this._riskAlertService.emergingNotificationMessageBar.id;
+       this.showRiskNotificationMessage = !!this._riskAlertService.emergingNotificationMessageBar && !!this._riskAlertService.emergingNotificationMessageBar.id;
         this._riskAlertService.getRiskAlertResponse().subscribe(()=>
         {
             this._riskAlertService.riskPanelContentsSub.next(this._riskAlertService.risksPanelContents);

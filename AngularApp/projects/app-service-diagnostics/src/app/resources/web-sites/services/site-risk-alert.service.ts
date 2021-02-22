@@ -16,19 +16,16 @@ import { WebSiteFilter } from "../pipes/site-filter.pipe";
 
 
 @Injectable({
-    providedIn:'root'
+    providedIn: 'root'
 })
 
-export class SiteRiskAlertService extends  RiskAlertService{
+export class SiteRiskAlertService extends RiskAlertService {
     public riskAlertsSub: BehaviorSubject<RiskAlertConfig[]> = new BehaviorSubject<RiskAlertConfig[]>([]);
     public riskAlertPanelId: BehaviorSubject<String> = new BehaviorSubject<String>("");
     public riskPanelContentSub: BehaviorSubject<DetectorResponse> = new BehaviorSubject<DetectorResponse>(null);
     risks: RiskTile[] = [];
-    riskResponses: DetectorResponse[] = [];
-    risksDictionary = {};
     risksPanelContents = {};
     currentRiskPanelContentId: string = null;
-    riskPanelContent: DetectorResponse = null;
     riskAlertConfigs: RiskAlertConfig[];
 
     private _webAppRiskAlertConfigs = [
@@ -90,7 +87,7 @@ export class SiteRiskAlertService extends  RiskAlertService{
             renderingType: RiskAlertRendering.MessageBar,
             status: HealthStatus.Warning
         }
-    ;
+        ;
 
     // This is to show emerging platform level notification that we want to inform customers.
     private _siteRiskNotificationMessageConfig: SiteFilteredItem<RiskAlertConfig>[] = [
@@ -104,8 +101,7 @@ export class SiteRiskAlertService extends  RiskAlertService{
         }
     ];
 
-    constructor(private _websiteFilter: WebSiteFilter, protected _featureService: FeatureService, protected _diagnosticService: DiagnosticService, protected _detectorControlService: DetectorControlService, protected _telemetryService: TelemetryService, protected globals: Globals, protected _genericArmConfigService?: GenericArmConfigService)
-    {
+    constructor(private _websiteFilter: WebSiteFilter, protected _featureService: FeatureService, protected _diagnosticService: DiagnosticService, protected _detectorControlService: DetectorControlService, protected _telemetryService: TelemetryService, protected globals: Globals, protected _genericArmConfigService?: GenericArmConfigService) {
         super(_featureService, _diagnosticService, _detectorControlService, _telemetryService, globals, _genericArmConfigService);
         const riskAlertConfigs = this._websiteFilter.transform(this._siteRiskAlertConfigs);
         const notificationConfigs = this._websiteFilter.transform(this._siteRiskNotificationMessageConfig);
@@ -115,15 +111,10 @@ export class SiteRiskAlertService extends  RiskAlertService{
             siteRiskAlertConfigs = siteRiskAlertConfigs.concat(riskAlertConfig);
         }
 
-        if (notificationConfigs != null && notificationConfigs.length > 0)
-        {
+        if (notificationConfigs != null && notificationConfigs.length > 0) {
             siteNotificationConfig = notificationConfigs[0];
         }
 
         this._addRiskAlertIds(siteRiskAlertConfigs, siteNotificationConfig);
-    }
-
-    protected _isRiskAlertEnabled(): boolean {
-        return this.riskAlertConfigs != null && this.riskAlertConfigs.length > 0;
     }
 }

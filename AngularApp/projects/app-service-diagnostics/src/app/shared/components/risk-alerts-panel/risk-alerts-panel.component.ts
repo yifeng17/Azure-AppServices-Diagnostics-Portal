@@ -40,7 +40,6 @@ export class RiskAlertsPanelComponent implements OnInit {
         if (authService) {
             this.authService.getStartupInfo().subscribe(startupInfo => {
                 this.isInCaseSubmissionFlow = startupInfo && startupInfo.source !== undefined && startupInfo.source.toLowerCase() === ("CaseSubmissionV2-NonContext").toLowerCase();
-
                 if (!this.isInCaseSubmissionFlow) {
                     this.styles = {};
                 }

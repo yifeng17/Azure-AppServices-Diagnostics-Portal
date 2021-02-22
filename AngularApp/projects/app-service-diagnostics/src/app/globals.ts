@@ -31,7 +31,6 @@ export class Globals {
   openCreateStorageAccountPanel: boolean = false;
   openCallStackPanel: boolean = false;
   openRiskAlertsPanel: boolean = false;
-  reliabilityChecksDetailsBehaviorSubject: BehaviorSubject<any>= new BehaviorSubject<any>({});
   callStackDetails = { managedException: "", callStack: "" };
 
   private localStorageKey: string = "genieChat";

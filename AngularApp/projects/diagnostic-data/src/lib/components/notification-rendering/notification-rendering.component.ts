@@ -12,11 +12,8 @@ import { NotificationDetail, NotificationUtils } from "../../models/notification
 })
 export class NotificationRenderingComponent extends DataRenderBaseComponent {
     DataRenderingType = RenderingType.Notification;
-
     renderingProperties: NotificationRendering;
-
     public notifications: NotificationDetail[];
-
     NotificationStatus = HealthStatus;
 
     constructor(protected telemetryService: TelemetryService) {

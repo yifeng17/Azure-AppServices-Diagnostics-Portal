@@ -72,7 +72,6 @@ export class SupportTopicService {
 
                 let keywordsList = [];
                 return this._resourceService.getKeystoneDetectorId().pipe(flatMap(keystoneDetectorId => {
-
                     detectorPath = `/integratedSolutions` + detectorPath;
                     if (keystoneDetectorId) {
                         let startTime, endTime: momentNs.Moment;
@@ -89,7 +88,6 @@ export class SupportTopicService {
                                 keywordsList = JSON.parse(keystoneInsight["Title"]);
 
                                 if (keywordsList && keywordsList.findIndex((keyword) => searchTerm.toLowerCase().indexOf(keyword) !== -1) !== -1) {
-                             //       detectorPath = `/integratedSolutions` + detectorPath;
                                     queryParamsDic["keystoneDetectorId"] = keystoneDetectorId;
                                     keystoneSolutionApplied = true;
                                 }

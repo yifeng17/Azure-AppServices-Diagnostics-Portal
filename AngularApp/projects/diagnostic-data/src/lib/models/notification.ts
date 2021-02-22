@@ -86,37 +86,4 @@ export class NotificationUtils {
 
         return notificationList;
     }
-
-    static parseInsightRendering(diagnosticData: DiagnosticData): NotificationDetail[] {
-        const insights: NotificationDetail[] = [];
-        const data = diagnosticData.table;
-
-        const statusColumnIndex = 0;
-        const insightColumnIndex = 1;
-        const nameColumnIndex = 2;
-        const valueColumnIndex = 3;
-        const isExpandedIndex = 4;
-        const solutionsIndex = 5;
-
-        for (let i: number = 0; i < data.rows.length; i++) {
-            let insight: NotificationDetail;
-            const row = data.rows[i];
-            const insightName = row[insightColumnIndex];
-            const nameColumnValue = row[nameColumnIndex];
-
-            let solutionsValue = null;
-            if (solutionsIndex < row.length) {
-                solutionsValue = <Solution[]>JSON.parse(row[solutionsIndex]);
-            }
-
-            if ((insight = insights.find(ins => ins.Title === insightName)) == null) {
-                const isExpanded: boolean = row.length > isExpandedIndex ? row[isExpandedIndex].toLowerCase() === 'true' : false;
-                let solution = solutionsValue && solutionsValue.length > 0 ? solutionsValue[0] : null;
-                insight = new NotificationDetail(row[statusColumnIndex], insightName, row[valueColumnIndex], solution);
-                insights.push(insight);
-            }
-        }
-
-        return insights;
-    }
 }

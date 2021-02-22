@@ -5,7 +5,7 @@
 
   <div class="outer-container">
     <div class="row match-col-height">
-      <!-- <div class="col-sm-4 col-lg-3 vertical-tabs">
+      <div class="col-sm-4 col-lg-3 vertical-tabs">
         <div *ngFor="let item of titles" [ngClass]="{'list-item-selected': item.isSelected}"
             (click)="select(item)" class="list-item">
           <span class="list-item-text">
@@ -15,10 +15,10 @@
             <solution-type-tag [tagType]="item.tag"></solution-type-tag>
           </div>
         </div>
-      </div> -->
-      <!-- <div class="col-sm-8 col-lg-9"> -->
+      </div>
+      <div class="col-sm-8 col-lg-9">
         <ng-content></ng-content>
-      <!-- </div> -->
+      </div>
     </div>
   </div>
 </div>

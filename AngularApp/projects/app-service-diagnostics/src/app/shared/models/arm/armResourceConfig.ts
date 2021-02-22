@@ -17,7 +17,6 @@ export class ArmResourceConfig {
     keystoneDetectorId?: string;
     riskAlertConfigs?: RiskAlertConfig[];
     notificationConfig?: RiskAlertConfig;
-    notificationDetectorId?: string;
 }
 
 export interface ArmApiConfig {

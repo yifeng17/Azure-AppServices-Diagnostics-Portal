@@ -7,7 +7,6 @@ import { ArmResourceConfig, RiskAlertConfig } from "../../shared/models/arm/armR
 import { GenericArmConfigService } from "../../shared/services/generic-arm-config.service";
 import { FeatureService } from "./feature.service";
 import { delay, map } from 'rxjs/operators';
-import { mergeMap } from "rxjs-compat/operator/mergeMap";
 import { Globals } from "../../globals";
 
 
@@ -19,14 +18,11 @@ export class RiskAlertService {
     public riskAlertsSub: BehaviorSubject<RiskAlertConfig[]> = new BehaviorSubject<RiskAlertConfig[]>([]);
     public riskAlertPanelId: BehaviorSubject<String> = new BehaviorSubject<String>("");
     public riskPanelContentsSub: BehaviorSubject<any> = new BehaviorSubject<any>(null);
-    risks: {} = {}; //RiskTile[] = []
+    risks: {} = {};
     riskAlertNotifications: {} = {};
-    riskResponses: DetectorResponse[] = [];
-    risksDictionary = {};
     risksPanelContents = {};
     currentRiskPanelContentId: string = "";
     currentRiskPanelContentIdSub: BehaviorSubject<string> = new BehaviorSubject<string>("");
-    riskPanelContent: DetectorResponse = null;
     riskAlertConfigs: RiskAlertConfig[];
     riskNotificationConfig: RiskAlertConfig;
     notificationStatus: HealthStatus = HealthStatus.Info;
@@ -88,10 +84,9 @@ export class RiskAlertService {
             });
         }
 
-        if (notificationConfig != null && !!notificationConfig.riskAlertId  && !!notificationConfig.title)
-        {
+        if (notificationConfig != null && !!notificationConfig.riskAlertId && !!notificationConfig.title) {
             this.emergingNotificationMessageBar
-                    =
+                =
                 {
                     id: notificationConfig.riskAlertId,
                     title: notificationConfig.title,
@@ -152,48 +147,53 @@ export class RiskAlertService {
 
         }
         catch (err) {
-            this._telemetryService.logEvent("RiskAlertResponseFailed", {"error": JSON.stringify(err)});
+            this._telemetryService.logEvent("RiskAlertResponseFailed", { "error": JSON.stringify(err) });
         }
     }
 
     public getRiskAlertResponse(): Observable<any[]> {
-        let tasks = this.riskAlertConfigs.map(riskAlertConfig => {
-            let riskAlertObservable = this._diagnosticService.getDetector(riskAlertConfig.riskAlertId, this._detectorControlService.startTimeString, this._detectorControlService.endTimeString).pipe(map(
-                res => {
-                    const notificationList = res.dataset.filter(set => (<Rendering>set.renderingProperties).type === 7);
+        try {
+            let tasks = this.riskAlertConfigs.map(riskAlertConfig => {
+                let riskAlertObservable = this._diagnosticService.getDetector(riskAlertConfig.riskAlertId, this._detectorControlService.startTimeString, this._detectorControlService.endTimeString).pipe(map(
+                    res => {
+                        const notificationList = res.dataset.filter(set => (<Rendering>set.renderingProperties).type === 7);
 
-                    const statusColumnIndex = 0;
-                    notificationList.sort((s1, s2) => HealthStatus[<string>s1.table.rows[0][statusColumnIndex]] - HealthStatus[<string>s2.table.rows[0][statusColumnIndex]]);
+                        const statusColumnIndex = 0;
+                        notificationList.sort((s1, s2) => HealthStatus[<string>s1.table.rows[0][statusColumnIndex]] - HealthStatus[<string>s2.table.rows[0][statusColumnIndex]]);
 
-                    res.dataset = notificationList;
-                    if (this.risks.hasOwnProperty(riskAlertConfig.riskAlertId)) {
-                        this.risks[riskAlertConfig.riskAlertId].riskInfo = RiskHelper.convertResponseToRiskInfo(res);
-                        this.risks[riskAlertConfig.riskAlertId].loadingStatus = LoadingStatus.Success;
-                    }
+                        res.dataset = notificationList;
+                        if (this.risks.hasOwnProperty(riskAlertConfig.riskAlertId)) {
+                            this.risks[riskAlertConfig.riskAlertId].riskInfo = RiskHelper.convertResponseToRiskInfo(res);
+                            this.risks[riskAlertConfig.riskAlertId].loadingStatus = LoadingStatus.Success;
+                        }
 
-                    this.risksPanelContents[riskAlertConfig.riskAlertId] = res;
-                }));
+                        this.risksPanelContents[riskAlertConfig.riskAlertId] = res;
+                    }));
 
-            return riskAlertObservable;
+                return riskAlertObservable;
 
-        });
+            });
 
-        if (!!this.emergingNotificationMessageBar && !!this.emergingNotificationMessageBar.id) {
+            if (!!this.emergingNotificationMessageBar && !!this.emergingNotificationMessageBar.id) {
 
-            let notificationObservable = this._diagnosticService.getDetector(this.emergingNotificationMessageBar.id, this._detectorControlService.startTimeString, this._detectorControlService.endTimeString).pipe(map(
-                res => {
-                    const notificationList = res.dataset.filter(set => (<Rendering>set.renderingProperties).type === 7);
-                    const statusColumnIndex = 0;
-                    notificationList.sort((s1, s2) => HealthStatus[<string>s1.table.rows[0][statusColumnIndex]] - HealthStatus[<string>s2.table.rows[0][statusColumnIndex]]);
+                let notificationObservable = this._diagnosticService.getDetector(this.emergingNotificationMessageBar.id, this._detectorControlService.startTimeString, this._detectorControlService.endTimeString).pipe(map(
+                    res => {
+                        const notificationList = res.dataset.filter(set => (<Rendering>set.renderingProperties).type === 7);
+                        const statusColumnIndex = 0;
+                        notificationList.sort((s1, s2) => HealthStatus[<string>s1.table.rows[0][statusColumnIndex]] - HealthStatus[<string>s2.table.rows[0][statusColumnIndex]]);
 
-                    res.dataset = notificationList;
-                    this.risksPanelContents[this.emergingNotificationMessageBar.id] = res;
-                }));
+                        res.dataset = notificationList;
+                        this.risksPanelContents[this.emergingNotificationMessageBar.id] = res;
+                    }));
 
-            tasks.push(notificationObservable);
+                tasks.push(notificationObservable);
+            }
+
+            return forkJoin(tasks);
         }
-
-        return forkJoin(tasks);
+        catch (err) {
+            this._telemetryService.logEvent("RiskAlertResponseFailed", { "error": JSON.stringify(err) });
+        }
     }
 
     protected _isRiskAlertEnabled(): boolean {
