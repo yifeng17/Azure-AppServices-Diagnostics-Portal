@@ -10,7 +10,7 @@
     </div>
     <!-- markdown https://stackblitz.com/edit/ngx-markdown?file=src%2Fapp%2Fapp.component.html -->
     <div class="checker-container" *ngFor="let viewModel of checkResultViews; index as i">
-        <checker-list [viewModel]= "viewModel" [expandable]="true">
+        <checker-list [viewModel]= "viewModel" [expandable]="viewModel.expandable">
         </checker-list>
     </div>
 

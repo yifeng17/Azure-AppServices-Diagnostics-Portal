@@ -2,6 +2,38 @@
     padding-left: 15px;
 }
 
+.check-markdown {
+    font-size: 14px;
+    margin-top: -30px;
+    
+}
+
+.check-markdown .markdown-header{
+    position: absolute;
+    margin-left: -10px;
+}
+
+.check-markdown .markdown-title{
+    margin-left: 35px;
+    margin-top: -26px;
+    font-size: 18px;
+    font-weight: bold;
+} 
+
+.check-markdown .markdown-container{
+    max-width: 750px;
+    min-width: 300px;
+    padding-top: 30px;
+}
+
+.check-markdown .status-icon{
+    margin-top: 3px;
+}
+.check-markdown .markdown-separator{
+    border-bottom: 1px solid #cccccc;
+    border-bottom-style: inset;
+}
+
 .check-header {
     font-size: 15px;
     cursor: pointer;
@@ -17,6 +49,10 @@
 
 .expand-icon {
     padding: 0px 30px;
+}
+
+.details-link {
+    padding-right: 12px;
 }
 
 .check-title {

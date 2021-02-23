@@ -41,7 +41,7 @@ export class NetworkCheckFeedbackComponent implements AfterViewInit, OnInit,OnDe
   submitted: boolean = false;
   rating: number = 0;
   issueResolved: boolean = null;
-  checked: boolean = false;
+  checked: boolean = true;
   submittedPanelTimer: any = null;
   checkLabel: string = "Microsoft can email you about your feedback";
   tooltipDirectionalHint = DirectionalHint.rightBottomEdge;

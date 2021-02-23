@@ -102,7 +102,7 @@ export class ResultView {
             this.loadingStatus = data.loadingStatus;
             this.expanded = data.expanded;
             this.interactivePayload = data.interactivePayload;
-            this.expandable = (this.markdown!=null || this.interactiveCallBack!=null || (this.stepResultViews!=null && this.stepResultViews.length > 0));
+            this.expandable = (this.interactivePayload!=null || (this.stepResultViews!=null && this.stepResultViews.length > 0));
         }
     }
 
@@ -119,7 +119,6 @@ export class ResultView {
     }
 
     fill(id: string, result: CheckResult) {
-        console.log(new Error().stack);
         this.id = id;
         this.title = result.title;
         this.level = checkResultLevel[result.level];
@@ -129,7 +128,7 @@ export class ResultView {
         this.interactivePayload = result.interactivePayload;
         this.expanded = result.expanded;
         this.loadingStatus = LoadingStatus.Success;
-        this.expandable = (this.markdown!=null || this.interactivePayload!=null || (result.steps!=null && result.steps.length > 0));
+        this.expandable = (this.interactivePayload!=null || (result.steps!=null && result.steps.length > 0));
 
         if (result.promise != null) {
             this.loadingStatus = LoadingStatus.Loading;
@@ -405,7 +404,7 @@ export class NetworkCheckComponent implements OnInit {
         var sampleChecks = [sampleCheck];
 
         var taskList: Promise<void>[] = [];
-        //taskList.push(this.runChecksAsync(sampleChecks, appSettings));
+        taskList.push(this.runChecksAsync(sampleChecks, appSettings));
 
         if (jsSampleChecks != null) {
             //this.checks = this.checks.concat(jsTestChecks);
