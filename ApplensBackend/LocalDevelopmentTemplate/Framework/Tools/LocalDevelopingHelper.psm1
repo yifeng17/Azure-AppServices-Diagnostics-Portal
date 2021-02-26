@@ -406,10 +406,21 @@ function Publish-Package {
         if ($IsGist) {
             $path = (Get-Item "$PSScriptRoot\..\..\Detector\$FilePath").Directory
             $json = (Get-Content ((Get-ChildItem $path -Filter *.json).FullName)) | ConvertFrom-Json
+            
+            $entityId = $compilationResponse.invocationOutput.metadata.id
+
+            $json | Add-Member -Name "id" -value $entityId -Type NoteProperty
+            $json | Add-Member -Name "type" -value "Gist" -Type NoteProperty
         }
         else {
             $tmp = (Get-Content "$($PSScriptRoot)\..\..\Detector\package.json" -Raw) | ConvertFrom-Json
             $json = $tmp.packageDefinition
+
+            $entityId = $compilationResponse.invocationOutput.metadata.id
+            $entityType = $compilationResponse.invocationOutput.metadata.type
+
+            $json | Add-Member -Name "id" -value $entityId -Type NoteProperty
+            $json | Add-Member -Name "type" -value  $entityType -Type NoteProperty
         }
 
         $codeString = [System.IO.File]::ReadAllText($FilePath)
