@@ -65,12 +65,13 @@ class CheckResult {
     public title?: string;
     public level: number;
     public markdown?: string;
-    
+
     public interactivePayload?: InteractiveCheckPayload;
     public expanded?: boolean;
     public steps?: CheckResult[];
     public promise?: Promise<CheckResult>;
     public timeout?: number;
+    public hidden?: boolean;
 }
 
 export class ResultView {
@@ -104,7 +105,7 @@ export class ResultView {
             this.loadingStatus = data.loadingStatus;
             this.expanded = data.expanded;
             this.interactivePayload = data.interactivePayload;
-            this.expandable = (this.interactivePayload!=null || (this.stepResultViews!=null && this.stepResultViews.length > 0));
+            this.expandable = (this.interactivePayload != null || (this.stepResultViews != null && this.stepResultViews.length > 0));
         }
     }
 
@@ -130,14 +131,24 @@ export class ResultView {
         this.interactivePayload = result.interactivePayload;
         this.expanded = result.expanded;
         this.loadingStatus = LoadingStatus.Success;
-        this.expandable = (this.interactivePayload!=null || (result.steps!=null && result.steps.length > 0));
+        this.expandable = (this.interactivePayload != null || (result.steps != null && result.steps.length > 0));
 
         if (result.promise != null) {
             var timeout = result.timeout || 10;
             this.loadingStatus = LoadingStatus.Loading;
-            Promise.race([result.promise, delay(timeout).then((): CheckResult => null)]).then(t => {
+            var status = null;
+            var promise = result.promise.catch((e): CheckResult => {
+                this.fillError(e, this.id, this.title);
+                status = "faulted";
+                return null;
+            });
+            var delayPromise = delay(timeout).then((): CheckResult => {
+                status = "timeout";
+                return null;
+            })
+            Promise.race([promise, delayPromise]).then(t => {
                 this.loadingStatus = LoadingStatus.Success;
-                if (t == null) {
+                if (t == null && status == "timeout") {
                     this.status = convertLevelToHealthStatus(3);
                     this.title = "timeout: " + this.title;
                 } else {
@@ -145,13 +156,22 @@ export class ResultView {
                 }
             });
         }
-        if(result.steps!=null){
+        if (result.steps != null) {
             this.stepResultViews = result.steps.map((step, idx) => {
                 var resultView = new ResultView();
                 resultView.fill(`${id}-${idx}`, step);
                 return resultView;
             });
         }
+    }
+
+    fillError(error: Error, id: string, title: string) {
+        this.level = checkResultLevel[checkResultLevel.error];
+        this.loadingStatus = LoadingStatus.Success;
+        this.status = convertLevelToHealthStatus(checkResultLevel.error)
+        this.title = "faulted: " + title;
+        this.markdown = "```\r\n" + `message: ${error}\r\nstacktrace: ` + (error.stack || "none") + "\r\n```";
+        console.log(error);
     }
 }
 
@@ -320,12 +340,13 @@ export class NetworkCheckComponent implements OnInit {
                         checkResult.fill(check.id, result);
                     })
                     .catch(error => {
-                        checkResult.level = checkResultLevel[checkResultLevel.error];
+                        checkResult.fillError(error, check.id, check.title);
+                        /*checkResult.level = checkResultLevel[checkResultLevel.error];
                         checkResult.loadingStatus = LoadingStatus.Success;
                         checkResult.status = convertLevelToHealthStatus(checkResultLevel.error)
                         checkResult.title = "faulted: " + checkResult.title;
                         checkResult.markdown = "```\r\n" + `message: ${error}\r\nstacktrace: ` + (error.stack || "none") + "\r\n```";
-                        console.log(error);
+                        console.log(error);//*/
                     });
             }
             catch (error) {
@@ -436,7 +457,7 @@ function markdownPreprocess(markdown: string, id: string): string {
     return result;
 }
 
-async function GetWebAppVnetInfo(siteArmId:string, armService) {
+async function GetWebAppVnetInfo(siteArmId: string, armService) {
     //This is the regional VNet Integration endpoint
     var swiftUrl = siteArmId + "/config/virtualNetwork";
     var siteVnetInfo = await armService.getArmResourceAsync(swiftUrl);

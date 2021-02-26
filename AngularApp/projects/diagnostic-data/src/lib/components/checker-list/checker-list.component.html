@@ -41,42 +41,44 @@
       </div>
     </ng-template>
   </div>
-  <div *ngIf="viewModel.markdown!=null">
-    <fab-panel [isOpen]="panelOpened" [type]="type" [customWidth]="panelWidth" [isHiddenOnDismiss]="true"
-    [styles]="{overlay:{visibility: 'hidden'}, className:'networkcheck-panel'}" [isLightDismiss]="true" [hasCloseButton]="true" [closeButtonAriaLabel]="'close'"
-    (onDismissed)="dismissedHandler()">
-      <div class="check-markdown">
-        <div class="markdown-header">
-          <div class="status-icon">
-            <status-icon [loading]="viewModel.loadingStatus" [status]="viewModel.status" [size]="24"></status-icon>
+  <div class="check-content">
+    <div *ngIf="viewModel.markdown!=null">
+      <fab-panel [isOpen]="panelOpened" [type]="type" [customWidth]="panelWidth" [isHiddenOnDismiss]="true"
+      [styles]="{overlay:{visibility: 'hidden'}, className:'networkcheck-panel'}" [isLightDismiss]="true" [hasCloseButton]="false" 
+      (onDismissed)="dismissedHandler()">
+        <div class="check-markdown">
+          <div class="markdown-header">
+            <div class="status-icon">
+              <status-icon [loading]="viewModel.loadingStatus" [status]="viewModel.status" [size]="24"></status-icon>
+            </div>
+            <div class="markdown-title">
+              {{viewModel.title}}
+            </div>
           </div>
-          <div class="markdown-title">
-            {{viewModel.title}}
+          
+          <div class="markdown-container">
+            <div class="markdown"><markdown ngPreserveWhitespaces [data]="viewModel.markdown"></markdown></div>
           </div>
         </div>
-        
-        <div class="markdown-container">
-          <markdown ngPreserveWhitespaces [data]="viewModel.markdown"></markdown>
+      </fab-panel>
+    </div>
+    <div *ngIf="expandable" [ngStyle]="{'overflow-y': 'hidden', 'height': (viewModel.expanded ? 'none':'0px')}" [@expand]="viewModel.expanded ? 'shown' : 'hidden'">
+      <div *ngIf="viewModel.interactivePayload != null">
+        <div [ngSwitch]="viewModel.interactivePayload.type">
+            <div *ngSwitchCase="0" class="interactive-section"> 
+                <input placeholder="{{viewModel.interactivePayload.data.placeholder}}" #text>
+                    <fab-primary-button class="interactive-check-button" (click)="viewModel.interactiveCallBack(text.value)">
+                        {{viewModel.interactivePayload.data.buttonText}}
+                    </fab-primary-button>
+            </div>
+            <div *ngSwitchCase="1">interactive 1</div>
         </div>
       </div>
-    </fab-panel>
-  </div>
-  <div *ngIf="expandable" [ngStyle]="{'overflow-y': 'hidden', 'height': (viewModel.expanded ? 'none':'0px')}" [@expand]="viewModel.expanded ? 'shown' : 'hidden'">
-    <div *ngIf="viewModel.interactivePayload != null">
-      <div [ngSwitch]="viewModel.interactivePayload.type">
-          <div *ngSwitchCase="0" class="interactive-section"> 
-              <input placeholder="{{viewModel.interactivePayload.data.placeholder}}" #text>
-                  <fab-primary-button class="interactive-check-button" (click)="viewModel.interactiveCallBack(text.value)">
-                      {{viewModel.interactivePayload.data.buttonText}}
-                  </fab-primary-button>
-          </div>
-          <div *ngSwitchCase="1">interactive 1</div>
+      <div class="step-container" *ngFor="let step of viewModel.stepResultViews">
+          <checker-list [viewModel]= "step" [expandable]="step.expandable">
+          </checker-list>
       </div>
+      <!--<markdown class="check-markdown" ngPreserveWhitespaces [data]="viewModel.markdown"></markdown>-->
     </div>
-    <div class="step-container" *ngFor="let step of viewModel.stepResultViews">
-        <checker-list [viewModel]= "step" [expandable]="step.expandable">
-        </checker-list>
-    </div>
-    <!--<markdown class="check-markdown" ngPreserveWhitespaces [data]="viewModel.markdown"></markdown>-->
   </div>
 </div>

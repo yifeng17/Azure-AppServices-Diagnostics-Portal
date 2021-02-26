@@ -65,6 +65,11 @@ export class CacheService {
         return this.cache.has(key);
     }
 
+    clear(): void{
+        this.cache = new Map<string, CacheContent>();
+        this.inFlightObservables = new Map<string, Subject<any>>();
+    }
+
     private log(message: string, color: string) {
         if (this.enableConsoleLogging) {
             console.log(message, color);

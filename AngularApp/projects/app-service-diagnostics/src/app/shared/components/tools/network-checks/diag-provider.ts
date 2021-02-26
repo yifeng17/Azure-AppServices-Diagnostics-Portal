@@ -10,6 +10,7 @@ export class DiagProvider {
     constructor(siteInfo: SiteInfoMetaData & Site & { fullSiteName: string }, armService: ArmService) {
         this._siteInfo = siteInfo;
         this._armService = armService;
+        armService.clearCache();
     }
 
     public getArmResourceAsync<T>(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Promise<T> {
@@ -131,32 +132,48 @@ export class DiagProvider {
     public async checkConnectionAsync(hostname: string, port: number, count: number = 1, dns: string = "", instance?: string): Promise<{ status: ConnectionCheckStatus, ip: string, aliases: string, statuses: ConnectionCheckStatus[] }> {
         var stack = new Error("replace_placeholder").stack;
         var promise = (async () => {
-            var nameResolverPromise = this.runKudoCommand(this._siteInfo.fullSiteName, `nameresolver ${hostname} ${dns}`, undefined, instance).catch(e => {
-                console.log("nameresolver failed", e);
-                return null;
-            });
-            var pingPromise = this.tcpPingAsync(hostname, port, count, instance);
-            await Promise.all([nameResolverPromise.catch(e => e), pingPromise.catch(e => e)]);
-            var nameResovlerResult = await (nameResolverPromise.catch(e => null));
-            var pingResult = await (pingPromise.catch(e => null));
-            console.log(nameResovlerResult, pingResult);
-            var ip: string = null, aliases: string = null;
-            if (nameResovlerResult != null) {
-                if(nameResovlerResult.includes("Aliases")){
-                    var match = nameResovlerResult.match(/Addresses:\s*([\S\s]*)Aliases:\s*([\S\s]*)$/);
-                    if (match != null) {
-                        ip = match[1].split("\r\n").filter(i => i.length > 0).join(";");
-                        aliases = match[2].split("\r\n").filter(i => i.length > 0).join(";");
-                    }
-                }else{
-                    var match = nameResovlerResult.match(/Addresses:\s*([\S\s]*)$/);
-                    if (match != null) {
-                        ip = match[1].split("\r\n").filter(i => i.length > 0).join(";");
+            var nameResolverPromise = (async (): Promise<{ ip: string, aliases: string }> => {
+                var ip: string = null, aliases: string = null;
+                if (this.isIp(hostname)) {
+                    ip = hostname;
+                } else {
+                    try {
+                        var result = await this.runKudoCommand(this._siteInfo.fullSiteName, `nameresolver ${hostname} ${dns}`, undefined, instance);
+                        if (result != null) {
+                            if (result.includes("Aliases")) {
+                                var match = result.match(/Addresses:\s*([\S\s]*)Aliases:\s*([\S\s]*)$/);
+                                if (match != null) {
+                                    ip = match[1].split("\r\n").filter(i => i.length > 0).join(";");
+                                    aliases = match[2].split("\r\n").filter(i => i.length > 0).join(";");
+                                }
+                            } else {
+                                var match = result.match(/Addresses:\s*([\S\s]*)$/);
+                                if (match != null) {
+                                    ip = match[1].split("\r\n").filter(i => i.length > 0).join(";");
+                                }
+                            }
+                        }
+                    } catch (e) {
+
                     }
                 }
-            }
+                return { ip, aliases };
+            })();
 
-            return { status: pingResult && pingResult.status, ip, aliases, statuses: pingResult && pingResult.statuses };
+            var pingPromise = this.tcpPingAsync(hostname, port, count, instance);
+            await Promise.all([nameResolverPromise.catch(e => e), pingPromise.catch(e => e)]);
+            var nameResovlerResult = await nameResolverPromise;
+            var pingResult = await (pingPromise.catch(e => null));
+            console.log(nameResovlerResult, pingResult);
+
+
+            var connectionStatus: ConnectionCheckStatus;
+            if (nameResovlerResult.ip == null) {
+                connectionStatus = ConnectionCheckStatus.hostNotFound;
+            } else {
+                connectionStatus = (pingResult && pingResult.status);
+            }
+            return { status: connectionStatus, ip: nameResovlerResult.ip, aliases: nameResovlerResult.aliases, statuses: pingResult && pingResult.statuses };
         })();
 
         return promise.catch(e => {
@@ -166,10 +183,21 @@ export class DiagProvider {
         });
     }
 
-    public async GetWebAppVnetInfo() {
+    public async getWebAppVnetInfo() {
         //This is the regional VNet Integration endpoint
         var swiftUrl = this._siteInfo["id"] + "/config/virtualNetwork";
         var siteVnetInfo = await this.getArmResourceAsync(swiftUrl);
         return siteVnetInfo;
+    }
+
+    public isIp(s: string) {
+        if (s.match(/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/)) {
+            // ipv4
+            return true;
+        } else if (s.match(/^(?:[a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}$/)) {
+            // ipv6
+            return true;
+        }
+        return false;
     }
 }

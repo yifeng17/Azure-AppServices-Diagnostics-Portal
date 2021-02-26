@@ -526,4 +526,8 @@ export class ArmService {
 
         return headers;
     }
+
+    clearCache():void {
+        this._cache.clear();
+    }
 }
