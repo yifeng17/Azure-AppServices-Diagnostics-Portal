@@ -1,13 +1,8 @@
 <div class="container" (mouseleave)="toggleFeedbackOnce()">
     <h2 tabindex="0">{{ title }}</h2>
     <p tabindex="0">{{ description }}</p>
+    <a [routerLink]="['../']">Back</a>
 
-    <div class="wizardcontainer">
-
-        <!--<profiler [scmPath]="scmPath" [siteToBeDiagnosed]="siteToBeDiagnosed" (SessionsEvent)="updateSessions($event)">
-        </profiler>-->
-
-    </div>
     <!-- markdown https://stackblitz.com/edit/ngx-markdown?file=src%2Fapp%2Fapp.component.html -->
     <div class="checker-container" *ngFor="let viewModel of checkResultViews; index as i">
         <checker-list [viewModel]= "viewModel" [expandable]="viewModel.expandable">

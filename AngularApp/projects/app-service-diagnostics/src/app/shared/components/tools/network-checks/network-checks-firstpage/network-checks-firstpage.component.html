@@ -1,0 +1,27 @@
+<div class="container">
+    <h2 tabindex="0">{{ title }}</h2>
+    <p tabindex="0">{{ description }}</p>
+    
+
+    <div *ngIf="vnetIntegrationDetected!=null" class="links">
+        You may want
+        <div  *ngIf="vnetIntegrationDetected; else noIntegration">
+            <ul>
+                <li><a [routerLink]="['./run-check']">Troubleshoot a runtime networking issue</a></li>
+                <li><a [routerLink]="['./']">Re-configure the VNet integration</a></li>
+            </ul>
+        </div>
+        <ng-template #noIntegration>
+            <ul>
+                <li><a [routerLink]="['./']">I have a VNet integration plan, but failed to configure</a></li>
+                <li><a [routerLink]="['./']">I have needs of VNet integration, I want to know what options do I have.</a></li>
+            </ul>
+        </ng-template>
+        
+        <!--<profiler [scmPath]="scmPath" [siteToBeDiagnosed]="siteToBeDiagnosed" (SessionsEvent)="updateSessions($event)">
+        </profiler>-->
+
+    </div>
+
+
+</div>

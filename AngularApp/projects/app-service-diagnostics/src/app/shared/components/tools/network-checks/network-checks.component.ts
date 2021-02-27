@@ -7,6 +7,8 @@ import { ResponseMessageEnvelope } from '../../../models/responsemessageenvelope
 import { HealthStatus, LoadingStatus, TelemetryService } from 'diagnostic-data';
 import { CheckerListComponent } from 'projects/diagnostic-data/src/lib/components/checker-list/checker-list.component';
 import { DiagProvider } from './diag-provider';
+import { Globals } from 'projects/app-service-diagnostics/src/app/globals';
+import { CheckManager } from './check-manager';
 //import { MarkdownTextComponent } from 'projects/diagnostic-data/src/lib/components/markdown-text/markdown-text.component';
 declare var jsDynamicImportChecks: any;
 
@@ -175,10 +177,6 @@ export class ResultView {
     }
 }
 
-
-
-
-
 var sampleCheck: Check = {
     title: "Sample TS check",
     func: async function sampleCheck(siteInfo: SiteInfoMetaData, appSettings: Map<string, string>, diagProvider: DiagProvider): Promise<CheckResult> {
@@ -212,7 +210,7 @@ enum interactiveCheckType {
     templateUrl: 'network-checks.component.html',
     styleUrls: ['../styles/daasstyles.scss', './network-checks.component.scss'],
     encapsulation: ViewEncapsulation.None,
-    entryComponents: [CheckerListComponent]
+    entryComponents: []
 })
 
 export class NetworkCheckComponent implements OnInit {
@@ -224,31 +222,35 @@ export class NetworkCheckComponent implements OnInit {
 
     diagProvider: DiagProvider;
     checkResultViews: ResultView[] = [];
-    siteInfo: SiteInfoMetaData & Site & { fullSiteName: string }
+    siteInfo: SiteInfoMetaData & Site & { fullSiteName: string, siteVnetInfo?: any }
     siteVnetInfoPromise: Promise<any>;
     feedbackReady = false;
     openFeedback = false;
     isFeedbacktoggled = false;
     //checks: any[];
 
-    constructor(private _siteService: SiteService, private _armService: ArmService, private _telemetryService: TelemetryService) {
-        var castedWindow: any = window;
+    constructor(private _siteService: SiteService, private _armService: ArmService, private _telemetryService: TelemetryService, private _globals: Globals) {
         var telemetryService = this._telemetryService;
-        castedWindow.networkCheckLinkClickEventLogger = (checkId: string, url: string, text: string) => {
+        window["networkCheckLinkClickEventLogger"] = (checkId: string, url: string, text: string) => {
             telemetryService.logEvent("NetworkCheck.LinkClick", { checkId: checkId, url: url, text: text });
         }
 
-
-        var siteInfo = this._siteService.currentSiteMetaData.value;
-        var fullSiteName = siteInfo.siteName + (siteInfo.slot == "" ? "" : "-" + siteInfo.slot);
-        this.siteInfo = { ...this._siteService.currentSiteMetaData.value, ...this._siteService.currentSite.value, fullSiteName };
-        this.diagProvider = new DiagProvider(this.siteInfo, _armService);
+        this.siteInfo = this._globals.messagesData["SiteInfoWithVNetInfo"];
+        if (this.siteInfo == null) {
+            var siteInfo = this._siteService.currentSiteMetaData.value;
+            var fullSiteName = siteInfo.siteName + (siteInfo.slot == "" ? "" : "-" + siteInfo.slot);
+            this.siteInfo = { ...this._siteService.currentSiteMetaData.value, ...this._siteService.currentSite.value, fullSiteName };
+        }
+        this.diagProvider = this._globals.messagesData["NetworkCheckDiagProvider"];
+        if (this.diagProvider == null) {
+            this.diagProvider = new DiagProvider(this.siteInfo, _armService);
+        }
         this.loadChecksAsync();
         delay(10).then(() => this.feedbackReady = true);
     }
 
     ngOnInit(): void {
-        this._telemetryService.logEvent("NetworkCheck.PageLoad");
+        this._telemetryService.logEvent("NetworkCheck.CheckPageLoad");
         /*
         this.scmPath = this._siteService.currentSiteStatic.enabledHostNames.find(hostname => hostname.indexOf('.scm.') > 0);
         this._siteService.getSiteAppSettings(siteInfo.subscriptionId, siteInfo.resourceGroupName, siteInfo.siteName, siteInfo.slot).toPromise().then(val=>{
@@ -270,17 +272,16 @@ export class NetworkCheckComponent implements OnInit {
 
         if (jsSampleChecks != null) {
             //this.checks = this.checks.concat(jsTestChecks);
-            //taskList.push(this.runChecksAsync(jsSampleChecks, appSettings));
+            //this.runChecks(jsSampleChecks, appSettings);
         }
-        var castedWindow: any = window;
 
-        console.log("use window.diagNetworkChecks array to debug your check, e.g. window.diagNetworkChecks = [testCheck]");
-        if (castedWindow.hasOwnProperty("diagNetworkChecks") && castedWindow.diagNetworkChecks != null) {
+        console.log("set window.NetworkCheckDebugMode to true to load localhost checks for debugging");
+        if (window["diagNetworkChecks"] != null) {
             //this.checks = this.checks.concat(castedWindow.diagNetworkChecks);
-            taskList.push(this.runChecksAsync(castedWindow.diagNetworkChecks, appSettings));
+            this.runChecks(window["diagNetworkChecks"].diagNetworkChecks, appSettings);
         }
 
-        taskList.push(this.loadRemoteCheckAsync().then(remoteChecks => {
+        taskList.push(CheckManager.loadRemoteCheckAsync().then(remoteChecks => {
             console.log(remoteChecks);
             remoteChecks = Object.keys(remoteChecks).map(key => {
                 var check = remoteChecks[key];
@@ -289,41 +290,11 @@ export class NetworkCheckComponent implements OnInit {
             });
             //debugger;
             //this.checks = this.checks.concat(remoteChecks);
-            taskList.push(this.runChecksAsync(remoteChecks, appSettings));
+            this.runChecks(remoteChecks, appSettings);
         }));
-
-        await Promise.all(taskList);
     }
 
-    loadRemoteCheckAsync(): Promise<any[]> {
-        var promise = new Promise<any[]>((resolve, reject) => {
-            var existedScript = document.getElementById("remoteChecks");
-            if (existedScript != null) {
-                document.head.removeChild(existedScript);
-            }
-            var script = document.createElement("script");
-            script.setAttribute('type', 'text/javascript');
-            script.setAttribute('src', 'http://127.0.0.1:8000/test-check.js');
-            script.setAttribute('id', 'remoteChecks');
-            script.onload = () => {
-                console.log("remote script loaded!");
-                console.log(script);
-                if (typeof jsDynamicImportChecks != 'undefined') {
-                    resolve(jsDynamicImportChecks);
-                }
-                else {
-                    resolve([]);
-                }
-            }
-            script.onerror = () => {
-                resolve([]);
-            }
-            document.head.appendChild(script);
-        });
-        return promise;
-    }
-
-    async runChecksAsync(checks: Check[], appSettings: any): Promise<void> {
+    runChecks(checks: Check[], appSettings: any): void {
         var siteInfo = this.siteInfo;
         checks.forEach(check => {
             check.tryGetSharedObject = ((key) => this.tryGetObject(check.id, key));
@@ -332,15 +303,15 @@ export class NetworkCheckComponent implements OnInit {
         });
         checks.forEach(check => {
             try {
-                var checkResult = this.pushCheckResult(check.id, check.title);
+                var checkResultView = this.pushCheckResult(check.id, check.title);
 
                 check.func(siteInfo, appSettings, this.diagProvider)
                     .then(result => {
                         result.title = check.title;
-                        checkResult.fill(check.id, result);
+                        checkResultView.fill(check.id, result);
                     })
                     .catch(error => {
-                        checkResult.fillError(error, check.id, check.title);
+                        checkResultView.fillError(error, check.id, check.title);
                         /*checkResult.level = checkResultLevel[checkResultLevel.error];
                         checkResult.loadingStatus = LoadingStatus.Success;
                         checkResult.status = convertLevelToHealthStatus(checkResultLevel.error)

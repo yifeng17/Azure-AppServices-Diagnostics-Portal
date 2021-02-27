@@ -3,6 +3,8 @@ import { Site, SiteInfoMetaData } from '../../../models/site';
 import { ArmService } from '../../../services/arm.service';
 
 enum ConnectionCheckStatus { success, timeout, hostNotFound, blocked, refused }
+export enum OutboundType {SWIFT, gateway};
+export enum InboundType {privateEndpoint, serviceEndpoint}
 
 export class DiagProvider {
     private _siteInfo: SiteInfoMetaData & Site & { fullSiteName: string };
@@ -11,6 +13,28 @@ export class DiagProvider {
         this._siteInfo = siteInfo;
         this._armService = armService;
         armService.clearCache();
+    }
+
+    public async getVNetIntegrationStatusAsync() {
+        var result = { isVnetIntegrated: false, outboundType: <OutboundType> null, outboundSubnets: [], inboundType:<InboundType> null, inboundSubnets: [], siteVnetInfo: null };
+        var siteArmId = this._siteInfo["id"];
+        var siteVnetInfo = await this.getWebAppVnetInfo();
+        result.siteVnetInfo = siteVnetInfo;
+        if (siteVnetInfo != null) {
+            var subnetResourceId = siteVnetInfo.properties["subnetResourceId"];
+            if (subnetResourceId != null) {
+                result.isVnetIntegrated = true;
+                result.outboundType = OutboundType.SWIFT;
+            } else {
+                var siteGWVnetInfo = await this.getArmResourceAsync<any>(siteArmId + "/virtualNetworkConnections");
+
+                if (siteGWVnetInfo.length > 0) {
+                    result.isVnetIntegrated = true;
+                    result.outboundType = OutboundType.gateway;
+                }
+            }
+        }
+        return result;
     }
 
     public getArmResourceAsync<T>(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Promise<T> {
@@ -183,7 +207,7 @@ export class DiagProvider {
         });
     }
 
-    public async getWebAppVnetInfo() {
+    public async getWebAppVnetInfo():Promise<any> {
         //This is the regional VNet Integration endpoint
         var swiftUrl = this._siteInfo["id"] + "/config/virtualNetwork";
         var siteVnetInfo = await this.getArmResourceAsync(swiftUrl);

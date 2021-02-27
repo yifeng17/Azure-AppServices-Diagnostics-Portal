@@ -137,6 +137,7 @@ import { NetworkCheckComponent } from './components/tools/network-checks/network
 import { MarkdownModule } from 'ngx-markdown';
 import { CheckerListComponent } from 'projects/diagnostic-data/src/lib/components/checker-list/checker-list.component';
 import { NetworkCheckFeedbackComponent } from './components/networkcheck-feedback/networkcheck-feedback.component';
+import { NetworkCheckFirstPageComponent } from './components/tools/network-checks/network-checks-firstpage/network-checks-firstpage.component';
 
 @NgModule({
     declarations: [
@@ -169,6 +170,7 @@ import { NetworkCheckFeedbackComponent } from './components/networkcheck-feedbac
         ProfilerComponent,
         ProfilerToolComponent,
         NetworkCheckComponent,
+        NetworkCheckFirstPageComponent,
         NetworkCheckFeedbackComponent,
         CheckerListComponent,
         MemoryDumpToolComponent,
