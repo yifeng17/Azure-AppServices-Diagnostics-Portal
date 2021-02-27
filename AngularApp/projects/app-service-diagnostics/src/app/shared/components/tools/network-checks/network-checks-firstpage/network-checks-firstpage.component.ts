@@ -53,6 +53,7 @@ export class NetworkCheckFirstPageComponent implements OnInit {
                         this.description = "Gateway required VNet integration detected."
                     }
                 }else{
+                    this.vnetIntegrationDetected = false;
                     this.description = "No VNet integration detected."
                 }
             });

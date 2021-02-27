@@ -267,21 +267,17 @@ export class NetworkCheckComponent implements OnInit {
         var appSettings = (await this._siteService.getSiteAppSettings(siteInfo.subscriptionId, siteInfo.resourceGroupName, siteInfo.siteName, siteInfo.slot).toPromise()).properties;
         var sampleChecks = [sampleCheck];
 
-        var taskList: Promise<void>[] = [];
         //taskList.push(this.runChecksAsync(sampleChecks, appSettings));
+        var resultViews = [];
 
         if (jsSampleChecks != null) {
             //this.checks = this.checks.concat(jsTestChecks);
-            //this.runChecks(jsSampleChecks, appSettings);
+            //resultViews = resultViews.concat(this.runChecks(jsSampleChecks, appSettings));
         }
 
         console.log("set window.NetworkCheckDebugMode to true to load localhost checks for debugging");
-        if (window["diagNetworkChecks"] != null) {
-            //this.checks = this.checks.concat(castedWindow.diagNetworkChecks);
-            this.runChecks(window["diagNetworkChecks"].diagNetworkChecks, appSettings);
-        }
 
-        taskList.push(CheckManager.loadRemoteCheckAsync().then(remoteChecks => {
+        await CheckManager.loadRemoteCheckAsync().then(remoteChecks => {
             console.log(remoteChecks);
             remoteChecks = Object.keys(remoteChecks).map(key => {
                 var check = remoteChecks[key];
@@ -290,20 +286,31 @@ export class NetworkCheckComponent implements OnInit {
             });
             //debugger;
             //this.checks = this.checks.concat(remoteChecks);
-            this.runChecks(remoteChecks, appSettings);
-        }));
+            resultViews = resultViews.concat(this.runChecks(remoteChecks, appSettings));
+        });
+
+        this.checkResultViews = resultViews;
     }
 
-    runChecks(checks: Check[], appSettings: any): void {
+    runChecks(checks: Check[], appSettings: any): ResultView[] {
         var siteInfo = this.siteInfo;
         checks.forEach(check => {
             check.tryGetSharedObject = ((key) => this.tryGetObject(check.id, key));
             check.shareObject = ((key, value) => this.setObject(check.id, key, value));
             check.waitSharedObjectAsync = ((key) => this.waitObjectAsync(check.id, key));
         });
-        checks.forEach(check => {
+        var resultViews = checks.map(check => {
             try {
-                var checkResultView = this.pushCheckResult(check.id, check.title);
+                var checkResultView = new ResultView({
+                    id: check.id,
+                    title: check.title,
+                    level: checkResultLevel.loading.toString(),
+                    markdown: null,
+                    interactivePayload: null,
+                    status: convertLevelToHealthStatus(checkResultLevel.loading),
+                    loadingStatus: LoadingStatus.Loading,
+                    expanded: false
+                });
 
                 check.func(siteInfo, appSettings, this.diagProvider)
                     .then(result => {
@@ -319,13 +326,15 @@ export class NetworkCheckComponent implements OnInit {
                         checkResult.markdown = "```\r\n" + `message: ${error}\r\nstacktrace: ` + (error.stack || "none") + "\r\n```";
                         console.log(error);//*/
                     });
+                return checkResultView;
             }
             catch (error) {
                 console.log("error:", error);
                 debugger;
             }
         });
-        console.log("check results", this.checkResultViews);
+        // console.log("check results", resultViews);
+        return resultViews;
     }
 
     pushCheckResult(id: string, title: string) {
@@ -338,7 +347,7 @@ export class NetworkCheckComponent implements OnInit {
             status: convertLevelToHealthStatus(checkResultLevel.loading),
             loadingStatus: LoadingStatus.Loading,
             expanded: false
-        }))
+        }));
         return this.checkResultViews[this.checkResultViews.length - 1];
     }
 

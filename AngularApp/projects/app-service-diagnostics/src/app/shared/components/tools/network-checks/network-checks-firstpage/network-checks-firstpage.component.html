@@ -4,17 +4,18 @@
     
 
     <div *ngIf="vnetIntegrationDetected!=null" class="links">
-        You may want
-        <div  *ngIf="vnetIntegrationDetected; else noIntegration">
+        <div *ngIf="vnetIntegrationDetected; else noIntegration">
+            You may want
             <ul>
                 <li><a [routerLink]="['./run-check']">Troubleshoot a runtime networking issue</a></li>
-                <li><a [routerLink]="['./']">Re-configure the VNet integration</a></li>
+                <li><a (click)="vnetIntegrationDetected = false;">Re-configure the VNet integration</a></li>
             </ul>
         </div>
         <ng-template #noIntegration>
+            Which of following best describes your situation?
             <ul>
                 <li><a [routerLink]="['./']">I have a VNet integration plan, but failed to configure</a></li>
-                <li><a [routerLink]="['./']">I have needs of VNet integration, I want to know what options do I have.</a></li>
+                <li><a [routerLink]="['./']">I have needs of private network, I want to know what options do I have.</a></li>
             </ul>
         </ng-template>
         
