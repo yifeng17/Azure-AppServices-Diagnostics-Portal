@@ -31,7 +31,7 @@ export class RiskTileComponent implements OnInit {
     ngOnInit() {
         this.title = this.riskAlertConfig.title;
         this._riskAlertService.riskPanelContentsSub.subscribe((riskAlertContents) => {
-            this.risk = this._riskAlertService.risks[this.riskAlertConfig.riskAlertId];
+            this.risk = this._riskAlertService.risks[this.riskAlertConfig.riskAlertDetectorId];
             this.riskProperties["Title"] = this.title;
             this.linkText = this.risk.linkText;
             this.showTile = this.risk.showTile;
@@ -62,7 +62,7 @@ export class RiskTileComponent implements OnInit {
     clickTileHandler() {
         this.logEvent(TelemetryEventNames.RiskTileClicked, {});
         this.globals.openRiskAlertsPanel = true;
-        this._riskAlertService.currentRiskPanelContentIdSub.next(this.riskAlertConfig.riskAlertId);
+        this._riskAlertService.currentRiskPanelContentIdSub.next(this.riskAlertConfig.riskAlertDetectorId);
     }
 
     private processRiskInfo(info: RiskInfo): RiskInfoDisplay[] {

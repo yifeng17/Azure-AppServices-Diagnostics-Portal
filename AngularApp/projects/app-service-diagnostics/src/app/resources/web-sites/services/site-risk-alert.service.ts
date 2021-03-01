@@ -31,9 +31,8 @@ export class SiteRiskAlertService extends RiskAlertService {
     private _webAppRiskAlertConfigs = [
         {
             title: "Availability",
-            riskAlertId: "availablityriskalert",
+            riskAlertDetectorId: "availablityriskalert",
             enableForCaseSubmissionFlow: true,
-            notificationMessage: "We detected you are not following best practices configuration and that will increase risk of a downtime."
         }
     ];
 
@@ -81,7 +80,7 @@ export class SiteRiskAlertService extends RiskAlertService {
     private _webAppNotificationMessageConfig =
         {
             title: "A platform update recently may have impact on your app service.",
-            riskAlertId: "webappemergingnotification",
+            riskAlertDetectorId: "webappemergingnotification",
             enableForCaseSubmissionFlow: true,
             notificationMessage: "A platform update recently may have impact on your app service.",
             renderingType: RiskAlertRendering.MessageBar,
@@ -115,6 +114,6 @@ export class SiteRiskAlertService extends RiskAlertService {
             siteNotificationConfig = notificationConfigs[0];
         }
 
-        this._addRiskAlertIds(siteRiskAlertConfigs, siteNotificationConfig);
+        this._addRiskAlertDetectorIds(siteRiskAlertConfigs, siteNotificationConfig);
     }
 }

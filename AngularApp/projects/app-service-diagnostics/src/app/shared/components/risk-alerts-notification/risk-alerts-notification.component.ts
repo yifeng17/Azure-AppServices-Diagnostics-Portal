@@ -26,7 +26,7 @@ export class RiskAlertsNotificationComponent implements OnInit {
     riskAlertChecksHealthy: boolean = false;
     reliabilityChecksResults: any = {};
     notificationId: string = "";
-    notificationMessage: string = "We detected missing configurations in your application that will increase risk of a downtime. Please check";
+    notificationMessage: string = "We detected missing configurations in your application that will increase risk of a downtime.";
     styles: IMessageBarStyles = {
         root: {
             height: '49px',
@@ -51,16 +51,12 @@ export class RiskAlertsNotificationComponent implements OnInit {
 
                 this.riskAlertChecksHealthy = this._riskAlertService.notificationStatus >= HealthStatus.Info;
                 this.notificationId = this._riskAlertService.caseSubmissionRiskNotificationId;
-                this.notificationMessage = this._riskAlertService.riskAlertNotifications && this._riskAlertService.riskAlertNotifications.hasOwnProperty(this._riskAlertService.caseSubmissionRiskNotificationId) ? this._riskAlertService.riskAlertNotifications[this._riskAlertService.caseSubmissionRiskNotificationId].text : this.notificationMessage;
+                this.notificationMessage = this._riskAlertService.riskAlertNotifications && this._riskAlertService.riskAlertNotifications.hasOwnProperty(this._riskAlertService.caseSubmissionRiskNotificationId) ? this._riskAlertService.riskAlertNotifications[this._riskAlertService.caseSubmissionRiskNotificationId].notificationMessage : this.notificationMessage;
                 this.showRiskAlertsNotification = (startupInfo.supportTopicId && startupInfo.supportTopicId != '' && !this.riskAlertChecksHealthy && !this.isKeystoneSolutionView);
 
                 // This is to determine whether we want to show emerging issue notification bar.
-                this.showEmergingNotification = !!this._riskAlertService.emergingNotificationMessageBar && !!this._riskAlertService.emergingNotificationMessageBar.id;
+                this.showEmergingNotification = !!this._riskAlertService.emergingNotificationMessageBar && !!this._riskAlertService.emergingNotificationMessageBar.id && this._riskAlertService.emergingNotificationMessageBar.showEmergingIssue;
             });
-            //  }
-            //  });
-            //}
-
         }, e => {
             this.telemetryService.logEvent("RiskNotificationLoadingFailure", { "error": JSON.stringify(e) });
         });

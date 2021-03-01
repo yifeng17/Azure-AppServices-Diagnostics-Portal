@@ -24,8 +24,6 @@ export class RiskAlertsPanelComponent implements OnInit {
         }
     }
     riskPanelContents: any = {};
-    @Input() riskAlertId: string = "";
-    @Input() riskAlertTitle: string = "";
     error: string = "";
     endTime: Moment = this.detectorControlService.endTime;
     startTime: Moment = this.detectorControlService.startTime;
@@ -50,9 +48,9 @@ export class RiskAlertsPanelComponent implements OnInit {
     ngOnInit() {
         this._riskAlertService.riskPanelContentsSub.subscribe((risksPanelContents) => {
             this.riskPanelContents = risksPanelContents;
-            this._riskAlertService.currentRiskPanelContentIdSub.subscribe((currentRiskAlertId) => {
-                this.riskPanelTitle = this._riskAlertService.risks && this._riskAlertService.risks.hasOwnProperty(currentRiskAlertId) ? this._riskAlertService.risks[currentRiskAlertId].title : this.riskPanelTitle;
-                this.currentRiskPanelContentId = currentRiskAlertId;
+            this._riskAlertService.currentRiskPanelContentIdSub.subscribe((currentRiskAlertDetectorId) => {
+                this.riskPanelTitle = this._riskAlertService.risks && this._riskAlertService.risks.hasOwnProperty(currentRiskAlertDetectorId) ? this._riskAlertService.risks[currentRiskAlertDetectorId].title : this.riskPanelTitle;
+                this.currentRiskPanelContentId = currentRiskAlertDetectorId;
             });
         });
 

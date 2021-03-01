@@ -47,9 +47,8 @@ export interface LiabilityCheckConfig {
 
 export class RiskAlertConfig {
     title: string;
-    riskAlertId: string;
+    riskAlertDetectorId: string;
     enableForCaseSubmissionFlow?: boolean = true;
-    notificationMessage?: string = "";
     renderingType?: RiskAlertRendering =  RiskAlertRendering.Card;
     overrideStatus?: HealthStatus = HealthStatus.Info
 }
