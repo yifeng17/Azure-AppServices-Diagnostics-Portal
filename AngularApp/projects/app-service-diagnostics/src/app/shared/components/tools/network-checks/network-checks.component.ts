@@ -50,13 +50,17 @@ class InteractiveCheckPayload {
     public callBack: (userInput: any) => Promise<CheckResult & { title: string }>;
 }
 
-
+enum FlowType{
+    troubleshoot,
+    configuration
+}
 
 class Check {
     public id?: string;
     public title: string;
     public description?: string;
     public func: (siteInfo: SiteInfoMetaData & Site, appSettings: any, diagProvider: DiagProvider) => Promise<CheckResult>;
+    public flow?:FlowType;
     public tryGetSharedObject?: (key: string) => any;
     public shareObject?: (key: string, value: any) => void;
     public waitSharedObjectAsync?: (key: string) => Promise<any>;
@@ -294,7 +298,7 @@ export class NetworkCheckComponent implements OnInit {
 
     runChecks(checks: Check[], appSettings: any): ResultView[] {
         var siteInfo = this.siteInfo;
-        checks.forEach(check => {
+        checks.filter(check => check.flow == null || check.flow == FlowType.troubleshoot).forEach(check => {
             check.tryGetSharedObject = ((key) => this.tryGetObject(check.id, key));
             check.shareObject = ((key, value) => this.setObject(check.id, key, value));
             check.waitSharedObjectAsync = ((key) => this.waitObjectAsync(check.id, key));

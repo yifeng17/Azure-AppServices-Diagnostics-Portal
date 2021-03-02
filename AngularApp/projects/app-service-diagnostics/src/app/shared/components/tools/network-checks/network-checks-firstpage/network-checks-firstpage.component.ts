@@ -48,16 +48,16 @@ export class NetworkCheckFirstPageComponent implements OnInit {
                     this._globals.messagesData["SiteInfoWithVNetInfo"] = siteInfoPlus;
                     this.vnetIntegrationDetected = true;
                     if(result.outboundType == OutboundType.SWIFT){
-                        this.description = "Regional VNet integration detected."
+                        this.description = "Detected Regional VNet integration configured."
                     }else if(result.outboundType == OutboundType.gateway){
-                        this.description = "Gateway required VNet integration detected."
+                        this.description = "Detected Gateway required VNet integration configured."
                     }
                 }else{
                     this.vnetIntegrationDetected = false;
                     this.description = "No VNet integration detected."
                 }
             });
-        CheckManager.loadRemoteCheckAsync();
+        CheckManager.loadRemoteCheckAsync(true);
     }
 
     ngOnInit(): void {
