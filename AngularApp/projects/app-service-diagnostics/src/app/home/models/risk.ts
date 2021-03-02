@@ -16,7 +16,8 @@ export interface RiskTile {
 export interface NotificationMessageBar {
     showEmergingIssue: boolean;
     id: string;
-    title: string;
+    panelTitle: string;
+    notificationMessage: string;
     status: HealthStatus,
     linkText: string;
 }

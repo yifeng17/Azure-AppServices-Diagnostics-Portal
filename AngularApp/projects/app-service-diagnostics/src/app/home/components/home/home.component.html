@@ -100,7 +100,6 @@
 
 
 <ng-template #newHomePage>
-  <risk-alerts-notification></risk-alerts-notification>
   <fab-command-bar tabindex="0" contentClass="fab-command-bar-class">
     <items>
       <fab-command-bar-item key="askGenie" text="Ask Genie" [iconProps]="{ iconName: 'ChatInviteFriend' }"
@@ -111,6 +110,7 @@
         (click)="openFeedbackPanel()"></fab-command-bar-item>
     </items>
   </fab-command-bar>
+  <risk-alerts-notification></risk-alerts-notification>
 
   <div class="home-main-area">
     <div class="home-title-container">

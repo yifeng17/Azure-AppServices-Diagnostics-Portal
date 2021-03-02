@@ -27,7 +27,7 @@ export class RiskAlertsPanelComponent implements OnInit {
     error: string = "";
     endTime: Moment = this.detectorControlService.endTime;
     startTime: Moment = this.detectorControlService.startTime;
-    riskPanelTitle: string = "";
+    riskPanelTitle: string = "Notifications";
     currentRiskPanelContentId: string;
     viewResponse: DetectorResponse;
 
@@ -49,7 +49,7 @@ export class RiskAlertsPanelComponent implements OnInit {
         this._riskAlertService.riskPanelContentsSub.subscribe((risksPanelContents) => {
             this.riskPanelContents = risksPanelContents;
             this._riskAlertService.currentRiskPanelContentIdSub.subscribe((currentRiskAlertDetectorId) => {
-                this.riskPanelTitle = this._riskAlertService.risks && this._riskAlertService.risks.hasOwnProperty(currentRiskAlertDetectorId) ? this._riskAlertService.risks[currentRiskAlertDetectorId].title : this.riskPanelTitle;
+                this.riskPanelTitle = this._riskAlertService.risks && this._riskAlertService.risks.hasOwnProperty(currentRiskAlertDetectorId) ? this._riskAlertService.risks[currentRiskAlertDetectorId].title + " risk alerts" : this._riskAlertService.emergingNotificationMessageBar && this._riskAlertService.emergingNotificationMessageBar.panelTitle ? this._riskAlertService.emergingNotificationMessageBar.panelTitle : this.riskPanelTitle;
                 this.currentRiskPanelContentId = currentRiskAlertDetectorId;
             });
         });

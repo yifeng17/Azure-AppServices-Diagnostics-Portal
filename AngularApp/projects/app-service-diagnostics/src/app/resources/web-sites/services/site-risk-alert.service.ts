@@ -21,7 +21,6 @@ import { WebSiteFilter } from "../pipes/site-filter.pipe";
 
 export class SiteRiskAlertService extends RiskAlertService {
     public riskAlertsSub: BehaviorSubject<RiskAlertConfig[]> = new BehaviorSubject<RiskAlertConfig[]>([]);
-    public riskAlertPanelId: BehaviorSubject<String> = new BehaviorSubject<String>("");
     public riskPanelContentSub: BehaviorSubject<DetectorResponse> = new BehaviorSubject<DetectorResponse>(null);
     risks: RiskTile[] = [];
     risksPanelContents = {};
@@ -79,10 +78,9 @@ export class SiteRiskAlertService extends RiskAlertService {
 
     private _webAppNotificationMessageConfig =
         {
-            title: "A platform update recently may have impact on your app service.",
+            title: "Notifications",
             riskAlertDetectorId: "webappemergingnotification",
             enableForCaseSubmissionFlow: true,
-            notificationMessage: "A platform update recently may have impact on your app service.",
             renderingType: RiskAlertRendering.MessageBar,
             status: HealthStatus.Warning
         }

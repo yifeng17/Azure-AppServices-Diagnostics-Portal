@@ -17,7 +17,6 @@ import { Globals } from "../../globals";
 
 export class RiskAlertService {
     public riskAlertsSub: BehaviorSubject<RiskAlertConfig[]> = new BehaviorSubject<RiskAlertConfig[]>([]);
-    public riskAlertPanelId: BehaviorSubject<String> = new BehaviorSubject<String>("");
     public riskPanelContentsSub: BehaviorSubject<any> = new BehaviorSubject<any>(null);
     risks: {} = {};
     riskAlertNotifications: {} = {};
@@ -90,7 +89,7 @@ export class RiskAlertService {
                 {
                     showEmergingIssue: false,
                     id: notificationConfig.riskAlertDetectorId,
-                    title: notificationConfig.title,
+                    panelTitle: notificationConfig.title,
                     status: notificationConfig.overrideStatus ? notificationConfig.overrideStatus : HealthStatus.Info,
                     linkText: "Click here to view more details",
                 } as NotificationMessageBar;
