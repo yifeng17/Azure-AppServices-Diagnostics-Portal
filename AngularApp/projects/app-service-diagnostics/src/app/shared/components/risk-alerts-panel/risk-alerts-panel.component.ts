@@ -49,7 +49,7 @@ export class RiskAlertsPanelComponent implements OnInit {
         this._riskAlertService.riskPanelContentsSub.subscribe((risksPanelContents) => {
             this.riskPanelContents = risksPanelContents;
             this._riskAlertService.currentRiskPanelContentIdSub.subscribe((currentRiskAlertDetectorId) => {
-                this.riskPanelTitle = this._riskAlertService.risks && this._riskAlertService.risks.hasOwnProperty(currentRiskAlertDetectorId) ? this._riskAlertService.risks[currentRiskAlertDetectorId].title + " risk alerts" : this._riskAlertService.emergingNotificationMessageBar && this._riskAlertService.emergingNotificationMessageBar.panelTitle ? this._riskAlertService.emergingNotificationMessageBar.panelTitle : this.riskPanelTitle;
+                this.riskPanelTitle = this._riskAlertService.risks && this._riskAlertService.risks.hasOwnProperty(currentRiskAlertDetectorId) ? this._riskAlertService.risks[currentRiskAlertDetectorId].title + " risk alerts" : this._riskAlertService.notificationMessageBar && this._riskAlertService.notificationMessageBar.panelTitle ? this._riskAlertService.notificationMessageBar.panelTitle : this.riskPanelTitle;
                 this.currentRiskPanelContentId = currentRiskAlertDetectorId;
             });
         });

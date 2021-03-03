@@ -16,7 +16,7 @@ export class ArmResourceConfig {
     quickLinks?: string[];
     keystoneDetectorId?: string;
     riskAlertConfigs?: RiskAlertConfig[];
-    notificationConfig?: RiskAlertConfig;
+    notificationConfig?: NotificationConfig;
 }
 
 export interface ArmApiConfig {
@@ -45,15 +45,16 @@ export interface LiabilityCheckConfig {
     isLiabilityCheckEnabled?: boolean;
 }
 
-export class RiskAlertConfig {
+export class baseNotificationConfig {
     title: string;
-    riskAlertDetectorId: string;
     enableForCaseSubmissionFlow?: boolean = true;
-    renderingType?: RiskAlertRendering =  RiskAlertRendering.Card;
-    overrideStatus?: HealthStatus = HealthStatus.Info
 }
 
-export enum RiskAlertRendering {
-    Card = 0,
-    MessageBar = 1
+export class RiskAlertConfig extends baseNotificationConfig {
+    riskAlertDetectorId: string;
+}
+
+export class NotificationConfig extends baseNotificationConfig {
+    notificationId: string;
+    notificationPanelTitle?: string = "Notifications";
 }

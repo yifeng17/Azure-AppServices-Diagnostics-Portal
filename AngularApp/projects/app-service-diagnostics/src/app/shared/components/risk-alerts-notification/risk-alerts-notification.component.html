@@ -1,7 +1,7 @@
-<ng-container *ngIf="showEmergingNotification">
+<ng-container *ngIf="showNotification">
   <fab-message-bar [messageBarType]="type" isMultiline="false" dismissButtonAriaLabel="Close" [truncated]="true"
-    [styles]="styles" overflowButtonAriaLabel="See more">{{_riskAlertService.emergingNotificationMessageBar.notificationMessage}} <a
-      (click)="openRiskAlertsPanel(_riskAlertService.emergingNotificationMessageBar.id)">View more details</a>.
+    [styles]="styles" overflowButtonAriaLabel="See more">{{_riskAlertService.notificationMessageBar.notificationMessage}} <a
+      (click)="openRiskAlertsPanel(_riskAlertService.notificationMessageBar.id)">View more details</a>.
   </fab-message-bar>
 </ng-container>
 

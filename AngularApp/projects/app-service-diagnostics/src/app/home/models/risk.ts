@@ -14,12 +14,12 @@ export interface RiskTile {
 }
 
 export interface NotificationMessageBar {
-    showEmergingIssue: boolean;
     id: string;
     panelTitle: string;
-    notificationMessage: string;
-    status: HealthStatus,
-    linkText: string;
+    showNotification: boolean;
+    notificationMessage?: string;
+    status?: HealthStatus;
+    linkText?: string;
 }
 
 export interface RiskInfo {

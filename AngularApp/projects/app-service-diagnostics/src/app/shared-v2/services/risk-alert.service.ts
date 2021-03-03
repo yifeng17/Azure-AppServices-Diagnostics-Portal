@@ -3,7 +3,7 @@ import { DetectorResponse, HealthStatus, LoadingStatus, Rendering, RenderingType
 import { DiagnosticService, DetectorControlService, TelemetryEventNames, TelemetrySource } from 'diagnostic-data';
 import { BehaviorSubject, forkJoin, Observable, observable } from "rxjs";
 import { NotificationMessageBar, RiskHelper, RiskInfo, RiskTile } from "../../home/models/risk";
-import { ArmResourceConfig, RiskAlertConfig } from "../../shared/models/arm/armResourceConfig";
+import { ArmResourceConfig, RiskAlertConfig, NotificationConfig } from "../../shared/models/arm/armResourceConfig";
 import { GenericArmConfigService } from "../../shared/services/generic-arm-config.service";
 import { FeatureService } from "./feature.service";
 import { delay, map } from 'rxjs/operators';
@@ -24,10 +24,9 @@ export class RiskAlertService {
     currentRiskPanelContentId: string = "";
     currentRiskPanelContentIdSub: BehaviorSubject<string> = new BehaviorSubject<string>("");
     riskAlertConfigs: RiskAlertConfig[];
-    riskNotificationConfig: RiskAlertConfig;
     notificationStatus: HealthStatus = HealthStatus.Info;
     caseSubmissionRiskNotificationId: string = "";
-    emergingNotificationMessageBar: NotificationMessageBar = null;
+    notificationMessageBar: NotificationMessageBar = null;
 
     constructor(protected _featureService: FeatureService, protected _diagnosticService: DiagnosticService, protected _detectorControlService: DetectorControlService, protected _telemetryService: TelemetryService, protected globals: Globals, protected _genericArmConfigService?: GenericArmConfigService) { }
 
@@ -38,7 +37,7 @@ export class RiskAlertService {
         }
     }
 
-    public _addRiskAlertDetectorIds(riskAlertConfigs: RiskAlertConfig[], notificationConfig?: RiskAlertConfig) {
+    public _addRiskAlertDetectorIds(riskAlertConfigs: RiskAlertConfig[], notificationConfig?: NotificationConfig) {
 
         if (riskAlertConfigs != null && riskAlertConfigs.length > 0) {
             //Filter out duplicate links
@@ -48,7 +47,6 @@ export class RiskAlertService {
             }
             const riskAlertsArray = Array.from(riskConfigSet);
             this.riskAlertConfigs = riskAlertsArray;
-            this.riskNotificationConfig = notificationConfig;
 
             this.riskAlertConfigs.forEach(riskAlertConfig => {
                 let newRiskTile: RiskTile
@@ -83,25 +81,25 @@ export class RiskAlertService {
             });
         }
 
-        if (notificationConfig != null && !!notificationConfig.riskAlertDetectorId && !!notificationConfig.title) {
-            this.emergingNotificationMessageBar
+        if (notificationConfig != null && !!notificationConfig.notificationId && !!notificationConfig.title) {
+            this.notificationMessageBar
                 =
                 {
-                    showEmergingIssue: false,
-                    id: notificationConfig.riskAlertDetectorId,
+                    showNotification: false,
+                    id: notificationConfig.notificationId,
                     panelTitle: notificationConfig.title,
-                    status: notificationConfig.overrideStatus ? notificationConfig.overrideStatus : HealthStatus.Info,
+                    status: HealthStatus.Info,
                     linkText: "Click here to view more details",
                 } as NotificationMessageBar;
         }
     }
 
-    public getRiskAlertNotificationResponse(): Observable<any[]> {
+    public getRiskAlertNotificationResponse(isInCaseSubmissionFlow: boolean = false): Observable<any[]> {
         try {
-            if (this.riskAlertConfigs == null || this.emergingNotificationMessageBar == null)
+            if (this.riskAlertConfigs == null && this.notificationMessageBar == null)
                 return;
 
-            let tasks = this.riskAlertConfigs.filter(config => config.enableForCaseSubmissionFlow != null && config.enableForCaseSubmissionFlow === true).map(riskAlertConfig => {
+            let tasks = this.riskAlertConfigs.filter(config => !isInCaseSubmissionFlow || isInCaseSubmissionFlow && config.enableForCaseSubmissionFlow != null && config.enableForCaseSubmissionFlow === true).map(riskAlertConfig => {
                 let riskAlertObservable = this._diagnosticService.getDetector(riskAlertConfig.riskAlertDetectorId, this._detectorControlService.startTimeString, this._detectorControlService.endTimeString).pipe(map(
                     res => {
                         const notificationList = res.dataset.filter(set => (<Rendering>set.renderingProperties).type === RenderingType.Notification);
@@ -131,20 +129,34 @@ export class RiskAlertService {
                 return riskAlertObservable;
             });
 
-            if (!!this.emergingNotificationMessageBar && !!this.emergingNotificationMessageBar.id) {
+            if (!!this.notificationMessageBar && !!this.notificationMessageBar.id) {
 
-                let notificationObservable = this._diagnosticService.getDetector(this.emergingNotificationMessageBar.id, this._detectorControlService.startTimeString, this._detectorControlService.endTimeString).pipe(map(
+                let notificationObservable = this._diagnosticService.getDetector(this.notificationMessageBar.id, this._detectorControlService.startTimeString, this._detectorControlService.endTimeString).pipe(map(
                     res => {
                         if (res != null && res.metadata != null && res.dataset != null)
                         {
-                            this.emergingNotificationMessageBar.title = res.metadata.description ? res.metadata.description : this.emergingNotificationMessageBar.title;
                             const notificationList = res.dataset.filter(set => (<Rendering>set.renderingProperties).type === RenderingType.Notification);
                             notificationList.filter((notification) => NotificationUtils.isTimeRangeValidated(notification));
-                            this.emergingNotificationMessageBar.showEmergingIssue = !(notificationList == null || notificationList.length === 0) ? true : false;
-                            const statusColumnIndex = 0;
-                            notificationList.sort((s1, s2) => HealthStatus[<string>s1.table.rows[0][statusColumnIndex]] - HealthStatus[<string>s2.table.rows[0][statusColumnIndex]]);
-                            res.dataset = notificationList;
-                            this.risksPanelContents[this.emergingNotificationMessageBar.id] = res;
+
+                            if (notificationList != null && notificationList.length !== 0)
+                            {
+                                this.notificationMessageBar.panelTitle = res.metadata.description ? res.metadata.description : this.notificationMessageBar.panelTitle;
+                                this.notificationMessageBar.showNotification = true;
+
+                                const statusColumnIndex = 0;
+                                notificationList.sort((s1, s2) => HealthStatus[<string>s1.table.rows[0][statusColumnIndex]] - HealthStatus[<string>s2.table.rows[0][statusColumnIndex]]);
+                                let notificationMessageStatus = HealthStatus.Info;
+                                if (notificationList[0] != null && notificationList[0].table != null && notificationList[0].table.rows != null && notificationList[0].table.rows.length > 0)
+                                {
+                                    notificationMessageStatus = HealthStatus[<string>notificationList[0].table.rows[0][0]];
+                                }
+                                res.dataset = notificationList;
+                                this.risksPanelContents[this.notificationMessageBar.id] = res;
+                            }
+                            else
+                            {
+                                this.notificationMessageBar.showNotification = false;
+                            }
                         }
                     }));
 
@@ -153,52 +165,6 @@ export class RiskAlertService {
 
             return forkJoin(tasks);
 
-        }
-        catch (err) {
-            this._telemetryService.logEvent("RiskAlertResponseFailed", { "error": JSON.stringify(err) });
-        }
-    }
-
-    public getRiskAlertResponse(): Observable<any[]> {
-        try {
-            let tasks = this.riskAlertConfigs.map(riskAlertConfig => {
-                let riskAlertObservable = this._diagnosticService.getDetector(riskAlertConfig.riskAlertDetectorId, this._detectorControlService.startTimeString, this._detectorControlService.endTimeString).pipe(map(
-                    res => {
-                        const notificationList = res.dataset.filter(set => (<Rendering>set.renderingProperties).type === RenderingType.Notification);
-
-                        const statusColumnIndex = 0;
-                        notificationList.sort((s1, s2) => HealthStatus[<string>s1.table.rows[0][statusColumnIndex]] - HealthStatus[<string>s2.table.rows[0][statusColumnIndex]]);
-
-                        res.dataset = notificationList;
-                        if (this.risks.hasOwnProperty(riskAlertConfig.riskAlertDetectorId)) {
-                            this.risks[riskAlertConfig.riskAlertDetectorId].riskInfo = RiskHelper.convertResponseToRiskInfo(res);
-                            this.risks[riskAlertConfig.riskAlertDetectorId].loadingStatus = LoadingStatus.Success;
-                        }
-
-                        this.risksPanelContents[riskAlertConfig.riskAlertDetectorId] = res;
-                    }));
-
-                return riskAlertObservable;
-
-            });
-
-            if (!!this.emergingNotificationMessageBar && !!this.emergingNotificationMessageBar.id) {
-
-                let notificationObservable = this._diagnosticService.getDetector(this.emergingNotificationMessageBar.id, this._detectorControlService.startTimeString, this._detectorControlService.endTimeString).pipe(map(
-                    res => {
-                        const notificationList = res.dataset.filter(set => (<Rendering>set.renderingProperties).type === RenderingType.Notification);
-                        notificationList.filter((notification) => NotificationUtils.isTimeRangeValidated(notification));
-                        const statusColumnIndex = 0;
-                        notificationList.sort((s1, s2) => HealthStatus[<string>s1.table.rows[0][statusColumnIndex]] - HealthStatus[<string>s2.table.rows[0][statusColumnIndex]]);
-
-                        res.dataset = notificationList;
-                        this.risksPanelContents[this.emergingNotificationMessageBar.id] = res;
-                    }));
-
-                tasks.push(notificationObservable);
-            }
-
-            return forkJoin(tasks);
         }
         catch (err) {
             this._telemetryService.logEvent("RiskAlertResponseFailed", { "error": JSON.stringify(err) });

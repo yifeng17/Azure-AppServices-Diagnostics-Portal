@@ -29,7 +29,7 @@ export class SupportTopicRedirectComponent implements OnInit {
     //     }
     //   });
 
-    this._riskAlertService.getRiskAlertNotificationResponse().subscribe((res)=>{
+    this._riskAlertService.getRiskAlertNotificationResponse(true).subscribe((res)=>{
         this._riskAlertService.riskPanelContentsSub.next(this._riskAlertService.risksPanelContents);
     });
     });

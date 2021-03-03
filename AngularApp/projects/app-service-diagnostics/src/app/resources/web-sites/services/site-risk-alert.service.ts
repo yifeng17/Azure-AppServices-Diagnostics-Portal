@@ -3,7 +3,7 @@ import { DetectorResponse, HealthStatus, LoadingStatus, Rendering, TelemetryServ
 import { DiagnosticService, DetectorControlService, TelemetryEventNames, TelemetrySource } from 'diagnostic-data';
 import { BehaviorSubject, forkJoin, Observable, observable } from "rxjs";
 import { RiskHelper, RiskInfo, RiskTile } from "../../../home/models/risk";
-import { RiskAlertConfig, RiskAlertRendering } from "../../../shared/models/arm/armResourceConfig";
+import { RiskAlertConfig } from "../../../shared/models/arm/armResourceConfig";
 import { GenericArmConfigService } from "../../../shared/services/generic-arm-config.service";
 import { FeatureService } from "../../../shared-v2/services/feature.service";
 import { Globals } from "../../../globals";
@@ -81,12 +81,11 @@ export class SiteRiskAlertService extends RiskAlertService {
             title: "Notifications",
             riskAlertDetectorId: "webappemergingnotification",
             enableForCaseSubmissionFlow: true,
-            renderingType: RiskAlertRendering.MessageBar,
             status: HealthStatus.Warning
         }
         ;
 
-    // This is to show emerging platform level notification that we want to inform customers.
+    // This is to show platform level notification that we want to inform customers.
     private _siteRiskNotificationMessageConfig: SiteFilteredItem<RiskAlertConfig>[] = [
         {
             appType: AppType.WebApp,

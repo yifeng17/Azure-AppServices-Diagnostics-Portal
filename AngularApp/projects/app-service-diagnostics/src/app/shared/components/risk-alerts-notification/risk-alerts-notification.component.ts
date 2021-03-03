@@ -21,7 +21,7 @@ import { AuthService } from '../../../startup/services/auth.service';
 export class RiskAlertsNotificationComponent implements OnInit {
     @Input() isKeystoneSolutionView: boolean = false;
     showRiskAlertsNotification: boolean = false;
-    showEmergingNotification: boolean = false;
+    showNotification: boolean = false;
     type: MessageBarType = MessageBarType.severeWarning;
     riskAlertChecksHealthy: boolean = false;
     reliabilityChecksResults: any = {};
@@ -55,7 +55,7 @@ export class RiskAlertsNotificationComponent implements OnInit {
                 this.showRiskAlertsNotification = (startupInfo.supportTopicId && startupInfo.supportTopicId != '' && !this.riskAlertChecksHealthy && !this.isKeystoneSolutionView);
 
                 // This is to determine whether we want to show emerging issue notification bar.
-                this.showEmergingNotification = !!this._riskAlertService.emergingNotificationMessageBar && !!this._riskAlertService.emergingNotificationMessageBar.id && this._riskAlertService.emergingNotificationMessageBar.showEmergingIssue;
+                this.showNotification = !!this._riskAlertService.notificationMessageBar && !!this._riskAlertService.notificationMessageBar.id && this._riskAlertService.notificationMessageBar.showNotification;
             });
         }, e => {
             this.telemetryService.logEvent("RiskNotificationLoadingFailure", { "error": JSON.stringify(e) });
@@ -67,8 +67,8 @@ export class RiskAlertsNotificationComponent implements OnInit {
         if (this.showRiskAlertsNotification) {
             this.telemetryService.logPageView(TelemetryEventNames.RiskAlertNotificationLoaded,
                 {
-                    "showEmergingNotification": this.showEmergingNotification.toString(),
-                    "emergingNotificationId": !!this._riskAlertService.emergingNotificationMessageBar && !!this._riskAlertService.emergingNotificationMessageBar.id ? this._riskAlertService.emergingNotificationMessageBar.id : "",
+                    "showNotification": this.showNotification.toString(),
+                    "notificationId": !!this._riskAlertService.notificationMessageBar && !!this._riskAlertService.notificationMessageBar.id ? this._riskAlertService.notificationMessageBar.id : "",
                     "showRiskAlertsNotification": this.showRiskAlertsNotification.toString(),
                     "RiskNotificationId": this.notificationId,
                     "RiskNotificationMessage": this.notificationMessage,

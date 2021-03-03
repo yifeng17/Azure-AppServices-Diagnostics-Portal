@@ -195,8 +195,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
         if (!this._detectorControlService.startTime) {
             this._detectorControlService.setDefault();
         }
-       this.showRiskNotificationMessage = !!this._riskAlertService.emergingNotificationMessageBar && !!this._riskAlertService.emergingNotificationMessageBar.id && this._riskAlertService.emergingNotificationMessageBar.showEmergingIssue;
-        this._riskAlertService.getRiskAlertResponse().subscribe(()=>
+       this.showRiskNotificationMessage = !!this._riskAlertService.notificationMessageBar && !!this._riskAlertService.notificationMessageBar.id && this._riskAlertService.notificationMessageBar.showNotification;
+        this._riskAlertService.getRiskAlertNotificationResponse().subscribe(()=>
         {
             this._riskAlertService.riskPanelContentsSub.next(this._riskAlertService.risksPanelContents);
         });
