@@ -81,12 +81,12 @@ export class RiskAlertService {
             });
         }
 
-        if (notificationConfig != null && !!notificationConfig.notificationId && !!notificationConfig.title) {
+        if (notificationConfig != null && !!notificationConfig.notificationDetectorId && !!notificationConfig.title) {
             this.notificationMessageBar
                 =
                 {
                     showNotification: false,
-                    id: notificationConfig.notificationId,
+                    id: notificationConfig.notificationDetectorId,
                     panelTitle: notificationConfig.title,
                     status: HealthStatus.Info,
                     linkText: "Click here to view more details",

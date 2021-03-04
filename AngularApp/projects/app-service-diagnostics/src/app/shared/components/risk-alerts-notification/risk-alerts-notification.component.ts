@@ -25,8 +25,8 @@ export class RiskAlertsNotificationComponent implements OnInit {
     type: MessageBarType = MessageBarType.severeWarning;
     riskAlertChecksHealthy: boolean = false;
     reliabilityChecksResults: any = {};
-    notificationId: string = "";
-    notificationMessage: string = "We detected missing configurations in your application that will increase risk of a downtime.";
+    riskAlertDetectorId: string = "";
+    riskAlertMessage: string = "We detected missing configurations in your application that will increase risk of a downtime.";
     styles: IMessageBarStyles = {
         root: {
             height: '49px',
@@ -50,8 +50,8 @@ export class RiskAlertsNotificationComponent implements OnInit {
                 // 3. No keystone solution is presented
 
                 this.riskAlertChecksHealthy = this._riskAlertService.notificationStatus >= HealthStatus.Info;
-                this.notificationId = this._riskAlertService.caseSubmissionRiskNotificationId;
-                this.notificationMessage = this._riskAlertService.riskAlertNotifications && this._riskAlertService.riskAlertNotifications.hasOwnProperty(this._riskAlertService.caseSubmissionRiskNotificationId) ? this._riskAlertService.riskAlertNotifications[this._riskAlertService.caseSubmissionRiskNotificationId].notificationMessage : this.notificationMessage;
+                this.riskAlertDetectorId = this._riskAlertService.caseSubmissionRiskNotificationId;
+                this.riskAlertMessage = this._riskAlertService.riskAlertNotifications && this._riskAlertService.riskAlertNotifications.hasOwnProperty(this._riskAlertService.caseSubmissionRiskNotificationId) ? this._riskAlertService.riskAlertNotifications[this._riskAlertService.caseSubmissionRiskNotificationId].notificationMessage : this.riskAlertMessage;
                 this.showRiskAlertsNotification = (startupInfo.supportTopicId && startupInfo.supportTopicId != '' && !this.riskAlertChecksHealthy && !this.isKeystoneSolutionView);
 
                 // This is to determine whether we want to show emerging issue notification bar.
@@ -67,11 +67,11 @@ export class RiskAlertsNotificationComponent implements OnInit {
         if (this.showRiskAlertsNotification) {
             this.telemetryService.logPageView(TelemetryEventNames.RiskAlertNotificationLoaded,
                 {
-                    "showNotification": this.showNotification.toString(),
-                    "notificationId": !!this._riskAlertService.notificationMessageBar && !!this._riskAlertService.notificationMessageBar.id ? this._riskAlertService.notificationMessageBar.id : "",
-                    "showRiskAlertsNotification": this.showRiskAlertsNotification.toString(),
-                    "RiskNotificationId": this.notificationId,
-                    "RiskNotificationMessage": this.notificationMessage,
+                    "ShowNotification": this.showNotification.toString(),
+                    "NotificationDetectorId": this.showNotification ? this._riskAlertService.notificationMessageBar.id : "",
+                    "ShowRiskAlertsNotification": this.showRiskAlertsNotification.toString(),
+                    "riskAlertDetectorId": this.riskAlertDetectorId,
+                    "RiskAlertMessage": this.riskAlertMessage,
                 });
         }
     }
@@ -81,7 +81,7 @@ export class RiskAlertsNotificationComponent implements OnInit {
         this._riskAlertService.currentRiskPanelContentIdSub.next(id);
         this.telemetryService.logEvent(TelemetryEventNames.OpenRiskAlertPanel, {
             'Location': TelemetrySource.CaseSubmissionFlow,
-            "NotificationId": id
+            "notificationDetectorId": id
         });
     }
 }

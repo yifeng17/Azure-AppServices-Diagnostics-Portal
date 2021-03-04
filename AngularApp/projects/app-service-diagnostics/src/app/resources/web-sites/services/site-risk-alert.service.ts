@@ -3,7 +3,7 @@ import { DetectorResponse, HealthStatus, LoadingStatus, Rendering, TelemetryServ
 import { DiagnosticService, DetectorControlService, TelemetryEventNames, TelemetrySource } from 'diagnostic-data';
 import { BehaviorSubject, forkJoin, Observable, observable } from "rxjs";
 import { RiskHelper, RiskInfo, RiskTile } from "../../../home/models/risk";
-import { RiskAlertConfig } from "../../../shared/models/arm/armResourceConfig";
+import { NotificationConfig, RiskAlertConfig } from "../../../shared/models/arm/armResourceConfig";
 import { GenericArmConfigService } from "../../../shared/services/generic-arm-config.service";
 import { FeatureService } from "../../../shared-v2/services/feature.service";
 import { Globals } from "../../../globals";
@@ -77,16 +77,14 @@ export class SiteRiskAlertService extends RiskAlertService {
     ];
 
     private _webAppNotificationMessageConfig =
-        {
-            title: "Notifications",
-            riskAlertDetectorId: "webappemergingnotification",
-            enableForCaseSubmissionFlow: true,
-            status: HealthStatus.Warning
-        }
-        ;
+    {
+        title: "Notifications",
+        notificationDetectorId: "webappemergingnotification",
+        enableForCaseSubmissionFlow: true,
+    };
 
     // This is to show platform level notification that we want to inform customers.
-    private _siteRiskNotificationMessageConfig: SiteFilteredItem<RiskAlertConfig>[] = [
+    private _siteRiskNotificationMessageConfig: SiteFilteredItem<NotificationConfig>[] = [
         {
             appType: AppType.WebApp,
             platform: OperatingSystem.windows,
@@ -102,7 +100,7 @@ export class SiteRiskAlertService extends RiskAlertService {
         const riskAlertConfigs = this._websiteFilter.transform(this._siteRiskAlertConfigs);
         const notificationConfigs = this._websiteFilter.transform(this._siteRiskNotificationMessageConfig);
         let siteRiskAlertConfigs: RiskAlertConfig[] = [];
-        let siteNotificationConfig: RiskAlertConfig = null;
+        let siteNotificationConfig: NotificationConfig = null;
         for (const riskAlertConfig of riskAlertConfigs) {
             siteRiskAlertConfigs = siteRiskAlertConfigs.concat(riskAlertConfig);
         }

@@ -7,7 +7,7 @@
 
 <ng-container *ngIf="showRiskAlertsNotification">
   <fab-message-bar [messageBarType]="type" isMultiline="false" dismissButtonAriaLabel="Close" [truncated]="true"
-    [styles]="styles" overflowButtonAriaLabel="See more">{{notificationMessage}} <a
+    [styles]="styles" overflowButtonAriaLabel="See more">{{riskAlertMessage}} <a
       (click)="openRiskAlertsPanel(_riskAlertService.caseSubmissionRiskNotificationId)">View more details</a>.
   </fab-message-bar>
 </ng-container>
