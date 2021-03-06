@@ -202,7 +202,7 @@ enum checkResultLevel {
     pending,
     loading,
     error,
-    unav
+    hidden
 }
 
 enum interactiveCheckType {

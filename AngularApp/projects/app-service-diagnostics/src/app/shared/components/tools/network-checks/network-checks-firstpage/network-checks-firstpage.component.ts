@@ -8,6 +8,7 @@ import { HealthStatus, LoadingStatus, TelemetryService } from 'diagnostic-data';
 import { DiagProvider, OutboundType } from '../diag-provider';
 import { Globals } from 'projects/app-service-diagnostics/src/app/globals';
 import { CheckManager } from '../check-manager';
+import { CheckStepView, DropdownStepView, InfoStepView, Step, StepFlowManager, StepView, StepViewContainer, StepViewType } from '../step-view-lib';
 //import { MarkdownTextComponent } from 'projects/diagnostic-data/src/lib/components/markdown-text/markdown-text.component';
 
 
@@ -29,13 +30,42 @@ export class NetworkCheckFirstPageComponent implements OnInit {
 
     title: string = 'Network Checking Tool';
     description: string = 'Checking VNet integration status...';
+    stepFlowManager:StepFlowManager;
+    stepViews: StepViewContainer[] = [];
 
     vnetIntegrationDetected = null;
     openFeedback = false;
     //checks: any[];
 
     constructor(private _siteService: SiteService, private _armService: ArmService, private _telemetryService: TelemetryService, private _globals:Globals) {
+        var testStep: Step = {
+            id: "testStep",
+            title: "test",
+            async run(){
+                return  new CheckStepView({
+                    id: "Test",
+                    type: StepViewType.check,
+                    title: "test123",
+                    level: 0
+                });
+            }
+        };
 
+        var testStep2: Step = {
+            id: "testInfo",
+            title: "test",
+            async run(){
+                return  new InfoStepView({
+                    id: "Test",
+                    infoType: 0,
+                    type: StepViewType.info,
+                    title: "test234",
+                    markdown: "# Test\r\n\r\n123123",
+                    next: testStep.run()
+                });
+            },
+        };
+        this.stepFlowManager = new StepFlowManager([testStep, testStep2], this.stepViews);
         var siteInfo = this._siteService.currentSiteMetaData.value;
         var fullSiteName = siteInfo.siteName + (siteInfo.slot == "" ? "" : "-" + siteInfo.slot);
         var siteInfoPlus = { ...this._siteService.currentSiteMetaData.value, ...this._siteService.currentSite.value, fullSiteName, siteVnetInfo:null };
