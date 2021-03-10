@@ -24,21 +24,19 @@ export class RiskTileComponent implements OnInit {
     }
 
     @Input() riskAlertConfig: RiskAlertConfig;
-    risk: RiskTile;
+    riskTile: RiskTile;
     constructor(private telemetryService: TelemetryService, private _riskAlertService: RiskAlertService, public globals: Globals) { }
 
 
     ngOnInit() {
         this.title = this.riskAlertConfig.title;
         this._riskAlertService.riskPanelContentsSub.subscribe((riskAlertContents) => {
-            this.risk = this._riskAlertService.risks[this.riskAlertConfig.riskAlertDetectorId];
+            this.riskTile = this._riskAlertService.riskAlertNotifications[this.riskAlertConfig.riskAlertDetectorId];
             this.riskProperties["Title"] = this.title;
-            this.linkText = this.risk.linkText;
-            this.showTile = this.risk.showTile;
+            this.linkText = this.riskTile.linkText;
 
-            if (this.risk.riskInfo != null && Object.keys(this.risk.riskInfo).length > 0) {
-                this.infoList = this.processRiskInfo(this.risk.riskInfo);
-                this.loading = this.risk.loadingStatus;
+            if (this.riskTile.riskInfo != null && Object.keys(this.riskTile.riskInfo).length > 0) {
+                this.infoList = this.processRiskInfo(this.riskTile.riskInfo);
             }
             else {
                 this.infoList = [
@@ -47,16 +45,17 @@ export class RiskTileComponent implements OnInit {
                         status: HealthStatus.Info
                     }
                 ];
-                this.loading = this.risk.loadingStatus;
             }
+
+            this.loading = this.riskTile.loadingStatus;
+            this.riskProperties["TileLoaded"] = LoadingStatus[this.loading];
+            this.riskProperties["InfoList"] = JSON.stringify(this.infoList);
         });
 
     }
 
     ngAfterViewInit() {
-        if (this.showTile) {
-            this.logEvent(TelemetryEventNames.RiskTileLoaded, {});
-        }
+        this.logEvent(TelemetryEventNames.RiskTileLoaded);
     }
 
     clickTileHandler() {

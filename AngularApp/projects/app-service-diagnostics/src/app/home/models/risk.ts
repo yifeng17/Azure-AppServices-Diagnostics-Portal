@@ -7,10 +7,10 @@ import { Observable } from "rxjs";
 export interface RiskTile {
     id: string;
     title: string;
-    linkText: string;
     riskInfo: RiskInfo;
     loadingStatus: LoadingStatus;
-    showTile: boolean;
+    enableForCaseSubmissionFlow?: boolean;
+    linkText?: string;
 }
 
 export interface NotificationMessageBar {
@@ -27,36 +27,22 @@ export interface RiskInfo {
 }
 
 export class RiskHelper {
-    public static convertToRiskInfo(info: any): RiskInfo {
-        let riskInfo: RiskInfo = {};
-        const keys = Object.keys(info);
-        for (let key of keys) {
-            const type = info[key].messageType;
-            if (type !== undefined && type !== null) {
-                let status = this.convertMessageTypeToHealthStatus(type);
-                riskInfo[key] = status;
-            }
-        }
-        return riskInfo;
-    }
+    public static convertHealthStatusToMessageType(healthStatus: HealthStatus): MessageBarType {
+        switch (healthStatus) {
+            case HealthStatus.Critical:
+                return MessageBarType.error;
 
-    private static convertMessageTypeToHealthStatus(messageBarType: MessageBarType): HealthStatus {
-        switch (messageBarType) {
-            case MessageBarType.severeWarning:
-            case MessageBarType.error:
-                return HealthStatus.Critical;
+            case HealthStatus.Warning:
+                return MessageBarType.severeWarning;
 
-            case MessageBarType.warning:
-                return HealthStatus.Warning;
+            case HealthStatus.Info:
+                return MessageBarType.info;
 
-            case MessageBarType.info:
-                return HealthStatus.Info;
-
-            case MessageBarType.success:
-                return HealthStatus.Success;
+            case HealthStatus.Success:
+                return MessageBarType.success;
 
             default:
-                return HealthStatus.Info;
+                return MessageBarType.info;
         }
     }
 

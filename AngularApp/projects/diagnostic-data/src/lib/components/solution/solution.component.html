@@ -57,5 +57,5 @@
 </ng-template>
 
 <ng-template #newSolution>
-  <div (click)="performAction()" type="button" class="custom-solution-button">{{solution.Title}}</div>
+  <div (click)="performAction()" type="button" class="custom-solution-button" tabindex="0" (keyup.enter)="performAction()">{{solution.Title}}</div>
 </ng-template>

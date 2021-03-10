@@ -18,7 +18,6 @@ import { Globals } from "../../globals";
 export class RiskAlertService {
     public riskAlertsSub: BehaviorSubject<RiskAlertConfig[]> = new BehaviorSubject<RiskAlertConfig[]>([]);
     public riskPanelContentsSub: BehaviorSubject<any> = new BehaviorSubject<any>(null);
-    risks: {} = {};
     riskAlertNotifications: {} = {};
     risksPanelContents = {};
     currentRiskPanelContentId: string = "";
@@ -49,35 +48,21 @@ export class RiskAlertService {
             this.riskAlertConfigs = riskAlertsArray;
 
             this.riskAlertConfigs.forEach(riskAlertConfig => {
-                let newRiskTile: RiskTile
-                    =
-                {
+                // RiskAlertNotification
+                let enableForCaseSubmission = riskAlertConfig.enableForCaseSubmissionFlow != null && riskAlertConfig.enableForCaseSubmissionFlow === true;
+                let notificationMessageDetail: RiskTile = {
                     id: riskAlertConfig.riskAlertDetectorId,
                     title: riskAlertConfig.title,
-                    linkText: "Click here to view more details",
                     riskInfo: null,
                     loadingStatus: LoadingStatus.Loading,
-                    showTile: this._isRiskAlertEnabled()
+                    linkText: "Click here to view more details",
+                    enableForCaseSubmissionFlow: enableForCaseSubmission
                 };
 
-                if (!this.risks.hasOwnProperty(riskAlertConfig.riskAlertDetectorId)) {
-                    this.risks[riskAlertConfig.riskAlertDetectorId] = newRiskTile;
+                if (!this.riskAlertNotifications.hasOwnProperty(riskAlertConfig.riskAlertDetectorId)) {
+                    this.riskAlertNotifications[riskAlertConfig.riskAlertDetectorId] = notificationMessageDetail;
                 }
-            });
 
-            this.riskAlertConfigs.forEach(RiskAlertConfig => {
-                if (RiskAlertConfig.enableForCaseSubmissionFlow != null && RiskAlertConfig.enableForCaseSubmissionFlow === true) {
-                    // RiskAlertNotification
-                    let notificationMessageDetail: any = {
-                        id: RiskAlertConfig.riskAlertDetectorId,
-                        riskInfo: null,
-                        loadingStatus: LoadingStatus.Loading
-                    };
-
-                    if (!this.riskAlertNotifications.hasOwnProperty(RiskAlertConfig.riskAlertDetectorId)) {
-                        this.riskAlertNotifications[RiskAlertConfig.riskAlertDetectorId] = notificationMessageDetail;
-                    }
-                }
             });
         }
 
@@ -133,28 +118,26 @@ export class RiskAlertService {
 
                 let notificationObservable = this._diagnosticService.getDetector(this.notificationMessageBar.id, this._detectorControlService.startTimeString, this._detectorControlService.endTimeString).pipe(map(
                     res => {
-                        if (res != null && res.metadata != null && res.dataset != null)
-                        {
+                        if (res != null && res.metadata != null && res.dataset != null) {
                             const notificationList = res.dataset.filter(set => (<Rendering>set.renderingProperties).type === RenderingType.Notification);
                             notificationList.filter((notification) => NotificationUtils.isTimeRangeValidated(notification));
 
-                            if (notificationList != null && notificationList.length !== 0)
-                            {
-                                this.notificationMessageBar.panelTitle = res.metadata.description ? res.metadata.description : this.notificationMessageBar.panelTitle;
+                            if (notificationList != null && notificationList.length !== 0) {
+                                this.notificationMessageBar.notificationMessage = res.metadata.description ? res.metadata.description : this.notificationMessageBar.notificationMessage;
                                 this.notificationMessageBar.showNotification = true;
 
                                 const statusColumnIndex = 0;
                                 notificationList.sort((s1, s2) => HealthStatus[<string>s1.table.rows[0][statusColumnIndex]] - HealthStatus[<string>s2.table.rows[0][statusColumnIndex]]);
                                 let notificationMessageStatus = HealthStatus.Info;
-                                if (notificationList[0] != null && notificationList[0].table != null && notificationList[0].table.rows != null && notificationList[0].table.rows.length > 0)
-                                {
+                                if (notificationList[0] != null && notificationList[0].table != null && notificationList[0].table.rows != null && notificationList[0].table.rows.length > 0) {
                                     notificationMessageStatus = HealthStatus[<string>notificationList[0].table.rows[0][0]];
                                 }
+
+                                this.notificationMessageBar.status = notificationMessageStatus;
                                 res.dataset = notificationList;
                                 this.risksPanelContents[this.notificationMessageBar.id] = res;
                             }
-                            else
-                            {
+                            else {
                                 this.notificationMessageBar.showNotification = false;
                             }
                         }

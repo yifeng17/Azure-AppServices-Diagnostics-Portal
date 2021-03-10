@@ -46,7 +46,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     searchPlaceHolder: string;
     providerRegisterUrl: string;
     quickLinkFeatures: Feature[] = [];
-    risks: {} = {};
+    riskAlertNotifications: {} = {};
     risksPanelContents={};
     currentRiskPanelContentId: string = null;
     riskAlertConfigs: RiskAlertConfig[];
@@ -201,7 +201,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
             this._riskAlertService.riskPanelContentsSub.next(this._riskAlertService.risksPanelContents);
         });
 
-        this.risks = this._riskAlertService.risks;
+        this.riskAlertNotifications = this._riskAlertService.riskAlertNotifications;
         this.riskAlertConfigs = this._riskAlertService.riskAlertConfigs;
         this.showRiskSection = this._isRiskAlertEnabled();
         this._telemetryService.logEvent("telemetry service logging", {});

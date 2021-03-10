@@ -6,8 +6,7 @@ import { MessageBarType, IMessageBarProps, IMessageBarStyles } from 'office-ui-f
 import { throwError } from 'rxjs';
 import { catchError, filter, map } from 'rxjs/operators';
 import { Globals } from '../../../globals';
-import { WebSitesService } from '../../../resources/web-sites/services/web-sites.service';
-import { NotificationService } from '../../../shared-v2/services/notification.service';
+import { RiskHelper } from '../../../home/models/risk';
 import { ResourceService } from '../../../shared-v2/services/resource.service';
 import { RiskAlertService } from '../../../shared-v2/services/risk-alert.service';
 import { AuthService } from '../../../startup/services/auth.service';
@@ -22,7 +21,10 @@ export class RiskAlertsNotificationComponent implements OnInit {
     @Input() isKeystoneSolutionView: boolean = false;
     showRiskAlertsNotification: boolean = false;
     showNotification: boolean = false;
-    type: MessageBarType = MessageBarType.severeWarning;
+    notificationMessageBarText: string = "There is an emerging issue going on which may impact availablity of your application.";
+    notificationMessageBarLinkText: string = "Click here to view more details";
+    notificationStatusType: MessageBarType = MessageBarType.severeWarning;
+    riskAlertNotificationStatusType: MessageBarType = MessageBarType.severeWarning;
     riskAlertChecksHealthy: boolean = false;
     reliabilityChecksResults: any = {};
     riskAlertDetectorId: string = "";
@@ -49,6 +51,7 @@ export class RiskAlertsNotificationComponent implements OnInit {
                 // 2. There is at least one risk check fails
                 // 3. No keystone solution is presented
 
+                this.riskAlertNotificationStatusType = RiskHelper.convertHealthStatusToMessageType(this._riskAlertService.notificationStatus);
                 this.riskAlertChecksHealthy = this._riskAlertService.notificationStatus >= HealthStatus.Info;
                 this.riskAlertDetectorId = this._riskAlertService.caseSubmissionRiskNotificationId;
                 this.riskAlertMessage = this._riskAlertService.riskAlertNotifications && this._riskAlertService.riskAlertNotifications.hasOwnProperty(this._riskAlertService.caseSubmissionRiskNotificationId) ? this._riskAlertService.riskAlertNotifications[this._riskAlertService.caseSubmissionRiskNotificationId].notificationMessage : this.riskAlertMessage;
@@ -56,6 +59,9 @@ export class RiskAlertsNotificationComponent implements OnInit {
 
                 // This is to determine whether we want to show emerging issue notification bar.
                 this.showNotification = !!this._riskAlertService.notificationMessageBar && !!this._riskAlertService.notificationMessageBar.id && this._riskAlertService.notificationMessageBar.showNotification;
+                this.notificationMessageBarText = !!this._riskAlertService.notificationMessageBar && this._riskAlertService.notificationMessageBar.notificationMessage ? this._riskAlertService.notificationMessageBar.notificationMessage : this.notificationMessageBarText;
+                this.notificationMessageBarLinkText = !!this._riskAlertService.notificationMessageBar && this._riskAlertService.notificationMessageBar.linkText ? this._riskAlertService.notificationMessageBar.linkText : this.notificationMessageBarLinkText;
+                this.notificationStatusType = RiskHelper.convertHealthStatusToMessageType(this._riskAlertService.notificationMessageBar.status);
             });
         }, e => {
             this.telemetryService.logEvent("RiskNotificationLoadingFailure", { "error": JSON.stringify(e) });
