@@ -62,7 +62,7 @@ namespace AppLensV3.Configuration
                 loggingBuilder.AddAzureWebAppDiagnostics();
                 loggingBuilder.AddFilter("System", LogLevel.Warning);
                 loggingBuilder.AddFilter("Microsoft", LogLevel.Warning);
-                loggingBuilder.AddFilter("StartupNationalCloud", LogLevel.Warning);
+                loggingBuilder.AddFilter("ApplensV3", LogLevel.Warning);
 
                 if (env.EnvironmentName.Contains("Development"))
                 {

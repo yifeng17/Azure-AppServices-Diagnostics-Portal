@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AppLensV3.Helpers;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace AppLensV3.Services.DiagnosticClientService
 {
@@ -20,6 +21,7 @@ namespace AppLensV3.Services.DiagnosticClientService
         private HttpClient _client { get; set; }
 
         private List<string> _nonPassThroughResourceProviderList { get; set; }
+        private ILogger _logger;
 
         public string AuthCertThumbprint
         {
@@ -65,11 +67,12 @@ namespace AppLensV3.Services.DiagnosticClientService
             }
         }
 
-        public DiagnosticClient(IConfiguration configuration)
+        public DiagnosticClient(IConfiguration configuration, ILogger<DiagnosticClient> logger)
         {
             _configuration = configuration;
             _client = InitializeClient();
             _nonPassThroughResourceProviderList = new List<string>() { "microsoft.web/sites", "microsoft.web/hostingenvironments" };
+            _logger = logger;
         }
 
         private HttpClient InitializeClient()
@@ -183,6 +186,7 @@ namespace AppLensV3.Services.DiagnosticClientService
                 response = await _client.SendAsync(requestMessage);
             }
 
+            _logger.LogInformation($"RuntimeHost URL: {path} StatusCode: {(response != null ? (int)response.StatusCode : 0)}");
             return response;
         }
 

@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using System.Net;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace AppLensV3
 {
@@ -36,9 +37,11 @@ namespace AppLensV3
         private const string DEFAULT_PUBLIC_AZURE_AAD_AUTHORITY = "https://login.microsoftonline.com/microsoft.onmicrosoft.com";
 
         private IConfiguration _configuration;
+        private ILogger _logger;
 
-        public SupportObserverClientService(IConfiguration configuration) {
+        public SupportObserverClientService(IConfiguration configuration, ILogger<SupportObserverClientService> logger) {
             _configuration = configuration;
+            _logger = logger;
         }
 
         /// <summary>
@@ -140,7 +143,7 @@ namespace AppLensV3
             request.Headers.Add("Authorization", await GetSupportObserverAccessToken());
             var response = await _httpClient.SendAsync(request);
 
-            ObserverResponse res = await CreateObserverResponse(response, "GetAdminSite");
+            ObserverResponse res = await CreateObserverResponse(response, "GetAdminSite", request);
             return res;
         }
 
@@ -161,7 +164,7 @@ namespace AppLensV3
             request.Headers.Add("Authorization", await GetSupportObserverAccessToken());
             var response = await _httpClient.SendAsync(request);
 
-            ObserverResponse res = await CreateObserverResponse(response, "GetResourceGroup(2.0)");
+            ObserverResponse res = await CreateObserverResponse(response, "GetResourceGroup(2.0)", request);
             return res;
         }
 
@@ -182,7 +185,7 @@ namespace AppLensV3
             request.Headers.Add("Authorization", await GetSupportObserverAccessToken());
             var response = await _httpClient.SendAsync(request);
 
-            ObserverResponse res = await CreateObserverResponse(response, "GetStamp");
+            ObserverResponse res = await CreateObserverResponse(response, "GetStamp", request);
             return res;
         }
 
@@ -198,7 +201,7 @@ namespace AppLensV3
             request.Headers.Add("Authorization", await GetSupportObserverAccessToken());
             var response = await _httpClient.SendAsync(request);
 
-            ObserverResponse res = await CreateObserverResponse(response, "GetHostingEnvironmentDetails(2.0)");
+            ObserverResponse res = await CreateObserverResponse(response, "GetHostingEnvironmentDetails(2.0)", request);
             return res;
         }
 
@@ -213,7 +216,7 @@ namespace AppLensV3
             request.Headers.Add("Authorization", await GetSupportObserverAccessToken());
             var response = await _httpClient.SendAsync(request);
 
-            ObserverResponse res = await CreateObserverResponse(response, "GetSitePostBody");
+            ObserverResponse res = await CreateObserverResponse(response, "GetSitePostBody", request);
             return res;
         }
 
@@ -228,11 +231,11 @@ namespace AppLensV3
             request.Headers.Add("Authorization", await GetSupportObserverAccessToken());
             var response = await _httpClient.SendAsync(request);
 
-            ObserverResponse res = await CreateObserverResponse(response, "GetHostingEnvironmentPostBody");
+            ObserverResponse res = await CreateObserverResponse(response, "GetHostingEnvironmentPostBody", request);
             return res;
         }
 
-        private async Task<ObserverResponse> CreateObserverResponse(HttpResponseMessage response, string apiName = "")
+        private async Task<ObserverResponse> CreateObserverResponse(HttpResponseMessage response, string apiName, HttpRequestMessage request)
         {
             var observerResponse = new ObserverResponse();
 
@@ -257,6 +260,8 @@ namespace AppLensV3
             {
                 observerResponse.Content = "Unable to fetch data from Observer API : " + apiName;
             }
+
+            _logger.LogInformation($"Observer URL: {request.RequestUri.AbsoluteUri} StatusCode: {(response != null ? (int)response.StatusCode : 0)}");
 
             return observerResponse;
         }
