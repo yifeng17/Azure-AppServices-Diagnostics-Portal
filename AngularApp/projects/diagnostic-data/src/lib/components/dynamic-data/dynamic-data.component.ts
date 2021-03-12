@@ -40,6 +40,7 @@ import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { DataTableV4Component } from '../data-table-v4/data-table-v4.component';
 import { KeystoneInsightComponent } from '../keystone-insight/keystone-insight.component';
 import { NotificationRenderingComponent } from '../notification-rendering/notification-rendering.component';
+import { FabTabComponent } from '../fab-tab/fab-tab.component';
 
 @Component({
   selector: 'dynamic-data',
@@ -49,7 +50,7 @@ import { NotificationRenderingComponent } from '../notification-rendering/notifi
     TimeSeriesGraphComponent, DataTableComponent, DataSummaryComponent, EmailComponent,
     InsightsComponent, TimeSeriesInstanceGraphComponent, DynamicInsightComponent, MarkdownViewComponent,
     DetectorListComponent, DropdownComponent, CardSelectionComponent, SolutionComponent, GuageControlComponent, FormComponent,
-    ChangeAnalysisOnboardingComponent, ChangesetsViewComponent, AppDependenciesComponent, AppInsightsMarkdownComponent, DetectorListAnalysisComponent, ConnectAppInsightsComponent, DetectorSearchComponent, SummaryCardsComponent, InsightsV4Component, DropdownV4Component, CardSelectionV4Component,DynamicInsightV4Component,DataTableV4Component, KeystoneInsightComponent, NotificationRenderingComponent
+    ChangeAnalysisOnboardingComponent, ChangesetsViewComponent, AppDependenciesComponent, AppInsightsMarkdownComponent, DetectorListAnalysisComponent, ConnectAppInsightsComponent, DetectorSearchComponent, SummaryCardsComponent, InsightsV4Component, DropdownV4Component, CardSelectionV4Component,DynamicInsightV4Component,DataTableV4Component, KeystoneInsightComponent, NotificationRenderingComponent, FabTabComponent
   ]
 })
 export class DynamicDataComponent implements OnInit {
@@ -137,6 +138,7 @@ export class DynamicDataComponent implements OnInit {
   }
 
   private _findInputComponent(type: RenderingType): any {
+    console.log(type);
     switch (type) {
       case RenderingType.TimeSeries:
         return TimeSeriesGraphComponent;
@@ -181,9 +183,11 @@ export class DynamicDataComponent implements OnInit {
       case RenderingType.AppInsightEnablement:
         return ConnectAppInsightsComponent;
       case RenderingType.KeystoneComponent:
-          return KeystoneInsightComponent;
+        return KeystoneInsightComponent;
       case RenderingType.Notification:
-            return NotificationRenderingComponent;
+        return NotificationRenderingComponent;
+      case RenderingType.Tab:
+        return FabTabComponent;
       default:
         return null;
     }

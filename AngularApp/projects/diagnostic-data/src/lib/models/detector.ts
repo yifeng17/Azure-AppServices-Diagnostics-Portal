@@ -111,7 +111,8 @@ export enum RenderingType {
     SearchComponent,
     AppInsightEnablement,
     KeystoneComponent,
-    Notification
+    Notification,
+    Tab,
 }
 
 export enum TimeSeriesType {
@@ -220,6 +221,12 @@ export interface DetectorListRendering extends Rendering {
 
 export interface MarkdownRendering extends Rendering {
     isContainerNeeded: boolean;
+}
+
+export interface TabRendering extends Rendering {
+    itemCount?: number;
+    icon: string;
+    needsAttention: boolean;
 }
 
 export interface RecommendedUtterance {
