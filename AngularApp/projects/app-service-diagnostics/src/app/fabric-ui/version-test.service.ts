@@ -36,7 +36,7 @@ export class VersionTestService {
                     this.initializedPortalVersion.next(this.isVnextSub && isVnextResourceType ? "v3" : "v2");
                     // The current expericence can still be override if customer click on the link to switch to a different version
                     const shouldUseLegacy = overrideValue !== 0 ? overrideValue === 1 : (!this.isVnextSub||!isVnextResourceType);
-                    this.isLegacySub.next(false);
+                    this.isLegacySub.next(shouldUseLegacy);
                     this.isVnextOnlyResource.next(isVnextOnlyResourceType);
                 });
             });
