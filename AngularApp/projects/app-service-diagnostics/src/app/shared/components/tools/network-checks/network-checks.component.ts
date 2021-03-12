@@ -247,7 +247,7 @@ export class NetworkCheckComponent implements OnInit {
         }
         this.diagProvider = this._globals.messagesData["NetworkCheckDiagProvider"];
         if (this.diagProvider == null) {
-            this.diagProvider = new DiagProvider(this.siteInfo, _armService);
+            this.diagProvider = new DiagProvider(this.siteInfo, _armService, _siteService);
         }
         this.loadChecksAsync();
         delay(10).then(() => this.feedbackReady = true);

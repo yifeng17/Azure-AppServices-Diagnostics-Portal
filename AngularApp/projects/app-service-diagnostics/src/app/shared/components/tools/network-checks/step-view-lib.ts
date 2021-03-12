@@ -1,10 +1,10 @@
 import { HealthStatus } from "diagnostic-data";
 
-export abstract class Step {
+export abstract class StepFlow {
     public id: string;
     public title: string;
-    public data?: any;
-    abstract run(): Promise<StepView>;
+    public description?: string;
+    abstract run(flowMgr: StepFlowManager):Promise<void>;
 }
 
 export enum StepViewType {
@@ -31,13 +31,11 @@ export class StepViewContainer {
 export abstract class StepView {
     public id: string;
     public type: StepViewType;
-    public next?: StepView|Promise<StepView>;
-    public hasNext? = false;
+    public hasNext?= false;
     public container?: StepViewContainer;
 
     constructor(view: StepView) {
         this.type = view.type;
-        this.next = view.next;
     }
 
     public update?(view: StepView) {
@@ -81,10 +79,10 @@ enum checkResultLevel {
     hidden
 }
 
-export class CheckStepView extends StepView{
-    public title:string;
-    public level:number;
-    public getStatus?():HealthStatus{
+export class CheckStepView extends StepView {
+    public title: string;
+    public level: number;
+    public getStatus?(): HealthStatus {
         return this._convertLevelToHealthStatus(this.level);
     }
     private _convertLevelToHealthStatus?(level: checkResultLevel): HealthStatus {
@@ -103,23 +101,23 @@ export class CheckStepView extends StepView{
         return HealthStatus.None;
     }
 
-    constructor(view:CheckStepView){
+    constructor(view: CheckStepView) {
         super(view);
         this.title = view.title;
         this.level = view.level;
     }
 }
 
-enum InfoType{
+enum InfoType {
     recommendation,
 }
 
-export class InfoStepView extends StepView{
-    public title:string;
-    public infoType:InfoType; 
-    public markdown:string;
+export class InfoStepView extends StepView {
+    public title: string;
+    public infoType: InfoType;
+    public markdown: string;
 
-    constructor(view:InfoStepView){
+    constructor(view: InfoStepView) {
         super(view);
         this.title = view.title;
         this.infoType = view.infoType;
@@ -134,50 +132,55 @@ export class InfoStepView extends StepView{
         var result = markdown.replace(/(?<!\!)\[(.*?)]\((.*?)( +\"(.*?)\")?\)/g, `<a target="_blank" href="$2" title="$4" onclick="window.networkCheckLinkClickEventLogger('${id}','$2', '$1')">$1</a>`);
         return result;
     }
-    
-    
+
+
 }
 
 export class StepFlowManager {
     private _stepViews: StepViewContainer[];
+    private _stepViewQueue: PromiseCompletionSource<StepView>[];
     private _dropDownView: StepView;
-    constructor(flows: Step[], stepViews: StepViewContainer[], data?: any) {
+    private _currentFlowId: string;
+    constructor(flows: StepFlow[], stepViews: StepViewContainer[]) {
         this._stepViews = stepViews;
+        this._stepViewQueue = [new PromiseCompletionSource<StepView>()];
         var mgr = this;
-        var promiseCompletion = new PromiseCompletionSource<StepView>();
         this._dropDownView = new DropdownStepView({
             id: "InitialDropDown",
             type: StepViewType.dropdown,
             description: "This is dropdown description",
-            options: flows.map(f=>f.title),
+            options: flows.map(f => f.title),
             async callback(selectedIdx: number): Promise<StepView> {
                 if (stepViews.length > 1) {
-                    promiseCompletion = new PromiseCompletionSource<StepView>();
-                    this.next = promiseCompletion;
-                    mgr._resetStepViews();
+                    mgr.reset(idx);
                 }
-                var step = flows[selectedIdx];
-                step.data = data;
-                var stepView = await step.run();
-                stepView.id = stepView.id || flows[selectedIdx].id;
-                promiseCompletion.resolve(stepView);
+                var flow = flows[selectedIdx];
+                mgr._currentFlowId = flow.id;
+                await flow.run(mgr);
                 return this;
-            },
-            next: promiseCompletion
+            }
         });
-        this._stepViews.push(new StepViewContainer(this._dropDownView));
+        var idx = this.addView(this._dropDownView);
         this._execute();
     }
 
-    private _resetStepViews(){
-        this._stepViews.length = 1;
+    public reset(idx: number) {
+        this._stepViewQueue[this._stepViewQueue.length - 1].resolve(null);
+        this._stepViewQueue = [new PromiseCompletionSource<StepView>()];
+        this._stepViews.length = idx + 1;
         this._execute();
     }
 
-    private async _execute(){
-        var view = this._dropDownView;
-        while(view.next!=null && (view = await view.next)!= null){
-            switch(view.type){
+    private async _execute() {
+        var idx = 0;
+        while (idx < this._stepViewQueue.length) {
+            var view = await this._stepViewQueue[idx];
+            view.id = view.id || this._currentFlowId + `_${idx}`;
+            ++idx;
+            if (view == null) {
+                break;
+            }
+            switch (view.type) {
                 case StepViewType.dropdown:
                     view = new DropdownStepView(<DropdownStepView>view);
                     break;
@@ -189,6 +192,13 @@ export class StepFlowManager {
             }
             this._stepViews.push(new StepViewContainer(view));
         }
+    }
+
+    public addView(viewPromise: StepView | Promise<StepView>) {
+        var idx = this._stepViewQueue.length-1;
+        this._stepViewQueue[this._stepViewQueue.length - 1].resolve(viewPromise);
+        this._stepViewQueue.push(new PromiseCompletionSource<StepView>());
+        return idx;
     }
 }
 
@@ -220,7 +230,7 @@ class PromiseCompletionSource<T> extends Promise<T>{
         }
     }
 
-    resolve(val: T) {
+    resolve(val: T | PromiseLike<T>) {
         this._resolve(val);
     }
 }

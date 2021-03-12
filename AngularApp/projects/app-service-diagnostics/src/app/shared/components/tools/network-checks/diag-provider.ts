@@ -1,6 +1,7 @@
 import { ResponseMessageEnvelope } from '../../../models/responsemessageenvelope';
 import { Site, SiteInfoMetaData } from '../../../models/site';
 import { ArmService } from '../../../services/arm.service';
+import { SiteService } from '../../../services/site.service';
 
 enum ConnectionCheckStatus { success, timeout, hostNotFound, blocked, refused }
 export enum OutboundType {SWIFT, gateway};
@@ -9,9 +10,11 @@ export enum InboundType {privateEndpoint, serviceEndpoint}
 export class DiagProvider {
     private _siteInfo: SiteInfoMetaData & Site & { fullSiteName: string };
     private _armService: ArmService;
-    constructor(siteInfo: SiteInfoMetaData & Site & { fullSiteName: string }, armService: ArmService) {
+    private _siteService: SiteService;
+    constructor(siteInfo: SiteInfoMetaData & Site & { fullSiteName: string }, armService: ArmService, siteService: SiteService) {
         this._siteInfo = siteInfo;
         this._armService = armService;
+        this._siteService = siteService;
         armService.clearCache();
     }
 
@@ -223,5 +226,10 @@ export class DiagProvider {
             return true;
         }
         return false;
+    }
+
+    public async getAppSettings():Promise<any>{
+        var siteInfo = this._siteInfo;
+        return (await this._siteService.getSiteAppSettings(siteInfo.subscriptionId, siteInfo.resourceGroupName, siteInfo.siteName, siteInfo.slot).toPromise()).properties
     }
 }
