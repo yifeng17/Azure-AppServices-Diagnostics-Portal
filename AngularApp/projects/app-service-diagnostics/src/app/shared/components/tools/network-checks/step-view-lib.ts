@@ -110,6 +110,7 @@ export class CheckStepView extends StepView {
 
 enum InfoType {
     recommendation,
+    diagnostic
 }
 
 export class InfoStepView extends StepView {
@@ -196,8 +197,8 @@ export class StepFlowManager {
 
     public addView(viewPromise: StepView | Promise<StepView>) {
         var idx = this._stepViewQueue.length-1;
-        this._stepViewQueue[this._stepViewQueue.length - 1].resolve(viewPromise);
         this._stepViewQueue.push(new PromiseCompletionSource<StepView>());
+        this._stepViewQueue[idx].resolve(viewPromise);        
         return idx;
     }
 }

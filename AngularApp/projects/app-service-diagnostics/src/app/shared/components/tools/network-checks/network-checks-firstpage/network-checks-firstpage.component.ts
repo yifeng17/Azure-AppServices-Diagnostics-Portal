@@ -50,6 +50,14 @@ var testFlow2:NetworkCheckFlow = {
             title: "test234",
             markdown: "# Test\r\n\r\n123123"
         }));
+
+        flowMgr.addView(new InfoStepView({
+            id: "Test",
+            infoType: 1,
+            type: StepViewType.info,
+            title: "test1111",
+            markdown: "# Test\r\n\r\n123123"
+        }));
         return;
     }
 }
@@ -65,7 +73,7 @@ var testFlow2:NetworkCheckFlow = {
 export class NetworkCheckFirstPageComponent implements OnInit {
 
     title: string = 'Network Checking Tool';
-    description: string = 'Checking VNet integration status...';
+    description: string = '';
     stepFlowManager:StepFlowManager;
     stepViews: StepViewContainer[] = [];
 
@@ -84,7 +92,7 @@ export class NetworkCheckFirstPageComponent implements OnInit {
 
         var flows = [testFlow, testFlow2].map(f => this.convertFromNetworkCheckFlow(f));
         this.stepFlowManager = new StepFlowManager(flows, this.stepViews);
-        var siteInfo = this._siteService.currentSiteMetaData.value;
+         /*var siteInfo = this._siteService.currentSiteMetaData.value;
         var fullSiteName = siteInfo.siteName + (siteInfo.slot == "" ? "" : "-" + siteInfo.slot);
         var siteInfoPlus = { ...this._siteService.currentSiteMetaData.value, ...this._siteService.currentSite.value, fullSiteName, siteVnetInfo:null };
         var diagProvider = new DiagProvider(siteInfoPlus, _armService, _siteService);
@@ -104,7 +112,7 @@ export class NetworkCheckFirstPageComponent implements OnInit {
                     this.vnetIntegrationDetected = false;
                     this.description = "No VNet integration detected."
                 }
-            });
+            });//*/
         CheckManager.loadRemoteCheckAsync(true);
     }
 

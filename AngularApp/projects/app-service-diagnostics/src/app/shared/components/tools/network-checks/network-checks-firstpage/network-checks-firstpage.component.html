@@ -8,26 +8,5 @@
         <info-step *ngSwitchCase="4" [viewModel]="viewModel"></info-step>
     </div>
 
-    <div *ngIf="vnetIntegrationDetected!=null" class="links">
-        <div *ngIf="vnetIntegrationDetected; else noIntegration">
-            You may want
-            <ul>
-                <li><a [routerLink]="['./run-check']">Troubleshoot a runtime networking issue</a></li>
-                <li><a (click)="vnetIntegrationDetected = false;">Re-configure the VNet integration</a></li>
-            </ul>
-        </div>
-        <ng-template #noIntegration>
-            Which of following best describes your situation?
-            <ul>
-                <li><a [routerLink]="['./']">I have a VNet integration plan, but failed to configure</a></li>
-                <li><a [routerLink]="['./']">I have a need to connect my app to private network, I want to know what options do I have.</a></li>
-            </ul>
-        </ng-template>
-        
-        <!--<profiler [scmPath]="scmPath" [siteToBeDiagnosed]="siteToBeDiagnosed" (SessionsEvent)="updateSessions($event)">
-        </profiler>-->
-
-    </div>
-
 
 </div>
