@@ -31,14 +31,14 @@ export class StepViewContainer {
 export abstract class StepView {
     public id: string;
     public type: StepViewType;
-    public hasNext?= false;
-    public container?: StepViewContainer;
+    public hasNext = false;
+    public container: StepViewContainer;
 
-    constructor(view: StepView) {
+    constructor(view: {type: StepViewType}) {
         this.type = view.type;
     }
 
-    public update?(view: StepView) {
+    public update(view: StepView) {
         this.container.set(view);
     }
 }
@@ -46,7 +46,7 @@ export abstract class StepView {
 export class PromiseStepView extends StepView {
     public message: string;
     public promise: Promise<StepView>;
-    constructor(view: PromiseStepView) {
+    constructor(view: any) {
         super(view);
         this.message = view.message;
         this.promise = view.promise;
@@ -56,11 +56,11 @@ export class PromiseStepView extends StepView {
 export class DropdownStepView extends StepView {
     public description: string;
     public options: string[];
-    public defaultChecked?: number;
+    public defaultChecked: number;
     public callback(selectedIdx: number): Promise<StepView> {
         return null;
     };
-    constructor(view: DropdownStepView) {
+    constructor(view: any) {
         super(view);
         this.description = view.description;
         this.options = view.options;
@@ -82,10 +82,10 @@ enum checkResultLevel {
 export class CheckStepView extends StepView {
     public title: string;
     public level: number;
-    public getStatus?(): HealthStatus {
+    public get status(): HealthStatus {
         return this._convertLevelToHealthStatus(this.level);
     }
-    private _convertLevelToHealthStatus?(level: checkResultLevel): HealthStatus {
+    private _convertLevelToHealthStatus(level: checkResultLevel): HealthStatus {
         switch (level) {
             case checkResultLevel.pass:
                 return HealthStatus.Success;
@@ -101,7 +101,7 @@ export class CheckStepView extends StepView {
         return HealthStatus.None;
     }
 
-    constructor(view: CheckStepView) {
+    constructor(view: any) {
         super(view);
         this.title = view.title;
         this.level = view.level;
@@ -118,14 +118,14 @@ export class InfoStepView extends StepView {
     public infoType: InfoType;
     public markdown: string;
 
-    constructor(view: InfoStepView) {
+    constructor(view: any) {
         super(view);
         this.title = view.title;
         this.infoType = view.infoType;
         this.markdown = this._markdownPreprocess(view.markdown, view.id);
     }
 
-    private _markdownPreprocess?(markdown: string, id: string): string {
+    private _markdownPreprocess(markdown: string, id: string): string {
         if (markdown == null) {
             return null;
         }

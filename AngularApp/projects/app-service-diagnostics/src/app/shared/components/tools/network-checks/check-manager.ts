@@ -1,4 +1,4 @@
-declare var jsDynamicImportChecks: any;
+declare var jsDynamicImportFlows: any;
 export class CheckManager {
     private static _jsUrl = "http://127.0.0.1:8000/test-check.js";
     private static _debugModeJsUrl = "http://127.0.0.1:8000/test-check.js";
@@ -18,8 +18,8 @@ export class CheckManager {
                 script.onload = () => {
                     console.log("remote script loaded!");
                     console.log(script);
-                    if (typeof jsDynamicImportChecks != 'undefined') {
-                        resolve(jsDynamicImportChecks);
+                    if (typeof jsDynamicImportFlows != 'undefined') {
+                        resolve(jsDynamicImportFlows);
                     }
                     else {
                         resolve([]);

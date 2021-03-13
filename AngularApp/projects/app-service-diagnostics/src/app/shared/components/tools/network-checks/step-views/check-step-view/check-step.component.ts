@@ -23,7 +23,7 @@ export class CheckStepComponent implements OnInit{
   
   ngOnInit(): void {
     this.checkStepView = <CheckStepView> this.viewModel.stepView; 
-    this.status = this.checkStepView.getStatus();
+    this.status = this.checkStepView.status;
   }
 
 }

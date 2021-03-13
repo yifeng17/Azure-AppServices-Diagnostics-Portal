@@ -89,9 +89,6 @@ export class NetworkCheckFirstPageComponent implements OnInit {
         this.siteInfo = { ...this._siteService.currentSiteMetaData.value, ...this._siteService.currentSite.value, fullSiteName };
 
         this.diagProvider = new DiagProvider(this.siteInfo, _armService, _siteService);
-
-        var flows = [testFlow, testFlow2].map(f => this.convertFromNetworkCheckFlow(f));
-        this.stepFlowManager = new StepFlowManager(flows, this.stepViews);
          /*var siteInfo = this._siteService.currentSiteMetaData.value;
         var fullSiteName = siteInfo.siteName + (siteInfo.slot == "" ? "" : "-" + siteInfo.slot);
         var siteInfoPlus = { ...this._siteService.currentSiteMetaData.value, ...this._siteService.currentSite.value, fullSiteName, siteVnetInfo:null };
@@ -113,7 +110,18 @@ export class NetworkCheckFirstPageComponent implements OnInit {
                     this.description = "No VNet integration detected."
                 }
             });//*/
-        CheckManager.loadRemoteCheckAsync(true);
+        this.loadFlowsAsync();
+    }
+
+    async loadFlowsAsync(): Promise<void> {
+        var remoteFlows:any = await CheckManager.loadRemoteCheckAsync(true);
+        remoteFlows = Object.keys(remoteFlows).map(key=> {
+            var flow = remoteFlows[key];
+            flow.id = flow.id || key;
+            return flow;
+        });
+        var flows =  [testFlow, testFlow2].concat(remoteFlows).map(f => this.convertFromNetworkCheckFlow(f));
+        this.stepFlowManager = new StepFlowManager(flows, this.stepViews);
     }
 
     ngOnInit(): void {
@@ -135,7 +143,7 @@ export class NetworkCheckFirstPageComponent implements OnInit {
         var stepFlow:StepFlow ={
             id: flow.id,
             title: flow.title,
-            description: flow.description,
+            description: flow.description || null,
             async run(flowMgr: StepFlowManager):Promise<void>{
                 return flow.func(siteInfo, diagProvider, flowMgr);
             }
