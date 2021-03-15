@@ -142,6 +142,7 @@ export class StepFlowManager {
     private _stepViewQueue: PromiseCompletionSource<StepView>[];
     private _dropDownView: StepView;
     private _currentFlowId: string;
+    private _executionCount = 0;
     constructor(flows: StepFlow[], stepViews: StepViewContainer[]) {
         this._stepViews = stepViews;
         this._stepViewQueue = [new PromiseCompletionSource<StepView>()];
@@ -173,12 +174,14 @@ export class StepFlowManager {
     }
 
     private async _execute() {
+        ++this._executionCount;
+        var cnt = this._executionCount;
         var idx = 0;
         while (idx < this._stepViewQueue.length) {
             var view = await this._stepViewQueue[idx];
             view.id = view.id || this._currentFlowId + `_${idx}`;
             ++idx;
-            if (view == null) {
+            if (view == null || cnt != this._executionCount) {
                 break;
             }
             switch (view.type) {
