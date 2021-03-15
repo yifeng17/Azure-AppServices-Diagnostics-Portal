@@ -17,7 +17,7 @@ import { DiagnosticService } from 'diagnostic-data';
 import { HttpResponse } from '@angular/common/http';
 import { Globals } from '../../../globals';
 import { PortalActionService } from '../../../shared/services/portal-action.service';
-import { VersionTestService } from '../../../fabric-ui/version-test.service';
+import { allowV3PResourceTypeList, VersionTestService } from '../../../fabric-ui/version-test.service';
 import { SubscriptionPropertiesService } from '../../../shared/services/subscription-properties.service';
 import { Feature } from '../../../shared-v2/models/features';
 import { QuickLinkService } from '../../../shared-v2/services/quick-link.service';
@@ -53,6 +53,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
     loadingQuickLinks: boolean = true;
     showRiskSection: boolean = true;
     showRiskNotificationMessage: boolean = false;
+    private _showSwitchBanner: boolean = false;
+    get showSwitchBanner():boolean {
+        const typeSwitchItem = allowV3PResourceTypeList.find(item => this._resourceService.resource.type.toLowerCase() === item.type.toLowerCase());
+        const allowResourceTypeSwitch = typeSwitchItem === undefined ? false : typeSwitchItem.allowSwitchBack;
+        return allowResourceTypeSwitch && this._showSwitchBanner;
+    }
+    initializedPortalVersion = 'v3';
     get inputAriaLabel(): string {
         return this.searchValue !== '' ?
             `${this.searchResultCount} Result` + (this.searchResultCount !== 1 ? 's' : '') :
@@ -74,7 +81,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
         this.subscriptionId = this._activatedRoute.snapshot.params['subscriptionid'];
         this.versionTestService.isLegacySub.subscribe(isLegacy => this.useLegacy = isLegacy);
-
+        this.versionTestService.initializedPortalVersion.subscribe(v => this.initializedPortalVersion = v);
         this.resourceName = this._resourceService.resource.name;
         let eventProps = {
             subscriptionId: this.subscriptionId,
@@ -86,6 +93,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
             && _resourceService.armResourceConfig.homePageText.title && _resourceService.armResourceConfig.homePageText.title.length > 1
             && _resourceService.armResourceConfig.homePageText.description && _resourceService.armResourceConfig.homePageText.description.length > 1
             && _resourceService.armResourceConfig.homePageText.searchBarPlaceHolder && _resourceService.armResourceConfig.homePageText.searchBarPlaceHolder.length > 1) {
+            this._showSwitchBanner = true;
             this.homePageText = _resourceService.armResourceConfig.homePageText;
             this.searchPlaceHolder = this.homePageText.searchBarPlaceHolder;
         }
@@ -337,6 +345,17 @@ export class HomeComponent implements OnInit, AfterViewInit {
             'Location': TelemetrySource.LandingPage
         });
         this._resourceService.updateRiskAlertResult();
+    }
+
+    switchView() {
+        this.useLegacy = !this.useLegacy;
+        this.versionTestService.setLegacyFlag(this.useLegacy === true ? 1 : 2);
+        let eventProps = {
+            subscriptionId: this.subscriptionId,
+            resourceName: this.resourceName,
+            switchToLegacy: this.useLegacy.toString(),
+        };
+        this._telemetryService.logEvent('SwitchView',eventProps);
     }
 }
 
