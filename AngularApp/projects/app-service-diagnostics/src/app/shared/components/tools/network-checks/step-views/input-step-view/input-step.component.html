@@ -1,0 +1,11 @@
+<div class="input-step step">
+    <p class="input-step-title">{{inputStepView.title}}</p>
+    <div class="input-section">
+        <input class="input-box" placeholder="{{inputStepView.placeholder}}" #text>
+        <a class="input-tooltip" title="{{inputStepView.tooltip}}" *ngIf="inputStepView.tooltip">?</a>
+    </div>
+    <fab-primary-button class="input-check-button" (click)="inputStepView.callback(text.value)">
+        {{inputStepView.buttonText}}
+    </fab-primary-button>
+     
+</div>

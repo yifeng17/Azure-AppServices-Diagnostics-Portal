@@ -141,6 +141,7 @@ import { NetworkCheckFirstPageComponent } from './components/tools/network-check
 import { DropDownStepComponent } from './components/tools/network-checks/step-views/dropdown-step-view/dropdown-step.component';
 import { CheckStepComponent } from './components/tools/network-checks/step-views/check-step-view/check-step.component';
 import { InfoStepComponent } from './components/tools/network-checks/step-views/info-step-view/info-step.component';
+import { InputStepComponent } from './components/tools/network-checks/step-views/input-step-view/input-step.component';
 
 @NgModule({
     declarations: [
@@ -177,6 +178,7 @@ import { InfoStepComponent } from './components/tools/network-checks/step-views/
         DropDownStepComponent,
         InfoStepComponent,
         CheckStepComponent,
+        InputStepComponent,
         NetworkCheckFeedbackComponent,
         CheckerListComponent,
         MemoryDumpToolComponent,

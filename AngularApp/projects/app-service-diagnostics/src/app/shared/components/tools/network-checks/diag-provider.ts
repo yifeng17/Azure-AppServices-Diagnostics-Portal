@@ -4,8 +4,8 @@ import { ArmService } from '../../../services/arm.service';
 import { SiteService } from '../../../services/site.service';
 
 enum ConnectionCheckStatus { success, timeout, hostNotFound, blocked, refused }
-export enum OutboundType {SWIFT, gateway};
-export enum InboundType {privateEndpoint, serviceEndpoint}
+export enum OutboundType { SWIFT, gateway };
+export enum InboundType { privateEndpoint, serviceEndpoint }
 
 export class DiagProvider {
     private _siteInfo: SiteInfoMetaData & Site & { fullSiteName: string };
@@ -19,7 +19,7 @@ export class DiagProvider {
     }
 
     public async getVNetIntegrationStatusAsync() {
-        var result = { isVnetIntegrated: false, outboundType: <OutboundType> null, outboundSubnets: [], inboundType:<InboundType> null, inboundSubnets: [], siteVnetInfo: null };
+        var result = { isVnetIntegrated: false, outboundType: <OutboundType>null, outboundSubnets: [], inboundType: <InboundType>null, inboundSubnets: [], siteVnetInfo: null };
         var siteArmId = this._siteInfo["id"];
         var siteVnetInfo = await this.getWebAppVnetInfo();
         result.siteVnetInfo = siteVnetInfo;
@@ -210,7 +210,16 @@ export class DiagProvider {
         });
     }
 
-    public async getWebAppVnetInfo():Promise<any> {
+    public async checkKudoReachable(): Promise<boolean> {
+        try {
+            var result = await this.runKudoCommand(this._siteInfo.fullSiteName, "echo ok");
+            return result == "ok";
+        } catch (error) {
+            return false;
+        }
+    }
+
+    public async getWebAppVnetInfo(): Promise<any> {
         //This is the regional VNet Integration endpoint
         var swiftUrl = this._siteInfo["id"] + "/config/virtualNetwork";
         var siteVnetInfo = await this.getArmResourceAsync(swiftUrl);
@@ -228,7 +237,7 @@ export class DiagProvider {
         return false;
     }
 
-    public async getAppSettings():Promise<any>{
+    public async getAppSettings(): Promise<any> {
         var siteInfo = this._siteInfo;
         return (await this._siteService.getSiteAppSettings(siteInfo.subscriptionId, siteInfo.resourceGroupName, siteInfo.siteName, siteInfo.slot).toPromise()).properties
     }

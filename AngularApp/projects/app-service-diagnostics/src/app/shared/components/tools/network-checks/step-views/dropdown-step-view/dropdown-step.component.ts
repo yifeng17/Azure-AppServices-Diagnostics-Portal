@@ -30,10 +30,7 @@ export class DropDownStepComponent implements OnInit{
   }
 
   onChange(event:{event:any, option: ISelectableOption, index: number}){
-    this.dropdownStepView.callback(<number>event.option.key)
-      .then(result => {
-        this.viewModel.set(result);
-      });
+    this.dropdownStepView.callback(<number>event.option.key);
   }
 
 }

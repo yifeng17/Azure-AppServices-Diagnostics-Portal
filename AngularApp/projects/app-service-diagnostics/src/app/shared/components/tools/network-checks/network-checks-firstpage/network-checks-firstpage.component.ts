@@ -121,7 +121,19 @@ export class NetworkCheckFirstPageComponent implements OnInit {
             return flow;
         });
         var flows =  [testFlow, testFlow2].concat(remoteFlows).map(f => this.convertFromNetworkCheckFlow(f));
-        this.stepFlowManager = new StepFlowManager(flows, this.stepViews);
+        var mgr = this.stepFlowManager = new StepFlowManager(this.stepViews);
+        var dropDownView = new DropdownStepView({
+            id: "InitialDropDown",
+            type: StepViewType.dropdown,
+            description: "Tell us more about the problem you are experiencing? ",
+            options: flows.map(f => f.title),
+            async callback(selectedIdx: number): Promise<void> {
+                mgr.reset(state);
+                var flow = flows[selectedIdx];
+                mgr.setFlow(flow);
+            }
+        });
+        var state = mgr.addView(dropDownView);
     }
 
     ngOnInit(): void {
