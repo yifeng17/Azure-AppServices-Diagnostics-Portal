@@ -1,27 +1,87 @@
 {
-	"homePageText": {
-		"title": "Azure API Management Service Diagnostics",
-		"description": "Use Azure API Management Service Diagnostics to investigate how your service is performing, diagnose issues, and discover how to improve its reliability. Select the problem category that best matches the information or tool that you're interested in:",
-		"searchBarPlaceHolder": "Search Azure API Management Services"
-	},
-	"matchRegEx": "/Microsoft.ApiManagement/service/",
-	"searchSuffix": "AZURE API MANAGEMENT SERVICE",
-	"azureServiceName": "Azure API Management Service",
-	"armApiVersion": "2018-06-01-preview",
-	"isSearchEnabled": true,
-	"liveChatConfig": {
-		"isApplicableForLiveChat": false,
-		"supportTopicIds": []
-	},
-	"categories": [{
-			"id": "Service Availability",
-			"name": "Service Availability",
-			"description": "Investigate issues with the API Management gateway requests, gateway policy errors and service uptime. Find out the common causes and investigate in detail.",
-			"keywords": ["Gateway requests", "Service Up"],
-			"color": "rgb(186, 211, 245)",
-			"createFlowForCategory": true,
-			"chatEnabled": false
-		}
-	],
-	"pesId": "15551"
+  "homePageText": {
+    "title": "API Management Diagnostics",
+    "description": "Investigate how your API is performing, diagnose issues, and discover how to improve its reliability.",
+    "searchBarPlaceHolder": "Search for common problems or tools"
+  },
+  "matchRegEx": "/Microsoft.ApiManagement/service/",
+  "searchSuffix": "API Management",
+  "azureServiceName": "API Management",
+  "armApiConfig": {
+    "armApiVersion": "2018-06-01-preview"
+  },
+  "isSearchEnabled": true,
+  "keystoneDetectorId": "",
+  "liveChatConfig": {
+    "isApplicableForLiveChat": false,
+    "supportTopicIds": []
+  },
+  "categories": [
+    {
+      "id": "availabilityandperformanceapim",
+      "name": "Availability and Performance",
+      "description": "Check your API service's health and discover performance issues",
+      "keywords": [
+        "Service Down",
+        "Platform Health",
+        "Backend 5xx",
+        "SNAT"
+      ],
+      "color": "rgb(208, 175, 239)",
+      "createFlowForCategory": true,
+      "chatEnabled": false,
+      "overviewDetectorId": "apim-availability-and-performance"
+    },
+    {
+      "id": "apipoliciesapim",
+      "name": "API Policies",
+      "description": "Find out if your API policies are misconfigured",
+      "keywords": [
+        "Caching",
+        "Policy Expressions",
+        "Validate JWT",
+        "CORS"
+      ],
+      "color": "rgb(249, 213, 180)",
+      "createFlowForCategory": true,
+      "chatEnabled": false,
+      "overviewDetectorId": "Apim-proxy-policy-errors-recategory"
+    },
+    {
+      "id": "gatewayperformanceapim",
+      "name": "Gateway Performance",
+      "description": "Analyze your API Gateway performance and discover issues",
+      "keywords": [
+        "Gateway Responses",
+        "4xx",
+        "5xx",
+        "Gateway Requests"
+      ],
+      "color": "rgb(208, 228, 176)",
+      "createFlowForCategory": true,
+      "chatEnabled": false,
+      "overviewDetectorId": "apim-proxy-response-recategory"
+    },
+    {
+      "id": "serviceupgradeapim",
+      "name": "Service Upgrade",
+      "description": "Check your service SKU and discover your service upgrade events",
+      "keywords": [
+        "Upgrade",
+        "SKU",
+        "Latency",
+        "Resource Deployment Failure"
+      ],
+      "color": "rgb(186, 211, 245)",
+      "createFlowForCategory": true,
+      "chatEnabled": false,
+      "overviewDetectorId": "apim-service-sku-recategory"
+    }
+  ],
+  "quickLinks": [
+    "apim-platform-health-new-category",
+    "apim-proxy-policy-errors-recategory",
+    "apim-proxy-performance-recategory"
+  ],
+  "pesId": "15551"
 }

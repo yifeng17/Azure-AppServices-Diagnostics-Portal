@@ -7,8 +7,11 @@
 	"matchRegEx": "/Microsoft.ContainerRegistry/registries/",
 	"searchSuffix": "ACR",
 	"azureServiceName": "Azure Container Registry",
-	"armApiVersion": "2019-12-01-preview",
+	"armApiConfig": {
+		"armApiVersion": "2019-12-01-preview"
+	},
 	"isSearchEnabled": true,
+	"keystoneDetectorId": "",
 	"liveChatConfig": {
 		"isApplicableForLiveChat": false,
 		"supportTopicIds": []

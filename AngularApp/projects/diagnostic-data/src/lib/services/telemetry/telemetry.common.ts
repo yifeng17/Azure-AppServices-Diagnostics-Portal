@@ -74,11 +74,19 @@ export const TelemetryEventNames = {
     QuickLinkClicked: 'QuickLinkClicked',
     RiskTileClicked: 'RiskTileClicked',
     RiskTileLoaded: 'RiskTileLoaded',
+    ArmConfigMergeError: 'ArmConfigMergeError',
+    OpenRiskAlertPanel: 'openRiskAlertsPanel',
+    IncidentAssistancePage: 'IncidentAssistancePage',
+    IncidentAssistanceLoaded: 'IncidentAssistanceLoaded',
+    IncidentValidationCheck: 'IncidentValidationCheck',
+    IncidentUpdateOperation: 'IncidentUpdateOperation',
+    RiskAlertNotificationLoaded: 'RiskAlertNotificationLoaded',
 };
 
 export const TelemetrySource = {
     LandingPage: 'LandingPage',
-    CategoryPage: 'CategoryPage'
+    CategoryPage: 'CategoryPage',
+    CaseSubmissionFlow: 'CaseSubmissionFlow'
 }
 
 export interface TelemetryPayload {

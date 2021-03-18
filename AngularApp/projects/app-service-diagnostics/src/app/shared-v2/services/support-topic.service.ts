@@ -72,6 +72,7 @@ export class SupportTopicService {
 
                 let keywordsList = [];
                 return this._resourceService.getKeystoneDetectorId().pipe(flatMap(keystoneDetectorId => {
+                    detectorPath = `/integratedSolutions` + detectorPath;
                     if (keystoneDetectorId) {
                         let startTime, endTime: momentNs.Moment;
                         endTime = moment.utc().subtract(16, 'minutes');
@@ -87,7 +88,6 @@ export class SupportTopicService {
                                 keywordsList = JSON.parse(keystoneInsight["Title"]);
 
                                 if (keywordsList && keywordsList.findIndex((keyword) => searchTerm.toLowerCase().indexOf(keyword) !== -1) !== -1) {
-                                    detectorPath = `/integratedSolutions` + detectorPath;
                                     queryParamsDic["keystoneDetectorId"] = keystoneDetectorId;
                                     keystoneSolutionApplied = true;
                                 }
@@ -103,12 +103,12 @@ export class SupportTopicService {
                             catchError(err => {
                                 // If there is an error getting keystone detector, render the matched dector without key stone solution
                                 this._telemetryService.logEvent("KeystoneLoadingFailed", {
-                                    "details": err.ToString()
+                                    "details": JSON.stringify(err)
                                 });
 
                                 return observableOf({ path: detectorPath, queryParams: queryParamsDic });
                             }))
-                    }
+                   }
 
                     return observableOf({ path: detectorPath, queryParams: queryParamsDic });
                 }))

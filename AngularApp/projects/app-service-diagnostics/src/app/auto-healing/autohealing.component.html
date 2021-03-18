@@ -69,8 +69,7 @@
             </ng-container>
 
             <div class="forminput" *ngIf="triggerSelected >= 0">
-              <autohealing-slowrequests-rule *ngIf="triggerSelected === 0"
-                [rule]="autohealingSettings.autoHealRules.triggers.slowRequests"
+              <autohealing-slowrequests-rule *ngIf="triggerSelected === 0" [rule]="slowRequestRules"
                 (ruleChange)="triggerRuleUpdated($event, triggerSelected)"></autohealing-slowrequests-rule>
               <autohealing-memory-rule *ngIf="triggerSelected === 1"
                 [rule]="autohealingSettings.autoHealRules.triggers.privateBytesInKB"
@@ -78,8 +77,7 @@
               <autohealing-requests-rule *ngIf="triggerSelected === 2"
                 [rule]="autohealingSettings.autoHealRules.triggers.requests"
                 (ruleChange)="triggerRuleUpdated($event, triggerSelected)"></autohealing-requests-rule>
-              <autohealing-statuscodes-rule *ngIf="triggerSelected === 3"
-                [rule]="autohealingSettings.autoHealRules.triggers.statusCodes"
+              <autohealing-statuscodes-rule *ngIf="triggerSelected === 3" [rule]="statusCodeRules"
                 (ruleChange)="triggerRuleUpdated($event, triggerSelected)"></autohealing-statuscodes-rule>
             </div>
           </div>
@@ -165,8 +163,16 @@
         </table>
       </div>
       <div *ngIf="!retrievingAutohealSettings  && !errorMessage" class="saveSection autohealtile-content">
-        <button type="button" class="btn btn-primary" [disabled]="!saveEnabled" (click)="saveChanges()">Save</button>
-        <button type="button" class="btn btn-primary" [disabled]="!saveEnabled" (click)="reset()">Cancel</button>
+        <div *ngIf="!saveEnabled && generateSasRecommendation()" class="error-details">
+          <i class="fa health-icon fa-times-circle unhealthy-icon-color" aria-hidden="true"></i>
+          Please reconfigure the storage account by clicking on the Custom Action section above. This 
+          ensures that SAS URI gets stored as an environment variable which is more secure than passing 
+          the SAS URI as a parameter to the DaaSConsole executable.
+        </div>
+
+        <button type="button" class="btn btn-sm btn-primary" [disabled]="!saveEnabled" (click)="saveChanges()">Save</button>
+        <button type="button" class="btn btn-sm btn-primary" [disabled]="!saveEnabled" (click)="reset()">Cancel</button>
+        <button type="button" class="btn btn-sm btn-primary" (click)="toggleSessionPanel()">View All Sessions</button>
         <div *ngIf="savingAutohealSettings" class="inline ml-3">
           <i class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true"></i>
           Saving AutoHeal settings...

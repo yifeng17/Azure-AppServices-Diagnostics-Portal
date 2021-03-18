@@ -68,6 +68,10 @@ export const Routes = RouterModule.forRoot([
             loadChildren: './modules/site/site.module#SiteModule'
           },
           {
+            path: 'icm/:incidentId',
+            loadChildren: './modules/incidentassist/incidentassist.module#IncidentAssistModule'
+          },
+          {
             path: 'hostingEnvironments/:hostingEnvironment',
             loadChildren: './modules/ase/ase.module#AseModule'
           },

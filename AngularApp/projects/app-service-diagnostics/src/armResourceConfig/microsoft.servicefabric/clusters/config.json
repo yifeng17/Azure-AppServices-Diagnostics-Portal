@@ -7,11 +7,17 @@
 	"matchRegEx": "/Microsoft.ServiceFabric/clusters/",
 	"searchSuffix": "SF",
 	"azureServiceName": "Service Fabric",
-	"armApiVersion": "2020-03-01",
+	"armApiConfig": {
+		"armApiVersion": "2020-03-01"
+	},
 	"isSearchEnabled": true,
-	"isApplicableForLiveChat": false,
+	"keystoneDetectorId": "",
+	"liveChatConfig": {
+        "isApplicableForLiveChat": false,
+        "supportTopicIds": []
+    },
 	"categories": [{
-			"id": "ClusterAnalysis",
+			"id": "Cluster Insights",
 			"name": "Cluster Insights",
 			"description": "Get recommendations for your configuration, find common issues, and identify possible improvements for reliability.",
 			"keywords": ["Health", "Deployment", "Performance", "Scaling", "Upgrade", "Update", "Configuration", "Reliability", "Security"],

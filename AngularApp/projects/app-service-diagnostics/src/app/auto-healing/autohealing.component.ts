@@ -4,8 +4,10 @@ import { SiteInfoMetaData } from '../shared/models/site';
 import { SiteService } from '../shared/services/site.service';
 import { AutohealingService } from '../shared/services/autohealing.service';
 import { FormatHelper } from '../shared/utilities/formattingHelper';
-import { AutoHealSettings, AutoHealCustomAction, AutoHealRules, AutoHealActions, AutoHealTriggers, AutoHealActionType } from '../shared/models/autohealing';
+import { AutoHealSettings, AutoHealCustomAction, AutoHealRules, AutoHealActions, AutoHealTriggers, AutoHealActionType, StatusCodeRules, SlowRequestsRules } from '../shared/models/autohealing';
 import { AvailabilityLoggingService } from '../shared/services/logging/availability.logging.service';
+import { Globals } from '../globals';
+import { TelemetryService } from 'diagnostic-data';
 
 @Component({
   selector: 'autohealing',
@@ -39,8 +41,12 @@ export class AutohealingComponent implements OnInit {
   detectorHasData: boolean = false;
   validationWarning: string[];
   selectedTab: string = 'autoHealing';
+  statusCodeRules: StatusCodeRules = null;
+  slowRequestRules: SlowRequestsRules = null;
 
-  constructor(private _siteService: SiteService, private _autohealingService: AutohealingService, private _logger: AvailabilityLoggingService, protected _route: ActivatedRoute) {
+  constructor(private _siteService: SiteService, private _autohealingService: AutohealingService,
+    private globals: Globals, private telemetryService: TelemetryService,
+    private _logger: AvailabilityLoggingService, protected _route: ActivatedRoute) {
   }
 
   ngOnInit() {
@@ -66,6 +72,8 @@ export class AutohealingComponent implements OnInit {
     this.originalAutoHealSettings = JSON.parse(this.originalSettings);
     this.updateConditionsAndActions();
     this.updateSummaryText();
+    this.statusCodeRules = this.getStatusCodeRules();
+    this.slowRequestRules = this.getSlowRequestRules();
   }
 
   updateConditionsAndActions() {
@@ -132,9 +140,11 @@ export class AutohealingComponent implements OnInit {
   checkTriggersValid(triggers: AutoHealTriggers): boolean {
     let isValid = false;
     if ((triggers.privateBytesInKB != null && triggers.privateBytesInKB > 0)
-      || triggers.requests != null && triggers.requests.count > 0
-      || triggers.slowRequests != null && triggers.slowRequests.count > 0
-      || triggers.statusCodes != null && triggers.statusCodes.length > 0) {
+      || (triggers.requests != null && triggers.requests.count > 0)
+      || (triggers.slowRequests != null && triggers.slowRequests.count > 0)
+      || (triggers.statusCodes != null && triggers.statusCodes.length > 0)
+      || (triggers.statusCodesRange != null && triggers.statusCodesRange.length > 0)
+      || (triggers.slowRequestsWithPath != null && triggers.slowRequestsWithPath.length > 0)) {
       isValid = true;
     }
     return isValid;
@@ -246,7 +256,8 @@ export class AutohealingComponent implements OnInit {
   triggerRuleUpdated(ruleEvent, triggerRule: number) {
     switch (triggerRule) {
       case 0: {
-        this.autohealingSettings.autoHealRules.triggers.slowRequests = ruleEvent;
+        this.autohealingSettings.autoHealRules.triggers.slowRequests = ruleEvent.slowRequests;
+        this.autohealingSettings.autoHealRules.triggers.slowRequestsWithPath = ruleEvent.slowRequestsWithPath;
         break;
       }
       case 1: {
@@ -259,7 +270,8 @@ export class AutohealingComponent implements OnInit {
       }
 
       case 3: {
-        this.autohealingSettings.autoHealRules.triggers.statusCodes = ruleEvent;
+        this.autohealingSettings.autoHealRules.triggers.statusCodes = ruleEvent.statusCodes;
+        this.autohealingSettings.autoHealRules.triggers.statusCodesRange = ruleEvent.statusCodesRange;
         break;
       }
     }
@@ -274,10 +286,10 @@ export class AutohealingComponent implements OnInit {
     this.actions = [];
     const self = this;
 
-    this.triggers.push({ Name: 'Request Duration', Icon: 'fa fa-hourglass-half', checkRuleConfigured: () => self.autohealingSettings != null && self.autohealingSettings.autoHealRules != null && self.autohealingSettings.autoHealRules.triggers != null && self.autohealingSettings.autoHealRules.triggers.slowRequests != null, IsConfigured: false });
+    this.triggers.push({ Name: 'Request Duration', Icon: 'fa fa-hourglass-half', checkRuleConfigured: () => self.autohealingSettings != null && self.autohealingSettings.autoHealRules != null && self.autohealingSettings.autoHealRules.triggers != null && (self.autohealingSettings.autoHealRules.triggers.slowRequests != null || (self.autohealingSettings.autoHealRules.triggers.slowRequestsWithPath != null && self.autohealingSettings.autoHealRules.triggers.slowRequestsWithPath.length > 0)), IsConfigured: false });
     this.triggers.push({ Name: 'Memory Limit', Icon: 'fa fa-microchip', checkRuleConfigured: () => self.autohealingSettings != null && self.autohealingSettings.autoHealRules != null && self.autohealingSettings.autoHealRules.triggers != null && self.autohealingSettings.autoHealRules.triggers.privateBytesInKB > 0, IsConfigured: false });
     this.triggers.push({ Name: 'Request Count', Icon: 'fa fa-bar-chart', checkRuleConfigured: () => self.autohealingSettings != null && self.autohealingSettings.autoHealRules != null && self.autohealingSettings.autoHealRules.triggers != null && self.autohealingSettings.autoHealRules.triggers.requests != null, IsConfigured: false });
-    this.triggers.push({ Name: 'Status Codes', Icon: 'fa fa-list', checkRuleConfigured: () => self.autohealingSettings != null && self.autohealingSettings.autoHealRules != null && self.autohealingSettings.autoHealRules.triggers != null && self.autohealingSettings.autoHealRules.triggers.statusCodes && this.autohealingSettings.autoHealRules.triggers.statusCodes.length > 0, IsConfigured: false });
+    this.triggers.push({ Name: 'Status Codes', Icon: 'fa fa-list', checkRuleConfigured: () => self.autohealingSettings != null && self.autohealingSettings.autoHealRules != null && self.autohealingSettings.autoHealRules.triggers != null && ((self.autohealingSettings.autoHealRules.triggers.statusCodes && this.autohealingSettings.autoHealRules.triggers.statusCodes.length > 0) || (self.autohealingSettings.autoHealRules.triggers.statusCodesRange && this.autohealingSettings.autoHealRules.triggers.statusCodesRange.length > 0)), IsConfigured: false });
 
     this.triggers.forEach(triggerRule => {
       triggerRule.IsConfigured = triggerRule.checkRuleConfigured();
@@ -309,6 +321,34 @@ export class AutohealingComponent implements OnInit {
     this.minProcessExecutionTimeExpanded = false;
   }
 
+  getStatusCodeRules(): StatusCodeRules {
+    if (this.autohealingSettings != null && this.autohealingSettings.autoHealRules != null && this.autohealingSettings.autoHealRules.triggers != null) {
+      return new StatusCodeRules(this.autohealingSettings.autoHealRules.triggers.statusCodes, this.autohealingSettings.autoHealRules.triggers.statusCodesRange);
+    }
+  }
+
+  getSlowRequestRules(): SlowRequestsRules {
+    if (this.autohealingSettings != null && this.autohealingSettings.autoHealRules != null && this.autohealingSettings.autoHealRules.triggers != null) {
+      return new SlowRequestsRules(this.autohealingSettings.autoHealRules.triggers.slowRequests, this.autohealingSettings.autoHealRules.triggers.slowRequestsWithPath);
+    }
+  }
+
+  toggleSessionPanel() {
+    this.globals.openSessionPanel = !this.globals.openSessionPanel;
+    this.telemetryService.logEvent("OpenSesssionsPanel");
+    this.telemetryService.logPageView("SessionsPanelView");
+  }
+
+  generateSasRecommendation() {
+    return this.originalAutoHealSettings && this.originalAutoHealSettings.autoHealEnabled &&
+      this.originalAutoHealSettings.autoHealRules && this.originalAutoHealSettings.autoHealRules.actions
+      && this.originalAutoHealSettings.autoHealRules.actions && this.originalAutoHealSettings.autoHealRules.actions.customAction
+      && this.originalAutoHealSettings.autoHealRules.actions.customAction.exe
+      && this.originalAutoHealSettings.autoHealRules.actions.customAction.exe.toLowerCase().indexOf("daasconsole.exe") > -1
+      && this.originalAutoHealSettings.autoHealRules.actions.customAction.parameters
+      && this.originalAutoHealSettings.autoHealRules.actions.customAction.parameters.toLowerCase().indexOf("blobsasuri") > -1
+  }
+
   validateAutoHealRules() {
     this.validationWarning = [];
 
@@ -318,7 +358,7 @@ export class AutohealingComponent implements OnInit {
     const diagnosticToolChosenCustom: string = 'You have chosen a custom action to execute whenever mitigation kicks in.';
     const diagnosticToolChosen: string = ' If this is a production app, please ensure that you try this out on a deployment slot first to protect against any downtimes to your application.';
     const diagnosticJavaToolChosen: string = 'The Java diagnostic tools use either jMap or jStack process to collect dumps. Both of these tools freeze the process while collecting data. As a result, the app cannot serve any requests during this time and performance will be impacted. It may take longer to collect these dumps if the process is consuming high memory or has a high number of active threads.';
-    const diagnosticMemoryDumpChosen: string = 'You have chosen to collect a memory dump of the process. Please note that during the time the memory dump is getting generated, the process is frozen and cannot serve any requests. The amount of time it takes to capture the memory dump depends upon the memory consumption of the process. For processes consuming high memory, it will take longer to generate the dump.';
+    const diagnosticMemoryDumpChosen: string = 'You have chosen to collect a memory dump of the process. Please ensure that the storage acccount has enough space to copy memory dumps.';
     const diagnosticProfilerWithThreadStacksChosen: string = 'When the profiler is chosen along with thread stacks option, the process is frozen for a few seconds to dump all raw thread stacks. This option is advisable if you are experiencing long delays (in minutes) to serve the requests or if the application is experiencing deadlocks. During this time, the process cannot serve any requests and application performance will be impacted.';
     const diagnosticProfilerChosen: string = 'The profiling tool is light weight but incurs some CPU overhead during the data collection process.';
 

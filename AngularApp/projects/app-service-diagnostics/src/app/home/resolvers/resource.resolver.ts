@@ -7,7 +7,7 @@ import { DetectorControlService, TelemetryService } from 'diagnostic-data';
 
 @Injectable()
 export class ResourceResolver implements Resolve<Observable<{} | ArmResource>> {
-    constructor(private _resourceService: ResourceService, private _detectorControlService: DetectorControlService,private telemetryService: TelemetryService) { }
+    constructor(private _resourceService: ResourceService, private _detectorControlService: DetectorControlService) { }
     // Live Chat Service is included here so that we ensure an instance is created
 
     resolve(activatedRouteSnapshot: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<{} | ArmResource> {
@@ -21,9 +21,8 @@ export class ResourceResolver implements Resolve<Observable<{} | ArmResource>> {
             .filter(x => x.path !== 'new' && x.path !== 'categories')
             .map(x => x.path)
             .join('/');
-
         
-        if (this.checkResourceUriIsEmpty(resourceUri) || this.checkResourceUriMissingApiParam(resourceUri)) {
+        if (this.checkResourceUriIsEmpty(resourceUri)) {
             const url = state.url;
             const startIndex = url.indexOf("subscriptions/") > -1 ? url.indexOf("subscriptions/") : 0;
             let endIndex = url.length;
@@ -34,29 +33,21 @@ export class ResourceResolver implements Resolve<Observable<{} | ArmResource>> {
             }
             resourceUri = url.substring(startIndex, endIndex);
         }
-        
 
-        return this._resourceService.registerResource(resourceUri);
+        if(this.validateResourceUri(resourceUri)){
+            return this._resourceService.registerResource(resourceUri);    
+        }else {
+            return of({});
+        }
+        
     }
 
     private checkResourceUriIsEmpty(resourceUri: string): boolean {
         return resourceUri === "" || resourceUri === "/";
     }
 
-    //All dependencies call from below Uri is returning 400, block ARM call
-    private checkResourceUriMissingApiParam(resourceUri: string): boolean {
-        const missingApiParamUri = "management.azure.com/?clientOptimizations";
-        if(resourceUri.includes(missingApiParamUri)) {
-            const error = new Error("MissingApiVersionParameter handled at resolver");
-            this.telemetryService.logException(
-                error,
-                "resource.resolver",
-                {
-                    "resourceUri" : resourceUri,  
-                }
-            );
-            return true;
-        }
-        return false;   
+    //if it is invalidate resource uri, block call to registerResource
+    private validateResourceUri(resourceUri: string): boolean {
+        return resourceUri.toLowerCase().startsWith("subscriptions") || resourceUri.toLowerCase().startsWith("/subscriptions");
     }
 }

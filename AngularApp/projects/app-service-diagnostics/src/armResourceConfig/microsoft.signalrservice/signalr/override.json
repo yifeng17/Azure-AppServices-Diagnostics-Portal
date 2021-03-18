@@ -7,8 +7,12 @@
     "matchRegEx": "/Microsoft.SignalRService/SignalR/",
     "searchSuffix": "",
     "azureServiceName": "",
-    "armApiVersion": "",
+    "armApiConfig": {
+		"armApiVersion": "",
+		"isArmApiResponseBase64Encoded": false
+	},
     "isSearchEnabled": true,
+	"keystoneDetectorId": "",
     "liveChatConfig": {
         "isApplicableForLiveChat": false,
         "supportTopicIds": []

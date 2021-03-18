@@ -133,8 +133,9 @@ import { CollapsibleListFabricComponent } from './components/collapsible-list/co
 import { RiskAlertsNotificationComponent } from './components/risk-alerts-notification/risk-alerts-notification.component';
 import { RiskAlertsPanelComponent } from './components/risk-alerts-panel/risk-alerts-panel.component';
 import { IntegratedSolutionsViewComponent } from './components/integrated-solutions-view/integrated-solutions-view.component';
-import { NetworkCheckComponent } from './components/tools/network-checks/network-checks.component';
+import { Asev3CustomViewComponent } from './components/asev3-custom-view/asev3-custom-view.component';
 import { MarkdownModule } from 'ngx-markdown';
+import { NetworkCheckComponent } from './components/tools/network-checks/network-checks.component';
 import { CheckerListComponent } from 'projects/diagnostic-data/src/lib/components/checker-list/checker-list.component';
 import { NetworkCheckFeedbackComponent } from './components/networkcheck-feedback/networkcheck-feedback.component';
 import { NetworkCheckFirstPageComponent } from './components/tools/network-checks/network-checks-firstpage/network-checks-firstpage.component';
@@ -222,6 +223,7 @@ import { InputStepComponent } from './components/tools/network-checks/step-views
         RiskAlertsNotificationComponent,
         RiskAlertsPanelComponent,
         IntegratedSolutionsViewComponent,
+        Asev3CustomViewComponent
     ],
     imports: [
         HttpClientModule,

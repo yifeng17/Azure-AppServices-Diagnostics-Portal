@@ -50,16 +50,23 @@ export class PromiseStepView extends StepView {
 }
 
 export class DropdownStepView extends StepView {
-    public description: string;
-    public options: string[];
-    public defaultChecked: number;
-    public callback: (selectedIdx: number) => Promise<void>;
+    public dropdowns:{
+        description?: string,
+        options: string[],
+        defaultChecked?: number,
+        placeholder: string }[];
+    public width:string;
+    public bordered:boolean;
+    public description:string;
+    public callback: (dropdownIdx: number, selectedIdx: number) => Promise<void>;
     constructor(view: any) {
         super(view);
-        this.description = view.description;
-        this.options = view.options;
-        this.defaultChecked = view.defaultChecked;
+        this.type = StepViewType.dropdown;
+        this.dropdowns = view.dropdowns;
         this.callback = view.callback;
+        this.bordered = view.bordered || false;
+        this.width = view.width || "100%";
+        this.description = view.description || undefined;
     }
 }
 

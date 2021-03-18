@@ -64,6 +64,7 @@ namespace AppLensV3
             services.AddSingleton<ISelfHelpContentService, SelfHelpContentService>();
             services.AddSingleton<IFreshChatClientService, FreshChatClientService>();
             services.AddSingleton<ICosmosDBHandler<TemporaryAccessUser>, CosmosDBHandler<TemporaryAccessUser>>();
+            services.AddSingleton<IIncidentAssistanceService, IncidentAssistanceService>();
 
             services.AddMemoryCache();
             services.AddMvc();
@@ -85,23 +86,28 @@ namespace AppLensV3
             {
                 Configuration.Bind("AzureAd", options);
             });
-            if (Configuration["ServerMode"] != "internal"){
+            if (Configuration["ServerMode"] != "internal")
+            {
                 services.AddHttpContextAccessor();
                 AuthorizationTokenService.Instance.Initialize(Configuration);
             }
-            services.AddAuthorization(options => {
+            services.AddAuthorization(options =>
+            {
                 var applensAccess = new SecurityGroupConfig();
                 var applensTesters = new SecurityGroupConfig();
                 Configuration.Bind("ApplensAccess", applensAccess);
                 Configuration.Bind("ApplensTesters", applensTesters);
 
-                options.AddPolicy("DefaultAccess", policy => {
+                options.AddPolicy("DefaultAccess", policy =>
+                {
                     policy.Requirements.Add(new DefaultAuthorizationRequirement());
                 });
-                options.AddPolicy(applensAccess.GroupName, policy => {
-                   policy.Requirements.Add(new SecurityGroupRequirement(applensAccess.GroupName, applensAccess.GroupId));
+                options.AddPolicy(applensAccess.GroupName, policy =>
+                {
+                    policy.Requirements.Add(new SecurityGroupRequirement(applensAccess.GroupName, applensAccess.GroupId));
                 });
-                options.AddPolicy(applensTesters.GroupName, policy => {
+                options.AddPolicy(applensTesters.GroupName, policy =>
+                {
                     policy.Requirements.Add(new SecurityGroupRequirement(applensTesters.GroupName, applensTesters.GroupId));
                 });
             });

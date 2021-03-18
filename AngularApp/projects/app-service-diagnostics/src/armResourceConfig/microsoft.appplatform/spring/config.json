@@ -7,8 +7,11 @@
 	"matchRegEx": "/Microsoft.AppPlatform/Spring/",
 	"searchSuffix": "Spring",
 	"azureServiceName": "Azure Spring Cloud",
-	"armApiVersion": "2019-05-01-preview",
+	"armApiConfig": {
+		"armApiVersion": "2019-05-01-preview"
+	},
 	"isSearchEnabled": true,
+	"keystoneDetectorId": "",
 	"liveChatConfig": {
 		"isApplicableForLiveChat": false,
 		"supportTopicIds": []
@@ -27,6 +30,14 @@
 			"description": "Are you having issues exporting platform logs or distributed tracing? Are you having issue with some settings that you configured for your app? Find out if you misconfigured some features of Azure Spring Cloud, such as Log Analytics, App Insights, scaling, deployments and domain.",
 			"keywords": ["Log", "Metrics", "Distributed Tracing", "Scaling", "Swap", "Custom Domain", "SSL"],
 			"color": "rgb(249, 213, 180)",
+			"createFlowForCategory": false,
+			"chatEnabled": false
+		}, {
+			"id": "Networking",
+			"name": "Networking",
+            "description": "Are you having network connectivity issues when Azure Spring Cloud is deployed in your own virtual network? Find out if you misconfigured the Private DNS Zone, Custom DNS Server or blocked required outbound traffic in your VNet injected service instance.",
+            "keywords": [ "Virtual Network", "Custom DNS Server", "Private DNS Zone", "Firewall" ],
+			"color": "rgb(208, 228, 176)",
 			"createFlowForCategory": false,
 			"chatEnabled": false
 		}

@@ -7,9 +7,16 @@
 	"matchRegEx": "/Microsoft.ServiceFabric/clusters/",
 	"searchSuffix": "",
 	"azureServiceName": "",
-	"armApiVersion": "",
+	"armApiConfig": {
+		"armApiVersion": "",
+		"isArmApiResponseBase64Encoded": false
+	},
 	"isSearchEnabled": true,
-	"isApplicableForLiveChat": false,
+	"keystoneDetectorId": "",
+	"liveChatConfig": {
+        "isApplicableForLiveChat": false,
+        "supportTopicIds": []
+    },
 	"categories": [{
 			"id": "",
 			"name": "",

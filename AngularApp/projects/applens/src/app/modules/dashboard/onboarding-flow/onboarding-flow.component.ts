@@ -42,7 +42,7 @@ export class OnboardingFlowComponent implements OnInit {
 
   DevelopMode = DevelopMode;
 
-  hideModal: boolean = false;
+  hideModal: boolean = true;
   fileName: string;
   editorOptions: any;
   code: string;

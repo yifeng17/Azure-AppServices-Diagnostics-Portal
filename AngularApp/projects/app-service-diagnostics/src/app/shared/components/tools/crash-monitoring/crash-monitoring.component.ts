@@ -9,10 +9,11 @@ import { Globals } from '../../../../globals'
 import { TelemetryService, TelemetryEventNames } from 'diagnostic-data';
 import { SharedStorageAccountService } from 'projects/app-service-diagnostics/src/app/shared-v2/services/shared-storage-account.service';
 import { CrashMonitoringSettings } from '../../../models/daas';
-import moment = require('moment');
 import { DirectionalHint } from 'office-ui-fabric-react/lib/Tooltip';
 import { ITooltipOptions } from '@angular-react/fabric';
 import { CrashMonitoringAnalysisComponent } from './crash-monitoring-analysis/crash-monitoring-analysis.component';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'crash-monitoring',
@@ -31,6 +32,7 @@ export class CrashMonitoringComponent implements OnInit {
       this.blobSasUriEnvironmentVariable = newStorageAccount.sasUri;
       if (this.chosenStorageAccount) {
         this.validationError = "";
+        this.storageConfiguredAsAppSetting = true;
       }
     })
   }
@@ -38,8 +40,10 @@ export class CrashMonitoringComponent implements OnInit {
   today: Date = new Date(Date.now());
   memoryDumpOptions: IDropdownOption[] = [];
 
-  maxDate: Date = this.convertUTCToLocalDate(addMonths(this.today, 1))
-  minDate: Date = this.convertUTCToLocalDate(this.today)
+  // TODO: Revert this to 30 days after timer overflow issue is fixed
+  //maxDate: Date = this.convertUTCToLocalDate(addMonths(this.today, 1))
+  maxDate: Date = this.convertUTCToLocalDate(addDays(this.today, 20));
+  minDate: Date = this.convertUTCToLocalDate(this.today);
   startDate: Date = this.minDate;
   endDate: Date = addDays(this.startDate, 15);
   startClock: string;
@@ -53,6 +57,7 @@ export class CrashMonitoringComponent implements OnInit {
   validationError: string = "";
   updatingStorageAccounts: boolean = false;
   chosenStorageAccount: string = "";
+  storageConfiguredAsAppSetting: boolean = false;
 
   chosenStartDateTime: Date;
   chosenEndDateTime: Date;
@@ -61,7 +66,6 @@ export class CrashMonitoringComponent implements OnInit {
   crashMonitoringSettings: CrashMonitoringSettings = null;
   collapsed: boolean = false;
   blobSasUriEnvironmentVariable: string = "";
-  toolBlocked: boolean = false;
 
   // For tooltip display
   directionalHint = DirectionalHint.rightTopEdge;
@@ -89,40 +93,24 @@ export class CrashMonitoringComponent implements OnInit {
   ngOnInit() {
     this._siteService.getSiteDaasInfoFromSiteMetadata().subscribe(site => {
       this.siteToBeDiagnosed = site;
-      this._siteService.getSiteAppSettings(site.subscriptionId, site.resourceGroupName, site.siteName, site.slot).subscribe(settingsResponse => {
-        if (settingsResponse && settingsResponse.properties) {
-          if (settingsResponse.properties["WEBSITE_LOCAL_CACHE_OPTION"] != null
-            && settingsResponse.properties["WEBSITE_LOCAL_CACHE_OPTION"].toString().toLowerCase() === "Always".toLowerCase()) {
-            this.toolBlocked = true;
-            return;
+      this.status = toolStatus.CheckingBlobSasUri;
+      this.getStorageAccountName().subscribe(storageAccountName => {
+        this.chosenStorageAccount = storageAccountName;
+        this._siteService.getCrashMonitoringSettings(site).subscribe(crashMonitoringSettings => {
+          if (crashMonitoringSettings != null) {
+            this.crashMonitoringSettings = crashMonitoringSettings;
+            this.populateSettings(crashMonitoringSettings);
+            this.monitoringEnabled = true;
+            this.collapsed = true;
           }
-        }
-        this.status = toolStatus.CheckingBlobSasUri;
-        this._daasService.getBlobSasUri(this.siteToBeDiagnosed).subscribe(resp => {
-          this.status = toolStatus.CheckingBlobSasUri;
-          let configuredSasUri = "";
-          if (resp.BlobSasUri) {
-            configuredSasUri = resp.BlobSasUri;
-            this.chosenStorageAccount = this.getStorageAccountNameFromSasUri(configuredSasUri);
-          }
-
-          this._siteService.getCrashMonitoringSettings(site).subscribe(crashMonitoringSettings => {
-            if (crashMonitoringSettings != null) {
-              this.crashMonitoringSettings = crashMonitoringSettings;
-              this.populateSettings(crashMonitoringSettings);
-              this.monitoringEnabled = true;
-              this.collapsed = true;
-            }
-            this.status = toolStatus.Loaded;
-          });
-
-        },
-          error => {
-            this.errorMessage = "Failed while checking configured storage account";
-            this.status = toolStatus.Error;
-            this.error = error;
-          });
-      });
+          this.status = toolStatus.Loaded;
+        });
+      },
+        error => {
+          this.errorMessage = "Failed while checking configured storage account";
+          this.status = toolStatus.Error;
+          this.error = error;
+        });
 
       this.startClock = this.getHourAndMinute(this.startDate);
       this.endClock = this.getHourAndMinute(this.endDate);
@@ -131,9 +119,20 @@ export class CrashMonitoringComponent implements OnInit {
     });
   }
 
+  getStorageAccountName(): Observable<string> {
+    return this._daasService.getBlobSasUri(this.siteToBeDiagnosed).pipe(
+      map(daasSasUri => {
+        this.storageConfiguredAsAppSetting = daasSasUri.IsAppSetting;
+        return this.getStorageAccountNameFromSasUri(daasSasUri.SasUri);
+      }));
+  }
+
   resetGlobals() {
     this.today = new Date(Date.now());
-    this.maxDate = this.convertUTCToLocalDate(addMonths(this.today, 1))
+
+    // TODO: Revert this to 30 days after timer overflow issue is fixed
+    //this.maxDate = this.convertUTCToLocalDate(addMonths(this.today, 1))
+    this.maxDate = this.convertUTCToLocalDate(addDays(this.today, 20));
     this.minDate = this.convertUTCToLocalDate(this.today)
     this.startDate = this.minDate;
     this.endDate = addDays(this.startDate, 15);
@@ -161,6 +160,9 @@ export class CrashMonitoringComponent implements OnInit {
   }
 
   getStorageAccountNameFromSasUri(blobSasUri: string): string {
+    if (!blobSasUri) {
+      return blobSasUri;
+    }
     let blobUrl = new URL(blobSasUri);
     return blobUrl.host.split('.')[0];
   }
@@ -200,7 +202,7 @@ export class CrashMonitoringComponent implements OnInit {
   validateSettings(): boolean {
     this.validationError = ""
     let isValid: boolean = true;
-    if (!this.chosenStorageAccount) {
+    if (!this.chosenStorageAccount || !this.storageConfiguredAsAppSetting) {
       this.validationError = "Please choose a storage account to save the memory dumps";
       return false;
     }

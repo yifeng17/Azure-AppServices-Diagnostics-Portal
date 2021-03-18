@@ -17,11 +17,13 @@ export class CommAlertComponent implements OnInit {
     private resolvedAlertTitle: string =
         'An Azure service outage that was impacting this subscription was recently resolved. (Issue : {title})';
     private azureServiceCommList: Communication[];
+    private activeIssueMessageBarBGColor : string = 'rgb(253, 231, 233)';
+    private resolvedIssueMessageBarBGColor : string = 'rgb(255, 244, 206)';
 
     @Input() autoExpand: boolean = false;
     commAlertTitle: string;
     commAlertToShow: Communication = null;
-    commAlertStatus: MessageBarType = MessageBarType.success;
+    commAlertStatus: MessageBarType = MessageBarType.warning;
     isAlertExpanded: boolean = false;
     commPublishedTime: string;
     impactedServices: string;
@@ -29,10 +31,11 @@ export class CommAlertComponent implements OnInit {
     isPublic: boolean;
     type: PanelType = PanelType.custom;
     width: string = "850px";
+    
     messageBarStyles: any = {
         root: {
             height: '49px',
-            backgroundColor: '#FEF0F1',
+            backgroundColor: this.resolvedIssueMessageBarBGColor
         }
     }
 
@@ -63,6 +66,7 @@ export class CommAlertComponent implements OnInit {
                 if (commAlert.status === CommunicationStatus.Active) {
                     this.commAlertTitle = this.activeAlertTitle;
                     this.commAlertStatus = MessageBarType.error;
+                    this.messageBarStyles.root.backgroundColor = this.activeIssueMessageBarBGColor;
                 } else {
                     this.commAlertTitle = this.resolvedAlertTitle;
                 }

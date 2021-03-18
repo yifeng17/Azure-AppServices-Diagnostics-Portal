@@ -182,14 +182,36 @@ export class DaasSettings {
     EndpointSuffix: string;
 }
 
+export interface DaasSasUri {
+    SasUri: string;
+    IsAppSetting: boolean;
+}
+
 export class DaasValidationResult {
     Validated: boolean = false;
     BlobSasUri: string = "";
+    SasUriAsAppSetting: boolean = false;
 }
 
 export class CrashMonitoringSettings {
     StartTimeUtc: string;
     MaxHours: number;
     MaxDumpCount: number;
-    ExceptionFilter:string;
+    ExceptionFilter: string;
+}
+
+export interface ValidateSasUriResponse {
+    Exception: string;
+    IsValid: boolean;
+    StorageAccount:string;
+    SpecifiedAt: string;
+    ExtendedError: StorageExtendError;
+}
+
+export interface StorageExtendError {
+    HttpStatusCode: string;
+    HttpStatusMessage: string;
+    ErrorCode: string;
+    ErrorMessage: string;
+    AdditionalDetails: any;
 }

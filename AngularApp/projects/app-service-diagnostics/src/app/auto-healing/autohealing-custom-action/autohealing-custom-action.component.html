@@ -20,7 +20,7 @@
             <div class="detail-cards">
               <ng-container *ngFor="let item of Diagnosers;let i = index">
                 <button class="detail-card" (click)="chooseDiagnoser(item)"
-                  [ngClass]="{'detail-card-active': item.Name === diagnoser.Name}">
+                  [ngClass]="{'detail-card-active': item.Name === diagnoser.Name && item.Enabled , 'detail-card-disabled': item.Enabled === false}">
                   <h4>{{item.Name}}</h4>
                   <p>{{ item.Description }}</p>
                 </button>
@@ -62,14 +62,15 @@
                       </td>
                     </tr>
                   </th>
-                  <tr>
-                    <td> You have chosen a tool option that does not restart the process. This can cause
-                      auto-healing actions to kick in multiple times thus generating a lot of data. It is
-                      recommended to choose <strong>CollectKillAnalyze</strong> option to ensure that the process gets
-                      restarted after collecting data.</td>
-                  </tr>
+                  <tbody>
+                    <tr>
+                      <td> You have chosen a tool option that does not restart the process. This can cause
+                        auto-healing actions to kick in multiple times thus generating a lot of data. It is
+                        recommended to choose <strong>CollectKillAnalyze</strong> option to ensure that the process gets
+                        restarted after collecting data.</td>
+                    </tr>
+                  </tbody>
                 </table>
-
               </div>
             </div>
           </div>

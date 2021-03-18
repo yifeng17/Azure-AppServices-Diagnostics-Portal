@@ -124,10 +124,11 @@ export class NetworkCheckFirstPageComponent implements OnInit {
         var mgr = this.stepFlowManager = new StepFlowManager(this.stepViews);
         var dropDownView = new DropdownStepView({
             id: "InitialDropDown",
-            type: StepViewType.dropdown,
-            description: "Tell us more about the problem you are experiencing? ",
-            options: flows.map(f => f.title),
-            async callback(selectedIdx: number): Promise<void> {
+            description: "Tell us more about the problem you are experiencing?",
+            dropdowns: [{
+                options: flows.map(f => f.title),
+                placeholder: "Please select..."}],
+            async callback(dropdownIdx: number, selectedIdx: number): Promise<void> {
                 mgr.reset(state);
                 var flow = flows[selectedIdx];
                 mgr.setFlow(flow);
