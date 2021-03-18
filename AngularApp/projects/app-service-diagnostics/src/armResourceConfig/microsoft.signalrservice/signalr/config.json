@@ -6,7 +6,7 @@
     },
 
     "matchRegEx": "/Microsoft.SignalRService/SignalR/",
-    "searchSuffix": "signalr",
+    "searchSuffix": "AZURE SIGNALR SERVICE",
     "azureServiceName": "Azure SignalR Services",
     "armApiConfig": {
         "armApiVersion": "2020-05-01"

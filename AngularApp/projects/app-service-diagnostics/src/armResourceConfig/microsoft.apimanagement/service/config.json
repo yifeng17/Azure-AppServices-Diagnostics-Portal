@@ -5,7 +5,7 @@
     "searchBarPlaceHolder": "Search for common problems or tools"
   },
   "matchRegEx": "/Microsoft.ApiManagement/service/",
-  "searchSuffix": "API Management",
+  "searchSuffix": "AZURE API MANAGEMENT SERVICE",
   "azureServiceName": "API Management",
   "armApiConfig": {
     "armApiVersion": "2018-06-01-preview"
