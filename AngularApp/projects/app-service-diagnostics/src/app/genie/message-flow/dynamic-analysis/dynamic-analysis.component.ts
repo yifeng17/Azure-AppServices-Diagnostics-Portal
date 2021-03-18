@@ -6,6 +6,8 @@ import { SearchAnalysisMode } from 'projects/diagnostic-data/src/lib/models/sear
 import { ContentService } from '../../../shared-v2/services/content.service';
 import { CategoryChatStateService } from '../../../shared-v2/services/category-chat-state.service';
 import { LoggingV2Service } from '../../../shared-v2/services/logging-v2.service';
+import { TelemetryService, TelemetryEventNames } from 'diagnostic-data';
+import { v4 as uuid } from 'uuid';
 
 @Component({
     selector: 'dynamic-analysis',
@@ -26,8 +28,9 @@ export class DynamicAnalysisComponent implements OnInit, AfterViewInit, IChatMes
     loading: boolean = true;
     searchMode: SearchAnalysisMode = SearchAnalysisMode.Genie;
     viewUpdated: boolean = false;
+    webSearchId: string = null;
 
-    constructor(private _routerLocal: Router, private _activatedRouteLocal: ActivatedRoute, private injector: Injector, private _contentService: ContentService, private _chatState: CategoryChatStateService, private _logger: LoggingV2Service) { }
+    constructor(private _routerLocal: Router, private _activatedRouteLocal: ActivatedRoute, private injector: Injector, private _contentService: ContentService, private _chatState: CategoryChatStateService, private _logger: LoggingV2Service, private _telemetryService: TelemetryService) { }
     noSearchResult: boolean = undefined;
     showDocumentSearchResult: boolean = false;
     showFeedback: boolean = undefined;
@@ -48,6 +51,7 @@ export class DynamicAnalysisComponent implements OnInit, AfterViewInit, IChatMes
         };
 
         this._contentService.searchWeb(this.keyword, this.documentResultCount).subscribe(searchResults => {
+            this.webSearchId = uuid();
             if (searchResults && searchResults.webPages && searchResults.webPages.value && searchResults.webPages.value.length > 0) {
                 this.hasDocumentSearchResult = true;
                 this.content = searchResults.webPages.value.map(result => {
@@ -56,6 +60,13 @@ export class DynamicAnalysisComponent implements OnInit, AfterViewInit, IChatMes
                         description: result.snippet,
                         link: result.url
                     };
+                });
+                this._telemetryService.logEvent(TelemetryEventNames.WebQueryResults, {
+                    searchId: this.webSearchId,
+                    searchMode: "1",
+                    query: this.keyword,
+                    results: JSON.stringify(this.content),
+                    ts: Math.floor((new Date()).getTime() / 1000).toString()
                 });
 
                 setTimeout(() => {
@@ -68,6 +79,7 @@ export class DynamicAnalysisComponent implements OnInit, AfterViewInit, IChatMes
 
 
     openArticle(article: any) {
+        this._telemetryService.logEvent(TelemetryEventNames.WebQueryResultClicked, { searchId: this.webSearchId, searchMode: "1", article: JSON.stringify(article), ts: Math.floor((new Date()).getTime() / 1000).toString() });
         window.open(article.link, '_blank');
     }
 
