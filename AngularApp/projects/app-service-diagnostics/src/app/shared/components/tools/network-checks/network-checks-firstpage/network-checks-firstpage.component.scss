@@ -2,6 +2,7 @@
     position: fixed;
     height: calc(100vh - 35px);
     width: calc(100vw - 298px);
+    min-width: 550px;
     overflow-y: scroll;
 }
 .container {
