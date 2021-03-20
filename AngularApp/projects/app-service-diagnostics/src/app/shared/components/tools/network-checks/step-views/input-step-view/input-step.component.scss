@@ -1,13 +1,29 @@
 .input-section{
+    padding-top: 10px;
+    padding-bottom: 5px;
+
+    .input-entry{
+        float: left;
+    }
+
+    .input-tooltip{
+        margin-top: -5px;
+        position: absolute;
+        margin-left: 3px;
+        font-size: 12px;
+    }
+
+    .input-box{
+        width: 225px;
+        margin-top: -2px;
+        margin-left: 35px;
+    }
 }
 
 .input-check-button{
     padding-top: 12px;
 }
 
-.input-box{
-    width: 225px;
-}
 
 .input-step{
     padding: 10px 10px 10px 10px;
@@ -23,9 +39,3 @@
     font-weight: 500;
 }
 
-.input-tooltip{
-    margin-top: -8px;
-    position: absolute;
-    margin-left: 3px;
-    font-size: 15px;
-}

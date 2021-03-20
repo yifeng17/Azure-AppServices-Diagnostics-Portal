@@ -18,3 +18,15 @@
 .step{
     border: 1px solid #e5e5e5;
 }
+
+.loading-spin{
+    padding-left: 8px;
+    padding-top: 5px;
+    .fa-spin{
+        font-size: 18px;
+    }
+    .loading-text{
+        margin-top: -20px;
+        margin-left: 25px;
+    }
+}

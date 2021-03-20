@@ -33,7 +33,7 @@ export abstract class StepView {
     public type: StepViewType;
     public container: StepViewContainer;
 
-    constructor(view: { id:string, type: StepViewType }) {
+    constructor(view: { id: string, type: StepViewType }) {
         this.type = view.type;
         this.id = view.id;
     }
@@ -50,14 +50,15 @@ export class PromiseStepView extends StepView {
 }
 
 export class DropdownStepView extends StepView {
-    public dropdowns:{
+    public dropdowns: {
         description?: string,
         options: string[],
         defaultChecked?: number,
-        placeholder: string }[];
-    public width:string;
-    public bordered:boolean;
-    public description:string;
+        placeholder: string
+    }[];
+    public width: string;
+    public bordered: boolean;
+    public description: string;
     public callback: (dropdownIdx: number, selectedIdx: number) => Promise<void>;
     constructor(view: any) {
         super(view);
@@ -139,6 +140,7 @@ export class InfoStepView extends StepView {
 export class InputStepView extends StepView {
     public title: string;
     public placeholder: string;
+    public entry:string;
     public buttonText: string;
     public tooltip: string;
     public callback: (input: string) => Promise<void>;
@@ -150,32 +152,40 @@ export class InputStepView extends StepView {
         this.buttonText = view.buttonText;
         this.tooltip = view.tooltip;
         this.callback = view.callback;
+        this.entry = view.entry;
     }
 }
 
+
 export class StepFlowManager {
-    private _stepViews: StepViewContainer[];
+    public stepViews: StepViewContainer[];
     private _stepViewQueue: PromiseCompletionSource<StepView[]>[];
     private _currentFlow: StepFlow;
     private _executionCount = 0;
     private _stepViewQueueMap: number[];
-    constructor(stepViews: StepViewContainer[]) {
-        this._stepViews = stepViews;
+    public loadingView: { loadingText: string };
+    private _defaultLoadingText = "Loading...";
+    constructor(views: StepViewContainer[]) {
+        this.stepViews = views;
         this._stepViewQueue = [new PromiseCompletionSource<StepView[]>()];
         this._stepViewQueueMap = [];
         this._execute();
     }
 
-    public setFlow(flow: StepFlow){
+    public setFlow(flow: StepFlow) {
         this._currentFlow = flow;
-        flow.run(this);
+        flow.run(this.generateMgrForFlow(flow));
+    }
+
+    private endFlow() {
+        this._stepViewQueue[this._stepViewQueue.length - 1].resolve(null);
     }
 
     public reset(idx: number) {
-        this._stepViewQueue[this._stepViewQueue.length - 1].resolve(null);
+        this.endFlow();
         this._stepViewQueue.length = idx + 1;
         if (this._stepViewQueueMap[idx] != null) {
-            this._stepViews.length = this._stepViewQueueMap[idx];
+            this.stepViews.length = this._stepViewQueueMap[idx];
         }
         this._stepViewQueue.push(new PromiseCompletionSource<StepView[]>());
         this._execute(idx + 1);
@@ -183,11 +193,13 @@ export class StepFlowManager {
 
     private async _execute(idx: number = 0) {
         ++this._executionCount;
-        var cnt = this._executionCount;
-        while (idx < this._stepViewQueue.length) {
+        var currentCnt = this._executionCount;
+        var stepViewQueue = this._stepViewQueue;
+        while (idx < stepViewQueue.length && currentCnt == this._executionCount) {
             try {
-                var views = await this._stepViewQueue[idx];
-                if (views == null || cnt != this._executionCount) {
+                this.loadingView = stepViewQueue[idx];
+                var views = await stepViewQueue[idx];
+                if (views == null || currentCnt != this._executionCount) {
                     break;
                 }
 
@@ -209,29 +221,45 @@ export class StepFlowManager {
                             view = new InputStepView(view);
                             break;
                     }
-                    this._stepViews.push(new StepViewContainer(view));
+                    this.stepViews.push(new StepViewContainer(view));
                 }
             }
             catch (error) {
                 console.log(error);
             }
-            this._stepViewQueueMap[idx] = this._stepViews.length;
+            this._stepViewQueueMap[idx] = this.stepViews.length;
             ++idx;
         }
     }
 
-    public addView(viewPromise: StepView | Promise<StepView>) {
-        var idx = this._stepViewQueue.length - 1;
-        this._stepViewQueue.push(new PromiseCompletionSource<StepView[]>());
-        this._stepViewQueue[idx].resolve(Promise.resolve(viewPromise).then(v => [v]));
-        return idx;
+    public addView(viewPromise: StepView | Promise<StepView>, loadingText?:string) {
+        return this.addViews(Promise.resolve(viewPromise).then(v => [v]), loadingText);
     }
 
-    public addViews(viewPromise: StepView[] | Promise<StepView[]>) {
+    public addViews(viewPromise: StepView[] | Promise<StepView[]>, loadingText?:string) {
         var idx = this._stepViewQueue.length - 1;
         this._stepViewQueue.push(new PromiseCompletionSource<StepView[]>());
         this._stepViewQueue[idx].resolve(viewPromise);
+        this._stepViewQueue[idx].loadingText = loadingText || this._defaultLoadingText;
         return idx;
+    }
+
+    private generateAddViewsFunc(flow: StepFlow){
+        var addViews = this.addViews.bind(this);
+        return (viewPromise: StepView[] | Promise<StepView[]>, loadingText?:string):number => {
+            if(this._currentFlow != flow){
+                return;
+            }
+            return addViews(viewPromise, loadingText);
+        };
+    }
+
+    private generateMgrForFlow(flow: StepFlow){
+        var mgr = {...this}
+        mgr.addViews = this.generateAddViewsFunc(flow);
+        mgr.addView = this.addView;
+        mgr.reset = this.reset.bind(this);
+        return mgr;
     }
 }
 
@@ -244,6 +272,7 @@ function delay(second: number): Promise<void> {
 class PromiseCompletionSource<T> extends Promise<T>{
     private _resolve: (value: T | PromiseLike<T>) => void;
     private _reject: (reason?: any) => void;
+    public loadingText: string;
 
     constructor(timeoutInSec?: number) {
         var _resolve: (value: T | PromiseLike<T>) => void;

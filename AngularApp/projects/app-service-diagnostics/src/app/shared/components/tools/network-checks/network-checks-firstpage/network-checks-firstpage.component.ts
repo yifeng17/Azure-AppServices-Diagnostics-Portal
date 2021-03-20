@@ -84,8 +84,11 @@ export class NetworkCheckFirstPageComponent implements OnInit {
     //checks: any[];
 
     constructor(private _siteService: SiteService, private _armService: ArmService, private _telemetryService: TelemetryService, private _globals:Globals) {
+        try
+        {
         var siteInfo = this._siteService.currentSiteMetaData.value;
         var fullSiteName = siteInfo.siteName + (siteInfo.slot == "" ? "" : "-" + siteInfo.slot);
+        this.stepFlowManager = new StepFlowManager(this.stepViews);
         this.siteInfo = { ...this._siteService.currentSiteMetaData.value, ...this._siteService.currentSite.value, fullSiteName };
 
         this.diagProvider = new DiagProvider(this.siteInfo, _armService, _siteService);
@@ -111,6 +114,10 @@ export class NetworkCheckFirstPageComponent implements OnInit {
                 }
             });//*/
         this.loadFlowsAsync();
+        }catch(error){
+            debugger;
+            console.log(error);
+        }
     }
 
     async loadFlowsAsync(): Promise<void> {
@@ -121,7 +128,7 @@ export class NetworkCheckFirstPageComponent implements OnInit {
             return flow;
         });
         var flows =  [testFlow, testFlow2].concat(remoteFlows).map(f => this.convertFromNetworkCheckFlow(f));
-        var mgr = this.stepFlowManager = new StepFlowManager(this.stepViews);
+        var mgr = this.stepFlowManager;
         var dropDownView = new DropdownStepView({
             id: "InitialDropDown",
             description: "Tell us more about the problem you are experiencing?",
