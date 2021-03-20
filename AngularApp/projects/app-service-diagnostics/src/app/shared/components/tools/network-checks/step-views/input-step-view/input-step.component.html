@@ -6,7 +6,7 @@
             <a class="input-tooltip" title="{{inputStepView.tooltip}}" *ngIf="inputStepView.tooltip">?</a>
         </div>
         <input class="input-box" placeholder="{{inputStepView.placeholder}}" #text>
-        
+        <div class="input-error">{{inputStepView.error || " "}}</div>
     </div>
     <fab-primary-button class="input-check-button" (click)="inputStepView.callback(text.value)">
         {{inputStepView.buttonText}}

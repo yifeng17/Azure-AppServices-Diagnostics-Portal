@@ -143,6 +143,7 @@ export class InputStepView extends StepView {
     public entry:string;
     public buttonText: string;
     public tooltip: string;
+    public error:string;
     public callback: (input: string) => Promise<void>;
 
     constructor(view: any) {
@@ -153,6 +154,7 @@ export class InputStepView extends StepView {
         this.tooltip = view.tooltip;
         this.callback = view.callback;
         this.entry = view.entry;
+        this.error = view.error;
     }
 }
 
