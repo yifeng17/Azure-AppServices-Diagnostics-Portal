@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ViewEncapsulation, ViewChild, AfterViewInit } from '@angular/core';
 import { Site, SiteInfoMetaData } from '../../../../models/site';
 import { SiteService } from '../../../../services/site.service';
 import { ArmService } from '../../../../services/arm.service';
@@ -25,10 +25,10 @@ abstract class NetworkCheckFlow {
     abstract func(siteInfo: SiteInfoMetaData & Site & { fullSiteName: string }, diagProvider: DiagProvider, flowMgr: StepFlowManager): Promise<null>;
 }
 
-var testFlow:NetworkCheckFlow = {
+var testFlow: NetworkCheckFlow = {
     id: "testFlow1",
     title: "test1",
-    async func(siteInfo: SiteInfoMetaData & Site & { fullSiteName: string }, diagProvider: DiagProvider, flowMgr: StepFlowManager): Promise<null>{
+    async func(siteInfo: SiteInfoMetaData & Site & { fullSiteName: string }, diagProvider: DiagProvider, flowMgr: StepFlowManager): Promise<null> {
         flowMgr.addView(new CheckStepView({
             id: "Test",
             type: StepViewType.check,
@@ -39,10 +39,10 @@ var testFlow:NetworkCheckFlow = {
     }
 }
 
-var testFlow2:NetworkCheckFlow = {
+var testFlow2: NetworkCheckFlow = {
     id: "testFlow2",
     title: "test2",
-    async func(siteInfo: SiteInfoMetaData & Site & { fullSiteName: string }, diagProvider: DiagProvider, flowMgr: StepFlowManager): Promise<null>{
+    async func(siteInfo: SiteInfoMetaData & Site & { fullSiteName: string }, diagProvider: DiagProvider, flowMgr: StepFlowManager): Promise<null> {
         flowMgr.addView(new InfoStepView({
             id: "Test",
             infoType: 0,
@@ -70,12 +70,12 @@ var testFlow2:NetworkCheckFlow = {
 })
 
 
-export class NetworkCheckFirstPageComponent implements OnInit {
+export class NetworkCheckFirstPageComponent implements OnInit, AfterViewInit {
 
-    @ViewChild('networkCheckingTool',  {static: false}) networkCheckingToolDiv:any; 
+    @ViewChild('networkCheckingTool', { static: false }) networkCheckingToolDiv: any;
     title: string = 'Network Checking Tool';
     description: string = '';
-    stepFlowManager:StepFlowManager;
+    stepFlowManager: StepFlowManager;
     stepViews: StepViewContainer[] = [];
 
     diagProvider: DiagProvider;
@@ -84,62 +84,42 @@ export class NetworkCheckFirstPageComponent implements OnInit {
     openFeedback = false;
     //checks: any[];
 
-    constructor(private _siteService: SiteService, private _armService: ArmService, private _telemetryService: TelemetryService, private _globals:Globals) {
-        try
-        {
-        var siteInfo = this._siteService.currentSiteMetaData.value;
-        var fullSiteName = siteInfo.siteName + (siteInfo.slot == "" ? "" : "-" + siteInfo.slot);
-        this.stepFlowManager = new StepFlowManager(this.stepViews);
-        this.siteInfo = { ...this._siteService.currentSiteMetaData.value, ...this._siteService.currentSite.value, fullSiteName };
+    constructor(private _siteService: SiteService, private _armService: ArmService, private _telemetryService: TelemetryService, private _globals: Globals) {
+        try {
+            var siteInfo = this._siteService.currentSiteMetaData.value;
+            var fullSiteName = siteInfo.siteName + (siteInfo.slot == "" ? "" : "-" + siteInfo.slot);
+            this.stepFlowManager = new StepFlowManager(this.stepViews);
+            this.siteInfo = { ...this._siteService.currentSiteMetaData.value, ...this._siteService.currentSite.value, fullSiteName };
 
-        this.diagProvider = new DiagProvider(this.siteInfo, _armService, _siteService);
-         /*var siteInfo = this._siteService.currentSiteMetaData.value;
-        var fullSiteName = siteInfo.siteName + (siteInfo.slot == "" ? "" : "-" + siteInfo.slot);
-        var siteInfoPlus = { ...this._siteService.currentSiteMetaData.value, ...this._siteService.currentSite.value, fullSiteName, siteVnetInfo:null };
-        var diagProvider = new DiagProvider(siteInfoPlus, _armService, _siteService);
-        this._globals.messagesData["NetworkCheckDiagProvider"] = diagProvider;
-        diagProvider.getVNetIntegrationStatusAsync()
-            .then(result => {
-                if(result.isVnetIntegrated){
-                    siteInfoPlus.siteVnetInfo = result.siteVnetInfo;
-                    this._globals.messagesData["SiteInfoWithVNetInfo"] = siteInfoPlus;
-                    this.vnetIntegrationDetected = true;
-                    if(result.outboundType == OutboundType.SWIFT){
-                        this.description = "Detected Regional VNet integration configured."
-                    }else if(result.outboundType == OutboundType.gateway){
-                        this.description = "Detected Gateway required VNet integration configured."
-                    }
-                }else{
-                    this.vnetIntegrationDetected = false;
-                    this.description = "No VNet integration detected."
-                }
-            });//*/
-        this.loadFlowsAsync();
-        }catch(error){
+            this.diagProvider = new DiagProvider(this.siteInfo, _armService, _siteService);
+            this.loadFlowsAsync();
+        } catch (error) {
             debugger;
             console.log(error);
         }
     }
 
-    ngAfterViewInit(){
+    ngAfterViewInit() {
         this.stepFlowManager.setDom(this.networkCheckingToolDiv.nativeElement);
     }
 
     async loadFlowsAsync(): Promise<void> {
-        var remoteFlows:any = await CheckManager.loadRemoteCheckAsync(true);
-        remoteFlows = Object.keys(remoteFlows).map(key=> {
+        var remoteFlows: any = await CheckManager.loadRemoteCheckAsync(true);
+        remoteFlows = Object.keys(remoteFlows).map(key => {
             var flow = remoteFlows[key];
             flow.id = flow.id || key;
             return flow;
         });
-        var flows =  [testFlow, testFlow2].concat(remoteFlows).map(f => this.convertFromNetworkCheckFlow(f));
+        var flows = [testFlow, testFlow2].concat(remoteFlows).map(f => this.convertFromNetworkCheckFlow(f));
         var mgr = this.stepFlowManager;
         var dropDownView = new DropdownStepView({
             id: "InitialDropDown",
             description: "Tell us more about the problem you are experiencing?",
             dropdowns: [{
                 options: flows.map(f => f.title),
-                placeholder: "Please select..."}],
+                placeholder: "Please select..."
+            }],
+            expandByDefault: true,
             async callback(dropdownIdx: number, selectedIdx: number): Promise<void> {
                 mgr.reset(state);
                 var flow = flows[selectedIdx];
@@ -162,14 +142,14 @@ export class NetworkCheckFirstPageComponent implements OnInit {
             .then(val => console.log("getArmResource", val));//*/
     }
 
-    convertFromNetworkCheckFlow(flow: NetworkCheckFlow): StepFlow{
+    convertFromNetworkCheckFlow(flow: NetworkCheckFlow): StepFlow {
         var siteInfo = this.siteInfo;
         var diagProvider = this.diagProvider;
-        var stepFlow:StepFlow ={
+        var stepFlow: StepFlow = {
             id: flow.id,
             title: flow.title,
             description: flow.description || null,
-            async run(flowMgr: StepFlowManager):Promise<void>{
+            async run(flowMgr: StepFlowManager): Promise<void> {
                 return flow.func(siteInfo, diagProvider, flowMgr);
             }
         };

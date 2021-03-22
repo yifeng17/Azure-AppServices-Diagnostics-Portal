@@ -1,5 +1,4 @@
 import { HealthStatus } from "diagnostic-data";
-
 export abstract class StepFlow {
     public id: string;
     public title: string;
@@ -8,7 +7,6 @@ export abstract class StepFlow {
 }
 
 export enum StepViewType {
-    promise,
     dropdown,
     check,
     input,
@@ -30,22 +28,12 @@ export class StepViewContainer {
 
 export abstract class StepView {
     public id: string;
-    public type: StepViewType;
-    public container: StepViewContainer;
+    public type?: StepViewType;
+    public container?: StepViewContainer;
 
-    constructor(view: { id: string, type: StepViewType }) {
+    constructor(view: StepView) {
         this.type = view.type;
         this.id = view.id;
-    }
-}
-
-export class PromiseStepView extends StepView {
-    public message: string;
-    public promise: Promise<StepView>;
-    constructor(view: any) {
-        super(view);
-        this.message = view.message;
-        this.promise = view.promise;
     }
 }
 
@@ -56,11 +44,12 @@ export class DropdownStepView extends StepView {
         defaultChecked?: number,
         placeholder: string
     }[];
-    public width: string;
-    public bordered: boolean;
+    public width?: string;
+    public bordered?: boolean;
     public description: string;
+    public expandByDefault:boolean;
     public callback: (dropdownIdx: number, selectedIdx: number) => Promise<void>;
-    constructor(view: any) {
+    constructor(view: DropdownStepView) {
         super(view);
         this.type = StepViewType.dropdown;
         this.dropdowns = view.dropdowns;
@@ -68,6 +57,7 @@ export class DropdownStepView extends StepView {
         this.bordered = view.bordered || false;
         this.width = view.width || "100%";
         this.description = view.description || undefined;
+        this.expandByDefault = view.expandByDefault || false;
     }
 }
 
@@ -84,30 +74,31 @@ enum checkResultLevel {
 export class CheckStepView extends StepView {
     public title: string;
     public level: number;
-    public get status(): HealthStatus {
-        return this._convertLevelToHealthStatus(this.level);
-    }
-    private _convertLevelToHealthStatus(level: checkResultLevel): HealthStatus {
-        switch (level) {
-            case checkResultLevel.pass:
-                return HealthStatus.Success;
-            case checkResultLevel.fail:
-                return HealthStatus.Critical;
-            case checkResultLevel.warning:
-                return HealthStatus.Warning;
-            case checkResultLevel.pending:
-                return HealthStatus.Info;
-            case checkResultLevel.error:
-                return HealthStatus.Info;
-        }
-        return HealthStatus.None;
-    }
+    public status?: HealthStatus;
 
-    constructor(view: any) {
+    constructor(view: CheckStepView) {
         super(view);
+        this.type = StepViewType.check;
         this.title = view.title;
         this.level = view.level;
+        this.status = convertLevelToHealthStatus(this.level);
     }
+}
+
+function convertLevelToHealthStatus(level: checkResultLevel): HealthStatus {
+    switch (level) {
+        case checkResultLevel.pass:
+            return HealthStatus.Success;
+        case checkResultLevel.fail:
+            return HealthStatus.Critical;
+        case checkResultLevel.warning:
+            return HealthStatus.Warning;
+        case checkResultLevel.pending:
+            return HealthStatus.Info;
+        case checkResultLevel.error:
+            return HealthStatus.Info;
+    }
+    return HealthStatus.None;
 }
 
 enum InfoType {
@@ -120,21 +111,22 @@ export class InfoStepView extends StepView {
     public infoType: InfoType;
     public markdown: string;
 
-    constructor(view: any) {
+    constructor(view: InfoStepView) {
         super(view);
+        this.type = StepViewType.info;
         this.title = view.title;
         this.infoType = view.infoType;
-        this.markdown = this._markdownPreprocess(view.markdown, view.id);
+        this.markdown = markdownPreprocess(view.markdown, view.id);
     }
+}
 
-    private _markdownPreprocess(markdown: string, id: string): string {
-        if (markdown == null) {
-            return null;
-        }
-        // parse markdown links to html <a> tag
-        var result = markdown.replace(/(?<!\!)\[(.*?)]\((.*?)( +\"(.*?)\")?\)/g, `<a target="_blank" href="$2" title="$4" onclick="window.networkCheckLinkClickEventLogger('${id}','$2', '$1')">$1</a>`);
-        return result;
+function markdownPreprocess(markdown: string, id: string): string {
+    if (markdown == null) {
+        return null;
     }
+    // parse markdown links to html <a> tag
+    var result = markdown.replace(/(?<!\!)\[(.*?)]\((.*?)( +\"(.*?)\")?\)/g, `<a target="_blank" href="$2" title="$4" onclick="window.networkCheckLinkClickEventLogger('${id}','$2', '$1')">$1</a>`);
+    return result;
 }
 
 export class InputStepView extends StepView {
@@ -146,8 +138,9 @@ export class InputStepView extends StepView {
     public error:string;
     public callback: (input: string) => Promise<void>;
 
-    constructor(view: any) {
+    constructor(view: InputStepView) {
         super(view);
+        this.type = StepViewType.input;
         this.title = view.title;
         this.placeholder = view.placeholder;
         this.buttonText = view.buttonText;
@@ -219,16 +212,16 @@ export class StepFlowManager {
 
                     switch (view.type) {
                         case StepViewType.dropdown:
-                            view = new DropdownStepView(view);
+                            view = new DropdownStepView(<DropdownStepView>view);
                             break;
                         case StepViewType.check:
-                            view = new CheckStepView(view);
+                            view = new CheckStepView(<CheckStepView>view);
                             break;
                         case StepViewType.info:
-                            view = new InfoStepView(view);
+                            view = new InfoStepView(<InfoStepView>view);
                             break;
                         case StepViewType.input:
-                            view = new InputStepView(view);
+                            view = new InputStepView(<InputStepView>view);
                             break;
                     }
                     this.stepViews.push(new StepViewContainer(view));
@@ -309,3 +302,6 @@ class PromiseCompletionSource<T> extends Promise<T>{
         this._resolve(val);
     }
 }
+
+var globalClasses = {DropdownStepView, CheckStepView, InputStepView, InfoStepView};
+Object.keys(globalClasses).forEach(key => window[key] = globalClasses[key]);

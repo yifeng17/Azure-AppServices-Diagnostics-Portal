@@ -3,10 +3,10 @@
         <h2 tabindex="0">{{ title }}</h2>
         <p tabindex="0">{{ description }}</p>
         <div class="step-container" *ngFor="let viewModel of stepViews" [ngSwitch]="viewModel.stepView.type">
-            <dropdown-step *ngSwitchCase="1" [viewModel]="viewModel"></dropdown-step>
-            <check-step *ngSwitchCase="2" [viewModel]="viewModel"></check-step>
-            <input-step *ngSwitchCase="3" [viewModel]="viewModel"></input-step>
-            <info-step *ngSwitchCase="4" [viewModel]="viewModel"></info-step>
+            <dropdown-step *ngSwitchCase="0" [viewModel]="viewModel"></dropdown-step>
+            <check-step *ngSwitchCase="1" [viewModel]="viewModel"></check-step>
+            <input-step *ngSwitchCase="2" [viewModel]="viewModel"></input-step>
+            <info-step *ngSwitchCase="3" [viewModel]="viewModel"></info-step>
         </div>
         <div class="loading-spin" *ngIf="stepFlowManager.loadingView && stepFlowManager.loadingView.loadingText != null">
             <i class="fa fa-circle-o-notch fa-spin"></i>
