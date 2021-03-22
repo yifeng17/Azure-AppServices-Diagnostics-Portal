@@ -167,11 +167,16 @@ export class StepFlowManager {
     private _stepViewQueueMap: number[];
     public loadingView: { loadingText: string };
     private _defaultLoadingText = "Loading...";
+    private _dom:HTMLDivElement;
     constructor(views: StepViewContainer[]) {
         this.stepViews = views;
         this._stepViewQueue = [new PromiseCompletionSource<StepView[]>()];
         this._stepViewQueueMap = [];
         this._execute();
+    }
+
+    public setDom(dom:HTMLDivElement){
+        this._dom = dom;
     }
 
     public setFlow(flow: StepFlow) {
@@ -207,6 +212,9 @@ export class StepFlowManager {
 
                 for (var i = 0; i < views.length; ++i) {
                     var view = views[i];
+                    if(view == null){
+                        break;
+                    }
                     view.id = view.id || this._currentFlow.id + `_${idx}`;
 
                     switch (view.type) {
@@ -224,6 +232,9 @@ export class StepFlowManager {
                             break;
                     }
                     this.stepViews.push(new StepViewContainer(view));
+                    if(this._dom!=null){
+                        delay(0.1).then(()=>this._dom.scrollTop = this._dom.scrollHeight);
+                    }
                 }
             }
             catch (error) {

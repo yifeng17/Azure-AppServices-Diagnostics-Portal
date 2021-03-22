@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ViewEncapsulation, ViewChild } from '@angular/core';
 import { Site, SiteInfoMetaData } from '../../../../models/site';
 import { SiteService } from '../../../../services/site.service';
 import { ArmService } from '../../../../services/arm.service';
@@ -72,6 +72,7 @@ var testFlow2:NetworkCheckFlow = {
 
 export class NetworkCheckFirstPageComponent implements OnInit {
 
+    @ViewChild('networkCheckingTool',  {static: false}) networkCheckingToolDiv:any; 
     title: string = 'Network Checking Tool';
     description: string = '';
     stepFlowManager:StepFlowManager;
@@ -118,6 +119,10 @@ export class NetworkCheckFirstPageComponent implements OnInit {
             debugger;
             console.log(error);
         }
+    }
+
+    ngAfterViewInit(){
+        this.stepFlowManager.setDom(this.networkCheckingToolDiv.nativeElement);
     }
 
     async loadFlowsAsync(): Promise<void> {
