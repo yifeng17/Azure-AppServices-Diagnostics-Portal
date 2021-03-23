@@ -1,213 +1,65 @@
-import { Component, Input, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ViewEncapsulation, ViewChild, AfterViewInit } from '@angular/core';
 import { Site, SiteInfoMetaData } from '../../../models/site';
 import { SiteService } from '../../../services/site.service';
 import { ArmService } from '../../../services/arm.service';
-import { jsSampleChecks } from './sample-check.js'
-import { ResponseMessageEnvelope } from '../../../models/responsemessageenvelope';
+
 import { HealthStatus, LoadingStatus, TelemetryService } from 'diagnostic-data';
-import { CheckerListComponent } from 'projects/diagnostic-data/src/lib/components/checker-list/checker-list.component';
-import { DiagProvider } from './diag-provider';
+
+import { DiagProvider, OutboundType } from './diag-provider';
 import { Globals } from 'projects/app-service-diagnostics/src/app/globals';
 import { CheckManager } from './check-manager';
+import { CheckStepView, DropdownStepView, InfoStepView, StepFlow, StepFlowManager, StepView, StepViewContainer, StepViewType } from './step-view-lib';
 //import { MarkdownTextComponent } from 'projects/diagnostic-data/src/lib/components/markdown-text/markdown-text.component';
-declare var jsDynamicImportChecks: any;
+
 
 function delay(second: number): Promise<void> {
     return new Promise(resolve =>
         setTimeout(resolve, second * 1000));
 }
 
-class PromiseCompletionSource<T> extends Promise<T>{
-    private _resolve: (value: T | PromiseLike<T>) => void;
-    private _reject: (reason?: any) => void;
 
-    constructor(timeoutInSec?: number) {
-        var _resolve: (value: T | PromiseLike<T>) => void;
-        var _reject: (reason?: any) => void;
-        super((resolve, reject) => {
-            _resolve = resolve;
-            _reject = reject;
-        });
-
-        this._resolve = _resolve;
-        this._reject = _reject;
-
-        if (timeoutInSec != null) {
-            delay(timeoutInSec).then(() => {
-                this._reject(`Timeout after ${timeoutInSec} seconds!`);
-            });
-        }
-    }
-
-    resolve(val: T) {
-        this._resolve(val);
-    }
-}
-
-class InteractiveCheckPayload {
-    public type: number;
-    public data: any;
-    public callBack: (userInput: any) => Promise<CheckResult & { title: string }>;
-}
-
-enum FlowType{
-    troubleshoot,
-    configuration
-}
-
-class Check {
-    public id?: string;
-    public title: string;
-    public description?: string;
-    public func: (siteInfo: SiteInfoMetaData & Site, appSettings: any, diagProvider: DiagProvider) => Promise<CheckResult>;
-    public flow?:FlowType;
-    public tryGetSharedObject?: (key: string) => any;
-    public shareObject?: (key: string, value: any) => void;
-    public waitSharedObjectAsync?: (key: string) => Promise<any>;
-}
-
-class CheckResult {
-    public id?: string;
-    public title?: string;
-    public level: number;
-    public markdown?: string;
-
-    public interactivePayload?: InteractiveCheckPayload;
-    public expanded?: boolean;
-    public steps?: CheckResult[];
-    public promise?: Promise<CheckResult>;
-    public timeout?: number;
-    public hidden?: boolean;
-}
-
-export class ResultView {
+abstract class NetworkCheckFlow {
     public id: string;
     public title: string;
-    public level: string;
-    public markdown: string;
-    public status: HealthStatus;
-    public loadingStatus: LoadingStatus;
-    public expanded: boolean;
-    public interactivePayload?: InteractiveCheckPayload;
-    public expandable: boolean;
-    public stepResultViews?: ResultView[];
+    public description?: string;
+    abstract func(siteInfo: SiteInfoMetaData & Site & { fullSiteName: string }, diagProvider: DiagProvider, flowMgr: StepFlowManager): Promise<null>;
+}
 
-    constructor(data?: {
-        id: string;
-        title: string;
-        level: string;
-        markdown: string;
-        status: HealthStatus;
-        loadingStatus: LoadingStatus;
-        expanded: boolean;
-        interactivePayload?: InteractiveCheckPayload;
-    }) {
-        if (data != null) {
-            this.id = data.id;
-            this.title = data.title;
-            this.level = data.level;
-            this.markdown = data.markdown;
-            this.status = data.status;
-            this.loadingStatus = data.loadingStatus;
-            this.expanded = data.expanded;
-            this.interactivePayload = data.interactivePayload;
-            this.expandable = (this.interactivePayload != null || (this.stepResultViews != null && this.stepResultViews.length > 0));
-        }
-    }
-
-    async interactiveCallBack(userInput: any) {
-        try {
-            var result = await this.interactivePayload.callBack(userInput);
-            this.fill(this.id + "CallBack", result);
-        }
-        catch (error) {
-            console.log("error:", error);
-            debugger;
-        }
-
-    }
-
-    fill(id: string, result: CheckResult) {
-        this.id = id;
-        this.title = result.title;
-        this.level = checkResultLevel[result.level];
-        this.status = convertLevelToHealthStatus(result.level);
-        this.markdown = markdownPreprocess(result.markdown, id);
-        this.loadingStatus = LoadingStatus.Success;
-        this.interactivePayload = result.interactivePayload;
-        this.expanded = result.expanded;
-        this.loadingStatus = LoadingStatus.Success;
-        this.expandable = (this.interactivePayload != null || (result.steps != null && result.steps.length > 0));
-
-        if (result.promise != null) {
-            var timeout = result.timeout || 10;
-            this.loadingStatus = LoadingStatus.Loading;
-            var status = null;
-            var promise = result.promise.catch((e): CheckResult => {
-                this.fillError(e, this.id, this.title);
-                status = "faulted";
-                return null;
-            });
-            var delayPromise = delay(timeout).then((): CheckResult => {
-                status = "timeout";
-                return null;
-            })
-            Promise.race([promise, delayPromise]).then(t => {
-                this.loadingStatus = LoadingStatus.Success;
-                if (t == null && status == "timeout") {
-                    this.status = convertLevelToHealthStatus(3);
-                    this.title = "timeout: " + this.title;
-                } else {
-                    this.fill(id, t);
-                }
-            });
-        }
-        if (result.steps != null) {
-            this.stepResultViews = result.steps.map((step, idx) => {
-                var resultView = new ResultView();
-                resultView.fill(`${id}-${idx}`, step);
-                return resultView;
-            });
-        }
-    }
-
-    fillError(error: Error, id: string, title: string) {
-        this.level = checkResultLevel[checkResultLevel.error];
-        this.loadingStatus = LoadingStatus.Success;
-        this.status = convertLevelToHealthStatus(checkResultLevel.error)
-        this.title = "faulted: " + title;
-        this.markdown = "```\r\n" + `message: ${error}\r\nstacktrace: ` + (error.stack || "none") + "\r\n```";
-        console.log(error);
+var testFlow: NetworkCheckFlow = {
+    id: "testFlow1",
+    title: "test1",
+    async func(siteInfo: SiteInfoMetaData & Site & { fullSiteName: string }, diagProvider: DiagProvider, flowMgr: StepFlowManager): Promise<null> {
+        flowMgr.addView(new CheckStepView({
+            id: "Test",
+            type: StepViewType.check,
+            title: "test123",
+            level: 0
+        }));
+        return;
     }
 }
 
-var sampleCheck: Check = {
-    title: "Sample TS check",
-    func: async function sampleCheck(siteInfo: SiteInfoMetaData, appSettings: Map<string, string>, diagProvider: DiagProvider): Promise<CheckResult> {
-        console.log("appSettings", appSettings);
-        var s = `
-        # Markdown test
-        Test [hyperlink](https://ms.portal.azure.com)
-        ## Subtitle
-        abcabcabc 
-        `
-        return { level: 0, markdown: s };
+var testFlow2: NetworkCheckFlow = {
+    id: "testFlow2",
+    title: "test2",
+    async func(siteInfo: SiteInfoMetaData & Site & { fullSiteName: string }, diagProvider: DiagProvider, flowMgr: StepFlowManager): Promise<null> {
+        flowMgr.addView(new InfoStepView({
+            id: "Test",
+            infoType: 0,
+            type: StepViewType.info,
+            title: "test234",
+            markdown: "# Test\r\n\r\n123123"
+        }));
+
+        flowMgr.addView(new InfoStepView({
+            id: "Test",
+            infoType: 1,
+            type: StepViewType.info,
+            title: "test1111",
+            markdown: "# Test\r\n\r\n123123"
+        }));
+        return;
     }
-}
-
-enum checkResultLevel {
-    pass,
-    warning,
-    fail,
-    pending,
-    loading,
-    error,
-    hidden
-}
-
-enum interactiveCheckType {
-    textbox,
-    dropdown
 }
 
 @Component({
@@ -217,44 +69,74 @@ enum interactiveCheckType {
     entryComponents: []
 })
 
-export class NetworkCheckComponent implements OnInit {
 
-    private _objectMap: Map<string, any> = new Map<string, any>();
+export class NetworkCheckComponent implements OnInit, AfterViewInit {
 
-    title: string = 'Run Network Checks';
-    description: string = 'Run network checks';
+    @ViewChild('networkCheckingTool', { static: false }) networkCheckingToolDiv: any;
+    title: string = 'Network Checking Tool';
+    description: string = '';
+    stepFlowManager: StepFlowManager;
+    stepViews: StepViewContainer[] = [];
 
     diagProvider: DiagProvider;
-    checkResultViews: ResultView[] = [];
-    siteInfo: SiteInfoMetaData & Site & { fullSiteName: string, siteVnetInfo?: any }
-    siteVnetInfoPromise: Promise<any>;
-    feedbackReady = false;
+    siteInfo: SiteInfoMetaData & Site & { fullSiteName: string };
+    vnetIntegrationDetected = null;
     openFeedback = false;
-    isFeedbacktoggled = false;
     //checks: any[];
 
     constructor(private _siteService: SiteService, private _armService: ArmService, private _telemetryService: TelemetryService, private _globals: Globals) {
-        var telemetryService = this._telemetryService;
-        window["networkCheckLinkClickEventLogger"] = (checkId: string, url: string, text: string) => {
-            telemetryService.logEvent("NetworkCheck.LinkClick", { checkId: checkId, url: url, text: text });
-        }
+        try {
+            window["networkCheckLinkClickEventLogger"] = (checkId: string, url: string, text: string) => {
+                _telemetryService.logEvent("NetworkCheck.LinkClick", { checkId, url, text });
+            }
 
-        this.siteInfo = this._globals.messagesData["SiteInfoWithVNetInfo"];
-        if (this.siteInfo == null) {
             var siteInfo = this._siteService.currentSiteMetaData.value;
             var fullSiteName = siteInfo.siteName + (siteInfo.slot == "" ? "" : "-" + siteInfo.slot);
+            this.stepFlowManager = new StepFlowManager(this.stepViews, _telemetryService);
             this.siteInfo = { ...this._siteService.currentSiteMetaData.value, ...this._siteService.currentSite.value, fullSiteName };
-        }
-        this.diagProvider = this._globals.messagesData["NetworkCheckDiagProvider"];
-        if (this.diagProvider == null) {
+
             this.diagProvider = new DiagProvider(this.siteInfo, _armService, _siteService);
+            this.loadFlowsAsync().catch(e => {
+                throw e;
+            });
+        } catch (error) {
+            _telemetryService.logException(error, "NetworkCheck.Initialization");
+            console.log(error);
         }
-        this.loadChecksAsync();
-        delay(10).then(() => this.feedbackReady = true);
+    }
+
+    ngAfterViewInit() {
+        this.stepFlowManager.setDom(this.networkCheckingToolDiv.nativeElement);
+    }
+
+    async loadFlowsAsync(): Promise<void> {
+        var remoteFlows: any = await CheckManager.loadRemoteCheckAsync(true);
+        remoteFlows = Object.keys(remoteFlows).map(key => {
+            var flow = remoteFlows[key];
+            flow.id = flow.id || key;
+            return flow;
+        });
+        var flows = [testFlow, testFlow2].concat(remoteFlows).map(f => this.convertFromNetworkCheckFlow(f));
+        var mgr = this.stepFlowManager;
+        var dropDownView = new DropdownStepView({
+            id: "InitialDropDown",
+            description: "Tell us more about the problem you are experiencing?",
+            dropdowns: [{
+                options: flows.map(f => f.title),
+                placeholder: "Please select..."
+            }],
+            expandByDefault: true,
+            async callback(dropdownIdx: number, selectedIdx: number): Promise<void> {
+                mgr.reset(state);
+                var flow = flows[selectedIdx];
+                mgr.setFlow(flow);
+            }
+        });
+        var state = mgr.addView(dropDownView);
     }
 
     ngOnInit(): void {
-        this._telemetryService.logEvent("NetworkCheck.CheckPageLoad");
+        this._telemetryService.logEvent("NetworkCheck.FirstPageLoad");
         /*
         this.scmPath = this._siteService.currentSiteStatic.enabledHostNames.find(hostname => hostname.indexOf('.scm.') > 0);
         this._siteService.getSiteAppSettings(siteInfo.subscriptionId, siteInfo.resourceGroupName, siteInfo.siteName, siteInfo.slot).toPromise().then(val=>{
@@ -266,184 +148,20 @@ export class NetworkCheckComponent implements OnInit {
             .then(val => console.log("getArmResource", val));//*/
     }
 
-    async loadChecksAsync(): Promise<void> {
+    convertFromNetworkCheckFlow(flow: NetworkCheckFlow): StepFlow {
         var siteInfo = this.siteInfo;
-        var appSettings = (await this._siteService.getSiteAppSettings(siteInfo.subscriptionId, siteInfo.resourceGroupName, siteInfo.siteName, siteInfo.slot).toPromise()).properties;
-        var sampleChecks = [sampleCheck];
-
-        //taskList.push(this.runChecksAsync(sampleChecks, appSettings));
-        var resultViews = [];
-
-        if (jsSampleChecks != null) {
-            //this.checks = this.checks.concat(jsTestChecks);
-            //resultViews = resultViews.concat(this.runChecks(jsSampleChecks, appSettings));
-        }
-
-        console.log("set window.NetworkCheckDebugMode to true to load localhost checks for debugging");
-
-        await CheckManager.loadRemoteCheckAsync().then(remoteChecks => {
-            console.log(remoteChecks);
-            remoteChecks = Object.keys(remoteChecks).map(key => {
-                var check = remoteChecks[key];
-                check.id = check.id || key;
-                return check;
-            });
-            //debugger;
-            //this.checks = this.checks.concat(remoteChecks);
-            resultViews = resultViews.concat(this.runChecks(remoteChecks, appSettings));
-        });
-
-        this.checkResultViews = resultViews;
-    }
-
-    runChecks(checks: Check[], appSettings: any): ResultView[] {
-        var siteInfo = this.siteInfo;
-        checks.filter(check => check.flow == null || check.flow == FlowType.troubleshoot).forEach(check => {
-            check.tryGetSharedObject = ((key) => this.tryGetObject(check.id, key));
-            check.shareObject = ((key, value) => this.setObject(check.id, key, value));
-            check.waitSharedObjectAsync = ((key) => this.waitObjectAsync(check.id, key));
-        });
-        var resultViews = checks.map(check => {
-            try {
-                var checkResultView = new ResultView({
-                    id: check.id,
-                    title: check.title,
-                    level: checkResultLevel.loading.toString(),
-                    markdown: null,
-                    interactivePayload: null,
-                    status: convertLevelToHealthStatus(checkResultLevel.loading),
-                    loadingStatus: LoadingStatus.Loading,
-                    expanded: false
-                });
-
-                check.func(siteInfo, appSettings, this.diagProvider)
-                    .then(result => {
-                        result.title = check.title;
-                        checkResultView.fill(check.id, result);
-                    })
-                    .catch(error => {
-                        checkResultView.fillError(error, check.id, check.title);
-                        /*checkResult.level = checkResultLevel[checkResultLevel.error];
-                        checkResult.loadingStatus = LoadingStatus.Success;
-                        checkResult.status = convertLevelToHealthStatus(checkResultLevel.error)
-                        checkResult.title = "faulted: " + checkResult.title;
-                        checkResult.markdown = "```\r\n" + `message: ${error}\r\nstacktrace: ` + (error.stack || "none") + "\r\n```";
-                        console.log(error);//*/
-                    });
-                return checkResultView;
+        var diagProvider = this.diagProvider;
+        var stepFlow: StepFlow = {
+            id: flow.id,
+            title: flow.title,
+            description: flow.description || null,
+            async run(flowMgr: StepFlowManager): Promise<void> {
+                return flow.func(siteInfo, diagProvider, flowMgr);
             }
-            catch (error) {
-                console.log("error:", error);
-                debugger;
-            }
-        });
-        // console.log("check results", resultViews);
-        return resultViews;
-    }
+        };
 
-    pushCheckResult(id: string, title: string) {
-        this.checkResultViews.push(new ResultView({
-            id: id,
-            title: title,
-            level: checkResultLevel.loading.toString(),
-            markdown: null,
-            interactivePayload: null,
-            status: convertLevelToHealthStatus(checkResultLevel.loading),
-            loadingStatus: LoadingStatus.Loading,
-            expanded: false
-        }));
-        return this.checkResultViews[this.checkResultViews.length - 1];
-    }
-
-
-
-    tryGetObject(checkId: string, key: string) {
-        var objectMap = this._objectMap;
-        if (objectMap.has(key)) {
-            var val = objectMap.get(key);
-            if (val instanceof PromiseCompletionSource) {
-                return null;
-            }
-            return val;
-        }
-        return null;
-    }
-
-    waitObjectAsync(checkId: string, key: string): Promise<any> {
-        var stack = new Error("replace_placeholder").stack;
-        var promise: Promise<any> = null;
-        var result = this.tryGetObject(checkId, key);
-        if (result != null) {
-            if (result instanceof PromiseCompletionSource) {
-                promise = result;
-            } else {
-                promise = Promise.resolve(result);
-            }
-        } else {
-            var promiseCompletion = new PromiseCompletionSource(10);
-            this.setObject(checkId, key, promiseCompletion);
-            promise = promiseCompletion;
-        }
-
-        return promise.catch(e => {
-            var err = new Error(e);
-            err.stack = stack.replace("replace_placeholder", e.message || e);
-            throw err;
-        });
-    }
-
-    setObject(checkId: string, key: string, value: any) {
-        if (checkId == null) {
-            throw new Error("Check Id is not set! Cannot use share an object without a check id!");
-        }
-        var objectMap = this._objectMap;
-
-        if (objectMap.has(key)) {
-            var val = objectMap.get(key);
-            if (val instanceof PromiseCompletionSource) {
-                val.resolve(value);
-            }
-        }
-        objectMap.set(key, value);
-    }
-
-    toggleFeedbackOnce() {
-        if (this.feedbackReady && !this.isFeedbacktoggled) {
-            this.isFeedbacktoggled = true;
-            this.openFeedback = true;
-        }
+        return stepFlow;
     }
 }
 
 
-function convertLevelToHealthStatus(level: checkResultLevel): HealthStatus {
-    switch (level) {
-        case checkResultLevel.pass:
-            return HealthStatus.Success;
-        case checkResultLevel.fail:
-            return HealthStatus.Critical;
-        case checkResultLevel.warning:
-            return HealthStatus.Warning;
-        case checkResultLevel.pending:
-            return HealthStatus.Info;
-        case checkResultLevel.error:
-            return HealthStatus.Info;
-    }
-    return HealthStatus.None;
-}
-
-function markdownPreprocess(markdown: string, id: string): string {
-    if (markdown == null) {
-        return null;
-    }
-    // parse markdown links to html <a> tag
-    var result = markdown.replace(/(?<!\!)\[(.*?)]\((.*?)( +\"(.*?)\")?\)/g, `<a target="_blank" href="$2" title="$4" onclick="window.networkCheckLinkClickEventLogger('${id}','$2', '$1')">$1</a>`);
-    return result;
-}
-
-async function GetWebAppVnetInfo(siteArmId: string, armService) {
-    //This is the regional VNet Integration endpoint
-    var swiftUrl = siteArmId + "/config/virtualNetwork";
-    var siteVnetInfo = await armService.getArmResourceAsync(swiftUrl);
-    return siteVnetInfo;
-}

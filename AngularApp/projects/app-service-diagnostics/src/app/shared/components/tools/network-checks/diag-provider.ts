@@ -155,7 +155,6 @@ export class DiagProvider {
         });
     }
 
-    //TODO need to read DNS setting of VNet
     public async checkConnectionAsync(hostname: string, port: number, count: number = 1, dns: string = "", instance?: string): Promise<{ status: ConnectionCheckStatus, ip: string, aliases: string, statuses: ConnectionCheckStatus[] }> {
         var stack = new Error("replace_placeholder").stack;
         var promise = (async () => {

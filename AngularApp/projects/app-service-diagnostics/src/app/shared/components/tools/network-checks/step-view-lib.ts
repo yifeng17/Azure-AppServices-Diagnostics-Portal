@@ -1,4 +1,4 @@
-import { HealthStatus } from "diagnostic-data";
+import { HealthStatus, TelemetryService } from "diagnostic-data";
 export abstract class StepFlow {
     public id: string;
     public title: string;
@@ -125,7 +125,7 @@ function markdownPreprocess(markdown: string, id: string): string {
         return null;
     }
     // parse markdown links to html <a> tag
-    var result = markdown.replace(/(?<!\!)\[(.*?)]\((.*?)( +\"(.*?)\")?\)/g, `<a target="_blank" href="$2" title="$4" onclick="window.networkCheckLinkClickEventLogger('${id}','$2', '$1')">$1</a>`);
+    var result = markdown.replace(/(?<!\!)\[(.*?)]\((.*?)( +\"(.*?)\")?\)/g, `<a target="_blank" href="$2" title="$4" onclick="networkCheckLinkClickEventLogger('${id}','$2', '$1')">$1</a>`);
     return result;
 }
 
@@ -161,8 +161,10 @@ export class StepFlowManager {
     public loadingView: { loadingText: string };
     private _defaultLoadingText = "Loading...";
     private _dom: HTMLDivElement;
-    constructor(views: StepViewContainer[]) {
+    private _telemetryService: TelemetryService;
+    constructor(views: StepViewContainer[], telemetryService:TelemetryService) {
         this.stepViews = views;
+        this._telemetryService = telemetryService;
         this._stepViewQueue = [new PromiseCompletionSource<StepView[]>()];
         this._stepViewQueueMap = [];
         this._execute();
@@ -182,6 +184,9 @@ export class StepFlowManager {
     }
 
     public reset(idx: number) {
+        /*if(this._stepViewQueue.length == idx + 2){
+            return;
+        }*/
         this.endFlow();
         this._stepViewQueue.length = idx + 1;
         if (this._stepViewQueueMap[idx] != null) {
@@ -200,7 +205,9 @@ export class StepFlowManager {
                 this.loadingView = stepViewQueue[idx];
                 var views = await stepViewQueue[idx];
                 if (views == null || currentCnt != this._executionCount) {
-                    this.loadingView = null;
+                    if (currentCnt == this._executionCount) {
+                        this.loadingView = null;
+                    }
                     break;
                 }
 
@@ -232,6 +239,7 @@ export class StepFlowManager {
                 }
             }
             catch (error) {
+                this._telemetryService.logException(error, `FlowMgr.${this._currentFlow.id}`);
                 console.log(error);
             }
             this._stepViewQueueMap[idx] = this.stepViews.length;
@@ -266,8 +274,16 @@ export class StepFlowManager {
         mgr.addViews = this.generateAddViewsFunc(flow);
         mgr.addView = this.addView;
         mgr.reset = this.reset.bind(this);
+        mgr.logEvent = this.generateLogEventFunc(flow);
         return mgr;
     }
+
+    private generateLogEventFunc(flow: StepFlow) {
+        var telemetryService = this._telemetryService;
+        return (eventName: string, payload: any) =>telemetryService.logEvent(`NetworkCheck.Flow.${flow.id}`, { eventName, payload});
+    }
+
+    public logEvent: (eventName: string, payload: any) => void;
 }
 
 
@@ -276,7 +292,7 @@ function delay(second: number): Promise<void> {
         setTimeout(resolve, second * 1000));
 }
 
-class PromiseCompletionSource<T> extends Promise<T>{
+export class PromiseCompletionSource<T> extends Promise<T>{
     private _resolve: (value: T | PromiseLike<T>) => void;
     private _reject: (reason?: any) => void;
     public loadingText: string;
@@ -304,5 +320,5 @@ class PromiseCompletionSource<T> extends Promise<T>{
     }
 }
 
-var globalClasses = { DropdownStepView, CheckStepView, InputStepView, InfoStepView };
+var globalClasses = { DropdownStepView, CheckStepView, InputStepView, InfoStepView, PromiseCompletionSource };
 Object.keys(globalClasses).forEach(key => window[key] = globalClasses[key]);

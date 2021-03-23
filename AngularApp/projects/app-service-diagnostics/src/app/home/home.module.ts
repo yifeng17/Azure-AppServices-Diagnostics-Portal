@@ -56,7 +56,6 @@ import { CrashMonitoringComponent } from '../shared/components/tools/crash-monit
 import { RiskTileComponent } from './components/risk-tile/risk-tile.component';
 import { IntegratedSolutionsViewComponent } from '../shared/components/integrated-solutions-view/integrated-solutions-view.component';
 import { Asev3CustomViewComponent } from '../shared/components/asev3-custom-view/asev3-custom-view.component';
-import { NetworkCheckFirstPageComponent } from '../shared/components/tools/network-checks/network-checks-firstpage/network-checks-firstpage.component';
 
 export const HomeRoutes = RouterModule.forChild([
     {
@@ -208,7 +207,7 @@ export const HomeRoutes = RouterModule.forChild([
             },
             {
                 path: 'tools/networkchecks',
-                component: NetworkCheckFirstPageComponent,
+                component: NetworkCheckComponent,
                 data: {
                     navigationTitle: ToolNames.NetworkChecks,
                     cacheComponent: true

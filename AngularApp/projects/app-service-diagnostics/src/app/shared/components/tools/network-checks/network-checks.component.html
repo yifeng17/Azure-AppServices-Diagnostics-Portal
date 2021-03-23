@@ -1,18 +1,19 @@
-<div class="container" (mouseleave)="toggleFeedbackOnce()">
-    <h2 tabindex="0">{{ title }}</h2>
-    <p tabindex="0">{{ description }}</p>
-    <a [routerLink]="['../']">Back</a>
-
-    <!-- markdown https://stackblitz.com/edit/ngx-markdown?file=src%2Fapp%2Fapp.component.html -->
-    <div class="checker-container" *ngFor="let viewModel of checkResultViews; index as i">
-        <checker-list [viewModel]= "viewModel" [expandable]="viewModel.expandable">
-        </checker-list>
+<div class="network-checking-tool" #networkCheckingTool>
+    <div class="container">
+        <h2 tabindex="0">{{ title }}</h2>
+        <p tabindex="0">{{ description }}</p>
+        <div class="step-container" *ngFor="let viewModel of stepViews" [ngSwitch]="viewModel.stepView.type">
+            <dropdown-step *ngSwitchCase="0" [viewModel]="viewModel"></dropdown-step>
+            <check-step *ngSwitchCase="1" [viewModel]="viewModel"></check-step>
+            <input-step *ngSwitchCase="2" [viewModel]="viewModel"></input-step>
+            <info-step *ngSwitchCase="3" [viewModel]="viewModel"></info-step>
+        </div>
+        <div class="loading-spin" *ngIf="stepFlowManager.loadingView && stepFlowManager.loadingView.loadingText != null">
+            <i class="fa fa-circle-o-notch fa-spin"></i>
+            <div class="loading-text">{{stepFlowManager.loadingView.loadingText}}</div>
+        </div>
+        
     </div>
-
-    <!--<div class="sessions">
-        <daas-sessions [refreshSessions]="refreshSessions" diagnoserNameLookup="CLR Profiler" [scmPath]="scmPath" [siteToBeDiagnosed]="siteToBeDiagnosed"></daas-sessions>
-    </div> -->
-
 </div>
 
 <networkcheck-feedback [openFeedback]="openFeedback"></networkcheck-feedback>

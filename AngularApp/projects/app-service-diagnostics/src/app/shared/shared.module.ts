@@ -136,9 +136,7 @@ import { IntegratedSolutionsViewComponent } from './components/integrated-soluti
 import { Asev3CustomViewComponent } from './components/asev3-custom-view/asev3-custom-view.component';
 import { MarkdownModule } from 'ngx-markdown';
 import { NetworkCheckComponent } from './components/tools/network-checks/network-checks.component';
-import { CheckerListComponent } from 'projects/diagnostic-data/src/lib/components/checker-list/checker-list.component';
 import { NetworkCheckFeedbackComponent } from './components/networkcheck-feedback/networkcheck-feedback.component';
-import { NetworkCheckFirstPageComponent } from './components/tools/network-checks/network-checks-firstpage/network-checks-firstpage.component';
 import { DropDownStepComponent } from './components/tools/network-checks/step-views/dropdown-step-view/dropdown-step.component';
 import { CheckStepComponent } from './components/tools/network-checks/step-views/check-step-view/check-step.component';
 import { InfoStepComponent } from './components/tools/network-checks/step-views/info-step-view/info-step.component';
@@ -175,13 +173,11 @@ import { InputStepComponent } from './components/tools/network-checks/step-views
         ProfilerComponent,
         ProfilerToolComponent,
         NetworkCheckComponent,
-        NetworkCheckFirstPageComponent,
         DropDownStepComponent,
         InfoStepComponent,
         CheckStepComponent,
         InputStepComponent,
         NetworkCheckFeedbackComponent,
-        CheckerListComponent,
         MemoryDumpToolComponent,
         DaasComponent,
         JavaMemoryDumpToolComponent,

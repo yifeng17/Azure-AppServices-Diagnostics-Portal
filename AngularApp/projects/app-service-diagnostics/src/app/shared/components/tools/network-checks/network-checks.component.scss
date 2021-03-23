@@ -1,28 +1,32 @@
+.network-checking-tool{
+    position: fixed;
+    height: calc(100vh - 35px);
+    width: calc(100vw - 298px);
+    min-width: 550px;
+    overflow-y: scroll;
+}
 .container {
-    height: 85vh;
+    min-width: 500px;
+    width: 80%;
+    max-width: 750px;
 }
 
-.ms-Modal {
-    padding-left: 32vh;
+.step-container{
+    padding: 7px;
 }
 
-.ms-Overlay{
-    position: absolute;
+.step{
+    border: 1px solid #e5e5e5;
 }
 
-.ms-Layer {
-    position: absolute;
-}
-
-.interactive-check-button{
-    margin-left:5px;
-}
-
-.interactive-check-button .ms-Button{
-    height: 28px;
-    margin-top: -4px;
-}
-
-.interactive-section{
-    margin-top: 10px;
+.loading-spin{
+    padding-left: 8px;
+    padding-top: 5px;
+    .fa-spin{
+        font-size: 18px;
+    }
+    .loading-text{
+        margin-top: -20px;
+        margin-left: 25px;
+    }
 }
