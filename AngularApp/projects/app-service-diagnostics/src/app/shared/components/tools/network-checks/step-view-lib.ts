@@ -47,7 +47,7 @@ export class DropdownStepView extends StepView {
     public width?: string;
     public bordered?: boolean;
     public description: string;
-    public expandByDefault:boolean;
+    public expandByDefault: boolean;
     public callback: (dropdownIdx: number, selectedIdx: number) => Promise<void>;
     constructor(view: DropdownStepView) {
         super(view);
@@ -132,10 +132,10 @@ function markdownPreprocess(markdown: string, id: string): string {
 export class InputStepView extends StepView {
     public title: string;
     public placeholder: string;
-    public entry:string;
+    public entry: string;
     public buttonText: string;
     public tooltip: string;
-    public error:string;
+    public error: string;
     public callback: (input: string) => Promise<void>;
 
     constructor(view: InputStepView) {
@@ -160,7 +160,7 @@ export class StepFlowManager {
     private _stepViewQueueMap: number[];
     public loadingView: { loadingText: string };
     private _defaultLoadingText = "Loading...";
-    private _dom:HTMLDivElement;
+    private _dom: HTMLDivElement;
     constructor(views: StepViewContainer[]) {
         this.stepViews = views;
         this._stepViewQueue = [new PromiseCompletionSource<StepView[]>()];
@@ -168,7 +168,7 @@ export class StepFlowManager {
         this._execute();
     }
 
-    public setDom(dom:HTMLDivElement){
+    public setDom(dom: HTMLDivElement) {
         this._dom = dom;
     }
 
@@ -200,12 +200,13 @@ export class StepFlowManager {
                 this.loadingView = stepViewQueue[idx];
                 var views = await stepViewQueue[idx];
                 if (views == null || currentCnt != this._executionCount) {
+                    this.loadingView = null;
                     break;
                 }
 
                 for (var i = 0; i < views.length; ++i) {
                     var view = views[i];
-                    if(view == null){
+                    if (view == null) {
                         break;
                     }
                     view.id = view.id || this._currentFlow.id + `_${idx}`;
@@ -225,8 +226,8 @@ export class StepFlowManager {
                             break;
                     }
                     this.stepViews.push(new StepViewContainer(view));
-                    if(this._dom!=null){
-                        delay(0.1).then(()=>this._dom.scrollTop = this._dom.scrollHeight);
+                    if (this._dom != null) {
+                        delay(0.1).then(() => this._dom.scrollTop = this._dom.scrollHeight);
                     }
                 }
             }
@@ -238,11 +239,11 @@ export class StepFlowManager {
         }
     }
 
-    public addView(viewPromise: StepView | Promise<StepView>, loadingText?:string) {
+    public addView(viewPromise: StepView | Promise<StepView>, loadingText?: string) {
         return this.addViews(Promise.resolve(viewPromise).then(v => [v]), loadingText);
     }
 
-    public addViews(viewPromise: StepView[] | Promise<StepView[]>, loadingText?:string) {
+    public addViews(viewPromise: StepView[] | Promise<StepView[]>, loadingText?: string) {
         var idx = this._stepViewQueue.length - 1;
         this._stepViewQueue.push(new PromiseCompletionSource<StepView[]>());
         this._stepViewQueue[idx].resolve(viewPromise);
@@ -250,18 +251,18 @@ export class StepFlowManager {
         return idx;
     }
 
-    private generateAddViewsFunc(flow: StepFlow){
+    private generateAddViewsFunc(flow: StepFlow) {
         var addViews = this.addViews.bind(this);
-        return (viewPromise: StepView[] | Promise<StepView[]>, loadingText?:string):number => {
-            if(this._currentFlow != flow){
+        return (viewPromise: StepView[] | Promise<StepView[]>, loadingText?: string): number => {
+            if (this._currentFlow != flow) {
                 return;
             }
             return addViews(viewPromise, loadingText);
         };
     }
 
-    private generateMgrForFlow(flow: StepFlow){
-        var mgr = {...this}
+    private generateMgrForFlow(flow: StepFlow) {
+        var mgr = { ...this }
         mgr.addViews = this.generateAddViewsFunc(flow);
         mgr.addView = this.addView;
         mgr.reset = this.reset.bind(this);
@@ -303,5 +304,5 @@ class PromiseCompletionSource<T> extends Promise<T>{
     }
 }
 
-var globalClasses = {DropdownStepView, CheckStepView, InputStepView, InfoStepView};
+var globalClasses = { DropdownStepView, CheckStepView, InputStepView, InfoStepView };
 Object.keys(globalClasses).forEach(key => window[key] = globalClasses[key]);
