@@ -96,7 +96,7 @@ export class DaasSessionsComponent implements OnChanges, OnDestroy {
     }
 
     checkSessions() {
-        this._daasService.getDaasSessionsWithDetails(this.siteToBeDiagnosed)
+        this._daasService.getDaasSessionsWithDetails(this.siteToBeDiagnosed).pipe(retry(2))
             .subscribe(sessions => {
                 if (sessions != null && Array.isArray(sessions)) {
                     const newSessions = sessions.map(this.reducedSession);
