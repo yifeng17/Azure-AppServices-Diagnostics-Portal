@@ -130,6 +130,7 @@ import { CrashMonitoringAnalysisComponent } from './components/tools/crash-monit
 import { RiskAlertsNotificationComponent } from './components/risk-alerts-notification/risk-alerts-notification.component';
 import { RiskAlertsPanelComponent } from './components/risk-alerts-panel/risk-alerts-panel.component';
 import { IntegratedSolutionsViewComponent } from './components/integrated-solutions-view/integrated-solutions-view.component';
+import { MarkdownModule } from 'ngx-markdown';
 import { NetworkCheckComponent } from './components/tools/network-checks/network-checks.component';
 import { NetworkCheckFeedbackComponent } from './components/networkcheck-feedback/networkcheck-feedback.component';
 import { DropDownStepComponent } from './components/step-views/dropdown-step-view/dropdown-step.component';
@@ -252,6 +253,7 @@ import { InputStepComponent } from './components/step-views/input-step-view/inpu
         FabTagPickerModule,
         FabProgressIndicatorModule,
         FabContextualMenuModule,
+        MarkdownModule.forRoot(),
     ],
     exports: [
         CommonModule,
