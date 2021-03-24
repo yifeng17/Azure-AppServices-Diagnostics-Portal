@@ -12,7 +12,7 @@ export class CheckManager {
                 }
                 var script = document.createElement("script");
                 script.setAttribute('type', 'text/javascript');
-                var url = window["NetworkCheckDebugMode"] ? CheckManager._debugModeJsUrl : CheckManager._jsUrl;
+                var url = window["debugMode"] ? CheckManager._debugModeJsUrl : CheckManager._jsUrl;
                 script.setAttribute('src', url);
                 script.setAttribute('id', "remoteChecks");
                 script.onload = () => {

@@ -8,8 +8,8 @@ import { HealthStatus, LoadingStatus, TelemetryService } from 'diagnostic-data';
 import { DiagProvider, OutboundType } from './diag-provider';
 import { Globals } from 'projects/app-service-diagnostics/src/app/globals';
 import { CheckManager } from './check-manager';
-import { CheckStepView, DropdownStepView, InfoStepView, StepFlow, StepFlowManager, StepView, StepViewContainer, StepViewType } from './step-view-lib';
-//import { MarkdownTextComponent } from 'projects/diagnostic-data/src/lib/components/markdown-text/markdown-text.component';
+import { CheckStepView, DropdownStepView, InfoStepView, StepFlow, StepFlowManager, StepView, StepViewContainer, StepViewType } from '../../step-views/step-view-lib';
+import { networkCheckFlows } from './network-check-flows.js'
 
 
 function delay(second: number): Promise<void> {
@@ -23,43 +23,6 @@ abstract class NetworkCheckFlow {
     public title: string;
     public description?: string;
     abstract func(siteInfo: SiteInfoMetaData & Site & { fullSiteName: string }, diagProvider: DiagProvider, flowMgr: StepFlowManager): Promise<null>;
-}
-
-var testFlow: NetworkCheckFlow = {
-    id: "testFlow1",
-    title: "test1",
-    async func(siteInfo: SiteInfoMetaData & Site & { fullSiteName: string }, diagProvider: DiagProvider, flowMgr: StepFlowManager): Promise<null> {
-        flowMgr.addView(new CheckStepView({
-            id: "Test",
-            type: StepViewType.check,
-            title: "test123",
-            level: 0
-        }));
-        return;
-    }
-}
-
-var testFlow2: NetworkCheckFlow = {
-    id: "testFlow2",
-    title: "test2",
-    async func(siteInfo: SiteInfoMetaData & Site & { fullSiteName: string }, diagProvider: DiagProvider, flowMgr: StepFlowManager): Promise<null> {
-        flowMgr.addView(new InfoStepView({
-            id: "Test",
-            infoType: 0,
-            type: StepViewType.info,
-            title: "test234",
-            markdown: "# Test\r\n\r\n123123"
-        }));
-
-        flowMgr.addView(new InfoStepView({
-            id: "Test",
-            infoType: 1,
-            type: StepViewType.info,
-            title: "test1111",
-            markdown: "# Test\r\n\r\n123123"
-        }));
-        return;
-    }
 }
 
 @Component({
@@ -82,12 +45,16 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
     siteInfo: SiteInfoMetaData & Site & { fullSiteName: string };
     vnetIntegrationDetected = null;
     openFeedback = false;
+    debugMode = true;
     //checks: any[];
 
     constructor(private _siteService: SiteService, private _armService: ArmService, private _telemetryService: TelemetryService, private _globals: Globals) {
         try {
             window["networkCheckLinkClickEventLogger"] = (checkId: string, url: string, text: string) => {
                 _telemetryService.logEvent("NetworkCheck.LinkClick", { checkId, url, text });
+            }
+            if (window["debugMode"]) {
+                this.debugMode = window["debugMode"];
             }
 
             var siteInfo = this._siteService.currentSiteMetaData.value;
@@ -110,13 +77,13 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
     }
 
     async loadFlowsAsync(): Promise<void> {
-        var remoteFlows: any = await CheckManager.loadRemoteCheckAsync(true);
-        remoteFlows = Object.keys(remoteFlows).map(key => {
-            var flow = remoteFlows[key];
-            flow.id = flow.id || key;
-            return flow;
-        });
-        var flows = [testFlow, testFlow2].concat(remoteFlows).map(f => this.convertFromNetworkCheckFlow(f));
+
+        var flows = this.processFlows(networkCheckFlows);
+        if (this.debugMode) {
+            var remoteFlows: any = await CheckManager.loadRemoteCheckAsync(true);
+            remoteFlows = this.processFlows(remoteFlows, "(debug)");
+            flows = flows.concat(remoteFlows);
+        }
         var mgr = this.stepFlowManager;
         var dropDownView = new DropdownStepView({
             id: "InitialDropDown",
@@ -133,6 +100,27 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
             }
         });
         var state = mgr.addView(dropDownView);
+    }
+
+    processFlows(flows: any, postfix?: string): StepFlow[] {
+        return Object.keys(flows).map(key => {
+            var flow = flows[key];
+            if (postfix != null) {
+                flow.title += " " + postfix;
+            }
+            flow.id = flow.id || key;
+            var siteInfo = this.siteInfo;
+            var diagProvider = this.diagProvider;
+            var stepFlow: StepFlow = {
+                id: flow.id,
+                title: flow.title,
+                description: flow.description || null,
+                async run(flowMgr: StepFlowManager): Promise<void> {
+                    return flow.func(siteInfo, diagProvider, flowMgr);
+                }
+            };
+            return stepFlow;
+        });
     }
 
     ngOnInit(): void {
