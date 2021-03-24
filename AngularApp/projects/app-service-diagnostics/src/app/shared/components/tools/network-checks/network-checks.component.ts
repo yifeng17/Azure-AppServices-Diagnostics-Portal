@@ -53,8 +53,8 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
     constructor(private _siteService: SiteService, private _armService: ArmService, private _telemetryService: TelemetryService, private _globals: Globals, private _route: ActivatedRoute) {
         try {
             this.isSupportCenter = (_route.snapshot.queryParams["isSupportCenter"] == "true");
-            window["networkCheckLinkClickEventLogger"] = (checkId: string, url: string, text: string) => {
-                _telemetryService.logEvent("NetworkCheck.LinkClick", { checkId, url, text });
+            window["networkCheckLinkClickEventLogger"] = (viewId: string, url: string, text: string) => {
+                _telemetryService.logEvent("NetworkCheck.LinkClick", { viewId, url, text });
             }
             if (window["debugMode"]) {
                 this.debugMode = window["debugMode"];
@@ -80,7 +80,7 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
     }
 
     async loadFlowsAsync(): Promise<void> {
-
+        var telemetryService = this._telemetryService;
         var flows = this.processFlows(networkCheckFlows);
         if (this.debugMode) {
             var remoteFlows: any = await CheckManager.loadRemoteCheckAsync(true);
@@ -99,6 +99,7 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
             async callback(dropdownIdx: number, selectedIdx: number): Promise<void> {
                 mgr.reset(state);
                 var flow = flows[selectedIdx];
+                telemetryService.logEvent("NetworkCheck.FlowSelected", {flowId: flow.id});
                 mgr.setFlow(flow);
             }
         });
@@ -128,15 +129,6 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
 
     ngOnInit(): void {
         this._telemetryService.logEvent("NetworkCheck.FirstPageLoad");
-        /*
-        this.scmPath = this._siteService.currentSiteStatic.enabledHostNames.find(hostname => hostname.indexOf('.scm.') > 0);
-        this._siteService.getSiteAppSettings(siteInfo.subscriptionId, siteInfo.resourceGroupName, siteInfo.siteName, siteInfo.slot).toPromise().then(val=>{
-            debugger;
-            this.thingsToKnowBefore = Object.keys(val.properties).map(key => key + ":" + val.properties[key]);
-        });
-        debugger;
-        this._armService.postResourceAsync(siteInfo.resourceUri + "/config/appsettings/list")
-            .then(val => console.log("getArmResource", val));//*/
     }
 
     convertFromNetworkCheckFlow(flow: NetworkCheckFlow): StepFlow {
