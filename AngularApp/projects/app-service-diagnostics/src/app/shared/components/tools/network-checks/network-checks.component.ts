@@ -46,7 +46,7 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
     siteInfo: SiteInfoMetaData & Site & { fullSiteName: string };
     vnetIntegrationDetected = null;
     openFeedback = false;
-    debugMode = true;
+    debugMode = false;
     isSupportCenter: boolean;
     //checks: any[];
 
