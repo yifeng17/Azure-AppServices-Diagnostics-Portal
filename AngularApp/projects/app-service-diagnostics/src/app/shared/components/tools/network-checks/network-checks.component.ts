@@ -10,6 +10,7 @@ import { Globals } from 'projects/app-service-diagnostics/src/app/globals';
 import { CheckManager } from './check-manager';
 import { CheckStepView, DropdownStepView, InfoStepView, StepFlow, StepFlowManager, StepView, StepViewContainer, StepViewType } from '../../step-views/step-view-lib';
 import { networkCheckFlows } from './network-check-flows.js'
+import { ActivatedRoute } from '@angular/router';
 
 
 function delay(second: number): Promise<void> {
@@ -46,10 +47,12 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
     vnetIntegrationDetected = null;
     openFeedback = false;
     debugMode = true;
+    isSupportCenter: boolean;
     //checks: any[];
 
-    constructor(private _siteService: SiteService, private _armService: ArmService, private _telemetryService: TelemetryService, private _globals: Globals) {
+    constructor(private _siteService: SiteService, private _armService: ArmService, private _telemetryService: TelemetryService, private _globals: Globals, private _route: ActivatedRoute) {
         try {
+            this.isSupportCenter = (_route.snapshot.queryParams["isSupportCenter"] == "true");
             window["networkCheckLinkClickEventLogger"] = (checkId: string, url: string, text: string) => {
                 _telemetryService.logEvent("NetworkCheck.LinkClick", { checkId, url, text });
             }

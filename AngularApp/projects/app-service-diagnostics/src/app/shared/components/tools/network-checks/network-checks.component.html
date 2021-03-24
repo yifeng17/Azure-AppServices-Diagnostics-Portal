@@ -1,4 +1,4 @@
-<div class="network-checking-tool" #networkCheckingTool>
+<div class="network-checking-tool" #networkCheckingTool [ngStyle]="isSupportCenter ? {width: '100vw', height:'100vh'}:{width: 'calc(100vw - 298px)', height:'calc(100vh - 35px)'}">
     <div class="container">
         <h2 tabindex="0">{{ title }}</h2>
         <p tabindex="0">{{ description }}</p>
@@ -10,7 +10,7 @@
         </div>
         <div class="loading-spin" *ngIf="stepFlowManager.loadingView && stepFlowManager.loadingView.loadingText != null">
             <i class="fa fa-circle-o-notch fa-spin"></i>
-            <div class="loading-text">{{stepFlowManager.loadingView.loadingText}}</div>
+            <div class="loading-text" tabindex="0">{{stepFlowManager.loadingView.loadingText}}</div>
         </div>
         
     </div>

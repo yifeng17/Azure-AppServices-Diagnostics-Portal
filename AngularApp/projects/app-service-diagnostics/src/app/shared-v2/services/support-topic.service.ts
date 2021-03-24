@@ -46,6 +46,10 @@ export class SupportTopicService {
 
     getPathForSupportTopic(supportTopicId: string, pesId: string, searchTerm: string): Observable<any> {
         this.supportTopicId = supportTopicId;
+        if(supportTopicId == "32542212"){
+            // VNET integration with App Service
+            return observableOf({ path: 'tools/networkchecks', queryParams: {"isSupportCenter": true} });
+        }
         return this._resourceService.getPesId().pipe(flatMap(pesId => {
             this.pesId = pesId;
             this.detectorTask = this._diagnosticService.getDetectors();

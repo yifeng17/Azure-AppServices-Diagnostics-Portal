@@ -198,14 +198,6 @@ export const HomeRoutes = RouterModule.forChild([
                 }
             },
             {
-                path: 'tools/networkchecks/run-check',
-                component: NetworkCheckComponent,
-                data: {
-                    navigationTitle: ToolNames.NetworkChecks,
-                    cacheComponent: true
-                }
-            },
-            {
                 path: 'tools/networkchecks',
                 component: NetworkCheckComponent,
                 data: {
