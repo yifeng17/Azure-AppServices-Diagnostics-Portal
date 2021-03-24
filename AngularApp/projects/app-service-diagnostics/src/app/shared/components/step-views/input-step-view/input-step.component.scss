@@ -1,0 +1,48 @@
+.input-section{
+    padding-top: 10px;
+    padding-bottom: 5px;
+
+    .input-entry{
+        float: left;
+    }
+
+    .input-tooltip{
+        margin-top: -5px;
+        position: absolute;
+        margin-left: 3px;
+        font-size: 12px;
+    }
+
+    .input-box{
+        width: 225px;
+        margin-top: -2px;
+        margin-left: 35px;
+        float: left;
+    }
+
+    .input-error{
+        margin-left: 320px;
+        color: red;
+    }
+}
+
+.input-check-button{
+    margin-left: -1px;
+    padding-top: 14px;
+}
+
+
+.input-step{
+    padding: 10px 10px 10px 10px;
+}
+
+.input-check-button .ms-Button{
+    height: 28px;
+    width: fit-content;
+}
+
+.input-step-title{
+    font-size: 14px;
+    font-weight: 500;
+}
+

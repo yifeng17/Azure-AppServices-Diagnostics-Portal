@@ -1,0 +1,38 @@
+.info-icon{
+    height: 30px;
+}
+
+.info-icon svg{
+    height: inherit;
+    fill: rgb(255, 255, 255);
+    padding: 5px;
+}
+
+.recommendation-info {
+    height: inherit;
+    background-color: rgb(240, 246, 255);
+    
+}
+
+.recommendation-info svg{
+    background-color: rgb(1, 92, 218);    
+}
+
+.diagnostic-info {
+    height: inherit;
+    background-color: rgb(249, 243, 252);
+    
+}
+
+.diagnostic-info svg{
+    background-color: rgb(138, 45, 165);  
+}
+
+.markdown-title{
+    margin-top: -25px;
+    margin-left: 40px;
+}
+
+.markdown-container{
+    padding: 12px 12px 0px 12px;
+}

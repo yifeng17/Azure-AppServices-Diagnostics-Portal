@@ -137,10 +137,10 @@ import { Asev3CustomViewComponent } from './components/asev3-custom-view/asev3-c
 import { MarkdownModule } from 'ngx-markdown';
 import { NetworkCheckComponent } from './components/tools/network-checks/network-checks.component';
 import { NetworkCheckFeedbackComponent } from './components/networkcheck-feedback/networkcheck-feedback.component';
-import { DropDownStepComponent } from './components/tools/network-checks/step-views/dropdown-step-view/dropdown-step.component';
-import { CheckStepComponent } from './components/tools/network-checks/step-views/check-step-view/check-step.component';
-import { InfoStepComponent } from './components/tools/network-checks/step-views/info-step-view/info-step.component';
-import { InputStepComponent } from './components/tools/network-checks/step-views/input-step-view/input-step.component';
+import { DropDownStepComponent } from './components/step-views/dropdown-step-view/dropdown-step.component';
+import { CheckStepComponent } from './components/step-views/check-step-view/check-step.component';
+import { InfoStepComponent } from './components/step-views/info-step-view/info-step.component';
+import { InputStepComponent } from './components/step-views/input-step-view/input-step.component';
 
 @NgModule({
     declarations: [
