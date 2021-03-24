@@ -78,7 +78,7 @@ export class ResourceRedirectComponent implements OnInit {
               pesId: info.pesId
             };
           }
-          var uri =  this._router.createUrlTree([path], navigationExtras);
+
           this._router.navigateByUrl(
             this._router.createUrlTree([path], navigationExtras)
           );
