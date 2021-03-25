@@ -66,7 +66,7 @@ export class DiagProvider {
             });
     }
 
-    public getKudoApiAsync<T>(siteName: string, uri: string): Promise<T> {
+    public getKuduApiAsync<T>(siteName: string, uri: string): Promise<T> {
         var stack = new Error("replace_placeholder").stack;
         return this._armService.get<T>(`https://${siteName}.scm.azurewebsites.net/api/${uri}`)
             .toPromise()
@@ -77,7 +77,7 @@ export class DiagProvider {
             });
     }
 
-    public postKudoApiAsync<T, S>(siteName: string, uri: string, body?: S, instance?: string): Promise<boolean | {} | ResponseMessageEnvelope<T>> {
+    public postKuduApiAsync<T, S>(siteName: string, uri: string, body?: S, instance?: string): Promise<boolean | {} | ResponseMessageEnvelope<T>> {
         var postfix = (instance == null ? "" : `?instance=${instance}`);
         var stack = new Error("replace_placeholder").stack;
         return this._armService.post<T, S>(`https://${siteName}.scm.azurewebsites.net/api/${uri}${postfix}`, body)
@@ -89,8 +89,8 @@ export class DiagProvider {
             });
     }
 
-    public async runKudoCommand(siteName: string, command: string, dir?: string, instance?: string): Promise<any> {
-        var result: any = await this.postKudoApiAsync(siteName, "command", { "command": command, "dir": dir }, instance);
+    public async runKuduCommand(siteName: string, command: string, dir?: string, instance?: string): Promise<any> {
+        var result: any = await this.postKuduApiAsync(siteName, "command", { "command": command, "dir": dir }, instance);
         return result.Output.slice(0, -2);
     }
 
@@ -98,7 +98,7 @@ export class DiagProvider {
         var stack = new Error("replace_placeholder").stack;
         var promise = (async () => {
             names = names.map(n => `%${n}%`);
-            var echoPromise = this.runKudoCommand(this._siteInfo.fullSiteName, `echo ${names.join(";")}`, undefined, instance).catch(e => {
+            var echoPromise = this.runKuduCommand(this._siteInfo.fullSiteName, `echo ${names.join(";")}`, undefined, instance).catch(e => {
                 console.log("getEnvironmentVariables failed", e);
                 e.message = "getEnvironmentVariablesAsync failed:" + e.message;
                 throw e;
@@ -118,7 +118,7 @@ export class DiagProvider {
     public async tcpPingAsync(hostname: string, port: number, count: number = 1, instance?: string): Promise<{ status: ConnectionCheckStatus, statuses: ConnectionCheckStatus[] }> {
         var stack = new Error("replace_placeholder").stack;
         var promise = (async () => {
-            var pingPromise = this.runKudoCommand(this._siteInfo.fullSiteName, `tcpping -n ${count} ${hostname}:${port}`, undefined, instance).catch(e => {
+            var pingPromise = this.runKuduCommand(this._siteInfo.fullSiteName, `tcpping -n ${count} ${hostname}:${port}`, undefined, instance).catch(e => {
                 console.log("tcpping failed", e);
                 return null;
             });
@@ -164,7 +164,7 @@ export class DiagProvider {
                     ip = hostname;
                 } else {
                     try {
-                        var result = await this.runKudoCommand(this._siteInfo.fullSiteName, `nameresolver ${hostname} ${dns}`, undefined, instance);
+                        var result = await this.runKuduCommand(this._siteInfo.fullSiteName, `nameresolver ${hostname} ${dns}`, undefined, instance);
                         if (result != null) {
                             if (result.includes("Aliases")) {
                                 var match = result.match(/Addresses:\s*([\S\s]*)Aliases:\s*([\S\s]*)$/);
@@ -209,9 +209,9 @@ export class DiagProvider {
         });
     }
 
-    public async checkKudoReachable(): Promise<boolean> {
+    public async checkKuduReachable(): Promise<boolean> {
         try {
-            var result = await this.runKudoCommand(this._siteInfo.fullSiteName, "echo ok");
+            var result = await this.runKuduCommand(this._siteInfo.fullSiteName, "echo ok");
             return result == "ok";
         } catch (error) {
             return false;

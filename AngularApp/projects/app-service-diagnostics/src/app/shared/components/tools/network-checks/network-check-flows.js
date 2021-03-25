@@ -7,19 +7,19 @@ export var networkCheckFlows =  {
             var isKuduAccessible = true;
 
 
-            var kudoAvailabilityCheckPromise = (async () => {
-                isKuduAccessible = await diagProvider.checkKudoReachable();
+            var kuduAvailabilityCheckPromise = (async () => {
+                isKuduAccessible = await diagProvider.checkKuduReachable();
                 var views = [];
                 if (isKuduAccessible == false) {
                     views.push(new CheckStepView({
-                        title: "kudo is not reachable",
+                        title: "kudu is not reachable",
                         level: 1
                     }));
 
                     views.push(new InfoStepView({
                         infoType: 0,
                         title: "Recommendations",
-                        markdown: "[Kudo](https://techcommunity.microsoft.com/t5/educator-developer-blog/using-kudu-and-deploying-apps-into-azure/ba-p/378585) is not accessible " +
+                        markdown: "[Kudu](https://techcommunity.microsoft.com/t5/educator-developer-blog/using-kudu-and-deploying-apps-into-azure/ba-p/378585) is not accessible " +
                             "because of IP restriction or Private Endpoint is turned for this app.\r\n\r\n" + 
                             "The check diagnostic will be incomplete without kudu access, please consider temporarily allow the traffic in IP restriction or turn of the Private Endpoint " +
                             "for running the network checks"
@@ -27,12 +27,12 @@ export var networkCheckFlows =  {
                 }
                 return views;
             })();
-            flowMgr.addViews(kudoAvailabilityCheckPromise, "Checking kudo availability...");
+            flowMgr.addViews(kuduAvailabilityCheckPromise, "Checking kudu availability...");
 
-            var kudoReachablePromise = kudoAvailabilityCheckPromise.then(r => isKuduAccessible);
-            var promise = checkVnetIntegrationAsync(siteInfo, diagProvider, kudoReachablePromise);
+            var kuduReachablePromise = kuduAvailabilityCheckPromise.then(r => isKuduAccessible);
+            var promise = checkVnetIntegrationAsync(siteInfo, diagProvider, kuduReachablePromise);
             flowMgr.addViews(promise.then(d => d.views), "Checking Vnet integration status...");
-            var data = { subnetDataPromise: promise.then(d => d.subnetData), serverFarmId: siteInfo["serverFarmId"], kudoReachablePromise, isContinuedPromise: promise.then(d => d.isContinue) };
+            var data = { subnetDataPromise: promise.then(d => d.subnetData), serverFarmId: siteInfo["serverFarmId"], kuduReachablePromise, isContinuedPromise: promise.then(d => d.isContinue) };
             checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, data);
         }
     },
@@ -433,8 +433,8 @@ function checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, data
     var subnetDataPromise = data.subnetDataPromise;
     var isContinuedPromise = data.isContinuedPromise;
     var serverFarmId = data.serverFarmId;
-    var kudoReachablePromise = data.kudoReachablePromise;
-    var kudoReachable = null;
+    var kuduReachablePromise = data.kuduReachablePromise;
+    var kuduReachable = null;
     var dnsServer = null;
     var configCheckViewsPromise = (async () => {
         var views = [];
@@ -453,8 +453,8 @@ function checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, data
             views = views.concat(subnetSizeViews);
         }
 
-        kudoReachable = await kudoReachablePromise;
-        if (kudoReachable) {
+        kuduReachable = await kuduReachablePromise;
+        if (kuduReachable) {
             var dnsCheckResult = await dnsCheckResultPromise;
             dnsServer = dnsCheckResult.dnsServer;
             views = views.concat(dnsCheckResult.views);
