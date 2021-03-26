@@ -1,7 +1,6 @@
 declare var jsDynamicImportFlows: any;
 export class CheckManager {
     private static _jsUrl = "http://127.0.0.1:8000/test-check.js";
-    private static _debugModeJsUrl = "http://127.0.0.1:8000/test-check.js";
     private static _remoteCheckPromise:Promise<any[]>;
     static loadRemoteCheckAsync(reset:boolean = false): Promise<any[]> {
         if (reset || CheckManager._remoteCheckPromise == null) {
@@ -12,7 +11,7 @@ export class CheckManager {
                 }
                 var script = document.createElement("script");
                 script.setAttribute('type', 'text/javascript');
-                var url = window["debugMode"] ? CheckManager._debugModeJsUrl : CheckManager._jsUrl;
+                var url = CheckManager._jsUrl;
                 script.setAttribute('src', url);
                 script.setAttribute('id', "remoteChecks");
                 script.onload = () => {

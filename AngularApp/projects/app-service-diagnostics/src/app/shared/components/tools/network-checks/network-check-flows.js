@@ -17,7 +17,7 @@ export var networkCheckFlows =  {
                     }));
 
                     views.push(new InfoStepView({
-                        infoType: 0,
+                        infoType: 1,
                         title: "Recommendations",
                         markdown: "[Kudu](https://techcommunity.microsoft.com/t5/educator-developer-blog/using-kudu-and-deploying-apps-into-azure/ba-p/378585) is not accessible " +
                             "because of IP restriction or Private Endpoint is turned for this app.\r\n\r\n" + 
@@ -1339,7 +1339,7 @@ async function checkSubnetAvailabilityAsync(siteInfo, diagProvider, subnetData) 
 
         successMsg += `<br/>`;
         views.push(new InfoStepView({
-            infoType: 0,
+            infoType: 1,
             title: "Recommendations",
             markdown: successMsg
         }));

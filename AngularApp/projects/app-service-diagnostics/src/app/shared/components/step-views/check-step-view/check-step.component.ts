@@ -2,7 +2,7 @@
 import { Component, Pipe, PipeTransform, Inject, OnInit, Input, ViewEncapsulation } from '@angular/core';
 import { HealthStatus, TelemetryService } from 'diagnostic-data';
 import { IDropdownOption, ISelectableOption } from 'office-ui-fabric-react';
-import { CheckStepView, DropdownStepView, StepViewContainer } from '../step-view-lib';
+import { CheckStepView, StepViewContainer } from '../step-view-lib';
 
 
 
@@ -12,18 +12,22 @@ import { CheckStepView, DropdownStepView, StepViewContainer } from '../step-view
   styleUrls: ['./check-step.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class CheckStepComponent implements OnInit{
+export class CheckStepComponent implements OnInit {
   @Input() viewModel: StepViewContainer;
   checkStepView: CheckStepView;
-  status:HealthStatus;
- 
-  constructor(private _telemetryService: TelemetryService){
-    
+  iconSize = 20;
+  expanded = false;
+
+  constructor(private _telemetryService: TelemetryService) {
+
   }
-  
+
   ngOnInit(): void {
-    this.checkStepView = <CheckStepView> this.viewModel.stepView; 
-    this.status = this.checkStepView.status;
+    this.checkStepView = <CheckStepView>this.viewModel.stepView;
+  }
+
+  toggleSubChecks(): void {
+    this.expanded = !this.expanded;
   }
 
 }

@@ -74,6 +74,7 @@ enum checkResultLevel {
 export class CheckStepView extends StepView {
     public title: string;
     public level: number;
+    public subChecks?: { title: string, level: number, status?: HealthStatus }[];
     public status?: HealthStatus;
 
     constructor(view: CheckStepView) {
@@ -82,6 +83,10 @@ export class CheckStepView extends StepView {
         this.title = view.title;
         this.level = view.level;
         this.status = convertLevelToHealthStatus(this.level);
+        this.subChecks = view.subChecks || [];
+        this.subChecks = this.subChecks.map(c => {
+            return { title: c.title, level: c.level, status: convertLevelToHealthStatus(c.level) };
+        });
     }
 }
 
@@ -162,7 +167,7 @@ export class StepFlowManager {
     private _defaultLoadingText = "Loading...";
     private _dom: HTMLDivElement;
     private _telemetryService: TelemetryService;
-    constructor(views: StepViewContainer[], telemetryService:TelemetryService) {
+    constructor(views: StepViewContainer[], telemetryService: TelemetryService) {
         this.stepViews = views;
         this._telemetryService = telemetryService;
         this._stepViewQueue = [new PromiseCompletionSource<StepView[]>()];
@@ -280,7 +285,7 @@ export class StepFlowManager {
 
     private generateLogEventFunc(flow: StepFlow) {
         var telemetryService = this._telemetryService;
-        return (eventName: string, payload: any) =>telemetryService.logEvent(`NetworkCheck.Flow.${flow.id}`, { eventName, payload});
+        return (eventName: string, payload: any) => telemetryService.logEvent(`NetworkCheck.Flow.${flow.id}`, { eventName, payload });
     }
 
     public logEvent: (eventName: string, payload: any) => void;

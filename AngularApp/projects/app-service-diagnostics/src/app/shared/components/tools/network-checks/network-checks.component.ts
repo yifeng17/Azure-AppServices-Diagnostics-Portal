@@ -95,7 +95,7 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
                 options: flows.map(f => f.title),
                 placeholder: "Please select..."
             }],
-            expandByDefault: true,
+            expandByDefault: false,
             async callback(dropdownIdx: number, selectedIdx: number): Promise<void> {
                 mgr.reset(state);
                 var flow = flows[selectedIdx];

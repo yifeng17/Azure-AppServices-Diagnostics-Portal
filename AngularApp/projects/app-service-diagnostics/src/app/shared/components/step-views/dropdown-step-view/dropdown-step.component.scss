@@ -3,8 +3,20 @@
     padding: 10px 10px 15px 10px;
 }
 
-.dropdown-container .description{
-    margin: 10px 0px 5px 1px;
+.dropdown-container{ 
+    .description{
+        margin: 10px 0px 5px 1px;
+    }
+
+    .ms-Dropdown-caretDownWrapper,.ms-Dropdown-title{
+        height: 24px;
+        padding-top: 2px;
+        line-height: unset;
+    }
+}
+
+.ms-Dropdown-optionText,.ms-Dropdown-title{
+    font-size: 13px;
 }
 
 .ms-Callout-container .ms-Callout-main{
