@@ -17,6 +17,19 @@
     }
 }
 
+.details-link{
+    float: right;
+    margin-top: -20px;
+    padding-right: 15px;
+}
+
+.subchecks-container{
+    padding-left: 10px;
+    .sub-check{
+        padding-top: 10px;
+    }
+}
+
 .check-title{
     font-size: 14px;
     margin-top: -20px;

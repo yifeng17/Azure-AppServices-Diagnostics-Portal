@@ -1,15 +1,15 @@
 <div class="check-step step">
     <div class="status-icon">
-        <status-icon [loading]="1" [status]="checkStepView.status" [size]="20"></status-icon>
+        <status-icon [loading]="1" [status]="checkStepView.status"></status-icon>
     </div>
     <div class="check-title" tabindex="0">
       {{checkStepView.title}}
     </div>
-    <div *ngIf="checkStepView.subChecks.length>0"> <a (click)="toggleSubChecks()"> {{expanded ? "collapse":"expand"}} </a></div>
+    <div class="details-link" *ngIf="checkStepView.subChecks.length>0"> <a (click)="toggleSubChecks()"> {{expanded ? "collapse":"details"}} </a></div>
     <div class="subchecks-container" *ngIf="expanded">
-      <div *ngFor="let subCheck of checkStepView.subChecks">
+      <div class="sub-check" *ngFor="let subCheck of checkStepView.subChecks">
         <div class="status-icon">
-          <status-icon [loading]="1" [status]="subCheck.status" [size]="16"></status-icon>
+          <status-icon [loading]="1" [status]="subCheck.status"></status-icon>
         </div>
         <div class="check-title" tabindex="0">
           {{subCheck.title}}
