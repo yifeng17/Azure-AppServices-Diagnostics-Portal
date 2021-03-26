@@ -15,7 +15,6 @@ import { CheckStepView, StepViewContainer } from '../step-view-lib';
 export class CheckStepComponent implements OnInit {
   @Input() viewModel: StepViewContainer;
   checkStepView: CheckStepView;
-  iconSize = 20;
   expanded = false;
 
   constructor(private _telemetryService: TelemetryService) {

@@ -2,7 +2,7 @@
     <div class="status-icon">
         <status-icon [loading]="1" [status]="checkStepView.status"></status-icon>
     </div>
-    <div class="check-title" tabindex="0">
+    <div class="check-title bold" tabindex="0">
       {{checkStepView.title}}
     </div>
     <div class="details-link" *ngIf="checkStepView.subChecks.length>0"> <a (click)="toggleSubChecks()"> {{expanded ? "collapse":"details"}} </a></div>
