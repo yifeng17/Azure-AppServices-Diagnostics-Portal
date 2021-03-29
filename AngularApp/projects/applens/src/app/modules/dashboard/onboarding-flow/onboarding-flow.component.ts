@@ -570,8 +570,8 @@ export class OnboardingFlowComponent implements OnInit {
   private IsDetectorMarkedPublic(codeString: string) : boolean {
     if(codeString)
     {
-      var trimmedCode = codeString.replace(/\s/g, "");
-      return trimmedCode.includes('InternalOnly=false)');
+      var trimmedCode = codeString.toLowerCase().replace(/\s/g, "");
+      return trimmedCode.includes('internalonly=false)') || trimmedCode.includes('internalonly:false)');
     }
 
     return false;

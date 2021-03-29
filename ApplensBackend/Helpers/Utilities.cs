@@ -73,7 +73,8 @@ namespace AppLensV3.Helpers
 
             // Loose logic to figure out whether the detector is public or not.
             // The challenge is we dont expose this data in detector definition. Need to figure out a better way to know if detector is public or not.
-            return detectorCodeString.Replace(" ", string.Empty).Contains("InternalOnly=false)");
+            string trimmedCode = detectorCodeString.Replace(" ", string.Empty).ToLower();
+            return trimmedCode.Contains("internalonly=false)") || trimmedCode.Contains("internalonly:false)");
         }
 
         /// <summary>
