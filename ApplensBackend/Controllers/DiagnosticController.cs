@@ -53,7 +53,7 @@ namespace AppLensV3.Controllers
         /// <param name="env">The environment.</param>
         /// <param name="diagnosticClient">Diagnostic client.</param>
         /// <param name="emailNotificationService">Email notification service.</param>
-        public DiagnosticController(IHostingEnvironment env, IDiagnosticClientService diagnosticClient, IEmailNotificationService emailNotificationService, IConfiguration configuration)
+        public DiagnosticController(IHostingEnvironment env, IDiagnosticClientService diagnosticClient, IEmailNotificationService emailNotificationService, IConfiguration configuration, IResourceConfigService resConfigService)
         {
             Env = env;
             DiagnosticClient = diagnosticClient;
@@ -61,6 +61,7 @@ namespace AppLensV3.Controllers
             blackListedAscRegions = configuration.GetValue<string>("BlackListedAscRegions", string.Empty).Replace(" ", string.Empty).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             diagAscHeaderValue = configuration.GetValue<string>("DiagAscHeaderValue");
             this.config = configuration;
+            this.resourceConfigService = resConfigService;
         }
 
         private IDiagnosticClientService DiagnosticClient { get; }
@@ -68,6 +69,8 @@ namespace AppLensV3.Controllers
         private IEmailNotificationService EmailNotificationService { get; }
 
         private IHostingEnvironment Env { get; }
+
+        private IResourceConfigService resourceConfigService { get; }
 
         [HttpGet("ping")]
         public IActionResult Ping()
@@ -85,9 +88,6 @@ namespace AppLensV3.Controllers
 
             return Ok(config[name]);
         }
-
-        private static string TryGetHeader(HttpRequest request, string headerName, string defaultValue = "") =>
-            request.Headers.ContainsKey(headerName) ? (string)request.Headers[headerName] : defaultValue;
 
         [HttpGet("invoke")]
         public async Task<IActionResult> InvokeUsingGet(string path, string method = "POST")
@@ -125,7 +125,7 @@ namespace AppLensV3.Controllers
         /// <returns>Task for invoking request.</returns>
         [HttpPost("invoke")]
         [HttpOptions("invoke")]
-        public async Task<IActionResult> Invoke([FromBody]JToken body)
+        public async Task<IActionResult> Invoke([FromBody] JToken body)
         {
             var invokeHeaders = ProcessInvokeHeaders();
 
@@ -164,6 +164,24 @@ namespace AppLensV3.Controllers
                 }
             }
 
+            // For Publishing Detector Calls, validate if user has access to publish the detector
+            if (invokeHeaders.Path.EndsWith("/diagnostics/publish", StringComparison.OrdinalIgnoreCase))
+            {
+                if (!TryFetchPublishAcessParametersFromRequestBody(body, out string resourceType, out string detectorCode, out bool isOriginalCodeMarkedPublic, out string errMsg))
+                {
+                    return BadRequest(errMsg);
+                }
+
+                string userAlias = Utilities.GetUserIdFromToken(Request.Headers["Authorization"].ToString());
+                var resourceConfig = await this.resourceConfigService.GetResourceConfig(resourceType);
+                bool hasAccess = await Utilities.IsUserAllowedToPublishDetector(userAlias, resourceConfig, detectorCode, isOriginalCodeMarkedPublic);
+
+                if (!hasAccess)
+                {
+                    return Unauthorized();
+                }
+            }
+
             var response = await DiagnosticClient.Execute(invokeHeaders.Method, invokeHeaders.Path, body?.ToString(), invokeHeaders.InternalClient, invokeHeaders.InternalView, headers);
             if (response == null)
             {
@@ -187,6 +205,42 @@ namespace AppLensV3.Controllers
             }
 
             return Ok(JsonConvert.DeserializeObject(await responseTask));
+        }
+
+        [HttpPost("publishingaccess")]
+        [HttpOptions("publishingaccess")]
+        public async Task<IActionResult> GetPublishingAccessControl([FromBody] JToken body)
+        {
+            if (body == null)
+            {
+                return BadRequest("Post body cannot be empty");
+            }
+
+            if (!TryFetchPublishAcessParametersFromRequestBody(body, out string resourceType, out string detectorCode, out bool isOriginalCodeMarkedPublic, out string errMsg))
+            {
+                return BadRequest(errMsg);
+            }
+
+            string userAlias = Utilities.GetUserIdFromToken(Request.Headers["Authorization"].ToString());
+            var resourceConfig = await this.resourceConfigService.GetResourceConfig(resourceType);
+
+            bool hasAccess = await Utilities.IsUserAllowedToPublishDetector(userAlias, resourceConfig, detectorCode, isOriginalCodeMarkedPublic);
+
+            List<string> groupNames = new List<string>();
+            if (resourceConfig != null && !resourceConfig.AllowedGroupsToPublish.IsNullOrEmpty())
+            {
+                groupNames = resourceConfig.AllowedGroupsToPublish.Select(p => p.Name).ToList();
+            }
+
+            return Ok(new
+            {
+                HasAccess = hasAccess,
+                ServiceName = resourceConfig?.Name,
+                ResourceType = resourceConfig?.ResourceType,
+                ResourceOwners = resourceConfig?.ResourceOwners,
+                allowedUsersToPublish = resourceConfig?.AllowedUsersToPublish,
+                allowedGroupsToPublish = groupNames
+            });
         }
 
         private static string GetHeaderOrDefault(IHeaderDictionary headers, string headerName, string defaultValue = "")
@@ -237,6 +291,29 @@ namespace AppLensV3.Controllers
                 InternalView = internalView,
                 ModifiedBy = modifiedBy
             };
+        }
+
+        private bool TryFetchPublishAcessParametersFromRequestBody(JToken body, out string resourceType, out string detectorCode, out bool isOriginalCodeMarkedPublic, out string errorMessage)
+        {
+            resourceType = body?["resourceType"]?.ToString();
+            detectorCode = body?["codeString"]?.ToString();
+            errorMessage = string.Empty;
+            isOriginalCodeMarkedPublic = false;
+            bool.TryParse(body?["isOriginalCodeMarkedPublic"]?.ToString(), out isOriginalCodeMarkedPublic);
+
+            if (string.IsNullOrWhiteSpace(resourceType))
+            {
+                errorMessage = "resourceType field cannot be null";
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(detectorCode))
+            {
+                errorMessage = "detectorCode field cannot be null";
+                return false;
+            }
+
+            return true;
         }
     }
 }
