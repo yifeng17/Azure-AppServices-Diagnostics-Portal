@@ -60,7 +60,8 @@ export class NetworkCheckFeedbackComponent implements AfterViewInit, OnInit,OnDe
       Rating: String(this.rating),
       Feedback: PIIUtilities.removePII(this.feedbackText)
     };
-    const detectorName = this.globals.getDetectorName();
+    const currentFlow = this.globals.messagesData.currentNetworkCheckFlow;
+    const detectorName = "NetworkCheck" + this.globals.messagesData.currentNetworkCheckFlow + currentFlow == null ? "" : "." + currentFlow;
     const isHomepage = !this.activatedRoute.root.firstChild.firstChild.firstChild.firstChild.snapshot.params["category"];
     this.ratingEventProperties = {
       'DetectorId': detectorName,
@@ -69,7 +70,7 @@ export class NetworkCheckFeedbackComponent implements AfterViewInit, OnInit,OnDe
       'MayContact': this.checked,
       'FeedbackId': Guid.newShortGuid()
     };
-    this.logEvent("NetworkCheck.Feedback", eventProps);
+    this.logEvent(TelemetryEventNames.StarRatingSubmitted, eventProps);
     
     this.reset();
     this.submitted = true;

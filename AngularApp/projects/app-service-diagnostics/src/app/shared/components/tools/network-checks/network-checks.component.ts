@@ -10,7 +10,8 @@ import { Globals } from 'projects/app-service-diagnostics/src/app/globals';
 import { CheckManager } from './check-manager';
 import { CheckStepView, DropdownStepView, InfoStepView, StepFlow, StepFlowManager, StepView, StepViewContainer, StepViewType } from '../../step-views/step-view-lib';
 import { networkCheckFlows } from './network-check-flows.js'
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { PortalService } from 'projects/app-service-diagnostics/src/app/startup/services/portal.service';
 
 
 function delay(second: number): Promise<void> {
@@ -48,13 +49,19 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
     openFeedback = false;
     debugMode = false;
     isSupportCenter: boolean;
+    logEvent: (eventMessage: string, properties: { [name: string]: string }, measurements?: any) => void;
     //checks: any[];
 
-    constructor(private _siteService: SiteService, private _armService: ArmService, private _telemetryService: TelemetryService, private _globals: Globals, private _route: ActivatedRoute) {
+    constructor(private _siteService: SiteService, private _armService: ArmService, private _telemetryService: TelemetryService, private _globals: Globals, private _route: ActivatedRoute, private _router: Router, private _portalService: PortalService) {
         try {
-            this.isSupportCenter = (_route.snapshot.queryParams["isSupportCenter"] == "true");
+            var queryParams = _route.snapshot.queryParams;
+            this.isSupportCenter = (queryParams["isSupportCenter"] == "true");
+            this.logEvent = (eventMessage: string, properties: { [name: string]: string } = {}, measurements?: any) => {
+                properties.isSupportCenter = this.isSupportCenter.toString();
+                _telemetryService.logEvent(eventMessage, properties, measurements);
+            };
             window["networkCheckLinkClickEventLogger"] = (viewId: string, url: string, text: string) => {
-                _telemetryService.logEvent("NetworkCheck.LinkClick", { viewId, url, text });
+                this.logEvent("NetworkCheck.LinkClick", { viewId, url, text });
             }
             if (window["debugMode"]) {
                 this.debugMode = window["debugMode"];
@@ -65,7 +72,7 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
             this.stepFlowManager = new StepFlowManager(this.stepViews, _telemetryService);
             this.siteInfo = { ...this._siteService.currentSiteMetaData.value, ...this._siteService.currentSite.value, fullSiteName };
 
-            this.diagProvider = new DiagProvider(this.siteInfo, _armService, _siteService);
+            this.diagProvider = new DiagProvider(this.siteInfo, _armService, _siteService, _portalService.shellSrc);
             this.loadFlowsAsync().catch(e => {
                 throw e;
             });
@@ -80,30 +87,38 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
     }
 
     async loadFlowsAsync(): Promise<void> {
-        var telemetryService = this._telemetryService;
-        var flows = this.processFlows(networkCheckFlows);
-        if (this.debugMode) {
-            var remoteFlows: any = await CheckManager.loadRemoteCheckAsync(true);
-            remoteFlows = this.processFlows(remoteFlows, "(debug)");
-            flows = flows.concat(remoteFlows);
-        }
-        var mgr = this.stepFlowManager;
-        var dropDownView = new DropdownStepView({
-            id: "InitialDropDown",
-            description: "Tell us more about the problem you are experiencing?",
-            dropdowns: [{
-                options: flows.map(f => f.title),
-                placeholder: "Please select..."
-            }],
-            expandByDefault: false,
-            async callback(dropdownIdx: number, selectedIdx: number): Promise<void> {
-                mgr.reset(state);
-                var flow = flows[selectedIdx];
-                telemetryService.logEvent("NetworkCheck.FlowSelected", {flowId: flow.id});
-                mgr.setFlow(flow);
+        try {
+            var globals = this._globals;
+            globals.messagesData.currentNetworkCheckFlow = null;
+            var telemetryService = this._telemetryService;
+            var flows = this.processFlows(networkCheckFlows);
+            if (this.debugMode) {
+                var remoteFlows: any = await CheckManager.loadRemoteCheckAsync(true);
+                remoteFlows = this.processFlows(remoteFlows, "(debug)");
+                flows = flows.concat(remoteFlows);
             }
-        });
-        var state = mgr.addView(dropDownView);
+            var mgr = this.stepFlowManager;
+            var dropDownView = new DropdownStepView({
+                id: "InitialDropDown",
+                description: "Tell us more about the problem you are experiencing?",
+                dropdowns: [{
+                    options: flows.map(f => f.title),
+                    placeholder: "Please select..."
+                }],
+                expandByDefault: false,
+                async callback(dropdownIdx: number, selectedIdx: number): Promise<void> {
+                    mgr.reset(state);
+                    var flow = flows[selectedIdx];
+                    globals.messagesData.currentNetworkCheckFlow = flow.id;
+                    telemetryService.logEvent("NetworkCheck.FlowSelected", { flowId: flow.id });
+                    mgr.setFlow(flow);
+                }
+            });
+            var state = mgr.addView(dropDownView);
+        } catch (e) {
+            console.log("loadFlowsAsync failed", e);
+            throw e;
+        }
     }
 
     processFlows(flows: any, postfix?: string): StepFlow[] {

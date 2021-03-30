@@ -29,7 +29,7 @@ export class PortalService {
     private setBladeReturnValueObservable: ReplaySubject<any>;
 
 
-    private shellSrc: string;
+    public shellSrc: string;
     private tokenObservable: ReplaySubject<string>;
 
     private acceptedOriginsSuffix: string[] = [];

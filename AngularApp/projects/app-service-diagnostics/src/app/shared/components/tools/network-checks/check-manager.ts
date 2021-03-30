@@ -1,10 +1,10 @@
 declare var jsDynamicImportFlows: any;
 export class CheckManager {
     private static _jsUrl = "http://127.0.0.1:8000/test-check.js";
-    private static _remoteCheckPromise:Promise<any[]>;
-    static loadRemoteCheckAsync(reset:boolean = false): Promise<any[]> {
+    private static _remoteCheckPromise:Promise<any>;
+    static loadRemoteCheckAsync(reset:boolean = false): Promise<any> {
         if (reset || CheckManager._remoteCheckPromise == null) {
-            CheckManager._remoteCheckPromise = new Promise<any[]>((resolve, reject) => {
+            CheckManager._remoteCheckPromise = new Promise<any>((resolve, reject) => {
                 var existedScript = document.getElementById("remoteChecks");
                 if (existedScript != null) {
                     document.head.removeChild(existedScript);
@@ -21,11 +21,11 @@ export class CheckManager {
                         resolve(jsDynamicImportFlows);
                     }
                     else {
-                        resolve([]);
+                        resolve({});
                     }
                 }
                 script.onerror = () => {
-                    resolve([]);
+                    resolve({});
                 }
                 document.head.appendChild(script);
             });

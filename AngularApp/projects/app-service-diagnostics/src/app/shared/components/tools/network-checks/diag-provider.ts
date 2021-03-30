@@ -11,10 +11,12 @@ export class DiagProvider {
     private _siteInfo: SiteInfoMetaData & Site & { fullSiteName: string };
     private _armService: ArmService;
     private _siteService: SiteService;
-    constructor(siteInfo: SiteInfoMetaData & Site & { fullSiteName: string }, armService: ArmService, siteService: SiteService) {
+    public portalDomain:string;
+    constructor(siteInfo: SiteInfoMetaData & Site & { fullSiteName: string }, armService: ArmService, siteService: SiteService, portalDomain:string) {
         this._siteInfo = siteInfo;
         this._armService = armService;
         this._siteService = siteService;
+        this.portalDomain = portalDomain;
         armService.clearCache();
     }
 

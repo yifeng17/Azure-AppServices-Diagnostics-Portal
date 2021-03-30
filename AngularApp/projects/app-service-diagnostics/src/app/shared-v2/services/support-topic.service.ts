@@ -46,11 +46,25 @@ export class SupportTopicService {
 
     getPathForSupportTopic(supportTopicId: string, pesId: string, searchTerm: string): Observable<any> {
         this.supportTopicId = supportTopicId;
-        if(supportTopicId == "32542212"){
-            // VNET integration with App Service
-            return observableOf({ path: 'tools/networkchecks', queryParams: {"isSupportCenter": true} });
-        }
+        var svcName = this._resourceService.azureServiceName
         return this._resourceService.getPesId().pipe(flatMap(pesId => {
+            if (supportTopicId == "32542212" || supportTopicId == "32630473") {
+                // WebApp/VNET integration with App Service or FunctionApp/Configuring VNET integration with AppService
+                if (this._resourceService.resource.kind.includes("container")) {
+                    // container based WebApp, not supported yet
+                } else {
+                    if (pesId == "14748") {
+                        // WebApp(Windows)
+                        return observableOf({ path: 'tools/networkchecks', queryParams: { "isSupportCenter": true } });
+                    } else if (pesId == "16170") {
+                        // WebApp(Linux), not supported yet
+                    } else if(pesId == "16072"){
+                         // FunctionApp
+                        return observableOf({ path: 'tools/networkchecks', queryParams: { "isSupportCenter": true } });
+                    }
+                }
+            } 
+
             this.pesId = pesId;
             this.detectorTask = this._diagnosticService.getDetectors();
             return this.detectorTask.pipe(flatMap(detectors => {
@@ -73,7 +87,7 @@ export class SupportTopicService {
                         detectorPath = `/analysis/searchResultsAnalysis/search`;
                     }
                 }
-
+                
                 let keywordsList = [];
                 return this._resourceService.getKeystoneDetectorId().pipe(flatMap(keystoneDetectorId => {
                     detectorPath = `/integratedSolutions` + detectorPath;
@@ -112,7 +126,7 @@ export class SupportTopicService {
 
                                 return observableOf({ path: detectorPath, queryParams: queryParamsDic });
                             }))
-                   }
+                    }
 
                     return observableOf({ path: detectorPath, queryParams: queryParamsDic });
                 }))
