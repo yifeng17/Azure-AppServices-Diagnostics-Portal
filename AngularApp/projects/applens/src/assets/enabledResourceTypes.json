@@ -305,7 +305,7 @@
             "imgSrc": "assets/img/Azure-SignalRService-Logo.svg",
             "versionPrefix": "",
             "azureCommImpactedServicesList": "SignalRService",
-            "pesId": "",
+            "pesId": "16477",
             "staticSelfHelpContent": "",
             "searchSuffix": "AZURE SIGNAL SERVICE"
         },
