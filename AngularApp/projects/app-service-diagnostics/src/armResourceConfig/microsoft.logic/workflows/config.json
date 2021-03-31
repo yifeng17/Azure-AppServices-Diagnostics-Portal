@@ -17,20 +17,20 @@
 		"supportTopicIds": []
 	},
 	"categories": [{
-			"id": "Diagnosticsla",
-			"name": "Diagnostics",
-			"description": "Get an overview about the most recent runs and their steps, troubleshoot, and identify possible improvements.",
-			"keywords": ["Overview", "Runs", "Performance", "Triggers"],
+			"id": "performancela",
+			"name": "Performance",
+			"description": "Troubleshoot performance issues on your most recent runs",
+			"keywords": ["Health Overview", "Runs", "Triggers", "Throttling"],
 			"color": "rgb(186, 211, 245)",
 			"createFlowForCategory": true,
 			"chatEnabled": false,
             "overviewDetectorId": "la_pubgeneral"
 		},
 		{
-			"id": "connectoractionshealthla",
-			"name": "Connector Actions Health",
-			"description": "Review connector actions health to get the details on connector errors, timeouts, or any other unexpected behavior.",
-			"keywords": ["Actions", "Timeouts", "Connector", "4xx Errors", "5xx Errors", "SQL, Storage, and more"],
+			"id": "connectorhealthla",
+			"name": "Connector Health",
+			"description": "Investigate the health of your connectors",
+			"keywords": ["Actions", "Timeouts", "4xx Errors", "5xx Errors", "SQL"],
 			"color": "rgb(249, 213, 180)",
 			"createFlowForCategory": true,
 			"chatEnabled": false,
