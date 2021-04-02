@@ -28,12 +28,14 @@ export class StepViewContainer {
 
 export abstract class StepView {
     public id: string;
+    public hidden?: boolean;
     public type?: StepViewType;
     public container?: StepViewContainer;
 
     constructor(view: StepView) {
         this.type = view.type;
         this.id = view.id;
+        this.hidden = view.hidden || false;
     }
 }
 
@@ -61,7 +63,7 @@ export class DropdownStepView extends StepView {
     }
 }
 
-enum checkResultLevel {
+export enum checkResultLevel {
     pass,
     warning,
     fail,
@@ -82,28 +84,8 @@ export class CheckStepView extends StepView {
         this.type = StepViewType.check;
         this.title = view.title;
         this.level = view.level;
-        this.status = convertLevelToHealthStatus(this.level);
         this.subChecks = view.subChecks || [];
-        this.subChecks = this.subChecks.map(c => {
-            return { title: c.title, level: c.level, status: convertLevelToHealthStatus(c.level) };
-        });
     }
-}
-
-function convertLevelToHealthStatus(level: checkResultLevel): HealthStatus {
-    switch (level) {
-        case checkResultLevel.pass:
-            return HealthStatus.Success;
-        case checkResultLevel.fail:
-            return HealthStatus.Critical;
-        case checkResultLevel.warning:
-            return HealthStatus.Warning;
-        case checkResultLevel.pending:
-            return HealthStatus.Info;
-        case checkResultLevel.error:
-            return HealthStatus.Info;
-    }
-    return HealthStatus.None;
 }
 
 enum InfoType {
@@ -137,6 +119,7 @@ function markdownPreprocess(markdown: string, id: string): string {
 export class InputStepView extends StepView {
     public title: string;
     public placeholder: string;
+    public text: string;
     public entry: string;
     public buttonText: string;
     public tooltip: string;
@@ -152,6 +135,7 @@ export class InputStepView extends StepView {
         this.tooltip = view.tooltip;
         this.callback = view.callback;
         this.entry = view.entry;
+        this.text = view.text;
         this.error = view.error;
     }
 }
@@ -167,6 +151,8 @@ export class StepFlowManager {
     private _defaultLoadingText = "Loading...";
     private _dom: HTMLDivElement;
     private _telemetryService: TelemetryService;
+    public errorMsg: string;
+    public errorDetailMarkdown: string;
     constructor(views: StepViewContainer[], telemetryService: TelemetryService) {
         this.stepViews = views;
         this._telemetryService = telemetryService;
@@ -181,7 +167,15 @@ export class StepFlowManager {
 
     public setFlow(flow: StepFlow) {
         this._currentFlow = flow;
-        flow.run(this.generateMgrForFlow(flow));
+
+        flow.run(this.generateMgrForFlow(flow)).catch(e => {
+            e.flowId = this._currentFlow.id;
+            console.log(e);
+            this._telemetryService.logException(e, "StepFlowManager.FlowExecution");
+            this.errorMsg = "Internal error, retry may not help."
+            this.errorDetailMarkdown = "```\r\n\r\n" + e.stack + "\r\n\r\n```"
+        });
+
     }
 
     private endFlow() {
@@ -222,21 +216,6 @@ export class StepFlowManager {
                         break;
                     }
                     view.id = view.id || this._currentFlow.id + `_${idx}`;
-
-                    switch (view.type) {
-                        case StepViewType.dropdown:
-                            view = new DropdownStepView(<DropdownStepView>view);
-                            break;
-                        case StepViewType.check:
-                            view = new CheckStepView(<CheckStepView>view);
-                            break;
-                        case StepViewType.info:
-                            view = new InfoStepView(<InfoStepView>view);
-                            break;
-                        case StepViewType.input:
-                            view = new InputStepView(<InputStepView>view);
-                            break;
-                    }
                     this.stepViews.push(new StepViewContainer(view));
                     if (this._dom != null) {
                         delay(0.1).then(() => this._dom.scrollTop = this._dom.scrollHeight);
@@ -244,7 +223,8 @@ export class StepFlowManager {
                 }
             }
             catch (error) {
-                this._telemetryService.logException(error, `FlowMgr.${this._currentFlow.id}`);
+                error.flowId = this._currentFlow.id;
+                this._telemetryService.logException(error, `FlowMgr.FlowRendering`);
                 console.log(error);
             }
             this._stepViewQueueMap[idx] = this.stepViews.length;

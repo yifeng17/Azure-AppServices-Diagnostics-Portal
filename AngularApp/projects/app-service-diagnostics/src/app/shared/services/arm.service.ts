@@ -463,7 +463,6 @@ export class ArmService {
         if (this.telemetryService) {
             this.telemetryService.logException(loggingError, null, loggingProps);
         }
-
         return observableThrowError(actualError);
     }
 

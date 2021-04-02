@@ -31,7 +31,7 @@ export class DiagProvider {
                 result.isVnetIntegrated = true;
                 result.outboundType = OutboundType.SWIFT;
             } else {
-                var siteGWVnetInfo = await this.getArmResourceAsync<any>(siteArmId + "/virtualNetworkConnections");
+                var siteGWVnetInfo = await this.getArmResourceAsync(siteArmId + "/virtualNetworkConnections");
 
                 if (siteGWVnetInfo.length > 0) {
                     result.isVnetIntegrated = true;
@@ -42,14 +42,31 @@ export class DiagProvider {
         return result;
     }
 
-    public getArmResourceAsync<T>(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Promise<T> {
+    public getArmResourceAsync(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Promise<any> {
         var stack = new Error("replace_placeholder").stack;
-        return this._armService.getArmResource<T>(resourceUri, apiVersion, invalidateCache)
+        return this._armService.getArmResource<any>(resourceUri, apiVersion, invalidateCache)
             .toPromise()
+            .then(t=> {
+                t.status = 200;
+                return t;
+            })
             .catch(e => {
                 var err = new Error(e);
                 err.stack = stack.replace("replace_placeholder", e);
-                throw err;
+                console.log(err);
+
+                var result = {message:e, status:0 };
+                if(e.startsWith("Code:AuthorizationFailed")){
+                    result.status = 401;
+                    return result;
+                }else if (e==""){
+                    result.status = 404;
+                    return result;
+                }
+                else{
+                    result.status = -1;
+                    return result;
+                }
             });
     }
 
