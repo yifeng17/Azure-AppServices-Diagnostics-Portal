@@ -240,7 +240,7 @@ export class DiagProvider {
     public async getWebAppVnetInfo(): Promise<any> {
         //This is the regional VNet Integration endpoint
         var swiftUrl = this._siteInfo["id"] + "/config/virtualNetwork";
-        var siteVnetInfo = await this.getArmResourceAsync(swiftUrl);
+        var siteVnetInfo = await this.getArmResourceAsync(swiftUrl, "2018-02-01");
         return siteVnetInfo;
     }
 

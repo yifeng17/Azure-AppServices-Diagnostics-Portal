@@ -28,17 +28,18 @@
 .input-check-button{
     margin-left: -1px;
     padding-top: 14px;
+    
+    .ms-Button{
+        height: 28px;
+        width: fit-content;
+        border-radius: 2px;
+    }
 }
 
 
 .input-step{
     padding: 10px 10px 10px 10px;
-}
-
-.input-check-button .ms-Button{
-    height: 28px;
-    width: fit-content;
-}
+} 
 
 .input-step-title{
     font-size: 14px;

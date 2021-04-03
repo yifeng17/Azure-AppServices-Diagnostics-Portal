@@ -19,7 +19,11 @@
     font-size: 13px;
 }
 
+.ms-Dropdown-optionText{
+    margin-left: -5px;
+}
+
 .ms-Callout-container .ms-Callout-main{
-    max-height: 400px !important;
+    max-height: calc(50vh - 30px) !important;
     overflow-y: overlay !important;
 }

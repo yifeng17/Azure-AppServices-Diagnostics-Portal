@@ -9,16 +9,11 @@ import { DiagProvider, OutboundType } from './diag-provider';
 import { Globals } from 'projects/app-service-diagnostics/src/app/globals';
 import { CheckManager } from './check-manager';
 import { CheckStepView, DropdownStepView, InfoStepView, StepFlow, StepFlowManager, StepView, StepViewContainer, StepViewType } from '../../step-views/step-view-lib';
-import { networkCheckFlows } from './network-check-flows.js'
 import { ActivatedRoute, Router } from '@angular/router';
 import { PortalService } from 'projects/app-service-diagnostics/src/app/startup/services/portal.service';
-
-
-function delay(second: number): Promise<void> {
-    return new Promise(resolve =>
-        setTimeout(resolve, second * 1000));
-}
-
+import { configFailureFlow } from './network-check-flows/configFailureFlow.js';
+import { connectionFailureFlow } from './network-check-flows/connectionFailureFlow.js';
+import { learnMoreFlow } from './network-check-flows/learnMoreFlow.js'; 
 
 abstract class NetworkCheckFlow {
     public id: string;
@@ -38,7 +33,7 @@ abstract class NetworkCheckFlow {
 export class NetworkCheckComponent implements OnInit, AfterViewInit {
 
     @ViewChild('networkCheckingTool', { static: false }) networkCheckingToolDiv: any;
-    title: string = 'Network Checking Tool';
+    title: string = 'Network/Connectivity Troubleshooter';
     description: string = '';
     stepFlowManager: StepFlowManager;
     stepViews: StepViewContainer[] = [];
@@ -64,6 +59,7 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
                 this.logEvent("NetworkCheck.LinkClick", { viewId, url, text });
             }
             if (window["debugMode"]) {
+                _telemetryService["telemetryProviders"] = [];
                 this.debugMode = window["debugMode"];
             }
 
@@ -77,6 +73,8 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
                 throw e;
             });
         } catch (error) {
+            this.stepFlowManager.errorMsg = "Initialization failure, retry may not help.";
+            this.stepFlowManager.errorDetailMarkdown = "```\r\n\r\n" + error.stack + "\r\n\r\n```";
             _telemetryService.logException(error, "NetworkCheck.Initialization");
             console.log(error);
         }
@@ -91,6 +89,7 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
             var globals = this._globals;
             globals.messagesData.currentNetworkCheckFlow = null;
             var telemetryService = this._telemetryService;
+            var networkCheckFlows = { connectionFailureFlow, configFailureFlow, learnMoreFlow }
             var flows = this.processFlows(networkCheckFlows);
             if (this.debugMode) {
                 var remoteFlows: any = await CheckManager.loadRemoteCheckAsync(true);
@@ -100,7 +99,7 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
             var mgr = this.stepFlowManager;
             var dropDownView = new DropdownStepView({
                 id: "InitialDropDown",
-                description: "Tell us more about the problem you are experiencing?",
+                description: "Tell us more about the problem you are experiencing:",
                 dropdowns: [{
                     options: flows.map(f => f.title),
                     placeholder: "Please select..."

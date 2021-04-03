@@ -1,7 +1,7 @@
 <div class="dropdown-step{{dropdownStepView.bordered?' bordered':''}}">
     <p tabindex="0"><b>{{ dropdownStepView.description }}</b></p>
     <div class="dropdown-container" *ngFor="let dropdown of dropdownStepView.dropdowns; index as i">
-        <p class="description" tabindex="0" *ngIf="dropdown.description">{{ dropdown.description }}</p>
+        <p class="description" *ngIf="dropdown.description">{{ dropdown.description }}</p>
         <fab-dropdown [componentRef]="dropdownRef" (onLoad)="onload()" (onChange)="onChange($event, i)" [disabled]="dropdownOptions[i].length==1" [options]="dropdownOptions[i]" [defaultSelectedKey]="null" contentStyle="width:{{dropdownStepView.width}};"></fab-dropdown>
     </div>
 </div>
