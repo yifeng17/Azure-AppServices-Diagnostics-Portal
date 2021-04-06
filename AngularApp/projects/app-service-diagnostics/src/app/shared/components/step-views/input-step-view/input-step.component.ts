@@ -9,7 +9,7 @@ import { CheckStepView, DropdownStepView, InfoStepView, InputStepView, StepViewC
 @Component({
   selector: 'input-step',
   templateUrl: './input-step.component.html',
-  styleUrls: ['./input-step.component.scss'],
+  styleUrls: ['./input-step.component.scss', '../../../../../styles/icons.scss'],
   encapsulation: ViewEncapsulation.None,
 })
 export class InputStepComponent implements OnInit{

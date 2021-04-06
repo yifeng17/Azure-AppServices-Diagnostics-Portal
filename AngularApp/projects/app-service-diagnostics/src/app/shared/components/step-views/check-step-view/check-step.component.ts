@@ -9,7 +9,7 @@ import { checkResultLevel, CheckStepView, StepViewContainer } from '../step-view
 @Component({
   selector: 'check-step',
   templateUrl: './check-step.component.html',
-  styleUrls: ['./check-step.component.scss'],
+  styleUrls: ['./check-step.component.scss', '../../../../../styles/icons.scss'],
   encapsulation: ViewEncapsulation.None,
 })
 export class CheckStepComponent implements OnInit {

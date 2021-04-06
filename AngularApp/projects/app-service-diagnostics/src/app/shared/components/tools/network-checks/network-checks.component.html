@@ -11,8 +11,8 @@
             </div>
         </div>
         <div class="loading-spin" *ngIf="stepFlowManager.loadingView && stepFlowManager.loadingView.loadingText != null">
-            <i class="fa fa-circle-o-notch fa-spin"></i>
-            <div class="loading-text" tabindex="0">{{stepFlowManager.loadingView.loadingText}}</div>
+            <fab-spinner [ariaLabel]="stepFlowManager.loadingView.loadingText"></fab-spinner>
+            <div class="loading-text">{{stepFlowManager.loadingView.loadingText}}</div>
         </div>
         <div *ngIf="stepFlowManager.errorMsg" class="error-section">
             <div class="error-message">

@@ -34,7 +34,7 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
 
     @ViewChild('networkCheckingTool', { static: false }) networkCheckingToolDiv: any;
     title: string = 'Network/Connectivity Troubleshooter';
-    description: string = '';
+    description: string = 'Check your network connectivity and troubleshoot network issues';
     stepFlowManager: StepFlowManager;
     stepViews: StepViewContainer[] = [];
 

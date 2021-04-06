@@ -5,7 +5,7 @@
     <div class="check-title bold" tabindex="0">
       {{checkStepView.title}}
     </div>
-    <div class="details-link" *ngIf="checkStepView.subChecks.length>0"> <a (click)="toggleSubChecks()"> {{expanded ? "collapse":"details"}} </a></div>
+    <div class="details-link" *ngIf="checkStepView.subChecks.length>0"> <a (click)="toggleSubChecks()"> <i class="{{expanded ? 'ib-dchevup' : 'ib-dchevdown'}}"></i> </a></div>
     <div class="subchecks-container" *ngIf="expanded">
       <div class="sub-check" *ngFor="let subCheck of checkStepView.subChecks; let i = index">
         <div class="status-icon">
