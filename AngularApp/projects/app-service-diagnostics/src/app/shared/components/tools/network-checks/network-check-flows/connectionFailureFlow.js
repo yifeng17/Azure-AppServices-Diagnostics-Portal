@@ -125,19 +125,18 @@ async function checkVnetIntegrationHealth(siteInfo, diagProvider, isKuduAccessib
 
     var promise = checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessiblePromise, permMgr);
     isContinue = await promise.then(d => d.isContinue);
-    if (isContinue == "Complete") {
-        views = views.concat(new CheckStepView({
+    if (isContinue) {
+        // Complete or Incomplete
+        var view = new CheckStepView({
             title: "VNet integration is healthy",
             level: 0,
             subChecks: await promise.then(d => d.checks.filter(c => c.type == 1))
-        }));
-    }
-    else if (isContinue == "Incomplete") {
-        views = views.concat(new CheckStepView({
-            title: "VNet integration checks are incomplete",
-            level: 1,
-            subChecks: await promise.then(d => d.checks.filter(c => c.type == 1))
-        }));
+        });
+
+        if (isContinue == "Incomplete") {
+            view.title+=" (incomplete result)";
+        }
+        views = views.concat(view);
     }
     else {
         var subchecks = await promise.then(d => d.checks.filter(c => c.type == 1));
@@ -204,10 +203,9 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
                 checks = checks.concat(viewShowGatewayVnetStatus);
 
                 //Check if Vnet exists that the gateway is connected to
-                vnetResourceId =  siteGWVnetInfo[0]["properties"]["vnetResourceId"];
+                vnetResourceId = siteGWVnetInfo[0]["properties"]["vnetResourceId"];
                 var vnetData = await diagProvider.getArmResourceAsync(vnetResourceId, "2020-11-01");
-                if(vnetData.status == 401)
-                {                
+                if (vnetData.status == 401) {
                     var missingPermissionResource = `Virtual Network: ${vnetResourceId.split("/virtualNetworks/")[1]}`;
                     var viewMissingPermissionsonResource = showMissingPermissionStatus(missingPermissionResource);
                     checks = checks.concat(viewMissingPermissionsonResource);
@@ -215,8 +213,7 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
                     var isContinue = "Incomplete";
                     return { checks, isContinue, subnetData };
                 }
-                else if(vnetData.status == 404)
-                {
+                else if (vnetData.status == 404) {
                     var resourceNotFound = `Virtual Network: ${vnetResourceId.split("/virtualNetworks/")[1]}`;
                     var viewResourceNotFound = showResourceNotFoundStatus(resourceNotFound);
                     checks = checks.concat(viewResourceNotFound);
@@ -228,11 +225,10 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
                 return { checks, isContinue, subnetData };
             }
             else {
-                
+
                 //VNET integration is not configured
                 var aspSitesObj = await aspSitesObjPromise;
-                if(aspSitesObj.status == 401)
-                {                
+                if (aspSitesObj.status == 401) {
                     var missingPermissionResource = `App Service Plan: ${serverFarmName}`;
                     var viewMissingPermissionsonResource = showMissingPermissionStatus(missingPermissionResource);
                     checks = checks.concat(viewMissingPermissionsonResource);
@@ -240,8 +236,7 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
                     var isContinue = "Incomplete";
                     return { checks, isContinue, subnetData };
                 }
-                else if(aspSitesObj.status == 404)
-                {
+                else if (aspSitesObj.status == 404) {
                     var resourceNotFound = `App Service Plan: ${serverFarmName}`;
                     var viewResourceNotFound = showResourceNotFoundStatus(resourceNotFound);
                     checks = checks.concat(viewResourceNotFound);
@@ -251,7 +246,7 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
                 var viewVnetNotIntegrated = await showVnetIntegrationNotConfiguredStatus(diagProvider, aspSitesObj, serverFarmId, serverFarmName);
                 checks = checks.concat(viewVnetNotIntegrated);
                 var isContinue = false;
-                return { checks, isContinue, subnetData };           
+                return { checks, isContinue, subnetData };
             }
         }
         else {
@@ -282,10 +277,9 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
             if (swiftSupported == true && subnetResourceId.includes("/subnets/")) {
 
                 //Get Virtual Network
-                vnetResourceId = subnetResourceId.split("/subnets/")[0];                
+                vnetResourceId = subnetResourceId.split("/subnets/")[0];
                 var vnetData = await diagProvider.getArmResourceAsync(vnetResourceId, "2020-11-01");
-                if(vnetData.status == 401)
-                {                
+                if (vnetData.status == 401) {
                     var missingPermissionResource = `Virtual Network: ${vnetResourceId.split("/virtualNetworks/")[1]}`;
                     var viewMissingPermissionsonResource = showMissingPermissionStatus(missingPermissionResource);
                     checks = checks.concat(viewMissingPermissionsonResource);
@@ -293,8 +287,7 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
                     var isContinue = "Incomplete";
                     return { checks, isContinue, subnetData };
                 }
-                else if(vnetData.status == 404)
-                {
+                else if (vnetData.status == 404) {
                     var resourceNotFound = `Virtual Network: ${vnetResourceId.split("/virtualNetworks/")[1]}`;
                     var viewResourceNotFound = showResourceNotFoundStatus(resourceNotFound);
                     checks = checks.concat(viewResourceNotFound);
@@ -339,8 +332,7 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
 
                 //Check if App Service plan is connected to 2 subnets                
                 var aspSitesObj = await aspSitesObjPromise;
-                if(aspSitesObj.status == 401)
-                {                
+                if (aspSitesObj.status == 401) {
                     var missingPermissionResource = `App Service Plan: ${serverFarmName}`;
                     var viewMissingPermissionsonResource = showMissingPermissionStatus(missingPermissionResource);
                     checks = checks.concat(viewMissingPermissionsonResource);
@@ -348,29 +340,27 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
                     var isContinue = "Incomplete";
                     return { checks, isContinue, subnetData };
                 }
-                else if(aspSitesObj.status == 404)
-                {
+                else if (aspSitesObj.status == 404) {
                     var resourceNotFound = `App Service Plan: ${serverFarmName}`;
                     var viewResourceNotFound = showResourceNotFoundStatus(resourceNotFound);
                     checks = checks.concat(viewResourceNotFound);
                     var isContinue = "Incomplete";
                     return { checks, isContinue, subnetData };
                 }
-                
+
                 var viewAspMultipleSubnet = await checkASPConnectedToMultipleSubnets(diagProvider, aspSitesObj, thisSite, serverFarmName, serverFarmId);
                 checks = checks.concat(viewAspMultipleSubnet.views);
                 if (viewAspMultipleSubnet.isContinue == false) {
                     var isContinue = false;
                     return { checks, isContinue, subnetData };
                 }
-               
+
 
                 //Check if Private IP is assigned
                 //First we need to get the list of instances 
                 var instancesObj = await instancesPromise;
 
-                if(instancesObj.status == 401)
-                {                
+                if (instancesObj.status == 401) {
                     var missingPermissionResource = `Instances: ${siteArmId}/instances`;
                     var viewMissingPermissionsonResource = showMissingPermissionStatus(missingPermissionResource);
                     checks = checks.concat(viewMissingPermissionsonResource);
@@ -378,8 +368,7 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
                     var isContinue = "Incomplete";
                     return { checks, isContinue, subnetData };
                 }
-                else if(instancesObj.status == 404)
-                {
+                else if (instancesObj.status == 404) {
                     var resourceNotFound = `Instances: ${siteArmId}/instances`;
                     var viewResourceNotFound = showResourceNotFoundStatus(resourceNotFound);
                     checks = checks.concat(viewResourceNotFound);
@@ -428,12 +417,14 @@ function checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, data
         var dnsCheckResultPromise = checkDnsSetting(siteInfo, diagProvider);
 
         var subnetSizeResult = await subnetSizeCheckPromise;
-        if (subnetSizeResult.checkResult.level == 1) {
-            configCheckView.title = "Network Configuration is suboptimal";
-            configCheckView.level = 1;
+        if (subnetSizeResult != null) {
+            if (subnetSizeResult.checkResult.level == 1) {
+                configCheckView.title = "Network Configuration is suboptimal";
+                configCheckView.level = 1;
+            }
+            views = views.concat(subnetSizeResult.views);
+            subChecks.push(subnetSizeResult.checkResult);
         }
-        views = views.concat(subnetSizeResult.views);
-        subChecks.push(subnetSizeResult.checkResult);
 
         kuduReachable = await kuduReachablePromise;
         if (kuduReachable) {
@@ -461,7 +452,7 @@ function checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, data
         await configCheckViewsPromise;
         if (dnsServer == null || !isContinued) {
             return [];
-        }else if(!kuduReachable){
+        } else if (!kuduReachable) {
             return [new CheckStepView({ title: "Connectivity check (tcpping and nameresolver) is not available due to kudu is inaccessible.", level: 3 })];
         }
 
@@ -511,9 +502,7 @@ async function checkSubnetSizeAsync(diagProvider, subnetDataPromise, serverFarmI
     var aspData = await diagProvider.getArmResourceAsync(serverFarmId);
     var subnetData = await subnetDataPromise;
     if (subnetData == null) {
-        checkResult.level = 3;
-        checkResult.title = "Subnet size check was skipped due to no access";
-        return { views, checkResult };
+        return null;
     }
     //Show subnet size recommendations but don't return 
     var subnetName = subnetData["name"];
@@ -649,7 +638,7 @@ function showResourceNotFoundStatus(resourceId) {
 
 async function showVnetIntegrationNotConfiguredStatus(diagProvider, aspSitesObj, serverFarmId, serverFarmName) {
 
-    var views = [];    
+    var views = [];
     var msg = `<b>Recommendations: </b>`;
     msg += `<li>For setting up VNet integration, please see [Integrate your app with an Azure virtual network](https://docs.microsoft.com/en-us/azure/app-service/web-sites-integrate-with-vnet).</li>`;
 
@@ -1055,11 +1044,11 @@ async function checkPrivateIPAsync(diagProvider, instancesObj, isKuduAccessibleP
         }));
 
         return { views, isContinue };
-    }    
+    }
 
     for (var instance in instances) {
         var instanceName = instances[instance]["name"];
-        instanceCount++;                                  
+        instanceCount++;
         var privateIpPromise = diagProvider.getEnvironmentVariablesAsync(["WEBSITE_PRIVATE_IP"], instanceName);
         privateIpPromiseArray.push(privateIpPromise);
     }
@@ -1069,16 +1058,16 @@ async function checkPrivateIPAsync(diagProvider, instancesObj, isKuduAccessibleP
     for (var promise in privateIpPromiseArray) {
         var privateIp = await privateIpPromiseArray[promise];
         if (privateIp == null) {
-            
+
         }
         else {
-            
+
             instanceAllocated++;
         }
-    }    
+    }
 
     if (instanceCount == instanceAllocated) {
-        
+
         views.push(new CheckStepView({
             title: `Private IP allocated for all(${instanceAllocated}) instances`,
             level: 0
@@ -1089,7 +1078,7 @@ async function checkPrivateIPAsync(diagProvider, instancesObj, isKuduAccessibleP
         views.push(new CheckStepView({
             title: `Private IP not allocated for any instances (${instanceAllocated} out of ${instanceCount} allocated)`,
             level: 2
-        }));        
+        }));
 
         views.push(new InfoStepView({
             infoType: 1,
@@ -1113,7 +1102,7 @@ async function checkPrivateIPAsync(diagProvider, instancesObj, isKuduAccessibleP
 
         isContinue = false;
     }
-    
+
     return { views, isContinue };
 }
 
@@ -1135,7 +1124,7 @@ async function checkDnsSetting(siteInfo, diagProvider) {
         });
         dnsSettings = dnsAppSettings;
         dnsSettingSource = "App Settings";
-    }else {
+    } else {
         var siteVnetInfo = await GetWebAppVnetInfo(siteInfo["id"], diagProvider);
         if (siteVnetInfo.status == 200) {
             var vnetInfo = siteVnetInfo["properties"];
@@ -1186,10 +1175,10 @@ async function checkDnsSetting(siteInfo, diagProvider) {
                 });
             }
             dnsSettingSource = "VNet";
-        } 
+        }
     }
 
-    if(dnsSettings!=null){
+    if (dnsSettings != null) {
         // verify if custom dns is reachable
         var p1 = diagProvider.tcpPingAsync(dnsSettings[0], 53);
         var p2 = dnsSettings.length >= 2 ? diagProvider.tcpPingAsync(dnsSettings[1], 53) : Promise.resolve(null);
@@ -1219,7 +1208,7 @@ async function checkDnsSetting(siteInfo, diagProvider) {
                 level: 0
             });
         }
-    }else{
+    } else {
         dnsServer = "168.63.129.16";
         subChecks.push({
             title: `No custom DNS is set, default DNS 168.63.129.16 will be applied`,
