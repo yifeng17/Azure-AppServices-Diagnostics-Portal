@@ -132,7 +132,6 @@ import { RiskAlertsPanelComponent } from './components/risk-alerts-panel/risk-al
 import { IntegratedSolutionsViewComponent } from './components/integrated-solutions-view/integrated-solutions-view.component';
 import { MarkdownModule } from 'ngx-markdown';
 import { NetworkCheckComponent } from './components/tools/network-checks/network-checks.component';
-import { NetworkCheckFeedbackComponent } from './components/networkcheck-feedback/networkcheck-feedback.component';
 import { DropDownStepComponent } from './components/step-views/dropdown-step-view/dropdown-step.component';
 import { CheckStepComponent, ConvertLevelToHealthStatusPipe } from './components/step-views/check-step-view/check-step.component';
 import { InfoStepComponent } from './components/step-views/info-step-view/info-step.component';
@@ -172,7 +171,6 @@ import { InputStepComponent } from './components/step-views/input-step-view/inpu
         CheckStepComponent,
         ConvertLevelToHealthStatusPipe,
         InputStepComponent,
-        NetworkCheckFeedbackComponent,
         MemoryDumpToolComponent,
         DaasComponent,
         JavaMemoryDumpToolComponent,

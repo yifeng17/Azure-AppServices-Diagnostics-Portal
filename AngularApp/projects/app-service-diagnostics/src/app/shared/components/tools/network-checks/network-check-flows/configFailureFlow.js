@@ -1,4 +1,4 @@
-import {GetArmData, GetWebAppVnetInfo, GetSubnet} from './flowMisc.js';
+import { GetArmData, GetWebAppVnetInfo, GetSubnet } from './flowMisc.js';
 
 export var configFailureFlow = {
     title: "I tried to configure VNet integration via the Azure Portal or ARM template, but it failed",
@@ -113,9 +113,9 @@ async function checkSubnetAvailabilityAsync(siteInfo, diagProvider, subnetData) 
 
     var views = [];
     if (aspSites != null) {
-        for (var site in aspSites) {
-            var siteResourceUri = aspSites[site]["id"];
-            var siteName = aspSites[site]["name"];
+        for (var idx = 0; idx < aspSites.length; ++idx) {
+            var siteResourceUri = aspSites[idx]["id"];
+            var siteName = aspSites[idx]["name"];
             var siteVnetInfo = await GetWebAppVnetInfo(siteResourceUri, diagProvider);
             var subnetName = "-";
             var vnetName = "-";

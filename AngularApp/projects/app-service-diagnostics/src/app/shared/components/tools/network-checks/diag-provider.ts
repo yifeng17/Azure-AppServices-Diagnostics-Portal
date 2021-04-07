@@ -11,11 +11,14 @@ export class DiagProvider {
     private _siteInfo: SiteInfoMetaData & Site & { fullSiteName: string };
     private _armService: ArmService;
     private _siteService: SiteService;
-    public portalDomain:string;
-    constructor(siteInfo: SiteInfoMetaData & Site & { fullSiteName: string }, armService: ArmService, siteService: SiteService, portalDomain:string) {
+    public portalDomain: string;
+    private _scmHostName: string;
+    constructor(siteInfo: SiteInfoMetaData & Site & { fullSiteName: string }, armService: ArmService, siteService: SiteService, portalDomain: string) {
         this._siteInfo = siteInfo;
         this._armService = armService;
         this._siteService = siteService;
+        var scmHostNameState = this._siteInfo.hostNameSslStates.filter(h => h.hostType == 1)[0];
+        this._scmHostName = scmHostNameState == null ? null : scmHostNameState.name;
         this.portalDomain = portalDomain;
         armService.clearCache();
     }
@@ -46,7 +49,7 @@ export class DiagProvider {
         var stack = new Error("replace_placeholder").stack;
         return this._armService.getArmResource<any>(resourceUri, apiVersion, invalidateCache)
             .toPromise()
-            .then(t=> {
+            .then(t => {
                 t.status = 200;
                 return t;
             })
@@ -55,15 +58,15 @@ export class DiagProvider {
                 err.stack = stack.replace("replace_placeholder", e);
                 console.log(err);
 
-                var result = {message:e, status:0 };
-                if(e.startsWith("Code:AuthorizationFailed")){
+                var result = { message: e, status: 0 };
+                if (e.startsWith("Code:AuthorizationFailed")) {
                     result.status = 401;
                     return result;
-                }else if (e==""){
+                } else if (e == "") {
                     result.status = 404;
                     return result;
                 }
-                else{
+                else {
                     result.status = -1;
                     return result;
                 }
@@ -85,9 +88,9 @@ export class DiagProvider {
             });
     }
 
-    public getKuduApiAsync<T>(siteName: string, uri: string): Promise<T> {
+    public getKuduApiAsync<T>(uri: string): Promise<T> {
         var stack = new Error("replace_placeholder").stack;
-        return this._armService.get<T>(`https://${siteName}.scm.azurewebsites.net/api/${uri}`)
+        return this._armService.get<T>(`https://${this._scmHostName}/api/${uri}`)
             .toPromise()
             .catch(e => {
                 var err = new Error(e);
@@ -96,10 +99,10 @@ export class DiagProvider {
             });
     }
 
-    public postKuduApiAsync<T, S>(siteName: string, uri: string, body?: S, instance?: string): Promise<boolean | {} | ResponseMessageEnvelope<T>> {
+    public postKuduApiAsync<T, S>(uri: string, body?: S, instance?: string): Promise<boolean | {} | ResponseMessageEnvelope<T>> {
         var postfix = (instance == null ? "" : `?instance=${instance}`);
         var stack = new Error("replace_placeholder").stack;
-        return this._armService.post<T, S>(`https://${siteName}.scm.azurewebsites.net/api/${uri}${postfix}`, body)
+        return this._armService.post<T, S>(`https://${this._scmHostName}/api/${uri}${postfix}`, body)
             .toPromise()
             .catch(e => {
                 var err = new Error(e);
@@ -108,8 +111,8 @@ export class DiagProvider {
             });
     }
 
-    public async runKuduCommand(siteName: string, command: string, dir?: string, instance?: string): Promise<any> {
-        var result: any = await this.postKuduApiAsync(siteName, "command", { "command": command, "dir": dir }, instance);
+    public async runKuduCommand(command: string, dir?: string, instance?: string): Promise<any> {
+        var result: any = await this.postKuduApiAsync("command", { "command": command, "dir": dir }, instance);
         return result.Output.slice(0, -2);
     }
 
@@ -117,7 +120,7 @@ export class DiagProvider {
         var stack = new Error("replace_placeholder").stack;
         var promise = (async () => {
             names = names.map(n => `%${n}%`);
-            var echoPromise = this.runKuduCommand(this._siteInfo.fullSiteName, `echo ${names.join(";")}`, undefined, instance).catch(e => {
+            var echoPromise = this.runKuduCommand(`echo ${names.join(";")}`, undefined, instance).catch(e => {
                 console.log("getEnvironmentVariables failed", e);
                 e.message = "getEnvironmentVariablesAsync failed:" + e.message;
                 throw e;
@@ -137,7 +140,7 @@ export class DiagProvider {
     public async tcpPingAsync(hostname: string, port: number, count: number = 1, instance?: string): Promise<{ status: ConnectionCheckStatus, statuses: ConnectionCheckStatus[] }> {
         var stack = new Error("replace_placeholder").stack;
         var promise = (async () => {
-            var pingPromise = this.runKuduCommand(this._siteInfo.fullSiteName, `tcpping -n ${count} ${hostname}:${port}`, undefined, instance).catch(e => {
+            var pingPromise = this.runKuduCommand(`tcpping -n ${count} ${hostname}:${port}`, undefined, instance).catch(e => {
                 console.log("tcpping failed", e);
                 return null;
             });
@@ -183,7 +186,7 @@ export class DiagProvider {
                     ip = hostname;
                 } else {
                     try {
-                        var result = await this.runKuduCommand(this._siteInfo.fullSiteName, `nameresolver ${hostname} ${dns}`, undefined, instance);
+                        var result = await this.runKuduCommand( `nameresolver ${hostname} ${dns}`, undefined, instance);
                         if (result != null) {
                             if (result.includes("Aliases")) {
                                 var match = result.match(/Addresses:\s*([\S\s]*)Aliases:\s*([\S\s]*)$/);
@@ -230,7 +233,7 @@ export class DiagProvider {
 
     public async checkKuduReachable(): Promise<boolean> {
         try {
-            var result = await this.runKuduCommand(this._siteInfo.fullSiteName, "echo ok");
+            var result = await this.runKuduCommand("echo ok");
             return result == "ok";
         } catch (error) {
             return false;

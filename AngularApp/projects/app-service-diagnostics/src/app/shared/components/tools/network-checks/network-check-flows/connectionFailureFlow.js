@@ -31,7 +31,7 @@ export var connectionFailureFlow = {
 
         var kuduReachablePromise = kuduAvailabilityCheckPromise.then(r => isKuduAccessible);
 
-        var promise = checkVnetIntegrationHealth(siteInfo, diagProvider, kuduReachablePromise);
+        var promise = checkVnetIntegrationHealth(siteInfo, diagProvider, kuduReachablePromise, permMgr);
         flowMgr.addViews(promise.then(d => d.views), "Checking VNet integration status...");
 
         var data = { subnetDataPromise: promise.then(d => d.subnetData), serverFarmId: siteInfo["serverFarmId"], kuduReachablePromise, isContinuedPromise: promise.then(d => d.isContinue) };
@@ -59,71 +59,71 @@ async function runConnectivityCheck(hostname, port, dnsServer, diagProvider) {
             }));
             views.push(new InfoStepView({
                 infoType: 1,
-                title: "Result explanation and action to take",
+                title: "Explanation of the result and recommended next steps",
                 markdown: markdown
             }));
             return views;
         }
-        resolvedIp = "Endpoint hostname resolved IP: " + ip;
+        resolvedIp = `hostname **${hostname}** was resolved to IP: ` + ip;
     }
     if (status == 0) {
-        markdown = "Connectivity test was succeeded at tcp level. " +
-            "This means Transportation Layer connection was successfully established between this app and target endpoint. \r\n\r\n" +
-            "If your app is still having runtime connection failure with this endpoint, the possible reasons can be: \r\n\r\n" +
+        markdown = "Connectivity test succeeded at tcp level. " +
+            "This means Transportation Layer connection was successfully established between this app and the target endpoint. \r\n\r\n" +
+            "If your app is still having runtime connection failures with this endpoint, the possible reasons can be: \r\n\r\n" +
             "1. Endpoint is not available, please check the status of your endpoint server.\r\n\r\n" +
-            "2. Endpoint firewall blocks Webapp or Function app's IP address, please check the IP restriction or application level firewall.\r\n\r\n" +
+            "2. Endpoint firewall blocks Web App or Function App's IP address, please check the IP restriction or application level firewall.\r\n\r\n" +
             "3. The traffic was blocked by Network Security Group or Firewall, please check your NSG or/and Firewall configuration if there is any.\r\n\r\n" +
             "4. The traffic was routed to a wrong destination, please check your User Defined Route Table if there is any.\r\n\r\n" +
             "5. The endpoint is an Azure Resource in a VNet in a different region. "
         resolvedIp;
         views.push(new CheckStepView({
-            title: `${hostname}:${port} - OK (tcp level only)`,
+            title: `Connecting to ${hostname}:${port} - OK (tcp level)`,
             level: 0
         }));
         views.push(new InfoStepView({
             infoType: 1,
-            title: "Result explanation and action to take",
+            title: "Explanation of the result and recommended next steps",
             markdown: markdown
         }));
     } else if (status == 1) {
-        markdown = "Connectivity test was failed at tcp level. " +
-            "This means the endpoint is not reachable in Transportation Layer. Possible reasons can be: \r\n\r\n" +
+        markdown = "Connectivity test failed at tcp level. " +
+            "This means the endpoint was not reachable in Transportation Layer. Possible reasons can be: \r\n\r\n" +
             "1. The endpoint does not exist, please double check the hostname:port or ip:port was correctly set. \r\n\r\n" +
             "2. The endpoint is not reachable from the VNet, please double check if the endpoint server is correctly configured. \r\n\r\n" +
-            "3. There are TCP level firewall or Network Security Rule blocking the traffic from this app, please check your firewall or NSG rule configurations if there is any. \r\n\r\n" +
+            "3. There is a TCP level firewall or a Network Security Group Rule blocking the traffic from this app. Please check your firewall or NSG rules if there are any. \r\n\r\n" +
             resolvedIp;
         views.push(new CheckStepView({
-            title: `${hostname}:${port} - failed, timeout because target unreachable`,
+            title: `Connecting to ${hostname}:${port} - failed, timeout because target unreachable`,
             level: 2
         }));
         views.push(new InfoStepView({
             infoType: 1,
-            title: "Result explanation and action to take",
+            title: "Explanation of the result and recommended next steps",
             markdown: markdown
         }));
-        //return { level: 2, title: `${hostname}:${port} - failed, timeout because target unreachable`, resolvedIp };
+        //return { level: 2, title: `Connecting to ${hostname}:${port} - failed, timeout because target unreachable`, resolvedIp };
     } else {
         views.push(new CheckStepView({
-            title: `${hostname}:${port} - failed, errorcode:${status}`,
+            title: `Connecting to ${hostname}:${port} - failed, errorcode:${status}`,
             level: 2
         }));
         views.push(new InfoStepView({
             infoType: 1,
-            title: "Result explanation and action to take",
+            title: "Explanation of the result and recommended next steps",
             markdown: "Unknown problem, please send a feedback to let us know and consider creating a support ticket for this."
         }));
-        //return { level: 2, title: `${hostname}:${port} - failed, errorcode:${status}`, resolvedIp };
+        //return { level: 2, title: `Connecting to ${hostname}:${port} - failed, errorcode:${status}`, resolvedIp };
     }
     return views;
 }
 
 
 
-async function checkVnetIntegrationHealth(siteInfo, diagProvider, isKuduAccessiblePromise) {
+async function checkVnetIntegrationHealth(siteInfo, diagProvider, isKuduAccessiblePromise, permMgr) {
 
     var views = [], subnetData, isContinue;
 
-    var promise = checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessiblePromise);
+    var promise = checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessiblePromise, permMgr);
     isContinue = await promise.then(d => d.isContinue);
     if (isContinue == "Complete") {
         views = views.concat(new CheckStepView({
@@ -141,9 +141,9 @@ async function checkVnetIntegrationHealth(siteInfo, diagProvider, isKuduAccessib
     }
     else {
         var subchecks = await promise.then(d => d.checks.filter(c => c.type == 1));
-        if (subchecks[0].title == "VNet integration is not configured") {
+        if (subchecks[0].title == "App is not configured for VNet Integration") {
             views = views.concat(new CheckStepView({
-                title: "VNet integration is not configured",
+                title: "App is not configured for VNet Integration",
                 level: 2
             }));
         }
@@ -163,7 +163,7 @@ async function checkVnetIntegrationHealth(siteInfo, diagProvider, isKuduAccessib
     return { views, isContinue, subnetData };
 }
 
-async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessiblePromise) {
+async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessiblePromise, permMgr) {
     var checks = [];
 
     var siteArmId = siteInfo["id"];
@@ -202,25 +202,56 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
                 //Gateway Vnet integration is present
                 var viewShowGatewayVnetStatus = showGatewayVnetStatus(thisSite, siteGWVnetInfo);
                 checks = checks.concat(viewShowGatewayVnetStatus);
+
+                //Check if Vnet exists that the gateway is connected to
+                vnetResourceId =  siteGWVnetInfo[0]["properties"]["vnetResourceId"];
+                var vnetData = await diagProvider.getArmResourceAsync(vnetResourceId, "2020-11-01");
+                if(vnetData.status == 401)
+                {                
+                    var missingPermissionResource = `Virtual Network: ${vnetResourceId.split("/virtualNetworks/")[1]}`;
+                    var viewMissingPermissionsonResource = showMissingPermissionStatus(missingPermissionResource);
+                    checks = checks.concat(viewMissingPermissionsonResource);
+                    permMgr.addResource(vnetResourceId);
+                    var isContinue = "Incomplete";
+                    return { checks, isContinue, subnetData };
+                }
+                else if(vnetData.status == 404)
+                {
+                    var resourceNotFound = `Virtual Network: ${vnetResourceId.split("/virtualNetworks/")[1]}`;
+                    var viewResourceNotFound = showResourceNotFoundStatus(resourceNotFound);
+                    checks = checks.concat(viewResourceNotFound);
+                    var isContinue = "Incomplete";
+                    return { checks, isContinue, subnetData };
+                }
+
                 var isContinue = "Complete";
                 return { checks, isContinue, subnetData };
             }
             else {
-                try {
-                    //VNET integration is not configured
-                    var aspSitesObj = await aspSitesObjPromise.catch(e => e);
-                    var viewVnetNotIntegrated = await showVnetIntegrationNotConfiguredStatus(diagProvider, aspSitesObj, serverFarmId, serverFarmName);
-                    checks = checks.concat(viewVnetNotIntegrated);
-                    var isContinue = false;
-                    return { checks, isContinue, subnetData };
-                }
-                catch (e) {
+                
+                //VNET integration is not configured
+                var aspSitesObj = await aspSitesObjPromise;
+                if(aspSitesObj.status == 401)
+                {                
                     var missingPermissionResource = `App Service Plan: ${serverFarmName}`;
                     var viewMissingPermissionsonResource = showMissingPermissionStatus(missingPermissionResource);
                     checks = checks.concat(viewMissingPermissionsonResource);
+                    permMgr.addResource(serverFarmId);
                     var isContinue = "Incomplete";
                     return { checks, isContinue, subnetData };
                 }
+                else if(aspSitesObj.status == 404)
+                {
+                    var resourceNotFound = `App Service Plan: ${serverFarmName}`;
+                    var viewResourceNotFound = showResourceNotFoundStatus(resourceNotFound);
+                    checks = checks.concat(viewResourceNotFound);
+                    var isContinue = "Incomplete";
+                    return { checks, isContinue, subnetData };
+                }
+                var viewVnetNotIntegrated = await showVnetIntegrationNotConfiguredStatus(diagProvider, aspSitesObj, serverFarmId, serverFarmName);
+                checks = checks.concat(viewVnetNotIntegrated);
+                var isContinue = false;
+                return { checks, isContinue, subnetData };           
             }
         }
         else {
@@ -251,14 +282,22 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
             if (swiftSupported == true && subnetResourceId.includes("/subnets/")) {
 
                 //Get Virtual Network
-                vnetResourceId = subnetResourceId.split("/subnets/")[0];
-                try {
-                    var vnetData = await diagProvider.getArmResourceAsync(vnetResourceId, "2020-11-01");
-                }
-                catch (e) {
+                vnetResourceId = subnetResourceId.split("/subnets/")[0];                
+                var vnetData = await diagProvider.getArmResourceAsync(vnetResourceId, "2020-11-01");
+                if(vnetData.status == 401)
+                {                
                     var missingPermissionResource = `Virtual Network: ${vnetResourceId.split("/virtualNetworks/")[1]}`;
                     var viewMissingPermissionsonResource = showMissingPermissionStatus(missingPermissionResource);
                     checks = checks.concat(viewMissingPermissionsonResource);
+                    permMgr.addResource(vnetResourceId);
+                    var isContinue = "Incomplete";
+                    return { checks, isContinue, subnetData };
+                }
+                else if(vnetData.status == 404)
+                {
+                    var resourceNotFound = `Virtual Network: ${vnetResourceId.split("/virtualNetworks/")[1]}`;
+                    var viewResourceNotFound = showResourceNotFoundStatus(resourceNotFound);
+                    checks = checks.concat(viewResourceNotFound);
                     var isContinue = "Incomplete";
                     return { checks, isContinue, subnetData };
                 }
@@ -298,27 +337,56 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
                     return { checks, isContinue, subnetData };
                 }
 
-                //Check if App Service plan is connected to 2 subnets
-                try {
-                    var aspSitesObj = await aspSitesObjPromise;
-                    var viewAspMultipleSubnet = await checkASPConnectedToMultipleSubnets(diagProvider, aspSitesObj, thisSite, serverFarmName, serverFarmId);
-                    checks = checks.concat(viewAspMultipleSubnet.views);
-                    if (viewAspMultipleSubnet.isContinue == false) {
-                        var isContinue = false;
-                        return { checks, isContinue, subnetData };
-                    }
-                }
-                catch (e) {
-                    var missingPermissionResource = `App Service Plan: <b>${serverFarmName}</b>`;
+                //Check if App Service plan is connected to 2 subnets                
+                var aspSitesObj = await aspSitesObjPromise;
+                if(aspSitesObj.status == 401)
+                {                
+                    var missingPermissionResource = `App Service Plan: ${serverFarmName}`;
                     var viewMissingPermissionsonResource = showMissingPermissionStatus(missingPermissionResource);
                     checks = checks.concat(viewMissingPermissionsonResource);
+                    permMgr.addResource(serverFarmId);
+                    var isContinue = "Incomplete";
+                    return { checks, isContinue, subnetData };
+                }
+                else if(aspSitesObj.status == 404)
+                {
+                    var resourceNotFound = `App Service Plan: ${serverFarmName}`;
+                    var viewResourceNotFound = showResourceNotFoundStatus(resourceNotFound);
+                    checks = checks.concat(viewResourceNotFound);
+                    var isContinue = "Incomplete";
+                    return { checks, isContinue, subnetData };
+                }
+                
+                var viewAspMultipleSubnet = await checkASPConnectedToMultipleSubnets(diagProvider, aspSitesObj, thisSite, serverFarmName, serverFarmId);
+                checks = checks.concat(viewAspMultipleSubnet.views);
+                if (viewAspMultipleSubnet.isContinue == false) {
+                    var isContinue = false;
+                    return { checks, isContinue, subnetData };
+                }
+               
+
+                //Check if Private IP is assigned
+                //First we need to get the list of instances 
+                var instancesObj = await instancesPromise;
+
+                if(instancesObj.status == 401)
+                {                
+                    var missingPermissionResource = `Instances: ${siteArmId}/instances`;
+                    var viewMissingPermissionsonResource = showMissingPermissionStatus(missingPermissionResource);
+                    checks = checks.concat(viewMissingPermissionsonResource);
+                    permMgr.addResource(siteArmId);
+                    var isContinue = "Incomplete";
+                    return { checks, isContinue, subnetData };
+                }
+                else if(instancesObj.status == 404)
+                {
+                    var resourceNotFound = `Instances: ${siteArmId}/instances`;
+                    var viewResourceNotFound = showResourceNotFoundStatus(resourceNotFound);
+                    checks = checks.concat(viewResourceNotFound);
                     var isContinue = "Incomplete";
                     return { checks, isContinue, subnetData };
                 }
 
-                //Check if Private IP is assigned
-                //First we need to get the list of instances 
-                var instancesObj = await instancesPromise.catch(e => e);
                 var viewPrivateIP = await checkPrivateIPAsync(diagProvider, instancesObj, isKuduAccessiblePromise);
                 checks = checks.concat(viewPrivateIP.views);
 
@@ -392,6 +460,8 @@ function checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, data
         var isContinued = await isContinuedPromise;
         await configCheckViewsPromise;
         if (dnsServer == null || !isContinued) {
+            return [];
+        }else if(!kuduReachable){
             return [new CheckStepView({ title: "Connectivity check (tcpping and nameresolver) is not available due to kudu is inaccessible.", level: 3 })];
         }
 
@@ -531,13 +601,13 @@ function showSwiftNotSupportedStatus(swiftSupported) {
         //return {level: 2, steps:steps};
 
         views.push(new CheckStepView({
-            title: "IsSwift property is set to False",
+            title: "IsSwift property is not True",
             level: 2
         }));
 
         views.push(new InfoStepView({
             infoType: 1,
-            title: "IsSwift property is set to False",
+            title: "Issue found: IsSwift property is not True",
             markdown: msg
         }));
 
@@ -565,11 +635,22 @@ function showMissingPermissionStatus(resourceId) {
     return views;
 }
 
-async function showVnetIntegrationNotConfiguredStatus(diagProvider, aspSitesObj, serverFarmId, serverFarmName) {
+function showResourceNotFoundStatus(resourceId) {
 
     var views = [];
-    var msg = `App is not configured for VNet Integration.`;
-    msg += `<br/><br/><b>Recommendations: </b>`;
+
+    views.push(new CheckStepView({
+        title: `Resource Not Found! Please check if ${resourceId} exists and then run the diagnostic again.`,
+        level: 3
+    }));
+
+    return views;
+}
+
+async function showVnetIntegrationNotConfiguredStatus(diagProvider, aspSitesObj, serverFarmId, serverFarmName) {
+
+    var views = [];    
+    var msg = `<b>Recommendations: </b>`;
     msg += `<li>For setting up VNet integration, please see [Integrate your app with an Azure virtual network](https://docs.microsoft.com/en-us/azure/app-service/web-sites-integrate-with-vnet).</li>`;
 
 
@@ -661,13 +742,13 @@ async function showVnetIntegrationNotConfiguredStatus(diagProvider, aspSitesObj,
     //return {level: 1, steps:steps, markdown:msg};  
 
     views.push(new CheckStepView({
-        title: "VNet integration is not configured",
+        title: "App is not configured for VNet Integration",
         level: 2
     }));
 
     views.push(new InfoStepView({
         infoType: 1,
-        title: "VNet Integration Recommendations",
+        title: "Issue found: App is not configured for VNet Integration",
         markdown: msg
     }));
 
@@ -724,13 +805,13 @@ function checkSubnetDelegationStatus(subnetProperties, subnetName) {
         msg += `</table>`;
 
         views.push(new CheckStepView({
-            title: "Subnet Delegation",
+            title: "Subnet delegation not configured for Microsoft.Web/serverFarms",
             level: 2
         }));
 
         views.push(new InfoStepView({
             infoType: 1,
-            title: "Subnet Delegation",
+            title: "Issue found: Subnet delegation not configured for Microsoft.Web/serverFarms",
             markdown: msg
         }));
 
@@ -746,13 +827,13 @@ function checkSubnetDelegationStatus(subnetProperties, subnetName) {
             //steps.push({level:2, title:"Subnet Delegation", markdown: msg});
             //return {level: 2, steps:steps};
             views.push(new CheckStepView({
-                title: "Subnet Delegation",
+                title: "Subnet delegation not configured for Microsoft.Web/serverFarms",
                 level: 2
             }));
 
             views.push(new InfoStepView({
                 infoType: 1,
-                title: "Subnet Delegation",
+                title: "Issue found: Subnet delegation not configured for Microsoft.Web/serverFarms",
                 markdown: msg
             }));
 
@@ -760,7 +841,7 @@ function checkSubnetDelegationStatus(subnetProperties, subnetName) {
         }
         else {
             views.push(new CheckStepView({
-                title: "Subnet Delegation",
+                title: "Subnet delegation configured for Microsoft.Web/serverFarms",
                 level: 0
             }));
         }
@@ -788,7 +869,7 @@ function checkSALInitialized(diagProvider, subnetProperties, subnetName) {
 
         views.push(new InfoStepView({
             infoType: 1,
-            title: "Service Association Link not initialized",
+            title: "Issue found: Service Association Link not initialized",
             markdown: msg
         }));
 
@@ -832,13 +913,13 @@ function checkSALOwner(diagProvider, subnetData, subnetName, serverFarmId, serve
         msg += `</table>`;
 
         views.push(new CheckStepView({
-            title: "Service Association Link Owner",
+            title: "Service Association Link owner is invalid",
             level: 2
         }));
 
         views.push(new InfoStepView({
             infoType: 1,
-            title: "Service Association Link Owner",
+            title: "Issue found: Service Association Link owner is invalid",
             markdown: msg
         }));
 
@@ -942,7 +1023,7 @@ async function checkASPConnectedToMultipleSubnets(diagProvider, aspSitesObj, thi
 
             views.push(new InfoStepView({
                 infoType: 1,
-                title: "App Service Plan connected to multiple subnets",
+                title: "Issue found: App Service Plan connected to multiple subnets",
                 markdown: msg
             }));
 
@@ -961,6 +1042,11 @@ async function checkPrivateIPAsync(diagProvider, instancesObj, isKuduAccessibleP
     var instanceAllocated = 0;
     var views = [];
     var isContinue = true;
+    var msg = `<b>Recommendations: </b>`;
+    msg += `<li>Check if the subnet size is as per recommendations to allocate IPs to all instances.`;
+    msg += `<li>If VNet integration was performed in last 5 minutes, then wait for 10 minutes and run the diagnostic again.`;
+    msg += `<li>Disconnect all apps in the app service plan and perform integration again.`;
+    msg += `<li>Reach out to support team to help with the investigation.`;
 
     if (!(await isKuduAccessiblePromise)) {
         views.push(new CheckStepView({
@@ -969,17 +1055,13 @@ async function checkPrivateIPAsync(diagProvider, instancesObj, isKuduAccessibleP
         }));
 
         return { views, isContinue };
-    }
-
-    //msg= `<table>`;
-    //msg+= `<tr><td><b>Instance Name</b></td><td><b>Private IP</b></td></tr>`;
+    }    
 
     for (var instance in instances) {
         var instanceName = instances[instance]["name"];
-        instanceCount++;
-        //var privateIp = (await diagProvider.getEnvironmentVariablesAsync(["WEBSITE_PRIVATE_IP"],instanceName))[0];                            
+        instanceCount++;                                  
         var privateIpPromise = diagProvider.getEnvironmentVariablesAsync(["WEBSITE_PRIVATE_IP"], instanceName);
-        privateIpPromiseArray.push(privateIpPromise.catch(e => null));
+        privateIpPromiseArray.push(privateIpPromise);
     }
 
     await Promise.all(privateIpPromiseArray);
@@ -987,52 +1069,51 @@ async function checkPrivateIPAsync(diagProvider, instancesObj, isKuduAccessibleP
     for (var promise in privateIpPromiseArray) {
         var privateIp = await privateIpPromiseArray[promise];
         if (privateIp == null) {
-            //msg+= `<tr><td>${instances[promise]["name"]}</td><td>Not Assigned</td></tr>`;
+            
         }
         else {
-            //msg+= `<tr><td>${instances[promise]["name"]}</td><td>${privateIp}</td></tr>`;
+            
             instanceAllocated++;
         }
-    }
-
-    //msg+= `</table>`; 
+    }    
 
     if (instanceCount == instanceAllocated) {
-        /*
+        
         views.push(new CheckStepView({
-            title: `Private IP is allocated for all instances (${instanceAllocated} out of ${instanceCount} allocated)`,
-            level: 0
-        }));
-        */
-        views.push(new CheckStepView({
-            title: `Private IP is allocated for all instances (${instanceAllocated})`,
+            title: `Private IP allocated for all(${instanceAllocated}) instances`,
             level: 0
         }));
 
     }
     else if (instanceAllocated == 0) {
         views.push(new CheckStepView({
-            title: `Private IP is not allocated for any instances (${instanceAllocated} out of ${instanceCount} allocated)`,
+            title: `Private IP not allocated for any instances (${instanceAllocated} out of ${instanceCount} allocated)`,
             level: 2
+        }));        
+
+        views.push(new InfoStepView({
+            infoType: 1,
+            title: "Issue found: Private IP not allocated for any instances",
+            markdown: msg
         }));
 
         isContinue = false;
     }
     else if (instanceCount > instanceAllocated) {
         views.push(new CheckStepView({
-            title: `Private IP is not allocated for few instances (${instanceAllocated} out of ${instanceCount} allocated)`,
+            title: `Private IP not allocated for few instances (${instanceAllocated} out of ${instanceCount} allocated)`,
             level: 2
+        }));
+
+        views.push(new InfoStepView({
+            infoType: 1,
+            title: "Issue found: Private IP not allocated for few instances",
+            markdown: msg
         }));
 
         isContinue = false;
     }
-    /* Commenting this code to avoid showing the list of IPs
-    flowMgr.addView(new InfoStepView({
-        infoType: 0,
-        title: "Private IP",
-        markdown: msg
-    }));
-    */
+    
     return { views, isContinue };
 }
 
@@ -1128,7 +1209,7 @@ async function checkDnsSetting(siteInfo, diagProvider) {
             });
             views.push(new InfoStepView({
                 infoType: 1,
-                title: "Please check your DNS configurations",
+                title: "Issue found: custom DNS is not reachable",
                 markdown: `You have custom DNS server ${dnsSettings.slice(0, 2).join(";")} configured in ${dnsSettingSource} but they are not reachable from this app, please double check if the DNS server is working properly. `
             }));
         }

@@ -173,7 +173,7 @@ export class StepFlowManager {
             console.log(e);
             this._telemetryService.logException(e, "StepFlowManager.FlowExecution");
             this.errorMsg = "Internal error, retry may not help."
-            this.errorDetailMarkdown = "```\r\n\r\n" + e.stack + "\r\n\r\n```"
+            this.errorDetailMarkdown = "```\r\n" + e.stack + "\r\n```"
         });
 
     }
@@ -225,6 +225,8 @@ export class StepFlowManager {
             catch (error) {
                 error.flowId = this._currentFlow.id;
                 this._telemetryService.logException(error, `FlowMgr.FlowRendering`);
+                this.errorMsg = "Internal error"
+                this.errorDetailMarkdown = "```\r\n" + error.stack + "\r\n```"
                 console.log(error);
             }
             this._stepViewQueueMap[idx] = this.stepViews.length;

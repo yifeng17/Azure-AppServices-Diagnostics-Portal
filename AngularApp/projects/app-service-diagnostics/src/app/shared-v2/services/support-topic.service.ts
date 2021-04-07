@@ -50,16 +50,15 @@ export class SupportTopicService {
         return this._resourceService.getPesId().pipe(flatMap(pesId => {
             if (supportTopicId == "32542212" || supportTopicId == "32630473") {
                 // WebApp/VNET integration with App Service or FunctionApp/Configuring VNET integration with AppService
-                if (this._resourceService.resource.kind.includes("container")) {
+                var kind = this._resourceService.resource.kind;
+                if (kind.includes("container")) {
                     // container based WebApp, not supported yet
                 } else {
-                    if (pesId == "14748") {
-                        // WebApp(Windows)
-                        return observableOf({ path: 'tools/networkchecks', queryParams: { "isSupportCenter": true } });
-                    } else if (pesId == "16170") {
-                        // WebApp(Linux), not supported yet
-                    } else if(pesId == "16072"){
-                         // FunctionApp
+                    if (kind.includes("linux")) {
+                        // linux app, not supported yet
+                        
+                    } else{
+                        // non-container windows webapp/function app
                         return observableOf({ path: 'tools/networkchecks', queryParams: { "isSupportCenter": true } });
                     }
                 }

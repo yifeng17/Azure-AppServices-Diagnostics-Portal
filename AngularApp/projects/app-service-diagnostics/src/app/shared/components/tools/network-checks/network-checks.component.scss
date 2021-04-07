@@ -8,6 +8,11 @@
     min-width: 500px;
     width: 80%;
     max-width: 750px;
+    .error-section{
+        .error-message{
+            color: red;
+        }
+    }
 }
 
 .step-container{

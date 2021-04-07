@@ -33,7 +33,7 @@ abstract class NetworkCheckFlow {
 export class NetworkCheckComponent implements OnInit, AfterViewInit {
 
     @ViewChild('networkCheckingTool', { static: false }) networkCheckingToolDiv: any;
-    title: string = 'Network/Connectivity Troubleshooter';
+    title: string = 'Network/Connectivity Troubleshooter (Preview)';
     description: string = 'Check your network connectivity and troubleshoot network issues';
     stepFlowManager: StepFlowManager;
     stepViews: StepViewContainer[] = [];
@@ -45,12 +45,18 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
     debugMode = false;
     isSupportCenter: boolean;
     logEvent: (eventMessage: string, properties: { [name: string]: string }, measurements?: any) => void;
+    private _feedbackQuestions = "- Is your networking issue resolved? \r\n\r\n\r\n" + 
+    "- What was the issue?\r\n\r\n\r\n" +
+    "- If the issue was not resolved, what can be the reason?\r\n\r\n\r\n" + 
+    "- What else do you expect from this tool?\r\n";
     //checks: any[];
 
     constructor(private _siteService: SiteService, private _armService: ArmService, private _telemetryService: TelemetryService, private _globals: Globals, private _route: ActivatedRoute, private _router: Router, private _portalService: PortalService) {
         try {
+            var feedbackPanelConfig = { defaultFeedbackText:this._feedbackQuestions, detectorName: "NetworkCheckingTool", notResetOnDismissed:true, url:window.location.href }
+            _globals.messagesData.feedbackPanelConfig = feedbackPanelConfig;
             var queryParams = _route.snapshot.queryParams;
-            this.isSupportCenter = (queryParams["isSupportCenter"] == "true");
+            this.isSupportCenter = (queryParams["isSupportCenter"] === "true");
             this.logEvent = (eventMessage: string, properties: { [name: string]: string } = {}, measurements?: any) => {
                 properties.isSupportCenter = this.isSupportCenter.toString();
                 _telemetryService.logEvent(eventMessage, properties, measurements);
@@ -109,6 +115,7 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
                     mgr.reset(state);
                     var flow = flows[selectedIdx];
                     globals.messagesData.currentNetworkCheckFlow = flow.id;
+                    globals.messagesData.feedbackPanelConfig.detectorName = "NetworkCheckingTool." + flow.id;
                     telemetryService.logEvent("NetworkCheck.FlowSelected", { flowId: flow.id });
                     mgr.setFlow(flow);
                 }
