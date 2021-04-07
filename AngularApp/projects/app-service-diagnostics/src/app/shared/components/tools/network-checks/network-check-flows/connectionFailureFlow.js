@@ -6,7 +6,7 @@ export var connectionFailureFlow = {
         var isKuduAccessible = true;
 
         var kuduAvailabilityCheckPromise = (async () => {
-            isKuduAccessible = await diagProvider.checkKuduReachable();
+            isKuduAccessible = await diagProvider.checkKuduReachable(5);
             var views = [];
             if (isKuduAccessible == false) {
                 views.push(new CheckStepView({
@@ -17,10 +17,11 @@ export var connectionFailureFlow = {
                 views.push(new InfoStepView({
                     infoType: 1,
                     title: "Recommendations",
-                    markdown: "[Kudu](https://techcommunity.microsoft.com/t5/educator-developer-blog/using-kudu-and-deploying-apps-into-azure/ba-p/378585) is not accessible " +
-                        "because of IP restriction or Private Endpoint is turned for this app.\r\n\r\n" +
-                        "The check diagnostic will be incomplete without kudu access, please consider temporarily allow the traffic in IP restriction or turn of the Private Endpoint " +
-                        "for running the network checks"
+                    markdown: "[Kudu](https://techcommunity.microsoft.com/t5/educator-developer-blog/using-kudu-and-deploying-apps-into-azure/ba-p/378585) is not accessible. Possible reason can be:\r\n\r\n" +
+                        "1. Your app has IP restriction or Private Endpoint turned on. Please check your configuration and consider running this check in an environment that is allowed to access your app"+
+                        " or temporarily allow the traffic by adding your client IP into IP restriction allow list or turning of the Private Endpoint for running the network checks\r\n\r\n" +
+                        "2. You don't have permission to access kudu site, please check your permission\r\n\r\n" +
+                        "The diagnostic will be incomplete without kudu access."
                 }));
             }
             return views;
@@ -70,7 +71,7 @@ async function runConnectivityCheck(hostname, port, dnsServer, diagProvider) {
         markdown = "Connectivity test succeeded at tcp level. " +
             "This means Transportation Layer connection was successfully established between this app and the target endpoint. \r\n\r\n" +
             "If your app is still having runtime connection failures with this endpoint, the possible reasons can be: \r\n\r\n" +
-            "1. Endpoint is not available, please check the status of your endpoint server.\r\n\r\n" +
+            "1. Service is not available, please check the status of your endpoint server.\r\n\r\n" +
             "2. Endpoint firewall blocks Web App or Function App's IP address, please check the IP restriction or application level firewall.\r\n\r\n" +
             "3. The traffic was blocked by Network Security Group or Firewall, please check your NSG or/and Firewall configuration if there is any.\r\n\r\n" +
             "4. The traffic was routed to a wrong destination, please check your User Defined Route Table if there is any.\r\n\r\n" +
@@ -379,12 +380,7 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
                 var viewPrivateIP = await checkPrivateIPAsync(diagProvider, instancesObj, isKuduAccessiblePromise);
                 checks = checks.concat(viewPrivateIP.views);
 
-                if (viewPrivateIP.isContinue) {
-                    isContinue = "Complete";
-                }
-                else {
-                    isContinue = false;
-                }
+                isContinue = viewPrivateIP.isContinue;
 
                 return { checks, isContinue, subnetData };
             }
@@ -438,7 +434,7 @@ function checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, data
             }
         } else {
             subChecks.push({ title: "DNS check was skipped due to having no access to kudu", level: 3 });
-            configCheckView.title += " - incomplete check result";
+            configCheckView.title += " (incomplete result)";
         }
         configCheckView.subChecks = subChecks;
         return views;
@@ -450,10 +446,12 @@ function checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, data
     var connectivityCheckViewPromise = (async () => {
         var isContinued = await isContinuedPromise;
         await configCheckViewsPromise;
+        if (!kuduReachable) {
+            return [new CheckStepView({ title: "Connectivity check (tcpping and nameresolver) is not available due to kudu is inaccessible.", level: 3 })];
+        }
+
         if (dnsServer == null || !isContinued) {
             return [];
-        } else if (!kuduReachable) {
-            return [new CheckStepView({ title: "Connectivity check (tcpping and nameresolver) is not available due to kudu is inaccessible.", level: 3 })];
         }
 
         return [new InputStepView({
@@ -1039,10 +1037,10 @@ async function checkPrivateIPAsync(diagProvider, instancesObj, isKuduAccessibleP
 
     if (!(await isKuduAccessiblePromise)) {
         views.push(new CheckStepView({
-            title: `VNet integration is healthy (incomplete result)`,
-            level: 1
+            title: `Private IP allocation check is skipped because kudu is unreachable`,
+            level: 3
         }));
-
+        isContinue = "Incomplete";
         return { views, isContinue };
     }
 

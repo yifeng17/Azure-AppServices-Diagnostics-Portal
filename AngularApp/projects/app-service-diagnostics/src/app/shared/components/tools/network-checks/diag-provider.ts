@@ -7,6 +7,12 @@ enum ConnectionCheckStatus { success, timeout, hostNotFound, blocked, refused }
 export enum OutboundType { SWIFT, gateway };
 export enum InboundType { privateEndpoint, serviceEndpoint }
 
+function delay(second: number): Promise<void> {
+    return new Promise(resolve =>
+        setTimeout(resolve, second * 1000));
+}
+
+
 export class DiagProvider {
     private _siteInfo: SiteInfoMetaData & Site & { fullSiteName: string };
     private _armService: ArmService;
@@ -99,20 +105,24 @@ export class DiagProvider {
             });
     }
 
-    public postKuduApiAsync<T, S>(uri: string, body?: S, instance?: string): Promise<boolean | {} | ResponseMessageEnvelope<T>> {
+    public postKuduApiAsync<T, S>(uri: string, body?: S, instance?: string, timeoutInSec: number = 15): Promise<boolean | {} | ResponseMessageEnvelope<T>> {
         var postfix = (instance == null ? "" : `?instance=${instance}`);
         var stack = new Error("replace_placeholder").stack;
-        return this._armService.post<T, S>(`https://${this._scmHostName}/api/${uri}${postfix}`, body)
+        var promise = this._armService.post<T, S>(`https://${this._scmHostName}/api/${uri}${postfix}`, body)
             .toPromise()
             .catch(e => {
                 var err = new Error(e);
                 err.stack = stack.replace("replace_placeholder", e);
                 throw err;
             });
+        var timeoutPromise = delay(timeoutInSec).then(() => {
+            throw new Error(`postKuduApiAsync timeout after ${timeoutInSec}s`);
+        });
+        return Promise.race([promise, timeoutPromise]);
     }
 
-    public async runKuduCommand(command: string, dir?: string, instance?: string): Promise<any> {
-        var result: any = await this.postKuduApiAsync("command", { "command": command, "dir": dir }, instance);
+    public async runKuduCommand(command: string, dir?: string, instance?: string, timeoutInSec?: number): Promise<any> {
+        var result: any = await this.postKuduApiAsync("command", { "command": command, "dir": dir }, instance, timeoutInSec);
         return result.Output.slice(0, -2);
     }
 
@@ -186,7 +196,7 @@ export class DiagProvider {
                     ip = hostname;
                 } else {
                     try {
-                        var result = await this.runKuduCommand( `nameresolver ${hostname} ${dns}`, undefined, instance);
+                        var result = await this.runKuduCommand(`nameresolver ${hostname} ${dns}`, undefined, instance);
                         if (result != null) {
                             if (result.includes("Aliases")) {
                                 var match = result.match(/Addresses:\s*([\S\s]*)Aliases:\s*([\S\s]*)$/);
@@ -231,9 +241,9 @@ export class DiagProvider {
         });
     }
 
-    public async checkKuduReachable(): Promise<boolean> {
+    public async checkKuduReachable(timeoutInSec: number): Promise<boolean> {
         try {
-            var result = await this.runKuduCommand("echo ok");
+            var result = await this.runKuduCommand("echo ok", undefined, undefined, timeoutInSec);
             return result == "ok";
         } catch (error) {
             return false;

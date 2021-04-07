@@ -42,6 +42,7 @@ export const icons: Set<string> = new Set(
         'javamemorydump',
         'javathreaddump',
         'javaflightrecorder',
+        'networkchecks',
 
         //Support Tools
         'sitemetrics',

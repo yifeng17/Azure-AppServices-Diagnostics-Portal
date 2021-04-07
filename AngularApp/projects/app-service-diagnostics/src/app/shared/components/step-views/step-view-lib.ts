@@ -167,6 +167,8 @@ export class StepFlowManager {
 
     public setFlow(flow: StepFlow) {
         this._currentFlow = flow;
+        this.errorMsg = null;
+        this.errorDetailMarkdown = null;
 
         flow.run(this.generateMgrForFlow(flow)).catch(e => {
             e.flowId = this._currentFlow.id;
