@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Tokens.Saml2;
@@ -20,6 +21,8 @@ using AppLensV3.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.Extensions.Logging.AzureAppServices;
+using AppLensV3.Services.AppSvcUxDiagnosticDataService;
 
 namespace AppLensV3.Configuration
 {
@@ -53,6 +56,29 @@ namespace AppLensV3.Configuration
             services.AddSingleton<IGithubClientService, GithubClientService>();
             services.AddSingleton<IGraphClientService, NationalCloudGraphClientService>();
             services.AddSingleton<IIncidentAssistanceService, NationalCloudIncidentAssistanceService>();
+            services.AddLogging(loggingBuilder =>
+            {
+                loggingBuilder.ClearProviders();
+                loggingBuilder.AddConfiguration(configuration.GetSection("Logging"));
+                loggingBuilder.AddAzureWebAppDiagnostics();
+                loggingBuilder.AddFilter("System", LogLevel.Warning);
+                loggingBuilder.AddFilter("Microsoft", LogLevel.Warning);
+                loggingBuilder.AddFilter("StartupNationalCloud", LogLevel.Warning);
+
+                if (env.EnvironmentName.Contains("Development"))
+                {
+                    loggingBuilder.AddConsole();
+                    loggingBuilder.AddDebug();
+                }
+            });
+
+            services.Configure<AzureFileLoggerOptions>(options =>
+            {
+                options.FileName = "applens-diagnostics-";
+                options.FileSizeLimit = 5 * 1024 * 1024; // 5 MB
+                options.RetainedFileCountLimit = 5;
+            });
+
 
             services.AddMemoryCache();
             // Add auth policies as they are applied on controllers
@@ -121,9 +147,11 @@ namespace AppLensV3.Configuration
                     setup.Filters.Add(new AllowAnonymousFilter());
                 });
             }
+
+            services.AddSingleton<IAppSvcUxDiagnosticDataService, NullableAppSvcUxDiagnosticDataService>();
         }
 
-        public virtual void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public virtual void Configure(IApplicationBuilder app, IHostingEnvironment env, ILogger<StartupNationalCloud> logger)
         {
             app.UseExceptionHandler(errorApp =>
             {
@@ -131,13 +159,22 @@ namespace AppLensV3.Configuration
                 {
                     context.Response.StatusCode = 500;
                     context.Response.ContentType = "text/html";
-                    await context.Response.WriteAsync("<html lang=\"en\"><body>\r\n");
-                    await context.Response.WriteAsync("ERROR!<br><br>\r\n");
-                    var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
-                    await context.Response.WriteAsync(exceptionHandlerPathFeature?.Error?.ToString());
-                    await context.Response.WriteAsync("<a href=\"/\">Home</a><br>\r\n");
-                    await context.Response.WriteAsync("</body></html>\r\n");
-                    await context.Response.WriteAsync(new string(' ', 512));
+                    var error = context.Features.Get<IExceptionHandlerPathFeature>();
+                    if (error != null)
+                    {
+                        var path = error.Path;
+                        if (error.Path.StartsWith("/api/invoke"))
+                        {
+                            StringValues headerVals;
+                            if (context.Request.Headers.TryGetValue("x-ms-path-query", out headerVals))
+                            {
+                                path = headerVals[0];
+                            }
+                        }
+
+                        logger.LogError(error.Error, $"{DateTime.UtcNow.ToString("o")} - Error while processing request from {path}", null);
+                        await context.Response.WriteAsync(error.Error.ToString());
+                    }
                 });
             });
 

@@ -5,18 +5,23 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AppLensV3.Helpers;
 using AppLensV3.Services;
+using AppLensV3.Services.AppSvcUxDiagnosticDataService;
+using Kusto.Cloud.Platform.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
@@ -34,8 +39,8 @@ namespace AppLensV3.Controllers
     public class DiagnosticController : Controller
     {
         IConfiguration config;
-        private readonly string[] blackListedAscRegions;
-        private readonly string diagAscHeaderValue;
+        private readonly string[] forbiddenAscRegions;
+        private readonly string forbiddenDiagAscHeaderValue;
 
         private class InvokeHeaders
         {
@@ -53,14 +58,22 @@ namespace AppLensV3.Controllers
         /// <param name="env">The environment.</param>
         /// <param name="diagnosticClient">Diagnostic client.</param>
         /// <param name="emailNotificationService">Email notification service.</param>
-        public DiagnosticController(IHostingEnvironment env, IDiagnosticClientService diagnosticClient, IEmailNotificationService emailNotificationService, IConfiguration configuration)
+        public DiagnosticController(IHostingEnvironment env, IDiagnosticClientService diagnosticClient, IEmailNotificationService emailNotificationService, IConfiguration configuration, IResourceConfigService resConfigService, IAppSvcUxDiagnosticDataService appSvcUxDiagnosticDataService)
         {
             Env = env;
             DiagnosticClient = diagnosticClient;
             EmailNotificationService = emailNotificationService;
-            blackListedAscRegions = configuration.GetValue<string>("BlackListedAscRegions", string.Empty).Replace(" ", string.Empty).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-            diagAscHeaderValue = configuration.GetValue<string>("DiagAscHeaderValue");
+            forbiddenAscRegions = configuration.GetValue<string>("ForbiddenAscRegions", string.Empty).Replace(" ", string.Empty).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            if (!forbiddenAscRegions.Any())
+            {
+                // will remove once production config is updated to use the more racially neutral term `ForbiddenAscRegions`
+                forbiddenAscRegions = configuration.GetValue<string>("BlackListedAscRegions", string.Empty).Replace(" ", string.Empty).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            }
+
+            forbiddenDiagAscHeaderValue = configuration.GetValue<string>("DiagAscHeaderValue");
             this.config = configuration;
+            this.resourceConfigService = resConfigService;
+            AppSvcUxDiagnosticDataService = appSvcUxDiagnosticDataService;
         }
 
         private IDiagnosticClientService DiagnosticClient { get; }
@@ -68,6 +81,10 @@ namespace AppLensV3.Controllers
         private IEmailNotificationService EmailNotificationService { get; }
 
         private IHostingEnvironment Env { get; }
+
+        private IAppSvcUxDiagnosticDataService AppSvcUxDiagnosticDataService { get; }
+
+        private IResourceConfigService resourceConfigService { get; }
 
         [HttpGet("ping")]
         public IActionResult Ping()
@@ -85,9 +102,6 @@ namespace AppLensV3.Controllers
 
             return Ok(config[name]);
         }
-
-        private static string TryGetHeader(HttpRequest request, string headerName, string defaultValue = "") =>
-            request.Headers.ContainsKey(headerName) ? (string)request.Headers[headerName] : defaultValue;
 
         [HttpGet("invoke")]
         public async Task<IActionResult> InvokeUsingGet(string path, string method = "POST")
@@ -125,7 +139,7 @@ namespace AppLensV3.Controllers
         /// <returns>Task for invoking request.</returns>
         [HttpPost("invoke")]
         [HttpOptions("invoke")]
-        public async Task<IActionResult> Invoke([FromBody]JToken body)
+        public async Task<IActionResult> Invoke([FromBody] JToken body)
         {
             var invokeHeaders = ProcessInvokeHeaders();
 
@@ -152,15 +166,36 @@ namespace AppLensV3.Controllers
             }
 
             HttpRequestHeaders headers = new HttpRequestMessage().Headers;
+
+            var locationPlacementId = await GetLocationPlacementId(invokeHeaders);
+            if (!string.IsNullOrWhiteSpace(locationPlacementId))
+            {
+                headers.Add("x-ms-subscription-location-placementid", locationPlacementId);
+            }
+
             foreach (var header in Request.Headers)
             {
-                if (header.Key.Equals("x-ms-location", StringComparison.CurrentCultureIgnoreCase) && blackListedAscRegions.Any(region => header.Value.FirstOrDefault()?.Contains(region) == true))
-                {
-                    headers.Add("x-ms-subscription-location-placementid", diagAscHeaderValue);
-                }
-                else if ((header.Key.StartsWith("x-ms-") || header.Key.StartsWith("diag-")) && !headers.Contains(header.Key))
+                if ((header.Key.StartsWith("x-ms-") || header.Key.StartsWith("diag-")) && !headers.Contains(header.Key))
                 {
                     headers.Add(header.Key, header.Value.ToString());
+                }
+            }
+
+            // For Publishing Detector Calls, validate if user has access to publish the detector
+            if (invokeHeaders.Path.EndsWith("/diagnostics/publish", StringComparison.OrdinalIgnoreCase))
+            {
+                if (!TryFetchPublishAcessParametersFromRequestBody(body, out string resourceType, out string detectorCode, out bool isOriginalCodeMarkedPublic, out string errMsg))
+                {
+                    return BadRequest(errMsg);
+                }
+
+                string userAlias = Utilities.GetUserIdFromToken(Request.Headers["Authorization"].ToString());
+                var resourceConfig = await this.resourceConfigService.GetResourceConfig(resourceType);
+                bool hasAccess = await Utilities.IsUserAllowedToPublishDetector(userAlias, resourceConfig, detectorCode, isOriginalCodeMarkedPublic);
+
+                if (!hasAccess)
+                {
+                    return Unauthorized();
                 }
             }
 
@@ -187,6 +222,78 @@ namespace AppLensV3.Controllers
             }
 
             return Ok(JsonConvert.DeserializeObject(await responseTask));
+        }
+
+        private async Task<string> GetLocationPlacementId(InvokeHeaders invokeHeaders)
+        {
+
+            // fetch some subscription details that we log from app service diagnostics appsvcux kusto cluster
+            var m = Regex.Match(invokeHeaders.Path, @"\/subscriptions\/(.*)\/resourceGroups", RegexOptions.IgnoreCase);
+            var subscriptionId = m.Groups.Count >= 2 ? m.Groups[1].Value : null;
+
+            Microsoft.Extensions.Primitives.StringValues locationHeaderValue;
+            if (Request.Headers.TryGetValue("x-ms-location", out locationHeaderValue) && forbiddenAscRegions.Any(region => locationHeaderValue.Any(value => value.Contains(region))))
+            {
+                try
+                {
+                    var subscriptionLocationPlacementIdentifiersTask = AppSvcUxDiagnosticDataService.GetLocationPlacementIdAsync(subscriptionId);
+
+                    // dont block request thread to wait on this.
+                    if (subscriptionLocationPlacementIdentifiersTask != null && subscriptionLocationPlacementIdentifiersTask.IsCompleted)
+                    {
+                        var subscriptionLocationPlacementIdentifiers = await subscriptionLocationPlacementIdentifiersTask;
+                        if (subscriptionLocationPlacementIdentifiers != null && subscriptionLocationPlacementIdentifiers.All(locationPlacementId => locationPlacementId.Equals(forbiddenDiagAscHeaderValue, StringComparison.CurrentCultureIgnoreCase) == false))
+                        {
+                            return string.Join(",", subscriptionLocationPlacementIdentifiers);
+                        }
+                    }
+                }
+                catch (LocationPlacementIdException ex)
+                {
+                    // silently ignore
+                    Trace.TraceWarning($"Failed to get locationPlacementId subscription information. Defer to fallback method using region approach {ex.Message}");
+                }
+
+                return forbiddenDiagAscHeaderValue;
+            }
+
+            return null;
+        }
+
+        [HttpPost("publishingaccess")]
+        [HttpOptions("publishingaccess")]
+        public async Task<IActionResult> GetPublishingAccessControl([FromBody] JToken body)
+        {
+            if (body == null)
+            {
+                return BadRequest("Post body cannot be empty");
+            }
+
+            if (!TryFetchPublishAcessParametersFromRequestBody(body, out string resourceType, out string detectorCode, out bool isOriginalCodeMarkedPublic, out string errMsg))
+            {
+                return BadRequest(errMsg);
+            }
+
+            string userAlias = Utilities.GetUserIdFromToken(Request.Headers["Authorization"].ToString());
+            var resourceConfig = await this.resourceConfigService.GetResourceConfig(resourceType);
+
+            bool hasAccess = await Utilities.IsUserAllowedToPublishDetector(userAlias, resourceConfig, detectorCode, isOriginalCodeMarkedPublic);
+
+            List<string> groupNames = new List<string>();
+            if (resourceConfig != null && !resourceConfig.AllowedGroupsToPublish.IsNullOrEmpty())
+            {
+                groupNames = resourceConfig.AllowedGroupsToPublish.Select(p => p.Name).ToList();
+            }
+
+            return Ok(new
+            {
+                HasAccess = hasAccess,
+                ServiceName = resourceConfig?.Name,
+                ResourceType = resourceConfig?.ResourceType,
+                ResourceOwners = resourceConfig?.ResourceOwners,
+                allowedUsersToPublish = resourceConfig?.AllowedUsersToPublish,
+                allowedGroupsToPublish = groupNames
+            });
         }
 
         private static string GetHeaderOrDefault(IHeaderDictionary headers, string headerName, string defaultValue = "")
@@ -237,6 +344,29 @@ namespace AppLensV3.Controllers
                 InternalView = internalView,
                 ModifiedBy = modifiedBy
             };
+        }
+
+        private bool TryFetchPublishAcessParametersFromRequestBody(JToken body, out string resourceType, out string detectorCode, out bool isOriginalCodeMarkedPublic, out string errorMessage)
+        {
+            resourceType = body?["resourceType"]?.ToString();
+            detectorCode = body?["codeString"]?.ToString();
+            errorMessage = string.Empty;
+            isOriginalCodeMarkedPublic = false;
+            bool.TryParse(body?["isOriginalCodeMarkedPublic"]?.ToString(), out isOriginalCodeMarkedPublic);
+
+            if (string.IsNullOrWhiteSpace(resourceType))
+            {
+                errorMessage = "resourceType field cannot be null";
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(detectorCode))
+            {
+                errorMessage = "detectorCode field cannot be null";
+                return false;
+            }
+
+            return true;
         }
     }
 }
