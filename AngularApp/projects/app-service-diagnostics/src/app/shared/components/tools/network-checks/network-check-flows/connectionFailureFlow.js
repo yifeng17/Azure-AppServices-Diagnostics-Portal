@@ -215,10 +215,10 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
                     return { checks, isContinue, subnetData };
                 }
                 else if (vnetData.status == 404) {
-                    var resourceNotFound = `Virtual Network: ${vnetResourceId.split("/virtualNetworks/")[1]}`;
-                    var viewResourceNotFound = showResourceNotFoundStatus(resourceNotFound);
+                    var resourceNotFound = `Virtual Network ${vnetResourceId.split("/virtualNetworks/")[1]}`;
+                    var viewResourceNotFound = showResourceNotFoundStatus(resourceNotFound, "VNet");
                     checks = checks.concat(viewResourceNotFound);
-                    var isContinue = "Incomplete";
+                    var isContinue = false;
                     return { checks, isContinue, subnetData };
                 }
 
@@ -238,10 +238,10 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
                     return { checks, isContinue, subnetData };
                 }
                 else if (aspSitesObj.status == 404) {
-                    var resourceNotFound = `App Service Plan: ${serverFarmName}`;
+                    var resourceNotFound = `App Service Plan ${serverFarmName}`;
                     var viewResourceNotFound = showResourceNotFoundStatus(resourceNotFound);
                     checks = checks.concat(viewResourceNotFound);
-                    var isContinue = "Incomplete";
+                    var isContinue = false;
                     return { checks, isContinue, subnetData };
                 }
                 var viewVnetNotIntegrated = await showVnetIntegrationNotConfiguredStatus(diagProvider, aspSitesObj, serverFarmId, serverFarmName);
@@ -289,10 +289,10 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
                     return { checks, isContinue, subnetData };
                 }
                 else if (vnetData.status == 404) {
-                    var resourceNotFound = `Virtual Network: ${vnetResourceId.split("/virtualNetworks/")[1]}`;
+                    var resourceNotFound = `Virtual Network ${vnetResourceId.split("/virtualNetworks/")[1]}`;
                     var viewResourceNotFound = showResourceNotFoundStatus(resourceNotFound);
                     checks = checks.concat(viewResourceNotFound);
-                    var isContinue = "Incomplete";
+                    var isContinue = false;
                     return { checks, isContinue, subnetData };
                 }
 
@@ -342,10 +342,10 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
                     return { checks, isContinue, subnetData };
                 }
                 else if (aspSitesObj.status == 404) {
-                    var resourceNotFound = `App Service Plan: ${serverFarmName}`;
+                    var resourceNotFound = `App Service Plan ${serverFarmName}`;
                     var viewResourceNotFound = showResourceNotFoundStatus(resourceNotFound);
                     checks = checks.concat(viewResourceNotFound);
-                    var isContinue = "Incomplete";
+                    var isContinue = false;
                     return { checks, isContinue, subnetData };
                 }
 
@@ -370,10 +370,10 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
                     return { checks, isContinue, subnetData };
                 }
                 else if (instancesObj.status == 404) {
-                    var resourceNotFound = `Instances: ${siteArmId}/instances`;
+                    var resourceNotFound = `Instance ${siteArmId}/instances`;
                     var viewResourceNotFound = showResourceNotFoundStatus(resourceNotFound);
                     checks = checks.concat(viewResourceNotFound);
-                    var isContinue = "Incomplete";
+                    var isContinue = false;
                     return { checks, isContinue, subnetData };
                 }
 
@@ -622,14 +622,19 @@ function showMissingPermissionStatus(resourceId) {
     return views;
 }
 
-function showResourceNotFoundStatus(resourceId) {
+function showResourceNotFoundStatus(resource) {
 
-    var views = [];
-
-    views.push(new CheckStepView({
-        title: `Resource Not Found! Please check if ${resourceId} exists and then run the diagnostic again.`,
-        level: 3
-    }));
+    var views = [
+        new CheckStepView({
+            title: `${resource} does not exist`,
+            level: 2
+        }),
+        new InfoStepView({
+            infoType: 1,
+            title: `Issue found: ${resource} does not exist`,
+            markdown: "Please re-configure your VNet integration."
+        }),
+    ];
 
     return views;
 }

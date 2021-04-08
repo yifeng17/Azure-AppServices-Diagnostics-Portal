@@ -147,7 +147,7 @@ async function checkSubnetAvailabilityAsync(siteInfo, diagProvider, subnetData) 
 
                                         views.push(new InfoStepView({
                                             infoType: 1,
-                                            title: "The App Service Plan is already using Regional VNet integration’",
+                                            title: "The App Service Plan is already using Regional VNet integration",
                                             markdown: msg
                                         }));
                                     }

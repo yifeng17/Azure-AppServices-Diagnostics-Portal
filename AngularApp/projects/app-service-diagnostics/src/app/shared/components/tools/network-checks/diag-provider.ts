@@ -68,7 +68,7 @@ export class DiagProvider {
                 if (e.startsWith("Code:AuthorizationFailed")) {
                     result.status = 401;
                     return result;
-                } else if (e == "") {
+                } else if (e.startsWith("Code:ResourceNotFound")) {
                     result.status = 404;
                     return result;
                 }
