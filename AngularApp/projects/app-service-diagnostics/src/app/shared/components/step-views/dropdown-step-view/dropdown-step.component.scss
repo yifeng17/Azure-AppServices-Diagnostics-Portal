@@ -1,0 +1,35 @@
+.bordered{
+    border: 1px solid #e5e5e5;
+    padding: 10px 10px 15px 10px;
+}
+
+.dropdown-step{
+    .view-description{
+        font-weight: 600;
+    }
+
+    .dropdown-container{ 
+        .description{
+            margin: 10px 0px 5px 1px;
+        }
+
+        .ms-Dropdown-caretDownWrapper,.ms-Dropdown-title{
+            height: 24px;
+            padding-top: 2px;
+            line-height: unset;
+        }
+    }
+}
+
+.ms-Dropdown-optionText,.ms-Dropdown-title{
+    font-size: 13px;
+}
+
+.ms-Dropdown-optionText{
+    margin-left: -5px;
+}
+
+.ms-Callout-container .ms-Callout-main{
+    max-height: calc(50vh - 30px) !important;
+    overflow-y: overlay !important;
+}

@@ -12,10 +12,11 @@ import { Guid } from '../../../shared/utilities/guid';
   templateUrl: './fabric-feedback.component.html',
   styleUrls: ['./fabric-feedback.component.scss']
 })
-export class FabricFeedbackComponent implements AfterViewInit, OnInit,OnDestroy {
+export class FabricFeedbackComponent implements AfterViewInit, OnInit, OnDestroy {
   type: PanelType = PanelType.custom;
   siteName: string = "";
   ratingEventProperties: any;
+  feedbackPanelConfig: { defaultFeedbackText?: string, notResetOnDismissed?: boolean, detectorName?: string, url?: string };
   feedbackText: string = "";
   panelWidth: string = "315px";
   feedbackIcons: { id: string, text: string }[] =
@@ -46,14 +47,15 @@ export class FabricFeedbackComponent implements AfterViewInit, OnInit,OnDestroy 
     }
   }
   currentTime: string = "";
-  constructor(protected telemetryService: TelemetryService, public globals: Globals, private activatedRoute: ActivatedRoute) { }
+  constructor(protected telemetryService: TelemetryService, public globals: Globals, private activatedRoute: ActivatedRoute) {
+  }
 
   submitFeedback() {
     const eventProps = {
       Rating: String(this.rating),
       Feedback: PIIUtilities.removePII(this.feedbackText)
     };
-    const detectorName = this.globals.getDetectorName();
+    const detectorName = this.feedbackPanelConfig.detectorName || this.globals.getDetectorName();
     const isHomepage = !this.activatedRoute.root.firstChild.firstChild.firstChild.firstChild.snapshot.params["category"];
     this.ratingEventProperties = {
       'DetectorId': detectorName,
@@ -63,7 +65,7 @@ export class FabricFeedbackComponent implements AfterViewInit, OnInit,OnDestroy 
       'FeedbackId': Guid.newShortGuid()
     };
     this.logEvent(TelemetryEventNames.StarRatingSubmitted, eventProps);
-    
+
     this.reset();
     this.submitted = true;
   }
@@ -99,13 +101,17 @@ export class FabricFeedbackComponent implements AfterViewInit, OnInit,OnDestroy 
 
   reset() {
     this.rating = 0;
-    this.feedbackText = "";
+    this.feedbackText = this.feedbackPanelConfig.defaultFeedbackText || "";
     this.checked = false;
     this.globals.openFeedback = false;
   }
 
 
   dismissedFeedbackHandler() {
+    if (this.feedbackPanelConfig.notResetOnDismissed) {
+      this.globals.openFeedback = false;
+      return;
+    }
     this.reset();
   }
 
@@ -117,10 +123,20 @@ export class FabricFeedbackComponent implements AfterViewInit, OnInit,OnDestroy 
     this.currentTime = momentNs(Date.now()).format("hh:mm A");
     this.submittedPanelTimer = setTimeout(() => {
       this.dismissedSubmittedHandler();
-    },3000);
+    }, 3000);
   }
 
   onOpenFeedbackPanel() {
+    if (this.feedbackPanelConfig == null || this.feedbackPanelConfig.url != window.location.href.split("?")[0]) {
+      var globals = this.globals;
+      if (globals.messagesData.feedbackPanelConfig != null && globals.messagesData.feedbackPanelConfig.url == window.location.href.split("?")[0]) {
+        this.feedbackPanelConfig = globals.messagesData.feedbackPanelConfig;
+
+      } else {
+        this.feedbackPanelConfig = {url: window.location.href.split("?")[0]};
+      }
+      this.feedbackText = this.feedbackPanelConfig.defaultFeedbackText || "";
+    }
     this.siteName = this.activatedRoute.root.firstChild.firstChild.snapshot.params['resourcename'];
   }
 

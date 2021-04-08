@@ -433,6 +433,28 @@ export class SiteFeatureService extends FeatureService {
           })
         }
       },
+      {
+        appType: AppType.WebApp | AppType.FunctionApp,
+        platform: OperatingSystem.windows,
+        sku: Sku.NotDynamic,
+        hostingEnvironmentKind: HostingEnvironmentKind.All,
+        stack: '',
+        item: {
+          id: ToolIds.NetworkChecks,
+          name: ToolNames.NetworkChecks,
+          category: 'Diagnostic Tools',
+          description: '',
+          featureType: FeatureTypes.Tool,
+          clickAction: this._createFeatureAction(ToolNames.NetworkChecks, 'Diagnostic Tools', () => {
+            //Need remove after A/B test
+            if (this.isLegacy) {
+              this._router.navigateByUrl(`resource${resourceId}/tools/networkchecks`);
+            } else {
+              this.navigateTo(resourceId, ToolIds.NetworkChecks);
+            }
+          })
+        }
+      },
     ];
 
     this.supportTools = [

@@ -20,6 +20,7 @@ import { PortalActionService } from '../shared/services/portal-action.service';
 import { AuthService } from '../startup/services/auth.service';
 import { JavaFlightRecorderToolComponent } from '../shared/components/tools/java-flight-recorder-tool/java-flight-recorder-tool.component';
 import { CrashMonitoringComponent } from '../shared/components/tools/crash-monitoring/crash-monitoring.component';
+import { NetworkCheckComponent } from '../shared/components/tools/network-checks/network-checks.component';
 
 @Injectable()
 export class MetricsPerInstanceAppsResolver implements Resolve<Observable<boolean>> {
@@ -86,6 +87,14 @@ export const DiagnosticToolsRoutes: Route[] = [
         component: ProfilerToolComponent,
         data: {
             navigationTitle: ToolNames.Profiler,
+            cacheComponent: true
+        }
+    },
+    {
+        path: 'networkchecks',
+        component: NetworkCheckComponent,
+        data: {
+            navigationTitle: ToolNames.NetworkChecks,
             cacheComponent: true
         }
     },

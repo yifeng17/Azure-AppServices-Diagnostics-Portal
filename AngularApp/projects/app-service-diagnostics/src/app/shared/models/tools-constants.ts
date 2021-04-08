@@ -3,6 +3,7 @@ import { SupportBladeDefinitions } from "./portal";
 export class ToolNames {
     public static MemoryDump: string = 'Collect Memory Dump';
     public static Profiler: string = 'Collect .NET Profiler Trace';
+    public static NetworkChecks: string = 'Troubleshoot Network/Connectivity Issues';
     public static JavaThreadDump: string = 'Collect Java Thread Dump';
     public static JavaMemoryDump: string = 'Collect Java Memory Dump';
     public static JavaFlightRecorder: string = 'Collect Java Flight Recorder Trace';
@@ -25,6 +26,7 @@ export class ToolNames {
 
 export class ToolIds {
     public static Profiler: string = 'profiler';
+    public static NetworkChecks: string = 'networkchecks';
     public static MemoryDump: string = 'memorydump';
     public static JavaThreadDump: string = 'javathreaddump';
     public static JavaMemoryDump: string = 'javamemorydump';

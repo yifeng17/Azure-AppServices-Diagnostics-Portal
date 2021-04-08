@@ -46,7 +46,24 @@ export class SupportTopicService {
 
     getPathForSupportTopic(supportTopicId: string, pesId: string, searchTerm: string): Observable<any> {
         this.supportTopicId = supportTopicId;
+        var svcName = this._resourceService.azureServiceName
         return this._resourceService.getPesId().pipe(flatMap(pesId => {
+            if (supportTopicId == "32542212" || supportTopicId == "32630473") {
+                // WebApp/VNET integration with App Service or FunctionApp/Configuring VNET integration with AppService
+                var kind = this._resourceService.resource.kind;
+                if (kind.includes("container")) {
+                    // container based WebApp, not supported yet
+                } else {
+                    if (kind.includes("linux")) {
+                        // linux app, not supported yet
+                        
+                    } else{
+                        // non-container windows webapp/function app
+                        return observableOf({ path: 'tools/networkchecks', queryParams: { "isSupportCenter": true } });
+                    }
+                }
+            } 
+
             this.pesId = pesId;
             this.detectorTask = this._diagnosticService.getDetectors();
             return this.detectorTask.pipe(flatMap(detectors => {
@@ -69,7 +86,7 @@ export class SupportTopicService {
                         detectorPath = `/analysis/searchResultsAnalysis/search`;
                     }
                 }
-
+                
                 let keywordsList = [];
                 return this._resourceService.getKeystoneDetectorId().pipe(flatMap(keystoneDetectorId => {
                     detectorPath = `/integratedSolutions` + detectorPath;
@@ -108,7 +125,7 @@ export class SupportTopicService {
 
                                 return observableOf({ path: detectorPath, queryParams: queryParamsDic });
                             }))
-                   }
+                    }
 
                     return observableOf({ path: detectorPath, queryParams: queryParamsDic });
                 }))

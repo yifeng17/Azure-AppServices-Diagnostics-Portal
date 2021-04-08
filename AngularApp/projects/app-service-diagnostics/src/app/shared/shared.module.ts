@@ -130,6 +130,12 @@ import { CrashMonitoringAnalysisComponent } from './components/tools/crash-monit
 import { RiskAlertsNotificationComponent } from './components/risk-alerts-notification/risk-alerts-notification.component';
 import { RiskAlertsPanelComponent } from './components/risk-alerts-panel/risk-alerts-panel.component';
 import { IntegratedSolutionsViewComponent } from './components/integrated-solutions-view/integrated-solutions-view.component';
+import { MarkdownModule } from 'ngx-markdown';
+import { NetworkCheckComponent } from './components/tools/network-checks/network-checks.component';
+import { DropDownStepComponent } from './components/step-views/dropdown-step-view/dropdown-step.component';
+import { CheckStepComponent, ConvertLevelToHealthStatusPipe } from './components/step-views/check-step-view/check-step.component';
+import { InfoStepComponent } from './components/step-views/info-step-view/info-step.component';
+import { InputStepComponent } from './components/step-views/input-step-view/input-step.component';
 
 @NgModule({
     declarations: [
@@ -159,6 +165,12 @@ import { IntegratedSolutionsViewComponent } from './components/integrated-soluti
         DaasSessionsComponent,
         ProfilerComponent,
         ProfilerToolComponent,
+        NetworkCheckComponent,
+        DropDownStepComponent,
+        InfoStepComponent,
+        CheckStepComponent,
+        ConvertLevelToHealthStatusPipe,
+        InputStepComponent,
         MemoryDumpToolComponent,
         DaasComponent,
         JavaMemoryDumpToolComponent,
@@ -240,6 +252,7 @@ import { IntegratedSolutionsViewComponent } from './components/integrated-soluti
         FabTagPickerModule,
         FabProgressIndicatorModule,
         FabContextualMenuModule,
+        MarkdownModule.forRoot(),
     ],
     exports: [
         CommonModule,

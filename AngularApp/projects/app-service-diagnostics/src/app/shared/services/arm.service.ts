@@ -224,6 +224,18 @@ export class ArmService {
         return this._cache.get(url, request, invalidateCache);
     }
 
+    get<T>(url: string): Observable<T> {
+
+        const request = this._http.get<T>(url, {
+            headers: this.getHeaders()
+        }).pipe(
+            retry(2),
+            catchError(this.handleError.bind(this))
+        );
+
+        return request;
+    }
+
     getResourceWithoutEnvelope<T>(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Observable<{} | T> {
         const url = this.createUrl(resourceUri, apiVersion);
 
@@ -251,6 +263,20 @@ export class ArmService {
         let cacheKey: string = appendBodyToCacheKey ? url + bodyString : url;
 
         return this._cache.get(cacheKey, request, invalidateCache);
+    }
+
+    post<T, S>(url: string, body?: S): Observable<boolean | {} | ResponseMessageEnvelope<T>> {
+        let bodyString: string = '';
+        if (body) {
+            bodyString = JSON.stringify(body);
+        }
+
+        const request = this._http.post<S>(url, bodyString, { headers: this.getHeaders() }).pipe(
+            retry(2),
+            catchError(this.handleError.bind(this))
+        );
+
+        return request;
     }
 
     deleteResource<T>(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Observable<any> {
@@ -437,7 +463,6 @@ export class ArmService {
         if (this.telemetryService) {
             this.telemetryService.logException(loggingError, null, loggingProps);
         }
-
         return observableThrowError(actualError);
     }
 
@@ -505,5 +530,9 @@ export class ArmService {
         }
 
         return headers;
+    }
+
+    clearCache():void {
+        this._cache.clear();
     }
 }
