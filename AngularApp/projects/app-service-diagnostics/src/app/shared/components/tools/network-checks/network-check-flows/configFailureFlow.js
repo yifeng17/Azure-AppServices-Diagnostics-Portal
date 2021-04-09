@@ -21,7 +21,7 @@ export var configFailureFlow = {
                     dropdownView.dropdowns.push(vnetDropdown);
                     vnets = await diagProvider.getArmResourceAsync(`/subscriptions/${subscription.subscriptionId}/providers/Microsoft.Network/virtualNetworks`, "2018-07-01");
                     dropdownView.dropdowns.length = 1;
-                    vnets = vnets.value.sort((s1, s2) => s1.name.toLowerCase() > s2.name.toLowerCase() ? 1 : -1);
+                    vnets = vnets.value.filter(v => v && v.name != null).sort((s1, s2) => s1.name.toLowerCase() > s2.name.toLowerCase() ? 1 : -1);
 
                     if (vnets.length > 0) {
                         vnetDropdown = {
@@ -40,7 +40,8 @@ export var configFailureFlow = {
                 } else if (dropdownIdx == 1) {
                     dropdownView.dropdowns.length = 2;
                     var vnet = vnets[selectedIdx];
-                    subnets = vnet.properties.subnets.sort((s1, s2) => s1.name.toLowerCase() > s2.name.toLowerCase() ? 1 : -1);
+                    subnets = vnet.properties == null ? [] : vnet.properties.subnets.filter(s => s && s.name != null);
+                    subnets = subnets.sort((s1, s2) => s1.name.toLowerCase() > s2.name.toLowerCase() ? 1 : -1);
                     var subnetDropdown = null;
                     if (subnets.length > 0) {
                         subnetDropdown = {
@@ -76,7 +77,7 @@ export var configFailureFlow = {
 
         diagProvider.getArmResourceAsync("subscriptions")
             .then(s => {
-                subscriptions = s.value.sort((s1, s2) => s1.displayName.toLowerCase() > s2.displayName.toLowerCase() ? 1 : -1);
+                subscriptions = s.value.filter(s => s && s.displayName != null).sort((s1, s2) => s1.displayName.toLowerCase() > s2.displayName.toLowerCase() ? 1 : -1);
                 subscriptionDropdown.options = subscriptions.map(s => s.displayName);
                 subscriptionDropdown.placeholder = "Please select...";
                 dropdownView.dropdowns.length = 0;
@@ -87,6 +88,9 @@ export var configFailureFlow = {
 
 async function checkSubnetAvailabilityAsync(siteInfo, diagProvider, subnetData) {
 
+    if (subnetData == null) {
+        throw new Error("subnetData is null");
+    }
     var isSubnetAvailable = true;
     var msg;
     var successMsg = `<li>For setting up VNet integration, please see [Integrate your app with an Azure virtual network](https://docs.microsoft.com/en-us/azure/app-service/web-sites-integrate-with-vnet).</li>`;
@@ -114,14 +118,15 @@ async function checkSubnetAvailabilityAsync(siteInfo, diagProvider, subnetData) 
     var views = [];
     if (aspSites != null) {
         for (var idx = 0; idx < aspSites.length; ++idx) {
+            if (aspSites[idx] && aspSites[idx]["id"] == null) {
+                continue;
+            }
             var siteResourceUri = aspSites[idx]["id"];
-            var siteName = aspSites[idx]["name"];
             var siteVnetInfo = await GetWebAppVnetInfo(siteResourceUri, diagProvider);
             var subnetName = "-";
             var vnetName = "-";
-            var sal, hasSAL = "-", linkedAsp = "-";
 
-            if (siteVnetInfo != null) {
+            if (siteVnetInfo && siteVnetInfo["properties"] != null) {
                 var subnetResourceId = siteVnetInfo["properties"]["subnetResourceId"];
                 if (subnetResourceId != null) {
                     if (subnetResourceId.includes("/subnets/")) {
@@ -131,9 +136,9 @@ async function checkSubnetAvailabilityAsync(siteInfo, diagProvider, subnetData) 
                         if (subnetResourceId == selectedSubnet) {
                             let subnetData = await GetSubnet(diagProvider, subnetResourceId);
 
-                            if (subnetData["properties"]["serviceAssociationLinks"] != null) {
-                                sal = subnetData["properties"]["serviceAssociationLinks"];
-                                linkedAsp = sal[0]["properties"]["link"];
+                            if (subnetData && subnetData["properties"] && subnetData["properties"]["serviceAssociationLinks"] != null) {
+                                var sal = subnetData["properties"]["serviceAssociationLinks"];
+                                var linkedAsp = sal[0] && sal[0]["properties"] && sal[0]["properties"]["link"] || '';
                                 if (siteResourceUri.toLowerCase() == siteArmId.toLowerCase()) {
                                     successMsg += `<li>App <b>${thisSite}</b> is already integrated to subnet <b>${subnetName}</b>. If you are facing connectivity issues, please select <b>I'm unable to connect to a resource, such as SQL or Redis or on-prem, in my Virtual Network</b> option.`;
                                 }
@@ -172,7 +177,7 @@ async function checkSubnetAvailabilityAsync(siteInfo, diagProvider, subnetData) 
 
                             views.push(new InfoStepView({
                                 infoType: 1,
-                                title: "The App Service Plan is already using Regional VNet integration’",
+                                title: "The App Service Plan is already using Regional VNet integration",
                                 markdown: msg
                             }));
 
@@ -200,8 +205,9 @@ async function checkSubnetAvailabilityAsync(siteInfo, diagProvider, subnetData) 
 
         //Third check is for subnet size
         var aspData = await GetArmData(serverFarmId, diagProvider);
-        var subnetAddressPrefix = subnetData["properties"]["addressPrefix"];
-        var subnetSize = subnetAddressPrefix.split("/")[1];
+        var subnetAddressPrefix = subnetData["properties"] && subnetData["properties"]["addressPrefix"] || '';
+        var splitted = subnetAddressPrefix.split("/");
+        var subnetSize = splitted.length > 0 ? splitted[1] : -1;
         var aspSku = aspData["sku"].hasOwnProperty("name") ? aspData["sku"]["name"] : undefined;
 
         if (subnetSize > 26 & aspSku[0] == "P") {
@@ -213,7 +219,6 @@ async function checkSubnetAvailabilityAsync(siteInfo, diagProvider, subnetData) 
             successMsg += `<li>In this App Service Plan, disconnect all the Web Apps that are currently using Regional VNet integration.</li>`;
             successMsg += `<li>Increase the subnet size as per the recommendations.</li>`;
             successMsg += `<li>Reconnect the webapps to the same subnet.</li>`;
-            successMsg += `<br/>`;
         }
         else if (subnetSize > 27) {
             successMsg += `<li>Subnet is not using the recommended address prefix of /27. Please increase size of the subnet.<br/>`;
@@ -224,21 +229,22 @@ async function checkSubnetAvailabilityAsync(siteInfo, diagProvider, subnetData) 
             successMsg += `<li>In this App Service Plan, disconnect all the Web Apps that are currently using Regional VNet integration.</li>`;
             successMsg += `<li>Increase the subnet size as per the recommendations.</li>`;
             successMsg += `<li>Reconnect the webapps to the same subnet.</li>`;
-            successMsg += `<br/>`;
         }
 
         //Fourth check if subnet is unused
-        if (subnetData["properties"]["ipConfigurations"] != null) {
+        if (subnetData["properties"] && subnetData["properties"]["ipConfigurations"] && subnetData["properties"]["ipConfigurations"][0] != null) {
             isSubnetAvailable = false;
+            var splitted = (subnetData["properties"]["ipConfigurations"][0]["id"] || '').split("/resourceGroups/");
+            if (splitted.length > 0) {
+                var resourceId = `/resourceGroups/${splitted[1]}`;
+                var resourceIdLength = resourceId.toString().length;
 
-            var resourceId = `/resourceGroups/${subnetData["properties"]["ipConfigurations"][0]["id"].split("/resourceGroups/")[1]}`;
-            var resourceIdLength = resourceId.toString().length;
-
-            views.push(new InfoStepView({
-                infoType: 1,
-                title: "Subnet is already in use",
-                markdown: `Subnet is already in use by resource <b>${resourceId.substring(0, 53)}<br/>${resourceId.substring(53, resourceIdLength - 1)}</b>. <br/><br/>Please select an unused subnet.`
-            }));
+                views.push(new InfoStepView({
+                    infoType: 1,
+                    title: "Subnet is already in use",
+                    markdown: `Subnet is already in use by resource <b>${resourceId.substring(0, 53)}<br/>${resourceId.substring(53, resourceIdLength - 1)}</b>. <br/><br/>Please select an unused subnet.`
+                }));
+            }
         }
 
         //Fifth check if subnet is owned by server farm where this app is hosted
@@ -246,18 +252,17 @@ async function checkSubnetAvailabilityAsync(siteInfo, diagProvider, subnetData) 
 
         if (subnetProperties["serviceAssociationLinks"] != null) {
             var sal = subnetProperties["serviceAssociationLinks"];
-            var linkedAsp = sal[0]["properties"]["link"];
-            if (linkedAsp.toLowerCase() == serverFarmId.toLowerCase()) {
-                //successMsg += `<li>Subnet <b>${selectedSubnetName}</b> is owned by App Service Plan <b>${linkedAsp.split('/serverfarms/')[1]}</b> and can be used for Regional VNet integration on app <b>${thisSite}</b>.`;
-            }
-            else {
+            var linkedAsp = sal[0] && sal[0]["properties"] && sal[0]["properties"]["link"] || '';
+            if (linkedAsp.toLowerCase() != serverFarmId.toLowerCase()) {
                 isSubnetAvailable = false;
-
-                views.push(new InfoStepView({
-                    infoType: 1,
-                    title: "Subnet Owner",
-                    markdown: `Subnet <b>${selectedSubnetName}</b> is owned by App Service Plan <b>${linkedAsp.split('/serverfarms/')[1]}</b> and cannot be used for Regional VNet integration by App Service Plan <b>${serverFarmId.split('/serverfarms/')[1]}</b> which hosts the app <b>${thisSite}</b>.`
-                }));
+                var splitted = linkedAsp.split('/serverfarms/');
+                if (splitted.length > 0) {
+                    views.push(new InfoStepView({
+                        infoType: 1,
+                        title: "Subnet Owner",
+                        markdown: `Subnet <b>${selectedSubnetName}</b> is owned by App Service Plan <b>${splitted[1]}</b> and cannot be used for Regional VNet integration by App Service Plan <b>${serverFarmId.split('/serverfarms/')[1]}</b> which hosts the app <b>${thisSite}</b>.`
+                    }));
+                }
             }
         }
     }
