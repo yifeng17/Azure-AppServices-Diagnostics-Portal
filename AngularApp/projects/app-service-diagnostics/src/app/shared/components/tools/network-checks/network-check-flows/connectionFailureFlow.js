@@ -40,7 +40,7 @@ export var connectionFailureFlow = {
     }
 }
 
-async function runConnectivityCheck(hostname, port, dnsServer, diagProvider) {
+async function runConnectivityCheck(hostname, port, dnsServer, diagProvider, lengthLimit) {
     var result = await diagProvider.checkConnectionAsync(hostname, port, undefined, dnsServer);
     var status = result.status;
     var ip = result.ip;
@@ -48,10 +48,11 @@ async function runConnectivityCheck(hostname, port, dnsServer, diagProvider) {
     var views = [];
     var resolvedIp = "";
     if (ip != hostname) {
+        hostname = hostname.length > lengthLimit ? hostname.substr(0, lengthLimit) + "..." : hostname;
         if (ip == null) {
-            markdown = `DNS server cannot resolve the hostname ${hostname}, possible reasons can be:\r\n` +
-                `1. hostname ${hostname} does not exist, please double check if the hostname is correct\r\n\r\n` +
-                (dnsServer == "168.63.129.16" ? "" : `1. Your custom DNS server ${dnsServer} was used for resolving hostname, but there is no DNS entry on the server for ${hostname}, please check your DNS server.\r\n\r\n`) +
+            markdown = `DNS server cannot resolve the hostname **${hostname}**, possible reasons can be:\r\n` +
+                `1. hostname **${hostname}** does not exist, please double check if the hostname is correct\r\n\r\n` +
+                (dnsServer == "168.63.129.16" ? "" : `1. Your custom DNS server ${dnsServer} was used for resolving hostname, but there is no DNS entry on the server for **${hostname}**, please check your DNS server.\r\n\r\n`) +
                 "1. If your target endpoint is an Azure service with Private Endpoint enabled, please check its Private Endpoint DNS Zone settings.\r\n\r\n"
             views.push(new CheckStepView({
                 title: `failed to resolve the IP of ${hostname}`,
@@ -320,7 +321,7 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
 
                 //Search for the subnet
                 subnets.forEach(subnet => {
-                    if (subnet["name"].toLowerCase() == subnetName.toLowerCase()) {
+                    if ((subnet && subnet["name"] || "").toLowerCase() == subnetName.toLowerCase()) {
                         subnetData = subnet;
                     }
                 });
@@ -480,7 +481,7 @@ function checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, data
             error: null,
             async callback(userInput) {
                 flowMgr.reset(state);
-
+                const userInputLimit = 50; // only applies to the UI
                 var splitted = userInput.split(":");
                 var hostname, port;
 
@@ -492,7 +493,9 @@ function checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, data
                         this.error = "invalid endpoint";
                     } else {
                         this.text = `${hostname}:${port}`;
-                        flowMgr.addViews(runConnectivityCheck(hostname, port, dnsServer, diagProvider), `Testing ${userInput}...`);
+                        userInput = this.text;
+                        userInput = userInput.length > userInputLimit ? userInput.substr(0, userInputLimit) + "..." : userInput;
+                        flowMgr.addViews(runConnectivityCheck(hostname, port, dnsServer, diagProvider, userInputLimit), `Testing ${userInput}...`);
                     }
                 } else {
                     if (splitted.length != 2 || isNaN(port = parseInt(splitted[1]))) {
@@ -500,7 +503,8 @@ function checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, data
                     } else {
                         this.error = null;
                         hostname = splitted[0];
-                        flowMgr.addViews(runConnectivityCheck(hostname, port, dnsServer, diagProvider), `Testing ${userInput}...`);
+                        userInput = userInput.length > userInputLimit ? userInput.substr(0, userInputLimit) + "..." : userInput;
+                        flowMgr.addViews(runConnectivityCheck(hostname, port, dnsServer, diagProvider, userInputLimit), `Testing ${userInput}...`);
                     }
                 }
             }
@@ -522,7 +526,7 @@ async function checkSubnetSizeAsync(diagProvider, subnetDataPromise, serverFarmI
     var subnetAddressPrefix = subnetData["properties"] && subnetData["properties"]["addressPrefix"] || '';
     var splitted = subnetAddressPrefix.split("/");
     var subnetSize = splitted.length > 0 ? splitted[1] : -1;
-    var aspSku = aspData["sku"]["name"] || '';
+    var aspSku = aspData["sku"] && aspData["sku"]["name"] || '';
     checkResult.title = `subnet size /${subnetSize} `
 
     if (subnetSize > 26 & aspSku[0] == "P") {
@@ -573,8 +577,9 @@ function showGatewayVnetStatus(thisSite, siteGWVnetInfo) {
 
     var views = [], subChecks = [];
     var msg = "<table>";
+    var vNetName = siteGWVnetInfo[0] && siteGWVnetInfo[0]["name"];
     msg += "<tr><td><b>Check Status</b></td><td>Pass</td></tr>";
-    msg += `<tr><td><b>Description</b></td><td>App <b>${thisSite}</b> is configured to use Gateway VNET integration and connected to Virtual network <b>${siteGWVnetInfo[0]["name"]}</b>.</td></tr>`;
+    msg += `<tr><td><b>Description</b></td><td>App <b>${thisSite}</b> is configured to use Gateway VNET integration and connected to Virtual network`+ vNetName ? ` <b>${vNetName}</b>.</td></tr>`:".";
     msg += "</table>";
     subChecks.push({ level: 0, title: "Gateway VNet Integration detected" });
 

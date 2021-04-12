@@ -1,6 +1,6 @@
 .network-checking-tool{
     position: fixed;
-    min-width: 550px;
+    min-width: 475px;
     overflow-y: scroll;
     padding-bottom: 20px;
 }
@@ -17,11 +17,11 @@
 
 .step-container{
     padding: 7px 7px 7px 0px;
-    overflow-x: hidden;
 }
 
 .step{
     border: 1px solid #e5e5e5;
+    overflow: hidden;
 }
 
 .loading-spin{

@@ -1,7 +1,7 @@
 <div class="network-checking-tool" #networkCheckingTool [ngStyle]="isSupportCenter ? {width: '100vw', height:'100vh'}:{width: 'calc(100vw - 298px)', height:'calc(100vh - 35px)'}">
     <div class="container">
-        <h2 tabindex="0">{{ title }}</h2>
-        <p tabindex="0">{{ description }}</p>
+        <h2 >{{ title }}</h2>
+        <p>{{ description }}</p>
         <div *ngFor="let viewModel of stepViews" >
             <div class="step-container" *ngIf="!viewModel.stepView.hidden" [ngSwitch]="viewModel.stepView.type">
                 <dropdown-step *ngSwitchCase="0" [viewModel]="viewModel"></dropdown-step>
