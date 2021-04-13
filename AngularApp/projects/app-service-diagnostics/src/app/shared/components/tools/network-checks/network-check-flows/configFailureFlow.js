@@ -4,13 +4,19 @@ export var configFailureFlow = {
     title: "I tried to configure VNet integration via the Azure Portal or ARM template, but it failed",
     async func(siteInfo, diagProvider, flowMgr) {
         var vnets = null, subnets = null, subscriptions = null;
+        var getAspSitesPromise = getAspSites(diagProvider, siteInfo["serverFarmId"]);
+        flowMgr.addViews(getAspSitesPromise.then(d => d.views), "Fetching App Service Plan data...");
+        var aspSites = (await getAspSitesPromise).aspSites;
+        if(aspSites == null){
+            return;
+        }
         var dropdownView = new DropdownStepView({
             dropdowns: [],
             width: "60%",
             bordered: true,
             description: "Please select the subnet you want to integrate your app to",
             async callback(dropdownIdx, selectedIdx) {
-                if (dropdownIdx == 0) {
+                if (dropdownIdx === 0) {
                     dropdownView.dropdowns.length = 1;
                     var subscription = subscriptions[selectedIdx];
                     var vnetDropdown = vnetDropdown = {
@@ -37,7 +43,7 @@ export var configFailureFlow = {
                         }
                     }
                     dropdownView.dropdowns.push(vnetDropdown);
-                } else if (dropdownIdx == 1) {
+                } else if (dropdownIdx === 1) {
                     dropdownView.dropdowns.length = 2;
                     var vnet = vnets[selectedIdx];
                     subnets = vnet.properties == null ? [] : vnet.properties.subnets.filter(s => s && s.name != null);
@@ -60,7 +66,7 @@ export var configFailureFlow = {
                 } else {
                     flowMgr.reset(state);
                     var subnet = subnets[selectedIdx];
-                    var promise = checkSubnetAvailabilityAsync(siteInfo, diagProvider, subnet);
+                    var promise = checkSubnetAvailabilityAsync(siteInfo, diagProvider, subnet, aspSites);
                     flowMgr.addViews(promise, "Checking subnet...");
                 }
             }
@@ -86,7 +92,29 @@ export var configFailureFlow = {
     }
 }
 
-async function checkSubnetAvailabilityAsync(siteInfo, diagProvider, subnetData) {
+async function getAspSites(diagProvider, serverFarmId) {
+    var views = [];
+    var aspSitesObj = await diagProvider.getArmResourceAsync(serverFarmId + "/sites");
+    
+    if (aspSitesObj.status == 401) {
+        views.push(new CheckStepView({
+            title: `Diagnostic is not available because you have no permission to access App Service Plan`,
+            level: 3,
+            subChecks: [{ title: serverFarmId, level: 3 }]
+        }));
+        views.push(new InfoStepView({
+            title: "Recommendation",
+            infoType: 1,
+            markdown: `Please grant your account access to **${serverFarmId}** or switch an account with access.`
+        }));
+        return { views, aspSites: null };
+    } else {
+        var aspSites = (aspSitesObj.hasOwnProperty("value")) ? aspSitesObj["value"] : aspSitesObj;
+        return { views, aspSites };
+    }
+}
+
+async function checkSubnetAvailabilityAsync(siteInfo, diagProvider, subnetData, aspSites) {
 
     if (subnetData == null) {
         throw new Error("subnetData is null");
@@ -112,8 +140,6 @@ async function checkSubnetAvailabilityAsync(siteInfo, diagProvider, subnetData) 
 
     //First check to see if the current ASP already is integrated to a subnet and if that subnet is missing SAL
     //Get All apps from the server farm(ASP)
-    var aspSitesObj = await diagProvider.getArmResourceAsync(serverFarmId + "/sites");
-    var aspSites = (aspSitesObj.hasOwnProperty("value")) ? aspSitesObj["value"] : aspSitesObj;
 
     var views = [];
     if (aspSites != null) {
@@ -139,11 +165,11 @@ async function checkSubnetAvailabilityAsync(siteInfo, diagProvider, subnetData) 
                             if (subnetData && subnetData["properties"] && subnetData["properties"]["serviceAssociationLinks"] != null) {
                                 var sal = subnetData["properties"]["serviceAssociationLinks"];
                                 var linkedAsp = sal[0] && sal[0]["properties"] && sal[0]["properties"]["link"] || '';
-                                if (siteResourceUri.toLowerCase() == siteArmId.toLowerCase()) {
+                                if (siteResourceUri.toLowerCase() === siteArmId.toLowerCase()) {
                                     successMsg += `<li>App <b>${thisSite}</b> is already integrated to subnet <b>${subnetName}</b>. If you are facing connectivity issues, please select <b>I'm unable to connect to a resource, such as SQL or Redis or on-prem, in my Virtual Network</b> option.`;
                                 }
                                 else {
-                                    if (linkedAsp.toLowerCase() == serverFarmId.toLowerCase()) {
+                                    if (linkedAsp.toLowerCase() === serverFarmId.toLowerCase()) {
                                         successMsg += `<li>App <b>${thisSite}</b> is hosted on App Service Plan <b>${serverFarmName}</b> that is already integrated to subnet <b>${subnetName}</b>. You can integrate your app to the same subnet.`;
                                     }
                                     else {
@@ -208,27 +234,29 @@ async function checkSubnetAvailabilityAsync(siteInfo, diagProvider, subnetData) 
         var subnetAddressPrefix = subnetData["properties"] && subnetData["properties"]["addressPrefix"] || '';
         var splitted = subnetAddressPrefix.split("/");
         var subnetSize = splitted.length > 0 ? splitted[1] : -1;
-        var aspSku = aspData["sku"].hasOwnProperty("name") ? aspData["sku"]["name"] : undefined;
+        var aspSku = aspData["sku"] && aspData["sku"]["name"];
 
-        if (subnetSize > 26 & aspSku[0] == "P") {
-            successMsg += `<li>Subnet is not using the recommended address prefix of /26. Please increase size of the subnet.<br/>`;
-            successMsg += `<br/><table><tr><th>Subnet Size</th><th>App Service Plan SKU</th><th>Recommended Subnet Size</th><th>Available Addresses</th></tr>`;
-            successMsg += `<tr><td>${subnetSize}</td><td>${aspSku}</td><td><b>/26</b></td><td>64-5 = <b>59</b> Addresses</td></tr>`;
-            successMsg += `<tr><td colspan='4'><i>Note: Azure reserves 5 IP addresses within each subnet.</i></td></tr></table>`;
-            successMsg += `<u>Steps to increase the subnet size:</u>`;
-            successMsg += `<li>In this App Service Plan, disconnect all the Web Apps that are currently using Regional VNet integration.</li>`;
-            successMsg += `<li>Increase the subnet size as per the recommendations.</li>`;
-            successMsg += `<li>Reconnect the webapps to the same subnet.</li>`;
-        }
-        else if (subnetSize > 27) {
-            successMsg += `<li>Subnet is not using the recommended address prefix of /27. Please increase size of the subnet.<br/>`;
-            successMsg += `<br/><table><tr><th>Subnet Size</th><th>App Service Plan SKU</th><th>Recommended Subnet Size</th><th>Available Addresses</th></tr>`;
-            successMsg += `<tr><td>${subnetSize}</td><td>${aspSku}</td><td><b>/27</b></td><td>32-5 = <b>27</b> Addresses</td></tr>`;
-            successMsg += `<tr><td colspan='4'><i>Note: Azure reserves 5 IP addresses within each subnet.</i></td></tr></table>`;
-            successMsg += `<u>Steps to increase the subnet size:</u>`;
-            successMsg += `<li>In this App Service Plan, disconnect all the Web Apps that are currently using Regional VNet integration.</li>`;
-            successMsg += `<li>Increase the subnet size as per the recommendations.</li>`;
-            successMsg += `<li>Reconnect the webapps to the same subnet.</li>`;
+        if (aspSku != null) {
+            if (subnetSize > 26 & aspSku[0] === "P") {
+                successMsg += `<li>Subnet is not using the recommended address prefix of /26. Please increase size of the subnet.<br/>`;
+                successMsg += `<br/><table><tr><th>Subnet Size</th><th>App Service Plan SKU</th><th>Recommended Subnet Size</th><th>Available Addresses</th></tr>`;
+                successMsg += `<tr><td>${subnetSize}</td><td>${aspSku}</td><td><b>/26</b></td><td>64-5 = <b>59</b> Addresses</td></tr>`;
+                successMsg += `<tr><td colspan='4'><i>Note: Azure reserves 5 IP addresses within each subnet.</i></td></tr></table>`;
+                successMsg += `<u>Steps to increase the subnet size:</u>`;
+                successMsg += `<li>In this App Service Plan, disconnect all the Web Apps that are currently using Regional VNet integration.</li>`;
+                successMsg += `<li>Increase the subnet size as per the recommendations.</li>`;
+                successMsg += `<li>Reconnect the webapps to the same subnet.</li>`;
+            }
+            else if (subnetSize > 27) {
+                successMsg += `<li>Subnet is not using the recommended address prefix of /27. Please increase size of the subnet.<br/>`;
+                successMsg += `<br/><table><tr><th>Subnet Size</th><th>App Service Plan SKU</th><th>Recommended Subnet Size</th><th>Available Addresses</th></tr>`;
+                successMsg += `<tr><td>${subnetSize}</td><td>${aspSku}</td><td><b>/27</b></td><td>32-5 = <b>27</b> Addresses</td></tr>`;
+                successMsg += `<tr><td colspan='4'><i>Note: Azure reserves 5 IP addresses within each subnet.</i></td></tr></table>`;
+                successMsg += `<u>Steps to increase the subnet size:</u>`;
+                successMsg += `<li>In this App Service Plan, disconnect all the Web Apps that are currently using Regional VNet integration.</li>`;
+                successMsg += `<li>Increase the subnet size as per the recommendations.</li>`;
+                successMsg += `<li>Reconnect the webapps to the same subnet.</li>`;
+            }
         }
 
         //Fourth check if subnet is unused
