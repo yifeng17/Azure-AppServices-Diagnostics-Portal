@@ -20,7 +20,7 @@ export class SiteQuickLinkService extends QuickLinkService {
         }
         this._addQuickLinks(links);
     }
-    
+
     private _siteQuickLinks: SiteFilteredItem<string[]>[] = [
         {
             appType: AppType.WebApp,
@@ -32,6 +32,7 @@ export class SiteQuickLinkService extends QuickLinkService {
                 'appDownAnalysis',
                 'perfAnalysis',
                 'webappcpu',
+                'networkchecks'
             ],
         },
         {
@@ -44,6 +45,16 @@ export class SiteQuickLinkService extends QuickLinkService {
                 'functionappdownanderrors',
                 'functionsettings',
                 'BestPracticesFunctionApp'
+            ]
+        },
+        {
+            appType: AppType.FunctionApp,
+            platform: OperatingSystem.windows,
+            stack: '',
+            sku: Sku.NotDynamic,
+            hostingEnvironmentKind: HostingEnvironmentKind.All,
+            item: [
+                'networkchecks'
             ]
         }
     ];
