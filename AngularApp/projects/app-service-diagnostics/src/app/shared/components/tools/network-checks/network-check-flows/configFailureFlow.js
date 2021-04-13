@@ -16,7 +16,7 @@ export var configFailureFlow = {
             bordered: true,
             description: "Please select the subnet you want to integrate your app to",
             async callback(dropdownIdx, selectedIdx) {
-                if (dropdownIdx == 0) {
+                if (dropdownIdx === 0) {
                     dropdownView.dropdowns.length = 1;
                     var subscription = subscriptions[selectedIdx];
                     var vnetDropdown = vnetDropdown = {
@@ -43,7 +43,7 @@ export var configFailureFlow = {
                         }
                     }
                     dropdownView.dropdowns.push(vnetDropdown);
-                } else if (dropdownIdx == 1) {
+                } else if (dropdownIdx === 1) {
                     dropdownView.dropdowns.length = 2;
                     var vnet = vnets[selectedIdx];
                     subnets = vnet.properties == null ? [] : vnet.properties.subnets.filter(s => s && s.name != null);
@@ -165,11 +165,11 @@ async function checkSubnetAvailabilityAsync(siteInfo, diagProvider, subnetData, 
                             if (subnetData && subnetData["properties"] && subnetData["properties"]["serviceAssociationLinks"] != null) {
                                 var sal = subnetData["properties"]["serviceAssociationLinks"];
                                 var linkedAsp = sal[0] && sal[0]["properties"] && sal[0]["properties"]["link"] || '';
-                                if (siteResourceUri.toLowerCase() == siteArmId.toLowerCase()) {
+                                if (siteResourceUri.toLowerCase() === siteArmId.toLowerCase()) {
                                     successMsg += `<li>App <b>${thisSite}</b> is already integrated to subnet <b>${subnetName}</b>. If you are facing connectivity issues, please select <b>I'm unable to connect to a resource, such as SQL or Redis or on-prem, in my Virtual Network</b> option.`;
                                 }
                                 else {
-                                    if (linkedAsp.toLowerCase() == serverFarmId.toLowerCase()) {
+                                    if (linkedAsp.toLowerCase() === serverFarmId.toLowerCase()) {
                                         successMsg += `<li>App <b>${thisSite}</b> is hosted on App Service Plan <b>${serverFarmName}</b> that is already integrated to subnet <b>${subnetName}</b>. You can integrate your app to the same subnet.`;
                                     }
                                     else {
@@ -237,7 +237,7 @@ async function checkSubnetAvailabilityAsync(siteInfo, diagProvider, subnetData, 
         var aspSku = aspData["sku"] && aspData["sku"]["name"];
 
         if (aspSku != null) {
-            if (subnetSize > 26 & aspSku[0] == "P") {
+            if (subnetSize > 26 & aspSku[0] === "P") {
                 successMsg += `<li>Subnet is not using the recommended address prefix of /26. Please increase size of the subnet.<br/>`;
                 successMsg += `<br/><table><tr><th>Subnet Size</th><th>App Service Plan SKU</th><th>Recommended Subnet Size</th><th>Available Addresses</th></tr>`;
                 successMsg += `<tr><td>${subnetSize}</td><td>${aspSku}</td><td><b>/26</b></td><td>64-5 = <b>59</b> Addresses</td></tr>`;

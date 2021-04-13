@@ -8,7 +8,7 @@ export var connectionFailureFlow = {
         var kuduAvailabilityCheckPromise = (async () => {
             isKuduAccessible = await diagProvider.checkKuduReachable(10);
             var views = [];
-            if (isKuduAccessible == false) {
+            if (isKuduAccessible === false) {
                 views.push(new CheckStepView({
                     title: "kudu is not reachable, diagnostic will be incomplete",
                     level: 1
@@ -52,7 +52,7 @@ async function runConnectivityCheck(hostname, port, dnsServer, diagProvider, len
         if (ip == null) {
             markdown = `DNS server cannot resolve the hostname **${hostname}**, possible reasons can be:\r\n` +
                 `1. hostname **${hostname}** does not exist, please double check if the hostname is correct\r\n\r\n` +
-                (dnsServer == "168.63.129.16" ? "" : `1. Your custom DNS server ${dnsServer} was used for resolving hostname, but there is no DNS entry on the server for **${hostname}**, please check your DNS server.\r\n\r\n`) +
+                (dnsServer === "168.63.129.16" ? "" : `1. Your custom DNS server ${dnsServer} was used for resolving hostname, but there is no DNS entry on the server for **${hostname}**, please check your DNS server.\r\n\r\n`) +
                 "1. If your target endpoint is an Azure service with Private Endpoint enabled, please check its Private Endpoint DNS Zone settings.\r\n\r\n"
             views.push(new CheckStepView({
                 title: `failed to resolve the IP of ${hostname}`,
@@ -132,7 +132,7 @@ async function checkVnetIntegrationHealth(siteInfo, diagProvider, isKuduAccessib
             subChecks: await promise.then(d => d.checks.filter(c => c.type == 1))
         });
 
-        if (isContinue == "Incomplete") {
+        if (isContinue === "Incomplete") {
             view.title += " (incomplete result)";
         }
 
@@ -140,7 +140,7 @@ async function checkVnetIntegrationHealth(siteInfo, diagProvider, isKuduAccessib
     }
     else {
         var subchecks = await promise.then(d => d.checks.filter(c => c.type == 1));
-        if (subchecks[0].title == "App is not configured for VNet Integration") {
+        if (subchecks[0].title === "App is not configured for VNet Integration") {
             views = views.concat(new CheckStepView({
                 title: "App is not configured for VNet Integration",
                 level: 2
@@ -201,7 +201,7 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
                 if (siteGWVnetInfo[0]["properties"] != null && siteGWVnetInfo[0]["properties"]["vnetResourceId"] != null) {
                     //Check if Vnet exists that the gateway is connected to
                     vnetResourceId = siteGWVnetInfo[0]["properties"]["vnetResourceId"];
-                    var vnetData = await diagProvider.getArmResourceAsync(vnetResourceId, "2020-11-01");
+                    var vnetData = await diagProvider.getArmResourceAsync(vnetResourceId, "2017-11-15");
                     if (vnetData.status == 401) {
                         var missingPermissionResource = `Virtual Network: ${vnetResourceId.split("/virtualNetworks/")[1]}`;
                         var viewMissingPermissionsonResource = showMissingPermissionStatus(missingPermissionResource);
@@ -279,7 +279,7 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
 
             var viewSubnetResourceIdFormatIncorrect = checkSubnetResourceIdFormat(subnetResourceId);
             checks = checks.concat(viewSubnetResourceIdFormatIncorrect.views);
-            if (viewSubnetResourceIdFormatIncorrect.isContinue == false) {
+            if (viewSubnetResourceIdFormatIncorrect.isContinue === false) {
                 var isContinue = false;
                 return { checks, isContinue, subnetData };
             }
@@ -290,7 +290,7 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
             //Show swiftSupported property status
             var viewSwiftSupported = showSwiftNotSupportedStatus(swiftSupported);
             checks = checks.concat(viewSwiftSupported.views);
-            if (viewSwiftSupported.isContinue == false) {
+            if (viewSwiftSupported.isContinue === false) {
                 var isContinue = false;
                 return { checks, isContinue, subnetData };
             }
@@ -330,7 +330,7 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
                 var subnetProperties = subnetData["properties"];
                 var viewSalInitialized = checkSALInitialized(diagProvider, subnetProperties, subnetName);
                 checks = checks.concat(viewSalInitialized.views);
-                if (viewSalInitialized.isContinue == false) {
+                if (viewSalInitialized.isContinue === false) {
                     var isContinue = false;
                     return { checks, isContinue, subnetData };
                 }
@@ -338,7 +338,7 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
                 //Check subnet delegation                        
                 var viewSubnetDelegation = checkSubnetDelegationStatus(subnetProperties, subnetName);
                 checks = checks.concat(viewSubnetDelegation.views);
-                if (viewSubnetDelegation.isContinue == false) {
+                if (viewSubnetDelegation.isContinue === false) {
                     var isContinue = false;
                     return { checks, isContinue, subnetData };
                 }
@@ -346,7 +346,7 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
                 //Check if SAL is owned by the current ASP
                 var viewSalOwner = checkSALOwner(diagProvider, subnetData, subnetName, serverFarmId, serverFarmName);
                 checks = checks.concat(viewSalOwner.views);
-                if (viewSalOwner.isContinue == false) {
+                if (viewSalOwner.isContinue === false) {
                     var isContinue = false;
                     return { checks, isContinue, subnetData };
                 }
@@ -371,7 +371,7 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
 
                 var viewAspMultipleSubnet = await checkASPConnectedToMultipleSubnets(diagProvider, aspSitesObj, thisSite, serverFarmName, serverFarmId);
                 checks = checks.concat(viewAspMultipleSubnet.views);
-                if (viewAspMultipleSubnet.isContinue == false) {
+                if (viewAspMultipleSubnet.isContinue === false) {
                     var isContinue = false;
                     return { checks, isContinue, subnetData };
                 }
@@ -529,7 +529,7 @@ async function checkSubnetSizeAsync(diagProvider, subnetDataPromise, serverFarmI
     var aspSku = aspData["sku"] && aspData["sku"]["name"] || '';
     checkResult.title = `subnet size /${subnetSize} `
 
-    if (subnetSize > 26 & aspSku[0] == "P") {
+    if (subnetSize > 26 & aspSku[0] === "P") {
         msg = `<li>Subnet <b>${subnetName}</b> is not using the recommended address prefix of /26. Please increase size of the subnet.<br/>`;
         msg += `<br/><table><tr><th>Subnet Size</th><th>App Service Plan SKU</th><th>Recommended Subnet Size</th><th>Available Addresses</th></tr>`;
         msg += `<tr><td>/${subnetSize}</td><td>${aspSku}</td><td><b>/26</b></td><td>64-5 = <b>59</b> Addresses</td></tr>`;
@@ -579,7 +579,7 @@ function showGatewayVnetStatus(thisSite, siteGWVnetInfo) {
     var msg = "<table>";
     var vNetName = siteGWVnetInfo[0] && siteGWVnetInfo[0]["name"];
     msg += "<tr><td><b>Check Status</b></td><td>Pass</td></tr>";
-    msg += `<tr><td><b>Description</b></td><td>App <b>${thisSite}</b> is configured to use Gateway VNET integration and connected to Virtual network`+ vNetName ? ` <b>${vNetName}</b>.</td></tr>`:".";
+    msg += `<tr><td><b>Description</b></td><td>App <b>${thisSite}</b> is configured to use Gateway VNET integration and connected to Virtual network` + vNetName ? ` <b>${vNetName}</b>.</td></tr>` : ".";
     msg += "</table>";
     subChecks.push({ level: 0, title: "Gateway VNet Integration detected" });
 
@@ -598,7 +598,7 @@ function showSwiftNotSupportedStatus(swiftSupported) {
     var msg;
     var isContinue = true;
 
-    if (swiftSupported == null || swiftSupported == false) {
+    if (swiftSupported == null || swiftSupported === false) {
         msg = "<table>";
         msg += "<tr><td><b>VNet Integration Status</b></td><td>Failed</td></tr>";
         msg += "<tr><td><b>Cause</b></td><td>isSwift property is set to False.</td></tr>";
@@ -683,7 +683,7 @@ async function showVnetIntegrationNotConfiguredStatus(diagProvider, aspSitesObj,
                             if (linkedAsp == null) {
                                 continue;
                             }
-                            if (linkedAsp.toLowerCase() == serverFarmId.toLowerCase()) {
+                            if (linkedAsp.toLowerCase() === serverFarmId.toLowerCase()) {
                                 msg += `<li>This App is hosted on App Service Plan <b>${serverFarmName}</b> that is already connected to subnet <b>${subnetName}</b>. You can integrate your app to the same subnet.`;
                             }
                             else {
@@ -888,7 +888,7 @@ async function checkASPConnectedToMultipleSubnets(diagProvider, aspSitesObj, thi
     }
 
     if (aspSubnetArray.length > 0) {
-        var uniqueAspSubnets = aspSubnetArray.filter((e, i) => aspSubnetArray.indexOf(e) == i)
+        var uniqueAspSubnets = aspSubnetArray.filter((e, i) => aspSubnetArray.indexOf(e) === i)
 
         msg = `App: <b>${thisSite}</b> is hosted on App Service Plan: <b>${serverFarmName}</b>. `;
         msg += `This App Service Plan is connected to <b>${uniqueAspSubnets.length}</b> subnet(s).<br/>`;
@@ -918,7 +918,7 @@ async function checkASPConnectedToMultipleSubnets(diagProvider, aspSitesObj, thi
                         subnetValidationTable = subnetValidationTable.concat("<tr>");
                         subnetValidationTable = subnetValidationTable.concat(`<td>${subnetName}</td>`);
                         subnetValidationTable = subnetValidationTable.concat(`<td>${linkedAsp.split("/serverfarms/")[1]}</td>`);
-                        subnetValidationTable = subnetValidationTable.concat(`<td><b><span style="color:${(linkedAsp.toLowerCase() == serverFarmId.toLowerCase()) ? "green" : "red"};">${linkedAsp.toLowerCase() == serverFarmId.toLowerCase()}</span></b></td>`);
+                        subnetValidationTable = subnetValidationTable.concat(`<td><b><span style="color:${(linkedAsp.toLowerCase() === serverFarmId.toLowerCase()) ? "green" : "red"};">${linkedAsp.toLowerCase() == serverFarmId.toLowerCase()}</span></b></td>`);
                         subnetValidationTable = subnetValidationTable.concat("</tr>");
                     }
                 }
@@ -995,7 +995,7 @@ async function checkPrivateIPAsync(diagProvider, instancesObj, isKuduAccessibleP
         }
     }
 
-    if (instanceCount == instanceAllocated) {
+    if (instanceCount === instanceAllocated) {
 
         views.push(new CheckStepView({
             title: `Private IP allocated for all(${instanceAllocated}) instances`,
@@ -1138,9 +1138,9 @@ async function checkDnsSetting(siteInfo, diagProvider) {
             });
         }
     } else {
-        dnsServer = "168.63.129.16";
+        dnsServer = "";
         subChecks.push({
-            title: `No custom DNS is set, default DNS 168.63.129.16 will be applied`,
+            title: `No custom DNS is set, default Azure DNS will be applied`,
             level: 0
         });
     }
