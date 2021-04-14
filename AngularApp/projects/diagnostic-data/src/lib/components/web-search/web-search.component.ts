@@ -12,6 +12,8 @@ import { ISubscription } from "rxjs/Subscription";
 import { WebSearchConfiguration } from '../../models/search';
 import { GenericDocumentsSearchService } from '../../services/generic-documents-search.service';
 import { GenericResourceService } from '../../services/generic-resource-service';
+import { Query } from '../../models/documents-search-models';
+import { GenericSupportTopicService } from '../../services/generic-support-topic.service';
 
 @Component({
     selector: 'web-search',
@@ -32,6 +34,10 @@ export class WebSearchComponent extends DataRenderBaseComponent implements OnIni
     @Output() searchResultsChange: EventEmitter<any[]> = new EventEmitter<any[]>();
     pesId : string = "";
 
+    supportTopicId : string = "";    
+
+    customQueryParametersForBingSearch : string = "";
+
     searchTermDisplay: string = '';
     showSearchTermPractices: boolean = false;
     showPreLoader: boolean = false;
@@ -42,9 +48,11 @@ export class WebSearchComponent extends DataRenderBaseComponent implements OnIni
     constructor(@Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig, public telemetryService: TelemetryService,
         private _activatedRoute: ActivatedRoute, private _router: Router, private _contentService: GenericContentService,
         private _documentsSearchService : GenericDocumentsSearchService,
+        private _supportTopicService: GenericSupportTopicService,
         private _resourceService: GenericResourceService  ) {
         super(telemetryService);
         this.isPublic = config && config.isPublic;
+        this.supportTopicId = this._supportTopicService.supportTopicId;
         const subscription = this._activatedRoute.queryParamMap.subscribe(qParams => {
             this.searchTerm = qParams.get('searchTerm') === null ? "" || this.searchTerm : qParams.get('searchTerm');
             this.getPesId();
@@ -137,7 +145,8 @@ export class WebSearchComponent extends DataRenderBaseComponent implements OnIni
                 return {
                     title: result.name,
                     description: result.snippet,
-                    link: result.url
+                    link: result.url,
+                    articleSurfacedBy : result.resultSurfacedBy || "Bing"
                 };
             }));
             this.searchResultsChange.emit(this.searchResults);
@@ -172,38 +181,34 @@ export class WebSearchComponent extends DataRenderBaseComponent implements OnIni
         if (!this.webSearchConfig) {
             this.webSearchConfig = new WebSearchConfiguration(this.pesId);
         }
+        var searchTask;
         let searchTaskComplete = false;
         let searchTaskPrefsComplete = false;
         let searchTaskPrefs = null;
         let searchTaskResult = null;
         let searchTaskPrefsResult = null;
-        let searchTask = this._contentService.searchWeb(this.searchTerm, this.webSearchConfig.MaxResults.toString(), this.webSearchConfig.UseStack, [], this.webSearchConfig.ExcludedSites).pipe(map((res) => res), retryWhen(errors => {
-            let numRetries = 0;
-            return errors.pipe(delay(1000), map(err => {
-                if(numRetries++ === 3){
-                    throw err;
-                }
-                return err;
-            }));
-        }), catchError(e => {
-            throw e;
-        }));
-        if (this.webSearchConfig && this.webSearchConfig.PreferredSites && this.webSearchConfig.PreferredSites.length>0) {
-            searchTaskPrefs = this._contentService.searchWeb(this.searchTerm, this.webSearchConfig.MaxResults.toString(), this.webSearchConfig.UseStack, this.webSearchConfig.PreferredSites, this.webSearchConfig.ExcludedSites).pipe(map((res) => res), retryWhen(errors => {
-                let numRetries = 0;
-                return errors.pipe(delay(1000), map(err => {
-                    if(numRetries++ === 3){
-                        throw err;
-                    }
-                    return err;
-                }));
-            }), catchError(e => {
-                throw e;
-            }));
+        
+        var isInternal = ! this.isPublic;
+        var shouldNotCombineWebSearchDeepSearchResults = isInternal ||  !this.deepSearchEnabled;
+
+        if(shouldNotCombineWebSearchDeepSearchResults){
+            // make call to bing search
+            searchTask = this.getBingSearchTaskWithoutPreferredSites();
+
+            if (this.webSearchConfig && this.webSearchConfig.PreferredSites && this.webSearchConfig.PreferredSites.length>0) {
+            searchTaskPrefs = this.getBingSearchTaskWithPreferredSites(searchTaskPrefs);
+            }
+            else {
+                searchTaskPrefsComplete = true;
+            }
         }
-        else {
+        else{
+            // make a call to deep search which combine bing + deep search engine results
+            var query = this.getInputsForDeepSearch();
+            searchTask = this.getDeepSearchTask(query);            
             searchTaskPrefsComplete = true;
         }
+        
         this.showPreLoader = true;
         let postFinish = () => {
             if (searchTaskComplete && searchTaskPrefsComplete) {
@@ -231,6 +236,70 @@ export class WebSearchComponent extends DataRenderBaseComponent implements OnIni
                 postFinish();
             });
         }
+    }
+
+    private getInputsForDeepSearch() {
+        var query = new Query();
+        query.searchTerm = this.searchTerm;
+        query.searchId = this.searchId;
+        query.numberOfDocuments = this.webSearchConfig.MaxResults;
+        query.productName = "App Services";
+        query.documentType = "External";
+        query.bingSearchEnabled = true;
+        query.deepSearchEnabled = this.deepSearchEnabled;
+        query.pesId = this.pesId;
+        query.supportTopicId = this.supportTopicId;
+        
+        var preferredSites = []
+        if (this.webSearchConfig && this.webSearchConfig.PreferredSites && this.webSearchConfig.PreferredSites.length>0){   
+            preferredSites = this.webSearchConfig.PreferredSites
+        }
+        
+        query.customFilterConditionsForBing = this._contentService.constructQueryParameters(this.searchTerm, this.webSearchConfig.UseStack, preferredSites, this.webSearchConfig.ExcludedSites);
+        return query;
+    }
+
+    private getDeepSearchTask(query: Query) {
+        return this._documentsSearchService.searchWeb(query).pipe(map((res) => res), retryWhen(errors => {
+            let numRetries = 0;
+            return errors.pipe(delay(1000), map(err => {
+                if (numRetries++ === 3) {
+                    throw err;
+                }
+                return err;
+            }));
+        }), catchError(e => {
+            throw e;
+        }));
+    }
+
+    private getBingSearchTaskWithPreferredSites(searchTaskPrefs: any) {
+        searchTaskPrefs = this._contentService.searchWeb(this.searchTerm, this.webSearchConfig.MaxResults.toString(), this.webSearchConfig.UseStack, this.webSearchConfig.PreferredSites, this.webSearchConfig.ExcludedSites).pipe(map((res) => res), retryWhen(errors => {
+            let numRetries = 0;
+            return errors.pipe(delay(1000), map(err => {
+                if (numRetries++ === 3) {
+                    throw err;
+                }
+                return err;
+            }));
+        }), catchError(e => {
+            throw e;
+        }));
+        return searchTaskPrefs;
+    }
+
+    private getBingSearchTaskWithoutPreferredSites() {
+        return this._contentService.searchWeb(this.searchTerm, this.webSearchConfig.MaxResults.toString(), this.webSearchConfig.UseStack, [], this.webSearchConfig.ExcludedSites).pipe(map((res) => res), retryWhen(errors => {
+            let numRetries = 0;
+            return errors.pipe(delay(1000), map(err => {
+                if (numRetries++ === 3) {
+                    throw err;
+                }
+                return err;
+            }));
+        }), catchError(e => {
+            throw e;
+        }));
     }
 
     selectResult(article: any) {
@@ -278,7 +347,7 @@ export class WebSearchComponent extends DataRenderBaseComponent implements OnIni
     
     checkIfDeepSearchIsEnabled () {
         let checkStatusTask = this._documentsSearchService
-                                .IsEnabled(this.pesId, this.isPublic )
+                                .IsEnabled(this.pesId, this.supportTopicId, this.isPublic )
                                 .pipe( map((res) => res), 
                                     retryWhen(errors => {
                                     let numRetries = 0;

@@ -12,7 +12,7 @@ export class DocumentSearchService {
   private authKey: string = "";
   private url : string = "";
   private _config : DocumentSearchConfiguration;
-  private featureEnabledForProduct: boolean = false;
+  private featureEnabledForSupportTopic: boolean = false;
 
   httpOptions = {}
 
@@ -38,19 +38,27 @@ export class DocumentSearchService {
 
   }
 
-  public IsEnabled(pesId : string, isPublic : boolean) : Observable<boolean> {
+  public IsEnabled(pesId : string, supportTopicId : string, isPublic : boolean) : Observable<boolean> {
     // featureEnabledForProduct is disabled by default
-    if ( pesId && pesId.length >0 && ( (isPublic && this._config.documentSearchEnabledPesIds.findIndex(x => x==pesId)>=0) ||
-                              (!isPublic && this._config.documentSearchEnabledPesIdsInternal.findIndex(x => x==pesId)>=0)
-                            )
-        ){
-          this.featureEnabledForProduct = true;
-    }
 
+    var isPesIdValid = pesId && pesId.length >0 ;
+    var isSupportTopicIdValid = supportTopicId && supportTopicId.length > 0;
+    if( isPesIdValid && isSupportTopicIdValid)
+    {
+      pesId = pesId.trim();
+      supportTopicId = supportTopicId.trim();
+
+      var listOfEnabledSupportTopics =  isPublic ? this._config.documentSearchEnabledSupportTopicIds[pesId] :
+                                                   this._config.documentSearchEnabledSupportTopicIdsInternal[pesId];
+    
+      var isDeepSearchEnabledForThisSupportTopic = listOfEnabledSupportTopics && (listOfEnabledSupportTopics.findIndex( x => x == supportTopicId ) > -1)
+      this.featureEnabledForSupportTopic = isDeepSearchEnabledForThisSupportTopic ;
+    }
+   
     return this._backendApi.get<string>(`api/appsettings/DeepSearch:isEnabled`)
                             // Value in App Service Application Settings are returned as strings
                             // converting this to boolean
-                            .map(status =>  ( status.toLowerCase() == "true" && this.featureEnabledForProduct) );
+                            .map(status =>  ( status.toLowerCase() == "true" && this.featureEnabledForSupportTopic) );
 
 
   }
@@ -72,9 +80,15 @@ export class DocumentSearchService {
 
   public Search(query): Observable<Document[]> {
     let queryString = this.constructUrl(query);
-    let url = this.url  + "?" +queryString;
-    return this.http.get<Document[]>(url, this.httpOptions)
+    var baseUrl = this.url
+    return this.http.get<Document[]>(baseUrl  + "?" +queryString, this.httpOptions)
+  }
 
+  public searchWeb(query : Query): Observable<any>
+  {
+    let queryString = this.constructUrl(query);
+    var baseUrl = this.url
+    return this.http.get<any>(baseUrl+ "?" +queryString   , this.httpOptions)
   }
 
 }

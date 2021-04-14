@@ -4,7 +4,15 @@ export class Query {
     productName : string ;
     documentType : string ;
     documentSource : string[];
-    numberOfDocuments : number;    
+    numberOfDocuments : number; 
+    deepSearchEnabled : boolean;
+    bingSearchEnabled : boolean;
+
+    customFilterConditionsForBing : string;
+
+    pesId : string;
+
+    supportTopicId : string;
 }
 
 export class Document{

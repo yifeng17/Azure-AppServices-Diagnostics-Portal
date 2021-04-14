@@ -177,13 +177,14 @@
     </web-search>
 </div>
 
-<div style="margin-left:20px;margin-top:20px;" *ngIf="searchConfiguration.WebSearchEnabled">
+<div style="margin-left:20px;margin-top:20px;" *ngIf="!isPublic && searchConfiguration.WebSearchEnabled">
     <documents-search   [searchTerm]="searchTerm"
                         [searchId] = "searchId"
                         [isChildComponent]="true"
                         [numDocumentsExpanded] = 2>
     </documents-search>
 </div>
+
 <div *ngIf="isPublic && showScrollButton && (detectors.length>0 || !(!webSearchResults || webSearchResults.length==0))" class="more-results-button">
     <fab-primary-button
         text='More Results' [iconProps]="moreResultsIconProps" [styles]="moreResultsButtonStyles" (onClick)="scrollToResults()">

@@ -11,4 +11,8 @@ export class GenericContentService {
   public searchWeb(questionString: string, resultsCount: string = '3', useStack: boolean = true, preferredSites: string[] = [], excludedSites: string[] = []): Observable<any> {
     return null;
   }
+
+  public constructQueryParameters(questionString: string, useStack: boolean, preferredSites: string[], excludedSites: string[],) : string {
+    return null;
+  }
 }

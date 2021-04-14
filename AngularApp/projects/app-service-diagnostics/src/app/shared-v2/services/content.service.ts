@@ -34,29 +34,7 @@ export class ContentService {
 
   searchWeb(questionString: string, resultsCount: string = '3', useStack: boolean = true, preferredSites: string[] = [], excludedSites: string[] = globalExcludedSites): Observable<any> {
 
-    const searchSuffix = this._resourceService.searchSuffix;
-
-    //Decide the stack type to use with query
-    var stackTypeSuffix = this._resourceService["appStack"]? ` ${this._resourceService["appStack"]}`: "";
-    stackTypeSuffix = stackTypeSuffix.toLowerCase();
-    if (stackTypeSuffix && stackTypeSuffix.length>0 && stackTypeSuffix == "static only") {
-      stackTypeSuffix = "static content";
-    }
-    if(!this.allowedStacks.some(stack => stackTypeSuffix.includes(stack))){
-      stackTypeSuffix = "";
-    }
-
-    var preferredSitesSuffix = preferredSites.map(site => `site:${site}`).join(" OR ");
-    if (preferredSitesSuffix && preferredSitesSuffix.length>0){
-      preferredSitesSuffix = ` AND (${preferredSitesSuffix})`;
-    }
-    
-    var excludedSitesSuffix = excludedSites.map(site => `NOT (site:${site})`).join(" AND ");
-    if (excludedSitesSuffix && excludedSitesSuffix.length>0){
-      excludedSitesSuffix = ` AND (${excludedSitesSuffix})`;
-    }
-
-    const query = encodeURIComponent(`${questionString}${useStack? stackTypeSuffix: ''} AND ${searchSuffix}${preferredSitesSuffix}${excludedSitesSuffix}`);
+    const query = this.constructQueryParameters(questionString, useStack,preferredSites, excludedSites);
     const url = `https://api.cognitive.microsoft.com/bing/v7.0/search?q='${query}'&count=${resultsCount}`;
 
     return this.ocpApimKeySubject.pipe(mergeMap((key:string)=>{
@@ -68,6 +46,32 @@ export class ContentService {
         })
       })
     );
+  }
+
+  public constructQueryParameters(questionString: string, useStack: boolean, preferredSites: string[], excludedSites: string[],) : string {
+    const searchSuffix = this._resourceService.searchSuffix;
+    //Decide the stack type to use with query
+    var stackTypeSuffix = this._resourceService["appStack"] ? ` ${this._resourceService["appStack"]}` : "";
+    stackTypeSuffix = stackTypeSuffix.toLowerCase();
+    if (stackTypeSuffix && stackTypeSuffix.length > 0 && stackTypeSuffix == "static only") {
+      stackTypeSuffix = "static content";
+    }
+    if (!this.allowedStacks.some(stack => stackTypeSuffix.includes(stack))) {
+      stackTypeSuffix = "";
+    }
+
+    var preferredSitesSuffix = preferredSites.map(site => `site:${site}`).join(" OR ");
+    if (preferredSitesSuffix && preferredSitesSuffix.length > 0) {
+      preferredSitesSuffix = ` AND (${preferredSitesSuffix})`;
+    }
+
+    var excludedSitesSuffix = excludedSites.map(site => `NOT (site:${site})`).join(" AND ");
+    if (excludedSitesSuffix && excludedSitesSuffix.length > 0) {
+      excludedSitesSuffix = ` AND (${excludedSitesSuffix})`;
+    }
+
+    const query = encodeURIComponent(`${questionString}${useStack ? stackTypeSuffix : ''} AND ${searchSuffix}${preferredSitesSuffix}${excludedSitesSuffix}`);
+    return query;
   }
 }
 
