@@ -10,7 +10,7 @@ export var connectionFailureFlow = {
             var views = [];
             if (isKuduAccessible === false) {
                 views.push(new CheckStepView({
-                    title: "kudu is not reachable, diagnostic will be incomplete",
+                    title: "Kudu is not reachable, diagnostic will be incomplete",
                     level: 1
                 }));
 
@@ -21,13 +21,13 @@ export var connectionFailureFlow = {
                         "- Timeout, please click refresh button and retry\r\n\r\n" +
                         "- Your app has IP restriction or Private Endpoint turned on. Please check your configuration and consider running this check in an environment that is allowed to access your app" +
                         " or temporarily allow the traffic by adding your client IP into IP restriction allow list or turning of the Private Endpoint for running the network checks\r\n\r\n" +
-                        "- You don't have permission to access kudu site, please check your permission\r\n\r\n" +
-                        "The diagnostic will be incomplete without kudu access."
+                        "- You don't have permission to access Kudu site, please check your permission\r\n\r\n" +
+                        "The diagnostic will be incomplete without Kudu access."
                 }));
             }
             return views;
         })();
-        flowMgr.addViews(kuduAvailabilityCheckPromise, "Checking kudu availability...");
+        flowMgr.addViews(kuduAvailabilityCheckPromise, "Checking Kudu availability...");
         var permMgr = new ResourcePermissionCheckManager();
         flowMgr.addView(permMgr.checkView);
 
@@ -41,10 +41,48 @@ export var connectionFailureFlow = {
     }
 }
 
-async function runConnectivityCheck(hostname, port, dnsServer, diagProvider, lengthLimit) {
-    var result = await diagProvider.checkConnectionAsync(hostname, port, undefined, dnsServer);
-    var status = result.status;
-    var ip = result.ip;
+async function runConnectivityCheck(hostname, port, dnsServers, diagProvider, lengthLimit) {
+    var subChecks = [];
+    var fallbackToPublicDns = false;
+    var nameResolvePromise = (async function checkNameResolve() {
+        var ip = null;
+        var subChecks = [];
+        for (var i = 0; i < dnsServers.length; ++i) {
+            var result = await diagProvider.nameResolveAsync(hostname, dnsServers[i]).catch(e => {
+                console.log(e);
+                return {};
+            });
+            var dns = (dnsServers[i] == "" ? "Azure DNS server" : `DNS server ${dnsServers[i]}`);
+            if (result.ip != null) {
+                if(dnsServers[i] == ""){
+                    fallbackToPublicDns = true;
+                }
+
+                if (result.ip != hostname) {
+                    ip = result.ip;
+                    subChecks.push({ title: `Successfully resolved hostname '${hostname}' with ${dns}`, level: 0 });
+                }
+                break;
+            } else {
+                subChecks.push({ title: `Failed to resolve hostname '${hostname}' with ${dns}`, level: 1 });
+            }
+        }
+        return { ip, subChecks };
+    })();
+    var tcpPingPromise = diagProvider.tcpPingAsync(hostname, port, dnsServers.length).catch(e => {
+        console.log(e);
+        return {};
+    });
+
+    await Promise.all([nameResolvePromise, tcpPingPromise]);
+
+    var nameResolveResult = await nameResolvePromise;
+    var ip = nameResolveResult.ip;
+    subChecks = nameResolveResult.subChecks;
+
+    var tcpPingResult = await tcpPingPromise;
+    var status = tcpPingResult.status;
+
     var markdown = null;
     var views = [];
     var resolvedIp = "";
@@ -53,10 +91,11 @@ async function runConnectivityCheck(hostname, port, dnsServer, diagProvider, len
         if (ip == null) {
             markdown = `DNS server cannot resolve the hostname **${hostname}**, possible reasons can be:\r\n` +
                 `-  hostname **${hostname}** does not exist, please double check if the hostname is correct\r\n\r\n` +
-                (dnsServer === "168.63.129.16" ? "" : `-  Your custom DNS server ${dnsServer} was used for resolving hostname, but there is no DNS entry on the server for **${hostname}**, please check your DNS server.\r\n\r\n`) +
+                (dnsServers.filter(s => s != "").length == 0 ? "" : `-  Your custom DNS server was used for resolving hostname, but there is no DNS entry on the server for **${hostname}**, please check your DNS server.\r\n\r\n`) +
                 "-  If your target endpoint is an Azure service with Private Endpoint enabled, please check its Private Endpoint DNS Zone settings.\r\n\r\n"
             views.push(new CheckStepView({
                 title: `failed to resolve the IP of ${hostname}`,
+                subChecks: subChecks,
                 level: 2
             }));
             views.push(new InfoStepView({
@@ -70,7 +109,7 @@ async function runConnectivityCheck(hostname, port, dnsServer, diagProvider, len
     }
     var msg = `Connecting to ${hostname}:${port} from your App instance`;
     if (status == 0) {
-        markdown = "Connectivity test succeeded at tcp level. " +
+        markdown = "Connectivity test succeeded at TCP level. " +
             "This means Transportation Layer connection was successfully established between this app and the target endpoint. \r\n\r\n" +
             "If your app is still having runtime connection failures with this endpoint, the possible reasons can be: \r\n\r\n" +
             "-  Service is not available, please check the status of your endpoint server.\r\n\r\n" +
@@ -79,8 +118,10 @@ async function runConnectivityCheck(hostname, port, dnsServer, diagProvider, len
             "-  The traffic was routed to a wrong destination, please check your User Defined Route Table if there is any.\r\n\r\n" +
             "-  The endpoint is an Azure Resource in a VNet in a different region. "
         resolvedIp;
+        subChecks.push({title:`TCP ping to ${hostname} was succeeded`, level:0});
         views.push(new CheckStepView({
-            title: msg + " - OK (tcp level)",
+            title: msg + " - OK (TCP level)",
+            subChecks: subChecks,
             level: 0
         }));
         views.push(new InfoStepView({
@@ -89,14 +130,18 @@ async function runConnectivityCheck(hostname, port, dnsServer, diagProvider, len
             markdown: markdown
         }));
     } else if (status == 1) {
-        markdown = "Connectivity test failed at tcp level. " +
+        markdown = "Connectivity test failed at TCP level. " +
             "This means the endpoint was not reachable in Transportation Layer. Possible reasons can be: \r\n\r\n" +
             "-  The endpoint does not exist, please double check the hostname:port or ip:port was correctly set. \r\n\r\n" +
             "-  The endpoint is not reachable from the VNet, please double check if the endpoint server is correctly configured. \r\n\r\n" +
             "-  There is a TCP level firewall or a Network Security Group Rule blocking the traffic from this app. Please check your firewall or NSG rules if there are any. \r\n\r\n" +
+            "-  WEBSITE_ALWAYS_FALLBACK_TO_PUBLIC_DNS setting is not supported by this connectivity check yet, if custom DNS server fails to resolve the hostname, the check will fail.\r\n\r\n" +
             resolvedIp;
+        
+        subChecks.push({title:`TCP ping to ${hostname} failed, timeout because target is unreachable`, level:2});
         views.push(new CheckStepView({
-            title: msg + " - failed, timeout because target unreachable",
+            title: msg + " - failed, timeout because target is unreachable",
+            subChecks: subChecks,
             level: 2
         }));
         views.push(new InfoStepView({
@@ -106,8 +151,10 @@ async function runConnectivityCheck(hostname, port, dnsServer, diagProvider, len
         }));
 
     } else {
+        subChecks.push({title:`TCP ping to ${hostname} failed, errorcode:${status}`, level:2});
         views.push(new CheckStepView({
             title: msg + " - failed, errorcode:${status}",
+            subChecks: subChecks,
             level: 2
         }));
         views.push(new InfoStepView({
@@ -420,22 +467,24 @@ function checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, data
     var serverFarmId = data.serverFarmId;
     var kuduReachablePromise = data.kuduReachablePromise;
     var kuduReachable = null;
-    var dnsServer = null;
-    var configCheckViewsPromise = (async () => {
+    var dnsServers = [];
+
+    var configCheckViewsPromise = (async function generateConfigCheckViews() {
         var views = [], subChecks = [];
+        var level = 0, skipReason = null;
+        var titlePostfix = "";
         var configCheckView = new CheckStepView({
             title: "Network Configuration is healthy",
             level: 0
         });
         views.push(configCheckView);
         var subnetSizeCheckPromise = checkSubnetSizeAsync(diagProvider, subnetDataPromise, serverFarmId, permMgr);
-        var dnsCheckResultPromise = checkDnsSetting(siteInfo, diagProvider);
+        var dnsCheckResultPromise = checkDnsSettingAsync(siteInfo, diagProvider);
 
         var subnetSizeResult = await subnetSizeCheckPromise;
         if (subnetSizeResult != null) {
             if (subnetSizeResult.checkResult.level == 1) {
-                configCheckView.title = "Network Configuration is suboptimal";
-                configCheckView.level = 1;
+                level = 1;
             }
             views = views.concat(subnetSizeResult.views);
             subChecks.push(subnetSizeResult.checkResult);
@@ -444,23 +493,36 @@ function checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, data
         kuduReachable = await kuduReachablePromise;
         if (kuduReachable) {
             var dnsCheckResult = await dnsCheckResultPromise;
-            dnsServer = dnsCheckResult.dnsServer;
+            dnsServers = dnsCheckResult.dnsServers;
             views = views.concat(dnsCheckResult.views);
             subChecks = subChecks.concat(dnsCheckResult.subChecks);
-            if (dnsServer == null) {
-                configCheckView.title = "Network Configuration is unhealthy";
-                configCheckView.level = 2;
+            if (dnsServers.length === 0) {
+                level = 2;
+            }else if(dnsCheckResult.level == 1){
+                level = Math.max(level, 1);
             }
         } else {
-            subChecks.push({ title: "DNS check was skipped due to having no access to kudu", level: 3 });
-            if(subnetSizeResult!=null){
-                configCheckView.title += " (incomplete result)";
-            }else{
+            subChecks.push({ title: "DNS check was skipped due to having no access to Kudu", level: 3 });
+            if (subnetSizeResult != null) {
+                titlePostfix = " (incomplete result)";
+            } else {
                 // no check is done
-                configCheckView.title = "Network Configuration checks are skipped due to kudu is inaccessible";
-                configCheckView.level = 3;
+                skipReason = "Kudu is inaccessible";
+                level = 3;
             }
         }
+
+        if(level == 1){
+            configCheckView.title = "Network Configuration is suboptimal";
+            configCheckView.level = 1;
+        }else if(level == 2){
+            configCheckView.title = "Network Configuration is unhealthy";
+            configCheckView.level = 2;
+        }else if(level == 3){
+            configCheckView.title = `Network Configuration checks are skipped due to ${skipReason}`;
+            configCheckView.level = 3;
+        }
+        configCheckView.title += titlePostfix;
         configCheckView.subChecks = subChecks;
         return views;
     })();
@@ -468,14 +530,14 @@ function checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, data
     flowMgr.addViews(isContinuedPromise.then(c => c ? configCheckViewsPromise : null), "Checking Network Configuration...");
 
     var state = null;
-    var connectivityCheckViewPromise = (async () => {
+    var connectivityCheckViewPromise = (async function generateConnectivityCheckViews() {
         var isContinued = await isContinuedPromise;
         await configCheckViewsPromise;
         if (!kuduReachable) {
-            return [new CheckStepView({ title: "Connectivity check (tcpping and nameresolver) is not available due to kudu is inaccessible.", level: 3 })];
+            return [new CheckStepView({ title: "Connectivity check (tcpping and nameresolver) is not available due to Kudu is inaccessible.", level: 3 })];
         }
 
-        if (dnsServer == null || !isContinued) {
+        if (dnsServers.length === 0 || !isContinued) {
             return [];
         }
 
@@ -495,7 +557,7 @@ function checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, data
                 var splitted = userInput.split(":");
                 var hostname, port;
 
-                if(userInput.length > userInputLimit){
+                if (userInput.length > userInputLimit) {
                     this.error = "invalid endpoint";
                     return;
                 }
@@ -522,7 +584,7 @@ function checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, data
                         userInput = userInput.length > userInputLimitInUI ? userInput.substr(0, userInputLimitInUI) + "..." : userInput;
                     }
                 }
-                flowMgr.addViews(runConnectivityCheck(hostname, port, dnsServer, diagProvider, userInputLimitInUI), `Connecting to ${userInput}...`);
+                flowMgr.addViews(runConnectivityCheck(hostname, port, dnsServers, diagProvider, userInputLimitInUI), `Connecting to ${userInput}...`);
                 this.collapsed = true;
             }
         })];
@@ -982,7 +1044,7 @@ async function checkPrivateIPAsync(diagProvider, instancesObj, isKuduAccessibleP
 
     if (!(await isKuduAccessiblePromise)) {
         views.push(new CheckStepView({
-            title: `Private IP allocation check is skipped because kudu is unreachable`,
+            title: `Private IP allocation check is skipped because Kudu is unreachable`,
             level: 3
         }));
         isContinue = "Incomplete";
@@ -1052,18 +1114,20 @@ async function checkPrivateIPAsync(diagProvider, instancesObj, isKuduAccessibleP
     return { views, isContinue };
 }
 
-async function checkDnsSetting(siteInfo, diagProvider) {
+async function checkDnsSettingAsync(siteInfo, diagProvider) {
     var views = [], subChecks = [];
-    var dnsServer = null;
+    var dnsServers = [];
     var vnetDns = [];
+    var level = 0;
 
     var appSettings = await diagProvider.getAppSettings();
     var dnsAppSettings = [appSettings["WEBSITE_DNS_SERVER"], appSettings["WEBSITE_DNS_ALT_SERVER"]].filter(i => i != null);
+    var alwaysFallBackToPublicDns = (appSettings["WEBSITE_ALWAYS_FALLBACK_TO_PUBLIC_DNS"] == 1);
+
 
     var dnsSettings = null;
     var dnsSettingSource = null;
     if (dnsAppSettings.length > 0) {
-
         subChecks.push({
             title: `Detected DNS ${dnsAppSettings.join(";")} configured in App Settings.`,
             level: 0
@@ -1103,13 +1167,14 @@ async function checkDnsSetting(siteInfo, diagProvider) {
                 vnetDns.sort();
                 dnsSettings = vnetDns.slice(0, 2);
                 subChecks.push({
-                    title: `Detected ${vnetDns.length} VNet DNS settings`,
+                    title: `Detected ${vnetDns.length} VNet DNS settings, only 2 of them will be used`,
                     level: 1
                 });
-                markdown = `You have ${vnetDns.length} custom DNS set in VNet, but only first two ${dnsSettings.join(";")} will be used in Windows AppService`;
+                level = 1;
+                var markdown = `You have ${vnetDns.length} custom DNS servers set in VNet, but only first two ${dnsSettings.join(" and ")} will be used in Windows AppService`;
 
                 views.push(new InfoStepView({
-                    infoType: 0,
+                    infoType: 1,
                     title: "About DNS settings limitation",
                     markdown: markdown
                 }));
@@ -1125,6 +1190,17 @@ async function checkDnsSetting(siteInfo, diagProvider) {
     }
 
     if (dnsSettings != null) {
+        if (!alwaysFallBackToPublicDns) {
+            subChecks.push({
+                title: "WEBSITE_ALWAYS_FALLBACK_TO_PUBLIC_DNS is not set or set to 0, Azure DNS won't be applied",
+                level: 3
+            });
+        } else {
+            subChecks.push({
+                title: "WEBSITE_ALWAYS_FALLBACK_TO_PUBLIC_DNS is set to 1, Azure DNS will be applied as backup",
+                level: 3
+            });
+        }
         // verify if custom dns is reachable
         var p1 = diagProvider.tcpPingAsync(dnsSettings[0], 53);
         var p2 = dnsSettings.length >= 2 ? diagProvider.tcpPingAsync(dnsSettings[1], 53) : Promise.resolve(null);
@@ -1132,35 +1208,63 @@ async function checkDnsSetting(siteInfo, diagProvider) {
         var r1 = await p1;
         var r2 = await p2;
         if (r1.status == 0) {
-            dnsServer = dnsSettings[0];
-        } else if (r2 && r2.status == 0) {
-            dnsServer = dnsSettings[1];
+            dnsServers.push(dnsSettings[0]);
+        } else {
+            level = 1;
+            subChecks.push({
+                title: `DNS server ${dnsSettings[0]} is not reachable`,
+                level: 1
+            });
         }
 
-        if (dnsServer == null) {
-            subChecks.push({
-                title: `Custom DNS server ${dnsSettings.slice(0, 2).join(" or ")} is not reachable!`,
-                level: 2
-            });
-            views.push(new InfoStepView({
-                infoType: 1,
-                title: "Issue found: custom DNS is not reachable",
-                markdown: `You have custom DNS server ${dnsSettings.slice(0, 2).join(";")} configured in ${dnsSettingSource} but they are not reachable from this app, please double check if the DNS server is working properly. `
-            }));
+        if (r2) {
+            if (r2.status == 0) {
+                dnsServers.push(dnsSettings[1]);
+            } else {
+                level = 1;
+                subChecks.push({
+                    title: `DNS server ${dnsSettings[1]} is not reachable`,
+                    level: 1
+                });
+            }
+        }
+
+        if (dnsServers.length == 0) {
+            if (!alwaysFallBackToPublicDns) {
+                subChecks.push({
+                    title: `None of your custom DNS server is reachable`,
+                    level: 2
+                });
+                views.push(new InfoStepView({
+                    infoType: 1,
+                    title: "Issue found: custom DNS is not reachable",
+                    markdown: `You have custom DNS server ${dnsSettings.slice(0, 2).join(" and ")} configured in ${dnsSettingSource} but they are not reachable from this app, please double check if the settings are correct and DNS server is working properly. `
+                }));
+            } else {
+                subChecks.push({
+                    title: `None of your custom DNS server is reachable, Azure DNS will be applied as backup`,
+                    level: 1
+                });
+            }
         }
         else {
             subChecks.push({
-                title: `Verified custom DNS ${dnsServer} is reachable. It will be used to resolve hostnames.`,
+                title: `Verified custom DNS ${dnsServers.join(" and ")} ${dnsServers.length > 1 ? "are" : "is"} reachable. ` +
+                    `${dnsServers.length > 1 ? "They" : "It"} will be used to resolve hostnames.`,
                 level: 0
             });
         }
+
+        if (alwaysFallBackToPublicDns) {
+            dnsServers.push("");
+        }
     } else {
-        dnsServer = "";
+        dnsServers = [""];
         subChecks.push({
             title: `No custom DNS is set, default Azure DNS will be applied`,
             level: 0
         });
     }
-    return { views, dnsServer, subChecks };
+    return { views, dnsServers, subChecks, level };
 }
 
