@@ -13,7 +13,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PortalService } from 'projects/app-service-diagnostics/src/app/startup/services/portal.service';
 import { configFailureFlow } from './network-check-flows/configFailureFlow.js';
 import { connectionFailureFlow } from './network-check-flows/connectionFailureFlow.js';
-import { learnMoreFlow } from './network-check-flows/learnMoreFlow.js'; 
+import { learnMoreFlow } from './network-check-flows/learnMoreFlow.js';
 
 abstract class NetworkCheckFlow {
     public id: string;
@@ -45,15 +45,15 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
     debugMode = false;
     isSupportCenter: boolean;
     logEvent: (eventMessage: string, properties: { [name: string]: string }, measurements?: any) => void;
-    private _feedbackQuestions = "- Is your networking issue resolved? \r\n\r\n\r\n" + 
-    "- What was the issue?\r\n\r\n\r\n" +
-    "- If the issue was not resolved, what can be the reason?\r\n\r\n\r\n" + 
-    "- What else do you expect from this tool?\r\n";
+    private _feedbackQuestions = "- Is your networking issue resolved? \r\n\r\n\r\n" +
+        "- What was the issue?\r\n\r\n\r\n" +
+        "- If the issue was not resolved, what can be the reason?\r\n\r\n\r\n" +
+        "- What else do you expect from this tool?\r\n";
     //checks: any[];
 
     constructor(private _siteService: SiteService, private _armService: ArmService, private _telemetryService: TelemetryService, private _globals: Globals, private _route: ActivatedRoute, private _router: Router, private _portalService: PortalService) {
         try {
-            var feedbackPanelConfig = { defaultFeedbackText:this._feedbackQuestions, detectorName: "NetworkCheckingTool", notResetOnDismissed:true, url:window.location.href }
+            var feedbackPanelConfig = { defaultFeedbackText: this._feedbackQuestions, detectorName: "NetworkCheckingTool", notResetOnDismissed: true, url: window.location.href }
             _globals.messagesData.feedbackPanelConfig = feedbackPanelConfig;
             var queryParams = _route.snapshot.queryParams;
             this.isSupportCenter = (queryParams["isSupportCenter"] === "true");
@@ -103,24 +103,28 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
                 flows = flows.concat(remoteFlows);
             }
             var mgr = this.stepFlowManager;
-            var dropDownView = new DropdownStepView({
-                id: "InitialDropDown",
-                description: "Tell us more about the problem you are experiencing:",
-                dropdowns: [{
-                    options: flows.map(f => f.title),
-                    placeholder: "Please select..."
-                }],
-                expandByDefault: false,
-                async callback(dropdownIdx: number, selectedIdx: number): Promise<void> {
-                    mgr.reset(state);
-                    var flow = flows[selectedIdx];
-                    globals.messagesData.currentNetworkCheckFlow = flow.id;
-                    globals.messagesData.feedbackPanelConfig.detectorName = "NetworkCheckingTool." + flow.id;
-                    telemetryService.logEvent("NetworkCheck.FlowSelected", { flowId: flow.id });
-                    mgr.setFlow(flow);
-                }
-            });
-            var state = mgr.addView(dropDownView);
+            if (this.siteInfo.kind.includes("functionapp") && this.siteInfo.sku.toLowerCase() == "dynamic") {
+                mgr.addView(new CheckStepView({ id: "NotSupportedCheck", title: "VNet integration is not supported by Consumption Plan Function App", level: 2 }));
+            } else {
+                var dropDownView = new DropdownStepView({
+                    id: "InitialDropDown",
+                    description: "Tell us more about the problem you are experiencing:",
+                    dropdowns: [{
+                        options: flows.map(f => f.title),
+                        placeholder: "Please select..."
+                    }],
+                    expandByDefault: false,
+                    async callback(dropdownIdx: number, selectedIdx: number): Promise<void> {
+                        mgr.reset(state);
+                        var flow = flows[selectedIdx];
+                        globals.messagesData.currentNetworkCheckFlow = flow.id;
+                        globals.messagesData.feedbackPanelConfig.detectorName = "NetworkCheckingTool." + flow.id;
+                        telemetryService.logEvent("NetworkCheck.FlowSelected", { flowId: flow.id });
+                        mgr.setFlow(flow);
+                    }
+                });
+                var state = mgr.addView(dropDownView);
+            }
         } catch (e) {
             console.log("loadFlowsAsync failed", e);
             throw e;

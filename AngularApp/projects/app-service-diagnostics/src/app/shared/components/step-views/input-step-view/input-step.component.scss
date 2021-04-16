@@ -1,6 +1,42 @@
-.input-section{
-    padding-top: 10px;
-    padding-bottom: 5px;
+.input-step{
+    padding: 10px 10px 10px 10px;
+    fab-primary-button{
+        margin-left: -1px;
+
+        .ms-Button{
+            height: 28px;
+            margin-top: -10px;
+            width: fit-content;
+            border-radius: 2px;
+        }
+
+        .ms-Button-flexContainer{
+            font-size: 13px;
+            font-weight: 500;
+        }
+    }
+
+    .input-step-title{
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .input-content{
+        position: absolute;
+        margin-left: 200px;
+        margin-top: -19px;
+    }
+
+    .input-expand{
+        float: right;
+        margin-top: -47px;
+        margin-right: 2px;
+        .ib-pencil{
+            height: 15px;
+            width: 15px;
+        }
+    }
+
 
     .input-tooltip{
         margin-top: 2px;
@@ -8,49 +44,29 @@
         margin-left: 3px;
     }
 
-    .input-box{
-        position: absolute;
-        width: 225px;
-        margin-top: -21px;
-        margin-left: 200px;
-    }
+    .input-section{
+        padding-top: 10px;
+        padding-bottom: 5px;
 
-    .input-error{
-        margin-left: 200px;
-        color: red;
-        margin-top: 12px;
-    }
-
-    .input-error-icon{
-        margin-right: 4px;
-        margin-top: 3px;
-        float: left;
-    }
-}
-
-.input-check-button{
-    margin-left: -1px;
-
-    .ms-Button{
-        height: 28px;
-        margin-top: -10px;
-        width: fit-content;
-        border-radius: 2px;
-    }
-
-    .ms-Button-flexContainer{
-        font-size: 13px;
-        font-weight: 500;
+        .input-box{
+            position: absolute;
+            margin-left: 200px;
+            margin-top: -21px;
+            width: 225px;
+        }
+    
+        .input-error{
+            margin-left: 200px;
+            color: red;
+            margin-top: 12px;
+        }
+    
+        .input-error-icon{
+            margin-right: 4px;
+            margin-top: 3px;
+            float: left;
+        }
     }
 }
 
-
-.input-step{
-    padding: 10px 10px 10px 10px;
-} 
-
-.input-step-title{
-    font-size: 14px;
-    font-weight: 500;
-}
 

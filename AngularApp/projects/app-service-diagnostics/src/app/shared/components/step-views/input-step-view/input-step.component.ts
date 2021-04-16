@@ -24,6 +24,10 @@ export class InputStepComponent implements OnInit{
     this.inputStepView = <InputStepView> this.viewModel.stepView; 
   }
 
+  expand(){
+    this.inputStepView.collapsed = false;
+  }
+
 }
 
 

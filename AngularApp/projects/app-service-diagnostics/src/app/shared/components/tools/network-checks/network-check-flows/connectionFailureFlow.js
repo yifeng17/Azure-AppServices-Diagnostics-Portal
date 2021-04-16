@@ -6,7 +6,7 @@ export var connectionFailureFlow = {
         var isKuduAccessible = true;
 
         var kuduAvailabilityCheckPromise = (async () => {
-            isKuduAccessible = await diagProvider.checkKuduReachable(10);
+            isKuduAccessible = await diagProvider.checkKuduReachable(30);
             var views = [];
             if (isKuduAccessible === false) {
                 views.push(new CheckStepView({
@@ -18,9 +18,10 @@ export var connectionFailureFlow = {
                     infoType: 1,
                     title: "Recommendations",
                     markdown: "[Kudu](https://techcommunity.microsoft.com/t5/educator-developer-blog/using-kudu-and-deploying-apps-into-azure/ba-p/378585) is not accessible. Possible reason can be:\r\n\r\n" +
-                        "1. Your app has IP restriction or Private Endpoint turned on. Please check your configuration and consider running this check in an environment that is allowed to access your app" +
+                        "- Timeout, please click refresh button and retry\r\n\r\n" +
+                        "- Your app has IP restriction or Private Endpoint turned on. Please check your configuration and consider running this check in an environment that is allowed to access your app" +
                         " or temporarily allow the traffic by adding your client IP into IP restriction allow list or turning of the Private Endpoint for running the network checks\r\n\r\n" +
-                        "2. You don't have permission to access kudu site, please check your permission\r\n\r\n" +
+                        "- You don't have permission to access kudu site, please check your permission\r\n\r\n" +
                         "The diagnostic will be incomplete without kudu access."
                 }));
             }
@@ -51,9 +52,9 @@ async function runConnectivityCheck(hostname, port, dnsServer, diagProvider, len
         hostname = hostname.length > lengthLimit ? hostname.substr(0, lengthLimit) + "..." : hostname;
         if (ip == null) {
             markdown = `DNS server cannot resolve the hostname **${hostname}**, possible reasons can be:\r\n` +
-                `1. hostname **${hostname}** does not exist, please double check if the hostname is correct\r\n\r\n` +
-                (dnsServer === "168.63.129.16" ? "" : `1. Your custom DNS server ${dnsServer} was used for resolving hostname, but there is no DNS entry on the server for **${hostname}**, please check your DNS server.\r\n\r\n`) +
-                "1. If your target endpoint is an Azure service with Private Endpoint enabled, please check its Private Endpoint DNS Zone settings.\r\n\r\n"
+                `-  hostname **${hostname}** does not exist, please double check if the hostname is correct\r\n\r\n` +
+                (dnsServer === "168.63.129.16" ? "" : `-  Your custom DNS server ${dnsServer} was used for resolving hostname, but there is no DNS entry on the server for **${hostname}**, please check your DNS server.\r\n\r\n`) +
+                "-  If your target endpoint is an Azure service with Private Endpoint enabled, please check its Private Endpoint DNS Zone settings.\r\n\r\n"
             views.push(new CheckStepView({
                 title: `failed to resolve the IP of ${hostname}`,
                 level: 2
@@ -67,18 +68,19 @@ async function runConnectivityCheck(hostname, port, dnsServer, diagProvider, len
         }
         resolvedIp = `hostname **${hostname}** was resolved to IP: ` + ip;
     }
+    var msg = `Connecting to ${hostname}:${port} from your App instance`;
     if (status == 0) {
         markdown = "Connectivity test succeeded at tcp level. " +
             "This means Transportation Layer connection was successfully established between this app and the target endpoint. \r\n\r\n" +
             "If your app is still having runtime connection failures with this endpoint, the possible reasons can be: \r\n\r\n" +
-            "1. Service is not available, please check the status of your endpoint server.\r\n\r\n" +
-            "2. Endpoint firewall blocks Web App or Function App's IP address, please check the IP restriction or application level firewall.\r\n\r\n" +
-            "3. The traffic was blocked by Network Security Group or Firewall, please check your NSG or/and Firewall configuration if there is any.\r\n\r\n" +
-            "4. The traffic was routed to a wrong destination, please check your User Defined Route Table if there is any.\r\n\r\n" +
-            "5. The endpoint is an Azure Resource in a VNet in a different region. "
+            "-  Service is not available, please check the status of your endpoint server.\r\n\r\n" +
+            "-  Endpoint firewall blocks Web App or Function App's IP address, please check the IP restriction or application level firewall.\r\n\r\n" +
+            "-  The traffic was blocked by Network Security Group or Firewall, please check your NSG or/and Firewall configuration if there is any.\r\n\r\n" +
+            "-  The traffic was routed to a wrong destination, please check your User Defined Route Table if there is any.\r\n\r\n" +
+            "-  The endpoint is an Azure Resource in a VNet in a different region. "
         resolvedIp;
         views.push(new CheckStepView({
-            title: `Connecting to ${hostname}:${port} - OK (tcp level)`,
+            title: msg + " - OK (tcp level)",
             level: 0
         }));
         views.push(new InfoStepView({
@@ -89,12 +91,12 @@ async function runConnectivityCheck(hostname, port, dnsServer, diagProvider, len
     } else if (status == 1) {
         markdown = "Connectivity test failed at tcp level. " +
             "This means the endpoint was not reachable in Transportation Layer. Possible reasons can be: \r\n\r\n" +
-            "1. The endpoint does not exist, please double check the hostname:port or ip:port was correctly set. \r\n\r\n" +
-            "2. The endpoint is not reachable from the VNet, please double check if the endpoint server is correctly configured. \r\n\r\n" +
-            "3. There is a TCP level firewall or a Network Security Group Rule blocking the traffic from this app. Please check your firewall or NSG rules if there are any. \r\n\r\n" +
+            "-  The endpoint does not exist, please double check the hostname:port or ip:port was correctly set. \r\n\r\n" +
+            "-  The endpoint is not reachable from the VNet, please double check if the endpoint server is correctly configured. \r\n\r\n" +
+            "-  There is a TCP level firewall or a Network Security Group Rule blocking the traffic from this app. Please check your firewall or NSG rules if there are any. \r\n\r\n" +
             resolvedIp;
         views.push(new CheckStepView({
-            title: `Connecting to ${hostname}:${port} - failed, timeout because target unreachable`,
+            title: msg + " - failed, timeout because target unreachable",
             level: 2
         }));
         views.push(new InfoStepView({
@@ -105,13 +107,13 @@ async function runConnectivityCheck(hostname, port, dnsServer, diagProvider, len
 
     } else {
         views.push(new CheckStepView({
-            title: `Connecting to ${hostname}:${port} - failed, errorcode:${status}`,
+            title: msg + " - failed, errorcode:${status}",
             level: 2
         }));
         views.push(new InfoStepView({
             infoType: 1,
             title: "Explanation of the result and recommended next steps",
-            markdown: "Unknown problem, please send a feedback to let us know and consider creating a support ticket for this."
+            markdown: "Unknown problem, please send a feedback to let us know."
         }));
 
     }
@@ -451,7 +453,13 @@ function checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, data
             }
         } else {
             subChecks.push({ title: "DNS check was skipped due to having no access to kudu", level: 3 });
-            configCheckView.title += " (incomplete result)";
+            if(subnetSizeResult!=null){
+                configCheckView.title += " (incomplete result)";
+            }else{
+                // no check is done
+                configCheckView.title = "Network Configuration checks are skipped due to kudu is inaccessible";
+                configCheckView.level = 3;
+            }
         }
         configCheckView.subChecks = subChecks;
         return views;
@@ -472,18 +480,25 @@ function checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, data
         }
 
         return [new InputStepView({
-            title: "Specify a server endpoint you want to test connectivity to",
+            title: "Specify an endpoint you want to test connectivity to",
             placeholder: "hostname:port or ip:port",
             buttonText: "Continue",
             entry: "Endpoint",
             text: "",
             tooltip: "e.g. microsoft.com:443 or 8.8.8.8:53\r\ncommon service ports: http - 80; https - 443; sql server - 1433; dns - 53",
             error: null,
+            collapsed: false,
             async callback(userInput) {
                 flowMgr.reset(state);
-                const userInputLimit = 50; // only applies to the UI
+                const userInputLimitInUI = 50; // only applies to the UI, will show ... if more than 50 chars
+                const userInputLimit = 300;
                 var splitted = userInput.split(":");
                 var hostname, port;
+
+                if(userInput.length > userInputLimit){
+                    this.error = "invalid endpoint";
+                    return;
+                }
 
                 if (userInput.startsWith("http")) {
                     port = userInput.startsWith("https") ? 443 : 80;
@@ -491,22 +506,24 @@ function checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, data
                     hostname = (m == null ? null : m[1]);
                     if (hostname == null) {
                         this.error = "invalid endpoint";
+                        return;
                     } else {
                         this.text = `${hostname}:${port}`;
                         userInput = this.text;
-                        userInput = userInput.length > userInputLimit ? userInput.substr(0, userInputLimit) + "..." : userInput;
-                        flowMgr.addViews(runConnectivityCheck(hostname, port, dnsServer, diagProvider, userInputLimit), `Testing ${userInput}...`);
+                        userInput = userInput.length > userInputLimitInUI ? userInput.substr(0, userInputLimitInUI) + "..." : userInput;
                     }
                 } else {
                     if (splitted.length != 2 || isNaN(port = parseInt(splitted[1]))) {
                         this.error = "invalid endpoint";
+                        return;
                     } else {
                         this.error = null;
                         hostname = splitted[0];
-                        userInput = userInput.length > userInputLimit ? userInput.substr(0, userInputLimit) + "..." : userInput;
-                        flowMgr.addViews(runConnectivityCheck(hostname, port, dnsServer, diagProvider, userInputLimit), `Testing ${userInput}...`);
+                        userInput = userInput.length > userInputLimitInUI ? userInput.substr(0, userInputLimitInUI) + "..." : userInput;
                     }
                 }
+                flowMgr.addViews(runConnectivityCheck(hostname, port, dnsServer, diagProvider, userInputLimitInUI), `Connecting to ${userInput}...`);
+                this.collapsed = true;
             }
         })];
     })();
@@ -527,7 +544,7 @@ async function checkSubnetSizeAsync(diagProvider, subnetDataPromise, serverFarmI
     var splitted = subnetAddressPrefix.split("/");
     var subnetSize = splitted.length > 0 ? splitted[1] : -1;
     var aspSku = aspData["sku"] && aspData["sku"]["name"] || '';
-    checkResult.title = `subnet size /${subnetSize} `
+    checkResult.title = `Subnet size /${subnetSize} `
 
     if (subnetSize > 26 & aspSku[0] === "P") {
         msg = `<li>Subnet <b>${subnetName}</b> is not using the recommended address prefix of /26. Please increase size of the subnet.<br/>`;

@@ -77,7 +77,6 @@ export class CheckStepView extends StepView {
     public title: string;
     public level: number;
     public subChecks?: { title: string, level: number, status?: HealthStatus }[];
-    public status?: HealthStatus;
 
     constructor(view: CheckStepView) {
         super(view);
@@ -124,6 +123,7 @@ export class InputStepView extends StepView {
     public buttonText: string;
     public tooltip: string;
     public error: string;
+    public collapsed? = false
     public callback: (input: string) => Promise<void>;
 
     constructor(view: InputStepView) {
@@ -137,6 +137,7 @@ export class InputStepView extends StepView {
         this.entry = view.entry;
         this.text = view.text;
         this.error = view.error;
+        this.collapsed = view.collapsed || false;
     }
 }
 
