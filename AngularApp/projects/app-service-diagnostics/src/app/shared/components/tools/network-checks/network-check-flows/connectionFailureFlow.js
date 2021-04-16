@@ -480,6 +480,14 @@ function checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, data
         views.push(configCheckView);
         var subnetSizeCheckPromise = checkSubnetSizeAsync(diagProvider, subnetDataPromise, serverFarmId, permMgr);
         var dnsCheckResultPromise = checkDnsSettingAsync(siteInfo, diagProvider);
+        var appSettings = await diagProvider.getAppSettings();
+        var vnetRouteAll = (appSettings["WEBSITE_VNET_ROUTE_ALL"] === "1");
+
+        if(vnetRouteAll){
+            subChecks.push({title:"WEBSITE_VNET_ROUTE_ALL is set to 1, all traffic will be routed to VNet", level:3});
+        }else{
+            subChecks.push({title:"WEBSITE_VNET_ROUTE_ALL is not set or set to 0, only private network traffic(RFC1918) will be routed to VNet", level:3});
+        }
 
         var subnetSizeResult = await subnetSizeCheckPromise;
         if (subnetSizeResult != null) {
@@ -1122,7 +1130,7 @@ async function checkDnsSettingAsync(siteInfo, diagProvider) {
 
     var appSettings = await diagProvider.getAppSettings();
     var dnsAppSettings = [appSettings["WEBSITE_DNS_SERVER"], appSettings["WEBSITE_DNS_ALT_SERVER"]].filter(i => i != null);
-    var alwaysFallBackToPublicDns = (appSettings["WEBSITE_ALWAYS_FALLBACK_TO_PUBLIC_DNS"] == 1);
+    var alwaysFallBackToPublicDns = (appSettings["WEBSITE_ALWAYS_FALLBACK_TO_PUBLIC_DNS"] === "1");
 
 
     var dnsSettings = null;
@@ -1167,7 +1175,7 @@ async function checkDnsSettingAsync(siteInfo, diagProvider) {
                 vnetDns.sort();
                 dnsSettings = vnetDns.slice(0, 2);
                 subChecks.push({
-                    title: `Detected ${vnetDns.length} VNet DNS settings, only 2 of them will be used`,
+                    title: `Detected ${vnetDns.length} VNet DNS settings, only 2 of them ${dnsSettings.join(" and ")} will be applied`,
                     level: 1
                 });
                 level = 1;
@@ -1192,12 +1200,12 @@ async function checkDnsSettingAsync(siteInfo, diagProvider) {
     if (dnsSettings != null) {
         if (!alwaysFallBackToPublicDns) {
             subChecks.push({
-                title: "WEBSITE_ALWAYS_FALLBACK_TO_PUBLIC_DNS is not set or set to 0, Azure DNS won't be applied",
+                title: "WEBSITE_ALWAYS_FALLBACK_TO_PUBLIC_DNS is not set or set to 0, Azure DNS server won't be applied",
                 level: 3
             });
         } else {
             subChecks.push({
-                title: "WEBSITE_ALWAYS_FALLBACK_TO_PUBLIC_DNS is set to 1, Azure DNS will be applied as backup",
+                title: "WEBSITE_ALWAYS_FALLBACK_TO_PUBLIC_DNS is set to 1, Azure DNS server will be applied as backup",
                 level: 3
             });
         }
@@ -1249,7 +1257,7 @@ async function checkDnsSettingAsync(siteInfo, diagProvider) {
         }
         else {
             subChecks.push({
-                title: `Verified custom DNS ${dnsServers.join(" and ")} ${dnsServers.length > 1 ? "are" : "is"} reachable. ` +
+                title: `Verified custom DNS server ${dnsServers.join(" and ")} ${dnsServers.length > 1 ? "are" : "is"} reachable. ` +
                     `${dnsServers.length > 1 ? "They" : "It"} will be used to resolve hostnames.`,
                 level: 0
             });
