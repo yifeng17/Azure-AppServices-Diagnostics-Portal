@@ -1,4 +1,4 @@
-import { Injectable, Injector } from '@angular/core';
+import { Injectable, Injector, isDevMode } from '@angular/core';
 import { Message } from './supportbot/models/message';
 import { ActivatedRoute } from '@angular/router';
 import { TimePickerInfo } from './fabric-ui/components/detector-time-picker/detector-time-picker.component';
@@ -66,5 +66,13 @@ export class Globals {
 
   updateTimePickerInfo(updatedInfo: TimePickerInfo) {
     this.timePickerInfoSub.next(updatedInfo);
+  }
+
+  get logDebugMessage():(message?: any, ...optionalParams: any[]) => void {;
+    if(isDevMode()){
+      return console.log.bind(console);
+    }else{
+      return ()=>{};
+    }
   }
 }

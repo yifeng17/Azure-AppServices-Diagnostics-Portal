@@ -49,7 +49,7 @@ async function runConnectivityCheck(hostname, port, dnsServers, diagProvider, le
         var subChecks = [];
         for (var i = 0; i < dnsServers.length; ++i) {
             var result = await diagProvider.nameResolveAsync(hostname, dnsServers[i]).catch(e => {
-                console.log(e);
+                logDebugMessage(e);
                 return {};
             });
             var dns = (dnsServers[i] == "" ? "Azure DNS server" : `DNS server ${dnsServers[i]}`);
@@ -70,7 +70,7 @@ async function runConnectivityCheck(hostname, port, dnsServers, diagProvider, le
         return { ip, subChecks };
     })();
     var tcpPingPromise = diagProvider.tcpPingAsync(hostname, port, dnsServers.length).catch(e => {
-        console.log(e);
+        logDebugMessage(e);
         return {};
     });
 

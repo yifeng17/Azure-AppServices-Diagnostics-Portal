@@ -64,6 +64,7 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
             window["networkCheckLinkClickEventLogger"] = (viewId: string, url: string, text: string) => {
                 this.logEvent("NetworkCheck.LinkClick", { viewId, url, text });
             }
+            window["logDebugMessage"] = _globals.logDebugMessage;
             if (window["debugMode"]) {
                 _telemetryService["telemetryProviders"] = [];
                 this.debugMode = window["debugMode"];
@@ -98,6 +99,7 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
             var networkCheckFlows = { connectionFailureFlow, configFailureFlow, learnMoreFlow }
             var flows = this.processFlows(networkCheckFlows);
             if (this.debugMode) {
+                window["logDebugMessage"] = console.log.bind(console);
                 var remoteFlows: any = await CheckManager.loadRemoteCheckAsync(true);
                 remoteFlows = this.processFlows(remoteFlows, "(debug)");
                 flows = flows.concat(remoteFlows);
