@@ -187,36 +187,38 @@ export class DiagProvider {
         });
     }
 
+    public async nameResolveAsync(hostname: string, dns: string, instance?: string): Promise<{ ip: string, aliases: string }> {
+        var ip: string = null, aliases: string = null;
+        if (this.isIp(hostname)) {
+            ip = hostname;
+        } else {
+            try {
+                var result = await this.runKuduCommand(`nameresolver ${hostname} ${dns}`, undefined, instance);
+                if (result != null) {
+                    if (result.includes("Aliases")) {
+                        var match = result.match(/Addresses:\s*([\S\s]*)Aliases:\s*([\S\s]*)$/);
+                        if (match != null) {
+                            ip = match[1].split("\r\n").filter(i => i.length > 0).join(";");
+                            aliases = match[2].split("\r\n").filter(i => i.length > 0).join(";");
+                        }
+                    } else {
+                        var match = result.match(/Addresses:\s*([\S\s]*)$/);
+                        if (match != null) {
+                            ip = match[1].split("\r\n").filter(i => i.length > 0).join(";");
+                        }
+                    }
+                }
+            } catch (e) {
+
+            }
+        }
+        return { ip, aliases };
+    }
+
     public async checkConnectionAsync(hostname: string, port: number, count: number = 1, dns: string = "", instance?: string): Promise<{ status: ConnectionCheckStatus, ip: string, aliases: string, statuses: ConnectionCheckStatus[] }> {
         var stack = new Error("replace_placeholder").stack;
         var promise = (async () => {
-            var nameResolverPromise = (async (): Promise<{ ip: string, aliases: string }> => {
-                var ip: string = null, aliases: string = null;
-                if (this.isIp(hostname)) {
-                    ip = hostname;
-                } else {
-                    try {
-                        var result = await this.runKuduCommand(`nameresolver ${hostname} ${dns}`, undefined, instance);
-                        if (result != null) {
-                            if (result.includes("Aliases")) {
-                                var match = result.match(/Addresses:\s*([\S\s]*)Aliases:\s*([\S\s]*)$/);
-                                if (match != null) {
-                                    ip = match[1].split("\r\n").filter(i => i.length > 0).join(";");
-                                    aliases = match[2].split("\r\n").filter(i => i.length > 0).join(";");
-                                }
-                            } else {
-                                var match = result.match(/Addresses:\s*([\S\s]*)$/);
-                                if (match != null) {
-                                    ip = match[1].split("\r\n").filter(i => i.length > 0).join(";");
-                                }
-                            }
-                        }
-                    } catch (e) {
-
-                    }
-                }
-                return { ip, aliases };
-            })();
+            var nameResolverPromise = this.nameResolveAsync(hostname, dns, instance);
 
             var pingPromise = this.tcpPingAsync(hostname, port, count, instance);
             await Promise.all([nameResolverPromise.catch(e => e), pingPromise.catch(e => e)]);
