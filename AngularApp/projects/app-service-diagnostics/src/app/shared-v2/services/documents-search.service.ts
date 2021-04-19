@@ -12,7 +12,7 @@ export class DocumentSearchService {
   private authKey: string = "";
   private url : string = "";
   private _config : DocumentSearchConfiguration;
-  private featureEnabledForSupportTopic: boolean = false;
+  private featureEnabledForPesId  : boolean = false;
 
   httpOptions = {}
 
@@ -48,17 +48,15 @@ export class DocumentSearchService {
       pesId = pesId.trim();
       supportTopicId = supportTopicId.trim();
 
-      var listOfEnabledSupportTopics =  isPublic ? this._config.documentSearchEnabledSupportTopicIds[pesId] :
-                                                   this._config.documentSearchEnabledSupportTopicIdsInternal[pesId];
-    
+      var listOfEnabledSupportTopics =  this._config.documentSearchEnabledSupportTopicIds[pesId] ;    
       var isDeepSearchEnabledForThisSupportTopic = listOfEnabledSupportTopics && (listOfEnabledSupportTopics.findIndex( x => x == supportTopicId ) > -1)
-      this.featureEnabledForSupportTopic = isDeepSearchEnabledForThisSupportTopic ;
+      this.featureEnabledForPesId = isDeepSearchEnabledForThisSupportTopic ;
     }
    
     return this._backendApi.get<string>(`api/appsettings/DeepSearch:isEnabled`)
                             // Value in App Service Application Settings are returned as strings
                             // converting this to boolean
-                            .map(status =>  ( status.toLowerCase() == "true" && this.featureEnabledForSupportTopic) );
+                            .map(status =>  ( status.toLowerCase() == "true" && this.featureEnabledForPesId) );
 
 
   }

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Query } from 'diagnostic-data';
 import { Observable} from 'rxjs';
 
 @Injectable()
@@ -15,4 +16,12 @@ export class GenericContentService {
   public constructQueryParameters(questionString: string, useStack: boolean, preferredSites: string[], excludedSites: string[],) : string {
     return null;
   }
+
+  public IsDeepSearchEnabled(pesId : string, supportTopicId : string) : Observable<boolean> {
+    return null;
+  }
+  public fetchResultsFromDeepSearch(query : Query): Observable<any>{
+    return null;
+  }
+
 }

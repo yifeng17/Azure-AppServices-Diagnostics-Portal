@@ -9,9 +9,11 @@ export class Query {
     bingSearchEnabled : boolean;
 
     customFilterConditionsForBing : string;
+    preferredSitesFromBing : string[];
+    excludedSitesFromBing : string[];
+    useStack : boolean;
 
     pesId : string;
-
     supportTopicId : string;
 }
 
@@ -22,4 +24,9 @@ export class Document{
     description : string ;
     documentType : string;
     documentSource : string
+}
+
+export enum AvailableDocumentTypes{
+    External = "External",
+    Internal = "Internal"
 }

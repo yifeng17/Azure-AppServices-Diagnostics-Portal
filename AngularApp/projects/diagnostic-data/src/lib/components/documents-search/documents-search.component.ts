@@ -83,7 +83,7 @@ export class DocumentsSearchComponent extends DataRenderBaseComponent  implement
 
   checkIfEnabled () {
     let checkStatusTask = this._documentsSearchService
-                         .IsEnabled(this.pesId, this.supportTopicId, this.isPublic )
+                         .IsEnabled(this.pesId)
                          .pipe( map((res) => res), 
                                 retryWhen(errors => {
                                 let numRetries = 0;
