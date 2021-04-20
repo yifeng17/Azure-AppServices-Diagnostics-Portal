@@ -270,7 +270,7 @@ export class StepFlowManager {
 
     private generateLogEventFunc(flow: StepFlow) {
         var telemetryService = this._telemetryService;
-        return (eventName: string, payload: any) => telemetryService.logEvent(`NetworkCheck.Flow.${flow.id}`, { eventName, payload });
+        return (eventName: string, payload: any) => telemetryService.logEvent(`NetworkCheck.Flow.${eventName}`, { flowId:flow.id, payload });
     }
 
     public logEvent: (eventName: string, payload: any) => void;
