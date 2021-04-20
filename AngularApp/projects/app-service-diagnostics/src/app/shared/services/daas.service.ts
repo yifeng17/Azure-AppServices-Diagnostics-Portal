@@ -7,7 +7,7 @@ import { SiteDaasInfo } from '../models/solution-metadata';
 import { ArmService } from './arm.service';
 import { AuthService } from '../../startup/services/auth.service';
 import { UriElementsService } from './urielements.service';
-import { Session, DiagnoserDefinition, DatabaseTestConnectionResult, MonitoringSession, MonitoringLogsPerInstance, ActiveMonitoringSession, DaasAppInfo, DaasSettings } from '../models/daas';
+import { Session, DiagnoserDefinition, DatabaseTestConnectionResult, MonitoringSession, MonitoringLogsPerInstance, ActiveMonitoringSession, DaasAppInfo, DaasSettings, MsiValidatorInput, MsiValidatorResult } from '../models/daas';
 import { SiteInfoMetaData } from '../models/site';
 
 const BlobContainerName: string = "memorydumps";
@@ -73,6 +73,11 @@ export class DaasService {
     getDatabaseTest(site: SiteInfoMetaData): Observable<DatabaseTestConnectionResult[]> {
         const resourceUri: string = this._uriElementsService.getDatabaseTestUrl(site);
         return <Observable<DatabaseTestConnectionResult[]>>this._armClient.getResourceWithoutEnvelope<Session>(resourceUri, null, true);
+    }
+
+    getMsiValidator(site: SiteInfoMetaData, msiValidatorInput : MsiValidatorInput): Observable<MsiValidatorResult> {
+        const resourceUri: string = this._uriElementsService.getMsiValidatorUrl(site, msiValidatorInput);
+        return <Observable<MsiValidatorResult>>this._armClient.getResourceWithoutEnvelope<Session>(resourceUri, null, true);
     }
 
     getDaasWebjobState(site: SiteDaasInfo): Observable<string> {

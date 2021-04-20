@@ -330,6 +330,29 @@ export class SiteFeatureService extends FeatureService {
         hostingEnvironmentKind: HostingEnvironmentKind.All,
         stack: '',
         item: {
+          id: ToolIds.MsiValidator,
+          name: ToolNames.MsiValidator,
+          category: 'Diagnostic Tools',
+          description: '',
+          featureType: FeatureTypes.Tool,
+          clickAction: this._createFeatureAction(ToolNames.DatabaseTester, 'Diagnostic Tools', () => {
+            //Need remove after A/B test
+            if (this.isLegacy) {
+              this._router.navigateByUrl(`resource${resourceId}/tools/msivalidator`);
+            } else {
+              this.navigateTo(resourceId, ToolIds.MsiValidator);
+            }
+          })
+        }
+      },
+
+      {
+        appType: AppType.WebApp | AppType.FunctionApp,
+        platform: OperatingSystem.windows,
+        sku: Sku.NotDynamic,
+        hostingEnvironmentKind: HostingEnvironmentKind.All,
+        stack: '',
+        item: {
           id: ToolIds.NetworkTrace,
           name: ToolNames.NetworkTrace,
           category: 'Diagnostic Tools',

@@ -38,6 +38,7 @@ import { JavaMemoryDumpToolComponent } from '../shared/components/tools/java-mem
 import { HttpLogAnalysisToolComponent } from '../shared/components/tools/http-loganalysis-tool/http-loganalysis-tool.component';
 import { PhpLogsAnalyzerToolComponent } from '../shared/components/tools/php-logsanalyzer-tool/php-logsanalyzer-tool.component';
 import { ConnectionDiagnoserToolComponent } from '../shared/components/tools/connection-diagnoser-tool/connection-diagnoser-tool.component';
+import { MsiValidatorToolComponent } from '../shared/components/tools/msi-validator-tool/msi-validator-tool.component';
 import { AutohealingComponent } from '../auto-healing/autohealing.component';
 import { NetworkTraceToolComponent } from '../shared/components/tools/network-trace-tool/network-trace-tool.component';
 import { DaasMainComponent } from '../shared/components/daas-main/daas-main.component';
@@ -259,6 +260,17 @@ export const HomeRoutes = RouterModule.forChild([
                     cacheComponent: true
                 }
             },
+
+            // Msi Validator Tool
+            {
+                path: 'tools/msivalidator',
+                component: MsiValidatorToolComponent,
+                data: {
+                    navigationTitle: ToolNames.MsiValidator,
+                    cacheComponent: true
+                }
+            },
+
             // CPU Monitoring tool
             {
                 path: 'tools/cpumonitoring',

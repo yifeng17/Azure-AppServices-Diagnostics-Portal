@@ -9,6 +9,7 @@ export class ToolNames {
     public static HttpLogAnalyzer: string = 'Analyze HTTP Logs';
     public static PHPLogAnalyzer: string = 'Analyze PHP Logs';
     public static DatabaseTester: string = 'Check Connection Strings';
+    public static MsiValidator: string = 'Test Managed Identity';
     public static NetworkTrace: string = 'Collect Network Trace';
     public static AutoHealing: string = 'Auto-Heal';
     public static Diagnostics: string = 'Diagnostics';
@@ -32,6 +33,7 @@ export class ToolIds {
     public static HttpLogAnalyzer: string = 'Analyze HTTP Logs';
     public static PHPLogAnalyzer: string = 'phploganalyzer';
     public static DatabaseTester: string = 'databasetester';
+    public static MsiValidator: string = 'msivalidator';
     public static NetworkTrace: string = 'networktrace';
     public static AutoHealing: string = 'mitigate';
     public static Diagnostics: string = 'Diagnostics';

@@ -193,3 +193,76 @@ export class CrashMonitoringSettings {
     MaxDumpCount: number;
     ExceptionFilter:string;
 }
+
+// Msi Validator
+export enum AvailableResourceTypes {
+    KeyVault = "KeyVault", 
+    Storage = "Storage",
+    Sql = "Sql",
+    Custom = "Custom"
+}
+
+export enum AvailableTypesOfIdentities{
+    SystemAssigned = "System Assigned Identity",
+    UserAssigned = "User Assigned Identity"
+}
+
+export class MsiValidatorInput {
+    ResourceType : AvailableResourceTypes;
+    
+    Resource : string;
+
+    TypeOfIdentity : AvailableTypesOfIdentities;
+
+    ClientId : string;
+
+    Endpoint:string;
+
+}
+
+export class MsiValidatorResult
+{
+    MsiValidatorVersion : string;
+    MsiEnabled : boolean ; 
+    GetTokenTestResult : GetTokenTestResult;
+    ConnectivityResult: ConnectivityResult;
+}
+
+export class GetTokenTestResult
+{
+    IsSuccessful : boolean;
+
+    TokenInformation : TokenInformation;
+
+    ErrorDetails : AdalError;
+}
+
+export class TokenInformation
+{
+    AccessToken : string;
+    ExpiresOn : string;
+    Resource : string;
+    TokenType : string;
+    ClientId : string; 
+}
+
+export class AdalError
+{
+    ExceptionMessage : string;
+    ErrorCode : string;
+    ServiceErrorCodes: string[];
+    InnerException : string;
+    StatusCode : number;
+    Message : string;
+    CorrelationId : string;
+  
+}
+
+
+export class ConnectivityResult
+{
+    ResourceType : AvailableResourceTypes;
+    Resource : string;
+    IsSuccessful : boolean;
+    Response : string;
+}

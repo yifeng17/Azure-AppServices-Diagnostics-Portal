@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SiteDaasInfo } from '../models/solution-metadata';
 import { SiteInfoMetaData } from '../models/site';
+import { AvailableResourceTypes, AvailableTypesOfIdentities, MsiValidatorInput } from '../models/daas';
 
 @Injectable()
 export class UriElementsService {
@@ -51,6 +52,7 @@ export class UriElementsService {
     private _diagnosticsSingleSessionDetailsPath = this._diagnosticsSingleSessionPath + '{details}';
     private _diagnosticsSingleSessionDeletePath = this._diagnosticsSingleSessionPath + 'delete';
     private _diagnosticsDatabaseTestPath = this._diagnosticsPath + 'databasetest';
+    private _diagnosticsMsiValidatorPath = this._diagnosticsPath + 'msivalidator';
     private _diagnosticsAppInfo = this._diagnosticsPath + 'appinfo';
     private _diagnosticsMonitoringPath = this._diagnosticsPath + "CpuMonitoring";
     private _diagnosticsStdoutSettingPath = this._diagnosticsPath + 'settings/stdout';
@@ -106,6 +108,24 @@ export class UriElementsService {
 
     getDatabaseTestUrl(site: SiteInfoMetaData) {
         return this._getSiteResourceUrl(site.subscriptionId, site.resourceGroupName, site.siteName, site.slot) + this._diagnosticsDatabaseTestPath;
+    }
+
+    getMsiValidatorUrl(site: SiteInfoMetaData, msiValidatorInput: MsiValidatorInput) {
+        let queryParams = "";
+        queryParams += "resourceType="+ msiValidatorInput.ResourceType;
+        if(msiValidatorInput.ResourceType == AvailableResourceTypes.Custom){
+            queryParams += "&resource="+ msiValidatorInput.Resource;
+        }
+
+        if(msiValidatorInput.TypeOfIdentity == AvailableTypesOfIdentities.UserAssigned){
+            queryParams += "&clientId="+ msiValidatorInput.ClientId;
+        }
+
+        queryParams += "&endpoint="+ msiValidatorInput.Endpoint;
+        console.log("query params = " + queryParams);
+        return this._getSiteResourceUrl(site.subscriptionId, site.resourceGroupName, site.siteName, site.slot) + 
+               this._diagnosticsMsiValidatorPath +
+               "?"+ queryParams;
     }
 
     getAppInfoUrl(site: SiteInfoMetaData) {

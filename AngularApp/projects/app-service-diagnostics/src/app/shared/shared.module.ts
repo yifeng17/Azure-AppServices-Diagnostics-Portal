@@ -51,6 +51,7 @@ import { IncidentNotificationComponent } from './components/incident-notificatio
 import { HttpLogAnalysisToolComponent } from './components/tools/http-loganalysis-tool/http-loganalysis-tool.component';
 import { PhpLogsAnalyzerToolComponent } from './components/tools/php-logsanalyzer-tool/php-logsanalyzer-tool.component';
 import { ConnectionDiagnoserToolComponent } from './components/tools/connection-diagnoser-tool/connection-diagnoser-tool.component';
+import { MsiValidatorToolComponent } from './components/tools/msi-validator-tool/msi-validator-tool.component';
 import { NetworkTraceToolComponent } from './components/tools/network-trace-tool/network-trace-tool.component';
 import { ServiceIncidentService } from './services/service-incident.service';
 import { IncidentSummaryComponent } from './components/incident-summary/incident-summary.component';
@@ -174,6 +175,7 @@ import { MarkdownModule } from 'ngx-markdown';
         HttpLogAnalysisToolComponent,
         PhpLogsAnalyzerToolComponent,
         ConnectionDiagnoserToolComponent,
+        MsiValidatorToolComponent,
         NetworkTraceToolComponent,
         IncidentSummaryComponent,
         DaasValidatorComponent,
@@ -293,6 +295,7 @@ import { MarkdownModule } from 'ngx-markdown';
         HttpLogAnalysisToolComponent,
         PhpLogsAnalyzerToolComponent,
         ConnectionDiagnoserToolComponent,
+        MsiValidatorToolComponent,
         NetworkTraceToolComponent,
         IncidentSummaryComponent,
         LiveAgentChatComponent,

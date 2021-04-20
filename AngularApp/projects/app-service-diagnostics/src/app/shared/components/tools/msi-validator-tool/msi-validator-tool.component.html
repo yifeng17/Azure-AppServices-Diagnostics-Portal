@@ -1,0 +1,103 @@
+<div class="category-container" style="width:60%">
+  <h2 tabindex="0"> Validate Managed Identity Configuration </h2>
+  <p tabindex="0">This tool validates and troubleshoot issues with Managed Identity for App Services.  </p>
+  
+  <!-- 1. Resource Type -->
+  <div class="row mt-4">
+    <div class="col-md-3 field-label">
+      <label for="resourceType">Resource Type : </label>
+    </div>
+
+    <div class="col-md-2">
+      <select name="resourceType" id="resourceType" [(ngModel)]="msiValidatorInput.ResourceType">
+        <option *ngFor="let value of availableResourceTypes"  [ngValue]="value"> {{value}} </option>        
+      </select>      
+    </div>
+  </div>
+
+  <!-- 2. Resource (Only when Resource Type is Custom) -->
+  <div class="row mt-4" *ngIf="msiValidatorInput.ResourceType == validResourceTypeToShowResourceTextBox" >
+    <div class="col-md-3 field-label">
+      <label for="resourceTxtBox">Resource:</label>
+    </div>  
+
+    <div class="col-md-2">
+      <input type="text" id="resourceTxtBox" name="resourceTxtBox">
+    </div>
+  </div>
+  
+  <!-- 3. Type of Identity to test -->
+  <div class="row mt-4">
+    <div class="col-md-3 field-label">
+      <label for="typeOfIdentity">Type of Identity : </label>
+    </div>
+
+    <div class="col-md-2">
+      <select name="typeOfIdentity" id="typeOfIdentity" [(ngModel)]="msiValidatorInput.TypeOfIdentity">
+        <option *ngFor="let value of availableIdentites"  [ngValue]="value"> {{value}} </option>        
+      </select>  
+    </div>
+  </div>
+  
+  <!-- 4. Client Id (Only when User Assigned Identity is selected) -->
+  <div class="row mt-4" *ngIf="msiValidatorInput.TypeOfIdentity == validIdentityToShowClientIdTextBox">
+    <div class="col-md-3 field-label">
+      <label for="clientIdTxtBox">Client Id:</label>
+    </div>
+
+    <div class="col-md-2">
+      <input type="text" id="clientIdTxtBox" name="clientIdTxtBox" [(ngModel)]="msiValidatorInput.ClientId">
+    </div>
+  </div>
+  
+  <!-- 5. Endpoint -->
+  <div class="row mt-4">
+    <div class="col-md-3 field-label">
+      <label for="endpointTxtBox">Endpoint:</label>
+    </div>
+
+    <div class="col-md-2">
+      <input type="text" id="endpointTxtBox" name="endpointTxtBox" [(ngModel)]="msiValidatorInput.Endpoint">
+    </div>
+  </div>
+  
+  <br>
+  <div class="row mt-4">
+    <fab-primary-button contentStyle="margin-right:10px;float:left" 
+     (onClick)="runMsiValidator()"
+    >
+      Validate Connectivity
+    </fab-primary-button>
+  </div>
+  <!-- 6. Validate Button -->
+  <br>
+  <br>
+
+  <div tabindex="0" *ngIf="retrievingInfo" style="margin-top:30px; margin-left:30px">
+    <i class="fa fa-circle-o-notch fa-2x fa-spin spin-icon" aria-hidden="true"></i>
+    <span class="loading-message">Checking connection settings for the Web App</span>
+  </div>
+
+  <div style="margin-top:10px" *ngIf="msiValidatorResult">
+    <span style="padding: 0px 10px 0px 0px">
+      <i class="fa health-icon fa-exclamation-circle unhealthy-icon-color"
+         *ngIf="!msiValidatorResult.MsiEnabled" aria-hidden="true">
+         Managed Identity is currently not enabled for the App Service.
+      </i>
+      <i class="fa health-icon fa-check-circle healthy-icon-color" 
+         *ngIf="msiValidatorResult.MsiEnabled" aria-hidden="true">
+         Managed Identity is currently enabled for the App Service.
+      </i>
+    </span>    
+  </div>
+
+  <div>
+    <code>
+        <pre>{{msiValidatorResult | json}}</pre>
+    </code>
+  </div>
+
+
+
+  <feedback-form tabindex="0" [source]="'msivalidator'"></feedback-form>
+</div>
