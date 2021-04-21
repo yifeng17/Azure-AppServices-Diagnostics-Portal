@@ -146,10 +146,6 @@ export class WebSearchComponent extends DataRenderBaseComponent implements OnIni
         if (results && results.webPages && results.webPages.value && results.webPages.value.length > 0) {
             
             var webSearchResults = results.webPages.value;
-            if(!this.deepSearchEnabled){ // Rank only results from Bing
-                webSearchResults = this.rankResultsBySource(webSearchResults);
-            }
-
             this.searchResults = webSearchResults.map(result => {
                 return {
                     title: result.name,
@@ -158,7 +154,11 @@ export class WebSearchComponent extends DataRenderBaseComponent implements OnIni
                     articleSurfacedBy : result.resultSurfacedBy || "Bing"
                 };
             });
-            this.searchResultsChange.emit(this.searchResults);
+
+            if(!this.deepSearchEnabled){ // Rank only results from Bing
+                this.searchResults = this.rankResultsBySource(this.searchResults);
+            }
+             this.searchResultsChange.emit(this.searchResults);
         }
         else {
             this.searchTermDisplay = this.searchTerm.valueOf();
@@ -168,7 +168,8 @@ export class WebSearchComponent extends DataRenderBaseComponent implements OnIni
             return {
                 title: result.title.replace(";"," "),
                 description: result.description.replace(";", " "),
-                link: result.link
+                link: result.link,
+                articleSurfacedBy : result.resultSurfacedBy || "Bing"
             };
         })), ts: Math.floor((new Date()).getTime() / 1000).toString() });
     }
@@ -197,13 +198,11 @@ export class WebSearchComponent extends DataRenderBaseComponent implements OnIni
         let searchTaskResult = null;
         let searchTaskPrefsResult = null;
         
-        var isInternal = ! this.isPublic;
-        var shouldNotCombineWebSearchDeepSearchResults = isInternal ||  !this.deepSearchEnabled;
-        if(shouldNotCombineWebSearchDeepSearchResults){
+        var shouldGetResultsFromDeepSearch = this.isPublic &&  this.deepSearchEnabled;
+        if(! shouldGetResultsFromDeepSearch){
             // make call to bing search
             var preferredSites = [];
             searchTask = this.getBingSearchTask(preferredSites);
-
             if (this.webSearchConfig && this.webSearchConfig.PreferredSites && this.webSearchConfig.PreferredSites.length>0) {
                 searchTaskPrefs = this.getBingSearchTask(this.webSearchConfig.PreferredSites);
             }
@@ -252,7 +251,6 @@ export class WebSearchComponent extends DataRenderBaseComponent implements OnIni
         query.searchTerm = this.searchTerm;
         query.searchId = this.searchId;
         query.numberOfDocuments = this.webSearchConfig.MaxResults;
-        query.productName = this.deepSearchConfig.getProductName(this.pesId);
         query.documentType = AvailableDocumentTypes.External;
         query.bingSearchEnabled = true;
         query.deepSearchEnabled = this.deepSearchEnabled;
@@ -278,6 +276,7 @@ export class WebSearchComponent extends DataRenderBaseComponent implements OnIni
             let numRetries = 0;
             return errors.pipe(delay(1000), map(err => {
                 if (numRetries++ === 3) {
+                    this.handleDeepSearchFailure();
                     throw err;
                 }
                 return err;
@@ -285,6 +284,11 @@ export class WebSearchComponent extends DataRenderBaseComponent implements OnIni
         }), catchError(e => {
             throw e;
         }));
+    }
+
+    private handleDeepSearchFailure() {
+        this.deepSearchEnabled = false;
+        this.triggerSearch();
     }
 
     private getBingSearchTask(preferredSites:string[]) {

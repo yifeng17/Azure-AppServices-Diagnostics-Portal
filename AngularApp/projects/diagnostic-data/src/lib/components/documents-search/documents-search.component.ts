@@ -10,7 +10,7 @@ import { v4 as uuid } from 'uuid';
 
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
 import { GenericDocumentsSearchService } from '../../services/generic-documents-search.service';
-import { Query } from '../../models/documents-search-models';
+import { AvailableDocumentTypes, Query } from '../../models/documents-search-models';
 import { GenericResourceService } from '../../services/generic-resource-service';
 import { GenericSupportTopicService } from '../../services/generic-support-topic.service';
 
@@ -145,12 +145,11 @@ export class DocumentsSearchComponent extends DataRenderBaseComponent  implement
     query.searchTerm = this.searchTerm;
     query.searchId = this.searchId;
     query.numberOfDocuments = 5;
-    query.productName = "App Services";
-    query.documentType = this.isPublic ? "External" : "Internal" ;
+    query.pesId = this.pesId;
+    query.documentType = AvailableDocumentTypes.Internal;
     query.documentSource = []
     query.bingSearchEnabled = false;
     query.deepSearchEnabled = true;
-    query.pesId = this.pesId;
     if(this.supportTopicId) {
       query.supportTopicId= this.supportTopicId;
     }
