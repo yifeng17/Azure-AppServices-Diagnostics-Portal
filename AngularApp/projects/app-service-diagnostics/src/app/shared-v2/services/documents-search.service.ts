@@ -38,19 +38,16 @@ export class DocumentSearchService {
 
   }
 
-  public IsEnabled(pesId : string, supportTopicId : string, isPublic : boolean) : Observable<boolean> {
+  public IsEnabled(pesId : string) : Observable<boolean> {
     // featureEnabledForProduct is disabled by default
 
     var isPesIdValid = pesId && pesId.length >0 ;
-    var isSupportTopicIdValid = supportTopicId && supportTopicId.length > 0;
-    if( isPesIdValid && isSupportTopicIdValid)
+    if( isPesIdValid )
     {
       pesId = pesId.trim();
-      supportTopicId = supportTopicId.trim();
-
-      var listOfEnabledSupportTopics =  this._config.documentSearchEnabledSupportTopicIds[pesId] ;    
-      var isDeepSearchEnabledForThisSupportTopic = listOfEnabledSupportTopics && (listOfEnabledSupportTopics.findIndex( x => x == supportTopicId ) > -1)
-      this.featureEnabledForPesId = isDeepSearchEnabledForThisSupportTopic ;
+      var listOfEnabledPesIds =  this._config.documentSearchEnabledSupportTopicIds[pesId] ;    
+      var isDeepSearchEnabledForThisPesId = listOfEnabledPesIds && (listOfEnabledPesIds.findIndex( x => x == pesId ) > -1)
+      this.featureEnabledForPesId = isDeepSearchEnabledForThisPesId ;
     }
    
     return this._backendApi.get<string>(`api/appsettings/DeepSearch:isEnabled`)
@@ -81,12 +78,4 @@ export class DocumentSearchService {
     var baseUrl = this.url
     return this.http.get<Document[]>(baseUrl  + "?" +queryString, this.httpOptions)
   }
-
-  public searchWeb(query : Query): Observable<any>
-  {
-    let queryString = this.constructUrl(query);
-    var baseUrl = this.url
-    return this.http.get<any>(baseUrl+ "?" +queryString   , this.httpOptions)
-  }
-
 }
