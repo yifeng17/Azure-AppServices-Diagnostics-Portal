@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Query } from 'diagnostic-data';
+import { Query } from '../models/documents-search-models';
 import { Observable} from 'rxjs';
 
 @Injectable()
