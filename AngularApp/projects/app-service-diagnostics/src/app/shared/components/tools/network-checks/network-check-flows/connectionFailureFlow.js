@@ -48,14 +48,13 @@ function isIp(s) {
 
 async function runConnectivityCheck(hostname, port, dnsServers, diagProvider, lengthLimit) {
     var subChecks = [];
-    var fallbackToPublicDns = false;
+    var fellbackToPublicDns = false;
     var nameResolvePromise = (async function checkNameResolve() {
         var ip = null;
         var subChecks = [];
         if (isIp(hostname)) {
             ip = hostname;
         } else {
-
             for (var i = 0; i < dnsServers.length; ++i) {
                 var result = await diagProvider.nameResolveAsync(hostname, dnsServers[i]).catch(e => {
                     logDebugMessage(e);
@@ -64,13 +63,10 @@ async function runConnectivityCheck(hostname, port, dnsServers, diagProvider, le
                 var dns = (dnsServers[i] == "" ? "Azure DNS server" : `DNS server ${dnsServers[i]}`);
                 if (result.ip != null) {
                     if (dnsServers[i] == "") {
-                        fallbackToPublicDns = true;
+                        fellbackToPublicDns = true;
                     }
-
-                    if (result.ip != hostname) {
-                        ip = result.ip;
-                        subChecks.push({ title: `Successfully resolved hostname '${hostname}' with ${dns}`, level: 0 });
-                    }
+                    ip = result.ip;
+                    subChecks.push({ title: `Successfully resolved hostname '${hostname}' with ${dns}`, level: 0 });
                     break;
                 } else {
                     subChecks.push({ title: `Failed to resolve hostname '${hostname}' with ${dns}`, level: 1 });
@@ -79,7 +75,7 @@ async function runConnectivityCheck(hostname, port, dnsServers, diagProvider, le
         }
         return { ip, subChecks };
     })();
-    var tcpPingPromise = diagProvider.tcpPingAsync(hostname, port, dnsServers.length).catch(e => {
+    var tcpPingPromise = diagProvider.tcpPingAsync(hostname, port).catch(e => {
         logDebugMessage(e);
         return {};
     });
@@ -1261,7 +1257,7 @@ async function checkDnsSettingAsync(siteInfo, diagProvider) {
                 }));
             } else {
                 subChecks.push({
-                    title: `None of your custom DNS server is reachable, Azure DNS will be applied as backup`,
+                    title: `None of your custom DNS server is reachable, Azure DNS will be applied`,
                     level: 1
                 });
             }

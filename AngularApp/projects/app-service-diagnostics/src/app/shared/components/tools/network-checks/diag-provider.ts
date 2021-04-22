@@ -147,10 +147,10 @@ export class DiagProvider {
         });
     }
 
-    public async tcpPingAsync(hostname: string, port: number, count: number = 1, instance?: string): Promise<{ status: ConnectionCheckStatus, statuses: ConnectionCheckStatus[] }> {
+    public async tcpPingAsync(hostname: string, port: number, count: number = 1, timeout: number = 10, instance?: string): Promise<{ status: ConnectionCheckStatus, statuses: ConnectionCheckStatus[] }> {
         var stack = new Error("replace_placeholder").stack;
         var promise = (async () => {
-            var pingPromise = this.runKuduCommand(`tcpping -n ${count} ${hostname}:${port}`, undefined, instance).catch(e => {
+            var pingPromise = this.runKuduCommand(`tcpping -n ${count} -w ${timeout} ${hostname}:${port}`, undefined, instance).catch(e => {
                 console.log("tcpping failed", e);
                 return null;
             });
