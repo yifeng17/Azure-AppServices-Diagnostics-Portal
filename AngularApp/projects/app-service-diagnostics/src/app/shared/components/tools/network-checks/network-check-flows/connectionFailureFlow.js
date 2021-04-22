@@ -1,7 +1,7 @@
 import {GetArmData, GetWebAppVnetInfo, GetSubnet, ResourcePermissionCheckManager} from './flowMisc.js';
 
 export var connectionFailureFlow = {
-    title: "I'm unable to connect to a resource, such as SQL or Redis or on-prem, in my Virtual Network",
+    title: "I'm unable to connect to a resource, such as SQL db or Redis db or on-prems, in my Virtual Network",
     async func(siteInfo, diagProvider, flowMgr) {
         var isKuduAccessible = true;
 
@@ -41,35 +41,41 @@ export var connectionFailureFlow = {
     }
 }
 
+function isIp(s) {
+    // TODO IPv6
+    return (/^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}$/).test(s);
+}
+
 async function runConnectivityCheck(hostname, port, dnsServers, diagProvider, lengthLimit) {
     var subChecks = [];
-    var fallbackToPublicDns = false;
+    var fellbackToPublicDns = false;
     var nameResolvePromise = (async function checkNameResolve() {
         var ip = null;
         var subChecks = [];
-        for (var i = 0; i < dnsServers.length; ++i) {
-            var result = await diagProvider.nameResolveAsync(hostname, dnsServers[i]).catch(e => {
-                logDebugMessage(e);
-                return {};
-            });
-            var dns = (dnsServers[i] == "" ? "Azure DNS server" : `DNS server ${dnsServers[i]}`);
-            if (result.ip != null) {
-                if(dnsServers[i] == ""){
-                    fallbackToPublicDns = true;
-                }
-
-                if (result.ip != hostname) {
+        if (isIp(hostname)) {
+            ip = hostname;
+        } else {
+            for (var i = 0; i < dnsServers.length; ++i) {
+                var result = await diagProvider.nameResolveAsync(hostname, dnsServers[i]).catch(e => {
+                    logDebugMessage(e);
+                    return {};
+                });
+                var dns = (dnsServers[i] == "" ? "Azure DNS server" : `DNS server ${dnsServers[i]}`);
+                if (result.ip != null) {
+                    if (dnsServers[i] == "") {
+                        fellbackToPublicDns = true;
+                    }
                     ip = result.ip;
                     subChecks.push({ title: `Successfully resolved hostname '${hostname}' with ${dns}`, level: 0 });
+                    break;
+                } else {
+                    subChecks.push({ title: `Failed to resolve hostname '${hostname}' with ${dns}`, level: 1 });
                 }
-                break;
-            } else {
-                subChecks.push({ title: `Failed to resolve hostname '${hostname}' with ${dns}`, level: 1 });
             }
         }
         return { ip, subChecks };
     })();
-    var tcpPingPromise = diagProvider.tcpPingAsync(hostname, port, dnsServers.length).catch(e => {
+    var tcpPingPromise = diagProvider.tcpPingAsync(hostname, port).catch(e => {
         logDebugMessage(e);
         return {};
     });
@@ -118,7 +124,7 @@ async function runConnectivityCheck(hostname, port, dnsServers, diagProvider, le
             "-  The traffic was routed to a wrong destination, please check your User Defined Route Table if there is any.\r\n\r\n" +
             "-  The endpoint is an Azure Resource in a VNet in a different region. "
         resolvedIp;
-        subChecks.push({title:`TCP ping to ${hostname} was succeeded`, level:0});
+        subChecks.push({ title: `TCP ping to ${hostname} was succeeded`, level: 0 });
         views.push(new CheckStepView({
             title: msg + " - OK (TCP level)",
             subChecks: subChecks,
@@ -137,8 +143,8 @@ async function runConnectivityCheck(hostname, port, dnsServers, diagProvider, le
             "-  There is a TCP level firewall or a Network Security Group Rule blocking the traffic from this app. Please check your firewall or NSG rules if there are any. \r\n\r\n" +
             "-  WEBSITE_ALWAYS_FALLBACK_TO_PUBLIC_DNS setting is not supported by this connectivity check yet, if custom DNS server fails to resolve the hostname, the check will fail.\r\n\r\n" +
             resolvedIp;
-        
-        subChecks.push({title:`TCP ping to ${hostname} failed, timeout because target is unreachable`, level:2});
+
+        subChecks.push({ title: `TCP ping to ${hostname} failed, timeout because target is unreachable`, level: 2 });
         views.push(new CheckStepView({
             title: msg + " - failed, timeout because target is unreachable",
             subChecks: subChecks,
@@ -151,9 +157,9 @@ async function runConnectivityCheck(hostname, port, dnsServers, diagProvider, le
         }));
 
     } else {
-        subChecks.push({title:`TCP ping to ${hostname} failed, errorcode:${status}`, level:2});
+        subChecks.push({ title: `TCP ping to ${hostname} failed, errorcode:${status}`, level: 2 });
         views.push(new CheckStepView({
-            title: msg + " - failed, errorcode:${status}",
+            title: msg + ` - failed, errorcode:${status}`,
             subChecks: subChecks,
             level: 2
         }));
@@ -483,10 +489,10 @@ function checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, data
         var appSettings = await diagProvider.getAppSettings();
         var vnetRouteAll = (appSettings["WEBSITE_VNET_ROUTE_ALL"] === "1");
 
-        if(vnetRouteAll){
-            subChecks.push({title:"WEBSITE_VNET_ROUTE_ALL is set to 1, all traffic will be routed to VNet", level:3});
-        }else{
-            subChecks.push({title:"WEBSITE_VNET_ROUTE_ALL is not set or set to 0, only private network traffic(RFC1918) will be routed to VNet", level:3});
+        if (vnetRouteAll) {
+            subChecks.push({ title: "WEBSITE_VNET_ROUTE_ALL is set to 1, all traffic will be routed to VNet", level: 3 });
+        } else {
+            subChecks.push({ title: "WEBSITE_VNET_ROUTE_ALL is not set or set to 0, only private network traffic(RFC1918) will be routed to VNet", level: 3 });
         }
 
         var subnetSizeResult = await subnetSizeCheckPromise;
@@ -506,7 +512,7 @@ function checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, data
             subChecks = subChecks.concat(dnsCheckResult.subChecks);
             if (dnsServers.length === 0) {
                 level = 2;
-            }else if(dnsCheckResult.level == 1){
+            } else if (dnsCheckResult.level == 1) {
                 level = Math.max(level, 1);
             }
         } else {
@@ -520,13 +526,13 @@ function checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, data
             }
         }
 
-        if(level == 1){
+        if (level == 1) {
             configCheckView.title = "Network Configuration is suboptimal";
             configCheckView.level = 1;
-        }else if(level == 2){
+        } else if (level == 2) {
             configCheckView.title = "Network Configuration is unhealthy";
             configCheckView.level = 2;
-        }else if(level == 3){
+        } else if (level == 3) {
             configCheckView.title = `Network Configuration checks are skipped due to ${skipReason}`;
             configCheckView.level = 3;
         }
@@ -1251,7 +1257,7 @@ async function checkDnsSettingAsync(siteInfo, diagProvider) {
                 }));
             } else {
                 subChecks.push({
-                    title: `None of your custom DNS server is reachable, Azure DNS will be applied as backup`,
+                    title: `None of your custom DNS server is reachable, Azure DNS will be applied`,
                     level: 1
                 });
             }
