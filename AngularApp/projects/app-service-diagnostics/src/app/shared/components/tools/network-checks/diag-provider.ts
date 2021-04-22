@@ -215,12 +215,12 @@ export class DiagProvider {
         return { ip, aliases };
     }
 
-    public async checkConnectionAsync(hostname: string, port: number, count: number = 1, dns: string = "", instance?: string): Promise<{ status: ConnectionCheckStatus, ip: string, aliases: string, statuses: ConnectionCheckStatus[] }> {
+    public async checkConnectionAsync(hostname: string, port: number, count?: number, timeout?: number, dns: string = "", instance?: string): Promise<{ status: ConnectionCheckStatus, ip: string, aliases: string, statuses: ConnectionCheckStatus[] }> {
         var stack = new Error("replace_placeholder").stack;
         var promise = (async () => {
             var nameResolverPromise = this.nameResolveAsync(hostname, dns, instance);
 
-            var pingPromise = this.tcpPingAsync(hostname, port, count, instance);
+            var pingPromise = this.tcpPingAsync(hostname, port, count, timeout, instance);
             await Promise.all([nameResolverPromise.catch(e => e), pingPromise.catch(e => e)]);
             var nameResovlerResult = await nameResolverPromise;
             var pingResult = await (pingPromise.catch(e => null));
