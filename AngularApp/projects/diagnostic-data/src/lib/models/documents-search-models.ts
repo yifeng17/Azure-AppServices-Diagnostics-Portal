@@ -4,7 +4,17 @@ export class Query {
     productName : string ;
     documentType : string ;
     documentSource : string[];
-    numberOfDocuments : number;    
+    numberOfDocuments : number; 
+    deepSearchEnabled : boolean;
+    bingSearchEnabled : boolean;
+
+    customFilterConditionsForBing : string;
+    preferredSitesFromBing : string[];
+    excludedSitesFromBing : string[];
+    useStack : boolean;
+
+    pesId : string;
+    supportTopicId : string;
 }
 
 export class Document{
@@ -14,4 +24,9 @@ export class Document{
     description : string ;
     documentType : string;
     documentSource : string
+}
+
+export enum AvailableDocumentTypes{
+    External = "External",
+    Internal = "Internal"
 }

@@ -12,7 +12,7 @@ export class DocumentSearchService {
   private authKey: string = "";
   private url : string = "";
   private _config : DocumentSearchConfiguration;
-  private featureEnabledForProduct: boolean = false;
+  private featureEnabledForPesId  : boolean = false;
 
   httpOptions = {}
 
@@ -38,19 +38,22 @@ export class DocumentSearchService {
 
   }
 
-  public IsEnabled(pesId : string, isPublic : boolean) : Observable<boolean> {
+  public IsEnabled(pesId : string) : Observable<boolean> {
     // featureEnabledForProduct is disabled by default
-    if ( pesId && pesId.length >0 && ( (isPublic && this._config.documentSearchEnabledPesIds.findIndex(x => x==pesId)>=0) ||
-                              (!isPublic && this._config.documentSearchEnabledPesIdsInternal.findIndex(x => x==pesId)>=0)
-                            )
-        ){
-          this.featureEnabledForProduct = true;
-    }
 
+    var isPesIdValid = pesId && pesId.length >0 ;
+    if( isPesIdValid )
+    {
+      pesId = pesId.trim();
+      var listOfEnabledPesIds =  this._config.documentSearchEnabledSupportTopicIds[pesId] ;    
+      var isDeepSearchEnabledForThisPesId = listOfEnabledPesIds && (listOfEnabledPesIds.findIndex( x => x == pesId ) > -1)
+      this.featureEnabledForPesId = isDeepSearchEnabledForThisPesId ;
+    }
+   
     return this._backendApi.get<string>(`api/appsettings/DeepSearch:isEnabled`)
                             // Value in App Service Application Settings are returned as strings
                             // converting this to boolean
-                            .map(status =>  ( status.toLowerCase() == "true" && this.featureEnabledForProduct) );
+                            .map(status =>  ( status.toLowerCase() == "true" && this.featureEnabledForPesId) );
 
 
   }
@@ -72,9 +75,7 @@ export class DocumentSearchService {
 
   public Search(query): Observable<Document[]> {
     let queryString = this.constructUrl(query);
-    let url = this.url  + "?" +queryString;
-    return this.http.get<Document[]>(url, this.httpOptions)
-
+    var baseUrl = this.url
+    return this.http.get<Document[]>(baseUrl  + "?" +queryString, this.httpOptions)
   }
-
 }

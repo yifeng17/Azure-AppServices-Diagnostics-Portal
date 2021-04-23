@@ -36,12 +36,9 @@ export class ApplensDocumentsSearchService {
     
   }
 
-  public IsEnabled(pesId : string, isPublic : boolean) : Observable<boolean> {
+  public IsEnabled(pesId : string) : Observable<boolean> {
     // featureEnabledForProduct is disabled by default
-    if ( pesId.length >0 && ( (isPublic && this._config.documentSearchEnabledPesIds.findIndex(x => x==pesId)>=0) || 
-                              (!isPublic && this._config.documentSearchEnabledPesIdsInternal.findIndex(x => x==pesId)>=0)
-                            ) 
-        ){
+    if ( pesId.length >0 && this._config.documentSearchEnabledPesIdsInternal.findIndex(x => x==pesId)>=0){
           this.featureEnabledForProduct = true;
     }
 

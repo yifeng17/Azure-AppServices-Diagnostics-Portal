@@ -10,8 +10,9 @@ import { v4 as uuid } from 'uuid';
 
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
 import { GenericDocumentsSearchService } from '../../services/generic-documents-search.service';
-import { Query } from '../../models/documents-search-models';
+import { AvailableDocumentTypes, Query } from '../../models/documents-search-models';
 import { GenericResourceService } from '../../services/generic-resource-service';
+import { GenericSupportTopicService } from '../../services/generic-support-topic.service';
 
 
 @Component({
@@ -30,6 +31,7 @@ export class DocumentsSearchComponent extends DataRenderBaseComponent  implement
   viewRemainingDocuments : boolean = false;
   isPublic : boolean = true;
   pesId : string = "";
+  supportTopicId : string = "";
   searchTermDisplay = ""
   preLoadingErrorMessage: string = "Some error occurred while fetching Deep Search results. "
   subscription: ISubscription;
@@ -44,6 +46,8 @@ export class DocumentsSearchComponent extends DataRenderBaseComponent  implement
  
   constructor(@Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig, 
               private _documentsSearchService : GenericDocumentsSearchService,
+
+              private _supportTopicService: GenericSupportTopicService,
               public telemetryService: TelemetryService,
               private _activatedRoute: ActivatedRoute ,
               private _router: Router,
@@ -51,6 +55,7 @@ export class DocumentsSearchComponent extends DataRenderBaseComponent  implement
     super(telemetryService);
  
     this.isPublic = config && config.isPublic;
+    this.supportTopicId = this._supportTopicService.supportTopicId;
     const subscription = this._activatedRoute.queryParamMap.subscribe(qParams => {
       this.searchTerm = qParams.get('searchTerm') === null ? "" || this.searchTerm : qParams.get('searchTerm');
       this.getPesId();
@@ -78,7 +83,7 @@ export class DocumentsSearchComponent extends DataRenderBaseComponent  implement
 
   checkIfEnabled () {
     let checkStatusTask = this._documentsSearchService
-                         .IsEnabled(this.pesId, this.isPublic )
+                         .IsEnabled(this.pesId)
                          .pipe( map((res) => res), 
                                 retryWhen(errors => {
                                 let numRetries = 0;
@@ -136,16 +141,18 @@ export class DocumentsSearchComponent extends DataRenderBaseComponent  implement
     if (!this.isChildComponent || !this.searchId || this.searchId.length <1)
       this.searchId = uuid();
     
-    
-    let query: Query = {
-      "searchId" : this.searchId,
-      "searchTerm" : this.searchTerm,
-      "productName" : "App Services" ,
-      "documentType" : this.isPublic ? "External" : "Internal" ,
-      "documentSource" : [],
-      "numberOfDocuments" : 5  
-
-    };
+    var query = new Query();
+    query.searchTerm = this.searchTerm;
+    query.searchId = this.searchId;
+    query.numberOfDocuments = 5;
+    query.pesId = this.pesId;
+    query.documentType = AvailableDocumentTypes.Internal;
+    query.documentSource = []
+    query.bingSearchEnabled = false;
+    query.deepSearchEnabled = true;
+    if(this.supportTopicId) {
+      query.supportTopicId= this.supportTopicId;
+    }
 
     if(! this.isPublic && this.viewResultsFromCSSWikionly){
       query.documentSource.push("supportability.visualstudio.com")
