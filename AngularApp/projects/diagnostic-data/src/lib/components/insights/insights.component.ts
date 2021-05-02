@@ -25,7 +25,9 @@ export class InsightsComponent extends DataRenderBaseComponent {
     super.processData(data);
     this.renderingProperties = <InsightsRendering>data.renderingProperties;
 
+    console.log("Get insights", data);
     this.insights = InsightUtils.parseInsightRendering(data);
+    console.log("Get insights", this.insights);
   }
 
   toggleInsightStatus(insight: any) {

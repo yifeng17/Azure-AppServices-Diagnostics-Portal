@@ -334,15 +334,11 @@ export class PortalService {
         }
 
         return this._getAcceptOrigins(event).pipe(map(originsSuffix => {
-<<<<<<< HEAD
             const originIndex = originsSuffix.findIndex(o => event.origin.toLowerCase().endsWith(o.toLowerCase()));
             if (originIndex === -1) {
                 this.logException("cannot find origin from origin list");
             }
             return originIndex > -1;
-=======
-            return originsSuffix.findIndex(o => event.origin.toLowerCase().endsWith(o.toLowerCase())) > -1;
->>>>>>> Add locale as parameter
         }));
     }
 

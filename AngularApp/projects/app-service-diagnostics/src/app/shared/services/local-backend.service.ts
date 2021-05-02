@@ -31,9 +31,11 @@ export class LocalBackendService {
 
   public getDetectors(overrideResourceUri:string = ""): Observable<DetectorMetaData[]> {
     let resourceId = overrideResourceUri ? overrideResourceUri : this.resourceId;
-    let languageQueryParam = !this.effectiveLocale || /^\s*$/.test(this.effectiveLocale) ? `?l=${this.effectiveLocale}` : "";
+    let languageQueryParam = !!this.effectiveLocale ? `?l=${this.effectiveLocale}` : "";
+    // || /^\s*$/.test(this.effectiveLocale)
     console.log("localbackend getdetectors languageparam", languageQueryParam, this.effectiveLocale);
-    const path = `v4${resourceId}/detectors${this.effectiveLocale}`;
+    const path = `v4${resourceId}/detectors${languageQueryParam}`;
+    console.log("get detectors path", path);
     if (this.detectorList.length > 0 && overrideResourceUri === "") {
       return of(this.detectorList);
     }
