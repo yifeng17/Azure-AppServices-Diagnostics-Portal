@@ -5,7 +5,7 @@ import { Router, ActivatedRoute, NavigationExtras, NavigationEnd, Params } from 
 import { ResourceService } from '../../../shared/services/resource.service';
 import { CollapsibleMenuItem } from '../../../collapsible-menu/components/collapsible-menu-item/collapsible-menu-item.component';
 import { ApplensDiagnosticService } from '../services/applens-diagnostic.service';
-import { DetectorType } from 'diagnostic-data';
+import { DetectorControlService, DetectorType } from 'diagnostic-data';
 import { TelemetryService } from '../../../../../../diagnostic-data/src/lib/services/telemetry/telemetry.service';
 import {TelemetryEventNames} from '../../../../../../diagnostic-data/src/lib/services/telemetry/telemetry.common';
 import { environment } from '../../../../environments/environment';
@@ -34,12 +34,25 @@ export class SideNavComponent implements OnInit {
 
   getDetectorsRouteNotFound: boolean = false;
 
-  constructor(private _router: Router, private _activatedRoute: ActivatedRoute, private _adalService: AdalService, private _diagnosticApiService: ApplensDiagnosticService, public resourceService: ResourceService, private _telemetryService: TelemetryService) {
+  constructor(private _router: Router, private _activatedRoute: ActivatedRoute, private _adalService: AdalService, private _diagnosticApiService: ApplensDiagnosticService, public resourceService: ResourceService, private _telemetryService: TelemetryService, private _detectorControlService: DetectorControlService) {
     this.contentHeight = (window.innerHeight - 139) + 'px';
     if(environment.adal.enabled){
       let alias = this._adalService.userInfo.profile ? this._adalService.userInfo.profile.upn : '';
       this.userId = alias.replace('@microsoft.com', '');
     }
+
+        // Add time params to route if not already present
+        // if (!this._activatedRoute.queryParams['l']) {
+        //     let routeParams = {
+        //       'l': this._detectorControlService.effectiveLocale
+        //     }
+        //     // If browser URL contains detectorQueryParams, adding it to route
+        //     if (!this._activatedRoute.queryParams['detectorQueryParams']) {
+        //       routeParams['detectorQueryParams'] = this._activatedRoute.snapshot.queryParams['detectorQueryParams'];
+        //     }
+
+        //     this._router.navigate([], { queryParams: routeParams, queryParamsHandling: 'merge', relativeTo: this._activatedRoute });
+        //   }
   }
 
   documentation: CollapsibleMenuItem[] = [

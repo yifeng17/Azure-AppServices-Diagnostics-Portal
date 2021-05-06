@@ -9,8 +9,9 @@ import { HttpMethod } from '../models/http';
 import { Package } from '../models/package';
 import { CacheService } from './cache.service';
 import { Guid } from 'projects/app-service-diagnostics/src/app/shared/utilities/guid';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TelemetryPayload } from 'diagnostic-data';
+import { DetectorControlService } from 'diagnostic-data';
 
 @Injectable()
 export class DiagnosticApiService {
@@ -21,14 +22,30 @@ export class DiagnosticApiService {
   public Location: string = null;
 
   constructor(private _httpClient: HttpClient, private _cacheService: CacheService,
-    private _adalService: AdalService, private _telemetryService: TelemetryService, private _router: Router) { }
+    private _adalService: AdalService, private _telemetryService: TelemetryService, private _router: Router, private _route: ActivatedRoute, private _detectorControlService: DetectorControlService) { }
 
   public get diagnosticApi(): string {
     return environment.production ? '' : this.localDiagnosticApi;
   }
 
+  public getLanguageAdditionalHeaders(languageQueryParam: string, additionalHeaders: Map<string, string> = new Map<string, string>()): any
+  {
+    if (languageQueryParam == undefined || languageQueryParam == "")
+    {
+        return additionalHeaders;
+    }
+
+    // languageQueryParam = languageQueryParam.toLowerCase();
+    // if (languageQueryParam != "en" && languageQueryParam.startsWith("en"))
+    // {
+    //     additionalHeaders.set("x-ms-localization-language", languageQueryParam);
+    // }
+
+    return additionalHeaders;
+  }
+
   public getDetector(version: string, resourceId: string, detector: string, startTime?: string, endTime?: string,
-    body?: any, refresh: boolean = false, internalView: boolean = true, additionalQueryParams?: string):
+    body?: any, refresh: boolean = false, internalView: boolean = true, additionalQueryParams?: string, languageQueryParam?: string):
     Observable<DetectorResponse> {
     let timeParameters = this._getTimeQueryParameters(startTime, endTime);
     let path = `${version}${resourceId}/detectors/${detector}?${timeParameters}`;
@@ -37,6 +54,25 @@ export class DiagnosticApiService {
       path += additionalQueryParams;
     }
 
+    let allRouteQueryParams = this._route.snapshot.queryParams;
+    this._detectorControlService._effectiveLocale = allRouteQueryParams['l'];
+
+
+    let languageQueryParam1 = "";
+    if (this._detectorControlService.effectiveLocale != undefined && this._detectorControlService.effectiveLocale != "")
+    {
+        console.log("get detector in diagnostic api locale", this._detectorControlService.effectiveLocale);
+        languageQueryParam1 = `&l=${this._detectorControlService.effectiveLocale}`;
+    }
+    if (!path.includes("l="))
+    {
+        path = `${path}${languageQueryParam1}`;
+    }
+
+
+    // path = `${path}${languageQueryParam}`;
+ //  let additionalHeaders = this.getLanguageAdditionalHeaders(languageQueryParam);
+ console.log("get detector in diagnostic path", path);
     return this.invoke<DetectorResponse>(path, HttpMethod.POST, body, true, refresh, true, internalView);
   }
 
@@ -48,11 +84,31 @@ export class DiagnosticApiService {
     return this.invoke<DetectorResponse>(path, HttpMethod.POST, body);
   }
 
-  public getDetectors(version: string, resourceId: string, body?: any, queryParams?: any[], internalClient: boolean = true): Observable<DetectorMetaData[]> {
+  public getDetectors(version: string, resourceId: string, body?: any, queryParams?: any[], internalClient: boolean = true, languageQueryParam?: string): Observable<DetectorMetaData[]> {
     let path = `${version}${resourceId}/detectors`;
     if (queryParams) {
       path = path + "?" + queryParams.map(qp => qp.key + "=" + qp.value).join("&");
     }
+
+
+    let allRouteQueryParams = this._route.snapshot.queryParams;
+    this._detectorControlService._effectiveLocale = allRouteQueryParams['l'];
+
+    let languageQueryParam1 = "";
+    if (this._detectorControlService.effectiveLocale != undefined && this._detectorControlService.effectiveLocale != "")
+    {
+        console.log("getdetectors in diagnostic api locale", this._detectorControlService.effectiveLocale);
+        languageQueryParam1 = `?l=${this._detectorControlService.effectiveLocale}`;
+
+        if (path.includes("?l="))
+        {
+            path = `${path}${languageQueryParam1}`;
+        }
+    }
+
+     console.log("getdetectors in diagnostic path", path);
+    // let additionalHeaders = this.getLanguageAdditionalHeaders(languageQueryParam);
+
     return this.invoke<DetectorResponse[]>(path, HttpMethod.POST, body, true, false, internalClient).pipe(retry(1), map(response => response.map(detector => detector.metadata)));
   }
 
@@ -160,7 +216,7 @@ export class DiagnosticApiService {
 
   public  verfifyPublishingDetectorAccess(resourceType: string, detectorCode: string, isOriginalCodeMarkedPublic: boolean) : Observable<any> {
     let url: string = `${this.diagnosticApi}api/publishingaccess`;
-    var body = 
+    var body =
     {
       'resourceType': resourceType,
       'codeString': detectorCode,
@@ -318,6 +374,15 @@ export class DiagnosticApiService {
     headers = headers.set('x-ms-internal-client', String(internalClient));
     headers = headers.set('x-ms-internal-view', String(internalView));
 
+    let allRouteQueryParams = this._route.snapshot.queryParams;
+    this._detectorControlService._effectiveLocale = allRouteQueryParams['l'];
+
+     // languageQueryParam = languageQueryParam.toLowerCase();
+    if (this._detectorControlService.effectiveLocale != null && this._detectorControlService.effectiveLocale != "" && this._detectorControlService.effectiveLocale != "en" && !this._detectorControlService.effectiveLocale.startsWith("en"))
+    {
+        headers = headers.set("x-ms-localization-language", this._detectorControlService.effectiveLocale);
+    }
+
     if (environment.adal.enabled) {
       headers = headers.set('Authorization', `Bearer ${this._adalService.userInfo.token}`)
     }
@@ -348,6 +413,7 @@ export class DiagnosticApiService {
       });
     }
 
+    console.log("get headers", headers);
     return headers;
   }
 

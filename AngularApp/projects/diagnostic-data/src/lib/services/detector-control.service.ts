@@ -52,7 +52,7 @@ export class DetectorControlService {
 
   private _refresh: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
-  private _effectiveLocale: string="";
+  public _effectiveLocale: string="";
 
   private detectorQueryParams: BehaviorSubject<string> = new BehaviorSubject<string>("");
 
