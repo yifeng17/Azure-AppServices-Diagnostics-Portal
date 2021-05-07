@@ -12,7 +12,6 @@ export class AuthService {
     private currentToken: string = null;
 
     public resourceType: ResourceType;
-    public effectiveLocale:string;
 
     private localStartUpInfo: StartupInfo = <StartupInfo>{
         sessionId: '',

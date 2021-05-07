@@ -25,8 +25,6 @@ export class DetectorContainerComponent implements OnInit {
   startTimeChildDetector: Moment = null;
   endTimeChildDetector: Moment = null;
 
-  effectiveLocale: string="";
-
   @Input() hideDetectorControl: boolean = false;
   @Input() isKeystoneSolution: boolean = false;
   hideTimerPicker: boolean = false;

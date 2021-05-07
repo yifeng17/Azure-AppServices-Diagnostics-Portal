@@ -11,7 +11,6 @@ import { CacheService } from './cache.service';
 import { Guid } from 'projects/app-service-diagnostics/src/app/shared/utilities/guid';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TelemetryPayload } from 'diagnostic-data';
-import { DetectorControlService } from 'diagnostic-data';
 
 @Injectable()
 export class DiagnosticApiService {
@@ -23,14 +22,14 @@ export class DiagnosticApiService {
   public effectiveLocale: string = "";
 
   constructor(private _httpClient: HttpClient, private _cacheService: CacheService,
-    private _adalService: AdalService, private _telemetryService: TelemetryService, private _router: Router, private _route: ActivatedRoute, private _detectorControlService: DetectorControlService) { }
+    private _adalService: AdalService, private _telemetryService: TelemetryService, private _router: Router, private _route: ActivatedRoute) { }
 
   public get diagnosticApi(): string {
     return environment.production ? '' : this.localDiagnosticApi;
   }
 
   public getDetector(version: string, resourceId: string, detector: string, startTime?: string, endTime?: string,
-    body?: any, refresh: boolean = false, internalView: boolean = true, additionalQueryParams?: string, languageQueryParam?: string):
+    body?: any, refresh: boolean = false, internalView: boolean = true, additionalQueryParams?: string):
     Observable<DetectorResponse> {
     let timeParameters = this._getTimeQueryParameters(startTime, endTime);
     let path = `${version}${resourceId}/detectors/${detector}?${timeParameters}`;
@@ -49,7 +48,7 @@ export class DiagnosticApiService {
     return this.invoke<DetectorResponse>(path, HttpMethod.POST, body);
   }
 
-  public getDetectors(version: string, resourceId: string, body?: any, queryParams?: any[], internalClient: boolean = true, languageQueryParam?: string): Observable<DetectorMetaData[]> {
+  public getDetectors(version: string, resourceId: string, body?: any, queryParams?: any[], internalClient: boolean = true): Observable<DetectorMetaData[]> {
     let path = `${version}${resourceId}/detectors`;
     if (queryParams) {
       path = path + "?" + queryParams.map(qp => qp.key + "=" + qp.value).join("&");

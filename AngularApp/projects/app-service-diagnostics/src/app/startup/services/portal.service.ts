@@ -33,7 +33,6 @@ export class PortalService {
     public shellSrc: string;
     private tokenObservable: ReplaySubject<string>;
     private origin: string;
-    public effectiveLocale: string;
     private acceptedOriginsSuffix: string[] = [];
 
     constructor(private _broadcastService: BroadcastService, private _http: HttpClient) {
@@ -105,7 +104,6 @@ export class PortalService {
 
     initializeIframe(): void {
         this.shellSrc = this.getQueryStringParameter('trustedAuthority');
-        this.effectiveLocale = this.getQueryStringParameter("l");
         // This is a required message. It tells the shell that your iframe is ready to receive messages.
         this.postMessage(Verbs.ready, null);
         this.postMessage(Verbs.getStartupInfo, null);
@@ -268,7 +266,6 @@ export class PortalService {
             map[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
         }
 
-        console.log("Querymap from the portal", map);
         return map;
     }
 

@@ -9,8 +9,6 @@ import { catchError, retry, map, retryWhen, delay } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { GenericArmConfigService } from './generic-arm-config.service';
 import { StartupInfo } from '../models/portal';
-import { DemoSubscriptions } from '../../betaSubscriptions';
-import { VersioningHelper } from '../../../app/shared/utilities/versioningHelper';
 import { PortalKustoTelemetryService } from './portal-kusto-telemetry.service';
 import { Guid } from '../utilities/guid';
 import { Router } from '@angular/router';
@@ -141,7 +139,8 @@ export class ArmService {
                     "resourceUri": resourceUri,
                     "uri": uri,
                     "armUrl": this.armUrl,
-                    "isInCaseSubmissionFlow" : `${this.isInCaseSubmissionFlow}`
+                    "isInCaseSubmissionFlow" : `${this.isInCaseSubmissionFlow}`,
+                    "effectivLocale" : `${this.effectiveLocale}`
                 });
             }
             throw new Error("ARM Call Cause MissingApiVersionParameter Exception");
