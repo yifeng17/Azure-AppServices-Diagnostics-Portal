@@ -14,14 +14,12 @@ export class LocalBackendService {
 
   detectorList: DetectorMetaData[] = [];
 
-  useLocal: boolean = false;
-
   effectiveLocale: string="";
 
   constructor(private _http: HttpClient, private _armService: ArmService, private _authService: AuthService) {
     this._authService.getStartupInfo().subscribe(info => {
       this.resourceId = info.resourceId.replace('microsoft.web', 'Microsoft.Web');
-      this.effectiveLocale = info.effectiveLocale;
+      this.effectiveLocale = !!info.effectiveLocale ? info.effectiveLocale.toLowerCase() : "";
     });
   }
 
@@ -31,11 +29,8 @@ export class LocalBackendService {
 
   public getDetectors(overrideResourceUri:string = ""): Observable<DetectorMetaData[]> {
     let resourceId = overrideResourceUri ? overrideResourceUri : this.resourceId;
-    let languageQueryParam = !!this.effectiveLocale ? `?l=${this.effectiveLocale}` : "";
-    // || /^\s*$/.test(this.effectiveLocale)
-    console.log("localbackend getdetectors languageparam", languageQueryParam, this.effectiveLocale);
+    let languageQueryParam = this.isLocalizationApplicable() ? `?l=${this.effectiveLocale}` : "";
     const path = `v4${resourceId}/detectors${languageQueryParam}`;
-    console.log("get detectors path", path);
     if (this.detectorList.length > 0 && overrideResourceUri === "") {
       return of(this.detectorList);
     }
@@ -58,9 +53,9 @@ export class LocalBackendService {
 
   public getDetector(detectorName: string, startTime: string, endTime: string, refresh?: boolean, internalView?: boolean, formQueryParams?: string,overrideResourceUri?: string) {
     let resourceId = overrideResourceUri ? overrideResourceUri : this.resourceId;
-    let languageQueryParam = !!this.effectiveLocale ? `&l=${this.effectiveLocale}` : "";
+    let languageQueryParam = this.isLocalizationApplicable() ? `&l=${this.effectiveLocale}` : "";
     let path = `v4${resourceId}/detectors/${detectorName}?startTime=${startTime}&endTime=${endTime}${languageQueryParam}`;
-    console.log("localbackendservice path", path);
+
     if(formQueryParams != null) {
       path += formQueryParams;
     }
@@ -79,6 +74,11 @@ export class LocalBackendService {
     return request;
   }
 
+  private isLocalizationApplicable(): boolean
+  {
+    return this.effectiveLocale != null && !/^\s*$/.test(this.effectiveLocale) && this.effectiveLocale != "en" && !this.effectiveLocale.startsWith("en");
+  }
+
   private _getHeaders(path?: string, method?: string): HttpHeaders {
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -91,6 +91,11 @@ export class LocalBackendService {
 
     if (method) {
       headers = headers.append('x-ms-method', method);
+    }
+
+    if (this.isLocalizationApplicable())
+    {
+        headers = headers.set('x-ms-localization-language', encodeURI(this.effectiveLocale));
     }
 
     return headers;

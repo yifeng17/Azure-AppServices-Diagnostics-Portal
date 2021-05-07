@@ -20,28 +20,13 @@ export class DiagnosticApiService {
   public GeomasterServiceAddress: string = null;
   public GeomasterName: string = null;
   public Location: string = null;
+  public effectiveLocale: string = "";
 
   constructor(private _httpClient: HttpClient, private _cacheService: CacheService,
     private _adalService: AdalService, private _telemetryService: TelemetryService, private _router: Router, private _route: ActivatedRoute, private _detectorControlService: DetectorControlService) { }
 
   public get diagnosticApi(): string {
     return environment.production ? '' : this.localDiagnosticApi;
-  }
-
-  public getLanguageAdditionalHeaders(languageQueryParam: string, additionalHeaders: Map<string, string> = new Map<string, string>()): any
-  {
-    if (languageQueryParam == undefined || languageQueryParam == "")
-    {
-        return additionalHeaders;
-    }
-
-    // languageQueryParam = languageQueryParam.toLowerCase();
-    // if (languageQueryParam != "en" && languageQueryParam.startsWith("en"))
-    // {
-    //     additionalHeaders.set("x-ms-localization-language", languageQueryParam);
-    // }
-
-    return additionalHeaders;
   }
 
   public getDetector(version: string, resourceId: string, detector: string, startTime?: string, endTime?: string,
@@ -53,26 +38,6 @@ export class DiagnosticApiService {
     if (additionalQueryParams != undefined) {
       path += additionalQueryParams;
     }
-
-    let allRouteQueryParams = this._route.snapshot.queryParams;
-    this._detectorControlService._effectiveLocale = allRouteQueryParams['l'];
-
-
-    let languageQueryParam1 = "";
-    if (this._detectorControlService.effectiveLocale != undefined && this._detectorControlService.effectiveLocale != "")
-    {
-        console.log("get detector in diagnostic api locale", this._detectorControlService.effectiveLocale);
-        languageQueryParam1 = `&l=${this._detectorControlService.effectiveLocale}`;
-    }
-    if (!path.includes("l="))
-    {
-        path = `${path}${languageQueryParam1}`;
-    }
-
-
-    // path = `${path}${languageQueryParam}`;
- //  let additionalHeaders = this.getLanguageAdditionalHeaders(languageQueryParam);
- console.log("get detector in diagnostic path", path);
     return this.invoke<DetectorResponse>(path, HttpMethod.POST, body, true, refresh, true, internalView);
   }
 
@@ -89,25 +54,6 @@ export class DiagnosticApiService {
     if (queryParams) {
       path = path + "?" + queryParams.map(qp => qp.key + "=" + qp.value).join("&");
     }
-
-
-    let allRouteQueryParams = this._route.snapshot.queryParams;
-    this._detectorControlService._effectiveLocale = allRouteQueryParams['l'];
-
-    let languageQueryParam1 = "";
-    if (this._detectorControlService.effectiveLocale != undefined && this._detectorControlService.effectiveLocale != "")
-    {
-        console.log("getdetectors in diagnostic api locale", this._detectorControlService.effectiveLocale);
-        languageQueryParam1 = `?l=${this._detectorControlService.effectiveLocale}`;
-
-        if (path.includes("?l="))
-        {
-            path = `${path}${languageQueryParam1}`;
-        }
-    }
-
-     console.log("getdetectors in diagnostic path", path);
-    // let additionalHeaders = this.getLanguageAdditionalHeaders(languageQueryParam);
 
     return this.invoke<DetectorResponse[]>(path, HttpMethod.POST, body, true, false, internalClient).pipe(retry(1), map(response => response.map(detector => detector.metadata)));
   }
@@ -367,21 +313,17 @@ export class DiagnosticApiService {
     return `${HttpMethod[method]}-${path}`;
   }
 
+  private isLocalizationApplicable(locale: string): boolean
+  {
+    return locale != null && locale != "" && locale != "en" && !locale.startsWith("en");
+  }
+
   private _getHeaders(path?: string, method?: HttpMethod, internalClient: boolean = true, internalView: boolean = true, additionalHeaders?: Map<string, string>): HttpHeaders {
     let headers = new HttpHeaders();
     headers = headers.set('Content-Type', 'application/json');
     headers = headers.set('Accept', 'application/json');
     headers = headers.set('x-ms-internal-client', String(internalClient));
     headers = headers.set('x-ms-internal-view', String(internalView));
-
-    let allRouteQueryParams = this._route.snapshot.queryParams;
-    this._detectorControlService._effectiveLocale = allRouteQueryParams['l'];
-
-     // languageQueryParam = languageQueryParam.toLowerCase();
-    if (this._detectorControlService.effectiveLocale != null && this._detectorControlService.effectiveLocale != "" && this._detectorControlService.effectiveLocale != "en" && !this._detectorControlService.effectiveLocale.startsWith("en"))
-    {
-        headers = headers.set("x-ms-localization-language", this._detectorControlService.effectiveLocale);
-    }
 
     if (environment.adal.enabled) {
       headers = headers.set('Authorization', `Bearer ${this._adalService.userInfo.token}`)
@@ -405,6 +347,11 @@ export class DiagnosticApiService {
       headers = headers.set('x-ms-location', encodeURI(this.Location));
     }
 
+    if (this.isLocalizationApplicable(this.effectiveLocale))
+    {
+        headers = headers.set('x-ms-localization-language', encodeURI(this.effectiveLocale.toLowerCase()));
+    }
+
     if (additionalHeaders) {
       additionalHeaders.forEach((headerVal: string, headerKey: string) => {
         if (headerVal.length > 0 && headerKey.length > 0) {
@@ -413,7 +360,6 @@ export class DiagnosticApiService {
       });
     }
 
-    console.log("get headers", headers);
     return headers;
   }
 

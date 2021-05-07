@@ -5,38 +5,15 @@ import { DetectorResponse, DetectorMetaData } from 'diagnostic-data';
 import { Observable } from 'rxjs';
 import { QueryResponse } from 'diagnostic-data';
 import { Package } from '../../../shared/models/package';
-import { DetectorControlService } from 'diagnostic-data';
-import { ActivatedRoute } from '@angular/router';
 
 @Injectable()
 export class ApplensDiagnosticService {
 
-  effectiveLocale: string="";
-  constructor(private _diagnosticApi: DiagnosticApiService, private _resourceService: ResourceService, private _detectorControlService: DetectorControlService, private _route: ActivatedRoute,) {
+  constructor(private _diagnosticApi: DiagnosticApiService, private _resourceService: ResourceService) {
   }
-
-//   public getDetectors1(overrideResourceUri:string = ""): Observable<DetectorMetaData[]> {
-//     let resourceId = overrideResourceUri ? overrideResourceUri : this.resourceId;
-//     let languageQueryParam = !!this.effectiveLocale ? `?l=${this.effectiveLocale}` : "";
-//     // || /^\s*$/.test(this.effectiveLocale)
-//     console.log("localbackend getdetectors languageparam", languageQueryParam, this.effectiveLocale);
-//     const path = `v4${resourceId}/detectors${languageQueryParam}`;
-//     console.log("get detectors path", path);
-//     if (this.detectorList.length > 0 && overrideResourceUri === "") {
-//       return of(this.detectorList);
-//     }
-
-//     return this.invoke<DetectorResponse[]>(path, 'POST').pipe(map(response => {
-//       const detectorList = response.map(detector => detector.metadata);
-//       if(overrideResourceUri === "") this.detectorList = detectorList;
-//       return detectorList;
-//     }));
-//   }
 
   getDetector(detector: string, startTime: string, endTime: string, refresh: boolean = false, internalView: boolean = true, formQueryParams?: string,overrideResourceUri?: string): Observable<DetectorResponse> {
     let resourceId = overrideResourceUri ? overrideResourceUri : this._resourceService.getCurrentResourceId(true);
-    let languageQueryParam = !!this.effectiveLocale ? `?l=${this.effectiveLocale}` : "";
-
     if(!resourceId.startsWith('/')) resourceId = '/' + resourceId;
 
     let versionPrefix = this._resourceService.versionPrefix;
@@ -71,19 +48,6 @@ export class ApplensDiagnosticService {
 
     let versionPrefix = this._resourceService.versionPrefix;
     if(versionPrefix.endsWith('/')) versionPrefix = versionPrefix.substring(0,versionPrefix.length - 1);
-
-      let allRouteQueryParams = this._route.snapshot.queryParams;
-      this._detectorControlService._effectiveLocale = allRouteQueryParams['l'];
-
-
-      let languageQueryParam1 = "";
-      if (this._detectorControlService.effectiveLocale != undefined && this._detectorControlService.effectiveLocale != "")
-      {
-          console.log("get detector in diagnostic api locale", this._detectorControlService.effectiveLocale);
-          languageQueryParam1 = `?l=${this._detectorControlService.effectiveLocale}`;
-      }
-
-    // if(this._detectorControlService.
     if (query != null)
       queryParams = [{ "key": "text", "value": encodeURIComponent(query) }];
       return this._diagnosticApi.getDetectors(

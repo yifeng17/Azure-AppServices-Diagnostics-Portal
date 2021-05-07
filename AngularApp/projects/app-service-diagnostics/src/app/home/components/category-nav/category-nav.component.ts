@@ -5,7 +5,6 @@ import { CategoryService } from '../../../shared-v2/services/category.service';
 import { Category } from '../../../shared-v2/models/category';
 import { CategoryChatStateService } from '../../../shared-v2/services/category-chat-state.service';
 import { INavProps, INavLink, INav, autobind, INavStyles } from 'office-ui-fabric-react';
-import { GenericApiService } from '../../../shared/services/generic-api.service';
 import { FeatureService } from '../../../shared-v2/services/feature.service';
 import { Tile } from '../../../shared/components/tile-list/tile-list.component';
 import { Feature } from '../../../shared-v2/models/features';

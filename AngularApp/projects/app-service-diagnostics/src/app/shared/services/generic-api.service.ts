@@ -18,12 +18,12 @@ export class GenericApiService {
 
     useLocal: boolean = false;
 
-    effectiveLocale: string="";
+    effectiveLocale: string = "";
 
     constructor(private _http: HttpClient, private _armService: ArmService, private _authService: AuthService) {
         this._authService.getStartupInfo().subscribe(info => {
             this.resourceId = info.resourceId;
-            this.effectiveLocale = info.effectiveLocale;
+            this.effectiveLocale = !!info.effectiveLocale ? info.effectiveLocale.toLowerCase() : "";
         });
     }
 
@@ -31,9 +31,9 @@ export class GenericApiService {
         return this.detectorList.find(detector => detector.id === detectorId);
     }
 
-    public getDetectors(overrideResourceUri:string = ""): Observable<DetectorMetaData[]> {
+    public getDetectors(overrideResourceUri: string = ""): Observable<DetectorMetaData[]> {
         let resourceId = overrideResourceUri ? overrideResourceUri : this.resourceId;
-        let languageQueryParam = !this.effectiveLocale || /^\s*$/.test(this.effectiveLocale) ? `?l=${this.effectiveLocale}` : "";
+        let languageQueryParam = this.isLocalizationApplicable() ? `?l=${this.effectiveLocale}` : "";
         console.log("genericapi getdetectors languageparam", languageQueryParam, this.effectiveLocale);
         if (this.useLocal) {
             const path = `v4${resourceId}/detectors?stampName=waws-prod-bay-085&hostnames=netpractice.azurewebsites.net`;
@@ -48,23 +48,22 @@ export class GenericApiService {
     }
 
     public getDetectorsSearch(searchTerm): Observable<DetectorMetaData[]> {
-
         if (this.useLocal) {
             const path = `v4${this.resourceId}/detectors?stampName=waws-prod-bay-085&hostnames=netpractice.azurewebsites.net&text=` + encodeURIComponent(searchTerm);
             return this.invoke<DetectorResponse[]>(path, 'POST').pipe(map(response => response.map(detector => detector.metadata)));
         } else {
             const path = `${this.resourceId}/detectors`;
-            var queryParams = [{"key": "text", "value": searchTerm}];
+            var queryParams = [{ "key": "text", "value": searchTerm }];
             return this._armService.getResourceCollection<DetectorResponse[]>(path, null, false, queryParams).pipe(map((response: ResponseMessageEnvelope<DetectorResponse>[]) => {
-                var searchResults = response.map(listItem => listItem.properties.metadata).sort((a,b) => {return b.score>a.score? 1: -1;});
+                var searchResults = response.map(listItem => listItem.properties.metadata).sort((a, b) => { return b.score > a.score ? 1 : -1; });
                 return searchResults;
             }));
         }
     }
 
-    public getDetector(detectorName: string, startTime: string, endTime: string, refresh?: boolean, internalView?: boolean, additionalQueryParams?: string,overrideResourceUri?: string) {
+    public getDetector(detectorName: string, startTime: string, endTime: string, refresh?: boolean, internalView?: boolean, additionalQueryParams?: string, overrideResourceUri?: string) {
         let resourceId = overrideResourceUri ? overrideResourceUri : this.resourceId;
-        let languageQueryParam = !this.effectiveLocale || /^\s*$/.test(this.effectiveLocale) ? `&l=${this.effectiveLocale}` : "";
+        let languageQueryParam = this.isLocalizationApplicable() ? `&l=${this.effectiveLocale}` : "";
         console.log("genericapi getdetector languageparam", languageQueryParam, this.effectiveLocale);
         if (this.useLocal) {
             const path = `v4${resourceId}/detectors/${detectorName}?stampName=waws-prod-bay-085&hostnames=netpractice.azurewebsites.net${languageQueryParam}`;
@@ -91,6 +90,11 @@ export class GenericApiService {
         return request;
     }
 
+    private isLocalizationApplicable(): boolean
+    {
+      return this.effectiveLocale != null && !/^\s*$/.test(this.effectiveLocale) && this.effectiveLocale != "en" && !this.effectiveLocale.startsWith("en");
+    }
+
     private _getHeaders(path?: string, method?: string): HttpHeaders {
         const headers = new HttpHeaders();
         headers.append('Content-Type', 'application/json');
@@ -102,6 +106,11 @@ export class GenericApiService {
 
         if (method) {
             headers.append('x-ms-method', method);
+        }
+
+        if (this.isLocalizationApplicable())
+        {
+            headers.append('x-ms-localization-language', encodeURI(this.effectiveLocale));
         }
 
         return headers;

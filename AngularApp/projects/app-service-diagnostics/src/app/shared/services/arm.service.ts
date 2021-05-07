@@ -34,6 +34,8 @@ export class ArmService {
     private readonly routeToDiagnosticRole = '1';
     private armEndpoint: string = '';
     private isInCaseSubmissionFlow = false;
+    private effectiveLocale: string = '';
+
     constructor(private _http: HttpClient, private _authService: AuthService, private _cache: CacheService, private _router: Router, private _genericArmConfigService?: GenericArmConfigService,
         private telemetryService?: PortalKustoTelemetryService) {
         this._authService.getStartupInfo().subscribe((startupInfo: StartupInfo) => {
@@ -41,6 +43,7 @@ export class ArmService {
                 this.armEndpoint = startupInfo.armEndpoint;
             }
             let resourceId = startupInfo.resourceId;
+            this.effectiveLocale = !!startupInfo.effectiveLocale ? startupInfo.effectiveLocale.toLowerCase() : "";
             let subscriptionId = resourceId.split('/')[2];
             this.diagRoleVersion = this.routeToLiberation;
             this.isInCaseSubmissionFlow = startupInfo && startupInfo.source !== undefined && startupInfo.source.toLowerCase() === ("CaseSubmissionV2-NonContext").toLowerCase();
@@ -105,6 +108,10 @@ export class ArmService {
         }
     }
 
+    get isLocalizationApplicable(): boolean {
+        return this.effectiveLocale != null && this.effectiveLocale != "" && this.effectiveLocale != "en" && !this.effectiveLocale.startsWith("en");
+    }
+
     getApiVersion(resourceUri: string, apiVersion?: string): string {
         if (apiVersion) {
             return apiVersion;
@@ -125,7 +132,7 @@ export class ArmService {
     createUrl(resourceUri: string, apiVersion?: string) {
         const uri = `${this.armUrl}${resourceUri}${resourceUri.indexOf('?') >= 0 ? '&' : '?'}` +
         `api-version=${this.getApiVersion(resourceUri, apiVersion)}`
-        
+
         //Temporary solution for checking dependency call for missing api version exception, will remove after resolve exception
         const exceptionUri = "management.azure.com/?clientOptimizations=undefined&l=en.en-us&trustedAuthority=https:%2F%2Fportal.azure.com&shellVersion=undefined#";
         if(uri.includes(exceptionUri)){
@@ -134,7 +141,7 @@ export class ArmService {
                     "resourceUri": resourceUri,
                     "uri": uri,
                     "armUrl": this.armUrl,
-                    "isInCaseSubmissionFlow" : `${this.isInCaseSubmissionFlow}` 
+                    "isInCaseSubmissionFlow" : `${this.isInCaseSubmissionFlow}`
                 });
             }
             throw new Error("ARM Call Cause MissingApiVersionParameter Exception");
@@ -527,6 +534,10 @@ export class ArmService {
                     headers = headers.set(headerKey, headerVal);
                 }
             });
+        }
+
+        if (this.isLocalizationApplicable){
+            headers = headers.set('x-ms-localization-language', encodeURI(this.effectiveLocale));
         }
 
         return headers;

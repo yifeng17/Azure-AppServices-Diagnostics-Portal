@@ -194,8 +194,6 @@ export class DetectorContainerComponent implements OnInit {
       }
     });
 
-    this.detectorControlService._effectiveLocale = allRouteQueryParams['l'];
-    console.log("getting effectiveLocale in detctor container", this.detectorControlService._effectiveLocale);
     if (this.analysisMode) {
       var startTimeChildDetector: string = allRouteQueryParams['startTimeChildDetector'];
       var endTimeChildDetector: string = allRouteQueryParams['endTimeChildDetector'];
