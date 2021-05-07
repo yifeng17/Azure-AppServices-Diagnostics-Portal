@@ -9,7 +9,7 @@ import { HttpMethod } from '../models/http';
 import { Package } from '../models/package';
 import { CacheService } from './cache.service';
 import { Guid } from 'projects/app-service-diagnostics/src/app/shared/utilities/guid';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { TelemetryPayload } from 'diagnostic-data';
 
 @Injectable()
@@ -22,7 +22,7 @@ export class DiagnosticApiService {
   public effectiveLocale: string = "";
 
   constructor(private _httpClient: HttpClient, private _cacheService: CacheService,
-    private _adalService: AdalService, private _telemetryService: TelemetryService, private _router: Router, private _route: ActivatedRoute) { }
+    private _adalService: AdalService, private _telemetryService: TelemetryService, private _router: Router) { }
 
   public get diagnosticApi(): string {
     return environment.production ? '' : this.localDiagnosticApi;
@@ -53,7 +53,6 @@ export class DiagnosticApiService {
     if (queryParams) {
       path = path + "?" + queryParams.map(qp => qp.key + "=" + qp.value).join("&");
     }
-
     return this.invoke<DetectorResponse[]>(path, HttpMethod.POST, body, true, false, internalClient).pipe(retry(1), map(response => response.map(detector => detector.metadata)));
   }
 
