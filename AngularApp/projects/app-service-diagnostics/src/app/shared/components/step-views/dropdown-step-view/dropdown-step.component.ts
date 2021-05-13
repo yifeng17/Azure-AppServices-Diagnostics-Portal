@@ -31,9 +31,11 @@ export class DropDownStepComponent implements OnInit {
     var expandByDefault = this.dropdownStepView.expandByDefault;
     this.dropdownRef = {
       set current(val: IDropdown) {
-        this.dropdown = val;
-        if (expandByDefault) {
-          val.focus(true);
+        if (val != null) {
+          this.dropdown = val;
+          if (expandByDefault) {
+            val.focus(true);
+          }
         }
       },
 
