@@ -68,7 +68,7 @@ import { RiskAlertService } from './shared-v2/services/risk-alert.service';
       },
       {
         path: 'resource',
-        loadChildren: './resources/resources.module#ResourcesModule',
+        loadChildren: () => import('./resources/resources.module').then(m => m.ResourcesModule)
       }
     ],
     ),

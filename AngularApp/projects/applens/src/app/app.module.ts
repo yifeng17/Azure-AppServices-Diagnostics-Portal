@@ -61,19 +61,19 @@ export const Routes = RouterModule.forRoot([
         children: [
           {
             path: '',
-            loadChildren: './modules/main/main.module#MainModule'
+            loadChildren: () => import('./modules/main/main.module').then(m => m.MainModule)
           },
           {
             path: 'sites/:site',
-            loadChildren: './modules/site/site.module#SiteModule'
+            loadChildren: () => import('./modules/site/site.module').then(m => m.SiteModule)
           },
           {
             path: 'icm/:incidentId',
-            loadChildren: './modules/incidentassist/incidentassist.module#IncidentAssistModule'
+            loadChildren: () => import('./modules/incidentassist/incidentassist.module').then(m => m.IncidentAssistModule)
           },
           {
             path: 'hostingEnvironments/:hostingEnvironment',
-            loadChildren: './modules/ase/ase.module#AseModule'
+            loadChildren: () => import('./modules/ase/ase.module').then(m => m.AseModule)
           },
           {
             path: 'subscriptions/:subscriptionId/resourceGroups/:resourceGroup/:resourceTypeName/:resourceName',
@@ -81,12 +81,12 @@ export const Routes = RouterModule.forRoot([
           },
           {
             path: 'subscriptions/:subscriptionId/resourceGroups/:resourceGroup/providers/:provider/:resourceTypeName/:resourceName',
-            loadChildren: './modules/dashboard/dashboard.module#DashboardModule',
+            loadChildren: () => import('./modules/dashboard/dashboard.module').then(m => m.DashboardModule),
             resolve: { validResources: ValidResourceResolver }
           },
           {
             path: 'caseCleansing',
-            loadChildren: './modules/casecleansing/casecleansing.module#CasecleansingModule'
+            loadChildren: () => import('./modules/casecleansing/casecleansing.module').then(m => m.CasecleansingModule)
           }
         ]
       }
