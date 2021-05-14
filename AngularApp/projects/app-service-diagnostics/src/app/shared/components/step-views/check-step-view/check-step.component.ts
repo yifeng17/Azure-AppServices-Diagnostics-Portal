@@ -29,24 +29,3 @@ export class CheckStepComponent implements OnInit {
     this.expanded = !this.expanded;
   }
 }
-
-@Pipe({
-  name: 'convertLevelToHealthStatus'
-})
-export class ConvertLevelToHealthStatusPipe implements PipeTransform {
-  transform(level: checkResultLevel, args?: any): any {
-    switch (level) {
-      case checkResultLevel.pass:
-        return HealthStatus.Success;
-      case checkResultLevel.fail:
-        return HealthStatus.Critical;
-      case checkResultLevel.warning:
-        return HealthStatus.Warning;
-      case checkResultLevel.pending:
-        return HealthStatus.Info;
-      case checkResultLevel.error:
-        return HealthStatus.Info;
-    }
-    return HealthStatus.None;
-  }
-}

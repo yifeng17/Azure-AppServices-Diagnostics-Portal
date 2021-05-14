@@ -75,10 +75,16 @@ export enum checkResultLevel {
     hidden
 }
 
-export class CheckStepView extends StepView {
-    public title: string;
-    public level: number;
-    public subChecks?: { title: string, level: number, status?: HealthStatus }[];
+export interface Check{
+    title: string;
+    level: number;
+    subChecks?: Check[];
+}
+
+export class CheckStepView extends StepView implements Check {
+    title: string;
+    level: number;
+    subChecks?: Check[];
 
     constructor(view: CheckStepView) {
         super(view);
