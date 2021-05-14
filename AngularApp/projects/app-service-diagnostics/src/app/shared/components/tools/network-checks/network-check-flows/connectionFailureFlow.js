@@ -1,4 +1,4 @@
-import {GetArmData, GetWebAppVnetInfo, GetSubnet, ResourcePermissionCheckManager, CheckVnetIntegrationHealth, CheckDnsSettingAsync, CheckSubnetSizeAsync} from './flowMisc.js';
+import {ResourcePermissionCheckManager, checkVnetIntegrationHealth, checkDnsSettingAsync, checkSubnetSizeAsync} from './flowMisc.js';
 
 export var connectionFailureFlow = {
     title: "I'm unable to connect to a resource, such as SQL db or Redis db or on-prems, in my Virtual Network",
@@ -33,7 +33,7 @@ export var connectionFailureFlow = {
 
         var kuduReachablePromise = kuduAvailabilityCheckPromise.then(r => isKuduAccessible);
 
-        var promise = CheckVnetIntegrationHealth(siteInfo, diagProvider, kuduReachablePromise, permMgr);
+        var promise = checkVnetIntegrationHealth(siteInfo, diagProvider, kuduReachablePromise, permMgr);
         flowMgr.addViews(promise.then(d => d.views), "Checking VNet integration status...");
 
         var data = { subnetDataPromise: promise.then(d => d.subnetData), serverFarmId: siteInfo["serverFarmId"], kuduReachablePromise, isContinuedPromise: promise.then(d => d.isContinue) };
@@ -185,8 +185,8 @@ function checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, data
             level: 0
         });
         views.push(configCheckView);
-        var subnetSizeCheckPromise = CheckSubnetSizeAsync(diagProvider, subnetDataPromise, serverFarmId, permMgr);
-        var dnsCheckResultPromise = CheckDnsSettingAsync(siteInfo, diagProvider);
+        var subnetSizeCheckPromise = checkSubnetSizeAsync(diagProvider, subnetDataPromise, serverFarmId, permMgr);
+        var dnsCheckResultPromise = checkDnsSettingAsync(siteInfo, diagProvider);
         var appSettings = await diagProvider.getAppSettings();
         var vnetRouteAll = (appSettings["WEBSITE_VNET_ROUTE_ALL"] === "1");
 
