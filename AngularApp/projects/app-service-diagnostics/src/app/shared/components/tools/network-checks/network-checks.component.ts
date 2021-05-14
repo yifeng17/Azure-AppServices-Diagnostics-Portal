@@ -13,6 +13,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PortalService } from 'projects/app-service-diagnostics/src/app/startup/services/portal.service';
 import { configFailureFlow } from './network-check-flows/configFailureFlow.js';
 import { connectionFailureFlow } from './network-check-flows/connectionFailureFlow.js';
+import { functionsFlow } from './network-check-flows/functionsFlow.js';
 import { learnMoreFlow } from './network-check-flows/learnMoreFlow.js';
 
 abstract class NetworkCheckFlow {
@@ -96,7 +97,7 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
             var globals = this._globals;
             globals.messagesData.currentNetworkCheckFlow = null;
             var telemetryService = this._telemetryService;
-            var networkCheckFlows = { connectionFailureFlow, configFailureFlow, learnMoreFlow }
+            var networkCheckFlows = { connectionFailureFlow, configFailureFlow, functionsFlow, learnMoreFlow }
             var flows = this.processFlows(networkCheckFlows);
             if (this.debugMode) {
                 window["logDebugMessage"] = console.log.bind(console);
