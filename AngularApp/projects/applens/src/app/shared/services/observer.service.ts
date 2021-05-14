@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DiagnosticApiService } from './diagnostic-api.service';
 import { isArray } from 'util';
+import { Observer } from '../models/observer';
 
 @Injectable()
 export class ObserverService {

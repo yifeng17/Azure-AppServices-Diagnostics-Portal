@@ -5,7 +5,6 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { LimitToFilter } from './utilities/limitToFilter.pipe';
-import { nvD3 } from './utilities/nvd3graph.component';
 import { MarkupPipe } from './pipes/markup.pipe';
 import { BlogComponent } from './components/blog/blog.component';
 import { OpenTicketComponent } from './components/open-ticket/open-ticket.component';
@@ -140,7 +139,6 @@ import { InputStepComponent } from './components/step-views/input-step-view/inpu
 @NgModule({
     declarations: [
         LimitToFilter,
-        nvD3,
         MarkupPipe,
         GroupByPipe,
         MapValuesPipe,
@@ -260,7 +258,6 @@ import { InputStepComponent } from './components/step-views/input-step-view/inpu
         HttpClientModule,
         LimitToFilter,
         RouterModule,
-        nvD3,
         MarkupPipe,
         GroupByPipe,
         MapValuesPipe,

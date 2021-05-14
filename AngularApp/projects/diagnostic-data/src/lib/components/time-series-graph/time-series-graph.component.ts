@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { DataTableDataType, DiagnosticData, TimeSeriesRendering, DataTableResponseObject, RenderingType } from '../../models/detector';
-import { GraphSeries, GraphPoint } from '../nvd3-graph/nvd3-graph.component';
 import { HighchartsData, HighchartGraphSeries } from '../highcharts-graph/highcharts-graph.component';
 import { DataRenderBaseComponent, DataRenderer } from '../data-render-base/data-render-base.component';
-import { TimeSeries, TablePoint, HighChartTimeSeries } from '../../models/time-series';
+import { TablePoint, HighChartTimeSeries } from '../../models/time-series';
 import * as momentNs from 'moment';
 import { TimeUtilities } from '../../utilities/time-utilities';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
@@ -23,14 +22,12 @@ export class TimeSeriesGraphComponent extends DataRenderBaseComponent implements
         super(telemetryService);
     }
 
-    allSeries: TimeSeries[] = [];
     allSeriesNames: string[] = [];
 
     // All series with highchart
     allHighChartSeries: HighChartTimeSeries[] = [];
     allHighChartSeriesNames: string[] = [];
 
-    selectedSeries: GraphSeries[];
     selectedHighChartSeries: HighchartGraphSeries[];
 
     renderingProperties: TimeSeriesRendering;
@@ -62,7 +59,6 @@ export class TimeSeriesGraphComponent extends DataRenderBaseComponent implements
     }
 
     selectSeries() {
-        this.selectedSeries = this.allSeries.map(series => series.series);
         this.selectedHighChartSeries = this.allHighChartSeries.map(series => series.series);
     }
 
@@ -84,7 +80,6 @@ export class TimeSeriesGraphComponent extends DataRenderBaseComponent implements
             if (uniqueCounterNames.length > 0) {
                 uniqueCounterNames.forEach(counterName => {
                     const seriesName = this._getSeriesName(column.columnName, counterName);
-                    timeSeriesDictionary[seriesName] = <TimeSeries>{ name: seriesName, series: <GraphSeries>{ key: seriesName, values: [] } };
                     let accessibilitySetting = {
                         description: seriesName,
                         enabled: true,
@@ -106,7 +101,6 @@ export class TimeSeriesGraphComponent extends DataRenderBaseComponent implements
                         enabled: true
                     }
                 };
-                timeSeriesDictionary[seriesName] = <TimeSeries>{ name: seriesName, series: <GraphSeries>{ key: seriesName, values: [] } };
                 highchartTimeSeriesDictionary[seriesName] = <HighChartTimeSeries>{ name: seriesName, series: <HighchartGraphSeries>{ name: seriesName, data: [], accessibility: accessibilitySetting } };
             }
         });
@@ -173,7 +167,6 @@ export class TimeSeriesGraphComponent extends DataRenderBaseComponent implements
                         value = pointToAdd.value;
                         pointToAdd = pointsForThisSeries.pop();
                     }
-                    timeSeriesDictionary[key].series.values.push(<GraphPoint>{ x: d.clone(), y: value });
                     highchartTimeSeriesDictionary[key].series.data.push([d.clone().valueOf(), value]);
                 }
             } else {
@@ -181,12 +174,9 @@ export class TimeSeriesGraphComponent extends DataRenderBaseComponent implements
                     if (pointToAdd.timestamp.isBefore(this.startTime)) {
                         this.startTime = pointToAdd.timestamp;
                     }
-                    timeSeriesDictionary[key].series.values.push(<GraphPoint>{ x: momentNs.utc(pointToAdd.timestamp), y: pointToAdd.value });
                     highchartTimeSeriesDictionary[key].series.data.push([momentNs.utc(pointToAdd.timestamp).valueOf(), pointToAdd.value]);
                 });
             }
-
-            this.allSeries.push(timeSeriesDictionary[key]);
 
             this.allHighChartSeries.push(highchartTimeSeriesDictionary[key]);
         });

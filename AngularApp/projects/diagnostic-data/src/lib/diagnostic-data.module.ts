@@ -1,5 +1,3 @@
-import 'd3';
-import 'nvd3';
 import { DetectorControlService } from './services/detector-control.service';
 import { DiagnosticService } from './services/diagnostic.service';
 import { GenericSupportTopicService } from './services/generic-support-topic.service';
@@ -7,7 +5,6 @@ import { GenericContentService } from './services/generic-content.service';
 import { GenericDocumentsSearchService } from './services/generic-documents-search.service';
 import { TelemetryService } from './services/telemetry/telemetry.service';
 import { GenieGlobals } from './services/genie.service';
-import { NvD3Module } from 'ng2-nvd3';
 import { MarkdownModule } from 'ngx-markdown';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 import { CommonModule } from '@angular/common';
@@ -40,7 +37,6 @@ import { InsightsComponent } from './components/insights/insights.component';
 import { LoaderViewComponent } from './components/loader-view/loader-view.component';
 import { MarkdownEditorComponent } from './components/markdown-editor/markdown-editor.component';
 import { MarkdownViewComponent } from './components/markdown-view/markdown-view.component';
-import { Nvd3GraphComponent } from './components/nvd3-graph/nvd3-graph.component';
 import {
   StarRatingFeedbackComponent
 } from './components/star-rating-feedback/star-rating-feedback.component';
@@ -112,7 +108,6 @@ import { CollapsibleListItemComponent } from './components/collapsible-list/coll
 @NgModule({
   imports: [
     CommonModule,
-    NvD3Module,
     MarkdownModule.forRoot(),
     FormsModule,
     MonacoEditorModule.forRoot(),
@@ -138,7 +133,7 @@ import { CollapsibleListItemComponent } from './components/collapsible-list/coll
     ClipboardService
   ],
   declarations: [
-    Nvd3GraphComponent, TimeSeriesGraphComponent, DynamicDataComponent,
+    TimeSeriesGraphComponent, DynamicDataComponent,
     DataRenderBaseComponent, DataContainerComponent, TimeSeriesInstanceGraphComponent, DetectorViewComponent, DetectorSearchComponent,
     DataSummaryComponent, EmailComponent, InsightsComponent, LoaderViewComponent, DynamicInsightComponent,
     MarkdownViewComponent, DetectorListComponent, DetectorOrderPipe, StarRatingComponent, StarRatingFeedbackComponent,

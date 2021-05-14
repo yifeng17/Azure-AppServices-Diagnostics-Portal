@@ -1,8 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { DataTableDataType, DiagnosticData, TimeSeriesPerInstanceRendering, DataTableResponseObject, DataTableResponseColumn } from '../../models/detector';
-import { GraphSeries, GraphPoint } from '../nvd3-graph/nvd3-graph.component';
 import { DataRenderBaseComponent, DataRenderer } from '../data-render-base/data-render-base.component';
-import { InstanceDetails, DetailedInstanceTimeSeries, DetailedInstanceHighChartTimeSeries } from '../../models/time-series';
+import { InstanceDetails, DetailedInstanceHighChartTimeSeries } from '../../models/time-series';
 import { TimeZones, TimeUtilities } from '../../utilities/time-utilities';
 import * as momentNs from 'moment';
 import { HighchartsData, HighchartGraphSeries } from '../highcharts-graph/highcharts-graph.component';
@@ -16,7 +15,6 @@ const moment = momentNs;
 })
 export class TimeSeriesInstanceGraphComponent extends DataRenderBaseComponent implements OnInit, DataRenderer {
 
-  allSeries: DetailedInstanceTimeSeries[] = [];
   allSeriesNames: string[] = [];
 
   allHighChartSeries: DetailedInstanceHighChartTimeSeries[] = [];
@@ -26,7 +24,6 @@ export class TimeSeriesInstanceGraphComponent extends DataRenderBaseComponent im
   selectedInstance: InstanceDetails;
   counters: string[];
 
-  selectedSeries: GraphSeries[];
   selectedHighChartSeries: HighchartGraphSeries[];
 
   renderingProperties: TimeSeriesPerInstanceRendering;
@@ -81,7 +78,6 @@ export class TimeSeriesInstanceGraphComponent extends DataRenderBaseComponent im
     //   this.selectedInstance = this.instances[0];
     // }
 
-    this.selectedSeries = this.allSeries.map(series => series.series);
     this.selectedHighChartSeries = this.allHighChartSeries.map(series => series.series);
   }
 
@@ -94,7 +90,6 @@ export class TimeSeriesInstanceGraphComponent extends DataRenderBaseComponent im
       return;
     }
 
-    const allSeries: DetailedInstanceTimeSeries[] = [];
     const allHighChartSeries: DetailedInstanceHighChartTimeSeries[] = [];
     const tablePoints: InstanceTablePoint[] = [];
     if (!this.renderingProperties.counterColumnName || this.renderingProperties.counterColumnName === '') {
@@ -102,15 +97,6 @@ export class TimeSeriesInstanceGraphComponent extends DataRenderBaseComponent im
       this.counters = valueColumns.map(col => col.columnName);
       valueColumns.forEach(column => instances.forEach(instance =>
         {
-          allSeries.push(<DetailedInstanceTimeSeries>{
-            instance: instance,
-            name: column.columnName,
-            series: <GraphSeries>{
-              key: `${instance.displayName}-${column.columnName}`,
-              values: []
-            }
-          });
-
         allHighChartSeries.push(<DetailedInstanceHighChartTimeSeries>{
           instance: instance,
           name: column.columnName,
@@ -157,15 +143,6 @@ export class TimeSeriesInstanceGraphComponent extends DataRenderBaseComponent im
       uniqueCounterNames.forEach(counter =>
         instances.forEach(instance =>
           {
-            allSeries.push(<DetailedInstanceTimeSeries>{
-              instance: instance,
-              name: counter,
-              series: <GraphSeries>{
-                key: `${instance.displayName}-${counter}`,
-                values: []
-              }
-            });
-
             allHighChartSeries.push(<DetailedInstanceHighChartTimeSeries>{
               instance: instance,
               name: counter,
@@ -203,28 +180,6 @@ export class TimeSeriesInstanceGraphComponent extends DataRenderBaseComponent im
       });
     }
 
-    allSeries.forEach(series => {
-
-      const pointsForThisSeries =
-        tablePoints
-          .filter(point => point.instance.equals(series.instance) && point.counterName === series.name)
-          .sort((b, a) => a.timestamp.diff(b.timestamp));
-
-      let pointToAdd = pointsForThisSeries.pop();
-
-      for (const d = this.startTime.clone(); d.isBefore(this.endTime); d.add(this.timeGrainInMinutes, 'minutes')) {
-        let value = this.defaultValue;
-
-        if (pointToAdd && d.isSame(moment.utc(pointToAdd.timestamp))) {
-          value = pointToAdd.value;
-
-          pointToAdd = pointsForThisSeries.pop();
-        }
-
-        series.series.values.push(<GraphPoint>{ x: d.clone(), y: value });
-      }
-    });
-
     allHighChartSeries.forEach(series => {
 
       const pointsForThisSeries =
@@ -247,7 +202,6 @@ export class TimeSeriesInstanceGraphComponent extends DataRenderBaseComponent im
       }
     });
 
-    this.allSeries = allSeries;
     this.allHighChartSeries = allHighChartSeries;
   }
 

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Observer } from '../../../shared/models/observer';
 import { ObserverService } from '../../../shared/services/observer.service';
 
 @Component({

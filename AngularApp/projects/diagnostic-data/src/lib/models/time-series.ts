@@ -1,29 +1,15 @@
-import { GraphSeries } from '../components/nvd3-graph/nvd3-graph.component';
 import { HighchartGraphSeries } from '../components/highcharts-graph/highcharts-graph.component';
 import * as momentNs from 'moment';
 
-export interface TimeSeries {
-  name: string;
-  series: GraphSeries;
-}
 
 export interface HighChartTimeSeries {
     name: string;
     series: HighchartGraphSeries;
   }
 
-export interface InstanceTimeSeries extends TimeSeries {
-  aggregated: boolean;
-  instance: string;
-}
-
 export interface InstanceHighChartTimeSeries extends HighChartTimeSeries {
   aggregated: boolean;
   instance: string;
-}
-
-export interface DetailedInstanceTimeSeries extends TimeSeries {
-  instance: InstanceDetails;
 }
 
 export interface DetailedInstanceHighChartTimeSeries extends HighChartTimeSeries {

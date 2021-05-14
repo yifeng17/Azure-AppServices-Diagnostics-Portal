@@ -4,6 +4,7 @@ import { Inject, Injectable } from '@angular/core';
 import { RESOURCE_SERVICE_INPUTS, ResourceServiceInputs } from '../models/resources';
 import { ObserverService } from './observer.service';
 import { ResourceService } from './resource.service';
+import { Observer } from '../models/observer';
 
 @Injectable()
 export class AseService extends ResourceService {

@@ -5,6 +5,7 @@ import { RESOURCE_SERVICE_INPUTS, ResourceServiceInputs } from '../models/resour
 import { ObserverService } from './observer.service';
 import { ResourceService } from './resource.service';
 import { HttpResponse } from '@angular/common/http';
+import { Observer } from '../models/observer';
 
 @Injectable()
 export class SiteService extends ResourceService {
@@ -53,7 +54,7 @@ export class SiteService extends ResourceService {
             this.searchSuffix = "AZURE FUNCTION APP";
         }
         else if (this._siteObject.IsLinux != undefined && this._siteObject.IsLinux) {
-            this.pesId = '16170';   
+            this.pesId = '16170';
             this.imgSrc = 'assets/img/Azure-Tux-Logo.png';
             this.searchSuffix = "AZURE LINUX WEB APP";
         }

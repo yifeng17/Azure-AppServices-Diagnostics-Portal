@@ -1,9 +1,9 @@
-namespace Observer {
+export namespace Observer {
     export interface ObserverSiteResponse {
         siteName: string;
         details: ObserverSiteInfo[];
     }
-  
+
     export interface ObserverSiteInfo {
         SiteName: string;
         StampName: string;
@@ -45,7 +45,7 @@ namespace Observer {
     export interface ObserverAseResponse {
         details: ObserverAseInfo;
     }
-  
+
     export interface ObserverAseInfo {
         ID: number;
         Name: string;

@@ -4,8 +4,6 @@ import { DetectorViewBaseComponent } from '../detector-view-base/detector-view-b
 import { DetectorControlService, LoadingStatus } from 'diagnostic-data';
 import { AppAnalysisService } from '../../../shared/services/appanalysis.service';
 import { IDetectorResponse } from '../../../shared/models/detectorresponse';
-import { SiteCpuAnalysisDetectorComponent } from '../detectors/site-cpu-analysis-detector/site-cpu-analysis-detector.component';
-import { SiteMemoryAnalysisDetectorComponent } from '../detectors/site-memory-analysis-detector/site-memory-analysis-detector.component';
 import { ThreadDetectorComponent } from '../detectors/thread-detector/thread-detector.component';
 import { FrebAnalysisDetectorComponent } from '../detectors/freb-analysis-detector/freb-analysis-detector.component';
 import { PhpLogAnalyzerComponent } from '../detectors/php-log-analyzer-detector/php-log-analyzer-detector.component';
@@ -20,7 +18,7 @@ import { AutohealingDetectorComponent } from '../detectors/autohealing-detector/
   selector: 'detector-loader',
   templateUrl: './detector-loader.component.html',
   styleUrls: ['./detector-loader.component.scss'],
-  entryComponents: [SiteCpuAnalysisDetectorComponent, SiteMemoryAnalysisDetectorComponent, ThreadDetectorComponent, FrebAnalysisDetectorComponent, PhpLogAnalyzerComponent, DockerContainerIntializationComponent, CommittedMemoryUsageComponent, PageFileOperationsComponent, AspNetCoreComponent, AutohealingDetectorComponent, DetectorViewBaseComponent],
+  entryComponents: [ThreadDetectorComponent, FrebAnalysisDetectorComponent, PhpLogAnalyzerComponent, DockerContainerIntializationComponent, CommittedMemoryUsageComponent, PageFileOperationsComponent, AspNetCoreComponent, AutohealingDetectorComponent, DetectorViewBaseComponent],
 })
 export class DetectorLoaderComponent implements OnInit, OnDestroy {
 

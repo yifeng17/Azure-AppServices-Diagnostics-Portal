@@ -6155,11 +6155,6 @@
         "type": "^1.0.1"
       }
     },
-    "d3": {
-      "version": "3.5.17",
-      "resolved": "https://registry.npmjs.org/d3/-/d3-3.5.17.tgz",
-      "integrity": "sha1-vEZ0gAQ3iyGjYMn8fPUjF5B2L7g="
-    },
     "damerau-levenshtein": {
       "version": "1.0.7",
       "resolved": "https://registry.npmjs.org/damerau-levenshtein/-/damerau-levenshtein-1.0.7.tgz",
@@ -12451,85 +12446,6 @@
         }
       }
     },
-    "ng-pick-datetime": {
-      "version": "6.0.16",
-      "resolved": "https://registry.npmjs.org/ng-pick-datetime/-/ng-pick-datetime-6.0.16.tgz",
-      "integrity": "sha512-96rHNg+tGXmzJHvGoH2O8dF+MF7N4rKIehsi8Px3IZUOZM4qA6PE1w8SQzDvHQTIp/1NpiICvmt6BZK5IaDsFg=="
-    },
-    "ng-pick-datetime-moment": {
-      "version": "1.0.8",
-      "resolved": "https://registry.npmjs.org/ng-pick-datetime-moment/-/ng-pick-datetime-moment-1.0.8.tgz",
-      "integrity": "sha512-aIUaKjneCqTwoDN3WUgJ692au2EtIFZW0InECs7mfYqKxXHb7+rwMe/XcDzpjH84c9PHjsyAG5s9n4gCvT/IdA==",
-      "requires": {
-        "@angular/animations": "^7.0.1",
-        "@angular/cdk": "^7.0.2",
-        "@angular/common": "^7.0.1",
-        "@angular/core": "^7.0.1",
-        "@angular/forms": "^7.0.1",
-        "moment": "^2.22.2",
-        "ng-pick-datetime": "^7.0.0"
-      },
-      "dependencies": {
-        "@angular/animations": {
-          "version": "7.2.16",
-          "resolved": "https://registry.npmjs.org/@angular/animations/-/animations-7.2.16.tgz",
-          "integrity": "sha512-jH7haM3Hgtn1EW9b0Vfq6UqSz+rx3l7k+gJi9tuHEOPZdBTjtv3sNQxmM0IKxzOuTfM8KhRFkUlzyi43kfdp0w==",
-          "requires": {
-            "tslib": "^1.9.0"
-          }
-        },
-        "@angular/common": {
-          "version": "7.2.16",
-          "resolved": "https://registry.npmjs.org/@angular/common/-/common-7.2.16.tgz",
-          "integrity": "sha512-lPo2Vt5zmKeKTdMxHMUuViouMiK4QsmO6dGTIhJ7QAx9mov0QYb4sUVKN9Ix32Aeeznaa97qJnhevyDncJqvSA==",
-          "requires": {
-            "tslib": "^1.9.0"
-          }
-        },
-        "@angular/core": {
-          "version": "7.2.16",
-          "resolved": "https://registry.npmjs.org/@angular/core/-/core-7.2.16.tgz",
-          "integrity": "sha512-z1RuBinuYeC4KLv8Z95YOgIQLd4nkoApdxkIZaWALwSkgeBuHJn4bCBn2cL0gJ/KO2x18TiTU5HuC+uyBt0AVQ==",
-          "requires": {
-            "tslib": "^1.9.0"
-          }
-        },
-        "@angular/forms": {
-          "version": "7.2.16",
-          "resolved": "https://registry.npmjs.org/@angular/forms/-/forms-7.2.16.tgz",
-          "integrity": "sha512-50JTXco6w1HOi5o6RQ6PVSR0tD4Y2aRcCFBfLXvzDi78aZOSEdOYaSm78RDUNzGCbjwdMCIbX8eOdQgUUtsEFA==",
-          "requires": {
-            "tslib": "^1.9.0"
-          }
-        },
-        "ng-pick-datetime": {
-          "version": "7.0.0",
-          "resolved": "https://registry.npmjs.org/ng-pick-datetime/-/ng-pick-datetime-7.0.0.tgz",
-          "integrity": "sha512-SbS+zKX6gOlYpgH8zDSx2EL32ak0Z0y1Ksu1ECP/FiwVBM2mHgbzdfyDYhMmKFB0GKn5yCwXTandR1FCQXe62w=="
-        }
-      }
-    },
-    "ng2-nvd3": {
-      "version": "2.0.0",
-      "resolved": "https://registry.npmjs.org/ng2-nvd3/-/ng2-nvd3-2.0.0.tgz",
-      "integrity": "sha512-QVpqYdtu4GAXhst4M3NQvLc5PL2BnBpgHyjnwdMkci1XmYTK7dUlzkmBLYCERHg0SMcUI9tdML/R9kGE2BHSUg==",
-      "requires": {
-        "d3": "^3.5.15",
-        "nvd3": "^1.8.5",
-        "reflect-metadata": "^0.1.10",
-        "rxjs": "5.2.0"
-      },
-      "dependencies": {
-        "rxjs": {
-          "version": "5.2.0",
-          "resolved": "https://registry.npmjs.org/rxjs/-/rxjs-5.2.0.tgz",
-          "integrity": "sha1-21N96HZ8BfpzchWHop4AhTB9MYs=",
-          "requires": {
-            "symbol-observable": "^1.0.1"
-          }
-        }
-      }
-    },
     "ng5-slider": {
       "version": "1.1.13",
       "resolved": "https://registry.npmjs.org/ng5-slider/-/ng5-slider-1.1.13.tgz",
@@ -13139,11 +13055,6 @@
       "version": "1.0.1",
       "resolved": "https://registry.npmjs.org/number-is-nan/-/number-is-nan-1.0.1.tgz",
       "integrity": "sha1-CXtgK1NCKlIsGvuHkDGDNpQaAR0="
-    },
-    "nvd3": {
-      "version": "1.8.6",
-      "resolved": "https://registry.npmjs.org/nvd3/-/nvd3-1.8.6.tgz",
-      "integrity": "sha1-LT66dL8zNjtRAevx0JPFmlOuc8Q="
     },
     "oauth-sign": {
       "version": "0.9.0",
@@ -17181,7 +17092,8 @@
     "symbol-observable": {
       "version": "1.2.0",
       "resolved": "https://registry.npmjs.org/symbol-observable/-/symbol-observable-1.2.0.tgz",
-      "integrity": "sha512-e900nM8RRtGhlV36KGEU9k65K3mPb1WV70OdjfxlG2EAuM1noi/E/BaW/uMhL7bPEssK8QV57vN3esixjUvcXQ=="
+      "integrity": "sha512-e900nM8RRtGhlV36KGEU9k65K3mPb1WV70OdjfxlG2EAuM1noi/E/BaW/uMhL7bPEssK8QV57vN3esixjUvcXQ==",
+      "dev": true
     },
     "syntax-error": {
       "version": "1.4.0",

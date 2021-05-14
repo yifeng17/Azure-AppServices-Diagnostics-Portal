@@ -4,7 +4,6 @@ import { DaasService } from '../../../../services/daas.service';
 import { SiteService } from '../../../../services/site.service';
 import * as momentNs from 'moment';
 import { CrashMonitoringSettings, DaasSasUri, DaasSettings } from '../../../../models/daas';
-import moment = require('moment');
 import { Subscription, interval, Observable } from 'rxjs';
 import { SiteDaasInfo } from '../../../../models/solution-metadata';
 import { Globals } from '../../../../../globals'
@@ -103,8 +102,8 @@ export class CrashMonitoringAnalysisComponent implements OnInit, OnChanges, OnDe
     this.updateMonitoringStatus();
     if (this.crashMonitoringSettings != null) {
 
-      let _startTime = moment.utc().subtract(1, 'days');
-      let _endTime = moment.utc().subtract(16, 'minutes');
+      let _startTime = momentNs.utc().subtract(1, 'days');
+      let _endTime = momentNs.utc().subtract(16, 'minutes');
 
       this._diagnosticService.getDetector(crashMonitoringDetectorName, _startTime.format(this.stringFormat), _endTime.format(this.stringFormat), true, false, null, null).subscribe(detectorResponse => {
         let rawTable = detectorResponse.dataset.find(x => x.renderingProperties.type === RenderingType.Table) // && x.table.tableName === "CrashMonitoring");
@@ -137,8 +136,8 @@ export class CrashMonitoringAnalysisComponent implements OnInit, OnChanges, OnDe
 
   refreshHistory() {
     this.refreshingHistory = true;
-    let _startTime = moment.utc().subtract(1, 'days');
-    let _endTime = moment.utc().subtract(16, 'minutes');
+    let _startTime = momentNs.utc().subtract(1, 'days');
+    let _endTime = momentNs.utc().subtract(16, 'minutes');
 
     this._diagnosticService.getDetector(crashMonitoringDetectorName, _startTime.format(this.stringFormat), _endTime.format(this.stringFormat), true, false, null, null).subscribe(detectorResponse => {
       let rawTable = detectorResponse.dataset.find(x => x.renderingProperties.type === RenderingType.Table) // && x.table.tableName === "CrashMonitoring");
@@ -229,7 +228,7 @@ export class CrashMonitoringAnalysisComponent implements OnInit, OnChanges, OnDe
     }
 
     dataTable.rows.forEach(row => {
-      let rowDate: Date = moment.utc(row[cIdxTimeStamp]).toDate();
+      let rowDate: Date = momentNs.utc(row[cIdxTimeStamp]).toDate();
       if ((monitoringDates != null && rowDate > monitoringDates.start && rowDate < monitoringDates.end) ||
         ignoreCurrentSession) {
         let crashMonitoringData = new CrashMonitoringData();

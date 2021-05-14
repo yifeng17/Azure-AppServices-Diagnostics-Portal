@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { ResponseMessageCollectionEnvelope, ResponseMessageEnvelope } from '../models/responsemessageenvelope';
 import { StorageAccount, StorageKeys, NewStorageAccount, SasUriPostBody, SasUriPostResponse, NewContainer } from '../models/storage';
-import moment = require('moment');
+import * as moment from 'moment';
 import { HttpResponse } from '@angular/common/http';
 import { ArmResource } from '../../shared-v2/models/arm';
 
@@ -66,7 +66,7 @@ export class StorageService {
 
         //
         // If the container does not exist or if it is marked as
-        // deleted we will get an error and we can try creating it 
+        // deleted we will get an error and we can try creating it
         //
 
         let requestBody = new NewContainer();

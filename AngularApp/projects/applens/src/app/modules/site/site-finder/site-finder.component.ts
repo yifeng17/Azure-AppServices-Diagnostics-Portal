@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Observer } from '../../../shared/models/observer';
 import { ObserverService } from '../../../shared/services/observer.service';
 import { StartupService } from '../../../shared/services/startup.service';
 
@@ -28,7 +29,7 @@ export class SiteFinderComponent implements OnInit {
     this._observerService.getSite(this.site).subscribe(observerSiteResponse => {
       if (observerSiteResponse.details.toString() == "Unable to fetch data from Observer API : GetAdminSite"){
         this.error = `There was an error trying to find app ${this.site}`;
-        this.loading = false;  
+        this.loading = false;
       }
       else if (observerSiteResponse.details.length === 1) {
         let matchingSite = observerSiteResponse.details[0];
