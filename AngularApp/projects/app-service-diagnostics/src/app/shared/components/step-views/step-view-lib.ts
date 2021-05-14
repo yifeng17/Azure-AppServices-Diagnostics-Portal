@@ -79,12 +79,14 @@ export interface Check{
     title: string;
     level: number;
     subChecks?: Check[];
+    detailsMarkdown?: string;
 }
 
 export class CheckStepView extends StepView implements Check {
     title: string;
     level: number;
     subChecks?: Check[];
+    detailsMarkdown?: string;
 
     constructor(view: CheckStepView) {
         super(view);
@@ -92,6 +94,7 @@ export class CheckStepView extends StepView implements Check {
         this.title = view.title;
         this.level = view.level;
         this.subChecks = view.subChecks || [];
+        this.detailsMarkdown = view.detailsMarkdown;
     }
 }
 

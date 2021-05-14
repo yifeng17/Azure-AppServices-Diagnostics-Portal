@@ -16,6 +16,7 @@ export class CheckComponent implements OnInit {
   @Input() bold = false;
   @Input() check:Check;
   expanded = false;
+  detailsPanelOpened = false;
 
   constructor(private _telemetryService: TelemetryService) {
 
@@ -26,6 +27,14 @@ export class CheckComponent implements OnInit {
 
   toggleSubChecks(): void {
     this.expanded = !this.expanded;
+  }
+
+  toggleDetails(): void{
+    this.detailsPanelOpened = true;
+  }
+
+  detailsPanelDismissedHandler(): void{
+    this.detailsPanelOpened = false;
   }
 }
 
