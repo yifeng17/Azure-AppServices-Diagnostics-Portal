@@ -251,6 +251,14 @@ export class StepFlowManager {
         return idx;
     }
 
+    public addViewPromises(viewPromises: Promise<StepView[]>[], loadingText?: string) {
+        var idx = this._stepViewQueue.length - 1;
+        for(var i = 0; i < viewPromises.length; ++i){
+            this.addViews(viewPromises[i], loadingText);
+        }
+        return idx;
+    }
+
     private generateAddViewsFunc(flow: StepFlow) {
         var addViews = this.addViews.bind(this);
         return (viewPromise: StepView[] | Promise<StepView[]>, loadingText?: string): number => {

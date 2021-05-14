@@ -105,6 +105,17 @@ export class DiagProvider {
             });
     }
 
+    public getDaasApiAsync(uri: string): Promise<any> {
+        var stack = new Error("replace_placeholder").stack;
+        return this._armService.get<any>(`https://${this._scmHostName}/DaaS/api/${uri}`)
+            .toPromise()
+            .catch(e => {
+                var err = new Error(e);
+                err.stack = stack.replace("replace_placeholder", e);
+                throw err;
+            });
+    }
+
     public postKuduApiAsync<T, S>(uri: string, body?: S, instance?: string, timeoutInSec: number = 15): Promise<boolean | {} | ResponseMessageEnvelope<T>> {
         var postfix = (instance == null ? "" : `?instance=${instance}`);
         var stack = new Error("replace_placeholder").stack;
@@ -145,6 +156,15 @@ export class DiagProvider {
             err.stack = stack.replace("replace_placeholder", e.message || e);
             throw err;
         });
+    }
+
+    public async udpEchoTestAsync(ips: string[]) {
+        var promises = [];
+        for (var i = 0; i < ips.length; ++i) {
+            promises.push(this.getDaasApiAsync(`udpechotest?ip=${ips[i]}`));
+        }
+        var results = await Promise.all(promises);
+        return results.filter(r => r.success == 0).length == 0;
     }
 
     public async tcpPingAsync(hostname: string, port: number, count: number = 1, timeout: number = 10, instance?: string): Promise<{ status: ConnectionCheckStatus, statuses: ConnectionCheckStatus[] }> {

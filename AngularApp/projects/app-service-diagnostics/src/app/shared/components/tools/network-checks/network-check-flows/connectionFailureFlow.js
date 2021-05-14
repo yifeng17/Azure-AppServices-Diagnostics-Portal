@@ -455,11 +455,18 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
                 checks = checks.concat(viewPrivateIP.views);
 
                 isContinue = viewPrivateIP.isContinue;
+                if(isContinue){
+                    var udpEchoCheckResult = await UdpEchoCheck(diagProvider, viewPrivateIP.ipMap);
+                }
 
                 return { checks, isContinue, subnetData };
             }
         }
     }
+}
+
+async function UdpEchoCheck(diagProvider, ipMap){
+
 }
 
 async function GetVirtualNetwork(vnetArmId, armService) {
@@ -1051,6 +1058,7 @@ async function checkPrivateIPAsync(diagProvider, instancesObj, isKuduAccessibleP
     var instanceCount = 0;
     var instanceAllocated = 0;
     var views = [];
+    var ipMap = {};
     var isContinue = true;
     var msg = `<b>Recommendations: </b>`;
     msg += `<li>Check if the subnet size is as per recommendations to allocate IPs to all instances..`;
@@ -1080,6 +1088,7 @@ async function checkPrivateIPAsync(diagProvider, instancesObj, isKuduAccessibleP
 
     for (var i = 0; i < privateIpPromiseArray.length; i++) {
         var privateIp = await privateIpPromiseArray[i];
+        ipMap[instances[i]["name"]] = privateIp;
         if (privateIp == null) {
 
         }
@@ -1126,7 +1135,7 @@ async function checkPrivateIPAsync(diagProvider, instancesObj, isKuduAccessibleP
         isContinue = false;
     }
 
-    return { views, isContinue };
+    return { views, isContinue, ipMap};
 }
 
 async function checkDnsSettingAsync(siteInfo, diagProvider) {
