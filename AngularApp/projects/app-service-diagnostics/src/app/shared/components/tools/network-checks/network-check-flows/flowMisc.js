@@ -18,7 +18,7 @@ export class ResourcePermissionCheckManager{
     }
 }
 
-export async function GetArmData(resourceId, diagProvider) {
+export async function getArmData(resourceId, diagProvider) {
     var apiVersion = "2018-07-01";//"2020-11-01"
     var armData = null;
     if (resourceId.includes("/subnets/")) {
@@ -46,7 +46,7 @@ export async function GetArmData(resourceId, diagProvider) {
     return armData;
 }
 
-export async function GetWebAppVnetInfo(siteArmId, armService) {
+export async function getWebAppVnetInfo(siteArmId, armService) {
     //This is the regional VNet Integration endpoint
     var swiftUrl = siteArmId + "/config/virtualNetwork";
     var siteVnetInfo = await armService.getArmResourceAsync(swiftUrl, "2018-02-01");
@@ -55,13 +55,13 @@ export async function GetWebAppVnetInfo(siteArmId, armService) {
 }
 
 var armDataDictionary = {};
-export async function GetSubnet(armService, subnetResourceId) {
+export async function getSubnet(armService, subnetResourceId) {
     var subnetData;
     var subnetName = subnetResourceId.split("/subnets/")[1];
     var vnetResourceId = subnetResourceId.split("/subnets/")[0];
     //Search for the subnet
     if (!(subnetResourceId in armDataDictionary)) {
-        var vnetData = await GetArmData(vnetResourceId, armService);
+        var vnetData = await getArmData(vnetResourceId, armService);
         var subnets = vnetData["properties"]["subnets"];
         subnets.forEach(subnet => {
             if (subnet["name"].toLowerCase() == subnetName.toLowerCase()) {
@@ -75,7 +75,7 @@ export async function GetSubnet(armService, subnetResourceId) {
     return subnetData;
 }
 
-export async function RunKuduAccessibleCheck(diagProvider) {
+export async function runKuduAccessibleCheck(diagProvider) {
     var isKuduAccessible = await diagProvider.checkKuduReachable(30);
     var views = [];
     if (isKuduAccessible === false) {
@@ -98,7 +98,7 @@ export async function RunKuduAccessibleCheck(diagProvider) {
     return views;
 }
 
-export async function CheckVnetIntegrationHealth(siteInfo, diagProvider, isKuduAccessiblePromise, permMgr) {
+export async function checkVnetIntegrationHealth(siteInfo, diagProvider, isKuduAccessiblePromise, permMgr) {
 
     var views = [], subnetData, isContinue;
 
@@ -159,7 +159,7 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
     //get Vnet Integration Details for the Web App
     //For Regional Integration path is sitearmId + /config/virtualNetwork
     //For Gateway Integration path is sitearmId + /virtualNetworkConnections
-    var siteVnetInfo = await GetWebAppVnetInfo(siteArmId, diagProvider);
+    var siteVnetInfo = await getWebAppVnetInfo(siteArmId, diagProvider);
 
     if (siteVnetInfo != null && siteVnetInfo["properties"] != null) {
         var vnetInfo = siteVnetInfo["properties"];
@@ -451,7 +451,7 @@ async function showVnetIntegrationNotConfiguredStatus(diagProvider, aspSitesObj,
             }
             var siteResourceUri = aspSites[i]["id"];
             var siteName = aspSites[i]["name"];
-            var siteVnetInfo = await GetWebAppVnetInfo(siteResourceUri, diagProvider);
+            var siteVnetInfo = await getWebAppVnetInfo(siteResourceUri, diagProvider);
             var subnetName = "-";
 
             if (siteVnetInfo != null) {
@@ -459,7 +459,7 @@ async function showVnetIntegrationNotConfiguredStatus(diagProvider, aspSitesObj,
                     var subnetResourceId = siteVnetInfo["properties"]["subnetResourceId"];
                     if (subnetResourceId.includes("/subnets/")) {
                         subnetName = subnetResourceId.split("/subnets/")[1];
-                        var subnetData = await GetSubnet(diagProvider, subnetResourceId);
+                        var subnetData = await getSubnet(diagProvider, subnetResourceId);
 
                         if (subnetData["properties"] != null) {
                             var sal = subnetData["properties"]["serviceAssociationLinks"];
@@ -689,7 +689,7 @@ async function checkASPConnectedToMultipleSubnets(diagProvider, aspSitesObj, thi
                 continue;
             }
             var siteResourceUri = aspSites[i]["id"];
-            var siteVnetInfo = await GetArmData(siteResourceUri + "/config/virtualNetwork", diagProvider);
+            var siteVnetInfo = await getArmData(siteResourceUri + "/config/virtualNetwork", diagProvider);
 
             if (siteVnetInfo["properties"] != null && siteVnetInfo["properties"]["subnetResourceId"] != null) {
                 var subnetResourceId = siteVnetInfo["properties"]["subnetResourceId"];
@@ -721,7 +721,7 @@ async function checkASPConnectedToMultipleSubnets(diagProvider, aspSitesObj, thi
                         subnetName = subnetResourceId.split("/subnets/")[1];
 
                         //Get Subnet Data
-                        var subnetData = await GetSubnet(diagProvider, subnetResourceId);
+                        var subnetData = await getSubnet(diagProvider, subnetResourceId);
                         var sal, linkedAsp;
 
                         if (subnetData && subnetData["properties"] && subnetData["properties"]["serviceAssociationLinks"] != null) {
@@ -849,7 +849,7 @@ async function checkPrivateIPAsync(diagProvider, instancesObj, isKuduAccessibleP
     return { views, isContinue };
 }
 
-export async function CheckSubnetSizeAsync(diagProvider, subnetDataPromise, serverFarmId, permMgr) {
+export async function checkSubnetSizeAsync(diagProvider, subnetDataPromise, serverFarmId, permMgr) {
     var views = [], checkResult = { level: 0, title: "" };
     var msg;
     var aspData = await diagProvider.getArmResourceAsync(serverFarmId);
@@ -909,7 +909,7 @@ export async function CheckSubnetSizeAsync(diagProvider, subnetDataPromise, serv
     return { views, checkResult };
 }
 
-export async function CheckDnsSettingAsync(siteInfo, diagProvider) {
+export async function checkDnsSettingAsync(siteInfo, diagProvider) {
     var views = [], subChecks = [];
     var dnsServers = [];
     var vnetDns = [];
@@ -930,7 +930,7 @@ export async function CheckDnsSettingAsync(siteInfo, diagProvider) {
         dnsSettings = dnsAppSettings;
         dnsSettingSource = "App Settings";
     } else {
-        var siteVnetInfo = await GetWebAppVnetInfo(siteInfo["id"], diagProvider);
+        var siteVnetInfo = await getWebAppVnetInfo(siteInfo["id"], diagProvider);
         if (siteVnetInfo.status == 200) {
             var vnetInfo = siteVnetInfo["properties"];
             var subnetResourceId = vnetInfo["subnetResourceId"];
@@ -1063,7 +1063,7 @@ export async function CheckDnsSettingAsync(siteInfo, diagProvider) {
     return { views, dnsServers, subChecks, level };
 }
 
-export function ExtractHostPortFromConnectionString(connectionString) {
+export function extractHostPortFromConnectionString(connectionString) {
     var hostName = undefined;
     var port = undefined;
 
@@ -1106,7 +1106,7 @@ export function ExtractHostPortFromConnectionString(connectionString) {
     return { "HostName": hostName, "Port": port }
 }
 
-export function ExtractHostPortFromKeyVaultReference(keyVaultReference) {
+export function extractHostPortFromKeyVaultReference(keyVaultReference) {
     // Format: @Microsoft.KeyVault(SecretUri=https://<Host>/<some_path>
     var hostName = keyVaultReference.split("SecretUri=https://")[1].split("/")[0];
     var port = 443;

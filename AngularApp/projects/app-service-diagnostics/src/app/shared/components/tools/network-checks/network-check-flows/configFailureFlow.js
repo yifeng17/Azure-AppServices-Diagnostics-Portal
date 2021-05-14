@@ -1,4 +1,4 @@
-import { GetArmData, GetWebAppVnetInfo, GetSubnet } from './flowMisc.js';
+import { getArmData, getWebAppVnetInfo, getSubnet } from './flowMisc.js';
 
 export var configFailureFlow = {
     title: "I tried to configure VNet integration via the Azure Portal or ARM template, but it failed",
@@ -148,7 +148,7 @@ async function checkSubnetAvailabilityAsync(siteInfo, diagProvider, subnetData, 
                 continue;
             }
             var siteResourceUri = aspSites[idx]["id"];
-            var siteVnetInfo = await GetWebAppVnetInfo(siteResourceUri, diagProvider);
+            var siteVnetInfo = await getWebAppVnetInfo(siteResourceUri, diagProvider);
             var subnetName = "-";
             var vnetName = "-";
 
@@ -160,7 +160,7 @@ async function checkSubnetAvailabilityAsync(siteInfo, diagProvider, subnetData, 
                         vnetName = subnetResourceId.split("/subnets/")[0].split("/virtualNetworks/")[1];
 
                         if (subnetResourceId == selectedSubnet) {
-                            let subnetData = await GetSubnet(diagProvider, subnetResourceId);
+                            let subnetData = await getSubnet(diagProvider, subnetResourceId);
 
                             if (subnetData && subnetData["properties"] && subnetData["properties"]["serviceAssociationLinks"] != null) {
                                 var sal = subnetData["properties"]["serviceAssociationLinks"];
@@ -230,7 +230,7 @@ async function checkSubnetAvailabilityAsync(siteInfo, diagProvider, subnetData, 
     } else {
 
         //Third check is for subnet size
-        var aspData = await GetArmData(serverFarmId, diagProvider);
+        var aspData = await getArmData(serverFarmId, diagProvider);
         var subnetAddressPrefix = subnetData["properties"] && subnetData["properties"]["addressPrefix"] || '';
         var splitted = subnetAddressPrefix.split("/");
         var subnetSize = splitted.length > 0 ? splitted[1] : -1;
