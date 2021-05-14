@@ -1,18 +1,18 @@
-import {ResourcePermissionCheckManager, RunKuduAccessibleCheck, CheckVnetIntegrationHealth, CheckDnsSettingAsync, ExtractHostPortFromConnectionString, CheckSubnetSizeAsync, ExtractHostPortFromKeyVaultReference} from './flowMisc.js';
+import {ResourcePermissionCheckManager, runKuduAccessibleCheck, checkVnetIntegrationHealth, checkDnsSettingAsync, extractHostPortFromConnectionString, checkSubnetSizeAsync, extractHostPortFromKeyVaultReference} from './flowMisc.js';
 
 export var functionsFlow = {
     title: "My Function App is not starting or executing or I see connection errors in logs",
     async func(siteInfo, diagProvider, flowMgr) {
         // Check that Kudu is accessible
         var isKuduAccessible = true;
-        var kuduAvailabilityCheckPromise = RunKuduAccessibleCheck(diagProvider);
+        var kuduAvailabilityCheckPromise = runKuduAccessibleCheck(diagProvider);
         flowMgr.addViews(kuduAvailabilityCheckPromise, "Checking kudu availability...");
         var permMgr = new ResourcePermissionCheckManager();
         flowMgr.addView(permMgr.checkView);
 
         var kuduReachablePromise = kuduAvailabilityCheckPromise.then(r => isKuduAccessible);
 
-        var promise = CheckVnetIntegrationHealth(siteInfo, diagProvider, kuduReachablePromise, permMgr);
+        var promise = checkVnetIntegrationHealth(siteInfo, diagProvider, kuduReachablePromise, permMgr);
         flowMgr.addViews(promise.then(d => d.views), "Checking VNet integration status...");
         var data = { 
             subnetDataPromise: promise.then(d => d.subnetData), 
@@ -24,7 +24,7 @@ export var functionsFlow = {
         // TODO: separate common code between this and connectionFailureFlow.js
         await flowMgr.addViews(data.isContinuedPromise.then(c => c ? checkNetworkConfigAndConnectivityAsync(siteInfo, diagProvider, flowMgr, data, permMgr) : null), "Checking Network Configuration...");
         
-        var dnsCheckResultPromise = CheckDnsSettingAsync(siteInfo, diagProvider);
+        var dnsCheckResultPromise = checkDnsSettingAsync(siteInfo, diagProvider);
         var dnsCheckResult = await dnsCheckResultPromise;
         var dnsServers = dnsCheckResult.dnsServers;
 
@@ -58,7 +58,7 @@ export var functionsFlow = {
         var promises = appSettingsToValidate.map(async (propertyName) => {
             var connectionString = appSettings[propertyName];
             if(!isKeyVaultReference(connectionString)) {
-                var hostPort = ExtractHostPortFromConnectionString(connectionString);
+                var hostPort = extractHostPortFromConnectionString(connectionString);
 
                 if (hostPort.HostName != undefined && hostPort.Port != undefined) {
                     var connectivityCheckResult = await runConnectivityCheckAsync(hostPort.HostName, hostPort.Port, dnsServers, diagProvider, hostPort.HostName.length);
@@ -82,7 +82,7 @@ export var functionsFlow = {
                         markdown: `Application setting "${propertyName}" - This detector does not support the configured connection string format.`}));
                 }
             } else {
-                var hostPort = ExtractHostPortFromKeyVaultReference(connectionString);
+                var hostPort = extractHostPortFromKeyVaultReference(connectionString);
                 if (hostPort.HostName != undefined && hostPort.Port != undefined) {
                     var connectivityCheckResult = await runConnectivityCheckAsync(hostPort.HostName, hostPort.Port, dnsServers, diagProvider, hostPort.HostName.length);
                     if(connectivityCheckResult.failureInfoViews.length == 0) {
@@ -150,7 +150,7 @@ export var functionsFlow = {
             var promises = functionInfo.connectionStringProperties.map(async (propertyName) => {
                 var connectionString = appSettings[propertyName];
                 if(!isKeyVaultReference(connectionString)) {
-                    var hostPort = ExtractHostPortFromConnectionString(connectionString);
+                    var hostPort = extractHostPortFromConnectionString(connectionString);
                     var connectivityCheckResult = await runConnectivityCheckAsync(hostPort.HostName, hostPort.Port, dnsServers, diagProvider, hostPort.HostName.length);
                     // TODO: Add connectivityCheckResult.subChecks as 3rd level subcheck when supported
                     if(connectivityCheckResult.failureInfoViews.length == 0) { //Some checks failed
@@ -233,8 +233,8 @@ async function checkNetworkConfigAndConnectivityAsync(siteInfo, diagProvider, fl
             level: 0
         });
         views.push(configCheckView);
-        var subnetSizeCheckPromise = CheckSubnetSizeAsync(diagProvider, subnetDataPromise, serverFarmId, permMgr);
-        var dnsCheckResultPromise = CheckDnsSettingAsync(siteInfo, diagProvider);
+        var subnetSizeCheckPromise = checkSubnetSizeAsync(diagProvider, subnetDataPromise, serverFarmId, permMgr);
+        var dnsCheckResultPromise = checkDnsSettingAsync(siteInfo, diagProvider);
         var appSettings = await diagProvider.getAppSettings();
         var vnetRouteAll = (appSettings["WEBSITE_VNET_ROUTE_ALL"] === "1");
 
