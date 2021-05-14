@@ -32,7 +32,7 @@ abstract class NetworkCheckFlow {
 
 export class NetworkCheckComponent implements OnInit, AfterViewInit {
 
-    @ViewChild('networkCheckingTool', { static: false }) networkCheckingToolDiv: any;
+    @ViewChild('networkCheckingTool') networkCheckingToolDiv: any;
     title: string = 'Network/Connectivity Troubleshooter (Preview)';
     description: string = 'Check your network connectivity and troubleshoot network issues';
     stepFlowManager: StepFlowManager;

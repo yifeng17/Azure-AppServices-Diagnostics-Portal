@@ -311,7 +311,7 @@ import { InputStepComponent } from './components/step-views/input-step-view/inpu
     entryComponents: [GenericAnalysisComponent, GenericDetectorComponent]
 })
 export class SharedModule {
-    static forRoot(): ModuleWithProviders {
+    static forRoot(): ModuleWithProviders<SharedModule> {
         return {
             ngModule: SharedModule,
             providers: [

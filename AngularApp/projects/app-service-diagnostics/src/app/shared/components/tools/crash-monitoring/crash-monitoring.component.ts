@@ -22,7 +22,7 @@ import { map } from 'rxjs/operators';
 })
 export class CrashMonitoringComponent implements OnInit {
 
-  @ViewChild('crashMonitoringAnalysisRef', { static: false }) crashMonitoringAnalysis: CrashMonitoringAnalysisComponent;
+  @ViewChild('crashMonitoringAnalysisRef') crashMonitoringAnalysis: CrashMonitoringAnalysisComponent;
 
   constructor(private _siteService: SiteService,
     private _daasService: DaasService, private globals: Globals, private telemetryService: TelemetryService,

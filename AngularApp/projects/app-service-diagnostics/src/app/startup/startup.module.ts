@@ -24,7 +24,7 @@ import { LinuxAvailabilityPerformanceFlow } from '../supportbot/message-flow/v2-
   declarations: []
 })
 export class StartupModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<StartupModule> {
     return {
         ngModule: StartupModule,
         providers: [
