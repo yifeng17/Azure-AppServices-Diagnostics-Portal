@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { IDatePickerProps, IDropdownOption, SelectableOptionMenuItemType, ICalloutProps } from 'office-ui-fabric-react';
 import * as momentNs from 'moment';
-import { addMonths, addDays } from 'office-ui-fabric-react/lib/utilities/dateMath/DateMath';
+import { addMonths, addDays } from '@fluentui/date-time-utilities';
 import { SiteDaasInfo } from '../../../models/solution-metadata';
 import { SiteService } from '../../../services/site.service';
 import { DaasService } from '../../../services/daas.service';

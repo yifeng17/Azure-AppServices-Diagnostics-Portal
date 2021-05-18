@@ -2,7 +2,7 @@ import { Component, OnInit, EventEmitter, Output, Renderer2 } from '@angular/cor
 import { ActivatedRoute, Router } from '@angular/router';
 import { DetectorControlService, TelemetryService, TelemetryEventNames } from 'diagnostic-data';
 import { ICalendarStrings, IDatePickerProps, IChoiceGroupOption } from 'office-ui-fabric-react';
-import { addMonths, addDays } from 'office-ui-fabric-react/lib/utilities/dateMath/DateMath';
+import { addMonths, addDays } from '@fluentui/date-time-utilities';
 import * as momentNs from 'moment';
 import { Globals } from '../../../globals';
 
@@ -273,7 +273,7 @@ export class DetectorTimePickerComponent implements OnInit {
 
   tabHandler(e: KeyboardEvent) {
     const ele = <HTMLElement>e.target;
-    //Tab to Cancel button will close 
+    //Tab to Cancel button will close
     if (ele.innerText.toLowerCase() === 'cancel') {
       this.closeTimePicker();
     }
