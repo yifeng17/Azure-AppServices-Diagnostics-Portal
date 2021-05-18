@@ -4,7 +4,7 @@ import { throwError as observableThrowError, of as observableOf, Observable, Sub
 import { tap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { TelemetryService, TelemetryPayload } from 'diagnostic-data';
+import { KustoTelemetryService, TelemetryPayload } from 'diagnostic-data';
 
 interface CacheContent {
     value: any;
@@ -18,7 +18,7 @@ export class CacheService {
     // This is useful to enable if you are trying to test and make sure this service is working properly
     private enableConsoleLogging: boolean = false;
 
-    constructor(private _telemetryService: TelemetryService) { }
+    constructor(private _telemetryService: KustoTelemetryService) { }
 
     get(key: string, fallback?: Observable<any>, invalidateCache: boolean = false, logDataForActualCall?: TelemetryPayload): Observable<any> | Subject<any> {
 

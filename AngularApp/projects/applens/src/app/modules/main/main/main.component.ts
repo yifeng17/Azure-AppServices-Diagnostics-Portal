@@ -42,7 +42,7 @@ export class MainComponent implements OnInit {
       resourceType: null,
       resourceTypeLabel: 'ARM Resource ID',
       routeName: (name) => `${name}`,
-      displayName: 'ARM Resource ID',      
+      displayName: 'ARM Resource ID',
       enabled: true,
       caseId: false
     },
@@ -149,8 +149,8 @@ export class MainComponent implements OnInit {
       window.location.href = `https://azuresupportcenter.msftcloudes.com/caseoverview?srId=${form.resourceName}`;
     }
 
-    let startUtc = moment.utc(form.startTime.format('YYYY-MM-DD HH:mm'));
-    let endUtc = moment.utc(form.endTime.format('YYYY-MM-DD HH:mm'));
+    let startUtc = moment.utc(this.startTime.format('YYYY-MM-DD HH:mm'));
+    let endUtc = moment.utc(this.endTime.format('YYYY-MM-DD HH:mm'));
 
     let timeParams = {
       startTime: startUtc.format('YYYY-MM-DDTHH:mm'),

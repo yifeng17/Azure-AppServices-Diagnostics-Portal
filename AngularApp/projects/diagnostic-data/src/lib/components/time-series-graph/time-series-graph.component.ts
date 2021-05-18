@@ -73,7 +73,7 @@ export class TimeSeriesGraphComponent extends DataRenderBaseComponent implements
             uniqueCounterNames = data.table.rows.map(row => row[counterNameColumnIndex]).filter((item, index, array) => array.indexOf(item) === index);
         }
 
-        const timeSeriesDictionary = {};
+     //   const timeSeriesDictionary = {};
         const highchartTimeSeriesDictionary = {};
 
         numberValueColumns.forEach(column => {
@@ -146,7 +146,7 @@ export class TimeSeriesGraphComponent extends DataRenderBaseComponent implements
             this._prepareStartAndEndTime();
         }
 
-        Object.keys(timeSeriesDictionary).forEach(key => {
+        Object.keys(highchartTimeSeriesDictionary).forEach(key => {
 
             const pointsForThisSeries =
                 tablePoints

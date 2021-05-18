@@ -14,7 +14,7 @@
           <div class="box-header with-border">
             <h3 class="box-title">Incident <a href="{{'https://portal.microsofticm.com/imp/v3/incidents/details/' + incidentInfo.incidentId + '/home'}}" target="_blank">{{incidentInfo.incidentId}}</a> &nbsp; {{incidentInfo.title}}</h3>
           </div>
-  
+
           <div style="height: calc(100vh - 140px);">
             <div class="form-group form-content">
               <div class="form-row" *ngFor="let field of incidentInfo.validationResults;">
@@ -31,10 +31,10 @@
               </div>
             </div>
             <div class="form-group go-form">
-              <fab-primary-button contentStyle="margin-top: 20px;"
+              <fab-primary-button styles="margin-top: 20px;"
                   type="Submit" text='Check Validation' (click)="onSubmit()" [disabled]="validationButtonDisabled">
               </fab-primary-button>
-              <fab-primary-button contentStyle="margin-top: 20px; margin-left: 10px;"
+              <fab-primary-button styles="margin-top: 20px; margin-left: 10px;"
                   type="Submit" text='Update Incident' (click)="onUpdateClick()" [disabled]="updateButtonDisabled">
               </fab-primary-button>
             </div>

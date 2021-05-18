@@ -1,5 +1,5 @@
 import { AdalService } from 'adal-angular4';
-import { DetectorMetaData, DetectorResponse, QueryResponse, TelemetryService } from 'diagnostic-data';
+import { DetectorMetaData, DetectorResponse, QueryResponse, KustoTelemetryService } from 'diagnostic-data';
 import { map, retry, catchError, tap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
@@ -12,7 +12,7 @@ import { Guid } from 'projects/app-service-diagnostics/src/app/shared/utilities/
 import { Router } from '@angular/router';
 import { TelemetryPayload } from 'diagnostic-data';
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class DiagnosticApiService {
 
   public readonly localDiagnosticApi = "http://localhost:5000/";
@@ -22,7 +22,7 @@ export class DiagnosticApiService {
   public effectiveLocale: string = "";
 
   constructor(private _httpClient: HttpClient, private _cacheService: CacheService,
-    private _adalService: AdalService, private _telemetryService: TelemetryService, private _router: Router) { }
+    private _adalService: AdalService, private _telemetryService: KustoTelemetryService, private _router: Router) { }
 
   public get diagnosticApi(): string {
     return environment.production ? '' : this.localDiagnosticApi;
