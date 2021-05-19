@@ -143,7 +143,7 @@ export class SitesCategoryService extends CategoryService {
           hostingEnvironmentKind: HostingEnvironmentKind.All,
           item: {
             id: 'RunsAndTriggersLA',
-            overviewDetectorId: 'runsandtriggersLA',
+            overviewDetectorId: 'la_pubgeneral_workflowapp',
             name: 'Runs and Triggers',
             description: 'Troubleshoot issues related to your run & triggers.',
             keywords: ['Runs', 'Triggers', 'Calls', 'Timeouts'],
