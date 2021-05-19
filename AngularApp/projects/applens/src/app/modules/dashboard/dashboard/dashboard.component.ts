@@ -13,7 +13,7 @@ import { v4 as uuid } from 'uuid';
 import { environment } from '../../../../environments/environment';
 import {DiagnosticApiService} from '../../../shared/services/diagnostic-api.service';
 import { ObserverService } from '../../../shared/services/observer.service';
-import { PanelType } from 'office-ui-fabric-react';
+import { PanelType } from '@fluentui/react';
 
 @Component({
   selector: 'dashboard',

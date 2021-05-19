@@ -1,5 +1,5 @@
 import { Component, AfterViewInit, ViewChild, TemplateRef, AfterContentInit, OnInit, OnDestroy } from '@angular/core';
-import { DirectionalHint, ICheckProps, IPanelProps, PanelType } from 'office-ui-fabric-react';
+import { DirectionalHint, ICheckProps, IPanelProps, PanelType } from '@fluentui/react';
 import { TelemetryService, TelemetryEventNames, PIIUtilities, TelemetrySource } from 'diagnostic-data';
 import { Globals } from '../../../globals';
 import { ActivatedRoute } from '@angular/router';

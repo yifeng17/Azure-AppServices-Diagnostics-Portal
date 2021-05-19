@@ -11,7 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Globals } from '../../../globals';
 import { TelemetryService } from 'diagnostic-data';
 import { ITooltipOptions } from '@angular-react/fabric';
-import { DirectionalHint } from 'office-ui-fabric-react';
+import { DirectionalHint } from '@fluentui/react';
 
 @Component({
     selector: 'daas-sessions',

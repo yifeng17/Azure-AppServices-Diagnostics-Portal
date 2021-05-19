@@ -2,7 +2,7 @@ import { JsonPipe } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { HealthStatus, TelemetryEventNames, TelemetryService, TelemetrySource } from 'diagnostic-data';
-import { MessageBarType, IMessageBarProps, IMessageBarStyles } from 'office-ui-fabric-react';
+import { MessageBarType, IMessageBarProps, IMessageBarStyles } from '@fluentui/react';
 import { throwError } from 'rxjs';
 import { catchError, filter, map } from 'rxjs/operators';
 import { Globals } from '../../../globals';

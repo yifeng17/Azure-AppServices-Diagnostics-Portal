@@ -1,7 +1,7 @@
 import { Component, OnInit, EventEmitter, Output, Renderer2 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DetectorControlService, TelemetryService, TelemetryEventNames } from 'diagnostic-data';
-import { ICalendarStrings, IDatePickerProps, IChoiceGroupOption } from 'office-ui-fabric-react';
+import { ICalendarStrings, IDatePickerProps, IChoiceGroupOption } from '@fluentui/react';
 import { addMonths, addDays } from '@fluentui/date-time-utilities';
 import * as momentNs from 'moment';
 import { Globals } from '../../../globals';

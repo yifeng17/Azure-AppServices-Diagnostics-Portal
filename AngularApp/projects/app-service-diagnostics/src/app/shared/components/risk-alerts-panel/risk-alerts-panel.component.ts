@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { DetectorControlService, TelemetryService } from 'diagnostic-data';
 import { DetectorResponse } from 'diagnostic-data';
 import { Moment } from 'moment';
-import { IPanelProps, IPanelStyles, MessageBarType, PanelType } from 'office-ui-fabric-react';
+import { IPanelProps, IPanelStyles, MessageBarType, PanelType } from '@fluentui/react';
 import { Globals } from '../../../globals';
 import { NotificationService } from '../../../shared-v2/services/notification.service';
 import { RiskAlertService } from '../../../shared-v2/services/risk-alert.service';

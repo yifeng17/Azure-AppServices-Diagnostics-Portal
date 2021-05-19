@@ -3,7 +3,7 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 import { BehaviorSubject } from 'rxjs';
 import { SearchPipe } from '../pipes/search.pipe';
 import { TelemetryService, TelemetryEventNames } from 'diagnostic-data';
-import { DirectionalHint } from 'office-ui-fabric-react/lib/Tooltip';
+import { DirectionalHint } from '@fluentui/react';
 
 @Component({
   selector: 'collapsible-menu-item',

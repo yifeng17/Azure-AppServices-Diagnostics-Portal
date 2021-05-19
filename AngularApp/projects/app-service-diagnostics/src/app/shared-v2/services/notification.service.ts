@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MessageBarType } from 'office-ui-fabric-react';
+import { MessageBarType } from '@fluentui/react';
 import { LoggingService } from '../../shared/services/logging/logging.service';
 
 @Injectable()

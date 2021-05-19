@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Globals } from '../../../globals';
-import { PanelType } from 'office-ui-fabric-react';
+import { PanelType } from '@fluentui/react';
 
 @Component({
   selector: 'callstack-panel',
@@ -11,7 +11,7 @@ export class CallstackPanelComponent implements OnInit {
 
   type: PanelType = PanelType.custom;
   width: string = "850px";
-  
+
   constructor(public globals: Globals) { }
 
   ngOnInit() {

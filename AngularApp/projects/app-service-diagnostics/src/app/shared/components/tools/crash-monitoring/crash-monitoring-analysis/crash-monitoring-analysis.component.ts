@@ -8,7 +8,7 @@ import { Subscription, interval, Observable } from 'rxjs';
 import { SiteDaasInfo } from '../../../../models/solution-metadata';
 import { Globals } from '../../../../../globals'
 import { TelemetryService } from 'diagnostic-data';
-import { DirectionalHint } from 'office-ui-fabric-react';
+import { DirectionalHint } from '@fluentui/react';
 import { ITooltipOptions } from '@angular-react/fabric';
 
 const crashMonitoringDetectorName: string = "crashmonitoring";

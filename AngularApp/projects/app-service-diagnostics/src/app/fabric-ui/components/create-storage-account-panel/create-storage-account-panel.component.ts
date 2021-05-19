@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { PanelType, IChoiceGroupOption, IDropdownOption } from 'office-ui-fabric-react';
+import { PanelType, IChoiceGroupOption, IDropdownOption } from '@fluentui/react';
 import { Globals } from '../../../globals';
 import { StorageService } from '../../../shared/services/storage.service';
 import { SiteService } from '../../../shared/services/site.service';
@@ -122,7 +122,7 @@ export class CreateStorageAccountPanelComponent implements OnInit {
       this._storageService.createStorageAccount(this.siteToBeDiagnosed.subscriptionId, this.siteToBeDiagnosed.resourceGroupName, this.newStorageAccountName, this._siteService.currentSiteStatic.location)
         .subscribe(location => {
 
-          // 
+          //
           // If someone tries to recreate an account with the same name,
           // the API will return a 200 but there will be no location header
           // We should treat it as success as the storage account already

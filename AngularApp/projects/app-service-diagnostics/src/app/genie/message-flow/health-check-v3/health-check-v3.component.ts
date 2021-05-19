@@ -6,7 +6,7 @@ import { BotLoggingService } from 'projects/app-service-diagnostics/src/app/shar
 import { SiteService } from 'projects/app-service-diagnostics/src/app/shared/services/site.service';
 import { HealthStatus, LoadingStatus, DiagnosticService, DetectorControlService, DetectorResponse, Insight, InsightUtils } from 'diagnostic-data';
 import { IChatMessageComponent } from '../../interfaces/ichatmessagecomponent';
-import { IChoiceGroupOption } from 'office-ui-fabric-react';
+import { IChoiceGroupOption } from '@fluentui/react';
 
 @Component({
   selector: 'health-check-v3',

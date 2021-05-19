@@ -100,9 +100,11 @@
                       <td> Enable Application insights for your app to collect application level monitoring data
                       </td>
                       <td>
-                        <fab-primary-button className="ml-2" (click)="enable()">
-                          Enable
+                        <fab-primary-button className="ml-2" (click)="enable()" text='Enable'>
                         </fab-primary-button>
+                        <!-- <fab-primary-button styles="margin-top: 20px;"
+                [disabled]="!(resourceName && resourceName.length > 0)" type="Submit" text='Go'>
+            </fab-primary-button> -->
                       </td>
                     </tr>
                   </tbody>

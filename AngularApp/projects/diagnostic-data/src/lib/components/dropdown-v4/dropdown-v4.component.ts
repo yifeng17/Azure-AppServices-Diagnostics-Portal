@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IDropdownOption, IDropdownProps } from 'office-ui-fabric-react';
+import { IDropdownOption, IDropdownProps } from '@fluentui/react';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
 import { Rendering, DiagnosticData, DataTableResponseObject } from '../../models/detector';
 
@@ -104,7 +104,7 @@ export class DropdownV4Component extends DataRenderBaseComponent {
   }
 
   calculateFabWidth(options: IDropdownOption[]): number {
-    //each char 10px  
+    //each char 10px
     let length = 0;
     options.forEach(option => {
       if(option && option.text && option.text.length){
@@ -114,7 +114,7 @@ export class DropdownV4Component extends DataRenderBaseComponent {
     let labelLength = 0;
     if(this.label && this.label.length > 0) {
       labelLength = this.label.length;
-    } 
+    }
     return (length + labelLength) * 11 ;
   }
 }

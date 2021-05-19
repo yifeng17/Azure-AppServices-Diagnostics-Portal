@@ -3,7 +3,7 @@ import { Component, Inject, Input, OnInit } from '@angular/core';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
 import { Communication, CommunicationStatus } from '../../models/communication';
 import { CommsService } from '../../services/comms.service';
-import { MessageBarType, PanelType } from 'office-ui-fabric-react';
+import { MessageBarType, PanelType } from '@fluentui/react';
 const moment = momentNs;
 
 @Component({
@@ -31,7 +31,7 @@ export class CommAlertComponent implements OnInit {
     isPublic: boolean;
     type: PanelType = PanelType.custom;
     width: string = "850px";
-    
+
     messageBarStyles: any = {
         root: {
             height: '49px',

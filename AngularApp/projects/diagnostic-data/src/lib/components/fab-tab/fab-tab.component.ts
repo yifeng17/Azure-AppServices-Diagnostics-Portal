@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Icon, IPivotItemProps } from 'office-ui-fabric-react';
+import { Icon, IPivotItemProps } from '@fluentui/react';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
 import { Rendering, DiagnosticData, DataTableResponseObject, TabRendering } from '../../models/detector';
 

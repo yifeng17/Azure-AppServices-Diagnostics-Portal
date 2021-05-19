@@ -1,7 +1,7 @@
 import { Component, ViewChild, AfterContentInit, TemplateRef, OnInit, AfterViewInit } from '@angular/core';
 import { DiagnosticData, DataTableRendering, TableFilter, TableFilterSelectionOption, TableColumnOption } from '../../models/detector';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
-import { SelectionMode, IColumn, IListProps, ISelection, Selection, IStyle, DetailsListLayoutMode, ICalloutProps } from 'office-ui-fabric-react';
+import { SelectionMode, IColumn, IListProps, ISelection, Selection, IStyle, DetailsListLayoutMode, ICalloutProps } from 'office-ui-fabric-react/lib';
 import { FabDetailsListComponent } from '@angular-react/fabric';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 
@@ -35,9 +35,9 @@ export class DataTableV4Component extends DataRenderBaseComponent implements Aft
 
     this.fabDetailsList.selectionMode = this.renderingProperties.descriptionColumnName ? SelectionMode.single : SelectionMode.none;
     this.fabDetailsList.selection = this.selection;
-    //Ideally,it should be enable if table is too large. 
+    //Ideally,it should be enable if table is too large.
     //But for now, if enabled, it will show only 40 rows
-    this.fabDetailsList.onShouldVirtualize = (list: IListProps<any>) => {
+    this.fabDetailsList.onShouldVirtualize = (props: IListProps<any>) => {
       // return this.rows.length > this.rowLimit ? true : false;
       return false;
     }

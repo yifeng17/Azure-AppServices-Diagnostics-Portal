@@ -9,8 +9,8 @@ import { Location } from '@angular/common';
 import { TelemetryEventNames } from '../../services/telemetry/telemetry.common';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
-import { DirectionalHint } from 'office-ui-fabric-react/lib/Tooltip';
-import { IDropdownOption, IComboBox, IDropdown } from 'office-ui-fabric-react';
+import { DirectionalHint } from '@fluentui/react';
+import { IDropdownOption, IComboBox, IDropdown } from '@fluentui/react';
 
 @Component({
   selector: 'custom-form',

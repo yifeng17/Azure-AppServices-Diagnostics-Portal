@@ -1,5 +1,5 @@
 import { DetectorResponse } from '../models/detector';
-import { IDropdownOption } from 'office-ui-fabric-react';
+import { IDropdownOption } from '@fluentui/react';
 
 export class Form {
     formId: number;

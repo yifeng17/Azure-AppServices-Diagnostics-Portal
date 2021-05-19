@@ -1,6 +1,6 @@
 import { DiagnosticData, HealthStatus, Insight, LoadingStatus, Rendering, RenderingType } from "diagnostic-data";
 import { DetectorResponse } from "diagnostic-data";
-import { MessageBarType } from "office-ui-fabric-react";
+import { MessageBarType } from "@fluentui/react";
 import { Observable } from "rxjs";
 
 export interface RiskTile {

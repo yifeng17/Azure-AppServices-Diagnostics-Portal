@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IMessageBarStyles, IStyle } from 'office-ui-fabric-react';
+import { IMessageBarStyles, IStyle } from '@fluentui/react';
 import { AnonymousSubject } from 'rxjs/Rx';
 import { NotificationService } from '../../../shared-v2/services/notification.service';
 

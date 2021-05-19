@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { AutohealingRuleComponent } from '../autohealing-rule/autohealing-rule.component';
 import { StatusCodeRules, StatusCodesBasedTrigger, StatusCodesRangeBasedTrigger } from '../../shared/models/autohealing';
 import { FormatHelper } from '../../shared/utilities/formattingHelper';
-import { IChoiceGroupOption } from 'office-ui-fabric-react';
+import { IChoiceGroupOption } from '@fluentui/react';
 
 @Component({
   selector: 'autohealing-statuscodes-rule',
@@ -146,7 +146,7 @@ export class AutohealingStatuscodesRuleComponent extends AutohealingRuleComponen
     if (!range) {
       return false;
     }
-    
+
     this.statusCodeRangeError = '';
     if (range.indexOf('.') > -1) {
       this.statusCodeRangeError = "HTTP Status code range cannot contain '.'";

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { PanelType } from 'office-ui-fabric-react';
+import { PanelType } from '@fluentui/react';
 import { Globals } from '../../../globals';
 import { SiteDaasInfo } from '../../../shared/models/solution-metadata';
 import { WebSitesService } from '../../../resources/web-sites/services/web-sites.service';

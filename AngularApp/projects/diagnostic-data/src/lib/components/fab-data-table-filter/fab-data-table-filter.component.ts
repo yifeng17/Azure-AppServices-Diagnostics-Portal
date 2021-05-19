@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { DirectionalHint, IChoiceGroup, IChoiceGroupOption } from 'office-ui-fabric-react';
+import { DirectionalHint, IChoiceGroup, IChoiceGroupOption } from '@fluentui/react';
 import { TableFilterSelectionOption, TableFilter } from '../../models/detector';
 
 const all = "all";

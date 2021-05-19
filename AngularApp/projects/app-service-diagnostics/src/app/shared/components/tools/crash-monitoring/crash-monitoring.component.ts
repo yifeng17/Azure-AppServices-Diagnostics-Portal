@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { IDatePickerProps, IDropdownOption, SelectableOptionMenuItemType, ICalloutProps } from 'office-ui-fabric-react';
+import { IDatePickerProps, IDropdownOption, SelectableOptionMenuItemType, ICalloutProps } from '@fluentui/react';
 import * as momentNs from 'moment';
 import { addMonths, addDays } from '@fluentui/date-time-utilities';
 import { SiteDaasInfo } from '../../../models/solution-metadata';
@@ -9,7 +9,7 @@ import { Globals } from '../../../../globals'
 import { TelemetryService, TelemetryEventNames } from 'diagnostic-data';
 import { SharedStorageAccountService } from 'projects/app-service-diagnostics/src/app/shared-v2/services/shared-storage-account.service';
 import { CrashMonitoringSettings } from '../../../models/daas';
-import { DirectionalHint } from 'office-ui-fabric-react/lib/Tooltip';
+import { DirectionalHint } from '@fluentui/react';
 import { ITooltipOptions } from '@angular-react/fabric';
 import { CrashMonitoringAnalysisComponent } from './crash-monitoring-analysis/crash-monitoring-analysis.component';
 import { Observable } from 'rxjs';

@@ -4,7 +4,7 @@ import { HttpHeaders } from '@angular/common/http';
 import { SettingsService } from '../../services/settings.service';
 import { BackendCtrlQueryService } from '../../services/backend-ctrl-query.service';
 import { TelemetryEventNames } from '../../services/telemetry/telemetry.common';
-import { MessageBarType } from 'office-ui-fabric-react';
+import { MessageBarType } from '@fluentui/react';
 
 const maxApiKeysPerAiResource: number = 10;
 
@@ -74,7 +74,7 @@ export class AppInsightsEnablementComponent implements OnInit {
               } else {
 
                 //
-                // If AppInsights is not connected already, check if the user has write access to the 
+                // If AppInsights is not connected already, check if the user has write access to the
                 // AppInsights resource by checking ARM permissions
                 //
 
@@ -111,12 +111,12 @@ export class AppInsightsEnablementComponent implements OnInit {
             && !this._appInsightsService.appInsightsSettings.enabledForWebApp) {
 
             //
-            // This is the case where :- 
+            // This is the case where :-
             // 1. Either we failed to look up the App Settings for the app, or
-            // 2. We succeeded to view app settings but we  failed to reverse lookup 
-            //    Application Insights resource corresponding to the app settings. This 
-            //    can happen if the app has the AppSetting set incorrectly or the current 
-            //    user has access to the app but does not have access on the subscription 
+            // 2. We succeeded to view app settings but we  failed to reverse lookup
+            //    Application Insights resource corresponding to the app settings. This
+            //    can happen if the app has the AppSetting set incorrectly or the current
+            //    user has access to the app but does not have access on the subscription
             //    to list all the AppInsights resources.
             //
             this.appSettingsHaveInstrumentationKey = true;

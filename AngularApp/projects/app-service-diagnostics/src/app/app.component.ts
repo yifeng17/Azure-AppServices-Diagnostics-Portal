@@ -1,6 +1,6 @@
 import { Component, OnInit, isDevMode } from '@angular/core';
 import { Router } from '@angular/router';
-import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
+import { initializeIcons } from '@fluentui/font-icons-mdl2';
 
 @Component({
     selector: 'sc-app',

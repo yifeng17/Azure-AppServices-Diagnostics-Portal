@@ -3,7 +3,7 @@ import { GenieChatFlow } from '../../../genie/message-flow/v2-flows/genie-chat.f
 import { Message } from '../../../genie/models/message';
 import { GenieMessageProcessor } from '../../../genie/message-processor.service';
 import { Router } from '@angular/router';
-import { PanelType } from 'office-ui-fabric-react';
+import { PanelType } from '@fluentui/react';
 import { GenieGlobals } from 'diagnostic-data';
 import { AuthService } from '../../../startup/services/auth.service';
 

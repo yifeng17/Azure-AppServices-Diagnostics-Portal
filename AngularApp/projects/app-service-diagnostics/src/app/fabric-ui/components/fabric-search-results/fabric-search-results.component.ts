@@ -4,7 +4,7 @@ import { FeatureService } from "../../../shared-v2/services/feature.service";
 import { LoggingV2Service } from "../../../shared-v2/services/logging-v2.service";
 import { NotificationService } from "../../../shared-v2/services/notification.service";
 import { Globals } from "../../../globals";
-import { SelectionMode } from 'office-ui-fabric-react/lib/DetailsList'
+import { SelectionMode } from '@fluentui/react'
 import { Router } from "@angular/router";
 import { TelemetryService, icons } from "diagnostic-data";
 
