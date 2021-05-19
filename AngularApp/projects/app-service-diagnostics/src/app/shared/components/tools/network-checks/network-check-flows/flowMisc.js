@@ -1107,9 +1107,19 @@ export function extractHostPortFromConnectionString(connectionString) {
 }
 
 export function extractHostPortFromKeyVaultReference(keyVaultReference) {
-    // Format: @Microsoft.KeyVault(SecretUri=https://<Host>/<some_path>
-    var hostName = keyVaultReference.split("SecretUri=https://")[1].split("/")[0];
+    // Format: @Microsoft.KeyVault(SecretUri=https://<Host>/<some_path>) 
+    // OR
+    // @Microsoft.KeyVault(VaultName=vaultName;SecretName=secretName;SecretVersion=secretVersion)
+    var secretUriPrefix = "SecretUri=https://";
+    var vaultNamePrefix = "VaultName=";
+    var keyVaultDomainName = "vault.azure.net";  // TODO: This needs to be dynamically determined based on the cloud this app is in
+    var hostName = undefined;
     var port = 443;
+    if (keyVaultReference.indexOf(secretUriPrefix) != -1) {
+        hostName = keyVaultReference.split(secretUriPrefix)[1].split("/")[0];
+    } else if (keyVaultReference.indexOf(vaultNamePrefix) != -1) {
+        hostName = keyVaultReference.split(vaultNamePrefix)[1].split(";")[0] + "." + keyVaultDomainName;
+    }
 
     return { "HostName": hostName, "Port": port }
 }
