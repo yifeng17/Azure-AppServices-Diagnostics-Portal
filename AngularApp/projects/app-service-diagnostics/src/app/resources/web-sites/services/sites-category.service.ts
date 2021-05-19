@@ -109,7 +109,7 @@ export class SitesCategoryService extends CategoryService {
         hostingEnvironmentKind: HostingEnvironmentKind.All,
         item: {
           id: 'AvailabilityAndPerformanceLogicApp',
-          overviewDetectorId: 'AvailabilityAndPerformanceLogicApp',
+          overviewDetectorId: 'appcrashesLA',
           name: 'Availability and Performance',
           description: 'Investigate performance issues or just check the health of your Logic App.',
           keywords: ['Downtime', '5xx Errors', '4xx Errors', 'CPU', 'Memory', 'Slowness'],
@@ -120,16 +120,33 @@ export class SitesCategoryService extends CategoryService {
       },
       {
           appType: AppType.WorkflowApp,
+          platform: OperatingSystem.windows,
+          stack: '',
+          sku: Sku.All,
+          hostingEnvironmentKind: HostingEnvironmentKind.All,
+          item: {
+            id: 'SSLandDomainsLogicApp',
+            name: 'SSL and Domains',
+            overviewDetectorId:'SSLandDomains',
+            description: 'Investigate issues with SSL and custom domains.',
+            keywords: ['4xx Errors', 'SSL', 'Domains'],
+            color: 'rgb(186, 211, 245)',
+            createFlowForCategory: true,
+            chatEnabled: true
+          }
+        },
+      {
+          appType: AppType.WorkflowApp,
           platform: OperatingSystem.windows | OperatingSystem.linux,
           stack: '',
           sku: Sku.All,
           hostingEnvironmentKind: HostingEnvironmentKind.All,
           item: {
-            id: 'ConfigurationAndManagementLogicApp',
-            overviewDetectorId: 'logicsettings',
-            name: 'Configuration and Management',
-            description: 'Find out if you misconfigured Logic App features/settings.',
-            keywords: ['Scaling', 'Swaps', 'Failed Backups', 'IPs', 'Migration'],
+            id: 'RunsAndTriggersLA',
+            overviewDetectorId: 'runsandtriggersLA',
+            name: 'Runs and Triggers',
+            description: 'Troubleshoot issues related to your run & triggers.',
+            keywords: ['Runs', 'Triggers', 'Calls', 'Timeouts'],
             color: 'rgb(249, 213, 180)',
             createFlowForCategory: true,
             chatEnabled: false
@@ -142,28 +159,11 @@ export class SitesCategoryService extends CategoryService {
           sku: Sku.All,
           hostingEnvironmentKind: HostingEnvironmentKind.All,
           item: {
-            id: 'SSLandDomainsLogicApp',
-            name: 'SSL and Domains',
-            overviewDetectorId:'SSLandDomainsLogicApp',
-            description: 'Investigate issues with certificates, authentication, and custom domains.',
-            keywords: ['4xx Errors', 'SSL', 'Domains', 'Permissions', 'Auth', 'Cert'],
-            color: 'rgb(186, 211, 245)',
-            createFlowForCategory: true,
-            chatEnabled: true
-          }
-        },
-        {
-          appType: AppType.WorkflowApp,
-          platform: OperatingSystem.windows,
-          stack: '',
-          sku: Sku.All,
-          hostingEnvironmentKind: HostingEnvironmentKind.All,
-          item: {
-            id: 'RiskAssessmentsLogicApp',
-            name: 'Risk Assessments',
-            overviewDetectorId: 'BestPracticesLogicApp',
-            description: 'Analyze your app for optimal performance and configuration.',
-            keywords: ['BestPractices', 'AlwaysOn', 'Async Pattern', 'Deployment Settings'],
+            id: 'NetworkingLA',
+            name: 'Networking',
+            overviewDetectorId: '',
+            description: 'Troubleshoot common networking problems.',
+            keywords: ['Networking', 'VNet'],
             color: 'rgb(208, 228, 176)',
             createFlowForCategory: true,
             chatEnabled: false
