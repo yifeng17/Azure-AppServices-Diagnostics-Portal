@@ -75,7 +75,7 @@ export var functionsFlow = {
             propertyName = "WEBSITE_RUN_FROM_PACKAGE";
             failureDetailsMarkdown = `Please refer to <a href= "https://docs.microsoft.com/en-us/azure/azure-functions/functions-app-settings#website_run_from_package" target="_blank">this documentation</a> on how to configure the app setting "${propertyName}".`;
             connectionString = appSettings[propertyName];
-            if (connectionString != undefined && propertyName != "0" && propertyName != "1") {
+            if (connectionString != undefined && connectionString != "0" && connectionString != "1") {
                 var subChecksL2 = await networkCheckConnectionString(propertyName, connectionString, dnsServers, diagProvider, failureDetailsMarkdown);
                 var maxCheckLevel = getMaxCheckLevel(subChecksL2);
                 var title = maxCheckLevel == 0 ? `Network connectivity test to the endpoint configured in app setting "${propertyName}" was successful.` :
