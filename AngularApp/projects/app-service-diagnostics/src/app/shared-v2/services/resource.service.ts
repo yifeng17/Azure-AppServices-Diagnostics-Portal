@@ -106,6 +106,15 @@ export class ResourceService {
     }
   }
 
+  public get isArmApiResponseBase64Encoded():boolean {
+    if (this._genericArmConfigService) {
+      return this._genericArmConfigService.isArmApiResponseBase64Encoded(this.resource.id);
+    }
+    else {
+      return false;
+    }
+  }
+
   public get isApplicableForLiveChat(): boolean {
     if (this._genericArmConfigService) {
       let currConfig: ArmResourceConfig = this._genericArmConfigService.getArmResourceConfig(this.resource.id);
