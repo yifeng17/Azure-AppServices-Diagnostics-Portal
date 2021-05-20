@@ -111,6 +111,10 @@ export var functionsFlow = {
             var functionsInfo = [];  // array of maps containing information about functions
             var functionAppResourceId = siteInfo["resourceUri"];
             var functionsList = await diagProvider.getArmResourceAsync(functionAppResourceId + "/functions");
+            if (functionsList != undefined && functionsList.value != undefined) {
+                return new InfoStepView({ infoType: 0, title: "No functions were found for this Function App" });
+            }
+
             functionsList.value.forEach(func => {
                 var functionInfo = { name: func.name, connectionStringProperties: [] };
                 func.properties.config.bindings.forEach(binding => {
