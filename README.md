@@ -59,8 +59,9 @@ root
 ## Getting Started
 
 - Clone repo `git clone https://github.com/Azure/Azure-AppServices-Diagnostics-Portal.git`
-- Either install required dependencies locally or build and run a docker container that has them. Run AngularApp/buildimage.sh once and then AngularApp/startcontainer.sh each time you need to start the container.
-- Navigate to the angular root folder `AngularApp` and run `npm install` (This will install all the required packages.)
+- Either:
+  - Install required dependencies locally by navigating to the angular root folder `AngularApp` and runing `npm install` (This will install all the required packages.) OR
+  - Build and run a docker container that has all dependencies. Run AngularApp/buildimage.sh (or buildimage.bat on Windows) once to build an image locally and then AngularApp/startcontainer.sh (or startcontaine.bat on Windows) to build a container from that image and open a terminal on it.  Once the container is created, you can use the docker UI to stop/start and open a terminal to the container.
 
 ## App Service Diagnostics Portal
 
