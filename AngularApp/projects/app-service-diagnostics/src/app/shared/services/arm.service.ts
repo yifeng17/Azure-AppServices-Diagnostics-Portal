@@ -207,10 +207,74 @@ export class ArmService {
                 }));
 
             }),
-            catchError(this.handleError.bind(this))
+            map(r=> this.getDecodedDetectorResponseMessageEnvelope<T>(url, resourceUri, r)),
+            catchError(this.handleError.bind(this))            
         );
 
         return this._cache.get(url, request, invalidateCache, logData);
+    }
+
+    getDecodedDetectorResponseMessageEnvelope<T>(url:string, resourceId:string, response:ResponseMessageEnvelope<T>):ResponseMessageEnvelope<T>{
+        let isDetectorsCall = url.toLowerCase().indexOf("/detectors/") > 0 || url.toLowerCase().indexOf("/detectors?") > 0 ;
+        if(isDetectorsCall && this._genericArmConfigService && this._genericArmConfigService.isArmApiResponseBase64Encoded(resourceId)){
+            const loggingError = new Error();
+            const loggingProps = {};
+            loggingProps['Name'] = 'PartnerResponseBase64DecodingFailure';
+            if(response && response.properties && (((response.properties) as any).value)) {
+                let encodedDetectorResponse:string = ((response.properties) as any).value;
+                let decodedDetectorResponseString:string = '';
+                try {
+                    decodedDetectorResponseString = atob(encodedDetectorResponse); //Decode the base64 response here
+                } catch (error) {
+                    //The string to be decoded is not properly base64 encoded.
+                    loggingError.message = `Failed to decode ${(url.toLowerCase().indexOf("/detectors?") > 0)?'List':'Get'} Detector response.`;
+                    loggingProps['Assertion condition'] = 'Base64 decoding failed';
+                    loggingProps['String being decoded'] = encodedDetectorResponse;
+                    if( error instanceof DOMException && error.name && error.name == "InvalidCharacterError") {
+                        loggingProps['Error Name'] = error.name;
+                        loggingProps['Error Message'] = error.message;
+                    }
+                    else {
+                        loggingProps['Error Object'] = JSON.stringify(error);
+                    }
+                    loggingProps['Next Steps'] = 'Confirm the browser version supports atob. Verify if the string being decoded is properly encoded, contact partner if not.';
+                    this.telemetryService.logException(loggingError, null, loggingProps);
+                    return null;
+                }
+                try {
+                    let decodedDetectorResponse:T = JSON.parse(decodedDetectorResponseString) as T;
+                    response.properties = decodedDetectorResponse;
+                    return response;
+                } catch (error) {
+                    //Log JSON parsing exception here
+                    loggingError.message = 'Failed to parse decoded JSON';
+                    loggingProps['Assertion condition'] = 'JSON parsing of decoded response failed';
+                    loggingProps['String being parsed'] = decodedDetectorResponseString;
+                    if(error instanceof SyntaxError) {
+                        loggingProps['Error Name'] = error.name;
+                        loggingProps['Error Message'] = error.message;
+                    }
+                    else {
+                        loggingProps['Error Object'] = JSON.stringify(error);
+                    }
+                    loggingProps['Next Steps'] = 'Inspect the string that was being parsed. If the string is malformed, check to verify if we sent a valid response to partner API and then reach out to the partner contact to verify their encoding logic.';
+                    this.telemetryService.logException(loggingError, null, loggingProps);
+                    return null;
+                }
+                
+            }
+            else {
+                loggingError.message = 'Encoded response not found.';
+                loggingProps['Assertion condition'] = 'Looking for an encoded value failed.';
+                loggingProps['Next Steps'] = 'Inspect the response to verify that it contains a encoded response. If not, confirm with the partner if this is expected and verify that the value in armconfig to force decoding is accurately configured.';
+                this.telemetryService.logException(loggingError, null, loggingProps);
+                return null;
+            }
+        }
+        else {
+            //No need to decode the response
+            return response;
+        }
     }
 
     getArmResource<T>(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Observable<T> {
@@ -480,6 +544,7 @@ export class ArmService {
             });
         }
 
+        let isDetectorsCall = url.toLowerCase().indexOf("/detectors?") > 0;
         let additionalHeaders = new Map<string, string>();
         // When x-ms-diagversion is set to 1, the requests will be sent to DiagnosticRole.
         //If the value is set to other than 1 or if the header is not present at all, requests will go to runtimehost
@@ -506,7 +571,21 @@ export class ArmService {
         } as TelemetryPayload;
 
         const request = this._http.get(url, { headers: this.getHeaders(null, additionalHeaders) }).pipe(
-            map<ResponseMessageCollectionEnvelope<ResponseMessageEnvelope<T>>, ResponseMessageEnvelope<T>[]>(r => r.value),
+            map<ResponseMessageCollectionEnvelope<ResponseMessageEnvelope<T>>, ResponseMessageEnvelope<T>[]>(r => {
+                if(isDetectorsCall && this._genericArmConfigService && this._genericArmConfigService.isArmApiResponseBase64Encoded(resourceId)) {
+                    let decodedResponseArray:ResponseMessageEnvelope<T>[] = [];
+                    r.value.forEach(response =>{
+                        let decodedResponse:ResponseMessageEnvelope<T> = this.getDecodedDetectorResponseMessageEnvelope(url, resourceId, response);
+                        if(decodedResponse) {
+                            decodedResponseArray.push(decodedResponse);
+                        }
+                    });
+                    return decodedResponseArray;
+                }
+                else {
+                    return r.value;
+                }
+            }),
             catchError(this.handleError.bind(this))
         );
 

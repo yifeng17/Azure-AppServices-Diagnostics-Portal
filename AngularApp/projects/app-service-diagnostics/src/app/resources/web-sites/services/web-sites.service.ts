@@ -99,6 +99,10 @@ export class WebSitesService extends ResourceService {
         return this.appType === AppType.WebApp ? this.platform === OperatingSystem.windows ? 'Web App (Windows)' : 'Web App (Linux)' : 'Function App';
     }
 
+    public get isArmApiResponseBase64Encoded():boolean {
+        return false;
+    }
+
     public get isApplicableForLiveChat(): boolean {
         return this.resource
             && (this.appType & (AppType.WebApp | AppType.FunctionApp)) > 0 //Enable chat for Function apps
