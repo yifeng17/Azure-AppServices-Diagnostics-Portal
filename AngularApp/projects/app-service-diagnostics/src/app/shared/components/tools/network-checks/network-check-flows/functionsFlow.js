@@ -111,7 +111,7 @@ export var functionsFlow = {
             var functionsInfo = [];  // array of maps containing information about functions
             var functionAppResourceId = siteInfo["resourceUri"];
             var functionsList = await diagProvider.getArmResourceAsync(functionAppResourceId + "/functions");
-            if (functionsList != undefined && functionsList.value != undefined) {
+            if (functionsList == undefined || functionsList.value == undefined) {
                 return new InfoStepView({ infoType: 0, title: "No functions were found for this Function App" });
             }
 
@@ -129,13 +129,13 @@ export var functionsFlow = {
                 }
             });
             var subChecksL1 = [];
-            var promises = functionsInfo.map(async (functionInfo) => {
+            var promisesL1 = functionsInfo.map(async (functionInfo) => {
                 var subChecksL2 = []; // These are the checks (and subchecks) for each binding of a function
-                var promises = functionInfo.connectionStringProperties.map(async (propertyName) => {
+                var promisesL2 = functionInfo.connectionStringProperties.map(async (propertyName) => {
                     var connectionString = appSettings[propertyName];
                     (await networkCheckConnectionString(propertyName, connectionString, dnsServers, diagProvider)).forEach(item => subChecksL2.push(item));
                 });
-                await Promise.all(promises);
+                await Promise.all(promisesL2);
                 var functionName = functionInfo.name.split("/").length < 2 ? functionInfo.name : functionInfo.name.split("/")[1];
                 var maxCheckLevel = getMaxCheckLevel(subChecksL2);
                 var title = maxCheckLevel == 0 ? `Function "${functionName}" - all network connectivity tests were successful.` :
@@ -143,7 +143,7 @@ export var functionsFlow = {
                 subChecksL1.push({ title: title, subChecks: subChecksL2, level: maxCheckLevel });
             });
 
-            await Promise.all(promises);
+            await Promise.all(promisesL1);
 
             var maxCheckLevel = getMaxCheckLevel(subChecksL1);
             var title = maxCheckLevel == 0 ? "Network connectivity tests for all Function input/output bindings were successful." :
