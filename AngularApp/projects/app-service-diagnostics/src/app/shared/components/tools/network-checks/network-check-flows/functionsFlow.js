@@ -1,4 +1,4 @@
-import {ResourcePermissionCheckManager, runKuduAccessibleCheck, checkVnetIntegrationHealth, checkDnsSettingAsync, extractHostPortFromConnectionString, checkSubnetSizeAsync, extractHostPortFromKeyVaultReference} from './flowMisc.js';
+import {ResourcePermissionCheckManager, runKuduAccessibleCheck, isVnetIntegratedAsync, checkVnetIntegrationHealth, checkDnsSettingAsync, extractHostPortFromConnectionString, checkSubnetSizeAsync, extractHostPortFromKeyVaultReference} from './flowMisc.js';
 
 export var functionsFlow = {
     title: "My Function App is not starting or executing or I see connection errors in logs",
@@ -13,17 +13,23 @@ export var functionsFlow = {
 
         var kuduReachablePromise = kuduAvailabilityCheckPromise.then(r => isKuduAccessible);
 
-        var vnetIntegrationHealthPromise = checkVnetIntegrationHealth(siteInfo, diagProvider, kuduReachablePromise, permMgr);
-        flowMgr.addViews(vnetIntegrationHealthPromise.then(d => d.views), "Checking VNet integration status...");
-        var data = { 
-            subnetDataPromise: vnetIntegrationHealthPromise.then(d => d.subnetData), 
-            serverFarmId: siteInfo["serverFarmId"], 
-            kuduReachablePromise, 
-            isContinuedPromise: vnetIntegrationHealthPromise.then(d => d.isContinue) 
-        };
+        var isVnetIntegrated = await isVnetIntegratedAsync(siteInfo, diagProvider);
+        if (isVnetIntegrated) {
+            var vnetIntegrationHealthPromise = checkVnetIntegrationHealth(siteInfo, diagProvider, kuduReachablePromise, permMgr);
+            flowMgr.addViews(vnetIntegrationHealthPromise.then(d => d != undefined ? d.views : undefined), "Checking VNet integration status...");
+            var data = { 
+                subnetDataPromise: vnetIntegrationHealthPromise.then(d => d != undefined ? d.subnetData : undefined), 
+                serverFarmId: siteInfo["serverFarmId"],
+                kuduReachablePromise
+            };
+            var isVnetIntegrationHealthy = await vnetIntegrationHealthPromise.then(d => d != undefined ? d.isContinue: false);
 
-        // TODO: separate common code between this and connectionFailureFlow.js
-        flowMgr.addViews(data.isContinuedPromise.then(c => c ? checkNetworkConfigAndConnectivityAsync(siteInfo, diagProvider, flowMgr, data, permMgr) : null), "Checking Network Configuration...");
+            // TODO: separate common code between this and connectionFailureFlow.js
+            // Don't run the network config check if the app is not VNet joined
+            if (isVnetIntegrationHealthy) {
+                flowMgr.addViews(checkNetworkConfigAndConnectivityAsync(siteInfo, diagProvider, flowMgr, data, permMgr), "Checking Network Configuration...");
+            }
+        }
         
         var dnsCheckResultPromise = checkDnsSettingAsync(siteInfo, diagProvider);
         var dnsCheckResult = await dnsCheckResultPromise;
@@ -45,7 +51,7 @@ export var functionsFlow = {
             var failureDetailsMarkdown = `Please refer to <a href= "https://docs.microsoft.com/en-us/azure/azure-functions/functions-app-settings#azurewebjobsstorage" target="_blank">this documentation</a> on how to configure the app setting "${propertyName}".`;
             var connectionString = appSettings[propertyName];
             if (connectionString != undefined) {
-                var subChecksL2 = await networkCheckConnectionString(propertyName, connectionString, dnsServers, diagProvider, failureDetailsMarkdown);
+                var subChecksL2 = await networkCheckConnectionString(propertyName, connectionString, dnsServers, diagProvider, isVnetIntegrated, failureDetailsMarkdown);
                 var maxCheckLevel = getMaxCheckLevel(subChecksL2);
                 var title = maxCheckLevel == 0 ? `Network connectivity test to Azure storage endpoint configured in app setting "${propertyName}" was successful.` :
                                                  `Network connectivity test to Azure storage endpoint configured in app setting "${propertyName}" failed.`;
@@ -63,7 +69,7 @@ export var functionsFlow = {
             failureDetailsMarkdown = `Please refer to <a href= "https://docs.microsoft.com/en-us/azure/azure-functions/functions-app-settings#website_contentazurefileconnectionstring" target="_blank">this documentation</a> on how to configure the app setting "${propertyName}".`;
             connectionString = appSettings[propertyName];
             if (connectionString != undefined) {
-                var subChecksL2 = await networkCheckConnectionString(propertyName, connectionString, dnsServers, diagProvider, failureDetailsMarkdown);
+                var subChecksL2 = await networkCheckConnectionString(propertyName, connectionString, dnsServers, diagProvider, isVnetIntegrated, failureDetailsMarkdown);
                 var maxCheckLevel = getMaxCheckLevel(subChecksL2);
                 var title = maxCheckLevel == 0 ? `Network connectivity test to the Azure storage endpoint configured in app setting "${propertyName}" was successful.` :
                                                  `Network connectivity test to the Azure storage endpoint configured in app setting "${propertyName}" failed.  `
@@ -76,7 +82,7 @@ export var functionsFlow = {
             failureDetailsMarkdown = `Please refer to <a href= "https://docs.microsoft.com/en-us/azure/azure-functions/functions-app-settings#website_run_from_package" target="_blank">this documentation</a> on how to configure the app setting "${propertyName}".`;
             connectionString = appSettings[propertyName];
             if (connectionString != undefined && connectionString != "0" && connectionString != "1") {
-                var subChecksL2 = await networkCheckConnectionString(propertyName, connectionString, dnsServers, diagProvider, failureDetailsMarkdown);
+                var subChecksL2 = await networkCheckConnectionString(propertyName, connectionString, dnsServers, diagProvider, isVnetIntegrated, failureDetailsMarkdown);
                 var maxCheckLevel = getMaxCheckLevel(subChecksL2);
                 var title = maxCheckLevel == 0 ? `Network connectivity test to the endpoint configured in app setting "${propertyName}" was successful.` :
                                                  `Network connectivity test to the endpoint configured in app setting "${propertyName}" failed.  `
@@ -88,7 +94,7 @@ export var functionsFlow = {
             failureDetailsMarkdown = `Please refer to <a href= "https://docs.microsoft.com/en-us/azure/azure-functions/functions-app-settings#applicationinsights_connection_string" target="_blank">this documentation</a> on how to configure the app setting "${propertyName}".`;
             connectionString = appSettings[propertyName];
             if (connectionString != undefined) {
-                var subChecksL2 = await networkCheckConnectionString(propertyName, connectionString, dnsServers, diagProvider, failureDetailsMarkdown);
+                var subChecksL2 = await networkCheckConnectionString(propertyName, connectionString, dnsServers, diagProvider, isVnetIntegrated, failureDetailsMarkdown);
                 var maxCheckLevel = getMaxCheckLevel(subChecksL2);
                 var title = maxCheckLevel == 0 ? `Network connectivity test to the Application Insights endpoint was successful.` :
                                                  `Detected integration with Application insights but network connectivity test to Application Insights failed.`;
@@ -112,6 +118,12 @@ export var functionsFlow = {
             var functionAppResourceId = siteInfo["resourceUri"];
             var functionsList = await diagProvider.getArmResourceAsync(functionAppResourceId + "/functions");
             if (functionsList == undefined || functionsList.value == undefined) {
+                return new CheckStepView({ 
+                    title: "Could not get the list of functions in this Function App.", 
+                    detailsMarkdown: "If retrying does not work, the app is most likely in an unhealthy state.  Please check the values configured in the app settings **AzureWebJobsStorage** and **WEBSITE_CONTENTAZUREFILECONNECTIONSTRING** point to an existing storage account and that it is accessible by the Function app using the checks above.",
+                    level: 2 });
+            }
+            if (functionsList.value.length == 0) {
                 return new InfoStepView({ infoType: 0, title: "No functions were found for this Function App" });
             }
 
@@ -133,7 +145,7 @@ export var functionsFlow = {
                 var subChecksL2 = []; // These are the checks (and subchecks) for each binding of a function
                 var promisesL2 = functionInfo.connectionStringProperties.map(async (propertyName) => {
                     var connectionString = appSettings[propertyName];
-                    (await networkCheckConnectionString(propertyName, connectionString, dnsServers, diagProvider)).forEach(item => subChecksL2.push(item));
+                    (await networkCheckConnectionString(propertyName, connectionString, dnsServers, diagProvider, isVnetIntegrated)).forEach(item => subChecksL2.push(item));
                 });
                 await Promise.all(promisesL2);
                 var functionName = functionInfo.name.split("/").length < 2 ? functionInfo.name : functionInfo.name.split("/")[1];
@@ -176,13 +188,13 @@ function getMaxCheckLevel(subChecks) {
     return maxCheckLevel;
 }
 
-async function networkCheckConnectionString(propertyName, connectionString, dnsServers, diagProvider, failureDetailsMarkdown = undefined) {
+async function networkCheckConnectionString(propertyName, connectionString, dnsServers, diagProvider, isVnetIntegrated, failureDetailsMarkdown = undefined) {
     var subChecks = [];
     if(!isKeyVaultReference(connectionString)) {
         var hostPort = extractHostPortFromConnectionString(connectionString);
 
         if (hostPort.HostName != undefined && hostPort.Port != undefined) {
-            var connectivityCheckResult = await runConnectivityCheckAsync(hostPort.HostName, hostPort.Port, dnsServers, diagProvider, hostPort.HostName.length, failureDetailsMarkdown);
+            var connectivityCheckResult = await runConnectivityCheckAsync(hostPort.HostName, hostPort.Port, dnsServers, diagProvider, hostPort.HostName.length, isVnetIntegrated, failureDetailsMarkdown);
             var maxCheckLevel = getMaxCheckLevel(connectivityCheckResult);
             var title = maxCheckLevel == 0 ? `Successfully accessed the endpoint "${hostPort.HostName}:${hostPort.Port}" configured in App Setting "${propertyName}"` :
                                              `Could not access the endpoint "${hostPort.HostName}:${hostPort.Port}" configured in App Setting "${propertyName}".`;
@@ -196,18 +208,18 @@ async function networkCheckConnectionString(propertyName, connectionString, dnsS
             }
         }
     } else {
-        var res = await networkCheckKeyVaultReferenceAsync(propertyName, connectionString, dnsServers, diagProvider);
+        var res = await networkCheckKeyVaultReferenceAsync(propertyName, connectionString, dnsServers, diagProvider, isVnetIntegrated);
         res.forEach(item => subChecks.push(item));
     }
     return subChecks;
 }
 
-async function networkCheckKeyVaultReferenceAsync(propertyName, connectionString, dnsServers, diagProvider) {
+async function networkCheckKeyVaultReferenceAsync(propertyName, connectionString, dnsServers, diagProvider, isVnetIntegrated) {
     var failureDetailsMarkdown = 'Please refer to <a href= "https://docs.microsoft.com/en-us/azure/app-service/app-service-key-vault-references#reference-syntax" target="_blank">this documentation</a> to configure the Key Vault reference correctly.'
     var subChecks = [];
     var hostPort = extractHostPortFromKeyVaultReference(connectionString);
     if (hostPort.HostName != undefined && hostPort.Port != undefined) {
-        var connectivityCheckResult = await runConnectivityCheckAsync(hostPort.HostName, hostPort.Port, dnsServers, diagProvider, hostPort.HostName.length, failureDetailsMarkdown);
+        var connectivityCheckResult = await runConnectivityCheckAsync(hostPort.HostName, hostPort.Port, dnsServers, diagProvider, hostPort.HostName.length, isVnetIntegrated, failureDetailsMarkdown);
         var maxCheckLevel = getMaxCheckLevel(connectivityCheckResult);
         if(maxCheckLevel == 0) {
             subChecks.push({
@@ -304,7 +316,7 @@ async function checkNetworkConfigAndConnectivityAsync(siteInfo, diagProvider, fl
     return views;
 }
 
-async function runConnectivityCheckAsync(hostname, port, dnsServers, diagProvider, lengthLimit, failureDetailsMarkdown = undefined) {
+async function runConnectivityCheckAsync(hostname, port, dnsServers, diagProvider, lengthLimit, isVnetIntegrated, failureDetailsMarkdown = undefined) {
     var fellbackToPublicDns = false;
     var nameResolvePromise = (async function checkNameResolve() {
         var ip = null;
@@ -353,9 +365,12 @@ async function runConnectivityCheckAsync(hostname, port, dnsServers, diagProvide
             var markdown = "Results:"
             resultsMarkdown.forEach(element => markdown += "\r\n- " + element);
             markdown += `\r\n\r\nPossible reasons can be:` +
-            `\r\n\-  hostname **${hostname}** does not exist, please double check that the hostname is correct.` +
-            (dnsServers.filter(s => s != "").length == 0 ? "" : `\r\n\-  Your custom DNS server was used for resolving hostname, but there is no DNS entry on the server for **${hostname}**, please check your DNS server.`) +
-            "\r\n\-  If your target endpoint is an Azure service with Private Endpoint enabled, please check its Private Endpoint DNS Zone settings.";
+            `\r\n\-  The hostname **${hostname}** does not exist, please double check that the hostname is correct.`;
+            if (isVnetIntegrated) {
+                markdown += (dnsServers.filter(s => s != "").length == 0 ? "" : `\r\n\-  Your custom DNS server was used for resolving hostname, but there is no DNS entry on the server for **${hostname}**, please check your DNS server.`) +
+                "\r\n\-  If your target endpoint is an Azure service with Private Endpoint enabled, please check its Private Endpoint DNS Zone settings." +
+                '\r\n\r\nThis <a href= "https://docs.microsoft.com/en-us/azure/azure-functions/functions-networking-options#troubleshooting" target="_blank">troubleshooting guide</a> may help you in debugging the issue further.';
+            }
             if (failureDetailsMarkdown != undefined) {
                 markdown += "\r\n\r\n" + failureDetailsMarkdown
             }
@@ -379,9 +394,13 @@ async function runConnectivityCheckAsync(hostname, port, dnsServers, diagProvide
         var markdown = `Connectivity test failed at TCP level for hostname **${hostname}** via resolved IP address ${resolvedIp}.  ` +
         "This means the endpoint was not reachable at the network transport layer. Possible reasons can be:" +
         "\r\n\-  The endpoint does not exist, please double check the hostname:port or ip:port was correctly set." +
-        "\r\n\-  The endpoint is not reachable from the VNet, please double check if the endpoint server is correctly configured." +
-        "\r\n\-  There is a TCP level firewall or a Network Security Group Rule blocking the traffic from this app. Please check your firewall or NSG rules if there are any." +
-        "\r\n\-  WEBSITE_ALWAYS_FALLBACK_TO_PUBLIC_DNS setting is not supported by this connectivity check yet, if custom DNS server fails to resolve the hostname, the check will fail.";
+        '\r\n\-  If your target endpoint is an Azure service, please check its network configuration to confirm that access to public endpoints is not restricted by firewall rules.';
+        if (isVnetIntegrated) {
+            markdown += "\r\n\-  The endpoint is not reachable from the VNet, please double check if the endpoint server is correctly configured." +
+            "\r\n\-  There is a TCP level firewall or a Network Security Group Rule blocking the traffic from this app. Please check your firewall or NSG rules if there are any." +
+            "\r\n\-  WEBSITE_ALWAYS_FALLBACK_TO_PUBLIC_DNS setting is not supported by this connectivity check yet, if custom DNS server fails to resolve the hostname, the check will fail." +
+            '\r\n\r\nThis <a href= "https://docs.microsoft.com/en-us/azure/azure-functions/functions-networking-options#troubleshooting" target="_blank">troubleshooting guide</a> may help you in debugging the issue further.';
+        }
         if (failureDetailsMarkdown != undefined) {
             markdown += "\r\n\r\n" + failureDetailsMarkdown
         }

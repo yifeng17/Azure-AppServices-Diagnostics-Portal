@@ -109,7 +109,7 @@ export async function checkVnetIntegrationHealth(siteInfo, diagProvider, isKuduA
         var view = new CheckStepView({
             title: "VNet integration is healthy",
             level: 0,
-            subChecks: await promise.then(d => d.checks.filter(c => c.type == 1))
+            subChecks: await promise.then(d => d.checks != undefined ? d.checks.filter(c => c.type == 1) : undefined)
         });
 
         if (isContinue === "Incomplete") {
@@ -119,10 +119,10 @@ export async function checkVnetIntegrationHealth(siteInfo, diagProvider, isKuduA
         views = views.concat(view);
     }
     else {
-        var subchecks = await promise.then(d => d.checks.filter(c => c.type == 1));
-        if (subchecks[0].title === "App is not configured for VNet Integration") {
+        var subchecks = await promise.then(d => d.checks != undefined ? d.checks.filter(c => c.type == 1) : undefined);
+        if (subchecks != undefined && subchecks[0].title === "App is not configured for VNet Integration") {
             views = views.concat(new CheckStepView({
-                title: "App is not configured for VNet Integration",
+                title: subchecks[0].title,
                 level: 2
             }));
         }
@@ -140,6 +140,25 @@ export async function checkVnetIntegrationHealth(siteInfo, diagProvider, isKuduA
     subnetData = await promise.then(d => d.subnetData);
 
     return { views, isContinue, subnetData };
+}
+
+export async function isVnetIntegratedAsync(siteInfo, diagProvider) {
+    var siteArmId = siteInfo["id"];
+    var siteVnetInfo = await getWebAppVnetInfo(siteArmId, diagProvider);
+    if (siteVnetInfo != null && siteVnetInfo["properties"] != null) {
+        var vnetInfo = siteVnetInfo["properties"];
+        var subnetResourceId = vnetInfo["subnetResourceId"];
+        if (subnetResourceId != null) { // App is using regional VNet integration
+            return true;
+        } else {
+            var siteGWVnetInfo = await diagProvider.getArmResourceAsync(siteArmId + "/virtualNetworkConnections");
+            if (siteGWVnetInfo != null && siteGWVnetInfo.length > 0) { // App is using Gateway VNet integration
+                return true;
+            }
+        }
+    }
+    
+    return false;
 }
 
 async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessiblePromise, permMgr) {
@@ -384,6 +403,8 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
                 return { checks, isContinue, subnetData };
             }
         }
+    } else {
+        return { checks: undefined, isContinue: false, subnetData: undefined };
     }
 }
 
