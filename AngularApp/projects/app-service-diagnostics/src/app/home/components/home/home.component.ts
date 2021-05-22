@@ -26,6 +26,8 @@ import { RiskHelper, RiskTile } from '../../models/risk';
 import { OperatingSystem } from '../../../shared/models/site';
 import { RiskAlertService } from '../../../shared-v2/services/risk-alert.service';
 import { mergeMap } from 'rxjs-compat/operator/mergeMap';
+import { TranslateService } from '@ngx-translate/core';
+import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 
 @Component({
     selector: 'home',
@@ -76,7 +78,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     constructor(private _resourceService: ResourceService, private _categoryService: CategoryService, private _notificationService: NotificationService, private _router: Router,
         private _detectorControlService: DetectorControlService, private _featureService: FeatureService, private _logger: LoggingV2Service, private _authService: AuthService,
         private _navigator: FeatureNavigationService, private _activatedRoute: ActivatedRoute, private armService: ArmService, private _telemetryService: TelemetryService, private _diagnosticService: DiagnosticService, private _portalService: PortalActionService, private globals: Globals,
-        private versionTestService: VersionTestService, private subscriptionPropertiesService: SubscriptionPropertiesService, private _quickLinkService: QuickLinkService, private _riskAlertService: RiskAlertService) {
+        private versionTestService: VersionTestService, private subscriptionPropertiesService: SubscriptionPropertiesService, private _quickLinkService: QuickLinkService, private _riskAlertService: RiskAlertService, public translate: TranslateService) {
 
         this.subscriptionId = this._activatedRoute.snapshot.params['subscriptionid'];
         this.versionTestService.isLegacySub.subscribe(isLegacy => this.useLegacy = isLegacy);
@@ -99,12 +101,17 @@ export class HomeComponent implements OnInit, AfterViewInit {
         else {
             if (this._resourceService && !!this._resourceService.resource && this._resourceService.resource.type === 'Microsoft.Web/hostingEnvironments') {
                 this.homePageText = {
-                    title: 'App Service Environment Diagnostics',
-                    description: 'Use App Service Environment Diagnostics to investigate how your App Service Environment is performing, diagnose issues, and discover how to\
-          improve the availability of your App Service Environment. Select the problem category that best matches the information or tool that you\'re\
-          interested in:',
+        //             title: 'App Service Environment Diagnostics',
+        //             description: 'Use App Service Environment Diagnostics to investigate how your App Service Environment is performing, diagnose issues, and discover how to\
+        //   improve the availability of your App Service Environment. Select the problem category that best matches the information or tool that you\'re\
+        //   interested in:',
+        //             searchBarPlaceHolder: 'Search App Service Environment Diagnostics'
+                    title: "",
+                    description: "",
                     searchBarPlaceHolder: 'Search App Service Environment Diagnostics'
                 };
+                this.translate.get('ase.homepage.title').subscribe((des)=>{console.log(des); this.homePageText.title = des;}),
+                this.translate.get('ase.homepage.description').subscribe((des)=>{console.log(des); this.homePageText.description = des;}),
                 this.searchPlaceHolder = this.homePageText.searchBarPlaceHolder;
             }
             else {
@@ -134,6 +141,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 searchBarPlaceHolder: 'Search a keyword that best describes your issue'
             };
         }
+
+        marker("homePageText.title");
+        marker("homePageText.description");
+        marker("homePageText.searchBarPlaceHolder");
+        this.translate.get('ase.homepage.title').subscribe((des)=>{console.log(des); this.homePageText.title = des; this.translate.setTranslation("homePageText.title", this.homePageText.title);}),
+        this.translate.get('ase.homepage.description').subscribe((des)=>{console.log(des); this.homePageText.description = des; this.translate.setTranslation("homePageText.description", this.homePageText.description);}),
+        // this.translate.setTranslation("homePageText.title", this.homePageText.title);
+        // this.translate.setTranslation("homePageText.description", this.homePageText.description);
+        this.translate.setTranslation("homePageText.searchBarPlaceHolder", this.homePageText.searchBarPlaceHolder);
 
         if (_resourceService.armResourceConfig) {
             this._categoryService.initCategoriesForArmResource(_resourceService.resource.id);

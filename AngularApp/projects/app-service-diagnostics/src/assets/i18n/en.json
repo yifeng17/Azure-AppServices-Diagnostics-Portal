@@ -1,0 +1,51 @@
+{
+	"Apply": "",
+	"Ask Genie": "",
+	"Cancel": "",
+	"Extract me": "",
+	"Others": "",
+	"Overview": "Overview",
+	"Privacy": "Privacy",
+	"Troubleshooting categories": "",
+	"UTC End Time (mm/dd/yy)": "UTC End Time (mm/dd/yy)",
+	"UTC Start Time (mm/dd/yy)": "UTC Start Time (mm/dd/yy)",
+	"ase": {
+		"homepage": {
+			"description": "Use App Service Environment Diagnostics to investigate how your App Service Environment is performing, diagnose issues, and discover how to improve the availability of your App Service Environment.  Select the problem category that best matches the information or tool that you are  interested in.",
+			"title": "App Service Environment Diagnostics"
+		}
+	},
+	"category-overview": {
+		"If you have a specific problem you want to investigate, click a topic in the left navigation or click Ask Genie": {
+			"": ""
+		}
+	},
+	"detector-command-bar": {
+		"Ask Genie": "Ask Genie",
+		"Feedback": "Feedback",
+		"Refresh": "Refresh"
+	},
+	"fabric-feedback": {
+		"Are you satisfied with your experience? ": "Are you satisfied with your experience? ",
+		"Feedback": "Feedback",
+		"Feedback sent!": "Feedback sent!",
+		"Submit feedback": "Submit feedback",
+		"Tell us about your experience": "",
+		"Thank you for giving us feedback!": "Thank you for giving us feedback!",
+		"Thank you for your feedback": "Thank you for your feedback",
+		"checkLabel": "Microsoft can email you about your feedback"
+	},
+	"fabric-search-results| Ask chatbot Genie": "Ask chatbot Genie",
+	"homePageText": {
+		"description": "",
+		"searchBarPlaceHolder": "",
+		"title": ""
+	},
+	"homepage": {
+		"Have questions?": "Have questions?",
+		"Popular troubleshooting tools": "Popular troubleshooting tools",
+		"Privacy": "Privacy",
+		"Risk alerts": "Risk alerts",
+		"Troubleshooting categories": "Troubleshooting categories"
+	}
+}
