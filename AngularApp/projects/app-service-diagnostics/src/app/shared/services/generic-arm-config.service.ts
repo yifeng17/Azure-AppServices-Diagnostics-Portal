@@ -6,10 +6,6 @@ import { Category } from "../../shared-v2/models/category";
 import { Observable, of, forkJoin } from 'rxjs';
 import { AppInsightsTelemetryService, ResourceDescriptor, TelemetryEventNames } from 'diagnostic-data';
 import { PortalKustoTelemetryService } from './portal-kusto-telemetry.service';
-import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { TranslateService } from '@ngx-translate/core';
-
-// marker('Extract me');
 
 @Injectable()
 export class GenericArmConfigService {
@@ -95,7 +91,7 @@ export class GenericArmConfigService {
   }
 
 
-  constructor(private _http: HttpClient, private translate: TranslateService, private _telemetryService?: PortalKustoTelemetryService) { }
+  constructor(private _http: HttpClient, private _telemetryService?: PortalKustoTelemetryService) { }
 
   public initArmConfig(resourceUri: string): Observable<ArmResourceConfig> {
     if (!resourceUri.startsWith('/')) {
@@ -103,7 +99,6 @@ export class GenericArmConfigService {
     }
     let resourceDesc = ResourceDescriptor.parseResourceUri(resourceUri);
     const baseUri: string = 'armResourceConfig/' + resourceDesc.provider + '/' + resourceDesc.type + '/';
-    const localizedIdPrefix: string = 'armResourceConfig.' + resourceDesc.provider + '.' + resourceDesc.type + '.';
 
     let override = this._http.get<ArmResourceConfig>(baseUri + 'override.json')
     let config = this._http.get<ArmResourceConfig>(baseUri + 'config.json')
@@ -615,29 +610,6 @@ export class GenericArmConfigService {
           }
 
         this.resourceMap.push(currConfig);
-
-
-        // homePageText?: HomePageText;
-        // matchRegEx?: string;
-        // searchSuffix?: string;
-        // azureServiceName?: string;
-        // armApiConfig?: ArmApiConfig;
-        // isSearchEnabled?: boolean;
-        // liveChatConfig?: LiveChatConfig
-        // categories?: Array<Category>;
-        // pesId?: string;
-        // liabilityCheckConfig?: LiabilityCheckConfig;
-        // quickLinks?: string[];
-        // keystoneDetectorId?: string;
-        // riskAlertConfigs?: RiskAlertConfig[];
-        // notificationConfig?: NotificationConfig;
-
-   //     var markerList = {"homePageText.title", "homePageText.description"};
-        marker(`homePageText.title`);
-        marker(`${localizedIdPrefix}.homePageText.description`);
-        console.log("hahaha", `${localizedIdPrefix}.homePageText.description`);
-        this.translate.set(`${localizedIdPrefix}.homePageText.title`, currConfig.homePageText.title);
-        this.translate.set(`${localizedIdPrefix}.homePageText.description`, currConfig.homePageText.description);
         return currConfig;
       })
     );

@@ -25,8 +25,6 @@ import { delay, map } from 'rxjs/operators';
 import { RiskHelper, RiskTile } from '../../models/risk';
 import { OperatingSystem } from '../../../shared/models/site';
 import { RiskAlertService } from '../../../shared-v2/services/risk-alert.service';
-import { mergeMap } from 'rxjs-compat/operator/mergeMap';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'home',
@@ -80,7 +78,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     constructor(private _resourceService: ResourceService, private _categoryService: CategoryService, private _notificationService: NotificationService, private _router: Router,
         private _detectorControlService: DetectorControlService, private _featureService: FeatureService, private _logger: LoggingV2Service, private _authService: AuthService,
         private _navigator: FeatureNavigationService, private _activatedRoute: ActivatedRoute, private armService: ArmService, private _telemetryService: TelemetryService, private _diagnosticService: DiagnosticService, private _portalService: PortalActionService, private globals: Globals,
-        private versionTestService: VersionTestService, private subscriptionPropertiesService: SubscriptionPropertiesService, private _quickLinkService: QuickLinkService, private _riskAlertService: RiskAlertService, public translate: TranslateService) {
+        private versionTestService: VersionTestService, private subscriptionPropertiesService: SubscriptionPropertiesService, private _quickLinkService: QuickLinkService, private _riskAlertService: RiskAlertService) {
 
         this.subscriptionId = this._activatedRoute.snapshot.params['subscriptionid'];
         this.versionTestService.isLegacySub.subscribe(isLegacy => this.useLegacy = isLegacy);
@@ -92,8 +90,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         };
         this._telemetryService.logEvent('DiagnosticsViewLoaded', eventProps);
 
-        this.resourcePrefix = !!_resourceService.azureServiceName ? _resourceService.azureServiceName + ".": "";
-        console.log("ResourcePrefix", this.resourcePrefix);
+        this.resourcePrefix = !!_resourceService.azureServiceName ? _resourceService.azureServiceName + ".": this.resourcePrefix;
         if (_resourceService.armResourceConfig && _resourceService.armResourceConfig.homePageText
             && _resourceService.armResourceConfig.homePageText.title && _resourceService.armResourceConfig.homePageText.title.length > 1
             && _resourceService.armResourceConfig.homePageText.description && _resourceService.armResourceConfig.homePageText.description.length > 1
@@ -101,7 +98,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
             this._showSwitchBanner = true;
             this.homePageText = _resourceService.armResourceConfig.homePageText;
             this.searchPlaceHolder = this.homePageText.searchBarPlaceHolder;
-
         }
         else {
             if (this._resourceService && !!this._resourceService.resource && this._resourceService.resource.type === 'Microsoft.Web/hostingEnvironments') {

@@ -25,9 +25,7 @@ export class ResourceRedirectComponent implements OnInit {
   }
 
   useLanguage(language: string): void {
-    console.log("Parsed language", language);
     language = language.split("-")[0];
-    console.log("Using language", language);
     this.translate.use(language);
 }
 

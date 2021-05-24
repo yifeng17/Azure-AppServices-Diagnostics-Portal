@@ -26,6 +26,7 @@
 	"Azure Spring Cloud.homepage.title": "App Service環境診断を使用して、App Service環境のパフォーマンスを調査し、問題を診断し、AppService環境の可用性を向上させる方法を見つけます。",
 	"Cancel": "",
 	"Check your app’s health and discover app or platform issues.": "アプリの状態を確認し、アプリまたはプラットフォームの問題を発見します。",
+	"Click here to go back to the old version.": "",
 	"Click here to view more details": "",
 	"Critical": "",
 	"Function App.homepage.description": "アプリのパフォーマンスを調査し、問題を診断して、アプリケーションを改善する方法を見つけます。",

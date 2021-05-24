@@ -26,6 +26,7 @@
 	"Azure Spring Cloud.homepage.title": "使用App Service环境诊断程序可以调查您的App Service环境如何执行，诊断问题以及发现如何提高App Service环境的可用性。选择以下您感兴趣的问题类别进行了解。",
 	"Cancel": "",
 	"Check your app’s health and discover app or platform issues.": "检查您应用的运行状况，并发现应用或平台问题。",
+	"Click here to go back to the old version.": "单击此处返回到旧版本",
 	"Click here to view more details": "点击此处查看更多详细信息",
 	"Critical": "关键",
 	"Function App.homepage.description": "调查您的应用程序的性能如何，诊断问题并发现如何改进您的应用程序。",

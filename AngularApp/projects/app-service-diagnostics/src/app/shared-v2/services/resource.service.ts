@@ -7,10 +7,6 @@ import { ArmService } from '../../shared/services/arm.service';
 import { ArmResourceConfig } from '../../shared/models/arm/armResourceConfig';
 import { GenericArmConfigService } from '../../shared/services/generic-arm-config.service';
 import { PortalReferrerMap } from '../../shared/models/portal-referrer-map';
-import { ResourceDescriptor, ResourceDescriptorGroups } from 'diagnostic-data';
-import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-
-marker('Extract me');
 
 @Injectable({providedIn: 'root'})
 export class ResourceService {
