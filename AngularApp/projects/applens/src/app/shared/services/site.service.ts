@@ -48,7 +48,7 @@ export class SiteService extends ResourceService {
     public updatePesIdAndImgSrc() {
         if (this._siteObject.Kind && this._siteObject.Kind.toString().toLowerCase().indexOf("workflowapp") !== -1) {
             this.pesId = '17378';
-            this.imgSrc = 'assets/img/Azure-LogicAppsPreview-Logo.png';
+            this.imgSrc = 'assets/img/Azure-LogicAppsPreview-Logo.svg';
             this.staticSelfHelpContent = 'microsoft.logicapps';
             this.searchSuffix = "AZURE Logic APP";
             this.templateFileName = "WorkflowApp";
