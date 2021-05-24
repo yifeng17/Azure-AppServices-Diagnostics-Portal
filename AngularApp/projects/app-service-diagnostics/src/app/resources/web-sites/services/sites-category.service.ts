@@ -161,7 +161,7 @@ export class SitesCategoryService extends CategoryService {
           item: {
             id: 'NetworkingLA',
             name: 'Networking',
-            overviewDetectorId: '',
+            overviewDetectorId: 'NetworkingLA',
             description: 'Troubleshoot common networking problems.',
             keywords: ['Networking', 'VNet'],
             color: 'rgb(208, 228, 176)',
