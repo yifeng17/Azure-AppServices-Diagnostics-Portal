@@ -37,7 +37,7 @@ export class CXPChatCallerService {
             this.chatLanguage = startupInfo.effectiveLocale;
           }
 
-          if (!!startupInfo.optionalParameters) {
+          if (!!startupInfo.optionalParameters && Array.isArray(startupInfo.optionalParameters)) {
             var caseSubjectParam = startupInfo.optionalParameters.find(param => param.key === "caseSubject");
             if (!!caseSubjectParam) {
               this.caseSubject = caseSubjectParam.value;
@@ -374,7 +374,7 @@ export class CXPChatCallerService {
         "checkType": checkType,
         "checkOutcome": checkOutcome
       };
-  
+
       this._telemetryService.logEvent(TelemetryEventNames.CXPChatEligibilityCheck, notificationMessage);
     }
   }
