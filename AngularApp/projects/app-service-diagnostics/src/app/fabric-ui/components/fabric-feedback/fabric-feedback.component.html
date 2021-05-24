@@ -6,7 +6,7 @@
     <!-- Feedback Panel Content -->
     <div class="panel-text">
       <p>{{"fabric-feedback.Thank you for giving us feedback!" | translate }}</p>
-      <label aria-required="true">{{"fabric-feedback.Are you satisfied with your experience? " | translate }}</label>
+      <label aria-required="true">{{"fabric-feedback.Are you satisfied with your experience?" | translate }}</label>
       <div class="feedback-panel-icons" id="feedback-icons">
         <div *ngFor="let feedbackIcon of feedbackIcons;let i = index" (click)="setRating(i)"
           [ngClass]="{'selected-icon':rating - 1 === i}" class="feedback-icon hover-item" style="padding: 5px;"

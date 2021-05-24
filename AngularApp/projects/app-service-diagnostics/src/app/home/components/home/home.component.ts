@@ -27,7 +27,6 @@ import { OperatingSystem } from '../../../shared/models/site';
 import { RiskAlertService } from '../../../shared-v2/services/risk-alert.service';
 import { mergeMap } from 'rxjs-compat/operator/mergeMap';
 import { TranslateService } from '@ngx-translate/core';
-import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 
 @Component({
     selector: 'home',
@@ -55,8 +54,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     loadingQuickLinks: boolean = true;
     showRiskSection: boolean = true;
 
-    keyPrefix="";
-    keyPrefix1 = 'ase.homepage.title';
+    resourcePrefix="Web App (Windows).";
+
     private _showSwitchBanner: boolean = false;
     get showSwitchBanner():boolean {
         const typeSwitchItem = allowV3PResourceTypeList.find(item => this._resourceService.resource && this._resourceService.resource.type.toLowerCase() === item.type.toLowerCase());
@@ -93,6 +92,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
         };
         this._telemetryService.logEvent('DiagnosticsViewLoaded', eventProps);
 
+        this.resourcePrefix = !!_resourceService.azureServiceName ? _resourceService.azureServiceName + ".": "";
+        console.log("ResourcePrefix", this.resourcePrefix);
         if (_resourceService.armResourceConfig && _resourceService.armResourceConfig.homePageText
             && _resourceService.armResourceConfig.homePageText.title && _resourceService.armResourceConfig.homePageText.title.length > 1
             && _resourceService.armResourceConfig.homePageText.description && _resourceService.armResourceConfig.homePageText.description.length > 1
@@ -100,23 +101,18 @@ export class HomeComponent implements OnInit, AfterViewInit {
             this._showSwitchBanner = true;
             this.homePageText = _resourceService.armResourceConfig.homePageText;
             this.searchPlaceHolder = this.homePageText.searchBarPlaceHolder;
+
         }
         else {
             if (this._resourceService && !!this._resourceService.resource && this._resourceService.resource.type === 'Microsoft.Web/hostingEnvironments') {
                 this.homePageText = {
-        //             title: 'App Service Environment Diagnostics',
-        //             description: 'Use App Service Environment Diagnostics to investigate how your App Service Environment is performing, diagnose issues, and discover how to\
-        //   improve the availability of your App Service Environment. Select the problem category that best matches the information or tool that you\'re\
-        //   interested in:',
-        //             searchBarPlaceHolder: 'Search App Service Environment Diagnostics'
-                    title: "",
-                    description: "",
+                    title: 'App Service Environment Diagnostics',
+                    description: 'Use App Service Environment Diagnostics to investigate how your App Service Environment is performing, diagnose issues, and discover how to\
+          improve the availability of your App Service Environment. Select the problem category that best matches the information or tool that you\'re\
+          interested in:',
                     searchBarPlaceHolder: 'Search App Service Environment Diagnostics'
                 };
-                this.translate.get('ase.homepage.title').subscribe((des)=>{console.log(des); this.homePageText.title = des;}),
-                this.translate.get('ase.homepage.description').subscribe((des)=>{console.log(des); this.homePageText.description = des;}),
                 this.searchPlaceHolder = this.homePageText.searchBarPlaceHolder;
-                this.keyPrefix = "ase.";
             }
             else {
                 if (this._resourceService && this._resourceService instanceof WebSitesService && (this._resourceService as WebSitesService).appType === AppType.FunctionApp) {
@@ -126,7 +122,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
                         searchBarPlaceHolder: 'Search Azure Functions Diagnostics'
                     };
                     this.searchPlaceHolder = this.homePageText.searchBarPlaceHolder;
-                    this.keyPrefix = "function.";
                 }
                 else {
                     this.homePageText = {
@@ -145,21 +140,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 description: 'Explore ways to diagnose and troubleshoot the common problems of your cluster from CRUD operations to connection problems. Click on any of the documents below to start troubleshooting.',
                 searchBarPlaceHolder: 'Search a keyword that best describes your issue'
             };
-            this.keyPrefix = "aks.";
+            this.resourcePrefix = "Static Azure Kubernetes Service.";
         }
 
-        marker("homePageText.title");
-        marker("homePageText.description");
-        marker("homePageText.searchBarPlaceHolder");
-        this.translate.get('ase.homepage.title').subscribe((des)=>{console.log(des); this.homePageText.title = des; this.translate.setTranslation("homepage.title", this.homePageText.title);}),
-        this.translate.get('ase.homepage.description').subscribe((des)=>{console.log(des); this.homePageText.description = des; this.translate.setTranslation("homepage.description", this.homePageText.description);}),
-        // this.translate.setTranslation("homePageText.title", this.homePageText.title);
-        // this.translate.setTranslation("homePageText.description", this.homePageText.description);
-    //    this.keyPrefix = "ase.";
-    this.keyPrefix = "function.";
-        this.translate.setTranslation("homePageText.searchBarPlaceHolder", this.homePageText.searchBarPlaceHolder);
-
-        console.log(this.keyPrefix+"homepage.title");
         if (_resourceService.armResourceConfig) {
             this._categoryService.initCategoriesForArmResource(_resourceService.resource.id);
             this._quickLinkService.initQuickLinksForArmResource(_resourceService.resource.id);

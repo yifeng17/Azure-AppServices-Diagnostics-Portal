@@ -29,11 +29,11 @@
     </ng-container>
   </div>
   <div class="main-area">
-    <h2>{{ 'ase.homepage.title' | translate}}</h2>
-    <p id="page-description">{{'function.homepage.description' | translate}}</p>
+    <h2>{{ resourcePrefix+'homepage.title' | translate}}</h2>
+    <p id="page-description">{{ resourcePrefix+'homepage.description' | translate}}</p>
     <div *ngIf="categories && !useStaticAksText " class="category-container">
       <div *ngFor="let category of categories" style="display: inline-block;padding: 20px 40px 20px 0px">
-        <category-tile [category]="category"></category-tile>
+        <category-tile [category]="category" [resourcePrefix]="resourcePrefix"></category-tile>
       </div>
     </div>
     <markdown ngPreserveWhitespaces *ngIf="useStaticAksText">
@@ -130,7 +130,7 @@
 
   <div class="home-main-area">
     <div class="home-title-container">
-      <h2><span tabindex="0" id="homepage-title" class="blade-title">{{"homePageText.title" | translate}}</span><span class="blade-description"> - {{"homePageText.description" | translate}}
+      <h2><span tabindex="0" id="homepage-title" class="blade-title">{{ resourcePrefix+"homepage.title" | translate}}</span><span class="blade-description"> - {{ resourcePrefix+"homepage.description" | translate}}
           </span>
       </h2>
       <div class="home-search">
@@ -154,7 +154,7 @@
       <h2 class="section-title" translate>{{"homepage.Troubleshooting categories"|translate}}</h2>
       <div *ngIf="categories" class="home-tiles">
         <div *ngFor="let category of categories" class="home-tile-wrapper">
-          <category-tile-v4 [category]="category"></category-tile-v4>
+          <category-tile-v4 [category]="category" [resourcePrefix]="resourcePrefix"></category-tile-v4>
         </div>
       </div>
     </div>
