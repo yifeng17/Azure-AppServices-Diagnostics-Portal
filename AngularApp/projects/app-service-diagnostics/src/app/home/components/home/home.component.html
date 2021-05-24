@@ -29,8 +29,8 @@
     </ng-container>
   </div>
   <div class="main-area">
-    <h2>{{"homePageText.title" | translate}}</h2>
-    <p id="page-description">{{"homePageText.description" | translate}}</p>
+    <h2>{{ 'ase.homepage.title' | translate}}</h2>
+    <p id="page-description">{{'function.homepage.description' | translate}}</p>
     <div *ngIf="categories && !useStaticAksText " class="category-container">
       <div *ngFor="let category of categories" style="display: inline-block;padding: 20px 40px 20px 0px">
         <category-tile [category]="category"></category-tile>
