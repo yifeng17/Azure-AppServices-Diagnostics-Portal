@@ -108,7 +108,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 this.searchPlaceHolder = this.homePageText.searchBarPlaceHolder;
             }
             else {
-                if (this._resourceService && this._resourceService instanceof WebSitesService && (this._resourceService as WebSitesService).appType === AppType.FunctionApp) {
+                if (this._resourceService && this._resourceService instanceof WebSitesService && (this._resourceService as WebSitesService).appType === AppType.WorkflowApp) {
+                    this.homePageText = {
+                        title: 'Logic App Diagnostics (Preview)',
+                        description: 'Troubleshoot run and connector issues, investigate app performance and discover how to improve its reliability.',
+                        searchBarPlaceHolder: 'Search Azure Logic App Diagnostics'
+                    };
+                    this.searchPlaceHolder = this.homePageText.searchBarPlaceHolder;
+                }
+                else if (this._resourceService && this._resourceService instanceof WebSitesService && (this._resourceService as WebSitesService).appType === AppType.FunctionApp) {
                     this.homePageText = {
                         title: 'Function App Diagnostics (Preview)',
                         description: 'Investigate how your app is performing, diagnose issues and discover how to improve your application.',

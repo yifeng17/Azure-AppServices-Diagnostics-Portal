@@ -100,7 +100,75 @@ export class SitesCategoryService extends CategoryService {
         chatEnabled: false
       }
     },
-
+    // Workflow App
+    {
+        appType: AppType.WorkflowApp,
+        platform: OperatingSystem.windows | OperatingSystem.linux,
+        stack: '',
+        sku: Sku.All,
+        hostingEnvironmentKind: HostingEnvironmentKind.All,
+        item: {
+          id: 'AvailabilityAndPerformanceLogicApp',
+          overviewDetectorId: 'appcrashesLA',
+          name: 'Availability and Performance',
+          description: 'Investigate performance issues or just check the health of your Logic App.',
+          keywords: ['Downtime', '5xx Errors', '4xx Errors', 'CPU', 'Memory', 'Slowness'],
+          color: 'rgb(208, 175, 239)',
+          createFlowForCategory: true,
+          chatEnabled: false
+        }
+      },
+      {
+          appType: AppType.WorkflowApp,
+          platform: OperatingSystem.windows,
+          stack: '',
+          sku: Sku.All,
+          hostingEnvironmentKind: HostingEnvironmentKind.All,
+          item: {
+            id: 'SSLandDomainsLogicApp',
+            name: 'SSL and Domains',
+            overviewDetectorId:'SSLandDomains',
+            description: 'Investigate issues with SSL and custom domains.',
+            keywords: ['4xx Errors', 'SSL', 'Domains'],
+            color: 'rgb(186, 211, 245)',
+            createFlowForCategory: true,
+            chatEnabled: true
+          }
+        },
+      {
+          appType: AppType.WorkflowApp,
+          platform: OperatingSystem.windows | OperatingSystem.linux,
+          stack: '',
+          sku: Sku.All,
+          hostingEnvironmentKind: HostingEnvironmentKind.All,
+          item: {
+            id: 'RunsAndTriggersLA',
+            overviewDetectorId: 'la_pubgeneral_workflowapp',
+            name: 'Runs and Triggers',
+            description: 'Troubleshoot issues related to your run & triggers.',
+            keywords: ['Runs', 'Triggers', 'Calls', 'Timeouts'],
+            color: 'rgb(249, 213, 180)',
+            createFlowForCategory: true,
+            chatEnabled: false
+          }
+        },
+        {
+          appType: AppType.WorkflowApp,
+          platform: OperatingSystem.windows,
+          stack: '',
+          sku: Sku.All,
+          hostingEnvironmentKind: HostingEnvironmentKind.All,
+          item: {
+            id: 'NetworkingLA',
+            name: 'Networking',
+            overviewDetectorId: 'NetworkingLA',
+            description: 'Troubleshoot common networking problems.',
+            keywords: ['Networking', 'VNet'],
+            color: 'rgb(208, 228, 176)',
+            createFlowForCategory: true,
+            chatEnabled: false
+          }
+        },
     // Function App
     {
       appType: AppType.FunctionApp,
