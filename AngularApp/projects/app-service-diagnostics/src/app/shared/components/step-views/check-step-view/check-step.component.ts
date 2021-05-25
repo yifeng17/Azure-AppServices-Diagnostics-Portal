@@ -1,8 +1,7 @@
 
-import { Component, Pipe, PipeTransform, Inject, OnInit, Input, ViewEncapsulation, OnChanges, SimpleChanges } from '@angular/core';
-import { HealthStatus, TelemetryService } from 'diagnostic-data';
-import { IDropdownOption, ISelectableOption } from 'office-ui-fabric-react';
-import { checkResultLevel, CheckStepView, StepViewContainer } from '../step-view-lib';
+import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
+import { TelemetryService } from 'diagnostic-data';
+import { CheckStepView, StepViewContainer } from '../step-view-lib';
 
 
 

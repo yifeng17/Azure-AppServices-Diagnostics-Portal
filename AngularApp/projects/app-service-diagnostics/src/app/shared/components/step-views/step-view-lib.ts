@@ -69,7 +69,7 @@ export enum checkResultLevel {
     pass,
     warning,
     fail,
-    pending,
+    info,
     loading,
     error,
     hidden

@@ -97,10 +97,15 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
             var globals = this._globals;
             globals.messagesData.currentNetworkCheckFlow = null;
             var telemetryService = this._telemetryService;
-            var networkCheckFlows = { connectionFailureFlow, configFailureFlow, learnMoreFlow }
+            var networkCheckFlows = {};
             if (this.siteInfo.kind.includes("functionapp") && !this.siteInfo.kind.includes("workflowapp")) {
                 networkCheckFlows["functionsFlow"] = functionsFlow;
+            } else {
+                networkCheckFlows["connectionFailureFlow"] = connectionFailureFlow;
             }
+            networkCheckFlows["configFailureFlow"] = configFailureFlow;
+            networkCheckFlows["learnMoreFlow"] = learnMoreFlow;
+
             var flows = this.processFlows(networkCheckFlows);
             if (this.debugMode) {
                 window["logDebugMessage"] = console.log.bind(console);

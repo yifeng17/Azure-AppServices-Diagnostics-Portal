@@ -140,6 +140,10 @@ export var functionsFlow = {
                     functionsInfo.push(functionInfo);
                 }
             });
+            if (functionsInfo.length == 0) {
+                return new InfoStepView({ infoType: 0, title: "No functions with configured connection strings were found for this Function App" });
+            }
+
             var subChecksL1 = [];
             var promisesL1 = functionsInfo.map(async (functionInfo) => {
                 var subChecksL2 = []; // These are the checks (and subchecks) for each binding of a function
@@ -368,7 +372,7 @@ async function runConnectivityCheckAsync(hostname, port, dnsServers, diagProvide
             `\r\n\-  The hostname **${hostname}** does not exist, please double check that the hostname is correct.`;
             if (isVnetIntegrated) {
                 markdown += (dnsServers.filter(s => s != "").length == 0 ? "" : `\r\n\-  Your custom DNS server was used for resolving hostname, but there is no DNS entry on the server for **${hostname}**, please check your DNS server.`) +
-                "\r\n\-  If your target endpoint is an Azure service with Private Endpoint enabled, please check its Private Endpoint DNS Zone settings." +
+                '\r\n\-  If your target endpoint is an Azure service with Private Endpoint enabled, please check its <a href= "https://docs.microsoft.com/en-us/azure/azure-functions/functions-networking-options#azure-dns-private-zones" target="_blank">Private Endpoint DNS Zone settings</a>.' +
                 '\r\n\r\nThis <a href= "https://docs.microsoft.com/en-us/azure/azure-functions/functions-networking-options#troubleshooting" target="_blank">troubleshooting guide</a> may help you in debugging the issue further.';
             }
             if (failureDetailsMarkdown != undefined) {
