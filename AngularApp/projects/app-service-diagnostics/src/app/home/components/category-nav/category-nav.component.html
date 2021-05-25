@@ -11,7 +11,7 @@
             [class.selected]="isSelected"></collapsible-menu-item>
         </section-divider>
         <ng-container *ngIf="isDiagnosticTools">
-          <section-divider *ngFor="let item of toolCategoriesFilteredByStack" [label]=item.item.title
+          <section-divider *ngFor="let item of toolCategoriesFilteredByStack" [label]="item.item.title|translate"
             [routePath]=item.item.title>
             <collapsible-menu-item *ngFor="let tool of item.item.tools" [menuItem]="tool" [class.selected]="isSelected">
             </collapsible-menu-item>
