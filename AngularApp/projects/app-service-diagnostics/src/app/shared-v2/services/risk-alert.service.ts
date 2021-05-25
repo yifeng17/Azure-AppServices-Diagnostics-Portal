@@ -55,7 +55,7 @@ export class RiskAlertService {
                     title: riskAlertConfig.title,
                     riskInfo: null,
                     loadingStatus: LoadingStatus.Loading,
-                    linkText: "Click here to view more details",
+                    linkText: "View more details",
                     enableForCaseSubmissionFlow: enableForCaseSubmission
                 };
 
@@ -74,7 +74,7 @@ export class RiskAlertService {
                     id: notificationConfig.notificationDetectorId,
                     panelTitle: notificationConfig.title,
                     status: HealthStatus.Info,
-                    linkText: "Click here to view more details",
+                    linkText: "View more details",
                 } as NotificationMessageBar;
         }
     }
