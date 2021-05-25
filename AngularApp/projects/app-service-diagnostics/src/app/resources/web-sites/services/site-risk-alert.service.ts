@@ -37,7 +37,11 @@ export class SiteRiskAlertService extends RiskAlertService {
 
     private _consumptionFunctionAppRiskAlertConfigs = [];
 
-    private _dedicatedFunctionAppRiskAlertConfigs = [];
+    private _dedicatedFunctionAppRiskAlertConfigs = [{
+        title: "Availability",
+        riskAlertDetectorId: "funcAvailablityRiskAlert",
+        enableForCaseSubmissionFlow: true,
+    }];
 
     private _linuxAppRiskAlertConfigs = [];
 
