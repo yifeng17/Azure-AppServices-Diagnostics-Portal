@@ -50,7 +50,7 @@ export class ConvertLevelToHealthStatusPipe implements PipeTransform {
         return HealthStatus.Critical;
       case checkResultLevel.warning:
         return HealthStatus.Warning;
-      case checkResultLevel.pending:
+      case checkResultLevel.info:
         return HealthStatus.Info;
       case checkResultLevel.error:
         return HealthStatus.Info;
