@@ -102,9 +102,15 @@ export var functionsFlow = {
             } // Optional setting
 
             var maxCheckLevel = getMaxCheckLevel(subChecksL1);
-            var title = maxCheckLevel == 0 ? "Network connectivity tests to common Function App dependencies were successful" :
+            var subChecksL1final = [{
+                title: "Network connectivity evaluation is not extensive, you may still experience problems with the App. See explanation at bottom of page.",
+                level: 1
+            }];
+            subChecksL1.forEach(item => subChecksL1final.push(item));
+            var title = maxCheckLevel == 0 ? "Evaluated network connectivity for common Function App dependencies." :
                                              "Network connectivity tests to common Function App dependencies failed.";
-            return new CheckStepView({ title: title, subChecks: subChecksL1, level: maxCheckLevel });
+            maxCheckLevel = maxCheckLevel == 0 ? 3 : maxCheckLevel;
+            return new CheckStepView({ title: title, subChecks: subChecksL1final, level: maxCheckLevel });
         })(); // end of checkFunctionAppCommonDepsPromise
         
         flowMgr.addView(checkFunctionAppCommonDepsPromise, "Checking common Function App settings...");
@@ -162,9 +168,16 @@ export var functionsFlow = {
             await Promise.all(promisesL1);
 
             var maxCheckLevel = getMaxCheckLevel(subChecksL1);
-            var title = maxCheckLevel == 0 ? "Network connectivity tests for all Function input/output bindings were successful." :
+            var title = maxCheckLevel == 0 ? "Evaluated network connectivity for all Function input/output bindings." :
                                              "Network connectivity tests failed for some Function input/output bindings.";
-            return new CheckStepView({ title: title, subChecks: subChecksL1, level: maxCheckLevel });
+            maxCheckLevel = maxCheckLevel == 0 ? 3 : maxCheckLevel;
+            var subChecksL1final = [{
+                title: "Network connectivity evaluation is not extensive, you may still experience problems with the App. See explanation at bottom of page.",
+                level: 1
+            }];
+            subChecksL1.forEach(item => subChecksL1final.push(item));
+
+            return new CheckStepView({ title: title, subChecks: subChecksL1final, level: maxCheckLevel });
         })();
 
         flowMgr.addView(checkFunctionBindingsPromise, "Checking all Function bindings...");
@@ -175,6 +188,7 @@ export var functionsFlow = {
             title: "Explanation of the results and recommended next steps",
             markdown: "Positive tests above indicate a network layer connection was successfully established between this app and the configured remote service."
             + "\r\n\r\n" + "If the tests passed and your app is still having runtime connection failures with this endpoint, possible reasons could be:"
+            + "\r\n\r\n" + "-  Firewall rules configured on Function App binding resources (e.g. Service Bus) are blocking access to the Function App. Refer to this [troubleshooting guide](https://docs.microsoft.com/en-us/azure/azure-functions/functions-networking-options#debug-access-to-virtual-network-hosted-resources) to debug the issue."
             + "\r\n\r\n" + "-  There were authentication issues and the credentials involved have expired or are invalid. Only network connectivity was tested."
             + "\r\n\r\n" + "-  The application setting was configured as a key vault reference and this diagnostics tool does not retrieve secrets from Key Vault.  Check application logs to debug further."
             + "\r\n\r\n" + "-  The target endpoint/service is not available intermittently."
