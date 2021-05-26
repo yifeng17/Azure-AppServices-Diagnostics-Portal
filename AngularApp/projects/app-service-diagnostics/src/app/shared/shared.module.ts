@@ -133,9 +133,10 @@ import { IntegratedSolutionsViewComponent } from './components/integrated-soluti
 import { MarkdownModule } from 'ngx-markdown';
 import { NetworkCheckComponent } from './components/tools/network-checks/network-checks.component';
 import { DropDownStepComponent } from './components/step-views/dropdown-step-view/dropdown-step.component';
-import { CheckStepComponent, ConvertLevelToHealthStatusPipe } from './components/step-views/check-step-view/check-step.component';
+import { CheckStepComponent } from './components/step-views/check-step-view/check-step.component';
 import { InfoStepComponent } from './components/step-views/info-step-view/info-step.component';
 import { InputStepComponent } from './components/step-views/input-step-view/input-step.component';
+import { CheckComponent, ConvertLevelToHealthStatusPipe } from './components/step-views/check-step-view/check.component';
 
 @NgModule({
     declarations: [
@@ -169,6 +170,7 @@ import { InputStepComponent } from './components/step-views/input-step-view/inpu
         DropDownStepComponent,
         InfoStepComponent,
         CheckStepComponent,
+        CheckComponent,
         ConvertLevelToHealthStatusPipe,
         InputStepComponent,
         MemoryDumpToolComponent,

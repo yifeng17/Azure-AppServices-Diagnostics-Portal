@@ -1,8 +1,7 @@
 
-import { Component, Pipe, PipeTransform, Inject, OnInit, Input, ViewEncapsulation, OnChanges, SimpleChanges } from '@angular/core';
-import { HealthStatus, TelemetryService } from 'diagnostic-data';
-import { IDropdownOption, ISelectableOption } from 'office-ui-fabric-react';
-import { checkResultLevel, CheckStepView, StepViewContainer } from '../step-view-lib';
+import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
+import { TelemetryService } from 'diagnostic-data';
+import { CheckStepView, StepViewContainer } from '../step-view-lib';
 
 
 
@@ -27,26 +26,5 @@ export class CheckStepComponent implements OnInit {
 
   toggleSubChecks(): void {
     this.expanded = !this.expanded;
-  }
-}
-
-@Pipe({
-  name: 'convertLevelToHealthStatus'
-})
-export class ConvertLevelToHealthStatusPipe implements PipeTransform {
-  transform(level: checkResultLevel, args?: any): any {
-    switch (level) {
-      case checkResultLevel.pass:
-        return HealthStatus.Success;
-      case checkResultLevel.fail:
-        return HealthStatus.Critical;
-      case checkResultLevel.warning:
-        return HealthStatus.Warning;
-      case checkResultLevel.pending:
-        return HealthStatus.Info;
-      case checkResultLevel.error:
-        return HealthStatus.Info;
-    }
-    return HealthStatus.None;
   }
 }
