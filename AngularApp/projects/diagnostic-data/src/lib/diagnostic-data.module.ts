@@ -111,6 +111,7 @@ import { SectionsComponent } from './components/sections/sections.component';
 import { CollapsibleListComponent } from './components/collapsible-list/collapsible-list.component';
 import { CollapsibleListFabricComponent } from './components/collapsible-list/collapsible-list-fabric/collapsible-list-fabric.component';
 import { CollapsibleListItemComponent } from './components/collapsible-list/collapsible-list-item.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   imports: [
@@ -137,6 +138,7 @@ import { CollapsibleListItemComponent } from './components/collapsible-list/coll
     FabCalloutModule,
     FabCheckboxModule,
     FabPivotModule,
+    TranslateModule
   ],
   providers: [
     ClipboardService
@@ -184,7 +186,7 @@ import { CollapsibleListItemComponent } from './components/collapsible-list/coll
   ],
   entryComponents: [DetectorListAnalysisComponent],
   exports: [
-    FormsModule, TimeSeriesGraphComponent, DataTableComponent, DynamicDataComponent, DetectorViewComponent, DetectorSearchComponent,
+    FormsModule, TranslateModule, TimeSeriesGraphComponent, DataTableComponent, DynamicDataComponent, DetectorViewComponent, DetectorSearchComponent,
     DataSummaryComponent, LoaderViewComponent, LoaderDetectorViewComponent, StatusIconComponent, DetectorControlComponent,
     DetectorContainerComponent, InternalPipe, CommAlertComponent, GuageControlComponent, SolutionComponent,
     FormComponent, VerticalDisplayListComponent, VerticalDisplayListItemComponent, SolutionTypeTagComponent, DataContainerComponent,

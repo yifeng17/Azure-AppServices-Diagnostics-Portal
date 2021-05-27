@@ -136,6 +136,7 @@ import { DropDownStepComponent } from './components/step-views/dropdown-step-vie
 import { CheckStepComponent, ConvertLevelToHealthStatusPipe } from './components/step-views/check-step-view/check-step.component';
 import { InfoStepComponent } from './components/step-views/info-step-view/info-step.component';
 import { InputStepComponent } from './components/step-views/input-step-view/input-step.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
     declarations: [
@@ -253,6 +254,7 @@ import { InputStepComponent } from './components/step-views/input-step-view/inpu
         FabProgressIndicatorModule,
         FabContextualMenuModule,
         MarkdownModule.forRoot(),
+        TranslateModule
     ],
     exports: [
         CommonModule,
@@ -260,6 +262,7 @@ import { InputStepComponent } from './components/step-views/input-step-view/inpu
         HttpClientModule,
         LimitToFilter,
         RouterModule,
+        TranslateModule,
         nvD3,
         MarkupPipe,
         GroupByPipe,

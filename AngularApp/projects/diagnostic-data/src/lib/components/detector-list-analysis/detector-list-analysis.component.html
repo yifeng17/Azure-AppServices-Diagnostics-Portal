@@ -18,7 +18,7 @@
         <h4>{{ detectorName }}</h4>
       </div>
       <div class="pull-right">
-  
+
         <div style="display: inline-block">
             <button class="btn btn-sm" (click)="navigateToDetector()">Go to Detector</button>
         </div>
@@ -26,7 +26,7 @@
             <button class="btn btn-sm" (click)="goBackToAnalysis()">Back to Observations</button>
         </div>
       </div>
-    </div>  
+    </div>
   </div>
 </div>
 <div *ngIf = "!inDrillDownMode">
@@ -48,26 +48,25 @@
         <i aria-hidden="true" class="fa fa-search"></i>
       </div>
       <div class="list-item">
-        <div class="list-title">Observations</div>
-        <div>Events observed during this time period</div>
+        <div class="list-title">{{ "Observations" | translate }}</div>
+        <div>{{ "Events observed during this time period" | translate }}</div>
 
         <div *ngIf="getPendingDetectorCount() > 0" style="margin-top:10px">
           <i class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true"></i>
-          <span style="margin-left:5px">Loading...</span>
+          <span style="margin-left:5px">{{ "Loading" | translate }}...</span>
         </div>
         <div class="list-text">
           <div *ngIf="issueDetectedViewModels.length === 0 && getPendingDetectorCount() === 0">
-            <div class="success-msg">We could not identify any issues that caused availability drops to your
-              app
+            <div class="success-msg">{{ "We could not identify any issues that caused availability drops to your app" | translate }}
             </div>
           </div>
           <div *ngIf="issueDetectedViewModels.length > 0" class="table-responsive">
             <table class="table detector-list">
               <thead>
                 <tr>
-                  <th class="col-sm-2">Issues</th>
-                  <th class="col-sm-6">Description</th>
-                  <th class="col-sm-1">Link</th>
+                  <th class="col-sm-2">{{ "Issues" | translate }}</th>
+                  <th class="col-sm-6">{{ "Description" | translate }}</th>
+                  <th class="col-sm-1">{{ "Link" | translate }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -94,7 +93,7 @@
                     <div style="margin-top: 5px;white-space: nowrap;">
                       <a tabindex="0" role="button"
                         attr.aria-label="More info for failed check - {{ viewModel.model.title }}"
-                        (keyup.enter)="selectDetector(viewModel)" (click)="selectDetector(viewModel)">More Info
+                        (keyup.enter)="selectDetector(viewModel)" (click)="selectDetector(viewModel)">{{ "More Info" | translate }}
                         <i class="fa fa-arrow-circle-o-right" style="margin-left:5px; font-size: 15px"></i>
                       </a>
                     </div>
@@ -112,12 +111,12 @@
         <img src="assets/img/appinsights.png" class="app-insights-image">
       </div>
       <div class="list-item">
-        <div class="list-title">Application Insights Analysis</div>
+        <div class="list-title">{{ "Application Insights Analysis" | translate }}</div>
         <div *ngIf="isPublic">
           <div class="list-text">
             <div *ngIf="loadingAppInsightsResource" class="loading-status-container">
               <i class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true"></i>
-              <span class="loading-status">Checking Application Insights Status...</span>
+              <span class="loading-status">{{ "Checking Application Insights Status" | translate }}...</span>
             </div>
             <div *ngIf="!loadingAppInsightsResource && !isAppInsightsEnabled">
               <div class="success-msg">Application insights is not enabled for your resource.
@@ -132,19 +131,18 @@
                     <a (keyup.enter)="this._appInsightsService.openAppInsightsBlade()" tabindex="0" role="button"
                       aria-label="Enable Application Insights link"
                       (click)="this._appInsightsService.openAppInsightsBlade()">
-                      Enable Application Insights
+                      {{ "Enable Application Insights" | translate }}
                       <i class="fa fa-arrow-circle-o-right"></i>
                     </a>
                   </div>
                 </div>
               </div>
             </div>
-            <div *ngIf="isAppInsightsEnabled === true">We have run the following application insights
-              analysis for you</div>
+            <div *ngIf="isAppInsightsEnabled === true">{{ "We have run the following application insights analysis for you" | translate }}</div>
             <div *ngIf="isAppInsightsEnabled === true" class="analysis-content">
               <div *ngIf="loadingAppInsightsQueryData" class="loading-status-container">
                 <i class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true"></i>
-                <span class="loading-status">Loading...</span>
+                <span class="loading-status">{{ "Loading" | translate }}...</span>
               </div>
               <div *ngIf="!loadingAppInsightsQueryData">
                 <div *ngFor="let data of appInsightDataList;let i = index" class="dynamic-data-container">
@@ -187,11 +185,11 @@
           <i aria-hidden="true" class="fa fa-wrench"></i>
         </div>
         <div class="list-item">
-          <div class="list-title">Troubleshooting and Next Steps</div>
-          <div>Next steps curated specifically for your app</div>
+          <div class="list-title">{{ "Troubleshooting and Next Steps" | translate }}</div>
+          <div>{{ "Next steps curated specifically for your app" | translate }}</div>
           <div class="list-text">
             <div *ngIf="allSolutions.length === 0 && getPendingDetectorCount() === 0">
-              <div class="success-msg">We could not identify any futher troubleshooting steps or solutions
+              <div class="success-msg">{{ "We could not identify any futher troubleshooting steps or solutions" | translate }}
               </div>
             </div>
             <div class="analysis-content">
@@ -201,7 +199,7 @@
               </div>
               <div *ngIf="getPendingDetectorCount() > 0">
                 <i class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true"></i>
-                <span style="margin-left:5px">Loading...</span>
+                <span style="margin-left:5px">{{ "Loading" | translate }}...</span>
               </div>
             </div>
           </div>
@@ -216,20 +214,20 @@
         <div
           [ngClass]="{'remove-padding':withinDiagnoseAndSolve, 'white-line':withinDiagnoseAndSolve, 'gray-line':!withinDiagnoseAndSolve}">
         </div>
-        <div class="list-title">Successful Checks ({{successfulViewModels.length}})
+        <div class="list-title">{{ "Successful Checks" | translate }} ({{successfulViewModels.length}})
           <span *ngIf="(isDynamicAnalysis || isSearchEmbedded)&&!withinGenie" class="expand-section" (click)="toggleSuccessful()">
             <i *ngIf="!showSuccessfulChecks" class="fa fa-plus expand-icon"></i>
             <i *ngIf="showSuccessfulChecks" class="fa fa-minus expand-icon"></i>
           </span>
         </div>
-        <div>Tests that succeeded</div>
+        <div>{{ "Tests that succeeded" | translate }} </div>
         <div class="list-text" [class.sucessful-check]="showSuccessfulChecks" [class.hide-successful-check]="!showSuccessfulChecks">
           <table class="table detector-list">
             <thead>
               <tr>
-                <th class="col-sm-2">Checks</th>
-                <th class="col-sm-6">Description</th>
-                <th class="col-sm-1">Link</th>
+                <th class="col-sm-2">{{ "Checks" | translate }} </th>
+                <th class="col-sm-6">{{ "Description" | translate }} </th>
+                <th class="col-sm-1">{{ "Link" | translate }} </th>
               </tr>
             </thead>
             <tbody>
@@ -253,7 +251,7 @@
                   <div style="margin-top: 5px;white-space: nowrap;">
                     <a tabindex="0" role="button"
                       attr.aria-label="More info for successful check - {{ viewModel.model.title }}"
-                      (keyup.enter)="selectDetector(viewModel)" (click)="selectDetector(viewModel)">More Info
+                      (keyup.enter)="selectDetector(viewModel)" (click)="selectDetector(viewModel)">{{ "More Info"| translate }}
                       <i class="fa fa-arrow-circle-o-right" style="margin-left:5px; font-size: 15px"></i>
                     </a>
                   </div>
@@ -271,8 +269,8 @@
   </div>
   <div *ngIf="isDynamicAnalysis && ((!showPreLoader && getPendingDetectorCount() === 0) || showWebSearch)"
     style="margin-left:80px;margin-top:20px;">
-    <web-search [searchTerm]="searchTerm" 
-                [searchId]="searchId" 
+    <web-search [searchTerm]="searchTerm"
+                [searchId]="searchId"
                 [isChildComponent]="true"
     >
     </web-search>
@@ -284,8 +282,8 @@
         <i aria-hidden="true" class="fa fa-file-text-o"></i>
       </div>
       <div class="list-item">
-        <div class="list-title">Recommended Docs</div>
-        <div>Documents to aid in troubleshooting</div>
+        <div class="list-title">{{ "Recommended Docs"| translate }}</div>
+        <div>{{ "Documents to aid in troubleshooting"| translate }}</div>
         <div class="support-doc-section">
           <markdown *ngIf="supportDocumentContent.length>0" [data]="supportDocumentContent"></markdown>
         </div>

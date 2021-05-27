@@ -7,17 +7,17 @@
         <div
           style="position: absolute; left:25px; right: 32px; top:0px; height: 32px; font-family: 'segoe UI'; font-size: 18px; line-height: 24px; font-weight: 600;display: flex; align-items: flex-end"
           tabindex="0" aria-label="App Service Diagnostics Genie">
-          App Service Diagnostics: Genie</div>
+         {{"App Service Diagnostics: Genie" | translate}}</div>
         <div
           style="color:#605E5C; position: absolute; left:25px; right: 32px; top:35px; height: 19px; font-family: 'segoe UI'; font-size: 10px; line-height: 14px; display: block"
           tabindex="0" aria-label="An interactive self-serve diagnostics tool">
-          An interactive self-serve diagnostics tool</div>
+          {{"An interactive self-serve diagnostics tool" | translate}}</div>
         <div style="position: absolute; top:10px; right: 10px; align-items: flex-end; cursor: pointer; "
           class="button-container" (keydown.enter)="closeGeniePanel()" (click)="closeGeniePanel()">
           <div tabindex="0" aria-label="Collapse">
           </div>
           <div class="button-container" style="margin-top:25px">
-            <span class="tooltiptext" style="margin-left: -30px;">Collapse Genie</span>
+            <span class="tooltiptext" style="margin-left: -30px;">{{"Collapse Genie" | translate}}</span>
           </div>
         </div>
       </div>
@@ -34,11 +34,11 @@
       </div>
       <div class="search-box-container">
         <textarea id="genieChatBox" class="genie-search-box" (keydown.enter)="onSearchEnter($event)"
-          placeholder="Type your question" aria-label="Type your question"></textarea>
+          [placeholder]="'Type your question' | translate" aria-label="Type your question"></textarea>
         <div class="search-button-container">
             <span (click)="onSearchEnter($event)" (keydown.enter)="onSearchEnter($event)" tabindex="0"
               aria-label="Send Message" role="button"><i class="fa fa-paper-plane search-box-icon"></i></span>
-            <span *ngIf="isMessageEmpty" tabindex="0" aria-label="Message is empty" class="empty-message-warning">Message is empty</span>
+            <span *ngIf="isMessageEmpty" tabindex="0" aria-label="Message is empty" class="empty-message-warning">{{ "Message is empty" | translate}}</span>
         </div>
       </div>
     </div>

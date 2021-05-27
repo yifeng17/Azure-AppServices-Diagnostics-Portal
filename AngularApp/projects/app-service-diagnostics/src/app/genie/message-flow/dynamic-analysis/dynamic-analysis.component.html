@@ -2,7 +2,7 @@
    <generic-analysis [analysisId]="'searchResultsAnalysis'" [resourceId]="resourceId" [targetedScore]="targetedScore" [searchTerm]="keyword" [searchMode]="searchMode" (onComplete)="updateStatus($event)"></generic-analysis>
   <div *ngIf="noSearchResult === true">
       <div tabindex="0" class="message-sent-by-system-genie" style="margin-bottom:10px">
-      <span>Sorry we are not able to find any result based on your questions. Can you rephrase your last message?</span>
+      <span>{{ "Sorry we are not able to find any result based on your questions. Can you rephrase your last message?" | translate}}</span>
       </div>
     </div>
   <div *ngIf="showFeedback">

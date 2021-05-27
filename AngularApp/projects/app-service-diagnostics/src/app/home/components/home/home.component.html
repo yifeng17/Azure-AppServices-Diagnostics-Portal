@@ -124,7 +124,7 @@
     <div *ngIf="!useLegacy" class="switch2old-context-text">
       <i class="fa fa-info-circle info-banner-icon"></i>
       Welcome to the new {{homePageText.title}}.
-      <a (click)="switchView()" class="old-version-link" tabindex="0" (keyup.enter)="switchView()" aria-label="switch to the old version">{{Click here to go back to the old version.</a>
+      <a (click)="switchView()" class="old-version-link" tabindex="0" (keyup.enter)="switchView()" aria-label="switch to the old version">{{"Click here to go back to the old version." | translate}</a>
     </div>
   </ng-container>
 

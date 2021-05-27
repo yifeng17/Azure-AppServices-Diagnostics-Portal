@@ -1,5 +1,4 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { RouterModule } from '@angular/router';
 import { SharedModule } from '../shared/shared.module';
 import { FabricModule } from '../fabric-ui/fabric.module';
 import { SolutionsModule } from '../solutions/solutions.module';
