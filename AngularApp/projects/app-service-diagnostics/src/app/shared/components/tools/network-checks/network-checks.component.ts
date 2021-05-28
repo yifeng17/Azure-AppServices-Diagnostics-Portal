@@ -114,27 +114,38 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
                 flows = flows.concat(remoteFlows);
             }
             var mgr = this.stepFlowManager;
-            var dropDownView = new DropdownStepView({
-                id: "InitialDropDown",
-                description: "Tell us more about the problem you are experiencing:",
-                dropdowns: [{
-                    options: flows.map(f => f.title),
-                    placeholder: "Please select..."
-                }],
-                expandByDefault: true,
-                async callback(dropdownIdx: number, selectedIdx: number): Promise<void> {
-                    mgr.reset(state);
-                    var flow = flows[selectedIdx];
-                    globals.messagesData.currentNetworkCheckFlow = flow.id;
-                    globals.messagesData.feedbackPanelConfig.detectorName = "NetworkCheckingTool." + flow.id;
-                    telemetryService.logEvent("NetworkCheck.FlowSelected", { flowId: flow.id });
-                    mgr.setFlow(flow);
-                },
-                onDismiss: ()=>{
-                    telemetryService.logEvent("NetworkCheck.DropdownExpanded", {});
-                }
-            });
-            var state = mgr.addView(dropDownView);
+            if (this.isSupportCenter && 
+                this.siteInfo.kind.includes("functionapp") && 
+                this.siteInfo.sku.toLowerCase() == "dynamic") {
+                mgr.addView(new InfoStepView({
+                    id: "NotSupportedCheck",
+                    title: "VNet integration is not supported for Consumption Plan Function Apps.",
+                    infoType: 1,
+                    markdown: 'For more information please review <a href="https://docs.microsoft.com/en-us/azure/app-service/web-sites-integrate-with-vnet" target="_blank">Integrate your app with an Azure virtual network</a>.'
+                }));
+            } else {
+                var dropDownView = new DropdownStepView({
+                    id: "InitialDropDown",
+                    description: "Tell us more about the problem you are experiencing:",
+                    dropdowns: [{
+                        options: flows.map(f => f.title),
+                        placeholder: "Please select..."
+                    }],
+                    expandByDefault: true,
+                    async callback(dropdownIdx: number, selectedIdx: number): Promise<void> {
+                        mgr.reset(state);
+                        var flow = flows[selectedIdx];
+                        globals.messagesData.currentNetworkCheckFlow = flow.id;
+                        globals.messagesData.feedbackPanelConfig.detectorName = "NetworkCheckingTool." + flow.id;
+                        telemetryService.logEvent("NetworkCheck.FlowSelected", { flowId: flow.id });
+                        mgr.setFlow(flow);
+                    },
+                    onDismiss: ()=>{
+                        telemetryService.logEvent("NetworkCheck.DropdownExpanded", {});
+                    }
+                });
+                var state = mgr.addView(dropDownView);
+            }
         } catch (e) {
             console.log("loadFlowsAsync failed", e);
             throw e;
