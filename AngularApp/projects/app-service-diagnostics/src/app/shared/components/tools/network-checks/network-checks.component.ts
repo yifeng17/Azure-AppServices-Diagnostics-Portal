@@ -114,31 +114,27 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
                 flows = flows.concat(remoteFlows);
             }
             var mgr = this.stepFlowManager;
-            if (this.siteInfo.kind.includes("functionapp") && this.siteInfo.sku.toLowerCase() == "dynamic") {
-                mgr.addView(new CheckStepView({ id: "NotSupportedCheck", title: "VNet integration is not supported by Consumption Plan Function App", level: 2 }));
-            } else {
-                var dropDownView = new DropdownStepView({
-                    id: "InitialDropDown",
-                    description: "Tell us more about the problem you are experiencing:",
-                    dropdowns: [{
-                        options: flows.map(f => f.title),
-                        placeholder: "Please select..."
-                    }],
-                    expandByDefault: true,
-                    async callback(dropdownIdx: number, selectedIdx: number): Promise<void> {
-                        mgr.reset(state);
-                        var flow = flows[selectedIdx];
-                        globals.messagesData.currentNetworkCheckFlow = flow.id;
-                        globals.messagesData.feedbackPanelConfig.detectorName = "NetworkCheckingTool." + flow.id;
-                        telemetryService.logEvent("NetworkCheck.FlowSelected", { flowId: flow.id });
-                        mgr.setFlow(flow);
-                    },
-                    onDismiss: ()=>{
-                        telemetryService.logEvent("NetworkCheck.DropdownExpanded", {});
-                    }
-                });
-                var state = mgr.addView(dropDownView);
-            }
+            var dropDownView = new DropdownStepView({
+                id: "InitialDropDown",
+                description: "Tell us more about the problem you are experiencing:",
+                dropdowns: [{
+                    options: flows.map(f => f.title),
+                    placeholder: "Please select..."
+                }],
+                expandByDefault: true,
+                async callback(dropdownIdx: number, selectedIdx: number): Promise<void> {
+                    mgr.reset(state);
+                    var flow = flows[selectedIdx];
+                    globals.messagesData.currentNetworkCheckFlow = flow.id;
+                    globals.messagesData.feedbackPanelConfig.detectorName = "NetworkCheckingTool." + flow.id;
+                    telemetryService.logEvent("NetworkCheck.FlowSelected", { flowId: flow.id });
+                    mgr.setFlow(flow);
+                },
+                onDismiss: ()=>{
+                    telemetryService.logEvent("NetworkCheck.DropdownExpanded", {});
+                }
+            });
+            var state = mgr.addView(dropDownView);
         } catch (e) {
             console.log("loadFlowsAsync failed", e);
             throw e;
