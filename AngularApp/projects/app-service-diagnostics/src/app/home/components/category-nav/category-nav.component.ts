@@ -137,7 +137,7 @@ export class CategoryNavComponent implements OnInit {
         this.toolCategories.push(<SiteFilteredItem<any>>{
             appType: AppType.WebApp | AppType.FunctionApp,
             platform: OperatingSystem.windows,
-            sku: Sku.NotDynamic,
+            sku: Sku.All,
             hostingEnvironmentKind: HostingEnvironmentKind.All,
             stack: '',
             item: {

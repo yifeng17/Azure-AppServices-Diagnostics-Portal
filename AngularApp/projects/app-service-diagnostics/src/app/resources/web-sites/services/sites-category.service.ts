@@ -278,7 +278,7 @@ export class SitesCategoryService extends CategoryService {
       appType: AppType.WebApp | AppType.FunctionApp,
       platform: OperatingSystem.any,
       stack: '',
-      sku: Sku.NotDynamic,
+      sku: Sku.All,
       hostingEnvironmentKind: HostingEnvironmentKind.All,
       item: {
         id: 'DiagnosticTools',

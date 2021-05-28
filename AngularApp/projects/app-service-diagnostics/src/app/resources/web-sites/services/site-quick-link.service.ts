@@ -51,7 +51,7 @@ export class SiteQuickLinkService extends QuickLinkService {
             appType: AppType.FunctionApp,
             platform: OperatingSystem.windows,
             stack: '',
-            sku: Sku.NotDynamic,
+            sku: Sku.All,
             hostingEnvironmentKind: HostingEnvironmentKind.All,
             item: [
                 'networkchecks'

@@ -4,6 +4,16 @@ export var configFailureFlow = {
     title: "I tried to configure VNet integration via the Azure Portal or ARM template, but it failed",
     async func(siteInfo, diagProvider, flowMgr) {
         var vnets = null, subnets = null, subscriptions = null;
+
+        if (siteInfo.kind.includes("functionapp") && siteInfo.sku.toLowerCase() == "dynamic") {
+            flowMgr.addView(new InfoStepView({  
+                title: "VNet integration is not supported for Consumption Plan Function Apps.",
+                infoType: 1,
+                markdown: 'For more information please review <a href="https://docs.microsoft.com/en-us/azure/app-service/web-sites-integrate-with-vnet" target="_blank">Integrate your app with an Azure virtual network</a>.'
+            }));
+            return;
+        }
+
         var getAspSitesPromise = getAspSites(diagProvider, siteInfo["serverFarmId"]);
         flowMgr.addViews(getAspSitesPromise.then(d => d.views), "Fetching App Service Plan data...");
         var aspSites = (await getAspSitesPromise).aspSites;
