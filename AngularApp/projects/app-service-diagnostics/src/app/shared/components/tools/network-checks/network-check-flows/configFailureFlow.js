@@ -5,8 +5,6 @@ export var configFailureFlow = {
     async func(siteInfo, diagProvider, flowMgr) {
         var vnets = null, subnets = null, subscriptions = null;
 
-        siteInfo
-
         if (siteInfo.kind.includes("functionapp") && siteInfo.sku.toLowerCase() == "dynamic") {
             flowMgr.addView(new InfoStepView({  
                 title: "VNet integration is not supported for Consumption Plan Function Apps.",
