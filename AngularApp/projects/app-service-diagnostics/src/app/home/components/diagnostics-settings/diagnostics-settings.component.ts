@@ -61,7 +61,8 @@ export class DiagnosticsSettingsComponent implements OnInit, OnDestroy {
             this.resourceId = data.resourceId;
         });
 
-        this.loadingTable = true;
+        this.loadingTable = true;        
+        this.providerStatusUrl = `/subscriptions/${this.subscriptionId}/providers/Microsoft.ChangeAnalysis`;
         this.pollResourceProviderRegStatus();
         this.armService.getResourceFullResponse<any>(this.resourceId,true,'2016-08-01').subscribe(response => {
             let appServicePlanResponse = <ArmResource>response.body;
@@ -88,8 +89,11 @@ export class DiagnosticsSettingsComponent implements OnInit, OnDestroy {
                 this.logHTTPError(error, 'Cannot fetch App Service Plan,');
                 this.loadingTable = false;
                 this.showGeneralError = true;
+                this.servicePlan = null;
                 if (error.status === 403) {
                     this.generalErrorMsg = this.getGeneralErrorMsg('You do not have authorization to perform this operation. Make sure you have the required permissions to this App Service Plan and try again later.');
+                } else {
+                    this.generalErrorMsg = "Unable to fetch App Service Plan details";
                 }
             });
         });
@@ -103,7 +107,6 @@ export class DiagnosticsSettingsComponent implements OnInit, OnDestroy {
         });
 
 
-        this.providerStatusUrl = `/subscriptions/${this.subscriptionId}/providers/Microsoft.ChangeAnalysis`;
         this.currentResource = this.resourceService.resource;
 
     }
