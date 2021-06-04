@@ -15,7 +15,7 @@
 <loader-view *ngIf="loadingTable" message = "Loading settings..."></loader-view>
 <div class="row">
   <div class="col-6 col-sm-8 mt-5">
-    <table class="table" *ngIf= "servicePlan !== null && servicePlan.properties !== null && !loadingTable && !updatingTag">
+    <table class="table" *ngIf= "servicePlan !== null && servicePlan !== undefined && servicePlan.properties !== null && !loadingTable && !updatingTag">
       <thead>
         <tr>
           <th scope="col">NAME</th>
