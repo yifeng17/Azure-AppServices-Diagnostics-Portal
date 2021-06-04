@@ -1,4 +1,5 @@
-import { HealthStatus, TelemetryService } from "diagnostic-data";
+import { HealthStatus, PIIUtilities, TelemetryService } from "diagnostic-data";
+import { Guid } from "../../utilities/guid";
 export abstract class StepFlow {
     public id: string;
     public title: string;
@@ -61,7 +62,7 @@ export class DropdownStepView extends StepView {
         this.width = view.width || "100%";
         this.description = view.description || undefined;
         this.expandByDefault = view.expandByDefault || false;
-        this.onDismiss = view.onDismiss || (()=>{});
+        this.onDismiss = view.onDismiss || (() => { });
     }
 }
 
@@ -75,7 +76,7 @@ export enum checkResultLevel {
     hidden
 }
 
-export interface Check{
+export interface Check {
     title: string;
     level: number;
     subChecks?: Check[];
@@ -134,7 +135,7 @@ export class InputStepView extends StepView {
     public buttonText: string;
     public tooltip: string;
     public error: string;
-    public collapsed? = false
+    public collapsed?= false
     public callback: (input: string) => Promise<void>;
 
     constructor(view: InputStepView) {
@@ -165,11 +166,15 @@ export class StepFlowManager {
     private _telemetryService: TelemetryService;
     public errorMsg: string;
     public errorDetailMarkdown: string;
-    constructor(views: StepViewContainer[], telemetryService: TelemetryService) {
+    private _sessionId: string;
+    private _viewLogs: StepView[];
+    private _resourceUri: string;
+    constructor(views: StepViewContainer[], telemetryService: TelemetryService, resourceUri: string) {
         this.stepViews = views;
         this._telemetryService = telemetryService;
         this._stepViewQueue = [new PromiseCompletionSource<StepView[]>()];
         this._stepViewQueueMap = [];
+        this._resourceUri = resourceUri;
         this._execute();
     }
 
@@ -181,6 +186,8 @@ export class StepFlowManager {
         this._currentFlow = flow;
         this.errorMsg = null;
         this.errorDetailMarkdown = null;
+        this._sessionId = Guid.newGuid();
+        this._viewLogs = [];
 
         flow.run(this.generateMgrForFlow(flow)).catch(e => {
             e.flowId = this._currentFlow.id;
@@ -231,13 +238,22 @@ export class StepFlowManager {
                     }
                     view.id = view.id || this._currentFlow.id + `_${idx}`;
                     this.stepViews.push(new StepViewContainer(view));
+                    if (this._currentFlow != null) {
+                        this._viewLogs.push(view);
+                        this._telemetryService.logEvent("NetworkCheck.ViewLog", {
+                            "flowId": this._currentFlow.id,
+                            "sessionId": this._sessionId,
+                            "views": PIIUtilities.removePII(JSON.stringify(this._viewLogs, (key, value) => ({ "container": true })[key] ? undefined : value)),
+                            "resourceUri": this._resourceUri
+                        });
+                    }
                     if (this._dom != null) {
                         delay(0.1).then(() => this._dom.scrollTop = this._dom.scrollHeight);
                     }
                 }
             }
             catch (error) {
-                error.flowId = this._currentFlow.id;
+                error.flowId = this._currentFlow || this._currentFlow.id;
                 this._telemetryService.logException(error, `FlowMgr.FlowRendering`);
                 this.errorMsg = "Internal error"
                 this.errorDetailMarkdown = "```\r\n" + error.stack + "\r\n```"
@@ -281,7 +297,7 @@ export class StepFlowManager {
 
     private generateLogEventFunc(flow: StepFlow) {
         var telemetryService = this._telemetryService;
-        return (eventName: string, payload: any) => telemetryService.logEvent(`NetworkCheck.Flow.${eventName}`, { flowId:flow.id, payload });
+        return (eventName: string, payload: any) => telemetryService.logEvent(`NetworkCheck.Flow.${eventName}`, { flowId: flow.id, payload });
     }
 
     public logEvent: (eventName: string, payload: any) => void;
