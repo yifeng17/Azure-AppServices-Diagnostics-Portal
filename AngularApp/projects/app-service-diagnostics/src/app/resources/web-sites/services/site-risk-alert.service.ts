@@ -35,9 +35,9 @@ export class SiteRiskAlertService extends RiskAlertService {
         }
     ];
 
-    private _consumptionFunctionAppRiskAlertConfigs = [];
+    private _linuxFunctionAppRiskAlertConfigs = [];
 
-    private _dedicatedFunctionAppRiskAlertConfigs = [{
+    private _windowsFunctionAppRiskAlertConfigs = [{
         title: "Availability",
         riskAlertDetectorId: "funcAvailablityRiskAlert",
         enableForCaseSubmissionFlow: true,
@@ -56,19 +56,19 @@ export class SiteRiskAlertService extends RiskAlertService {
         },
         {
             appType: AppType.FunctionApp,
-            platform: OperatingSystem.windows | OperatingSystem.linux,
+            platform: OperatingSystem.windows,
             stack: '',
-            sku: Sku.NotDynamic,
+            sku: Sku.All,
             hostingEnvironmentKind: HostingEnvironmentKind.All,
-            item: this._dedicatedFunctionAppRiskAlertConfigs
+            item: this._windowsFunctionAppRiskAlertConfigs
         },
         {
             appType: AppType.FunctionApp,
-            platform: OperatingSystem.windows | OperatingSystem.linux,
+            platform: OperatingSystem.linux,
             stack: '',
-            sku: Sku.Dynamic,
+            sku: Sku.All,
             hostingEnvironmentKind: HostingEnvironmentKind.All,
-            item: this._consumptionFunctionAppRiskAlertConfigs
+            item: this._linuxFunctionAppRiskAlertConfigs
         },
         {
             appType: AppType.WebApp,
