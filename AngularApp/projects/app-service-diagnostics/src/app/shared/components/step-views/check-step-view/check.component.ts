@@ -23,6 +23,7 @@ export class CheckComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.expanded = this.check.expandByDefault;
   }
 
   toggleSubChecks(): void {

@@ -113,7 +113,8 @@ export enum RenderingType {
     KeystoneComponent,
     Notification,
     Tab,
-    Section
+    Section,
+    StepViews
 }
 
 export enum TimeSeriesType {

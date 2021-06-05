@@ -111,6 +111,12 @@ import { SectionsComponent } from './components/sections/sections.component';
 import { CollapsibleListComponent } from './components/collapsible-list/collapsible-list.component';
 import { CollapsibleListFabricComponent } from './components/collapsible-list/collapsible-list-fabric/collapsible-list-fabric.component';
 import { CollapsibleListItemComponent } from './components/collapsible-list/collapsible-list-item.component';
+import { InputStepComponent } from 'projects/app-service-diagnostics/src/app/shared/components/step-views/input-step-view/input-step.component';
+import { InfoStepComponent } from 'projects/app-service-diagnostics/src/app/shared/components/step-views/info-step-view/info-step.component';
+import { CheckStepComponent } from 'projects/app-service-diagnostics/src/app/shared/components/step-views/check-step-view/check-step.component';
+import { DropDownStepComponent } from 'projects/app-service-diagnostics/src/app/shared/components/step-views/dropdown-step-view/dropdown-step.component';
+import { CheckComponent, ConvertLevelToHealthStatusPipe } from 'projects/app-service-diagnostics/src/app/shared/components/step-views/check-step-view/check.component';
+import {  StepViewsRendererComponent} from 'projects/app-service-diagnostics/src/app/shared/components/step-views/step-view-renderer/step-views-renderer.component';
 
 @NgModule({
   imports: [
@@ -180,7 +186,14 @@ import { CollapsibleListItemComponent } from './components/collapsible-list/coll
     SectionsComponent,
     CollapsibleListComponent,
     CollapsibleListFabricComponent,
-    CollapsibleListItemComponent
+    CollapsibleListItemComponent,
+    InputStepComponent,
+    StepViewsRendererComponent,
+    InfoStepComponent,
+    DropDownStepComponent,
+    CheckStepComponent,
+    CheckComponent,
+    ConvertLevelToHealthStatusPipe,
   ],
   entryComponents: [DetectorListAnalysisComponent],
   exports: [
@@ -203,7 +216,14 @@ import { CollapsibleListItemComponent } from './components/collapsible-list/coll
     FabTabComponent,
     CollapsibleListComponent,
     CollapsibleListFabricComponent,
-    CollapsibleListItemComponent
+    CollapsibleListItemComponent,
+    InputStepComponent,
+    StepViewsRendererComponent,
+    InfoStepComponent,
+    DropDownStepComponent,
+    CheckStepComponent,
+    CheckComponent,
+    ConvertLevelToHealthStatusPipe,
   ],
 })
 export class DiagnosticDataModule {
