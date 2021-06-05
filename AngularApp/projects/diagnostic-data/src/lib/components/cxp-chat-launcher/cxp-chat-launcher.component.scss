@@ -1,24 +1,33 @@
 @import "../../../../../app-service-diagnostics/src/styles/common/variables";
 @import "../../../../../app-service-diagnostics/src/styles/controls/buttons";
 
-$chatBubble-color:#008080;
-$zIndex:99;
+$chatBubble-color: #008080;
+$zIndex: 99;
 
 .chatBubble {
     position: fixed;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    width:4em;
-    height:4em;
-    bottom:10px;
-    left:10px;
+    width: 4em;
+    height: 4em;
+    bottom: 10px;
+    left: 10px;
     text-align: center;
-    box-shadow: 0 0 15px #00214B;
-    border-radius:50%;
+    box-shadow: 0 0 15px #00214b;
+    border-radius: 50%;
     cursor: pointer;
     background-color: $chatBubble-color;
-    z-index:$zIndex;
+    z-index: $zIndex;
+}
+
+.cxpChat-FlatButton {
+    background-color: $chatBubble-color;
+    border: thin;
+}
+
+.cxpChat-RemoveOutline {
+    outline: none;
 }
 
 .agentImage {
@@ -28,60 +37,60 @@ $zIndex:99;
 }
 
 .agentName {
-    padding-left:4px;
+    padding-left: 4px;
 }
 
 .chatIcon {
-    font-size:1.7em;
+    font-size: 1.7em;
     color: ghostwhite;
 }
 
- .arrow-bottom  {
+.arrow-bottom {
     width: 2.5%;
     height: 0;
-    position:fixed;
-    bottom:4.9em;
-    left:2em;
-    z-index:$zIndex + 1;
- }
+    position: fixed;
+    bottom: 4.9em;
+    left: 2em;
+    z-index: $zIndex + 1;
+}
 
- .arrow-bottom::before {
-    content: '';
+.arrow-bottom::before {
+    content: "";
     display: block;
     width: 0;
-    margin-top:-10px;
-    z-index:$zIndex + 1;
-      
+    margin-top: -10px;
+    z-index: $zIndex + 1;
+
     border-left: 10px solid transparent;
-    border-right: 10px solid  transparent;
+    border-right: 10px solid transparent;
     border-top: 10px solid $chatBubble-color;
     border-bottom: 10px solid transparent;
 }
 
 .cxpChat-ConfContainer {
     background: $chatBubble-color;
-    color:white;
-    font-size:14px;
+    color: white;
+    font-size: 14px;
     padding: 5px;
-    z-index:$zIndex;
+    z-index: $zIndex;
     border-radius: 2px;
-    border:solid 1px $chatBubble-color;
+    border: solid 1px $chatBubble-color;
     position: fixed;
-    left:1.8em;
-    bottom:5.2em;    
+    left: 1.8em;
+    bottom: 5.2em;
 }
 
 .cxpChat-CloseIcon {
     cursor: pointer;
     color: white;
-    margin-right:4px;    
+    margin-right: 4px;
 }
 
 .cxpChat-ConfText {
     padding-top: 10px;
     padding-right: 15px;
     padding-bottom: 15px;
-    padding-left: 15px;  
+    padding-left: 15px;
     width: 25em;
 }
 
@@ -95,7 +104,7 @@ $zIndex:99;
 }
 
 .cxpChat-ConsentText {
-    padding-left: .2em;
+    padding-left: 0.2em;
 }
 
 label {
@@ -124,6 +133,7 @@ hr {
     margin-left: 0px;
     padding-left: 35px;
     padding-right: 35px;
+    &:focus,
     &:hover {
         background-color: $primary-color;
     }
@@ -136,9 +146,15 @@ hr {
     margin-left: 0px;
     padding-left: 35px;
     padding-right: 35px;
-    &:hover{
+    &:enabled:focus,
+    &:enabled:hover {
         color: white;
         background-color: $primary-color;
+    }
+    &:disabled {
+        font-weight: lighter;
+        cursor: not-allowed;
+        color: ghostwhite;
     }
 }
 
@@ -146,14 +162,21 @@ hr {
     border: 1px solid white;
 }
 
+.cxpChat-Required {
+    color: red;
+}
+
+.cxpChat-FlatButton:focus > .cxpChat-ChangeIcon > .fa,
 .cxpChat-ChangeIcon > .fa + .fa,
 .cxpChat-ChangeIcon:hover > .fa {
-  display: none;
+    display: none;
 }
+
+.cxpChat-FlatButton:focus > .cxpChat-ChangeIcon > .fa + .fa,
 .cxpChat-ChangeIcon:hover > .fa + .fa {
-  display: inherit;
-  color: #ba141a;
-  background-color: white;
-  margin-top: 5px;
-  margin-right: 0px;
+    display: inherit;
+    color: #ba141a;
+    background-color: white;
+    margin-top: 5px;
+    margin-right: 0px;
 }

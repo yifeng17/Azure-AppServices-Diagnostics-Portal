@@ -15,7 +15,7 @@ export class CxpChatLauncherComponent implements OnInit {
   public chatConfDialogOpenedAtleastOnce = false;
   public showChatConfDialog: boolean = false;
   public firstTimeCheck: boolean = true;
-  public diagnosticLogsConsent: boolean = true;
+  public diagnosticLogsConsent: string = '';
   public chatWelcomeMessage: string = "";
   public showChatButtons: boolean = true;
   public showDiagnosticsConsentOption: boolean = true;
@@ -25,7 +25,7 @@ export class CxpChatLauncherComponent implements OnInit {
   private readonly chatUrlTimeout: number = 1800000; //30 minutes
   private readonly chatBubbleConfirmationDisplayDelay: number = 10000; //10 seconds
   private readonly chatBubbleDisplayDelay: number = 40000; //40 seconds
-  public showChatBubble:boolean = false;
+  public showChatBubble: boolean = false;
 
   constructor(private _cxpChatService: CXPChatService) {
     this.chatWelcomeMessage = "I'd love to help you out with your issue and connect you with our quick help chat team.";
@@ -34,7 +34,7 @@ export class CxpChatLauncherComponent implements OnInit {
 
   ngOnInit() {
     window.setTimeout(() => {
-      
+
 
       //Have to check for first time due to the way our components are structured.
       //This gets called multiple times for each detector, specifically for child detectors that are collapsed and then expanded later.
@@ -59,8 +59,8 @@ export class CxpChatLauncherComponent implements OnInit {
           this._cxpChatService.logUserActionOnChat('ChatConfDialogShownBySystem', this.trackingId, this.chatUrl);
         }
       }, this.chatBubbleConfirmationDisplayDelay);
-      
-    }, this.chatBubbleDisplayDelay);    
+
+    }, this.chatBubbleDisplayDelay);
 
     this.refreshChatUrl();
   }
@@ -112,7 +112,7 @@ In case chat did not start in a pop up window, disable your pop up blocker and c
 
   public isComponentInitialized(): boolean {
 
-    let initializedTestResult: boolean = !!this.chatUrl && this.chatUrl != '' && !!this.trackingId && this.trackingId != '';    
+    let initializedTestResult: boolean = !!this.chatUrl && this.chatUrl != '' && !!this.trackingId && this.trackingId != '';
 
     return initializedTestResult;
   }
@@ -137,10 +137,15 @@ In case chat did not start in a pop up window, disable your pop up blocker and c
 
   public openChatPopup(): void {
     if (this.chatUrl != '') {
-      this.completeChatUrl = `${this.chatUrl}&diagnosticsConsent=${this.diagnosticLogsConsent}`;
-      window.open(this.completeChatUrl, '_blank', this.windowFeatures, false);
-      this._cxpChatService.logUserActionOnChat('ChatUrlOpened', this.trackingId, this.completeChatUrl);
-      this.showChatOpenedMessage();
+      if (this.diagnosticLogsConsent == 'Yes' || this.diagnosticLogsConsent == 'No') {
+        this.completeChatUrl = `${this.chatUrl}&diagnosticsConsent=${(this.diagnosticLogsConsent == 'Yes')}`;
+        window.open(this.completeChatUrl, '_blank', this.windowFeatures, false);
+        this._cxpChatService.logUserActionOnChat('ChatUrlOpened', this.trackingId, this.completeChatUrl);
+        this.showChatOpenedMessage();
+      }
+      else {
+        this.diagnosticLogsConsent = '';
+      }
     }
   }
 }
