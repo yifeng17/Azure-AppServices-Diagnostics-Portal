@@ -85,7 +85,7 @@ export class StorageService {
     let postBody = new SasUriPostBody();
     postBody.signedServices = "bqt";
     postBody.signedResourceTypes = "co";
-    postBody.signedPermission = "rwdl";
+    postBody.signedPermission = "acdlpruw";
     postBody.signedProtocol = "http,https";
     postBody.signedExpiry = moment.utc().add(10, 'years').toISOString();
     postBody.signedStart = moment.utc().toISOString();
