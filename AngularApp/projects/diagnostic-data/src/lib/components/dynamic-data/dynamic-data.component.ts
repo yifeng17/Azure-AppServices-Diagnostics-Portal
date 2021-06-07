@@ -42,11 +42,10 @@ import { KeystoneInsightComponent } from '../keystone-insight/keystone-insight.c
 import { NotificationRenderingComponent } from '../notification-rendering/notification-rendering.component';
 import { FabTabComponent } from '../fab-tab/fab-tab.component';
 import { SectionsComponent } from '../sections/sections.component';
-import { InputStepComponent } from 'projects/app-service-diagnostics/src/app/shared/components/step-views/input-step-view/input-step.component';
-import { InfoStepComponent } from 'projects/app-service-diagnostics/src/app/shared/components/step-views/info-step-view/info-step.component';
-import { DropDownStepComponent } from 'projects/app-service-diagnostics/src/app/shared/components/step-views/dropdown-step-view/dropdown-step.component';
-import { CheckStepComponent } from 'projects/app-service-diagnostics/src/app/shared/components/step-views/check-step-view/check-step.component';
-import {  StepViewsRendererComponent } from 'projects/app-service-diagnostics/src/app/shared/components/step-views/step-view-renderer/step-views-renderer.component';
+import { StepViewsRendererComponent } from '../step-views/step-view-renderer/step-views-renderer.component';
+import { InfoStepComponent } from '../step-views/info-step-view/info-step.component';
+import { DropDownStepComponent } from '../step-views/dropdown-step-view/dropdown-step.component';
+import { CheckStepComponent } from '../step-views/check-step-view/check-step.component';
 
 @Component({
   selector: 'dynamic-data',

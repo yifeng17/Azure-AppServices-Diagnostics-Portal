@@ -1,7 +1,7 @@
 import { Component, Pipe, PipeTransform, Inject, OnInit, Input, ViewEncapsulation } from '@angular/core';
-import { DiagnosticData, HealthStatus, RenderingType, TelemetryService } from 'diagnostic-data';
-import { IDropdownOption, ISelectableOption } from 'office-ui-fabric-react';
 import { DataRenderBaseComponent } from 'projects/diagnostic-data/src/lib/components/data-render-base/data-render-base.component';
+import { DiagnosticData } from '../../../models/detector';
+import { TelemetryService } from '../../../services/telemetry/telemetry.service';
 import { StepViewContainer, StepViewType } from '../step-view-lib';
 
 

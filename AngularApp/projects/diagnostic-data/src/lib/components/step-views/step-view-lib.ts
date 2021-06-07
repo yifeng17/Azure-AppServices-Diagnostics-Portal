@@ -1,5 +1,6 @@
-import { HealthStatus, PIIUtilities, TelemetryService } from "diagnostic-data";
+import { TelemetryService } from "../../services/telemetry/telemetry.service";
 import { Guid } from "../../utilities/guid";
+import { PIIUtilities } from "../../utilities/pii-utilities";
 export abstract class StepFlow {
     public id: string;
     public title: string;
