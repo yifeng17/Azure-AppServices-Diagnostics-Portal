@@ -8,7 +8,7 @@ import { InputStepView, StepViewContainer } from '../step-view-lib';
 @Component({
   selector: 'input-step',
   templateUrl: './input-step.component.html',
-  styleUrls: ['./input-step.component.scss', '../../../../../styles/icons.scss'],
+  styleUrls: ['./input-step.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
 export class InputStepComponent implements OnInit {

@@ -3,12 +3,11 @@ import { Site, SiteInfoMetaData } from '../../../models/site';
 import { SiteService } from '../../../services/site.service';
 import { ArmService } from '../../../services/arm.service';
 
-import { HealthStatus, LoadingStatus, TelemetryService } from 'diagnostic-data';
+import { DropdownStepView, InfoStepView, StepFlow, StepFlowManager, StepView, StepViewContainer,HealthStatus, LoadingStatus, TelemetryService } from 'diagnostic-data';
 
 import { DiagProvider, OutboundType } from './diag-provider';
 import { Globals } from 'projects/app-service-diagnostics/src/app/globals';
 import { CheckManager } from './check-manager';
-import { CheckStepView, DropdownStepView, InfoStepView, StepFlow, StepFlowManager, StepView, StepViewContainer, StepViewType } from '../../step-views/step-view-lib';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PortalService } from 'projects/app-service-diagnostics/src/app/startup/services/portal.service';
 import { configFailureFlow } from './network-check-flows/configFailureFlow.js';

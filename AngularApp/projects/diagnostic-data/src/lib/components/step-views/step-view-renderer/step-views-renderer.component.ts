@@ -9,7 +9,7 @@ import { StepViewContainer, StepViewType } from '../step-view-lib';
 @Component({
   selector: 'step-views-renderer',
   templateUrl: './step-views-renderer.component.html',
-  styleUrls: ['./step-views-renderer.component.scss', '../../../../../styles/icons.scss'],
+  styleUrls: ['./step-views-renderer.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
 export class StepViewsRendererComponent extends DataRenderBaseComponent implements OnInit{
