@@ -1,7 +1,7 @@
 import { Component, Pipe, PipeTransform, Inject, OnInit, Input, ViewEncapsulation } from '@angular/core';
-import { DataRenderBaseComponent } from 'projects/diagnostic-data/src/lib/components/data-render-base/data-render-base.component';
 import { DiagnosticData } from '../../../models/detector';
 import { TelemetryService } from '../../../services/telemetry/telemetry.service';
+import { DataRenderBaseComponent } from '../../data-render-base/data-render-base.component';
 import { StepViewContainer, StepViewType } from '../step-view-lib';
 
 

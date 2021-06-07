@@ -116,8 +116,7 @@ import { InputStepComponent } from './components/step-views/input-step-view/inpu
 import { InfoStepComponent } from './components/step-views/info-step-view/info-step.component';
 import { DropDownStepComponent } from './components/step-views/dropdown-step-view/dropdown-step.component';
 import { CheckStepComponent } from './components/step-views/check-step-view/check-step.component';
-import { CheckComponent } from './components/step-views/check-step-view/check.component';
-import { ConvertLevelToHealthStatusPipe } from 'dist/diagnostic-data/app-service-diagnostics/src/app/shared/components/step-views/check-step-view/check.component';
+import { CheckComponent, ConvertLevelToHealthStatusPipe } from './components/step-views/check-step-view/check.component';
 @NgModule({
   imports: [
     CommonModule,
