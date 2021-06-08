@@ -47,3 +47,4 @@ export * from './lib/components/detector-list-analysis/detector-list-analysis.co
 
 export * from './lib/utilities/pii-utilities';
 export * from './lib/utilities/icons-constants';
+export * from './lib/components/step-views/step-view-lib';

@@ -3,12 +3,11 @@ import { Site, SiteInfoMetaData } from '../../../models/site';
 import { SiteService } from '../../../services/site.service';
 import { ArmService } from '../../../services/arm.service';
 
-import { HealthStatus, LoadingStatus, TelemetryService } from 'diagnostic-data';
+import { DropdownStepView, InfoStepView, StepFlow, StepFlowManager, StepView, StepViewContainer,HealthStatus, LoadingStatus, TelemetryService } from 'diagnostic-data';
 
 import { DiagProvider, OutboundType } from './diag-provider';
 import { Globals } from 'projects/app-service-diagnostics/src/app/globals';
 import { CheckManager } from './check-manager';
-import { CheckStepView, DropdownStepView, InfoStepView, StepFlow, StepFlowManager, StepView, StepViewContainer, StepViewType } from '../../step-views/step-view-lib';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PortalService } from 'projects/app-service-diagnostics/src/app/startup/services/portal.service';
 import { configFailureFlow } from './network-check-flows/configFailureFlow.js';
@@ -50,6 +49,7 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
         "- What was the issue?\r\n\r\n\r\n" +
         "- If the issue was not resolved, what can be the reason?\r\n\r\n\r\n" +
         "- What else do you expect from this tool?\r\n";
+    
     //checks: any[];
 
     constructor(private _siteService: SiteService, private _armService: ArmService, private _telemetryService: TelemetryService, private _globals: Globals, private _route: ActivatedRoute, private _router: Router, private _portalService: PortalService) {
@@ -73,7 +73,7 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
 
             var siteInfo = this._siteService.currentSiteMetaData.value;
             var fullSiteName = siteInfo.siteName + (siteInfo.slot == "" ? "" : "-" + siteInfo.slot);
-            this.stepFlowManager = new StepFlowManager(this.stepViews, _telemetryService);
+            this.stepFlowManager = new StepFlowManager(this.stepViews, _telemetryService, siteInfo.resourceUri);
             this.siteInfo = { ...this._siteService.currentSiteMetaData.value, ...this._siteService.currentSite.value, fullSiteName };
 
             this.diagProvider = new DiagProvider(this.siteInfo, _armService, _siteService, _portalService.shellSrc);

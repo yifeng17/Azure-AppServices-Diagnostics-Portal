@@ -1,7 +1,7 @@
 
 import { Component, Pipe, PipeTransform, Inject, OnInit, Input, ViewEncapsulation, OnChanges, SimpleChanges } from '@angular/core';
-import { HealthStatus, TelemetryService } from 'diagnostic-data';
-import { IDropdownOption, ISelectableOption } from 'office-ui-fabric-react';
+import { HealthStatus } from '../../../models/detector';
+import { TelemetryService } from '../../../services/telemetry/telemetry.service';
 import { Check, checkResultLevel, CheckStepView, StepViewContainer } from '../step-view-lib';
 
 
@@ -9,7 +9,7 @@ import { Check, checkResultLevel, CheckStepView, StepViewContainer } from '../st
 @Component({
   selector: 'check',
   templateUrl: './check.component.html',
-  styleUrls: ['./check.component.scss', '../../../../../styles/icons.scss'],
+  styleUrls: ['./check.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
 export class CheckComponent implements OnInit {
@@ -23,6 +23,7 @@ export class CheckComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.expanded = this.check.expandByDefault;
   }
 
   toggleSubChecks(): void {

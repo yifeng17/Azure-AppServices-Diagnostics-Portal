@@ -42,6 +42,10 @@ import { KeystoneInsightComponent } from '../keystone-insight/keystone-insight.c
 import { NotificationRenderingComponent } from '../notification-rendering/notification-rendering.component';
 import { FabTabComponent } from '../fab-tab/fab-tab.component';
 import { SectionsComponent } from '../sections/sections.component';
+import { StepViewsRendererComponent } from '../step-views/step-view-renderer/step-views-renderer.component';
+import { InfoStepComponent } from '../step-views/info-step-view/info-step.component';
+import { DropDownStepComponent } from '../step-views/dropdown-step-view/dropdown-step.component';
+import { CheckStepComponent } from '../step-views/check-step-view/check-step.component';
 
 @Component({
   selector: 'dynamic-data',
@@ -51,7 +55,8 @@ import { SectionsComponent } from '../sections/sections.component';
     TimeSeriesGraphComponent, DataTableComponent, DataSummaryComponent, EmailComponent,
     InsightsComponent, TimeSeriesInstanceGraphComponent, DynamicInsightComponent, MarkdownViewComponent,
     DetectorListComponent, DropdownComponent, CardSelectionComponent, SolutionComponent, GuageControlComponent, FormComponent,
-    ChangeAnalysisOnboardingComponent, ChangesetsViewComponent, AppDependenciesComponent, AppInsightsMarkdownComponent, DetectorListAnalysisComponent, ConnectAppInsightsComponent, DetectorSearchComponent, SummaryCardsComponent, InsightsV4Component, DropdownV4Component, CardSelectionV4Component,DynamicInsightV4Component,DataTableV4Component, KeystoneInsightComponent, NotificationRenderingComponent, FabTabComponent,SectionsComponent
+    ChangeAnalysisOnboardingComponent, ChangesetsViewComponent, AppDependenciesComponent, AppInsightsMarkdownComponent, DetectorListAnalysisComponent, ConnectAppInsightsComponent, DetectorSearchComponent, SummaryCardsComponent, InsightsV4Component, DropdownV4Component, CardSelectionV4Component, DynamicInsightV4Component, DataTableV4Component, KeystoneInsightComponent, NotificationRenderingComponent, FabTabComponent, SectionsComponent,
+    StepViewsRendererComponent, InfoStepComponent, DropDownStepComponent, CheckStepComponent
   ]
 })
 export class DynamicDataComponent implements OnInit {
@@ -73,10 +78,10 @@ export class DynamicDataComponent implements OnInit {
   @Input() isRiskAlertDetector: boolean = false;
   private _instanceRef: DataRenderBaseComponent = null;
   private _xAxisPlotBands: xAxisPlotBand[] = null;
-  @Input() public set xAxisPlotBands(value:xAxisPlotBand[]) {
-    if(!!value) {
+  @Input() public set xAxisPlotBands(value: xAxisPlotBand[]) {
+    if (!!value) {
       this._xAxisPlotBands = value;
-      if(this._instanceRef != null) {
+      if (this._instanceRef != null) {
         this._instanceRef.xAxisPlotBands = value;
       }
     }
@@ -86,19 +91,19 @@ export class DynamicDataComponent implements OnInit {
   }
 
   private _zoomBehavior: zoomBehaviors = zoomBehaviors.Zoom;
-  @Input() public set zoomBehavior(value:zoomBehaviors) {
-    if(!!value) {
+  @Input() public set zoomBehavior(value: zoomBehaviors) {
+    if (!!value) {
       this._zoomBehavior = value;
-      if(this._instanceRef != null) {
+      if (this._instanceRef != null) {
         this._instanceRef.zoomBehavior = value;
       }
     }
   }
   public get zoomBehavior() {
-      return this._zoomBehavior;
+    return this._zoomBehavior;
   }
 
-  @Output() XAxisSelection:EventEmitter<XAxisSelection> = new EventEmitter<XAxisSelection>();
+  @Output() XAxisSelection: EventEmitter<XAxisSelection> = new EventEmitter<XAxisSelection>();
 
   @ViewChild('dynamicDataContainer', { read: ViewContainerRef, static: true }) dynamicDataContainer: ViewContainerRef;
   private isLegacy: boolean;
@@ -108,13 +113,11 @@ export class DynamicDataComponent implements OnInit {
     this.versionService.isLegacySub.subscribe(isLegacy => this.isLegacy = isLegacy);
     this.dataBehaviorSubject.subscribe((diagnosticData: DiagnosticData) => {
       const isVisible = (<Rendering>diagnosticData.renderingProperties).isVisible;
-      if (isVisible !== undefined && !isVisible)
-      {
+      if (isVisible !== undefined && !isVisible) {
         return;
       }
       const component = this._findInputComponent((<Rendering>diagnosticData.renderingProperties).type);
-      if (component == null)
-      {
+      if (component == null) {
         const rendering = (<Rendering>diagnosticData.renderingProperties).type;
         this.telemetryService.logTrace(`No component found for rendering type : ${RenderingType[rendering]}`);
         return;
@@ -158,7 +161,7 @@ export class DynamicDataComponent implements OnInit {
       case RenderingType.TimeSeriesPerInstance:
         return TimeSeriesInstanceGraphComponent;
       case RenderingType.DynamicInsight:
-        return this.isLegacy? DynamicInsightComponent : DynamicInsightV4Component;
+        return this.isLegacy ? DynamicInsightComponent : DynamicInsightV4Component;
       case RenderingType.Markdown:
         return MarkdownViewComponent;
       case RenderingType.DetectorList:
@@ -195,6 +198,8 @@ export class DynamicDataComponent implements OnInit {
         return FabTabComponent;
       case RenderingType.Section:
         return SectionsComponent;
+      case RenderingType.StepViews:
+        return StepViewsRendererComponent;
       default:
         return null;
     }

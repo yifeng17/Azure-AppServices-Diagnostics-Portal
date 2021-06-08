@@ -1,0 +1,10 @@
+<div class="step-views-container">
+    <div *ngFor="let viewModel of stepViews" >
+        <div class="step-container" *ngIf="!viewModel.stepView.hidden" [ngSwitch]="viewModel.stepView.type">
+            <dropdown-step *ngSwitchCase="0" [viewModel]="viewModel"></dropdown-step>
+            <check-step *ngSwitchCase="1" [viewModel]="viewModel"></check-step>
+            <input-step *ngSwitchCase="2" [viewModel]="viewModel"></input-step>
+            <info-step *ngSwitchCase="3" [viewModel]="viewModel"></info-step>
+        </div>
+    </div>
+</div>

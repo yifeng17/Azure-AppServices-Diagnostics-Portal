@@ -1,6 +1,6 @@
 
 import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
-import { TelemetryService } from 'diagnostic-data';
+import { TelemetryService } from '../../../services/telemetry/telemetry.service';
 import { CheckStepView, StepViewContainer } from '../step-view-lib';
 
 
@@ -8,7 +8,7 @@ import { CheckStepView, StepViewContainer } from '../step-view-lib';
 @Component({
   selector: 'check-step',
   templateUrl: './check-step.component.html',
-  styleUrls: ['./check-step.component.scss', '../../../../../styles/icons.scss'],
+  styleUrls: ['./check-step.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
 export class CheckStepComponent implements OnInit {

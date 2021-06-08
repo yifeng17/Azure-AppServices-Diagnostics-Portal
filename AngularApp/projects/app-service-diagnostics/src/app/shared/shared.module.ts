@@ -132,11 +132,6 @@ import { RiskAlertsPanelComponent } from './components/risk-alerts-panel/risk-al
 import { IntegratedSolutionsViewComponent } from './components/integrated-solutions-view/integrated-solutions-view.component';
 import { MarkdownModule } from 'ngx-markdown';
 import { NetworkCheckComponent } from './components/tools/network-checks/network-checks.component';
-import { DropDownStepComponent } from './components/step-views/dropdown-step-view/dropdown-step.component';
-import { CheckStepComponent } from './components/step-views/check-step-view/check-step.component';
-import { InfoStepComponent } from './components/step-views/info-step-view/info-step.component';
-import { InputStepComponent } from './components/step-views/input-step-view/input-step.component';
-import { CheckComponent, ConvertLevelToHealthStatusPipe } from './components/step-views/check-step-view/check.component';
 
 @NgModule({
     declarations: [
@@ -167,12 +162,6 @@ import { CheckComponent, ConvertLevelToHealthStatusPipe } from './components/ste
         ProfilerComponent,
         ProfilerToolComponent,
         NetworkCheckComponent,
-        DropDownStepComponent,
-        InfoStepComponent,
-        CheckStepComponent,
-        CheckComponent,
-        ConvertLevelToHealthStatusPipe,
-        InputStepComponent,
         MemoryDumpToolComponent,
         DaasComponent,
         JavaMemoryDumpToolComponent,
@@ -254,7 +243,7 @@ import { CheckComponent, ConvertLevelToHealthStatusPipe } from './components/ste
         FabTagPickerModule,
         FabProgressIndicatorModule,
         FabContextualMenuModule,
-        MarkdownModule.forRoot(),
+        MarkdownModule.forRoot()
     ],
     exports: [
         CommonModule,
