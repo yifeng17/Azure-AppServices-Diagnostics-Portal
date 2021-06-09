@@ -386,6 +386,17 @@
              "staticSelfHelpContent": "microsoft.kubernetes",
              "azureCommImpactedServicesList": "Azure Arc enabled Kubernetes",
             "searchSuffix": "Azure Arc enabled Kubernetes" 
-         }
+         },
+         {
+            "service": "ResourceService",
+            "resourceType": "Microsoft.Media/mediaservices",
+            "templateFileName": "MediaService",
+            "imgSrc": "assets/img/Azure-MediaService-Logo.png",
+            "versionPrefix": "",
+            "azureCommImpactedServicesList": "",
+            "pesId": "",
+            "staticSelfHelpContent": "",
+            "searchSuffix": "Azure Media Service"
+        }
     ]
 }
