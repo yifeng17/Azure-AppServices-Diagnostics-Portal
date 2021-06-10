@@ -69,14 +69,24 @@ export class RiskAlertsNotificationComponent implements OnInit {
 
 
     ngAfterViewInit() {
-        if (this.showRiskAlertsNotification) {
-            this.telemetryService.logPageView(TelemetryEventNames.RiskAlertNotificationLoaded,
+        if (this.showNotification) {
+            this.telemetryService.logEvent(TelemetryEventNames.RiskAlertNotificationLoaded,
                 {
-                    "ShowNotification": this.showNotification.toString(),
-                    "NotificationDetectorId": this.showNotification ? this._riskAlertService.notificationMessageBar.id : "",
-                    "ShowRiskAlertsNotification": this.showRiskAlertsNotification.toString(),
-                    "riskAlertDetectorId": this.riskAlertDetectorId,
-                    "RiskAlertMessage": this.riskAlertMessage,
+                    'Location': TelemetrySource.CaseSubmissionFlow,
+                    'NotificationType': "Notification",
+                    'Status': this.notificationStatusType.toString(),
+                    "NotificationDetectorId": this._riskAlertService.notificationMessageBar.id,
+                    "NotificationMessage": this.notificationMessageBarText,
+                });
+        }
+        if (this.showRiskAlertsNotification) {
+            this.telemetryService.logEvent(TelemetryEventNames.RiskAlertNotificationLoaded,
+                {
+                    'Location': TelemetrySource.CaseSubmissionFlow,
+                    'NotificationType': "RiskAlert",
+                    'Status': this.riskAlertNotificationStatusType.toString(),
+                    "NotificationDetectorId": this.riskAlertDetectorId,
+                    "NotificationMessage": this.riskAlertMessage,
                 });
         }
     }
