@@ -87,6 +87,13 @@ export class SiteRiskAlertService extends RiskAlertService {
         enableForCaseSubmissionFlow: true,
     };
 
+    private _functionAppNotificationMessageConfig =
+    {
+        title: "Notifications",
+        notificationDetectorId: "functionAppNotification",
+        enableForCaseSubmissionFlow: true,
+    };
+
     // This is to show platform level notification that we want to inform customers.
     private _siteRiskNotificationMessageConfig: SiteFilteredItem<NotificationConfig>[] = [
         {
@@ -96,6 +103,14 @@ export class SiteRiskAlertService extends RiskAlertService {
             sku: Sku.All,
             hostingEnvironmentKind: HostingEnvironmentKind.All,
             item: this._webAppNotificationMessageConfig,
+        },
+        {
+            appType: AppType.FunctionApp,
+            platform: OperatingSystem.windows,
+            stack: '',
+            sku: Sku.All,
+            hostingEnvironmentKind: HostingEnvironmentKind.All,
+            item: this._functionAppNotificationMessageConfig,
         }
     ];
 
