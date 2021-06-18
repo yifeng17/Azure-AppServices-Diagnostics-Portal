@@ -94,9 +94,12 @@ export class DiagProvider {
             });
     }
 
-    public getKuduApiAsync<T>(uri: string): Promise<T> {
+    public getKuduApiAsync<T>(uri: string, instance?: string, timeoutInSec: number = 15, scm = false): Promise<T> {
         var stack = new Error("replace_placeholder").stack;
-        return this._armService.get<T>(`https://${this._scmHostName}/api/${uri}`)
+        var params = [instance == null ? null : `instance=${instance}`, scm ? null : "api-version=2015-08-01"].filter(s => s!=null).join("&");
+        var postfix = (params == "" ? "" : `?${params}`);
+        var prefix = scm ? this._scmHostName : `management.azure.com/${this._siteInfo.resourceUri}/extensions`;
+        return this._armService.get<T>(`https://${prefix}/api/${uri}${postfix}`)
             .toPromise()
             .catch(e => {
                 var err = new Error(e);
@@ -105,10 +108,12 @@ export class DiagProvider {
             });
     }
 
-    public postKuduApiAsync<T, S>(uri: string, body?: S, instance?: string, timeoutInSec: number = 15): Promise<boolean | {} | ResponseMessageEnvelope<T>> {
-        var postfix = (instance == null ? "" : `?instance=${instance}`);
+    public postKuduApiAsync<T, S>(uri: string, body?: S, instance?: string, timeoutInSec: number = 15, scm = false): Promise<boolean | {} | ResponseMessageEnvelope<T>> {
+        var params = [instance == null ? null : `instance=${instance}`, scm ? null : "api-version=2015-08-01"].filter(s => s!=null).join("&");
+        var postfix = (params == "" ? "" : `?${params}`);
+        var prefix = scm ? this._scmHostName : `management.azure.com/${this._siteInfo.resourceUri}/extensions`;
         var stack = new Error("replace_placeholder").stack;
-        var promise = this._armService.post<T, S>(`https://${this._scmHostName}/api/${uri}${postfix}`, body)
+        var promise = this._armService.post<T, S>(`https://${prefix}/api/${uri}${postfix}`, body)
             .toPromise()
             .catch(e => {
                 var err = new Error(e);
