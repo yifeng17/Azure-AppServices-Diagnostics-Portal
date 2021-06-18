@@ -18,13 +18,13 @@ export class DiagProvider {
     private _armService: ArmService;
     private _siteService: SiteService;
     public portalDomain: string;
-    private _scmHostName: string;
+    public scmHostName: string;
     constructor(siteInfo: SiteInfoMetaData & Site & { fullSiteName: string }, armService: ArmService, siteService: SiteService, portalDomain: string) {
         this._siteInfo = siteInfo;
         this._armService = armService;
         this._siteService = siteService;
         var scmHostNameState = this._siteInfo.hostNameSslStates.filter(h => h.hostType == 1)[0];
-        this._scmHostName = scmHostNameState == null ? null : scmHostNameState.name;
+        this.scmHostName = scmHostNameState == null ? null : scmHostNameState.name;
         this.portalDomain = portalDomain;
         armService.clearCache();
     }
@@ -98,7 +98,7 @@ export class DiagProvider {
         var stack = new Error("replace_placeholder").stack;
         var params = [instance == null ? null : `instance=${instance}`, scm ? null : "api-version=2015-08-01"].filter(s => s!=null).join("&");
         var postfix = (params == "" ? "" : `?${params}`);
-        var prefix = scm ? this._scmHostName : `management.azure.com/${this._siteInfo.resourceUri}/extensions`;
+        var prefix = scm ? this.scmHostName : `management.azure.com/${this._siteInfo.resourceUri}/extensions`;
         return this._armService.get<T>(`https://${prefix}/api/${uri}${postfix}`)
             .toPromise()
             .catch(e => {
@@ -111,7 +111,7 @@ export class DiagProvider {
     public postKuduApiAsync<T, S>(uri: string, body?: S, instance?: string, timeoutInSec: number = 15, scm = false): Promise<boolean | {} | ResponseMessageEnvelope<T>> {
         var params = [instance == null ? null : `instance=${instance}`, scm ? null : "api-version=2015-08-01"].filter(s => s!=null).join("&");
         var postfix = (params == "" ? "" : `?${params}`);
-        var prefix = scm ? this._scmHostName : `management.azure.com/${this._siteInfo.resourceUri}/extensions`;
+        var prefix = scm ? this.scmHostName : `management.azure.com/${this._siteInfo.resourceUri}/extensions`;
         var stack = new Error("replace_placeholder").stack;
         var promise = this._armService.post<T, S>(`https://${prefix}/api/${uri}${postfix}`, body)
             .toPromise()

@@ -15,7 +15,7 @@ export var connectionFailureFlow = {
                     level: 1
                 }));
 
-                views.push(commonRec.KuduNotAccessible.Get());
+                views.push(commonRec.KuduNotAccessible.Get(`https://${diagProvider.scmHostName}`));
             }
             return views;
         })();

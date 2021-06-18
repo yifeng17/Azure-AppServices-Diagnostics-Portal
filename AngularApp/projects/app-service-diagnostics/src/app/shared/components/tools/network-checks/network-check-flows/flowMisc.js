@@ -87,7 +87,7 @@ export async function runKuduAccessibleCheck(diagProvider) {
         }));
         var commonRecommendations = new CommonRecommendations;
 
-        views.push(commonRecommendations.KuduNotAccessible.Get());
+        views.push(commonRec.KuduNotAccessible.Get(`https://${diagProvider.scmHostname}`));
     }
     return views;
 }
