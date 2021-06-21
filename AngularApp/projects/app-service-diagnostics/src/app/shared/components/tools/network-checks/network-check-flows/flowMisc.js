@@ -1,3 +1,5 @@
+import {CommonRecommendations} from './commonRecommendations.js'
+
 export class ResourcePermissionCheckManager{
     constructor(){
         this.hidden = true;
@@ -83,17 +85,9 @@ export async function runKuduAccessibleCheck(diagProvider) {
             title: "Kudu is not reachable, diagnostic will be incomplete",
             level: 1
         }));
+        var commonRecommendations = new CommonRecommendations;
 
-        views.push(new InfoStepView({
-            infoType: 1,
-            title: "Recommendations",
-            markdown: "[Kudu](https://techcommunity.microsoft.com/t5/educator-developer-blog/using-kudu-and-deploying-apps-into-azure/ba-p/378585) is not accessible. Possible reason can be:\r\n\r\n" +
-                "- Timeout, please click refresh button and retry\r\n\r\n" +
-                "- Your app has IP restriction or Private Endpoint turned on. Please check your configuration and consider running this check in an environment that is allowed to access your app" +
-                " or temporarily allow the traffic by adding your client IP into IP restriction allow list or turning of the Private Endpoint for running the network checks\r\n\r\n" +
-                "- You don't have permission to access Kudu site, please check your permission\r\n\r\n" +
-                "The diagnostic will be incomplete without Kudu access."
-        }));
+        views.push(commonRec.KuduNotAccessible.Get(`https://${diagProvider.scmHostname}`));
     }
     return views;
 }
