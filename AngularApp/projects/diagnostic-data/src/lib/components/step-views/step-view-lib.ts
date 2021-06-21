@@ -1,3 +1,4 @@
+import { SeverityLevel } from "../../models/telemetry";
 import { TelemetryService } from "../../services/telemetry/telemetry.service";
 import { Guid } from "../../utilities/guid";
 import { PIIUtilities } from "../../utilities/pii-utilities";
@@ -296,6 +297,7 @@ export class StepFlowManager {
         mgr.addView = this.addView;
         mgr.reset = this.reset.bind(this);
         mgr.logEvent = this.generateLogEventFunc(flow);
+        mgr.logException = this.generateLogExceptionFunc(flow);
         return mgr;
     }
 
@@ -304,7 +306,20 @@ export class StepFlowManager {
         return (eventName: string, payload: any) => telemetryService.logEvent(`NetworkCheck.Flow.${eventName}`, { flowId: flow.id, payload });
     }
 
+    private generateLogExceptionFunc(flow: StepFlow) {
+        var telemetryService = this._telemetryService;
+        return (exception: Error, handledAt?: string, properties?: any, severityLevel?: SeverityLevel) => {
+            if(handledAt == null){
+                handledAt = `NetworkCheck.Flow.${flow.id}`;
+            }else{
+                handledAt = `NetworkCheck.Flow.${flow.id}.` + handledAt;
+            }
+            telemetryService.logException(exception, handledAt, properties, severityLevel);
+        }
+    }
+
     public logEvent: (eventName: string, payload: any) => void;
+    public logException: (exception: Error, handledAt?: string, properties?: any, severityLevel?: SeverityLevel) => void;
 }
 
 
@@ -340,6 +355,3 @@ export class PromiseCompletionSource<T> extends Promise<T>{
         this._resolve(val);
     }
 }
-
-var globalClasses = { DropdownStepView, CheckStepView, InputStepView, InfoStepView, PromiseCompletionSource };
-Object.keys(globalClasses).forEach(key => window[key] = globalClasses[key]);

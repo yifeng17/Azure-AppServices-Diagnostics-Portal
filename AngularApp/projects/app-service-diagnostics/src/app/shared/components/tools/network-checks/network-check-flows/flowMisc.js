@@ -1,4 +1,6 @@
+import { DropdownStepView, InfoStepView, StepFlow, StepFlowManager, CheckStepView, StepViewContainer,InputStepView, PromiseCompletionSource, TelemetryService } from 'diagnostic-data';
 import {CommonRecommendations} from './commonRecommendations.js'
+
 
 export class ResourcePermissionCheckManager{
     constructor(){

@@ -3,7 +3,7 @@ import { Site, SiteInfoMetaData } from '../../../models/site';
 import { SiteService } from '../../../services/site.service';
 import { ArmService } from '../../../services/arm.service';
 
-import { DropdownStepView, InfoStepView, StepFlow, StepFlowManager, StepView, StepViewContainer,HealthStatus, LoadingStatus, TelemetryService } from 'diagnostic-data';
+import { DropdownStepView, InfoStepView, StepFlow, StepFlowManager, CheckStepView, StepViewContainer,InputStepView, PromiseCompletionSource, TelemetryService } from 'diagnostic-data';
 
 import { DiagProvider, OutboundType } from './diag-provider';
 import { Globals } from 'projects/app-service-diagnostics/src/app/globals';
@@ -69,6 +69,7 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
             if (window["debugMode"]) {
                 _telemetryService["telemetryProviders"] = [];
                 this.debugMode = window["debugMode"];
+                this.loadClassesToGlobalContext();
             }
 
             var siteInfo = this._siteService.currentSiteMetaData.value;
@@ -190,6 +191,11 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
         };
 
         return stepFlow;
+    }
+
+    loadClassesToGlobalContext(){
+        var globalClasses = { DropdownStepView, CheckStepView, InputStepView, InfoStepView, PromiseCompletionSource };
+        Object.keys(globalClasses).forEach(key => window[key] = globalClasses[key]);    
     }
 }
 

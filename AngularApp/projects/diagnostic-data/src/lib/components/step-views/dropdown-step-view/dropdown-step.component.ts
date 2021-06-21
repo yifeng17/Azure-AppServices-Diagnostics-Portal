@@ -40,12 +40,22 @@ export class DropDownStepComponent implements OnInit {
         return this.dropdown;
       }
     };
-    this.dropdownOptions = this.dropdownStepView.dropdowns.map(dropdown => this.getOptions(dropdown));//*/
+    this.dropdownOptions = this.dropdownStepView.dropdowns.map((dropdown, idx) => {
+      if(dropdown.defaultChecked != null){
+        this.dropdownStepView.callback(idx, dropdown.defaultChecked);
+      }
+      return this.getOptions(dropdown);
+    });
     var push = this.dropdownStepView.dropdowns.push.bind(this.dropdownStepView.dropdowns);
     this.dropdownStepView.dropdowns.push = (dropdown => {
       this.dropdownOptions.length = this.dropdownStepView.dropdowns.length;
-      this.dropdownOptions.push(this.getOptions(dropdown));
-      return push(dropdown);
+      var options = this.getOptions(dropdown);
+      this.dropdownOptions.push(options);
+      var result = push(dropdown);
+      if(dropdown.defaultChecked != null){
+        this.dropdownStepView.callback(this.dropdownStepView.dropdowns.length-1, dropdown.defaultChecked);
+      }
+      return result;
     });
   }
 
