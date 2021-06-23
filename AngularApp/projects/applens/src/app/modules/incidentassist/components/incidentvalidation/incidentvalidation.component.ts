@@ -23,6 +23,7 @@ export class IncidentValidationComponent implements OnInit {
   footerMessage: string = null;
   footerMessageType: string = "none";
   userId: string = null;
+  solutions: any = null;
 
   constructor(private _incidentAssistanceService: IncidentAssistanceService, private _route: ActivatedRoute, private _telemetryService: TelemetryService, private _router: Router, private _adalService: AdalService) {}
 
@@ -88,6 +89,14 @@ export class IncidentValidationComponent implements OnInit {
     });
   }
 
+  scrollToSolutions() {
+    var elementToScroll = document.querySelector(".main-container");
+        var elementToScrollTo = document.getElementById("solutions-content-div") as HTMLElement;
+        if (elementToScroll && elementToScrollTo) {
+            elementToScroll.scrollTop = elementToScrollTo.offsetTop+100;
+        }
+  }
+
   onSubmit() {
     if (!this.validationButtonDisabled){
       var body = {
@@ -100,11 +109,17 @@ export class IncidentValidationComponent implements OnInit {
         this.displayLoader = false;
         var result = JSON.parse(res.body);
         if (result.validationStatus) {
+          if (result.solutions && result.solutions.length>2) {
+            this.solutions = JSON.parse(result.solutions);
+          }
           this.incidentValidationStatus = true;
           this.footerMessage = "All validations have passed.";
           this.footerMessageType = "success";
           this.incidentInfo.validationResults.forEach(x => {x.validationStatus = true; x.oldValue = x.value;});
           this.refreshButtonStatus();
+          if (this.solutions && this.solutions.length>0) {
+            setTimeout(() => {this.scrollToSolutions();}, 300);
+          }
         }
         else {
           this.onValidationFailed(result);
