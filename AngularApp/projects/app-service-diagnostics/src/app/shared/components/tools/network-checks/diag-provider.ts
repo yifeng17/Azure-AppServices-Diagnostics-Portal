@@ -29,6 +29,13 @@ export class DiagProvider {
         armService.clearCache();
     }
 
+    public generateResourcePortalLink(resourceUri: string): string {
+        if (resourceUri.startsWith("/")) {
+            resourceUri = resourceUri.substr(1);
+        }
+        return `${this.portalDomain}/#@/resource/${resourceUri}`;
+    }
+
     public async getVNetIntegrationStatusAsync() {
         var result = { isVnetIntegrated: false, outboundType: <OutboundType>null, outboundSubnets: [], inboundType: <InboundType>null, inboundSubnets: [], siteVnetInfo: null };
         var siteArmId = this._siteInfo["id"];
@@ -94,9 +101,20 @@ export class DiagProvider {
             });
     }
 
+    public requestResourceAsync<T, S>(method:string, resourceUri: string, body?: S, apiVersion?: string): Promise<boolean | {} | ResponseMessageEnvelope<T>> {
+        var stack = new Error("replace_placeholder").stack;
+        return this._armService.requestResource<T, S>(method, resourceUri, body, apiVersion)
+            .toPromise()
+            .catch(e => {
+                var err = new Error(e);
+                err.stack = stack.replace("replace_placeholder", e);
+                throw err;
+            });
+    }
+
     public getKuduApiAsync<T>(uri: string, instance?: string, timeoutInSec: number = 15, scm = false): Promise<T> {
         var stack = new Error("replace_placeholder").stack;
-        var params = [instance == null ? null : `instance=${instance}`, scm ? null : "api-version=2015-08-01"].filter(s => s!=null).join("&");
+        var params = [instance == null ? null : `instance=${instance}`, scm ? null : "api-version=2015-08-01"].filter(s => s != null).join("&");
         var postfix = (params == "" ? "" : `?${params}`);
         var prefix = scm ? this.scmHostName : `management.azure.com/${this._siteInfo.resourceUri}/extensions`;
         return this._armService.get<T>(`https://${prefix}/api/${uri}${postfix}`)
@@ -109,7 +127,7 @@ export class DiagProvider {
     }
 
     public postKuduApiAsync<T, S>(uri: string, body?: S, instance?: string, timeoutInSec: number = 15, scm = false): Promise<boolean | {} | ResponseMessageEnvelope<T>> {
-        var params = [instance == null ? null : `instance=${instance}`, scm ? null : "api-version=2015-08-01"].filter(s => s!=null).join("&");
+        var params = [instance == null ? null : `instance=${instance}`, scm ? null : "api-version=2015-08-01"].filter(s => s != null).join("&");
         var postfix = (params == "" ? "" : `?${params}`);
         var prefix = scm ? this.scmHostName : `management.azure.com/${this._siteInfo.resourceUri}/extensions`;
         var stack = new Error("replace_placeholder").stack;

@@ -3,7 +3,7 @@ import { Site, SiteInfoMetaData } from '../../../models/site';
 import { SiteService } from '../../../services/site.service';
 import { ArmService } from '../../../services/arm.service';
 
-import { DropdownStepView, InfoStepView, StepFlow, StepFlowManager, CheckStepView, StepViewContainer,InputStepView, PromiseCompletionSource, TelemetryService } from 'diagnostic-data';
+import { DropdownStepView, InfoStepView, StepFlow, StepFlowManager, CheckStepView, StepViewContainer, InputStepView, PromiseCompletionSource, TelemetryService } from 'diagnostic-data';
 
 import { DiagProvider, OutboundType } from './diag-provider';
 import { Globals } from 'projects/app-service-diagnostics/src/app/globals';
@@ -14,6 +14,7 @@ import { configFailureFlow } from './network-check-flows/configFailureFlow.js';
 import { connectionFailureFlow } from './network-check-flows/connectionFailureFlow.js';
 import { functionsFlow } from './network-check-flows/functionsFlow.js';
 import { learnMoreFlow } from './network-check-flows/learnMoreFlow.js';
+import { subnetDeletionFlow } from './network-check-flows/subnetDeletionFlow.js'
 
 abstract class NetworkCheckFlow {
     public id: string;
@@ -49,7 +50,7 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
         "- What was the issue?\r\n\r\n\r\n" +
         "- If the issue was not resolved, what can be the reason?\r\n\r\n\r\n" +
         "- What else do you expect from this tool?\r\n";
-    
+
     //checks: any[];
 
     constructor(private _siteService: SiteService, private _armService: ArmService, private _telemetryService: TelemetryService, private _globals: Globals, private _route: ActivatedRoute, private _router: Router, private _portalService: PortalService) {
@@ -106,6 +107,7 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
             }
             networkCheckFlows["configFailureFlow"] = configFailureFlow;
             networkCheckFlows["learnMoreFlow"] = learnMoreFlow;
+            networkCheckFlows["subnetDeletionFlow"] = subnetDeletionFlow;
 
             var flows = this.processFlows(networkCheckFlows);
             if (this.debugMode) {
@@ -115,8 +117,8 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
                 flows = flows.concat(remoteFlows);
             }
             var mgr = this.stepFlowManager;
-            if (this.isSupportCenter && 
-                this.siteInfo.kind.includes("functionapp") && 
+            if (this.isSupportCenter &&
+                this.siteInfo.kind.includes("functionapp") &&
                 this.siteInfo.sku.toLowerCase() == "dynamic") {
                 mgr.addView(new InfoStepView({
                     id: "NotSupportedCheck",
@@ -141,7 +143,7 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
                         telemetryService.logEvent("NetworkCheck.FlowSelected", { flowId: flow.id });
                         mgr.setFlow(flow);
                     },
-                    onDismiss: ()=>{
+                    onDismiss: () => {
                         telemetryService.logEvent("NetworkCheck.DropdownExpanded", {});
                     }
                 });
@@ -193,9 +195,9 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
         return stepFlow;
     }
 
-    loadClassesToGlobalContext(){
+    loadClassesToGlobalContext() {
         var globalClasses = { DropdownStepView, CheckStepView, InputStepView, InfoStepView, PromiseCompletionSource };
-        Object.keys(globalClasses).forEach(key => window[key] = globalClasses[key]);    
+        Object.keys(globalClasses).forEach(key => window[key] = globalClasses[key]);
     }
 }
 

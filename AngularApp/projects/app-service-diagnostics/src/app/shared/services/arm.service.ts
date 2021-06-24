@@ -335,6 +335,19 @@ export class ArmService {
         return this._cache.get(cacheKey, request, invalidateCache);
     }
 
+    requestResource<T, S>(method:string, resourceUri: string, body?: S, apiVersion?: string): Observable<boolean | {} | ResponseMessageEnvelope<T>> {
+        const url = this.createUrl(resourceUri, apiVersion);
+        let bodyString: string = '';
+        if (body) {
+            bodyString = JSON.stringify(body);
+        }
+
+        const request = this._http.request<S>(method, url, { headers: this.getHeaders(), body: bodyString, observe:"response" });
+
+        return request;
+    }
+
+
     post<T, S>(url: string, body?: S): Observable<boolean | {} | ResponseMessageEnvelope<T>> {
         let bodyString: string = '';
         if (body) {

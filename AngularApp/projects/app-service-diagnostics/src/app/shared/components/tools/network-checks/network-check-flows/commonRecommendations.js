@@ -1,6 +1,5 @@
 import { DropdownStepView, InfoStepView, StepFlow, StepFlowManager, CheckStepView, StepViewContainer,InputStepView, PromiseCompletionSource, TelemetryService } from 'diagnostic-data';
-export class CommonRecommendations
-{
+export class CommonRecommendations{
     constructor(){
         this.KuduNotAccessible = {
             Get(kuduUrl){
