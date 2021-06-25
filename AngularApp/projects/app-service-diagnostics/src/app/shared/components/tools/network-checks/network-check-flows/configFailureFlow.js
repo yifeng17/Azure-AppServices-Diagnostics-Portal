@@ -1,7 +1,7 @@
 import { getArmData, getWebAppVnetInfo, getSubnet } from './flowMisc.js';
 
 export var configFailureFlow = {
-    title: "I tried to configure VNet integration via the Azure Portal or ARM template, but it failed",
+    title: "Configuration issues",
     async func(siteInfo, diagProvider, flowMgr) {
         var vnets = null, subnets = null, subscriptions = null;
 
