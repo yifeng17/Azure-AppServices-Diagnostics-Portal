@@ -19,7 +19,7 @@
     },
     "categories": [
         {
-            "id": "poolsAndNodes",
+            "id": "Pools and Nodes",
             "name": "Pools and Nodes",
             "description": "Investigate potential issues with your pools and nodes.",
             "keywords": [
