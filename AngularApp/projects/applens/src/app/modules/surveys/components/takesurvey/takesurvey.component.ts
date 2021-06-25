@@ -170,6 +170,7 @@ export class TakeSurveyComponent implements OnInit {
   onSubmit() {
     var responseBody = {
       caseId: this.surveyInfo.caseInfo.caseId,
+      caseTitle: this.surveyInfo.caseInfo.caseTitle,
       answers: {
         solutionFound: this.solutionFound.text,
         detectorHelped: this.detectorHelped.text,
