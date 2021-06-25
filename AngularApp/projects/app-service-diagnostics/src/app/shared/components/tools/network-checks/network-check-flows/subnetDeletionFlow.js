@@ -1,6 +1,6 @@
 import { DropdownStepView, InfoStepView, StepFlow, StepFlowManager, CheckStepView, StepViewContainer, InputStepView, PromiseCompletionSource, TelemetryService } from 'diagnostic-data';
 import { SubnetDeletionRecommendations } from './subnetDeletionRecommendations.js';
-import { addSubnetSelectionDropDownView } from './flowMisc.js';
+import { addSubnetSelectionDropDownView, getWebAppVnetInfo } from './flowMisc.js';
 import { CommonRecommendations } from './commonRecommendations.js';
 
 export var subnetDeletionFlow = {
@@ -97,9 +97,9 @@ async function checkSalAsync(subnet, siteInfo, diagProvider, flowMgr) {
                         }
 
                         var result = await diagProvider.getArmResourceAsync(aspSites[i].id + "/slots");
-                        if(result.status == 200){
+                        if (result.status == 200) {
                             var slots = result.value;
-                            for(var j = 0;j < slots.length; ++j){
+                            for (var j = 0; j < slots.length; ++j) {
                                 let vnetInfo = await getWebAppVnetInfo(slots[j].id, diagProvider);
                                 let subnetId = vnetInfo.properties.subnetResourceId;
                                 if (subnet.id == subnetId) {
@@ -107,7 +107,7 @@ async function checkSalAsync(subnet, siteInfo, diagProvider, flowMgr) {
                                 }
                             }
                         }
-                        
+
                     }
                 }
                 if (appsConnected.length == 0) {
@@ -125,10 +125,18 @@ async function checkSalAsync(subnet, siteInfo, diagProvider, flowMgr) {
                 }
 
             } else if (aspSitesResult.status == 401) {
+                views.push(new CheckStepView({
+                    title: `You don't have permission to read serverfarm ${asp}`,
+                    level: 1
+                }));
+                views.push(recommendations.NoPermission.Get(asp));
 
             } else if (aspSitesResult.status == 404) {
-                debugger;
-
+                orphanedSal = sal;
+                views.push(new CheckStepView({
+                    title: `Orphaned SAL detected: ${sal.id.replace("/virtualNetworks/", "\r\n/virtualNetworks/")}`,
+                    level: 1
+                }));
             } else {
                 flowMgr.logException(result.message, "checkSalAsync");
             }
@@ -161,16 +169,16 @@ async function deleteSalAsync(sal, subnet, diagProvider, flowMgr) {
             success = true;
         } catch (e) {
             console.log(e);
-        } finally{
+        } finally {
             await tryDeleteApp(aspResult, diagProvider, flowMgr);
         }
 
-        if(success){
+        if (success) {
             views.push(new CheckStepView({
                 title: "Successfully removed orphaned SAL, please hit refresh button and run the checks again.",
                 level: 0
             }));
-        }else{
+        } else {
             views.push(new CheckStepView({
                 title: "Failed to remove orphaned SAL, please consider for creating a support request.",
                 level: 2

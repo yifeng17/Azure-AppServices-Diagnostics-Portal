@@ -42,5 +42,15 @@ export class SubnetDeletionRecommendations {
                 });
             }
         }
+
+        this.NoPermission = {
+            Get(uri){
+                return new InfoStepView({
+                    infoType: 1,
+                    title: "Have no permission",
+                    markdown: `Check is terminated because you don't have permission to access **${uri}**. Please grant the permission, refresh the page and run this check again.`
+                });
+            }
+        }
     }
 }
