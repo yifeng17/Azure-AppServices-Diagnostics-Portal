@@ -1,5 +1,5 @@
 export var learnMoreFlow = {
-    title: "I want to learn more about VNet integration",
+    title: "Learn more about VNet integration",
     async func(siteInfo, diagProvider, flowMgr) {
         flowMgr.addView(new InfoStepView({
             infoType: 1,
