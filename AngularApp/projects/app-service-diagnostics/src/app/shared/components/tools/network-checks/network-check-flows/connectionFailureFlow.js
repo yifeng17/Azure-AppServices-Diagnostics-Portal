@@ -1,7 +1,7 @@
 import {ResourcePermissionCheckManager, checkVnetIntegrationHealth, checkDnsSettingAsync, checkSubnetSizeAsync} from './flowMisc.js';
 import {CommonRecommendations} from './commonRecommendations.js'
 export var connectionFailureFlow = {
-    title: "I'm unable to connect to a resource, such as SQL db or Redis db or on-prems, in my Virtual Network",
+    title: "Connection issues",
     async func(siteInfo, diagProvider, flowMgr) {
         var commonRec = new CommonRecommendations();
         var isKuduAccessible = true;
