@@ -1,12 +1,20 @@
-import { getArmData, getWebAppVnetInfo, getSubnet } from './flowMisc.js';
+import { getArmData, getWebAppVnetInfo, getSubnet, addSubnetSelectionDropDownView } from './flowMisc.js';
+import { ConfigFailureRecommendations } from './configFailureRecommendations.js'
 
 export var configFailureFlow = {
     title: "Configuration issues",
     async func(siteInfo, diagProvider, flowMgr) {
         var vnets = null, subnets = null, subscriptions = null;
 
+        var promise = checkAspVnetSupport(siteInfo, diagProvider, flowMgr);
+        flowMgr.addViews(promise.then(r => r.views), "Checking App Service Plan");
+        var isContinue = await promise.then(r => r.isContinue);
+        if (!isContinue) {
+            return;
+        }
+
         if (siteInfo.kind.includes("functionapp") && siteInfo.sku.toLowerCase() == "dynamic") {
-            flowMgr.addView(new InfoStepView({  
+            flowMgr.addView(new InfoStepView({
                 title: "VNet integration is not supported for Consumption Plan Function Apps.",
                 infoType: 1,
                 markdown: 'For more information please review <a href="https://docs.microsoft.com/en-us/azure/app-service/web-sites-integrate-with-vnet" target="_blank">Integrate your app with an Azure virtual network</a>.'
@@ -17,95 +25,21 @@ export var configFailureFlow = {
         var getAspSitesPromise = getAspSites(diagProvider, siteInfo["serverFarmId"]);
         flowMgr.addViews(getAspSitesPromise.then(d => d.views), "Fetching App Service Plan data...");
         var aspSites = (await getAspSitesPromise).aspSites;
-        if(aspSites == null){
+        if (aspSites == null) {
             return;
         }
-        var dropdownView = new DropdownStepView({
-            dropdowns: [],
-            width: "60%",
-            bordered: true,
-            description: "Please select the subnet you want to integrate your app to",
-            async callback(dropdownIdx, selectedIdx) {
-                if (dropdownIdx === 0) {
-                    dropdownView.dropdowns.length = 1;
-                    var subscription = subscriptions[selectedIdx];
-                    var vnetDropdown = vnetDropdown = {
-                        description: "Virtual Network",
-                        options: [],
-                        placeholder: "Loading..."
-                    };
-                    dropdownView.dropdowns.push(vnetDropdown);
-                    vnets = await diagProvider.getArmResourceAsync(`/subscriptions/${subscription.subscriptionId}/providers/Microsoft.Network/virtualNetworks`, "2018-07-01");
-                    dropdownView.dropdowns.length = 1;
-                    vnets = vnets.value.filter(v => v && v.name != null).sort((s1, s2) => s1.name.toLowerCase() > s2.name.toLowerCase() ? 1 : -1);
 
-                    if (vnets.length > 0) {
-                        vnetDropdown = {
-                            description: "Virtual Network",
-                            options: vnets.map(s => s.name),
-                            placeholder: "Please select..."
-                        };
-                    } else {
-                        vnetDropdown = {
-                            description: "Virtual Network",
-                            options: [],
-                            placeholder: "No VNet found in this subscription"
-                        }
-                    }
-                    dropdownView.dropdowns.push(vnetDropdown);
-                } else if (dropdownIdx === 1) {
-                    dropdownView.dropdowns.length = 2;
-                    var vnet = vnets[selectedIdx];
-                    subnets = vnet.properties == null ? [] : vnet.properties.subnets.filter(s => s && s.name != null);
-                    subnets = subnets.sort((s1, s2) => s1.name.toLowerCase() > s2.name.toLowerCase() ? 1 : -1);
-                    var subnetDropdown = null;
-                    if (subnets.length > 0) {
-                        subnetDropdown = {
-                            description: "Subnet",
-                            options: subnets.map(s => s.name),
-                            placeholder: "Please select..."
-                        };
-                    } else {
-                        subnetDropdown = {
-                            description: "Subnet",
-                            options: [],
-                            placeholder: "No subnet found in this VNet"
-                        }
-                    }
-                    dropdownView.dropdowns.push(subnetDropdown);
-                } else {
-                    flowMgr.reset(state);
-                    var subnet = subnets[selectedIdx];
-                    var promise = checkSubnetAvailabilityAsync(siteInfo, diagProvider, subnet, aspSites);
-                    flowMgr.addViews(promise, "Checking subnet...");
-                }
-            }
+        addSubnetSelectionDropDownView(siteInfo, diagProvider, flowMgr, "Please select the subnet you want to integrate your app to", async subnet => {
+            var promise = checkSubnetAvailabilityAsync(siteInfo, diagProvider, subnet, aspSites);
+            flowMgr.addViews(promise, "Checking subnet...");
         });
-
-
-        var subscriptionDropdown = {
-            description: "Subscription",
-            options: [],
-            placeholder: "Loading..."
-        };
-        dropdownView.dropdowns.push(subscriptionDropdown);
-        var state = flowMgr.addView(dropdownView);
-
-        diagProvider.getArmResourceAsync("subscriptions")
-            .then(s => {
-                subscriptions = s.value.filter(s => s && s.displayName != null).sort((s1, s2) => s1.displayName.toLowerCase() > s2.displayName.toLowerCase() ? 1 : -1);
-                subscriptionDropdown.options = subscriptions.map(s => s.displayName);
-                subscriptionDropdown.placeholder = "Please select...";
-                dropdownView.dropdowns.length = 0;
-                dropdownView.dropdowns.push(subscriptionDropdown);
-            });
     }
 }
 
 async function getAspSites(diagProvider, serverFarmId) {
     var views = [];
     var aspSitesObj = await diagProvider.getArmResourceAsync(serverFarmId + "/sites");
-    
+
     if (aspSitesObj.status == 401) {
         views.push(new CheckStepView({
             title: `Diagnostic is not available because you have no permission to access App Service Plan`,
@@ -326,6 +260,32 @@ async function checkSubnetAvailabilityAsync(siteInfo, diagProvider, subnetData, 
     return views;
 }
 
-async function checkAspVnetSupport(){
-    
+async function checkAspVnetSupport(siteInfo, diagProvider, flowMgr) {
+    var rec = new ConfigFailureRecommendations();
+    var sku = siteInfo.sku;
+    var views = [];
+    var isContinue = true;
+    if (sku == "Standard") {
+        var vnet = await getWebAppVnetInfo(siteInfo.id, diagProvider);
+        if (vnet.status == 200) {
+            if(!vnet.properties.swiftSupported){
+                isContinue = false;
+                views.push(new CheckStepView({
+                    title: `Your App Service Plan does not support VNet integration`,
+                    level: 2
+                }));
+                var splited =  siteInfo.serverFarmId.split("/");
+                var aspName = splited[splited.length-1];
+                views.push(rec.VnetNotSupported.Get(aspName, sku));
+            }
+        } else {
+            isContinue = false;
+            views.push(new CheckStepView({
+                title: `Failed to read app VNet configuration, please refresh the page and retry`,
+                level: 2
+            }));
+        }
+    }
+
+    return { views, isContinue };
 }
