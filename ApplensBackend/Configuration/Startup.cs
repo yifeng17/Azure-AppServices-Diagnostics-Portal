@@ -69,6 +69,7 @@ namespace AppLensV3
             services.AddSingleton<IIncidentAssistanceService, IncidentAssistanceService>();
             services.AddSingleton<IResourceConfigService, ResourceConfigService>();
             services.AddSingleton<IHealthCheckService, HealthCheckService>();
+            services.AddSingleton<ISurveysService, SurveysService>();
 
             services.AddMemoryCache();
             services.AddMvc();

@@ -56,6 +56,7 @@ namespace AppLensV3.Configuration
             services.AddSingleton<IGithubClientService, GithubClientService>();
             services.AddSingleton<IGraphClientService, NationalCloudGraphClientService>();
             services.AddSingleton<IIncidentAssistanceService, NationalCloudIncidentAssistanceService>();
+            services.AddSingleton<ISurveysService, NationalCloudSurveysService>();
             services.AddLogging(loggingBuilder =>
             {
                 loggingBuilder.ClearProviders();

@@ -83,7 +83,10 @@ export const TelemetryEventNames = {
     RiskAlertNotificationLoaded: 'RiskAlertNotificationLoaded',
     PortalIFrameLoadingException: 'PortalIFrameLoadingException',
     PortalIFrameLoadingSuccess: 'PortalIFrameLoadingSuccess',
-    PortalIFrameLoadingStart: 'PortalIFrameLoadingStart'
+    PortalIFrameLoadingStart: 'PortalIFrameLoadingStart',
+    SurveyPageLoaded: 'SurveyPageLoaded',
+    SurveyLoadStatus: 'SurveyLoadStatus',
+    SurveySubmitStatus: 'SurveySubmitStatus'
 };
 
 export const TelemetrySource = {
