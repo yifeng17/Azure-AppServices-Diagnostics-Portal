@@ -141,7 +141,10 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
                         mgr.setFlow(flow);
                     },
                     onDismiss: ()=>{
-                        telemetryService.logEvent("NetworkCheck.DropdownExpanded", {});
+                        telemetryService.logEvent("NetworkCheck.DropdownDismissed", {});
+                    },
+                    afterInit:()=>{
+                        telemetryService.logEvent("NetworkCheck.DropdownInitialized", {});
                     }
                 });
                 var state = mgr.addView(dropDownView);

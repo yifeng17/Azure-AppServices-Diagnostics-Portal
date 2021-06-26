@@ -1,4 +1,6 @@
+import { DropdownStepView, InfoStepView, StepFlow, StepFlowManager, CheckStepView, StepViewContainer,InputStepView, PromiseCompletionSource, TelemetryService } from 'diagnostic-data';
 import {CommonRecommendations} from './commonRecommendations.js'
+
 
 export class ResourcePermissionCheckManager{
     constructor(){
@@ -1137,4 +1139,90 @@ export function extractHostPortFromKeyVaultReference(keyVaultReference) {
     }
 
     return { "HostName": hostName, "Port": port }
+}
+
+export function addSubnetSelectionDropDownView(siteInfo, diagProvider, flowMgr, title, processSubnet){
+    var dropdownView = new DropdownStepView({
+        dropdowns: [],
+        width: "60%",
+        bordered: true,
+        description: title,
+        async callback(dropdownIdx, selectedIdx) {
+            if (dropdownIdx === 0) {
+                dropdownView.dropdowns.length = 1;
+                var subscription = subscriptions[selectedIdx];
+                var vnetDropdown = vnetDropdown = {
+                    description: "Virtual Network",
+                    options: [],
+                    placeholder: "Loading..."
+                };
+                dropdownView.dropdowns.push(vnetDropdown);
+                vnets = await diagProvider.getArmResourceAsync(`/subscriptions/${subscription.subscriptionId}/providers/Microsoft.Network/virtualNetworks`, "2018-07-01");
+                dropdownView.dropdowns.length = 1;
+                vnets = vnets.value.filter(v => v && v.name != null).sort((s1, s2) => s1.name.toLowerCase() > s2.name.toLowerCase() ? 1 : -1);
+
+                if (vnets.length > 0) {
+                    vnetDropdown = {
+                        description: "Virtual Network",
+                        options: vnets.map(s => s.name),
+                        placeholder: "Please select..."
+                    };
+                } else {
+                    vnetDropdown = {
+                        description: "Virtual Network",
+                        options: [],
+                        placeholder: "No VNet found in this subscription"
+                    }
+                }
+                dropdownView.dropdowns.push(vnetDropdown);
+            } else if (dropdownIdx === 1) {
+                dropdownView.dropdowns.length = 2;
+                var vnet = vnets[selectedIdx];
+                subnets = vnet.properties == null ? [] : vnet.properties.subnets.filter(s => s && s.name != null);
+                subnets = subnets.sort((s1, s2) => s1.name.toLowerCase() > s2.name.toLowerCase() ? 1 : -1);
+                var subnetDropdown = null;
+                if (subnets.length > 0) {
+                    subnetDropdown = {
+                        description: "Subnet",
+                        options: subnets.map(s => s.name),
+                        placeholder: "Please select..."
+                    };
+                } else {
+                    subnetDropdown = {
+                        description: "Subnet",
+                        options: [],
+                        placeholder: "No subnet found in this VNet"
+                    }
+                }
+                dropdownView.dropdowns.push(subnetDropdown);
+            } else {
+                flowMgr.reset(state);
+                var subnet = subnets[selectedIdx];
+                var promise = processSubnet(subnet);
+                //flowMgr.addViews(promise, "Checking subnet...");
+            }
+        }
+    });
+    var subscriptions = null, vnets = null, subnets = null;
+    var subscriptionDropdown = {
+        description: "Subscription",
+        options: [],
+        placeholder: "Loading..."
+    };
+    dropdownView.dropdowns.push(subscriptionDropdown);
+    var state = flowMgr.addView(dropdownView);
+
+    diagProvider.getArmResourceAsync("subscriptions")
+        .then(s => {
+            subscriptions = s.value.filter(s => s && s.displayName != null).sort((s1, s2) => s1.displayName.toLowerCase() > s2.displayName.toLowerCase() ? 1 : -1);
+            subscriptionDropdown.options = subscriptions.map((s, i) => {
+                if(s.subscriptionId == siteInfo.subscriptionId){
+                    subscriptionDropdown.defaultChecked = i;
+                }
+                return s.displayName;
+            });
+            subscriptionDropdown.placeholder = "Please select...";
+            dropdownView.dropdowns.length = 0;
+            dropdownView.dropdowns.push(subscriptionDropdown);
+        });
 }

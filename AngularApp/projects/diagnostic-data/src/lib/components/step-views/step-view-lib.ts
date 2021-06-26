@@ -54,6 +54,7 @@ export class DropdownStepView extends StepView {
     public expandByDefault: boolean;
     public callback: (dropdownIdx: number, selectedIdx: number) => Promise<void>;
     public onDismiss?: () => void;
+    public afterInit?: () => void;
     constructor(view: DropdownStepView) {
         super(view);
         this.type = StepViewType.dropdown;
@@ -64,6 +65,7 @@ export class DropdownStepView extends StepView {
         this.description = view.description || undefined;
         this.expandByDefault = view.expandByDefault || false;
         this.onDismiss = view.onDismiss || (() => { });
+        this.afterInit = view.afterInit || (() => { });
     }
 }
 

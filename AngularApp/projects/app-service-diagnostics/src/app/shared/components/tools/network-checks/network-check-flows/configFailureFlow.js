@@ -325,3 +325,7 @@ async function checkSubnetAvailabilityAsync(siteInfo, diagProvider, subnetData, 
     }
     return views;
 }
+
+async function checkAspVnetSupport(){
+    
+}
