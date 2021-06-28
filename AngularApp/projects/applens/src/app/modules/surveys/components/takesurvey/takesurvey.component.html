@@ -54,7 +54,7 @@
               </fab-primary-button>
             </div>
             <div *ngIf="footerMessage && footerMessage.length>0" [class.success-message]="footerMessageType=='success'" [class.failed-message]="footerMessageType=='error'">
-              {{footerMessage}}
+              {{footerMessage}}<div *ngIf="footerMessageType=='error'" [innerHTML]="backupLink"></div>
             </div>
           </div>
         </div>
