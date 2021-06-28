@@ -258,6 +258,7 @@ function checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, data
             error: null,
             collapsed: false,
             async callback(userInput) {
+                userInput = userInput.trim();
                 flowMgr.reset(state);
                 flowMgr.logEvent("ConnectivityTestTriggered", {});
                 const userInputLimitInUI = 50; // only applies to the UI, will show ... if more than 50 chars

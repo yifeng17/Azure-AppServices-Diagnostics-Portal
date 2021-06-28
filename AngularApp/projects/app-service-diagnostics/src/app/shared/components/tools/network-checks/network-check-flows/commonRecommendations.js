@@ -1,5 +1,4 @@
-export class CommonRecommendations
-{
+export class CommonRecommendations{
     constructor(){
         this.KuduNotAccessible = {
             Get(kuduUrl){
