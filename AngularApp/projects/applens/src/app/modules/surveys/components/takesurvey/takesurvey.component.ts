@@ -23,6 +23,7 @@ export class TakeSurveyComponent implements OnInit {
   footerMessageType: string = "none";
   userId: string = null;
   showCaseDetails: boolean = false;
+  backupLink: string = null;
   dropDownStyle = {
     label: {
       fontWeight: 700
@@ -120,7 +121,7 @@ export class TakeSurveyComponent implements OnInit {
           this.getSurveyData();
         }
         else{
-          this._telemetryService.logEvent(TelemetryEventNames.SurveyLoadStatus, {Loaded: "false", IsEnabled: this.isEnabled.toString()});
+          this._telemetryService.logEvent(TelemetryEventNames.SurveyLoadStatus, {Loaded: "false", CaseId: this.caseId, IsEnabled: this.isEnabled.toString()});
           this.alternateContent = "AppLens Survey feature is currently disabled";
           this.pageLoading = false;
         }
@@ -158,8 +159,14 @@ export class TakeSurveyComponent implements OnInit {
       this.displayLoader = false;
       var result = JSON.parse(res.body);
       this.pageLoading = false;
-      this.setSurveyInfo(result);
-      this._telemetryService.logEvent(TelemetryEventNames.SurveyLoadStatus, {Loaded: "true", CaseId: this.surveyInfo.caseInfo.caseId, userId: this.userId});
+      if (result && result.surveySubmitted) {
+        this.alternateContent = `Survey for ${this.caseId} has already been submitted. Thank you for your response!`;
+        this._telemetryService.logEvent(TelemetryEventNames.SurveyLoadStatus, {Loaded: "alreadysubmitted", CaseId: this.caseId, userId: this.userId});
+      }
+      else{
+        this.setSurveyInfo(result);
+        this._telemetryService.logEvent(TelemetryEventNames.SurveyLoadStatus, {Loaded: "true", CaseId: this.surveyInfo.caseInfo.caseId, userId: this.userId});
+      }
     },
     (err) => {
       this.displayLoader = false;
@@ -170,7 +177,9 @@ export class TakeSurveyComponent implements OnInit {
   onSubmit() {
     var responseBody = {
       caseId: this.surveyInfo.caseInfo.caseId,
-      caseTitle: this.surveyInfo.caseInfo.caseTitle,
+      caseInfo: this.surveyInfo.caseInfo,
+      detectorsShown: this.surveyInfo.detectorsShown,
+      surveySubmitted: true,
       answers: {
         solutionFound: this.solutionFound.text,
         detectorHelped: this.detectorHelped.text,
@@ -183,7 +192,7 @@ export class TakeSurveyComponent implements OnInit {
     this._surveysService.submitSurvey(responseBody).subscribe(res => {
       this.displayLoader = false;
       var result = JSON.parse(res.body);
-      this.footerMessage = "Survey submitted successfully.";
+      this.footerMessage = "Survey submitted successfully. Thank you for your response!";
       this.footerMessageType = "success";
       this.submitButtonDisabled = true;
       this._telemetryService.logEvent(TelemetryEventNames.SurveySubmitStatus, {CaseId: this.surveyInfo.caseInfo.caseId, Status: "success", userId: this.userId});
@@ -191,7 +200,9 @@ export class TakeSurveyComponent implements OnInit {
     (err) => {
       this.displayLoader = false;
       this._telemetryService.logEvent(TelemetryEventNames.SurveySubmitStatus, {CaseId: this.surveyInfo.caseInfo.caseId, Status: "failed", "ErrorMessage": err.error, userId: this.userId});
-      this.footerMessage = "There was an error submitting your response. Please try again";
+      let emailBody = encodeURIComponent(`Survey Response for ${this.surveyInfo.caseInfo.caseId} : \n\n ${JSON.stringify(responseBody.answers, undefined, 4)} \n\nThanks`);
+      this.backupLink = `<a href='mailto:applensv2team@microsoft.com?subject=Email Response on AppLens Case Surveys - Case ${this.surveyInfo.caseInfo.caseId}&body=${emailBody}'>Submit Response via Email</a>`;
+      this.footerMessage = "There was an error submitting your response.";
       this.footerMessageType = "error";
     });
   }
@@ -207,6 +218,7 @@ export class TakeSurveyComponent implements OnInit {
 interface SurveyInfo{
   caseInfo: CaseInfo;
   detectorsShown: any[];
+  surveySubmitted: boolean;
 }
 
 interface CaseInfo{

@@ -78,7 +78,7 @@ namespace AppLensV3.Services
                 throw new ArgumentException("caseId");
             }
             
-            await UploadToBlob(JsonConvert.SerializeObject(payload), $"{caseId}_response.json");
+            await UploadToBlob(JsonConvert.SerializeObject(payload), $"{caseId}.json");
             return "Response submitted successfully";
         }
 
