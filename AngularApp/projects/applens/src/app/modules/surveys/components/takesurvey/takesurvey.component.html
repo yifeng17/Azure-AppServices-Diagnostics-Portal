@@ -2,7 +2,7 @@
     <div class="top-banner">
       <div class="banner-text"><span style="color:#ffb353;">App</span>Lens Case Surveys</div>
     </div>
-    <div *ngIf="alternateContent!=null" class="row main-row" style="margin-left:25px;">
+    <div *ngIf="alternateContent!=null" class="row main-row" style="margin-left:25px;text-align: center;">
       {{alternateContent}}
     </div>
     <div *ngIf="!alternateContent" class="row main-row">
@@ -34,6 +34,7 @@
               </div>
               <div class="form-row" *ngIf="solutionFound.key=='y' && detectorHelped.key=='y'">
                 <fab-dropdown
+                  role="combobox"
                   [styles]="dropDownStyle"
                   [label]="'Which of these recently used detectors resolved the customer problem?'"
                   [placeholder]="'Select detectors from the list'"
