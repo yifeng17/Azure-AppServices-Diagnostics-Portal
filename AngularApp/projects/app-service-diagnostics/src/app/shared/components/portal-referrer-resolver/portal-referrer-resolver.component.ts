@@ -64,11 +64,10 @@ export class PortalReferrerResolverComponent implements OnInit {
 
       if (referrer.DetectorType.toLowerCase() === DetectorType.Analysis.toLowerCase()) {
         path = `${path}/analysis/${referrer.DetectorId}`;
-      }
-      else {
-        if (referrer.DetectorType.toLowerCase() === DetectorType.Detector.toLowerCase()) {
-          path = `${path}/detectors/${referrer.DetectorId}`;
-        }
+      } else if (referrer.DetectorType.toLowerCase() === DetectorType.Detector.toLowerCase()) {
+        path = `${path}/detectors/${referrer.DetectorId}`;
+      } else if (referrer.DetectorType.toLowerCase() === DetectorType.DiagnosticTool.toLowerCase()) {
+        path = `${path}/tools/${referrer.DetectorId}`;
       }
     }
     else {
@@ -108,6 +107,6 @@ export class PortalReferrerResolverComponent implements OnInit {
     }
 
     this.isEvaluating = false;
-    this._router.navigate([path], { queryParamsHandling: 'merge',  queryParams: { "redirectFrom": "referrer" } });
+    this._router.navigate([path], { queryParamsHandling: 'merge', queryParams: { "redirectFrom": "referrer" } });
   }
 }
