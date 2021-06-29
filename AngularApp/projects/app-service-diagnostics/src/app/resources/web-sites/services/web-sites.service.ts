@@ -47,6 +47,13 @@ export class WebSitesService extends ResourceService {
                 ReferrerTabName: '',
                 DetectorType: DetectorType.Detector,
                 DetectorId: 'configuringsslandcustomdomains'
+            },
+            {
+                ReferrerExtensionName: 'Websites',
+                ReferrerBladeName: 'VnetIntegrationV2DetailsBlade',
+                ReferrerTabName: '',
+                DetectorType: DetectorType.DiagnosticTool,
+                DetectorId: 'networkchecks'
             }];
 
 

@@ -82,7 +82,8 @@ export interface SupportTopic {
 export enum DetectorType {
     Detector = "Detector",
     Analysis = "Analysis",
-    CategoryOverview = "CategoryOverview"
+    CategoryOverview = "CategoryOverview",
+    DiagnosticTool = "DiagnosticTool"
 }
 export enum RenderingType {
     NoGraph = 0,
