@@ -153,6 +153,7 @@ export interface DataTableRendering extends Rendering {
     height: any;
     allowColumnSearch: boolean;
     columnOptions: TableColumnOption[];
+    searchPlaceholder: string;
 }
 
 export enum TableFilterSelectionOption {
@@ -162,15 +163,14 @@ export enum TableFilterSelectionOption {
 }
 
 export interface TableFilter {
-    selectionOption: TableFilterSelectionOption,
-    columnName: string
+    selectionOption: TableFilterSelectionOption;
+    name: string;
+    defaultSelection: string[];
 }
 
-export interface TableColumnOption {
-    name: string;
+export interface TableColumnOption extends TableFilter {
     minWidth: number;
     maxWidth: number;
-    selectionOption: TableFilterSelectionOption,
     visible: boolean;
 }
 
