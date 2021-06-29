@@ -83,11 +83,13 @@ export class PortalReferrerResolverComponent implements OnInit {
         if (referrerMatch.DetectorType === DetectorType.Detector) {
           path = `${path}/detectors/${referrerMatch.DetectorId}`;
         }
-        else {
-          if (referrerMatch.DetectorType === DetectorType.Analysis) {
-            path = `${path}/analysis/${referrerMatch.DetectorId}`;
-          }
+        else if (referrerMatch.DetectorType === DetectorType.Analysis) {
+          path = `${path}/analysis/${referrerMatch.DetectorId}`;
         }
+        else if (referrerMatch.DetectorType === DetectorType.DiagnosticTool) {
+          path = `${path}/tools/${referrerMatch.DetectorId}`;
+        }
+
         this._logService.logEvent('IntegratedDiagnostics', {
           details: 'Redirect decided by detector map.',
           referrerInformation: JSON.stringify(referrer),
@@ -106,6 +108,6 @@ export class PortalReferrerResolverComponent implements OnInit {
     }
 
     this.isEvaluating = false;
-    this._router.navigate([path], { queryParamsHandling: 'merge' });
+    this._router.navigate([path], { queryParamsHandling: 'merge',  queryParams: { "redirectFrom": "referrer" } });
   }
 }
