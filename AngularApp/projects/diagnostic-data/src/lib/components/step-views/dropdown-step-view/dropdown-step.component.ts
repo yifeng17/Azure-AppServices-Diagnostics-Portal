@@ -10,7 +10,7 @@ import { DropdownStepView, StepViewContainer } from '../step-view-lib';
   styleUrls: ['./dropdown-step.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class DropDownStepComponent implements OnInit {
+export class DropDownStepComponent implements OnInit,AfterViewInit {
   @Input() viewModel: StepViewContainer;
   dropdownStepView: DropdownStepView;
   dropdownOptions: IDropdownOption[][];
@@ -21,6 +21,13 @@ export class DropDownStepComponent implements OnInit {
 
   constructor(private _telemetryService: TelemetryService) {
 
+  }
+
+  ngAfterViewInit(): void {
+    var afterInit = this.dropdownStepView && this.dropdownStepView.afterInit;
+    if(afterInit!=null){
+      afterInit();
+    }
   }
 
   ngOnInit() {

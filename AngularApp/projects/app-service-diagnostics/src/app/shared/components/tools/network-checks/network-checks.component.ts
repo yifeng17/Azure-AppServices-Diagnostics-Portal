@@ -44,8 +44,10 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
     vnetIntegrationDetected = null;
     openFeedback = false;
     debugMode = false;
-    isSupportCenter: boolean;
+    isSupportTopic: boolean;
     logEvent: (eventMessage: string, properties: { [name: string]: string }, measurements?: any) => void;
+    width =  'calc(100vw - 298px)';
+    height = 'calc(100vh - 35px)';
     private _feedbackQuestions = "- Is your networking issue resolved? \r\n\r\n\r\n" +
         "- What was the issue?\r\n\r\n\r\n" +
         "- If the issue was not resolved, what can be the reason?\r\n\r\n\r\n" +
@@ -58,9 +60,13 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
             var feedbackPanelConfig = { defaultFeedbackText: this._feedbackQuestions, detectorName: "NetworkCheckingTool", notResetOnDismissed: true, url: window.location.href }
             _globals.messagesData.feedbackPanelConfig = feedbackPanelConfig;
             var queryParams = _route.snapshot.queryParams;
-            this.isSupportCenter = (queryParams["isSupportCenter"] === "true");
+            this.isSupportTopic = (queryParams["redirectFrom"] === "supportTopic");
+            if(this.isSupportTopic || queryParams["redirectFrom"] === "referrer"){
+                this.width = '100vw';
+                this.height = '100vh';
+            }
             this.logEvent = (eventMessage: string, properties: { [name: string]: string } = {}, measurements?: any) => {
-                properties.isSupportCenter = this.isSupportCenter.toString();
+                properties.redirectFrom = queryParams["redirectFrom"];
                 _telemetryService.logEvent(eventMessage, properties, measurements);
             };
             window["networkCheckLinkClickEventLogger"] = (viewId: string, url: string, text: string) => {
@@ -117,8 +123,8 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
                 flows = flows.concat(remoteFlows);
             }
             var mgr = this.stepFlowManager;
-            if (this.isSupportCenter &&
-                this.siteInfo.kind.includes("functionapp") &&
+            if (this.isSupportTopic && 
+                this.siteInfo.kind.includes("functionapp") && 
                 this.siteInfo.sku.toLowerCase() == "dynamic") {
                 mgr.addView(new InfoStepView({
                     id: "NotSupportedCheck",
@@ -144,7 +150,10 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
                         mgr.setFlow(flow);
                     },
                     onDismiss: () => {
-                        telemetryService.logEvent("NetworkCheck.DropdownExpanded", {});
+                        telemetryService.logEvent("NetworkCheck.DropdownDismissed", {});
+                    },
+                    afterInit:()=>{
+                        telemetryService.logEvent("NetworkCheck.DropdownInitialized", {});
                     }
                 });
                 var state = mgr.addView(dropDownView);

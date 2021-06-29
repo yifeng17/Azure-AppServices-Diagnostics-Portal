@@ -64,11 +64,10 @@ export class PortalReferrerResolverComponent implements OnInit {
 
       if (referrer.DetectorType.toLowerCase() === DetectorType.Analysis.toLowerCase()) {
         path = `${path}/analysis/${referrer.DetectorId}`;
-      }
-      else {
-        if (referrer.DetectorType.toLowerCase() === DetectorType.Detector.toLowerCase()) {
-          path = `${path}/detectors/${referrer.DetectorId}`;
-        }
+      } else if (referrer.DetectorType.toLowerCase() === DetectorType.Detector.toLowerCase()) {
+        path = `${path}/detectors/${referrer.DetectorId}`;
+      } else if (referrer.DetectorType.toLowerCase() === DetectorType.DiagnosticTool.toLowerCase()) {
+        path = `${path}/tools/${referrer.DetectorId}`;
       }
     }
     else {
@@ -83,11 +82,13 @@ export class PortalReferrerResolverComponent implements OnInit {
         if (referrerMatch.DetectorType === DetectorType.Detector) {
           path = `${path}/detectors/${referrerMatch.DetectorId}`;
         }
-        else {
-          if (referrerMatch.DetectorType === DetectorType.Analysis) {
-            path = `${path}/analysis/${referrerMatch.DetectorId}`;
-          }
+        else if (referrerMatch.DetectorType === DetectorType.Analysis) {
+          path = `${path}/analysis/${referrerMatch.DetectorId}`;
         }
+        else if (referrerMatch.DetectorType === DetectorType.DiagnosticTool) {
+          path = `${path}/tools/${referrerMatch.DetectorId}`;
+        }
+
         this._logService.logEvent('IntegratedDiagnostics', {
           details: 'Redirect decided by detector map.',
           referrerInformation: JSON.stringify(referrer),
@@ -106,6 +107,6 @@ export class PortalReferrerResolverComponent implements OnInit {
     }
 
     this.isEvaluating = false;
-    this._router.navigate([path], { queryParamsHandling: 'merge' });
+    this._router.navigate([path], { queryParamsHandling: 'merge', queryParams: { "redirectFrom": "referrer" } });
   }
 }

@@ -59,7 +59,7 @@ export class SupportTopicService {
                         
                     } else{
                         // non-container windows webapp/function app
-                        return observableOf({ path: 'tools/networkchecks', queryParams: { "isSupportCenter": true } });
+                        return observableOf({ path: 'tools/networkchecks', queryParams: { "redirectFrom": "supportTopic" }});
                     }
                 }
             } 
