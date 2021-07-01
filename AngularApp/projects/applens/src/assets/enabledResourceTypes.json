@@ -397,6 +397,17 @@
             "pesId": "",
             "staticSelfHelpContent": "",
             "searchSuffix": "Azure Media Service"
+        },
+         {
+            "service": "ResourceService",
+            "resourceType": "Microsoft.HybridNetwork/networkFunctions",
+            "templateFileName": "networkFunctions",
+            "imgSrc": "assets/img/Azure-Network-Function-Manager-Logo.png",
+            "versionPrefix": "",
+            "azureCommImpactedServicesList": "",
+            "pesId": "",
+            "staticSelfHelpContent": "",
+            "searchSuffix": "Azure Network Function Manager"
         }
     ]
 }
