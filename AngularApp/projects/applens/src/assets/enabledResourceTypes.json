@@ -402,7 +402,7 @@
             "service": "ResourceService",
             "resourceType": "Microsoft.HybridNetwork/networkFunctions",
             "templateFileName": "networkFunctions",
-            "imgSrc": "assets/img/Azure-Network-Function-Manager-Logo.png",
+            "imgSrc": "assets/img/Azure-Network-Function-Manager-Logo.svg",
             "versionPrefix": "",
             "azureCommImpactedServicesList": "",
             "pesId": "",
