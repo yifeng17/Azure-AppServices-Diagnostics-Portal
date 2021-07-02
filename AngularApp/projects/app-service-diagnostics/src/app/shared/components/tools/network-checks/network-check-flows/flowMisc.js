@@ -1177,7 +1177,7 @@ export function addSubnetSelectionDropDownView(siteInfo, diagProvider, flowMgr, 
                 dropdownView.dropdowns.push(vnetDropdown);
             } else if (dropdownIdx === 1) {
                 dropdownView.dropdowns.length = 2;
-                var vnet = vnets[selectedIdx];
+                vnet = vnets[selectedIdx];
                 subnets = vnet.properties == null ? [] : vnet.properties.subnets.filter(s => s && s.name != null);
                 subnets = subnets.sort((s1, s2) => s1.name.toLowerCase() > s2.name.toLowerCase() ? 1 : -1);
                 var subnetDropdown = null;
@@ -1198,12 +1198,13 @@ export function addSubnetSelectionDropDownView(siteInfo, diagProvider, flowMgr, 
             } else {
                 flowMgr.reset(state);
                 var subnet = subnets[selectedIdx];
-                var promise = processSubnet(subnet);
+                var promise = processSubnet(subnet, vnet);
                 //flowMgr.addViews(promise, "Checking subnet...");
             }
         }
     });
     var subscriptions = null, vnets = null, subnets = null;
+    var vnet = null;
     var subscriptionDropdown = {
         description: "Subscription",
         options: [],
