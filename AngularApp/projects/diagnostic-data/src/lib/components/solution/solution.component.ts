@@ -75,6 +75,10 @@ export class SolutionComponent extends DataRenderBaseComponent {
         return ActionType.Markdown;
     }
 
+    public showCompletionConfirmation():boolean {
+        return this.solution.Action!= ActionType.GoToBlade && this.solution.Action!= ActionType.OpenTab;
+    }
+
     prepareAction() {
         let actionOptions = {};
 
