@@ -15,7 +15,7 @@
 }
 
 .box-header{
-    height: 40px;
+    height: 62px;
     padding: 10px 0px;
 }
 
@@ -125,4 +125,11 @@
     margin-top: 10px;
     margin-left: 10px;
     display: inline-block;
+}
+
+.case-details {
+    font-size: 14px;
+    padding: 2px;
+    color: #2081af;
+    cursor: pointer;
 }

@@ -24,6 +24,7 @@ export class TakeSurveyComponent implements OnInit {
   userId: string = null;
   showCaseDetails: boolean = false;
   backupLink: string = null;
+  panelType = Number(String(PanelType.medium));
   dropDownStyle = {
     label: {
       fontWeight: 700
@@ -195,11 +196,11 @@ export class TakeSurveyComponent implements OnInit {
       this.footerMessage = "Survey submitted successfully. Thank you for your response!";
       this.footerMessageType = "success";
       this.submitButtonDisabled = true;
-      this._telemetryService.logEvent(TelemetryEventNames.SurveySubmitStatus, {CaseId: this.surveyInfo.caseInfo.caseId, Status: "success", userId: this.userId});
+      this._telemetryService.logEvent(TelemetryEventNames.SurveySubmitStatus, {CaseId: this.surveyInfo.caseInfo.caseId, Status: "success", userId: this.userId, Answers: JSON.stringify(responseBody.answers)});
     },
     (err) => {
       this.displayLoader = false;
-      this._telemetryService.logEvent(TelemetryEventNames.SurveySubmitStatus, {CaseId: this.surveyInfo.caseInfo.caseId, Status: "failed", "ErrorMessage": err.error, userId: this.userId});
+      this._telemetryService.logEvent(TelemetryEventNames.SurveySubmitStatus, {CaseId: this.surveyInfo.caseInfo.caseId, Status: "failed", "ErrorMessage": err.error, userId: this.userId, Answers: JSON.stringify(responseBody.answers)});
       let emailBody = encodeURIComponent(`Survey Response for ${this.surveyInfo.caseInfo.caseId} : \n\n ${JSON.stringify(responseBody.answers, undefined, 4)} \n\nThanks`);
       this.backupLink = `<a href='mailto:applensv2team@microsoft.com?subject=Email Response on AppLens Case Surveys - Case ${this.surveyInfo.caseInfo.caseId}&body=${emailBody}'>Submit Response via Email</a>`;
       this.footerMessage = "There was an error submitting your response.";

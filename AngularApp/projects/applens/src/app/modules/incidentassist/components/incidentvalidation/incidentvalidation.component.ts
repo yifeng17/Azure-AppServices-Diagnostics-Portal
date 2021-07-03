@@ -91,9 +91,9 @@ export class IncidentValidationComponent implements OnInit {
 
   scrollToSolutions() {
     var elementToScroll = document.querySelector(".main-container");
-        var elementToScrollTo = document.getElementById("solutions-content-div") as HTMLElement;
+        var elementToScrollTo = document.getElementById("update-incident-button") as HTMLElement;
         if (elementToScroll && elementToScrollTo) {
-            elementToScroll.scrollTop = elementToScrollTo.offsetTop+100;
+            elementToScroll.scrollTop = elementToScrollTo.offsetTop-50;
         }
   }
 

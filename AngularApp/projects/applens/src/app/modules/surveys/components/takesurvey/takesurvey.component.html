@@ -12,18 +12,19 @@
         </div>
         <div class="card-box" *ngIf="!pageLoading">
           <div class="box-header with-border">
-            <h3 class="box-title">Case <a href="#" (click)="showDetails($event)">{{surveyInfo.caseInfo.caseId}}</a>: &nbsp; {{surveyInfo.caseInfo.caseTitle}}</h3>
+            <h3 class="box-title">Case {{surveyInfo.caseInfo.caseId}}: &nbsp; {{surveyInfo.caseInfo.caseTitle}}</h3>
+            <span class="case-details" (click)="showDetails($event)">View case information in sidebar</span>
           </div>
   
           <div style="height: calc(100vh - 140px);">
-            <fab-panel [isOpen]="showCaseDetails" (onDismiss)="hideDetails()">
+            <fab-panel [isOpen]="showCaseDetails" (onDismiss)="hideDetails()" [type]="panelType">
               <div style="display:block">
               <h3 class="panel-title">Case <a href="{{'https://azuresupportcenter.msftcloudes.com/ticketdetails?srId=' + surveyInfo.caseInfo.caseId}}" target="_blank">{{surveyInfo.caseInfo.caseId}}<i class="fa fa-external-link" style="padding-left: 5px;font-size: 12px;" aria-hidden="true"></i></a></h3>
               </div>
               <p><b>Title:</b>&nbsp;&nbsp;{{surveyInfo.caseInfo.caseTitle}}</p><br><br>
-              <b>Description:</b>&nbsp;&nbsp;<div [innerHTML]="surveyInfo.caseInfo.caseDescription"></div><br><br>
               <b>Cause:</b>&nbsp;&nbsp;<div [innerHTML]="surveyInfo.caseInfo.caseCause"></div><br><br>
               <b>Resolution:</b>&nbsp;&nbsp;<div [innerHTML]="surveyInfo.caseInfo.caseResText"></div><br><br>
+              <b>Description:</b>&nbsp;&nbsp;<div [innerHTML]="surveyInfo.caseInfo.caseDescription"></div><br><br>
             </fab-panel>
             <div class="form-group form-content">
               <div class="form-row">
