@@ -4,7 +4,7 @@ import { addSubnetSelectionDropDownView, getWebAppVnetInfo } from './flowMisc.js
 import { CommonRecommendations } from './commonRecommendations.js';
 
 export var subnetDeletionFlow = {
-    title: "I'm unable to delete a subnet or VNet with error: Subnet is in use by serviceAssociationLinks/AppServiceLink",
+    title: "Subnet/VNet deletion issue",
     async func(siteInfo, diagProvider, flowMgr) {
         var commonRec = new CommonRecommendations();
         addSubnetSelectionDropDownView(siteInfo, diagProvider, flowMgr, "Please select the subnet you want to delete", async (subnet, vnet) => {
@@ -14,7 +14,6 @@ export var subnetDeletionFlow = {
             if (!isContinue) {
                 return;
             }
-
             var salPromise = checkSalAsync(subnet, siteInfo, diagProvider, flowMgr);
             flowMgr.addViews(salPromise.then(r => r.views), "Checking subnet usage...");
             var orphanedSal = (await salPromise).orphanedSal;
@@ -36,12 +35,22 @@ export var subnetDeletionFlow = {
                     if (!isContinue) {
                         return;
                     }
-                    var resourceCreationPromise = getResourceCreationListAsync(asp, diagProvider, flowMgr);
-                    flowMgr.addViews(resourceCreationPromise, "Checking resources...");
-                    await resourceCreationPromise;
 
-                    var deleteSalPromise = deleteSalAsync(orphanedSal, subnet, vnet, diagProvider, flowMgr);
-                    flowMgr.addViews(deleteSalPromise, "Try deleting the SAL, please DO NOT close the browser...");
+                    var resourceCreationPromise = getResourceCreationListAsync(asp, diagProvider, flowMgr);
+                    flowMgr.addViews(resourceCreationPromise.then(r => r.views), "Checking resources...");
+                    var result = await resourceCreationPromise;
+                    isContinue = result.isContinue;
+                    if (!isContinue) {
+                        return;
+                    }
+
+                    flowMgr.addView(new ButtonStepView({
+                        callback: () => {
+                            var deleteSalPromise = deleteSalAsync(orphanedSal, subnet, vnet, result.creationList, diagProvider, flowMgr);
+                            flowMgr.addViews(deleteSalPromise);
+                        },
+                        text: "Continue"
+                    }));
                 }
             }
         })
@@ -78,7 +87,7 @@ async function checkSubnetLocksAsync(subnet, siteInfo, diagProvider, flowMgr) {
                     title: "Subnet is locked",
                     level: 2
                 }));
-                views.push(recommendations.SubnetIsLocked.Get(subnetLocks, diagProvider.generateResourcePortalLink(`/subscriptions/${siteInfo.subscriptionId}/locks`)));
+                views.push(recommendations.subnetIsLocked.get(subnetLocks, diagProvider.generateResourcePortalLink(`/subscriptions/${siteInfo.subscriptionId}/locks`)));
                 isContinue = false;
             } else {
                 views.push(new CheckStepView({
@@ -116,8 +125,7 @@ async function checkSalAsync(subnet, siteInfo, diagProvider, flowMgr) {
                         if (subnet.id == subnetId) {
                             appsConnected.push(aspSites[i]);
                         }
-
-                        var result = await diagProvider.getArmResourceAsync(aspSites[i].id + "/slots");
+                        var result = await diagProvider.getArmResourceAsync(aspSites[i].id + "/slots", "2018-11-01");
                         if (result.status == 200) {
                             var slots = result.value;
                             for (var j = 0; j < slots.length; ++j) {
@@ -133,76 +141,95 @@ async function checkSalAsync(subnet, siteInfo, diagProvider, flowMgr) {
                 }
                 if (appsConnected.length == 0) {
                     orphanedSal = sal;
-                    views = views.concat(wordings.OrphanSalDetected.Get(sal.id));
+                    views = views.concat(wordings.orphanSalDetected.get(sal.id));
                 } else {
                     views.push(new CheckStepView({
                         title: `Subnet is used by ${appsConnected.length} app(s)`,
                         level: 1
                     }));
-                    views.push(wordings.SubnetIsInUse.Get(appsConnected));
+                    views.push(wordings.subnetIsInUse.get(appsConnected));
                 }
 
             } else if (aspSitesResult.status == 401) {
-                views.push(new CheckStepView({
-                    title: `You don't have permission to read serverfarm ${asp}`,
-                    level: 1
-                }));
-                views.push(wordings.NoPermission.Get(asp));
-
+                views = views.concat(wordings.noPermission.get(asp));
             } else if (aspSitesResult.status == 404) {
                 orphanedSal = sal;
-                views.push(new CheckStepView({
-                    title: `Orphaned SAL detected: ${sal.id.replace("/virtualNetworks/", "\r\n/virtualNetworks/")}`,
-                    level: 1
-                }));
+                views = views.concat(wordings.orphanSalDetected.get(sal.id));
             } else {
+                logDebugMessage(aspSitesResult.message);
                 flowMgr.logException(aspSitesResult.message, "checkSalAsync");
+                views.push(new CheckStepView({
+                    title: `Failed to check App Service plan, unknown result ${aspSitesResult.message}`,
+                    level: 3
+                }));
             }
         } else {
             views.push(new CheckStepView({
                 title: "Subnet is not used by AppService",
                 level: 0
             }));
-            views.push(wordings.SubnetIsNotUsedByAppService.Get());
+            views.push(wordings.subnetIsNotUsedByAppService.get());
         }
     } else {
         views.push(new CheckStepView({
             title: "Subnet is not used by any Azure Service",
             level: 0
         }));
-        views.push(wordings.SubnetIsNotUsed.Get());
+        views.push(wordings.subnetIsNotUsed.get());
     }
     return { views, orphanedSal };
 }
 
-async function deleteSalAsync(sal, subnet, vnet, diagProvider, flowMgr) {
+async function deleteSalAsync(sal, subnet, vnet, creationList, diagProvider, flowMgr) {
+    var deletionPromise = new PromiseCompletionSource();
+    flowMgr.addViews(deletionPromise, "Try deleting the SAL, this process can take up to 5 mins, please DO NOT close the browser...");
+    var cleanUpPromise = new PromiseCompletionSource();
+    var state = flowMgr.addViews(cleanUpPromise, "Try cleaning up temporal resources, this process can take up to 5 mins, please DO NOT close the browser...");
+    var retryView = null;
     var asp = sal.properties.link;
     var aspResult = await diagProvider.getArmResourceAsync(asp);
+    var wordings = new SubnetDeletionWordings();
     var views = [];
+    var deletionResult = null;
     if (aspResult != null && (aspResult.status == 200 || aspResult.status == 404)) {
         var success = false;
         try {
-            var createAsp = (aspResult.status == 404);
-            await tryCreateApp(asp, subnet, vnet, createAsp, diagProvider, flowMgr);
+            await tryCreateApp(asp, subnet, vnet, creationList, diagProvider, flowMgr);
             // await tryConnectAndDisconnectSubnet(aspResult, subnet, diagProvider, flowMgr);
-            success = true;
         } catch (e) {
-            console.log(e);
+            logDebugMessage(e);
         } finally {
-            await tryDeleteApp(asp, diagProvider, flowMgr);
+            deletionPromise.resolve([]);
+            try {
+                deletionResult = await tryDeleteApp(asp, creationList, diagProvider, flowMgr);
+                var deletionSuccess = Object.values(deletionResult).every(i => i == true);
+                if (!deletionSuccess) {
+                    retryView = new ButtonStepView({
+                        callback: async () => {
+                            flowMgr.reset(state);
+                            var cleanUpPromise = new PromiseCompletionSource();
+                            flowMgr.addViews(cleanUpPromise, "Try cleaning up temporal resources, this process can take up to 5 mins, please DO NOT close the browser...");
+                            var deletionResult = await tryDeleteApp(asp, creationList, diagProvider, flowMgr);
+                            var salResult = await checkResourceStatusAsync(sal.id, "GET", diagProvider);
+                            success = (salResult.status == 404);
+                            cleanUpPromise.resolve(wordings.salDeletionResult.get(success, deletionResult));
+                            var deletionSuccess = Object.values(deletionResult).every(i => i == true);
+                            if (!deletionSuccess) {
+                                retryView.hidden = false;
+                                flowMgr.addView(retryView);
+                            }
+                        },
+                        text: "Retry"
+                    });
+                }
+            } finally {
+                cleanUpPromise.resolve([]);
+            }
         }
+        var salResult = await checkResourceStatusAsync(sal.id, "GET", diagProvider);
+        success = (salResult.status == 404);
+        views = wordings.salDeletionResult.get(success, deletionResult);
 
-        if (success) {
-            views.push(new CheckStepView({
-                title: "Successfully removed orphaned SAL, please hit refresh button and run the checks again.",
-                level: 0
-            }));
-        } else {
-            views.push(new CheckStepView({
-                title: "Failed to remove orphaned SAL, please consider creating a support request.",
-                level: 2
-            }));
-        }
     } else {
         views.push(new CheckStepView({
             title: "Failed to delete SAL, please consider asking for support.",
@@ -210,13 +237,16 @@ async function deleteSalAsync(sal, subnet, vnet, diagProvider, flowMgr) {
         }));
     }
 
+    views.push(retryView);
     return views;
 }
 
-async function tryCreateApp(aspId, subnet, vnet, createAsp, diagProvider, flowMgr) {
+async function tryCreateApp(aspId, subnet, vnet, creationList, diagProvider, flowMgr) {
+    var createAsp = creationList.asp;
+    var createRg = creationList.resourceGroup;
     var asp = tryParseAspId(aspId);
     var siteName = asp.name + "SalDeletion";
-    var uri = `/subscriptions/${asp.subscription}/resourceGroups/${asp.resourceGroup}` +
+    var uri = `/subscriptions/${asp.subscription}` +
         `/providers/Microsoft.Resources/deployments/NetworkTroubleshooter-SalDeletion`;
     var vnetConfigUri = `/subscriptions/${asp.subscription}/resourceGroups/${asp.resourceGroup}` +
         `/providers/Microsoft.Web/sites/${siteName}/networkconfig/virtualNetwork`; //2018-11-01
@@ -238,8 +268,59 @@ async function tryCreateApp(aspId, subnet, vnet, createAsp, diagProvider, flowMg
             },
             "validationLevel": "Template"
         },
+        "location": vnet.location,
         "tags": {
             "marketplaceItemId": "Microsoft.Template"
+        }
+    };
+
+    if (createRg) {
+        var rgResource = {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2020-10-01",
+            "name": asp.resourceGroup,
+            "location": vnet.location,
+            "properties": {},
+        };
+
+        var rgDeploymentResource = {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "RgDeployment",
+            "location": vnet.location,
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [rgResource],
+                    "outputs": {}
+                }
+            }
+        };
+
+        template.properties.template.resources.push(rgResource);
+    }
+
+    var aspDeploymentResource = {
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2020-10-01",
+        "name": "AppServiceDeployment",
+        "resourceGroup": asp.resourceGroup,
+        "dependsOn": createRg ? ["Microsoft.Resources/resourceGroups/" + asp.resourceGroup] : [], //createRg ? ["Microsoft.Resources/deployments/RgDeployment"] : [],
+        "properties": {
+            "mode": "Incremental",
+            "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "parameters": {},
+                "variables": {},
+                "resources": [],
+                "outputs": {}
+            }
         }
     };
 
@@ -251,7 +332,7 @@ async function tryCreateApp(aspId, subnet, vnet, createAsp, diagProvider, flowMg
         "tags": {
             "CreatedByNetworkTroubleshooter": "If you see this tag, this means this resource failed to be cleaned up, please delete it manually"
         },
-        "dependsOn": createAsp ? ["Microsoft.Web/serverfarms/" + asp.name] : [],
+        "dependsOn": createAsp ? ["Microsoft.Web/serverfarms/" + asp.name] : [], // createRg ? ["Microsoft.Resources/resourceGroups/" + asp.resourceGroup, "Microsoft.Web/serverfarms/" + asp.name] : (
         "properties": {
             "name": siteName,
             "siteConfig": {
@@ -281,33 +362,14 @@ async function tryCreateApp(aspId, subnet, vnet, createAsp, diagProvider, flowMg
                 "location": vnet.location,
                 "dependsOn": ["Microsoft.Web/sites/" + siteName],
                 "properties": {
-                    "subnetResourceId": "/subscriptions/8ee49137-b1a2-4c6f-9e7f-6fe62eaa238a/resourceGroups/VNetStuff/providers/Microsoft.Network/virtualNetworks/JeffTestVNet/subnets/SalTest",//subnet.id,
+                    "subnetResourceId": subnet.id, //"/subscriptions/8ee49137-b1a2-4c6f-9e7f-6fe62eaa238a/resourceGroups/VNetStuff/providers/Microsoft.Network/virtualNetworks/JeffTestVNet/subnets/SalTest",//subnet.id,
                     "swiftSupported": true
                 }
-            }
+            }//*/
         ],
     };
-    template.properties.template.resources.push(websiteResource);
 
-    var vnetIntgrationResource = {
-        "apiVersion": "2018-11-01",
-        "name": `virtualNetwork`,
-        "type": "Microsoft.Web/sites/networkConfig",
-        "location": vnet.location,
-        "tags": {
-            "CreatedByNetworkTroubleshooter": "If you see this tag, this means this resource failed to be cleaned up, please delete it manually"
-        },
-        "dependsOn": ["Microsoft.Web/sites/" + siteName],
-        "properties": {
-            "location": vnet.location,
-            "id": "/subscriptions/8ee49137-b1a2-4c6f-9e7f-6fe62eaa238a/resourceGroups/VNetStuff/providers/Microsoft.Web/sites/testsalSalDeletion/config/virtualNetwork",//vnetConfigUri,
-            "properties": {
-                "subnetResourceId": "/subscriptions/8ee49137-b1a2-4c6f-9e7f-6fe62eaa238a/resourceGroups/VNetStuff/providers/Microsoft.Network/virtualNetworks/JeffTestVNet/subnets/SalTest",//subnet.id,
-                "swiftSupported": true
-            }
-        }
-    };
-    //template.properties.template.resources.push(vnetIntgrationResource);
+    aspDeploymentResource.properties.template.resources.push(websiteResource);
 
     if (createAsp) {
         var aspResource = {
@@ -330,22 +392,19 @@ async function tryCreateApp(aspId, subnet, vnet, createAsp, diagProvider, flowMg
                 "Tier": "PremiumV2",
                 "Name": "P1v2"
             }
-        }
-        template.properties.template.resources.push(aspResource);
+        };
+        aspDeploymentResource.properties.template.resources.push(aspResource);
     }
+    template.properties.template.resources.push(aspDeploymentResource);
 
-
-
-
-
-    var result = await diagProvider.requestResourceAsync("PUT", uri, template, "2020-06-01");
-    if (result.status != 200) {
+    var result = await diagProvider.requestResourceAsync("PUT", uri, template, "2020-10-01");
+    if (!(result.status >= 200 && result.status < 300)) {
         throw new Error(`Unexpected status ${result.status} ${result.statusText}`);
     }
     var completed = false;
     while (!completed) {
         await delay(3);
-        result = await diagProvider.requestResourceAsync("GET", uri, null, "2020-06-01");
+        result = await diagProvider.requestResourceAsync("GET", uri, null, "2020-10-01");
         completed = (result.body.properties.provisioningState == "Succeeded");
         if (!["Succeeded", "Accepted", "Running"].includes(result.body.properties.provisioningState)) {
             throw new Error(`Unexpected provisioningState ${result.body.properties.provisioningState}`);
@@ -353,12 +412,66 @@ async function tryCreateApp(aspId, subnet, vnet, createAsp, diagProvider, flowMg
     }
 }
 
-async function tryDeleteApp(aspId, diagProvider, flowMgr) {
+async function tryDeleteApp(aspId, creationList, diagProvider, flowMgr) {
     var asp = tryParseAspId(aspId);
-    var siteName = asp.name + "SalDeletion";
-    var uri = `/subscriptions/${asp.subscription}/resourceGroups/${asp.resourceGroup}` +
-        `/providers/Microsoft.Web/sites/${siteName}`
-    var result = await diagProvider.requestResourceAsync("DELETE", uri, null, "2018-11-01");
+    var resourceGroupUri = `/subscriptions/${asp.subscription}/resourceGroups/${asp.resourceGroup}`;
+    var result = {};
+    var siteId = `/subscriptions/${asp.subscription}/resourceGroups/${asp.resourceGroup}/providers/Microsoft.Web/sites/${asp.name}SalDeletion`;
+    if (creationList.resourceGroup) {
+        result[resourceGroupUri] = false;
+        result[asp.id] = false;
+        result[siteId] = false;
+        var succeeded = await tryDeleteResource(resourceGroupUri, diagProvider);
+        if (succeeded) {
+            result[resourceGroupUri] = true;
+            result[asp.id] = true;
+            result[siteId] = true;
+            return result;
+        }
+    }
+
+    result[siteId] = false;
+    if (creationList.asp) {
+        result[asp.id] = false;
+    }
+    var succeeded = await tryDeleteResource(siteId, diagProvider);
+    if (succeeded) {
+        result[siteId] = true;
+        await delay(1);
+
+        if (creationList.asp) {
+            succeeded = await tryDeleteResource(asp.id, diagProvider);
+            if (succeeded) {
+                result[asp.id] = true;
+                return result;
+            }
+        }
+    }
+
+
+
+    return result;
+}
+
+async function tryDeleteResource(uri, diagProvider) {
+    var result = await diagProvider.requestResourceAsync("DELETE", uri, null, "2020-10-01");
+    if (!(result.status >= 200 && result.status < 300) && result.status != 404) {
+        return false;
+    }
+    var completed = false;
+    while (!completed) {
+        await delay(3);
+        result = await diagProvider.requestResourceAsync("GET", uri, null, "2020-10-01");
+        if (result.status == 404) {
+            return true;
+        }
+        else if (!(result.status >= 200 && result.status < 300)) {
+            return false;
+        }
+        if (result.body.properties.provisioningState != "Deleting") {
+            return false;
+        }
+    }
 }
 
 async function tryConnectAndDisconnectSubnet(asp, subnet, diagProvider, flowMgr) {
@@ -409,15 +522,18 @@ async function checkWriteDeletePermissionAsync(uri, diagProvider, flowMgr) {
     var wordings = new SubnetDeletionWordings();
     isContinue = writePermission && deletePermission;
     if (!isContinue) {
-        views = views.concat(wordings.NoWriteDeletePermissionOverScope.Get(uri, writePermission, deletePermission));
+        views = views.concat(wordings.noWriteDeletePermissionOverScope.get(uri, writePermission, deletePermission));
     }
     return { views, isContinue };
 }
 
 async function getResourceCreationListAsync(asp, diagProvider, flowMgr) {
     var list = { asp: false, resourceGroup: false };
+    var isContinue = true;
     var resourceGroupUri = `/subscriptions/${asp.subscription}/resourceGroups/${asp.resourceGroup}`;
     var siteId = `/subscriptions/${asp.subscription}/resourceGroups/${asp.resourceGroup}/providers/Microsoft.Web/sites/${asp.name}SalDeletion`;
+    var subscriptionExisted = true;
+    var wordings = new SubnetDeletionWordings();
 
     var status = await checkResourceStatusAsync(asp.id, "GET", diagProvider);
     var aspExisted = (status == 200);
@@ -427,22 +543,30 @@ async function getResourceCreationListAsync(asp, diagProvider, flowMgr) {
         var rgExisted = (status == 200);
         if (!rgExisted) {
             list.resourceGroup = true;
+            status = await checkResourceStatusAsync(`/subscriptions/${asp.subscription}`, "GET", diagProvider);
+            if (status != 200) {
+                subscriptionExisted = false;
+            }
         }
     }
 
+    if (subscriptionExisted) {
+        var resources = {
+            Webapp: siteId
+        };
+        if (list.asp) {
+            resources["AppService Plan"] = asp.id;
+        }
 
-    var resources = {
-        Webapp: siteId
-    };
-    if (list.asp) {
-        resources["AppService Plan"] = asp.id;
+        if (list.resourceGroup) {
+            resources["Resource Group"] = resourceGroupUri;
+        }
+
+
+        views = wordings.resourcesGoingToCreate.get(resources);
+    } else {
+        isContinue = false;
+        views = wordings.subscriptionNotExist.get(asp.subscription);
     }
-
-    if (list.resourceGroup) {
-        resources["Resource Group"] = resourceGroupUri;
-    }
-
-    var wordings = new SubnetDeletionWordings();
-    var views = wordings.ResourcesGoingToCreate.Get(resources);
-    return views;
+    return { views, isContinue, creationList: list };
 }

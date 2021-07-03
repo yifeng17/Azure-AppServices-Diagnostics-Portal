@@ -335,7 +335,10 @@ export class ArmService {
         return this._cache.get(cacheKey, request, invalidateCache);
     }
 
-    requestResource<T, S>(method:string, resourceUri: string, body?: S, apiVersion?: string): Observable<boolean | {} | ResponseMessageEnvelope<T>> {
+    requestResource<T, S>(method:string, resourceUri: string, body?: S, apiVersion?: string): Observable<{} | T> {
+        if (!resourceUri.startsWith('/')) {
+            resourceUri = '/' + resourceUri;
+        }
         const url = this.createUrl(resourceUri, apiVersion);
         let bodyString: string = '';
         if (body) {
@@ -345,6 +348,21 @@ export class ArmService {
         const request = this._http.request<S>(method, url, { headers: this.getHeaders(), body: bodyString, observe:"response" });
 
         return request;
+    }
+
+    requestResourceWithCache<T, S>(method:string, resourceUri: string, body?: S, apiVersion?: string, invalidateCache = false): Observable<{} | T> {
+        if (!resourceUri.startsWith('/')) {
+            resourceUri = '/' + resourceUri;
+        }
+        const url = this.createUrl(resourceUri, apiVersion);
+        let bodyString: string = '';
+        if (body) {
+            bodyString = JSON.stringify(body);
+        }
+
+        const request = this._http.request<S>(method, url, { headers: this.getHeaders(), body: bodyString, observe:"response" });
+
+        return this._cache.get(url, request, invalidateCache);
     }
 
 

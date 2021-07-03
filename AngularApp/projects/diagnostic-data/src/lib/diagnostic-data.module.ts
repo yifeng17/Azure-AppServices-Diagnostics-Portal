@@ -117,6 +117,7 @@ import { InfoStepComponent } from './components/step-views/info-step-view/info-s
 import { DropDownStepComponent } from './components/step-views/dropdown-step-view/dropdown-step.component';
 import { CheckStepComponent } from './components/step-views/check-step-view/check-step.component';
 import { CheckComponent, ConvertLevelToHealthStatusPipe } from './components/step-views/check-step-view/check.component';
+import { ButtonStepComponent } from './components/step-views/button-step-view/button-step.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -190,6 +191,7 @@ import { CheckComponent, ConvertLevelToHealthStatusPipe } from './components/ste
     StepViewsRendererComponent,
     InfoStepComponent,
     DropDownStepComponent,
+    ButtonStepComponent,
     CheckStepComponent,
     CheckComponent,
     ConvertLevelToHealthStatusPipe,
@@ -220,6 +222,7 @@ import { CheckComponent, ConvertLevelToHealthStatusPipe } from './components/ste
     StepViewsRendererComponent,
     InfoStepComponent,
     DropDownStepComponent,
+    ButtonStepComponent,
     CheckStepComponent,
     CheckComponent,
     ConvertLevelToHealthStatusPipe,

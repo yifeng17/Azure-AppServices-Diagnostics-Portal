@@ -1,8 +1,8 @@
 import { DropdownStepView, InfoStepView, StepFlow, StepFlowManager, CheckStepView, StepViewContainer, InputStepView, PromiseCompletionSource, TelemetryService } from 'diagnostic-data';
 export class SubnetDeletionWordings {
     constructor() {
-        this.SubnetIsLocked = {
-            Get(locks, lockUri) {
+        this.subnetIsLocked = {
+            get(locks, lockUri) {
                 return new InfoStepView({
                     infoType: 1,
                     title: "Recommendations: remove the lock",
@@ -12,8 +12,8 @@ export class SubnetDeletionWordings {
             }
         }
 
-        this.SubnetIsNotUsedByAppService = {
-            Get() {
+        this.subnetIsNotUsedByAppService = {
+            get() {
                 return new InfoStepView({
                     infoType: 1,
                     title: "Subnet is used by other Azure service",
@@ -22,8 +22,8 @@ export class SubnetDeletionWordings {
             }
         }
 
-        this.SubnetIsNotUsed = {
-            Get() {
+        this.subnetIsNotUsed = {
+            get() {
                 return new InfoStepView({
                     infoType: 1,
                     title: "No problem detected",
@@ -32,8 +32,8 @@ export class SubnetDeletionWordings {
             }
         }
 
-        this.SubnetIsInUse = {
-            Get(apps) {
+        this.subnetIsInUse = {
+            get(apps) {
                 return new InfoStepView({
                     infoType: 1,
                     title: "Subnet is in use",
@@ -43,30 +43,36 @@ export class SubnetDeletionWordings {
             }
         }
 
-        this.NoPermission = {
-            Get(uri) {
-                return new InfoStepView({
+        this.noPermission = {
+            get(uri) {
+                var views = [];
+                views.push(new CheckStepView({
+                    title: `You don't have permission to read serverfarm ${asp}`,
+                    level: 1
+                }));
+                views.push(InfoStepView({
                     infoType: 1,
                     title: "Have no permission",
                     markdown: `Check is terminated because you don't have permission to access **${uri}**. Please grant the permission, refresh the page and run this check again.`
-                });
-            }
-        }
-        
-        this.OrphanSalDetected = {
-            Get(uri) {
-                uri = uri.replace("/virtualNetworks/", "\r\n/virtualNetworks/");
-                var views = [];
-                views.push(new CheckStepView({
-                    title: `Orphaned SAL detected: ${uri}`,
-                    level: 1
                 }));
                 return views;
             }
         }
 
-        this.NoWriteDeletePermissionOverScope = {
-            Get(uri, writePerm, deletePerm) {
+        this.orphanSalDetected = {
+            get(uri) {
+                uri = uri.replace("/virtualNetworks/", "\r\n/virtualNetworks/");
+                var views = [];
+                views.push(new CheckStepView({
+                    title: `Orphaned SAL detected: ${uri}`,
+                    level: 2
+                }));
+                return views;
+            }
+        }
+
+        this.noWriteDeletePermissionOverScope = {
+            get(uri, writePerm, deletePerm) {
                 var views = [];
                 var perms = [!writePerm ? "write" : null, !deletePerm ? "delete" : null].filter(p => p != null).join(" and "); //write and delete
                 views.push(new CheckStepView({
@@ -83,20 +89,90 @@ export class SubnetDeletionWordings {
             }
         }
 
-        this.ResourcesGoingToCreate = {
-            Get(resources) {
+        this.resourcesGoingToCreate = {
+            get(resources) {
                 var views = [];
                 var table = "|Resource Type|Id|\r\n| --- | --- |";
-                for(var type in resources){
-                    table+=`\r\n|${type}|${resources[type]}|`;
+                for (var type in resources) {
+                    table += `\r\n|${type}|${resources[type]}|`;
                 }
                 views.push(new InfoStepView({
                     infoType: 1,
                     title: "Problem detected",
-                    markdown: `We are going to fix the problem which blocks subnet deletion. During the fixing process, following temporal resources will be created.\r\n\r\n`
-                        + table + "\r\n\r\n"
-                        + "We will delete all these resources after SAL deletion is done. \r\n\r\n"
-                        + "By clicking **Continue** you agree to create these resources temporally."
+                    markdown: `The tool is going to fix the problem which blocks subnet deletion. During the fixing process, following resources will be created.\r\n\r\n` +
+                        table + "\r\n\r\n" +
+                        "The tool will delete all these resources after SAL deletion is done. \r\n\r\n" +
+                        "By clicking **Continue** you agree to create these temporal resources."
+                }));
+                return views;
+            }
+        }
+
+        this.subscriptionNotExist = {
+            get(subscription) {
+                var views = [];
+                views.push(new CheckStepView({
+                    title: `Subscription ${subscription} doesn't exist`,
+                    level: 2
+                }));
+
+                views.push(new InfoStepView({
+                    infoType: 1,
+                    title: "Subscription doesn't exist",
+                    markdown: `Failed to delete orphaned SAL because subscription **${subscription}** no longer exists. \r\n\r\n` +
+                        `Please consider creating a support request.`
+                }));
+                return views;
+            }
+        }
+
+        this.salDeletionResult = {
+            get(salDeletionSucceeded, resourceDeletionResult) {
+                var views = [];
+                var resourceDeletionSucceeded = Object.values(resourceDeletionResult).every(i => i == true);
+                var markdown = "";
+
+                if (salDeletionSucceeded) {
+                    views.push(new CheckStepView({
+                        title: "Successfully removed orphaned SAL",
+                        level: 0
+                    }));
+
+                    markdown += "Successfully removed orphaned SAL, please hit refresh button and run the checks again.\r\n\r\n";
+                } else {
+                    views.push(new CheckStepView({
+                        title: "Failed to remove orphaned SAL",
+                        level: 2
+                    }));
+
+                    markdown += "Failed to remove orphaned SAL, please consider creating a support request.\r\n\r\n";
+                }
+
+                var table = "|Resource Id|Deletion|\r\n| --- | --- |";
+                for (var resourceId in resourceDeletionResult) {
+                    table += `\r\n|${resourceId}|${resourceDeletionResult[resourceId] ? `<span style="color:green"> **success** </span>` : ` <span style="color:red"> **fail** </span>`}|`;
+                }
+
+                if(resourceDeletionSucceeded){
+                    views.push(new CheckStepView({
+                        title: "Successfully cleaned up all temporal resources.",
+                        level: 0
+                    }));
+                    markdown += "Successfully cleaned up all temporal resources.\r\n\r\n"
+                        + table + "\r\n\r\n";
+                }else{
+                    views.push(new CheckStepView({
+                        title: "Failed to clean up some temporal resource.",
+                        level: 2
+                    }));
+                    markdown += "Failed to clean up some temporal resource.\r\n\r\n"
+                        + table + "\r\n\r\nClick **Retry** to try again or try deleting them manually.";
+                }
+
+                views.push(new InfoStepView({
+                    infoType: 1,
+                    title: "Result",
+                    markdown: markdown
                 }));
                 return views;
             }

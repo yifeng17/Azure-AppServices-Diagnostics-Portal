@@ -13,7 +13,8 @@ export enum StepViewType {
     dropdown,
     check,
     input,
-    info
+    info,
+    button
 }
 
 // for angular component variable binding
@@ -67,6 +68,17 @@ export class DropdownStepView extends StepView {
         this.expandByDefault = view.expandByDefault || false;
         this.onDismiss = view.onDismiss || (() => { });
         this.afterInit = view.afterInit || (() => { });
+    }
+}
+
+export class ButtonStepView extends StepView {
+    public callback: () => Promise<void>;
+    public text:string;
+    constructor(view: ButtonStepView) {
+        super(view);
+        this.type = StepViewType.button;
+        this.callback = view.callback;
+        this.text = view.text;
     }
 }
 

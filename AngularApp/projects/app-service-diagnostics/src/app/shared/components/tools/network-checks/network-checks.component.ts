@@ -3,7 +3,7 @@ import { Site, SiteInfoMetaData } from '../../../models/site';
 import { SiteService } from '../../../services/site.service';
 import { ArmService } from '../../../services/arm.service';
 
-import { DropdownStepView, InfoStepView, StepFlow, StepFlowManager, CheckStepView, StepViewContainer, InputStepView, PromiseCompletionSource, TelemetryService } from 'diagnostic-data';
+import { DropdownStepView, InfoStepView, StepFlow, StepFlowManager, CheckStepView, StepViewContainer, InputStepView, ButtonStepView, PromiseCompletionSource, TelemetryService } from 'diagnostic-data';
 
 import { DiagProvider, OutboundType } from './diag-provider';
 import { Globals } from 'projects/app-service-diagnostics/src/app/globals';
@@ -84,7 +84,7 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
             this.stepFlowManager = new StepFlowManager(this.stepViews, _telemetryService, siteInfo.resourceUri);
             this.siteInfo = { ...this._siteService.currentSiteMetaData.value, ...this._siteService.currentSite.value, fullSiteName };
 
-            this.diagProvider = new DiagProvider(this.siteInfo, _armService, _siteService, _portalService.shellSrc);
+            this.diagProvider = new DiagProvider(this.siteInfo, _armService, _siteService, _portalService.shellSrc, _globals);
             this.loadFlowsAsync().catch(e => {
                 throw e;
             });
@@ -205,7 +205,7 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
     }
 
     loadClassesToGlobalContext() {
-        var globalClasses = { DropdownStepView, CheckStepView, InputStepView, InfoStepView, PromiseCompletionSource };
+        var globalClasses = { DropdownStepView, CheckStepView, InputStepView, InfoStepView, ButtonStepView, PromiseCompletionSource };
         Object.keys(globalClasses).forEach(key => window[key] = globalClasses[key]);
     }
 }

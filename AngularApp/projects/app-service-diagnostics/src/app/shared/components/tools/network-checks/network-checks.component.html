@@ -8,6 +8,7 @@
                 <check-step *ngSwitchCase="1" [viewModel]="viewModel"></check-step>
                 <input-step *ngSwitchCase="2" [viewModel]="viewModel"></input-step>
                 <info-step *ngSwitchCase="3" [viewModel]="viewModel"></info-step>
+                <button-step *ngSwitchCase="4" [viewModel]="viewModel"></button-step>
             </div>
         </div>
         <div class="loading-spin" *ngIf="stepFlowManager.loadingView && stepFlowManager.loadingView.loadingText != null">

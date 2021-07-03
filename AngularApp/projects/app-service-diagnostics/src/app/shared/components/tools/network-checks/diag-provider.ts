@@ -1,3 +1,4 @@
+import { Globals } from 'projects/app-service-diagnostics/src/app/globals';
 import { ResponseMessageEnvelope } from '../../../models/responsemessageenvelope';
 import { Site, SiteInfoMetaData } from '../../../models/site';
 import { ArmService } from '../../../services/arm.service';
@@ -17,12 +18,14 @@ export class DiagProvider {
     private _siteInfo: SiteInfoMetaData & Site & { fullSiteName: string };
     private _armService: ArmService;
     private _siteService: SiteService;
+    private _globals: Globals;
     public portalDomain: string;
     public scmHostName: string;
-    constructor(siteInfo: SiteInfoMetaData & Site & { fullSiteName: string }, armService: ArmService, siteService: SiteService, portalDomain: string) {
+    constructor(siteInfo: SiteInfoMetaData & Site & { fullSiteName: string }, armService: ArmService, siteService: SiteService, portalDomain: string, globals:Globals) {
         this._siteInfo = siteInfo;
         this._armService = armService;
         this._siteService = siteService;
+        this._globals = globals;
         var scmHostNameState = this._siteInfo.hostNameSslStates.filter(h => h.hostType == 1)[0];
         this.scmHostName = scmHostNameState == null ? null : scmHostNameState.name;
         this.portalDomain = portalDomain;
@@ -60,29 +63,22 @@ export class DiagProvider {
 
     public getArmResourceAsync(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Promise<any> {
         var stack = new Error("replace_placeholder").stack;
-        return this._armService.getArmResource<any>(resourceUri, apiVersion, invalidateCache)
+        return this._armService.requestResourceWithCache<any, any>("GET", resourceUri, null, apiVersion, invalidateCache)
             .toPromise()
             .then(t => {
-                t.status = 200;
-                return t;
+                var result = t.body;
+                result.status = t.status;
+                return result;
             })
             .catch(e => {
                 var err = new Error(e);
-                err.stack = stack.replace("replace_placeholder", e);
-                console.log(err);
+                err.stack = stack.replace("replace_placeholder", e.message);
+                this._globals.logDebugMessage(err, e);
 
-                var result = { message: e, status: 0 };
-                if (e.startsWith("Code:AuthorizationFailed")) {
-                    result.status = 401;
-                    return result;
-                } else if (e.startsWith("Code:ResourceNotFound")) {
-                    result.status = 404;
-                    return result;
+                if(e.status != null){
+                    return e;
                 }
-                else {
-                    result.status = -1;
-                    return result;
-                }
+                throw err;
             });
     }
 
@@ -106,8 +102,11 @@ export class DiagProvider {
         return this._armService.requestResource<T, S>(method, resourceUri, body, apiVersion)
             .toPromise()
             .catch(e => {
+                if(e.status != null){
+                    return e;
+                }
                 var err = new Error(e);
-                err.stack = stack.replace("replace_placeholder", e);
+                err.stack = stack.replace("replace_placeholder", e.message);
                 throw err;
             });
     }
@@ -154,7 +153,7 @@ export class DiagProvider {
         var promise = (async () => {
             names = names.map(n => `%${n}%`);
             var echoPromise = this.runKuduCommand(`echo ${names.join(";")}`, undefined, instance).catch(e => {
-                console.log("getEnvironmentVariables failed", e);
+                this._globals.logDebugMessage("getEnvironmentVariables failed", e);
                 e.message = "getEnvironmentVariablesAsync failed:" + e.message;
                 throw e;
             });
@@ -174,7 +173,7 @@ export class DiagProvider {
         var stack = new Error("replace_placeholder").stack;
         var promise = (async () => {
             var pingPromise = this.runKuduCommand(`tcpping -n ${count} -w ${timeout} ${hostname}:${port}`, undefined, instance).catch(e => {
-                console.log("tcpping failed", e);
+                this._globals.logDebugMessage("tcpping failed", e);
                 return null;
             });
             var pingResult = await pingPromise;
@@ -247,7 +246,7 @@ export class DiagProvider {
             await Promise.all([nameResolverPromise.catch(e => e), pingPromise.catch(e => e)]);
             var nameResovlerResult = await nameResolverPromise;
             var pingResult = await (pingPromise.catch(e => null));
-            console.log(nameResovlerResult, pingResult);
+            this._globals.logDebugMessage(nameResovlerResult, pingResult);
 
 
             var connectionStatus: ConnectionCheckStatus;
