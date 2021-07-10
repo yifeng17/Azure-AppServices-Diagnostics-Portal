@@ -82,7 +82,7 @@ export class SupportTopicService {
                             detectorPath = `/detectors/${matchingDetector.id}`;
                         }
                     }
-                    else if (this.supportTopicConfig.hasOwnProperty(this.pesId) && this.supportTopicConfig[this.pesId].findIndex(spId => spId === supportTopicId) >= 0) {
+                    else {
                         detectorPath = `/analysis/searchResultsAnalysis/search`;
                     }
                 }
