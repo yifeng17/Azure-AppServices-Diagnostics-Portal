@@ -19,6 +19,7 @@ export class DiagProvider {
     private _armService: ArmService;
     private _siteService: SiteService;
     private _globals: Globals;
+    private _dict: Map<string, any>;
     public portalDomain: string;
     public scmHostName: string;
     constructor(siteInfo: SiteInfoMetaData & Site & { fullSiteName: string }, armService: ArmService, siteService: SiteService, portalDomain: string, globals:Globals) {
@@ -26,6 +27,7 @@ export class DiagProvider {
         this._armService = armService;
         this._siteService = siteService;
         this._globals = globals;
+        this._dict = new Map<string, any>();
         var scmHostNameState = this._siteInfo.hostNameSslStates.filter(h => h.hostType == 1)[0];
         this.scmHostName = scmHostNameState == null ? null : scmHostNameState.name;
         this.portalDomain = portalDomain;
@@ -63,7 +65,11 @@ export class DiagProvider {
 
     public getArmResourceAsync(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Promise<any> {
         var stack = new Error("replace_placeholder").stack;
-        return this._armService.requestResourceWithCache<any, any>("GET", resourceUri, null, apiVersion, invalidateCache)
+        var key = "GET;"+resourceUri+";"+apiVersion;
+        if(!invalidateCache && this._dict.has(key)){
+            return this._dict.get(key);
+        }
+        var result = this._armService.requestResource<any, any>("GET", resourceUri, null, apiVersion)
             .toPromise()
             .then(t => {
                 var result = t.body;
@@ -80,6 +86,8 @@ export class DiagProvider {
                 }
                 throw err;
             });
+        this._dict.set(key, result);
+        return result;
     }
 
     public postResourceAsync<T, S>(resourceUri: string, body?: S, apiVersion?: string, invalidateCache: boolean = false, appendBodyToCacheKey: boolean = false): Promise<boolean | {} | ResponseMessageEnvelope<T>> {

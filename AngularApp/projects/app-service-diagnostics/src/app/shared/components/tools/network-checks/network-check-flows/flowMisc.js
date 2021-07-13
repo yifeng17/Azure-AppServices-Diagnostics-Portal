@@ -304,9 +304,20 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
                     return { checks, isContinue, subnetData };
                 }
                 else if (vnetData.status == 404) {
-                    var resourceNotFound = `Virtual Network ${vnetResourceId.split("/virtualNetworks/")[1]}`;
-                    var viewResourceNotFound = showResourceNotFoundStatus(resourceNotFound);
-                    checks = checks.concat(viewResourceNotFound);
+                    var resource = `Virtual Network ${vnetResourceId.split("/virtualNetworks/")[1]}`;
+                    var views = [
+                        new CheckStepView({
+                            title: `${resource} does not exist`,
+                            level: 2
+                        }),
+                        new InfoStepView({
+                            infoType: 1,
+                            title: `Issue found: ${resource} does not exist`,
+                            markdown: `The app is integrated with a nonexistent VNet **${vnetResourceId}**. \r\n\r\n` +
+                                `Please re-configure the VNet integration with a valid VNet.`
+                        }),
+                    ];                
+                    checks = checks.concat(views);
                     var isContinue = false;
                     return { checks, isContinue, subnetData };
                 }

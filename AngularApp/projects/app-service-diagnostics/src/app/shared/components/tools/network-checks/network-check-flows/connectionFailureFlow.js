@@ -127,6 +127,7 @@ async function runConnectivityCheck(hostname, port, dnsServers, diagProvider, le
         markdown = "Connectivity test failed at TCP level. " +
             "This means the endpoint was not reachable in Transportation Layer. Possible reasons can be: \r\n\r\n" +
             "-  The endpoint does not exist, please double check the hostname:port or ip:port was correctly set. \r\n\r\n" +
+            "-  If the target service is an Azure resource with Private Endpoint enabled, please check its DNS zone configuration to make sure the hostname is resolved to the correct IP address. \r\n\r\n" +
             "-  The endpoint is not reachable from the VNet, please double check if the endpoint server is correctly configured. \r\n\r\n" +
             "-  There is a TCP level firewall or a Network Security Group Rule blocking the traffic from this app. Please check your firewall or NSG rules if there are any. \r\n\r\n" +
             "-  WEBSITE_ALWAYS_FALLBACK_TO_PUBLIC_DNS setting is not supported by this connectivity check yet, if custom DNS server fails to resolve the hostname, the check will fail.\r\n\r\n" +
