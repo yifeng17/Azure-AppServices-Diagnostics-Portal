@@ -22,13 +22,13 @@ export class DataTableV4Component extends DataRenderBaseComponent implements Aft
     if (this.renderingProperties.columnOptions && this.renderingProperties.columnOptions.length > 0) {
       this.renderingProperties.columnOptions.forEach((option) => {
         if (this.validateFilterOption(option)) {
-          this.tableFilters.push({ columnName: option.name, selectionOption: option.selectionOption });
+          this.tableFilters.push({ name: option.name, selectionOption: option.selectionOption, defaultSelection: option.defaultSelection });
         }
       });
+    }
 
-      for (const filter of this.tableFilters) {
-        this.filtersMap.set(filter.columnName, new Set<string>());
-      }
+    for (const filter of this.tableFilters) {
+      this.filtersMap.set(filter.name, new Set<string>());
     }
 
     this.createFabricDataTableObjects();
@@ -68,6 +68,10 @@ export class DataTableV4Component extends DataRenderBaseComponent implements Aft
     if (this.rowsClone.length === 0) {
       this.fabDetailsList.renderDetailsFooter = this.emptyTableFooter
     }
+
+    if (this.renderingProperties.searchPlaceholder && this.renderingProperties.searchPlaceholder.length > 0) {
+      this.searchPlaceholder = this.renderingProperties.searchPlaceholder;
+    }
   }
 
 
@@ -93,7 +97,7 @@ export class DataTableV4Component extends DataRenderBaseComponent implements Aft
   columns: IColumn[] = [];
   allowColumnSearch: boolean = false;
   searchTimeout: any;
-  searchAriaLabel = "Search by keywords";
+  searchPlaceholder = "Search by keywords";
   heightThreshold = window.innerHeight * 0.5;
   tableFilters: TableFilter[] = [];
   searchValue: string = "";
@@ -135,7 +139,8 @@ export class DataTableV4Component extends DataRenderBaseComponent implements Aft
         rowObject[columnName] = row[i];
 
         if (this.filtersMap.has(columnName)) {
-          this.filtersMap.get(columnName).add(row[i]);
+          const value = `${row[i]}`;
+          this.filtersMap.get(columnName).add(value);
         }
       }
 
@@ -240,7 +245,8 @@ export class DataTableV4Component extends DataRenderBaseComponent implements Aft
     //Only if filterSelectionMap has the column name and value for the cell value does not include in the set, return false
     const keys = Array.from(this.filterSelectionMap.keys());
     for (let key of keys) {
-      if (row[key] !== undefined && !this.filterSelectionMap.get(key).has(row[key])) return false;
+      const value = row[key];
+      if (value !== undefined && !this.filterSelectionMap.get(key).has(`${value}`)) return false;
     }
     return true;
   }
@@ -270,12 +276,13 @@ export class DataTableV4Component extends DataRenderBaseComponent implements Aft
     return width;
   }
 
+  //Return true only if table is not empty and has column for this filter with same name
   private validateFilterOption(option: TableColumnOption): boolean {
     if (option.selectionOption === undefined || option.selectionOption === TableFilterSelectionOption.None) {
       return false;
     }
     const columns = this.diagnosticData.table.columns;
-    return columns.findIndex(col => col.columnName === option.name) > -1;
+    return columns.findIndex(col => col.columnName === option.name) > -1 && this.diagnosticData.table.rows.length > 0;
   }
 
   isMarkdown(s: any) {

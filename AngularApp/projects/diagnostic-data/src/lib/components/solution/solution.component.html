@@ -16,11 +16,11 @@
       </div>
 
       <span class="ml-3">
-        {{actionStatus}}
+        <span *ngIf="showCompletionConfirmation()">{{actionStatus}}</span>
         <span *ngIf="actionStatus === 'Running...'">
           <i class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true"></i>
         </span>
-        <span *ngIf="actionStatus === confirmationMessage">
+        <span *ngIf="actionStatus === confirmationMessage && showCompletionConfirmation()">
           <i class="fa fa-check-circle" aria-hidden="true"></i>
         </span>
       </span>

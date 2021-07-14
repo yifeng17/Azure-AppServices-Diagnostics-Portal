@@ -75,6 +75,10 @@ export class SolutionComponent extends DataRenderBaseComponent {
         return ActionType.Markdown;
     }
 
+    public showCompletionConfirmation():boolean {
+        return this.solution.Action!= ActionType.GoToBlade && this.solution.Action!= ActionType.OpenTab;
+    }
+
     prepareAction() {
         let actionOptions = {};
 
@@ -109,7 +113,7 @@ export class SolutionComponent extends DataRenderBaseComponent {
         let detectorLink = UriUtilities.BuildDetectorLink(this.solution.ResourceUri, this.solution.DetectorId);
         let detectorLinkMarkdown = `Go to [App Service Diagnostics](${detectorLink})`;
 
-        if (markdownBuilder.toLowerCase().includes("{detectorlink}")) {
+        if (markdownBuilder && markdownBuilder.toLowerCase().includes("{detectorlink}")) {
             markdownBuilder = markdownBuilder.replace(/{detectorlink}/gi, detectorLink);
         } else if (!markdownBuilder.includes(detectorLinkMarkdown)) {
             markdownBuilder = markdownBuilder + "\n\n" + detectorLinkMarkdown;
