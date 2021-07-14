@@ -370,7 +370,7 @@ export class WebSearchComponent extends DataRenderBaseComponent implements OnIni
                                                          );
         checkStatusTask.subscribe((status) => {
                 this.deepSearchEnabled = status;
-                if (this.deepSearchEnabled) {
+                if (!this.isPublic && this.deepSearchEnabled) {
                     this.numArticlesExpanded = 2;
                 }
             },
