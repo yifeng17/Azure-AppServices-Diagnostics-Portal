@@ -230,6 +230,8 @@ export class StepFlowManager {
         this._stepViewQueue.length = idx + 1;
         if (this._stepViewQueueMap[idx] != null) {
             this.stepViews.length = this._stepViewQueueMap[idx];
+        }else{
+            this.stepViews.length = 0;
         }
         this._stepViewQueue.push(new PromiseCompletionSource<StepView[]>());
         this._execute(idx + 1);

@@ -34,7 +34,7 @@ abstract class NetworkCheckFlow {
 export class NetworkCheckComponent implements OnInit, AfterViewInit {
 
     @ViewChild('networkCheckingTool', { static: false }) networkCheckingToolDiv: any;
-    title: string = 'Network/Connectivity Troubleshooter (Preview)';
+    title: string = 'Network/Connectivity Troubleshooter';
     description: string = 'Check your network connectivity and troubleshoot network issues';
     stepFlowManager: StepFlowManager;
     stepViews: StepViewContainer[] = [];
@@ -46,12 +46,13 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
     debugMode = false;
     isSupportTopic: boolean;
     logEvent: (eventMessage: string, properties: { [name: string]: string }, measurements?: any) => void;
-    width =  'calc(100vw - 298px)';
+    width = 'calc(100vw - 298px)';
     height = 'calc(100vh - 35px)';
     private _feedbackQuestions = "- Is your networking issue resolved? \r\n\r\n\r\n" +
         "- What was the issue?\r\n\r\n\r\n" +
         "- If the issue was not resolved, what can be the reason?\r\n\r\n\r\n" +
         "- What else do you expect from this tool?\r\n";
+    private _isPreview = false;
 
     //checks: any[];
 
@@ -61,7 +62,7 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
             _globals.messagesData.feedbackPanelConfig = feedbackPanelConfig;
             var queryParams = _route.snapshot.queryParams;
             this.isSupportTopic = (queryParams["redirectFrom"] === "supportTopic");
-            if(this.isSupportTopic || queryParams["redirectFrom"] === "referrer"){
+            if (this.isSupportTopic || queryParams["redirectFrom"] === "referrer") {
                 this.width = '100vw';
                 this.height = '100vh';
             }
@@ -85,9 +86,7 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
             this.siteInfo = { ...this._siteService.currentSiteMetaData.value, ...this._siteService.currentSite.value, fullSiteName };
 
             this.diagProvider = new DiagProvider(this.siteInfo, _armService, _siteService, _portalService.shellSrc, _globals);
-            this.loadFlowsAsync().catch(e => {
-                throw e;
-            });
+            this.loadFlowsAsync();
         } catch (error) {
             this.stepFlowManager.errorMsg = "Initialization failure, retry may not help.";
             this.stepFlowManager.errorDetailMarkdown = "```\r\n\r\n" + error.stack + "\r\n\r\n```";
@@ -113,7 +112,9 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
             }
             networkCheckFlows["configFailureFlow"] = configFailureFlow;
             networkCheckFlows["learnMoreFlow"] = learnMoreFlow;
-            networkCheckFlows["subnetDeletionFlow"] = subnetDeletionFlow;
+            if (this._isPreview) {
+                networkCheckFlows["subnetDeletionFlow"] = subnetDeletionFlow;
+            }
 
             var flows = this.processFlows(networkCheckFlows);
             if (this.debugMode) {
@@ -123,8 +124,8 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
                 flows = flows.concat(remoteFlows);
             }
             var mgr = this.stepFlowManager;
-            if (this.isSupportTopic && 
-                this.siteInfo.kind.includes("functionapp") && 
+            if (this.isSupportTopic &&
+                this.siteInfo.kind.includes("functionapp") &&
                 this.siteInfo.sku.toLowerCase() == "dynamic") {
                 mgr.addView(new InfoStepView({
                     id: "NotSupportedCheck",
@@ -152,7 +153,7 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
                     onDismiss: () => {
                         telemetryService.logEvent("NetworkCheck.DropdownDismissed", {});
                     },
-                    afterInit:()=>{
+                    afterInit: () => {
                         telemetryService.logEvent("NetworkCheck.DropdownInitialized", {});
                     }
                 });
@@ -160,7 +161,9 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
             }
         } catch (e) {
             console.log("loadFlowsAsync failed", e);
-            throw e;
+            this.stepFlowManager.errorMsg = "Initialization failure: failed to load flows, retry may not help.";
+            this.stepFlowManager.errorDetailMarkdown = "```\r\n\r\n" + e.stack + "\r\n\r\n```";
+            this._telemetryService.logException(e, "NetworkCheck.Initialization");
         }
     }
 
@@ -202,6 +205,14 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
         };
 
         return stepFlow;
+    }
+
+    onClickPreview() {
+        if (this._isPreview == false) {
+            this._isPreview = true;
+            this.stepFlowManager.reset(-1);
+            this.loadFlowsAsync();
+        }
     }
 
     loadClassesToGlobalContext() {

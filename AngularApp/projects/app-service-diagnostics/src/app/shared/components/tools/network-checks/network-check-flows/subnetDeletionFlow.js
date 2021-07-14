@@ -1,10 +1,10 @@
-import { DropdownStepView, InfoStepView, StepFlow, StepFlowManager, CheckStepView, StepViewContainer, InputStepView, PromiseCompletionSource, TelemetryService } from 'diagnostic-data';
+import { DropdownStepView, InfoStepView, StepFlow, StepFlowManager, CheckStepView, StepViewContainer, InputStepView, ButtonStepView, PromiseCompletionSource, TelemetryService } from 'diagnostic-data';
 import { SubnetDeletionWordings } from './subnetDeletionWordings.js';
 import { addSubnetSelectionDropDownView, getWebAppVnetInfo } from './flowMisc.js';
 import { CommonRecommendations } from './commonRecommendations.js';
 
 export var subnetDeletionFlow = {
-    title: "Subnet/VNet deletion issue",
+    title: "Subnet/VNet deletion issue (Preview)",
     async func(siteInfo, diagProvider, flowMgr) {
         var commonRec = new CommonRecommendations();
         addSubnetSelectionDropDownView(siteInfo, diagProvider, flowMgr, "Please select the subnet you want to delete", async (subnet, vnet) => {
@@ -529,6 +529,7 @@ async function checkWriteDeletePermissionAsync(uri, diagProvider, flowMgr) {
 
 async function getResourceCreationListAsync(asp, diagProvider, flowMgr) {
     var list = { asp: false, resourceGroup: false };
+    var views = [];
     var isContinue = true;
     var resourceGroupUri = `/subscriptions/${asp.subscription}/resourceGroups/${asp.resourceGroup}`;
     var siteId = `/subscriptions/${asp.subscription}/resourceGroups/${asp.resourceGroup}/providers/Microsoft.Web/sites/${asp.name}SalDeletion`;
