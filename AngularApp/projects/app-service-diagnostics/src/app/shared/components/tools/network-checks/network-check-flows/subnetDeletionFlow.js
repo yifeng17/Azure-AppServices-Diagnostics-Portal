@@ -46,6 +46,7 @@ export var subnetDeletionFlow = {
 
                     flowMgr.addView(new ButtonStepView({
                         callback: () => {
+                            flowMgr.logEvent("SubnetDeletion.StartDeletingSal", { sal: orphanedSal.id, asp: asp.id });
                             var deleteSalPromise = deleteSalAsync(orphanedSal, subnet, vnet, result.creationList, diagProvider, flowMgr);
                             flowMgr.addViews(deleteSalPromise);
                         },
@@ -81,7 +82,7 @@ async function checkSubnetLocksAsync(subnet, siteInfo, diagProvider, flowMgr) {
         if (result.status == 200) {
             var locks = result.value;
             var regex = /\/providers\/Microsoft\.Authorization\/locks\/.*/;
-            var subnetLocks = locks.filter(l => subnet.id.includes(l.id.replace(regex, "")));
+            var subnetLocks = locks.filter(l => subnet.id.includes(l.id.replace(regex, "/")));
             if (subnetLocks.length > 0) {
                 views.push(new CheckStepView({
                     title: "Subnet is locked",
@@ -192,28 +193,46 @@ async function deleteSalAsync(sal, subnet, vnet, creationList, diagProvider, flo
     var views = [];
     var deletionResult = null;
     if (aspResult != null && (aspResult.status == 200 || aspResult.status == 404)) {
+        var telemetry = {
+            sal: sal.id,
+            asp: asp,
+            creationList: creationList
+        };
         var success = false;
         try {
+            flowMgr.logEvent("SubnetDeletion.TryCreatingResource", telemetry);
             await tryCreateApp(asp, subnet, vnet, creationList, diagProvider, flowMgr);
+            flowMgr.logEvent("SubnetDeletion.ResourceCreated", telemetry);
             // await tryConnectAndDisconnectSubnet(aspResult, subnet, diagProvider, flowMgr);
         } catch (e) {
             logDebugMessage(e);
         } finally {
             deletionPromise.resolve([]);
             try {
+                var time = 0;
+                flowMgr.logEvent("SubnetDeletion.TryDeletingResource", { ...telemetry, time });
                 deletionResult = await tryDeleteApp(asp, creationList, diagProvider, flowMgr);
                 var deletionSuccess = Object.values(deletionResult).every(i => i == true);
                 if (!deletionSuccess) {
                     retryView = new ButtonStepView({
                         callback: async () => {
+                            ++time;
                             flowMgr.reset(state);
                             var cleanUpPromise = new PromiseCompletionSource();
                             flowMgr.addViews(cleanUpPromise, "Try cleaning up temporal resources, this process can take up to 5 mins, please DO NOT close the browser...");
+                            flowMgr.logEvent("SubnetDeletion.TryDeletingResource", { ...telemetry, time });
                             var deletionResult = await tryDeleteApp(asp, creationList, diagProvider, flowMgr);
                             var salResult = await checkResourceStatusAsync(sal.id, "GET", diagProvider);
                             success = (salResult.status == 404);
                             cleanUpPromise.resolve(wordings.salDeletionResult.get(success, deletionResult));
                             var deletionSuccess = Object.values(deletionResult).every(i => i == true);
+                            flowMgr.logEvent("SubnetDeletion.DeletionComplete", {
+                                ...telemetry,
+                                time,
+                                salDeletionSuccess: success,
+                                resourceDeletionSuccess: deletionSuccess,
+                                deletionResult
+                            });
                             if (!deletionSuccess) {
                                 retryView.hidden = false;
                                 flowMgr.addView(retryView);
@@ -228,6 +247,13 @@ async function deleteSalAsync(sal, subnet, vnet, creationList, diagProvider, flo
         }
         var salResult = await checkResourceStatusAsync(sal.id, "GET", diagProvider);
         success = (salResult.status == 404);
+        flowMgr.logEvent("SubnetDeletion.DeletionComplete", {
+            ...telemetry,
+            time,
+            salDeletionSuccess: success,
+            resourceDeletionSuccess: deletionSuccess,
+            deletionResult
+        });
         views = wordings.salDeletionResult.get(success, deletionResult);
 
     } else {

@@ -1,3 +1,4 @@
+import { DropdownStepView, InfoStepView, StepFlow, StepFlowManager, CheckStepView, StepViewContainer, InputStepView, ButtonStepView, PromiseCompletionSource, TelemetryService } from 'diagnostic-data';
 import {ResourcePermissionCheckManager, checkVnetIntegrationHealth, checkDnsSettingAsync, checkSubnetSizeAsync} from './flowMisc.js';
 import {CommonRecommendations} from './commonRecommendations.js'
 export var connectionFailureFlow = {
