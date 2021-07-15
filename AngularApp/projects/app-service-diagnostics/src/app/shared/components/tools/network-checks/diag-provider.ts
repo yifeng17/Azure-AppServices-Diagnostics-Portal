@@ -1,3 +1,4 @@
+import { Globals } from 'projects/app-service-diagnostics/src/app/globals';
 import { ResponseMessageEnvelope } from '../../../models/responsemessageenvelope';
 import { Site, SiteInfoMetaData } from '../../../models/site';
 import { ArmService } from '../../../services/arm.service';
@@ -17,16 +18,27 @@ export class DiagProvider {
     private _siteInfo: SiteInfoMetaData & Site & { fullSiteName: string };
     private _armService: ArmService;
     private _siteService: SiteService;
+    private _globals: Globals;
+    private _dict: Map<string, any>;
     public portalDomain: string;
     public scmHostName: string;
-    constructor(siteInfo: SiteInfoMetaData & Site & { fullSiteName: string }, armService: ArmService, siteService: SiteService, portalDomain: string) {
+    constructor(siteInfo: SiteInfoMetaData & Site & { fullSiteName: string }, armService: ArmService, siteService: SiteService, portalDomain: string, globals:Globals) {
         this._siteInfo = siteInfo;
         this._armService = armService;
         this._siteService = siteService;
+        this._globals = globals;
+        this._dict = new Map<string, any>();
         var scmHostNameState = this._siteInfo.hostNameSslStates.filter(h => h.hostType == 1)[0];
         this.scmHostName = scmHostNameState == null ? null : scmHostNameState.name;
         this.portalDomain = portalDomain;
         armService.clearCache();
+    }
+
+    public generateResourcePortalLink(resourceUri: string): string {
+        if (resourceUri.startsWith("/")) {
+            resourceUri = resourceUri.substr(1);
+        }
+        return `${this.portalDomain}/#@/resource/${resourceUri}`;
     }
 
     public async getVNetIntegrationStatusAsync() {
@@ -53,30 +65,29 @@ export class DiagProvider {
 
     public getArmResourceAsync(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Promise<any> {
         var stack = new Error("replace_placeholder").stack;
-        return this._armService.getArmResource<any>(resourceUri, apiVersion, invalidateCache)
+        var key = "GET;"+resourceUri+";"+apiVersion;
+        if(!invalidateCache && this._dict.has(key)){
+            return this._dict.get(key);
+        }
+        var result = this._armService.requestResource<any, any>("GET", resourceUri, null, apiVersion)
             .toPromise()
             .then(t => {
-                t.status = 200;
-                return t;
+                var result = t.body;
+                result.status = t.status;
+                return result;
             })
             .catch(e => {
                 var err = new Error(e);
-                err.stack = stack.replace("replace_placeholder", e);
-                console.log(err);
+                err.stack = stack.replace("replace_placeholder", e.message);
+                this._globals.logDebugMessage(err, e);
 
-                var result = { message: e, status: 0 };
-                if (e.startsWith("Code:AuthorizationFailed")) {
-                    result.status = 401;
-                    return result;
-                } else if (e.startsWith("Code:ResourceNotFound") || e.includes("not found")) {
-                    result.status = 404;
-                    return result;
+                if(e.status != null){
+                    return e;
                 }
-                else {
-                    result.status = -1;
-                    return result;
-                }
+                throw err;
             });
+        this._dict.set(key, result);
+        return result;
     }
 
     public postResourceAsync<T, S>(resourceUri: string, body?: S, apiVersion?: string, invalidateCache: boolean = false, appendBodyToCacheKey: boolean = false): Promise<boolean | {} | ResponseMessageEnvelope<T>> {
@@ -94,9 +105,23 @@ export class DiagProvider {
             });
     }
 
+    public requestResourceAsync<T, S>(method:string, resourceUri: string, body?: S, apiVersion?: string): Promise<boolean | {} | ResponseMessageEnvelope<T>> {
+        var stack = new Error("replace_placeholder").stack;
+        return this._armService.requestResource<T, S>(method, resourceUri, body, apiVersion)
+            .toPromise()
+            .catch(e => {
+                if(e.status != null){
+                    return e;
+                }
+                var err = new Error(e);
+                err.stack = stack.replace("replace_placeholder", e.message);
+                throw err;
+            });
+    }
+
     public getKuduApiAsync<T>(uri: string, instance?: string, timeoutInSec: number = 15, scm = false): Promise<T> {
         var stack = new Error("replace_placeholder").stack;
-        var params = [instance == null ? null : `instance=${instance}`, scm ? null : "api-version=2015-08-01"].filter(s => s!=null).join("&");
+        var params = [instance == null ? null : `instance=${instance}`, scm ? null : "api-version=2015-08-01"].filter(s => s != null).join("&");
         var postfix = (params == "" ? "" : `?${params}`);
         var prefix = scm ? this.scmHostName : `management.azure.com/${this._siteInfo.resourceUri}/extensions`;
         return this._armService.get<T>(`https://${prefix}/api/${uri}${postfix}`)
@@ -109,7 +134,7 @@ export class DiagProvider {
     }
 
     public postKuduApiAsync<T, S>(uri: string, body?: S, instance?: string, timeoutInSec: number = 15, scm = false): Promise<boolean | {} | ResponseMessageEnvelope<T>> {
-        var params = [instance == null ? null : `instance=${instance}`, scm ? null : "api-version=2015-08-01"].filter(s => s!=null).join("&");
+        var params = [instance == null ? null : `instance=${instance}`, scm ? null : "api-version=2015-08-01"].filter(s => s != null).join("&");
         var postfix = (params == "" ? "" : `?${params}`);
         var prefix = scm ? this.scmHostName : `management.azure.com/${this._siteInfo.resourceUri}/extensions`;
         var stack = new Error("replace_placeholder").stack;
@@ -136,7 +161,7 @@ export class DiagProvider {
         var promise = (async () => {
             names = names.map(n => `%${n}%`);
             var echoPromise = this.runKuduCommand(`echo ${names.join(";")}`, undefined, instance).catch(e => {
-                console.log("getEnvironmentVariables failed", e);
+                this._globals.logDebugMessage("getEnvironmentVariables failed", e);
                 e.message = "getEnvironmentVariablesAsync failed:" + e.message;
                 throw e;
             });
@@ -156,7 +181,7 @@ export class DiagProvider {
         var stack = new Error("replace_placeholder").stack;
         var promise = (async () => {
             var pingPromise = this.runKuduCommand(`tcpping -n ${count} -w ${timeout} ${hostname}:${port}`, undefined, instance).catch(e => {
-                console.log("tcpping failed", e);
+                this._globals.logDebugMessage("tcpping failed", e);
                 return null;
             });
             var pingResult = await pingPromise;
@@ -229,7 +254,7 @@ export class DiagProvider {
             await Promise.all([nameResolverPromise.catch(e => e), pingPromise.catch(e => e)]);
             var nameResovlerResult = await nameResolverPromise;
             var pingResult = await (pingPromise.catch(e => null));
-            console.log(nameResovlerResult, pingResult);
+            this._globals.logDebugMessage(nameResovlerResult, pingResult);
 
 
             var connectionStatus: ConnectionCheckStatus;
