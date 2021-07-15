@@ -16,8 +16,8 @@ export class SubnetDeletionWordings {
             get() {
                 return new InfoStepView({
                     infoType: 1,
-                    title: "Subnet is used by other Azure service",
-                    markdown: `Subnet is not locked nor used by AppService. But it was used by other Azure service thus it cannot be deleted.`
+                    title: "Subnet is used by another Azure service",
+                    markdown: `Subnet is not locked nor used by AppService. But it was used by another Azure service thus it cannot be deleted.`
                 });
             }
         }
@@ -27,7 +27,7 @@ export class SubnetDeletionWordings {
                 return new InfoStepView({
                     infoType: 1,
                     title: "No problem detected",
-                    markdown: `Subnet is not locked nor used by any Azure service thus it can be safely deleted. If deletion continues to fail, please check with Azure Network team.`
+                    markdown: `Subnet is not locked nor used by any Azure service thus it can be safely deleted. If deletion continues to fail, please contact Azure Network team via support.`
                 });
             }
         }
@@ -64,7 +64,7 @@ export class SubnetDeletionWordings {
                 uri = uri.replace("/virtualNetworks/", "\r\n/virtualNetworks/");
                 var views = [];
                 views.push(new CheckStepView({
-                    title: `Orphaned SAL detected: ${uri}`,
+                    title: `Orphaned Service Association Link detected: ${uri}`,
                     level: 2
                 }));
                 return views;
@@ -83,7 +83,7 @@ export class SubnetDeletionWordings {
                 views.push(new InfoStepView({
                     infoType: 1,
                     title: "Have no permission",
-                    markdown: `Failed to delete orphaned SAL because you don't have ${perms} permission over scope **${uri}**. Please grant the permission and remove the lock if there is any, refresh the page and run this check again.`
+                    markdown: `Failed to delete orphaned Service Association Link because you don't have ${perms} permission over scope **${uri}**. Please grant the permission and remove the lock if there is any, refresh the page and run this check again.`
                 }));
                 return views;
             }
@@ -101,8 +101,8 @@ export class SubnetDeletionWordings {
                     title: "Problem detected",
                     markdown: `The tool is going to fix the problem which blocks subnet deletion. During the fixing process, following resources will be created.\r\n\r\n` +
                         table + "\r\n\r\n" +
-                        "The tool will delete all these resources after SAL deletion is done. \r\n\r\n" +
-                        "By clicking **Continue** you agree to create these temporal resources."
+                        "The tool will delete all these resources after Service Association Link deletion is done. \r\n\r\n" +
+                        "By clicking **Continue** you agree to create these temporary resources."
                 }));
                 return views;
             }
@@ -119,7 +119,7 @@ export class SubnetDeletionWordings {
                 views.push(new InfoStepView({
                     infoType: 1,
                     title: "Subscription doesn't exist",
-                    markdown: `Failed to delete orphaned SAL because subscription **${subscription}** no longer exists. \r\n\r\n` +
+                    markdown: `Failed to delete orphaned Service Association Link because subscription **${subscription}** no longer exists. \r\n\r\n` +
                         `Please consider creating a support request.`
                 }));
                 return views;
@@ -134,18 +134,18 @@ export class SubnetDeletionWordings {
 
                 if (salDeletionSucceeded) {
                     views.push(new CheckStepView({
-                        title: "Successfully removed orphaned SAL",
+                        title: "Successfully removed orphaned Service Association Link",
                         level: 0
                     }));
 
-                    markdown += "Successfully removed orphaned SAL, please hit refresh button and run the checks again.\r\n\r\n";
+                    markdown += "Successfully removed orphaned Service Association Link, please hit refresh button and run the checks again.\r\n\r\n";
                 } else {
                     views.push(new CheckStepView({
-                        title: "Failed to remove orphaned SAL",
+                        title: "Failed to remove orphaned Service Association Link",
                         level: 2
                     }));
 
-                    markdown += "Failed to remove orphaned SAL, please consider creating a support request.\r\n\r\n";
+                    markdown += "Failed to remove orphaned Service Association Link, please consider creating a support request.\r\n\r\n";
                 }
 
                 var table = "|Resource Id|Deletion|\r\n| --- | --- |";
@@ -155,17 +155,17 @@ export class SubnetDeletionWordings {
 
                 if(resourceDeletionSucceeded){
                     views.push(new CheckStepView({
-                        title: "Successfully cleaned up all temporal resources.",
+                        title: "Successfully cleaned up all temporary resources.",
                         level: 0
                     }));
-                    markdown += "Successfully cleaned up all temporal resources.\r\n\r\n"
+                    markdown += "Successfully cleaned up all temporary resources.\r\n\r\n"
                         + table + "\r\n\r\n";
                 }else{
                     views.push(new CheckStepView({
-                        title: "Failed to clean up some temporal resource.",
+                        title: "Failed to clean up some temporary resource.",
                         level: 2
                     }));
-                    markdown += "Failed to clean up some temporal resource.\r\n\r\n"
+                    markdown += "Failed to clean up some temporary resource.\r\n\r\n"
                         + table + "\r\n\r\nClick **Retry** to try again or try deleting them manually.";
                 }
 

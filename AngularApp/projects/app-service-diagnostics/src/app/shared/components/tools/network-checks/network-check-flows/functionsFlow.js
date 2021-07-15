@@ -2,7 +2,7 @@ import { DropdownStepView, InfoStepView, StepFlow, StepFlowManager, CheckStepVie
 import {ResourcePermissionCheckManager, runKuduAccessibleCheck, isVnetIntegratedAsync, checkVnetIntegrationHealth, checkDnsSettingAsync, extractHostPortFromConnectionString, checkSubnetSizeAsync, extractHostPortFromKeyVaultReference} from './flowMisc.js';
 
 export var functionsFlow = {
-    title: "My Function App is not starting or executing or I see connection errors in logs",
+    title: "Connectivity issues",
     async func(siteInfo, diagProvider, flowMgr) {
         // Check that Kudu is accessible
         var isKuduAccessible = true;

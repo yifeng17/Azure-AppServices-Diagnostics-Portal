@@ -23,7 +23,7 @@ export var subnetDeletionFlow = {
                     asp = tryParseAspId(orphanedSal.properties.link);
                 } catch (e) {
                     flowMgr.addView(new CheckStepView({
-                        title: `Failed to delete SAL because SAL object is invalid, please consider creating a support request.`,
+                        title: `Failed to delete Service Association Link because Service Association Link object is invalid, please consider creating a support request.`,
                         level: 2
                     }));
                 }
@@ -112,7 +112,7 @@ async function checkSalAsync(subnet, siteInfo, diagProvider, flowMgr) {
         if (appServiceSals.length > 0) {
             // for now, one subnet only can be integrated by apps in one app service plan
             if (appServiceSals.length > 1) {
-                flowMgr.logException(new Error("unexpected multiple App Service SAL"), "checkSalAsync");
+                flowMgr.logException(new Error("unexpected multiple App Service Service Association Link"), "checkSalAsync");
             }
             var sal = appServiceSals[0];
             var asp = sal.properties.link;
@@ -183,9 +183,9 @@ async function checkSalAsync(subnet, siteInfo, diagProvider, flowMgr) {
 
 async function deleteSalAsync(sal, subnet, vnet, creationList, diagProvider, flowMgr) {
     var deletionPromise = new PromiseCompletionSource();
-    flowMgr.addViews(deletionPromise, "Try deleting the SAL, this process can take up to 5 mins, please DO NOT close the browser...");
+    flowMgr.addViews(deletionPromise, "Try deleting the Service Association Link, this process can take up to 5 mins, please DO NOT close the browser...");
     var cleanUpPromise = new PromiseCompletionSource();
-    var state = flowMgr.addViews(cleanUpPromise, "Try cleaning up temporal resources, this process can take up to 5 mins, please DO NOT close the browser...");
+    var state = flowMgr.addViews(cleanUpPromise, "Try cleaning up temporary resources, this process can take up to 5 mins, please DO NOT close the browser...");
     var retryView = null;
     var asp = sal.properties.link;
     var aspResult = await diagProvider.getArmResourceAsync(asp);
@@ -219,7 +219,7 @@ async function deleteSalAsync(sal, subnet, vnet, creationList, diagProvider, flo
                             ++time;
                             flowMgr.reset(state);
                             var cleanUpPromise = new PromiseCompletionSource();
-                            flowMgr.addViews(cleanUpPromise, "Try cleaning up temporal resources, this process can take up to 5 mins, please DO NOT close the browser...");
+                            flowMgr.addViews(cleanUpPromise, "Try cleaning up temporary resources, this process can take up to 5 mins, please DO NOT close the browser...");
                             flowMgr.logEvent("SubnetDeletion.TryDeletingResource", { ...telemetry, time });
                             var deletionResult = await tryDeleteApp(asp, creationList, diagProvider, flowMgr);
                             var salResult = await checkResourceStatusAsync(sal.id, "GET", diagProvider);
@@ -258,7 +258,7 @@ async function deleteSalAsync(sal, subnet, vnet, creationList, diagProvider, flo
 
     } else {
         views.push(new CheckStepView({
-            title: "Failed to delete SAL, please consider asking for support.",
+            title: "Failed to delete Service Association Link, please consider asking for support.",
             level: 2
         }));
     }
