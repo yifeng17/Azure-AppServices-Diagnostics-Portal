@@ -1,0 +1,51 @@
+<div class="col-md col-ms col-lg" style="padding: 5px 25px;width: 100%;min-height: 70vh;display: inline-block;">
+  <div class="row" name="header">
+    <fab-command-bar [attr.id]="'fab-command-bar-sol-orch'"  contentStyle="border-bottom:1px solid gray;font-weight:12px" contentClass="fab-command-bar-class" >
+      <far-items>
+        <fab-command-bar-item key="sendFeedback" text="Feedback" [iconProps]="{ iconName: 'Emoji2' }"
+          (click)="sendFeedback()"></fab-command-bar-item>
+        <fab-command-bar-item key="custom" text="custom text">
+          <render>
+            <ng-template let-item="item"><detector-control [disablePadding]="true"></detector-control></ng-template>
+          </render>
+        </fab-command-bar-item>
+      </far-items>
+    </fab-command-bar>
+  </div>
+  <div class="row" name="search-bar" style="margin: 20px auto;">
+    <div style="margin: auto 25%;">
+      <fab-search-box id="solOrchSearchBox" type="search" [placeholder]="'Briefly describe the issue'" [value]="searchTerm"
+        [ariaLabel]="inputAriaLabel" (onChange)="updateSearchTerm($event)" (onFocus)="onSearchBoxFocus()">
+      </fab-search-box>
+    </div>
+  </div>
+  <div class="row" name="top-solution">
+    <h3 style="font-size: 16px;font-weight: 700;margin: 2px 10px;">We think we found you a solution!</h3>
+    <p style="margin: 2px 10px;">Customers with similar problems were able to solve it by following these solutions below</p>
+    <div style="width: 60%;margin: 15px 20%;min-width: 300px;background-color: white;">
+      <solution-view-container [solutionTitle]="sampleSolution.Title" [isRecommended]="true" [detector]="'detector'"
+      [isAnalysisView]="false" [isKeystoneDetector]="false">
+      <markdown [data]="sampleSolution.DescriptionMarkdown"></markdown>
+      </solution-view-container>
+    </div>
+    <!--<div style="width: 50%;margin: 15px 25%;min-width: 300px;min-height: 100px;border: 1px solid gray;background-color: white; padding: 0px 10px;">
+      <h3>We found a solution for you</h3>
+      <p>Please go to Diagnose and Solve and debug using the <a href="/appDownAnalysis">Web App Down</a> detector.</p>
+    </div>-->
+  </div>
+  <div class="row" name="documentation-results">
+    <collapsible-list-fabric [collapsed]="true" [title]="'View Documentation and Guides from the Web (' + docs.length + ')'">
+      <collapsible-list-item body *ngFor="let doc of docs;let i =index">
+        <div class="article" (click)="selectResult(doc)" tabindex="0" (keyup.enter)="selectResult(doc)" >
+            <a style="font-weight:600;">{{doc.Title}}
+            <i class="fa fa-external-link"></i>
+            </a>
+            <div class="article-link">{{getLinkText(doc.Url)}}</div>
+            {{doc.Description}}
+        </div>
+      </collapsible-list-item>
+    </collapsible-list-fabric>
+  </div>
+  <div class="row" name="azure-guides"></div>
+  <div class="row" name="detector-results"></div>
+</div>

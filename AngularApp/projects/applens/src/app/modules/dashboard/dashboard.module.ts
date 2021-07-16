@@ -55,6 +55,7 @@ import { SearchService } from './services/search.service';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { ConfigurationComponent } from './configuration/configuration.component';
 import { ApplensDocumentsSearchService } from './services/applens-documents-search.service';
+import {SolutionOrchestratorComponent} from "diagnostic-data";
 
 @Injectable()
 export class InitResolver implements Resolve<Observable<boolean>>{
@@ -104,6 +105,10 @@ export const DashboardModuleRoutes: ModuleWithProviders = RouterModule.forChild(
             {
                 path: 'createGist',
                 component: GistComponent
+            },
+            {
+                path: 'solutionOrchestrator',
+                component: SolutionOrchestratorComponent
             },
             {
                 path: 'gists/:gist',

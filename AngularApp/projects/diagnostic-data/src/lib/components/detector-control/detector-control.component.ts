@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, Pipe, PipeTransform } from '@angular/core';
+import { Component, Inject, OnInit, Pipe, PipeTransform, Input } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
 import { DetectorControlService, DurationSelector } from '../../services/detector-control.service';
@@ -11,6 +11,7 @@ export class DetectorControlComponent implements OnInit {
 
   startTime: string;
   endTime: string;
+  @Input() disablePadding: boolean = false;
 
   isInternal: boolean;
   timeDiffError: string;

@@ -185,3 +185,14 @@ highcharts-chart {
 fab-command-bar .ms-SearchBox {
     border-width: 0px!important;
 }
+
+.fab-command-bar-class {
+  border-bottom: 1px solid rgb(204, 204, 204)!important;
+  font-size: 12px!important;
+  height: 34px;
+}
+
+
+.fab-command-bar-class .ms-CommandBar {
+  height: 33px;
+}
