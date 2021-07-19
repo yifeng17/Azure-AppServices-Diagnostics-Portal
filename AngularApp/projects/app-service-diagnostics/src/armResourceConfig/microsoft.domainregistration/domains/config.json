@@ -1,0 +1,21 @@
+{
+	"homePageText": {
+		"title": "App Service Domains Diagnostics",
+		"description": "Use App Service Domains Diagnostics to investigate how your service is performing, diagnose issues, and discover how to improve its reliability. Select the problem category that best matches the information or tool that you're interested in:",
+		"searchBarPlaceHolder": "Search App Service Domains Diagnostics"
+	},
+	"matchRegEx": "/Microsoft.DomainRegistration/domains/",
+	"searchSuffix": "domains",
+	"azureServiceName": "App Service Domains",
+	"armApiConfig": {
+		"armApiVersion": "2020-06-01"
+	},
+	"isSearchEnabled": true,
+	"keystoneDetectorId": "",
+	"liveChatConfig": {
+		"isApplicableForLiveChat": false,
+		"supportTopicIds": []
+	},
+	"categories": [],
+	"pesId": "16513"
+}
