@@ -3,6 +3,7 @@ import {AdalService} from 'adal-angular4';
 import {IncidentAssistanceService} from '../../services/incident-assistance.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TelemetryService, TelemetryEventNames } from 'diagnostic-data';
+import {PanelType} from "office-ui-fabric-react";
 
 @Component({
   selector: 'incidentvalidation',
@@ -24,6 +25,9 @@ export class IncidentValidationComponent implements OnInit {
   footerMessageType: string = "none";
   userId: string = null;
   solutions: any = null;
+  showSolutions: boolean = false;
+  panelType = Number(String(PanelType.custom));
+  loaderMessage = null;
 
   constructor(private _incidentAssistanceService: IncidentAssistanceService, private _route: ActivatedRoute, private _telemetryService: TelemetryService, private _router: Router, private _adalService: AdalService) {}
 
@@ -53,6 +57,10 @@ export class IncidentValidationComponent implements OnInit {
     else{
       this.alternateContent = "A valid incident id was not provided in the url path.";
     }
+  }
+
+  hideSolutions() {
+    this.showSolutions = false;
   }
 
   refreshButtonStatus() {
@@ -89,14 +97,6 @@ export class IncidentValidationComponent implements OnInit {
     });
   }
 
-  scrollToSolutions() {
-    var elementToScroll = document.querySelector(".main-container");
-        var elementToScrollTo = document.getElementById("update-incident-button") as HTMLElement;
-        if (elementToScroll && elementToScrollTo) {
-            elementToScroll.scrollTop = elementToScrollTo.offsetTop-50;
-        }
-  }
-
   onSubmit() {
     if (!this.validationButtonDisabled){
       var body = {
@@ -105,7 +105,10 @@ export class IncidentValidationComponent implements OnInit {
       };
       this.resetGlobals();
       this.displayLoader = true;
+      this.loaderMessage = "Checking validations";
+      setTimeout(() => {if (this.loaderMessage == "Checking validations") {this.loaderMessage = "Running Diagnostics";}}, 3000);
       this._incidentAssistanceService.validateIncident(body).subscribe(res => {
+        this.loaderMessage = null;
         this.displayLoader = false;
         var result = JSON.parse(res.body);
         if (result.validationStatus) {
@@ -118,7 +121,7 @@ export class IncidentValidationComponent implements OnInit {
           this.incidentInfo.validationResults.forEach(x => {x.validationStatus = true; x.oldValue = x.value;});
           this.refreshButtonStatus();
           if (this.solutions && this.solutions.length>0) {
-            setTimeout(() => {this.scrollToSolutions();}, 300);
+            setTimeout(() => {this.showSolutions = true;}, 300);
           }
         }
         else {
@@ -127,6 +130,7 @@ export class IncidentValidationComponent implements OnInit {
         this._telemetryService.logEvent(TelemetryEventNames.IncidentValidationCheck, {"IncidentId": this.incidentInfo.incidentId, "ValidationStatus": this.incidentValidationStatus.toString(), "Status": "success", userId: this.userId});
       },
       (err) => {
+        this.loaderMessage = null;
         this.displayLoader = false;
         this._telemetryService.logEvent(TelemetryEventNames.IncidentValidationCheck, {"IncidentId": this.incidentInfo.incidentId, "Status": "failed", "ErrorMessage": err.error, userId: this.userId});
         this.footerMessage = `Failed to validate incident. ${err.error}`;
@@ -185,6 +189,7 @@ export class IncidentValidationComponent implements OnInit {
     this.alternateContent = null;
     this.footerMessage = null;
     this.footerMessageType = "none";
+    this.loaderMessage = null;
   }
 }
 
