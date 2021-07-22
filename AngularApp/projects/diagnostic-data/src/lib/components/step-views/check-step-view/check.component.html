@@ -2,8 +2,7 @@
   <div class="status-icon">
       <status-icon [loading]="1" [status]="check.level | convertLevelToHealthStatus"></status-icon>
   </div>
-  <div class="check-title {{bold ? 'bold':''}}">
-    {{check.title}}
+  <div class="check-title {{bold ? 'bold':''}}" [innerHtml]="check.title">
   </div>
   <div class="expand-icon" *ngIf="check.subChecks?.length>0; else elseBlock"> <a tabindex="0" (click)="toggleSubChecks()"> <i class="{{expanded ? 'ib-dchevup' : 'ib-dchevdown'}}"></i> </a></div>
   <ng-template #elseBlock>

@@ -101,7 +101,7 @@ export async function runKuduAccessibleCheck(diagProvider) {
             title: "Kudu is not reachable, diagnostic will be incomplete",
             level: 1
         }));
-        var commonRec = new CommonWordings;
+        var commonRec = new CommonWordings();
 
         views.push(commonRec.kuduNotAccessible.get(`https://${diagProvider.scmHostname}`));
     }
