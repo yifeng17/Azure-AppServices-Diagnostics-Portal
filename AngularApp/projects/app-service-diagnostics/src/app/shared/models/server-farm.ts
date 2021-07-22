@@ -32,10 +32,10 @@ export enum Sku {
     PremiumContainer = 1 << 8, // 100000000
     ElasticPremium = 1 << 9, // 1000000000
     Paid = 1016,         // 1111111000
-    Dedicated = 507,    // 111111011 Not Dynamic or ElasticPremium
+    NotDynamicAndElasticPremium = 507,    // 111111011 Not Dynamic or ElasticPremium
     NotDynamic = 1019,   // 1111111011
-    PaidDedicated =  504, // 111111000
-    All = (1 << 10) - 1           // 1111111111 0111111011 => 111111011
+    PaidDedicated =  504, // 111111000: Paid & Dedicated
+    All = (1 << 10) - 1           // 1111111111
 }
 
 export enum WorkerSize {
