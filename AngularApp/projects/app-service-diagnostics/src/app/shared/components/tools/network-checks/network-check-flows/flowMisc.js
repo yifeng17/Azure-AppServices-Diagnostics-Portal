@@ -1,9 +1,23 @@
-import { DropdownStepView, InfoStepView, StepFlow, StepFlowManager, CheckStepView, StepViewContainer,InputStepView, PromiseCompletionSource, TelemetryService } from 'diagnostic-data';
-import {CommonRecommendations} from './commonRecommendations.js'
+"use strict";
+import { DropdownStepView, InfoStepView, StepFlow, StepFlowManager, CheckStepView, StepViewContainer, InputStepView, PromiseCompletionSource, TelemetryService } from 'diagnostic-data';
+import { CommonWordings } from './commonWordings.js'
+import { VnetIntegrationWordings } from './vnetInegrationWordings.js';
+import { VnetIntegrationConfigChecker } from './vnetIntegrationConfigChecker.js'
 
+export class TextReference {
+    constructor(s = "") {
+        this.text = s;
+    }
+    set(s) {
+        this.text = s;
+    }
+    toString() {
+        return this.text;
+    }
+}
 
-export class ResourcePermissionCheckManager{
-    constructor(){
+export class ResourcePermissionCheckManager {
+    constructor() {
         this.hidden = true;
         this.checkView = new CheckStepView({
             title: "Access was restricted to some resources, check results will be incomplete",
@@ -13,12 +27,12 @@ export class ResourcePermissionCheckManager{
         });
     }
 
-    addResource(uri){
-        if(this.hidden){
+    addResource(uri) {
+        if (this.hidden) {
             this.hidden = false;
             this.checkView.hidden = false;
         }
-        this.checkView.subChecks.push({title:`Have no access to ${uri}`, level:3});
+        this.checkView.subChecks.push({ title: `Have no access to ${uri}`, level: 3 });
     }
 }
 
@@ -87,9 +101,9 @@ export async function runKuduAccessibleCheck(diagProvider) {
             title: "Kudu is not reachable, diagnostic will be incomplete",
             level: 1
         }));
-        var commonRec = new CommonRecommendations;
+        var commonRec = new CommonWordings;
 
-        views.push(commonRec.KuduNotAccessible.Get(`https://${diagProvider.scmHostname}`));
+        views.push(commonRec.kuduNotAccessible.get(`https://${diagProvider.scmHostname}`));
     }
     return views;
 }
@@ -153,8 +167,175 @@ export async function isVnetIntegratedAsync(siteInfo, diagProvider) {
             }
         }
     }
-    
+
     return false;
+}
+
+export async function checkVnetIntegrationV2Async(siteInfo, diagProvider, flowMgr, isKuduAccessible) {
+    var views = [], isContinue = true;
+    var subChecks = [];
+    var vnetChecker = new VnetIntegrationConfigChecker(siteInfo, diagProvider);
+    var integrationCheckStatus = null; // 0 - healthy, 1 - needs attention, 2 - unhealthy
+    var vnetIntegrationType = await vnetChecker.getVnetIntegrationTypeAsync();
+    var wordings = new VnetIntegrationWordings();
+    if (vnetIntegrationType == "swift") {
+        subChecks.push(wordings.swiftConfigured.get());
+        var subnetResourceId = await vnetChecker.getSwiftSubnetIdAsync();
+        var subnetDataPromise = diagProvider.getArmResourceAsync(subnetResourceId, vnetChecker.apiVersion);
+        var aspSitesDataPromise = diagProvider.getArmResourceAsync(vnetChecker.serverFarmId + "/sites", vnetChecker.apiVersion);
+        var instanceDataPromise = diagProvider.getArmResourceAsync(vnetChecker.siteArmId + "/instances", vnetChecker.apiVersion);
+
+        if (subnetResourceId != null) {
+            if (!vnetChecker.isSubnetResourceIdFormatValid(subnetResourceId)) {
+                views.push(wordings.swiftInvalidSubnet.get(subChecks))
+                isContinue = false;
+            }
+
+            if (isContinue) {
+                if (!(await vnetChecker.isSwiftSupportedAsync())) {
+                    views.push(wordings.wrongArmTemplate.get(subChecks));
+                    isContinue = false;
+                }
+            }
+            if (isContinue) {
+                var subnetSubChecks = [];
+                var subnetStatus = null; // 0 - healthy, 1 - needs attention, 2 - unhealthy
+                var subnetData = await subnetDataPromise;
+                if (subnetData.status == 200) {
+                    subnetStatus = 0;
+                    subnetSubChecks.push(wordings.subnetExists.get(subnetResourceId));
+                    if (vnetChecker.subnetSalExists(subnetData)) {
+                        if (vnetChecker.isSubnetSalOwnerCorrect(subnetData, vnetChecker.serverFarmId)) {
+                            subnetSubChecks.push(wordings.subnetSalValid.get());
+                        } else {
+                            subnetSubChecks.push(wordings.subnetWrongSalOwner.get());
+                            subnetStatus = 1;
+                        }
+                    } else {
+                        subnetSubChecks.push(wordings.subnetSalMissing.get());
+                        subnetStatus = 2;
+                        isContinue = false;
+                    }
+
+                    if (vnetChecker.isSubnetDelegated(subnetData)) {
+                        subnetSubChecks.push(wordings.subnetDelegationResult.get(true));
+                    } else {
+                        subnetSubChecks.push(wordings.subnetDelegationResult.get(false));
+                        subnetStatus = 2;
+                        isContinue = false;
+                    }
+
+                } else {
+                    if (subnetData.status == 401) {
+                        views.push(wordings.noAccessToResource.get(subnetResourceId, "subnet", diagProvider.portalDomain));
+                    } else if (subnetData.status == 404) {
+                        views.push(wordings.subnetNotFound.get(subnetSubChecks, subnetResourceId));
+                        subnetStatus = 2;
+                    } else {
+                        throw new Error(`Unexpected subnet data status:${subnetData.status}`);
+                    }
+                    isContinue = false;
+                }
+            }
+
+            if (subnetStatus != null) {
+                var subnetCheckTitle = null;
+                if (subnetStatus == 0) {
+                    subnetCheckTitle = "Subnet configuration is healthy";
+                } else if (subnetStatus == 1) {
+                    subnetCheckTitle = "Subnet configuration needs attention";
+                } else {
+                    subnetCheckTitle = "Subnet configuration is unhealthy";
+                }
+                var subnetCheck = new CheckStepView({
+                    title: subnetCheckTitle,
+                    level: subnetStatus,
+                    subChecks: subnetSubChecks
+                });
+                subChecks.push(subnetCheck);
+            }
+
+            if (isContinue) {
+                var aspSitesData = await aspSitesDataPromise;
+                if (aspSitesData.status == 200) {
+                    var subnets = vnetChecker.getAspConnectedSubnetsAsync(aspSitesData);
+                    if (subnets.length == 1) {
+                        subChecks.push(wordings.swiftAspUnderLimitation.get(subnets, 1));
+                    } else if (subnets.length > 1) {
+                        views.push(wordings.swiftAspExceedsLimitation.get(subnets, 1, vnetChecker.serverFarmId, subChecks));
+                    }
+                } else {
+                    if (aspSitesData.status == 401) {
+                        // skip asp check
+                    } else {
+                        diagProvider.logException(new Error(`Unexpected aspSitesData status: ${aspSitesData.status}`));
+                    }
+                }
+            }
+
+            if (isContinue) {
+                if (isKuduAccessible) {
+                    var instanceData = await instanceDataPromise;
+                    if (instanceData.status == 200) {
+                        var ips = await vnetChecker.getInstancesPrivateIpAsync(instanceData);
+                        if (ips != null) {
+                            var total = ips.length;
+                            var notAllocated = ips.filter(ip => ip == null).length;
+                            if (notAllocated > 0) {
+                                views.push(wordings.swiftPrivateIpNotAssigned.get(notAllocated, subchecks));
+                            } else {
+                                subChecks.push(wordings.swiftPrivateIpAssigned.get(total));
+                            }
+                        } else {
+                            // failed to get instance private ip
+                        }
+                    } else {
+                        diagProvider.logException(new Error(`Unexpected instanceData status: ${instanceData.status}`));
+                    }
+                } else {
+                    //NoKuduAccess, skip
+                }
+            }
+            integrationCheckStatus = flowMgr.getSubCheckLevel(subChecks);
+            var integrationCheck = wordings.vnetIntegrationResult.get(integrationCheckStatus, subChecks);
+            views = [integrationCheck, ...views];
+
+        } else {
+            //invalid subnetResourceId
+            diagProvider.logException(new Error(`invalid subnetResourceId ${subnetResourceId}`));
+        }
+    } else if (vnetIntegrationType == "gateway") {
+        subChecks.push(wordings.gatewayConfigured.get());
+        integrationCheckStatus = 0;
+        var siteGWVnetInfo = await vnetChecker.getGatewayVnetInfoAsync();
+        if (siteGWVnetInfo[0]["properties"] != null && siteGWVnetInfo[0]["properties"]["vnetResourceId"] != null) {
+            var vnetResourceId = siteGWVnetInfo[0]["properties"]["vnetResourceId"];
+            var vnetData = await diagProvider.getArmResourceAsync(vnetResourceId, vnetChecker.apiVersion);
+            if (vnetData.status == 200) {
+                subChecks.push(wordings.gatewayVnetValid.get(vnetResourceId));
+            } else if (vnetData.status == 401) {
+                views.push(wordings.noAccessToResource.get(vnetResourceId, "vnet", diagProvider.portalDomain));
+                isContinue = false;
+            } else if (vnetData.status == 404) {
+                views.push(wordings.gatewayVnetNotFound.get(subChecks, vnetResourceId));
+                integrationCheckStatus = 2;
+                isContinue = false;
+            } else {
+                diagProvider.logException(new Error(`Unknown vnetData status ${vnetData.status}`));
+            }
+        } else {
+            diagProvider.logException(new Error(`invalid siteGWVnetInfo ${JSON.stringify(siteGWVnetInfo)}`));
+        }
+        var integrationCheck = wordings.vnetIntegrationResult.get(integrationCheckStatus, subChecks);
+        views = [integrationCheck, ...views];
+
+    } else if (vnetIntegrationType == "none") {
+        views = wordings.noVnetIntegration.get();
+    } else {
+        throw new Error("Unexpected null result returned from vnetChecker.getVnetIntegrationTypeAsync()");
+    }
+
+    return { views, isContinue };
 }
 
 async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessiblePromise, permMgr) {
@@ -317,7 +498,7 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
                             markdown: `The app is integrated with a nonexistent VNet **${vnetResourceId}**. \r\n\r\n` +
                                 `Please re-configure the VNet integration with a valid VNet.`
                         }),
-                    ];                
+                    ];
                     checks = checks.concat(views);
                     var isContinue = false;
                     return { checks, isContinue, subnetData };
@@ -733,11 +914,11 @@ async function checkASPConnectedToMultipleSubnets(diagProvider, aspSitesObj, thi
     if (aspSubnetArray.length > 0) {
         var uniqueAspSubnets = aspSubnetArray.filter((e, i) => aspSubnetArray.indexOf(e) === i)
 
-        msg = `App: <b>${thisSite}</b> is hosted on App Service Plan: <b>${serverFarmName}</b>. `;
+        var msg = `App: <b>${thisSite}</b> is hosted on App Service Plan: <b>${serverFarmName}</b>. `;
         msg += `This App Service Plan is connected to <b>${uniqueAspSubnets.length}</b> subnet(s).<br/>`;
 
         if (uniqueAspSubnets.length > 1) {
-            subnetValidationTable = "<table><tr><th>Subnet</th><th>Subnet delegated App Service Plan</th><th>Is valid delegation?</th></tr>";
+            var subnetValidationTable = "<table><tr><th>Subnet</th><th>Subnet delegated App Service Plan</th><th>Is valid delegation?</th></tr>";
 
             for (var i = 0; i < uniqueAspSubnets.length; i++) {
                 var subnetResourceId = uniqueAspSubnets[i];
@@ -1098,7 +1279,7 @@ export function extractHostPortFromConnectionString(connectionString) {
 
     var connectionStringTokens = connectionString.split(";");
     var connectionStringKVMap = connectionStringTokens.reduce(
-        (dict, element) =>  {
+        (dict, element) => {
             var kvpair = element.split("=");
             if (kvpair.length == 2) {
                 (dict[kvpair[0]] = kvpair[1])
@@ -1107,13 +1288,12 @@ export function extractHostPortFromConnectionString(connectionString) {
         },
         {}
     );
-    
-    if (connectionStringKVMap["AccountName"] != undefined)
-    {
+
+    if (connectionStringKVMap["AccountName"] != undefined) {
         // Storage account: DefaultEndpointsProtocol=https;AccountName=<account_name>;AccountKey=<key>;EndpointSuffix=core.windows.net;
         var storageAccountName = connectionStringKVMap["AccountName"];
-        hostName = connectionStringKVMap["EndpointSuffix"] != undefined ? 
-            storageAccountName + ".blob." + connectionStringKVMap["EndpointSuffix"] : 
+        hostName = connectionStringKVMap["EndpointSuffix"] != undefined ?
+            storageAccountName + ".blob." + connectionStringKVMap["EndpointSuffix"] :
             storageAccountName + ".blob.core.windows.net";
         port = connectionStringKVMap["DefaultEndpointsProtocol"] == "http" ? 80 : 443;
     } else if (connectionStringKVMap["Endpoint"] != undefined) {
@@ -1121,8 +1301,7 @@ export function extractHostPortFromConnectionString(connectionString) {
         // Service bus: Endpoint=sb://<namespace>.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=<key>
         hostName = connectionStringKVMap["Endpoint"].split("sb://")[1].split("/")[0];
         port = 443;
-    } else if (connectionStringKVMap["AccountEndpoint"] != undefined)
-    {
+    } else if (connectionStringKVMap["AccountEndpoint"] != undefined) {
         // Cosmos DB: AccountEndpoint=https://<account_name>.documents.azure.com:443/;AccountKey=<key>;"
         hostName = connectionStringKVMap["AccountEndpoint"].split("https://")[1].split(":")[0];
         port = connectionStringKVMap["AccountEndpoint"].split("https://")[1].split(":")[1].split("/")[0];
@@ -1153,7 +1332,7 @@ export function extractHostPortFromKeyVaultReference(keyVaultReference) {
     return { "HostName": hostName, "Port": port }
 }
 
-export function addSubnetSelectionDropDownView(siteInfo, diagProvider, flowMgr, title, processSubnet){
+export function addSubnetSelectionDropDownView(siteInfo, diagProvider, flowMgr, title, processSubnet) {
     var dropdownView = new DropdownStepView({
         dropdowns: [],
         width: "60%",
@@ -1229,7 +1408,7 @@ export function addSubnetSelectionDropDownView(siteInfo, diagProvider, flowMgr, 
         .then(s => {
             subscriptions = s.value.filter(s => s && s.displayName != null).sort((s1, s2) => s1.displayName.toLowerCase() > s2.displayName.toLowerCase() ? 1 : -1);
             subscriptionDropdown.options = subscriptions.map((s, i) => {
-                if(s.subscriptionId == siteInfo.subscriptionId){
+                if (s.subscriptionId == siteInfo.subscriptionId) {
                     subscriptionDropdown.defaultChecked = i;
                 }
                 return s.displayName;

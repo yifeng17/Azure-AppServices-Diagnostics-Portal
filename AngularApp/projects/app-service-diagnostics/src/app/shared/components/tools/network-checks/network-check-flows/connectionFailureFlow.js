@@ -1,14 +1,20 @@
 import { DropdownStepView, InfoStepView, StepFlow, StepFlowManager, CheckStepView, StepViewContainer, InputStepView, ButtonStepView, PromiseCompletionSource, TelemetryService } from 'diagnostic-data';
-import {ResourcePermissionCheckManager, checkVnetIntegrationHealth, checkDnsSettingAsync, checkSubnetSizeAsync} from './flowMisc.js';
-import {CommonRecommendations} from './commonRecommendations.js'
+import {ResourcePermissionCheckManager, checkVnetIntegrationHealth, checkVnetIntegrationV2Async, checkDnsSettingAsync, checkSubnetSizeAsync} from './flowMisc.js';
+import {CommonWordings} from './commonWordings.js'
+import {VnetIntegrationConfigChecker} from './vnetIntegrationConfigChecker.js'
 export var connectionFailureFlow = {
     title: "Connection issues",
     async func(siteInfo, diagProvider, flowMgr) {
-        var commonRec = new CommonRecommendations();
-        var isKuduAccessible = true;
+        var wordings = new CommonWordings();
+        var isKuduAccessible = false;
 
         var kuduAvailabilityCheckPromise = (async () => {
-            isKuduAccessible = await diagProvider.checkKuduReachable(30);
+            try{
+                isKuduAccessible = await diagProvider.checkKuduReachable(30);
+            }catch(e){
+
+            }
+
             var views = [];
             if (isKuduAccessible === false) {
                 views.push(new CheckStepView({
@@ -16,21 +22,20 @@ export var connectionFailureFlow = {
                     level: 1
                 }));
 
-                views.push(commonRec.KuduNotAccessible.Get(`https://${diagProvider.scmHostName}`));
+                views.push(wordings.kuduNotAccessible.get(`https://${diagProvider.scmHostName}`));
             }
             return views;
         })();
         flowMgr.addViews(kuduAvailabilityCheckPromise, "Checking Kudu availability...");
-        var permMgr = new ResourcePermissionCheckManager();
-        flowMgr.addView(permMgr.checkView);
+        await kuduAvailabilityCheckPromise;
 
-        var kuduReachablePromise = kuduAvailabilityCheckPromise.then(r => isKuduAccessible);
+        var vnetIntegrationCheckPromise = checkVnetIntegrationV2Async(siteInfo, diagProvider, flowMgr, isKuduAccessible);
+        flowMgr.addViews(vnetIntegrationCheckPromise.then(d => d.views), "Checking VNet integration status...");
+        var vnetIntegrationCheckResult = await vnetIntegrationCheckPromise;
 
-        var promise = checkVnetIntegrationHealth(siteInfo, diagProvider, kuduReachablePromise, permMgr);
-        flowMgr.addViews(promise.then(d => d.views), "Checking VNet integration status...");
-        await promise;
-        var data = { subnetDataPromise: promise.then(d => d && d.subnetData), serverFarmId: siteInfo["serverFarmId"], kuduReachablePromise, isContinuedPromise: promise.then(d => d.isContinue) };
-        checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, data, permMgr);
+        if(vnetIntegrationCheckResult.isContinue){
+            //checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr);
+        }
     }
 }
 
@@ -162,13 +167,15 @@ async function runConnectivityCheck(hostname, port, dnsServers, diagProvider, le
     return views;
 }
 
-function checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, data, permMgr) {
+function checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr) {
     var subnetDataPromise = data.subnetDataPromise;
     var isContinuedPromise = data.isContinuedPromise;
     var serverFarmId = data.serverFarmId;
     var kuduReachablePromise = data.kuduReachablePromise;
     var kuduReachable = null;
     var dnsServers = [];
+
+    var vnetChecker = new VnetIntegrationConfigChecker(siteInfo, diagProvider);
 
     var configCheckViewsPromise = (async function generateConfigCheckViews() {
         var views = [], subChecks = [];
