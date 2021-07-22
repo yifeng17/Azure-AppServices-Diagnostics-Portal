@@ -14,8 +14,9 @@
   </div>
   <div class="row" name="search-bar" style="margin: 20px auto;">
     <div style="margin: auto 25%;">
+      <div class="row" style="font-size: 18px; font-weight: 700; padding: 12px;">Displaying Diagnostics based on ...</div>
       <fab-search-box id="solOrchSearchBox" type="search" [placeholder]="'Briefly describe the issue'" [value]="searchTerm"
-        [ariaLabel]="inputAriaLabel" (onChange)="updateSearchTerm($event)" (onFocus)="onSearchBoxFocus()">
+        [ariaLabel]="inputAriaLabel" (onChange)="updateSearchTerm($event)" (onSearch)="onSearchEnter($event)" (onFocus)="onSearchBoxFocus()">
       </fab-search-box>
     </div>
   </div>
@@ -23,9 +24,9 @@
     <h3 style="font-size: 16px;font-weight: 700;margin: 2px 10px;">We think we found you a solution!</h3>
     <p style="margin: 2px 10px;">Customers with similar problems were able to solve it by following these solutions below</p>
     <div style="width: 60%;margin: 15px 20%;min-width: 300px;background-color: white;">
-      <solution-view-container [solutionTitle]="sampleSolution.Title" [isRecommended]="true" [detector]="'detector'"
+      <solution-view-container [solutionTitle]="solutionsArray[0].Title" [isRecommended]="true" [detector]="'detector'"
       [isAnalysisView]="false" [isKeystoneDetector]="false">
-      <markdown [data]="sampleSolution.DescriptionMarkdown"></markdown>
+      <markdown [data]="solutionsArray[0].DescriptionMarkdown"></markdown>
       </solution-view-container>
     </div>
     <!--<div style="width: 50%;margin: 15px 25%;min-width: 300px;min-height: 100px;border: 1px solid gray;background-color: white; padding: 0px 10px;">
@@ -35,17 +36,95 @@
   </div>
   <div class="row" name="documentation-results">
     <collapsible-list-fabric [collapsed]="true" [title]="'View Documentation and Guides from the Web (' + docs.length + ')'">
-      <collapsible-list-item body *ngFor="let doc of docs;let i =index">
+      <collapsible-list-item body *ngIf="true"><p>Video Guides</p></collapsible-list-item>
+      <collapsible-list-item body *ngIf="true" style="display:inline-block; width: 90%; margin: 5px 2.5%;">
+        <div class="support-doc-section">
+          <h3>WATCH THIS VIDEO</h3>
+        </div>
+      </collapsible-list-item>
+      <collapsible-list-item body *ngIf="supportDocumentContent && supportDocumentContent.length>0"><p>Azure Guides</p></collapsible-list-item>
+      <collapsible-list-item body *ngIf="supportDocumentContent && supportDocumentContent.length>0" style="display:inline-block; width: 90%; margin: 5px 2.5%;">
+        <div class="support-doc-section">
+          <markdown *ngIf="supportDocumentContent.length>0" [data]="supportDocumentContent"></markdown>
+        </div>
+      </collapsible-list-item>
+      <collapsible-list-item body>
+        <div>
+          <i *ngIf="documentsShowLoader" class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true"></i>
+          <span style="margin-left:5px">Documents from the web</span>
+        </div>
+      </collapsible-list-item>
+      <collapsible-list-item body *ngFor="let doc of webDocuments;let i =index" style="display:inline-block; width: 90%; margin: 5px 2.5%;">
         <div class="article" (click)="selectResult(doc)" tabindex="0" (keyup.enter)="selectResult(doc)" >
-            <a style="font-weight:600;">{{doc.Title}}
+            <a style="font-weight:600;">{{doc.title}}
             <i class="fa fa-external-link"></i>
             </a>
-            <div class="article-link">{{getLinkText(doc.Url)}}</div>
-            {{doc.Description}}
+            <div class="web-doc-text">{{doc.description}}</div>
         </div>
       </collapsible-list-item>
     </collapsible-list-fabric>
   </div>
-  <div class="row" name="azure-guides"></div>
-  <div class="row" name="detector-results"></div>
+  <div class="row" name="detector-results">
+    <!--<collapsible-list-fabric [collapsed]="true" [title]="'Observations and solutions (' + someInsights.length + ')'">
+      <collapsible-list-item body *ngFor="let insight of someInsights;let i =index" style="display: block; width: 90%; margin: 5px 5%;">
+        <div class="insight-box">
+          <div style="display: block;">
+            <i *ngIf="insight.Status==0" class="fa fa-times-circle" style="color: red;"></i>
+            <i *ngIf="insight.Status==3" class="fa fa-check-circle" style="color: green;"></i>
+            <div class="insight-detector-name">{{insight.Name}}</div>
+          </div>
+          <div class="insight-message">{{insight.Title}}</div>
+          <div style="display: block;">
+            <fab-primary-button contentStyle="margin-top: 20px;" [styles]="solutionButtonStyle"
+                type="Submit" text='View solutions' (click)="showSolutions()">
+            </fab-primary-button>
+            <fab-link [href]="''" [styles]="linkStyle">View diagnostic data</fab-link>
+          </div>
+        </div>
+      </collapsible-list-item>
+    </collapsible-list-fabric>-->
+    <div *ngIf="getPendingDetectorCount() > 0" style="margin-top:10px">
+      <i class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true"></i>
+      <span style="margin-left:5px">Observations and solutions</span>
+    </div>
+    <collapsible-list-fabric *ngIf="issueDetectedViewModels.length>0 && getPendingDetectorCount() === 0" [collapsed]="true" [title]="'Observations and solutions (' + issueDetectedViewModels.length + ')'">
+      <collapsible-list-item body *ngFor="let viewModel of issueDetectedViewModels;let i =index" style="display: block; width: 90%; margin: 5px 2.5%;">
+        <div class="insight-box">
+          <div style="display: block;">
+            <status-icon style="display: inline-block;" [loading]="viewModel.model.loadingStatus" [status]="viewModel.model.status"
+              [size]="20">
+            </status-icon>
+            <div class="insight-detector-name">{{viewModel.model.title}}</div>
+          </div>
+          <div class="insight-message">{{viewModel.insightTitle}}</div>
+          <div style="display: block;">
+            <fab-primary-button [styles]="solutionButtonStyle"
+                type="Submit" text='View solutions' (click)="showSolutions()">
+            </fab-primary-button>
+            <fab-link [href]="''" [styles]="linkStyle">View diagnostic data</fab-link>
+          </div>
+        </div>
+      </collapsible-list-item>
+    </collapsible-list-fabric>
+    <div *ngIf="getPendingDetectorCount() > 0" style="margin-top:10px">
+      <i class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true"></i>
+      <span style="margin-left:5px">Successful Checks</span>
+    </div>
+    <collapsible-list-fabric *ngIf="successfulViewModels.length>0 && getPendingDetectorCount() === 0" [collapsed]="true" [title]="'Successful Checks (' + successfulViewModels.length + ')'">
+      <collapsible-list-item body *ngFor="let viewModel of successfulViewModels;let i =index" style="display: block; width: 90%; margin: 5px 2.5%;">
+        <div class="insight-box">
+          <div style="display: block;">
+            <status-icon style="display: inline-block;" [loading]="viewModel.model.loadingStatus" [status]="viewModel.model.status"
+              [size]="20">
+            </status-icon>
+            <div class="insight-detector-name">{{viewModel.model.title}}</div>
+          </div>
+          <div class="insight-message">{{viewModel.insightTitle}}</div>
+          <div style="display: block;">
+            <fab-link [href]="''" [styles]="successfulLinkStyle">View diagnostic data</fab-link>
+          </div>
+        </div>
+      </collapsible-list-item>
+    </collapsible-list-fabric>
+  </div>
 </div>

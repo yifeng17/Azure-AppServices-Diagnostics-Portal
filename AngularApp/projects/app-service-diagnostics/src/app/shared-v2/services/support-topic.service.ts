@@ -83,7 +83,13 @@ export class SupportTopicService {
                         }
                     }
                     else {
-                        detectorPath = `/analysis/searchResultsAnalysis/search`;
+                        if (this.supportTopicId == "32629421") {
+                            detectorPath = `solutionorchestrator`;
+                            return observableOf({ path: detectorPath, queryParams: queryParamsDic });
+                        }
+                        else {
+                            detectorPath = `/analysis/searchResultsAnalysis/search`;
+                        }
                     }
                 }
                 

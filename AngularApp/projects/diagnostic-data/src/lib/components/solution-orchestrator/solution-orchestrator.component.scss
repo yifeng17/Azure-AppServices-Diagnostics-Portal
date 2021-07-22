@@ -28,3 +28,41 @@ a{
 br{
    display : none ;
 }
+
+.insight-box {
+    border: 1px solid #bbbbbb;
+    cursor: pointer;
+    padding: 10px;
+    background-color: white;
+    margin: 10px 0px;
+    overflow-wrap: break-word;
+}
+
+.insight-detector-name {
+    font-weight: 700;
+    font-size: 14px;
+    display: inline-block;
+    margin-left: 15px;
+}
+
+.insight-message {
+    display: block;
+    font-size: 12px;
+}
+
+.web-doc-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* number of lines to show */
+    -webkit-box-orient: vertical;
+ }
+
+ .support-doc-section{
+    border: 1px solid #bbbbbb;
+    cursor: pointer;
+    padding: 10px;
+    background-color: white;
+    margin: 10px 0px;
+    overflow-wrap: break-word;
+ }

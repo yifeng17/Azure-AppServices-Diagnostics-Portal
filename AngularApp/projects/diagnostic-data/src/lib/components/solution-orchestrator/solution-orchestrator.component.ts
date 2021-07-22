@@ -11,7 +11,7 @@ import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { Solution } from '../solution/solution';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { forkJoin as observableForkJoin, Observable, of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, delay, retryWhen } from 'rxjs/operators';
 import { DetectorResponse, DetectorMetaData, HealthStatus, DetectorType, DownTime } from '../../models/detector';
 import { Insight, InsightUtils } from '../../models/insight';
 import { DataTableResponseColumn, DataTableResponseObject, DiagnosticData, RenderingType, Rendering, TimeSeriesType, TimeSeriesRendering } from '../../models/detector';
@@ -27,6 +27,8 @@ import { SolutionService } from '../../services/solution.service';
 import { PortalActionGenericService } from '../../services/portal-action.service';
 import {detectorSearchEnabledPesIds, detectorSearchEnabledPesIdsInternal } from '../../models/search';
 import { GenericResourceService } from '../../services/generic-resource-service';
+import { WebSearchConfiguration } from '../../models/search';
+import { GenericContentService } from '../../services/generic-content.service';
 
 @Component({
     selector: 'solution-orchestrator',
@@ -60,13 +62,26 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
     time: string = "";
     detectorViewModels: any[];
     targetedScore: number = 0.5;
+    webSearchConfig: any = null;
+    pesId: string = null;
+
+    topLevelSolutions = [];
+    issueDetectedViewModels: any[] = [];
+    successfulViewModels: any[] = [];
+    webDocuments = [];
+    azureGuide = {};
+    videoGuides = [];
+
+    documentsShowLoader = false;
+    azureGuidesShowLoader = false;
+
+    detectors: any[] = [];
+
+
     detectorId: string;
     detectorName: string = '';
     contentHeight: string;
-    detectors: any[] = [];
     LoadingStatus = LoadingStatus;
-    issueDetectedViewModels: any[] = [];
-    successfulViewModels: any[] = [];
     detectorMetaData: DetectorMetaData[];
     private childDetectorsEventProperties = {};
     loadingChildDetectors: boolean = false;
@@ -104,10 +119,23 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
     public inDrillDownMode: boolean = false;
     drillDownDetectorId: string = '';
 
-    sampleSolution = {
-        Title: "Review Application Insights Telmetry",
-        DescriptionMarkdown: `\n            ### Review Application Insights Data\n\n            It appears that application insights was integrated for this app so review Application Insights data to identify why\n            custom exceptions were thrown by application code or why app was taking a long time to load.\n\n            1. Go to **Application Insights** blade for this App.\n            2. Click on **View Application Insights Data**.\n            3. If that doesn't help, use **Azure Application Insights Snapshot Debugger** to debug the issue further.\n            `
-    };
+    solutionsArray = [
+        {
+            Title: "Review Application Insights Telmetry",
+            DescriptionMarkdown: `\n            ### Review Application Insights Data\n\n            It appears that application insights was integrated for this app so review Application Insights data to identify why\n            custom exceptions were thrown by application code or why app was taking a long time to load.\n\n            1. Go to **Application Insights** blade for this App.\n            2. Click on **View Application Insights Data**.\n            3. If that doesn't help, use **Azure Application Insights Snapshot Debugger** to debug the issue further.\n            `,
+            Score: 0.9
+        },
+        {
+            Title: "Collect .NET Profiler Trace",
+            DescriptionMarkdown: `\n        ### Collect .NET Profiler\n\n        If the issue is happening right now, collect .NET Profiler trace to troubleshoot the issue. A profiler trace helps \n        you easily identify the ExceptionType, message and callstack for a .NET exception without installing any additional \n        tools and without changing the state of the problem. Profiler trace helps you identify exceptions in both ASP.NET \n        and ASP.NET Core applications.\n\n        > If you already know the exact **ExceptionType, Exception Message** and **call stack**, then this tool may not be able to offer more. Try searching online in <a href='https://stackoverflow.com/questions/tagged/azure-web-sites' target='_blank'>StackOverflow.com</a>, <a href='https://social.msdn.microsoft.com/Forums/azure/en-US/home?forum=windowsazurewebsitespreview' target='_blank'>Microsoft forums</a> or open a Support Ticket to identify how to solve the exception.</i>\n        \n        `,
+            Score: 0.88
+        },
+        {
+            Title: "Configure AutoHealing Custom Action",
+            DescriptionMarkdown: `\n        ### Configure AutoHealing Custom Action\n\n         **If the issue is not reproducible or intermittent**, you can configure AutoHealing's custom action \n         to collect some data (like profiler trace or memory dump) that will help you debug the issue further.\n         The triggers and actions allow you to define various conditions based on request count, slow requests, \n         memory limit on which you can take specific actions like restarting the process, logging an event,\n          or starting another executable.\n        `,
+            Score: 0.6
+        }
+    ];
 
     docs = [
         {
@@ -126,15 +154,40 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
 
     successfulChecks = [];
 
+    linkStyle = {
+        root: {
+            marginTop: '12px',
+            marginLeft: '20px',
+            fontSize: '13px'
+        }
+    };
+
+    successfulLinkStyle = {
+        root: {
+            margin: '10px 0px 2px 2px',
+            fontSize: '13px'
+        }
+    };
+
+    solutionButtonStyle = {
+        root: {
+            marginTop: '10px',
+            height: '25px',
+            fontSize: '13px',
+            paddingBottom: '2px'
+        }
+    }
+
     constructor(public _activatedRoute: ActivatedRoute, private _router: Router,
         private _diagnosticService: DiagnosticService, private _detectorControl: DetectorControlService,
         protected telemetryService: TelemetryService, public _appInsightsService: AppInsightsQueryService,
         private _supportTopicService: GenericSupportTopicService, protected _globals: GenieGlobals, private _solutionService: SolutionService,
-        @Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig, private portalActionService: PortalActionGenericService, private _resourceService: GenericResourceService) {
+        @Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig, private portalActionService: PortalActionGenericService, private _resourceService: GenericResourceService, private _contentService: GenericContentService,) {
         super(telemetryService);
         this.isPublic = config && config.isPublic;
 
         if (this.isPublic) {
+            this.getPesId();
             /*this._appInsightsService.CheckIfAppInsightsEnabled().subscribe(isAppinsightsEnabled => {
                 this.isAppInsightsEnabled = isAppinsightsEnabled;
                 this.loadingAppInsightsResource = false;
@@ -168,18 +221,7 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
         return detectorList.filter(element => (element.analysisTypes != null && element.analysisTypes.length > 0 && element.analysisTypes.findIndex(x => x == analysisId) >= 0)).map(element => { return { name: element.name, id: element.id }; });
     }
 
-    insertInDetectorArray(detectorItem) {
-        if (this.withinGenie) {
-            if (this.detectors.findIndex(x => x.id === detectorItem.id) < 0 && detectorItem.score >= this.targetedScore) {
-                this.detectors.push(detectorItem);
-                this.loadingMessages.push("Checking " + detectorItem.name);
-            }
-        }
-        else if (this.detectors.findIndex(x => x.id === detectorItem.id) < 0) {
-            this.detectors.push(detectorItem);
-            this.loadingMessages.push("Checking " + detectorItem.name);
-        }
-    }
+    showSolutions(){}
 
     resetGlobals() {
         this.detectors = [];
@@ -195,10 +237,24 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
     }
 
     ngOnInit() {
+        this.getAzureGuides();
+        this._activatedRoute.queryParamMap.subscribe(qParams => {
+            this.resetGlobals();
+            this.searchTerm = qParams.get('searchTerm') === null ? this.searchTerm : qParams.get('searchTerm');
+            if (this.searchTerm && this.searchTerm.length>1) {
+                this.hitSearch();
+            }
+        });
     }
 
     updateSearchTerm(searchValue: { newValue: string }) {
-        this.searchTerm = searchValue.newValue;
+        //this.searchTerm = searchValue.newValue;
+    }
+
+    getPesId(){
+        this._resourceService.getPesId().subscribe(pesId => {
+            this.pesId = pesId;
+        });    
     }
 
     onSearchBoxFocus(){}
@@ -223,7 +279,9 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
 
     getAzureGuides() {
         if (!this.supportDocumentRendered) {
+            this.azureGuidesShowLoader = true;
             this._supportTopicService.getSelfHelpContentDocument().subscribe(res => {
+                this.azureGuidesShowLoader = false;
                 if (res && res.length > 0) {
                     var htmlContent = res[0]["htmlContent"];
                     // Custom javascript code to remove top header from support document html string
@@ -238,12 +296,173 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
                     this.supportDocumentContent = tmp.innerHTML;
                     this.supportDocumentRendered = true;
                 }
+            }, (err) => {
+                this.azureGuidesShowLoader = false;
             });
         }
     }
 
+    getBingSearchTask(preferredSites:string[]) {
+        return this._contentService.searchWeb(this.searchTerm, this.webSearchConfig.MaxResults.toString(), this.webSearchConfig.UseStack, preferredSites, this.webSearchConfig.ExcludedSites).pipe(map((res) => res), retryWhen(errors => {
+            let numRetries = 0;
+            return errors.pipe(delay(1000), map(err => {
+                if (numRetries++ === 3) {
+                    throw err;
+                }
+                return err;
+            }));
+        }), catchError(e => {
+            throw e;
+        }));
+    }
+
+    getDocuments() {
+        if (!this.webSearchConfig) {
+            this.webSearchConfig = new WebSearchConfiguration(this.pesId);
+        }
+        var searchTask;
+        let searchTaskComplete = false;
+        let searchTaskPrefsComplete = false;
+        let searchTaskPrefs = null;
+        let searchTaskResult = null;
+        let searchTaskPrefsResult = null;
+        // make call to bing search
+        var preferredSites = [];
+        searchTask = this.getBingSearchTask(preferredSites);
+        if (this.webSearchConfig && this.webSearchConfig.PreferredSites && this.webSearchConfig.PreferredSites.length>0) {
+            searchTaskPrefs = this.getBingSearchTask(this.webSearchConfig.PreferredSites);
+        }
+        else {
+            searchTaskPrefsComplete = true;
+        }
+        let postFinish = () => {
+            if (searchTaskComplete && searchTaskPrefsComplete) {
+                let webresults = this.mergeBingResults([searchTaskResult, searchTaskPrefsResult]);
+                this.displayWebResults(webresults);
+            }
+        }
+        this.documentsShowLoader = true;
+        searchTask.subscribe(res => {
+            searchTaskResult = res;
+            searchTaskComplete = true;
+            postFinish();
+        }, (err)=> {
+            searchTaskResult = null;
+            searchTaskComplete = true;
+            postFinish();
+        });
+        if (searchTaskPrefs) {
+            searchTaskPrefs.subscribe(res => {
+                searchTaskPrefsResult = res;
+                searchTaskPrefsComplete = true;
+                postFinish();
+            }, (err)=> {
+                searchTaskPrefsResult = null;
+                searchTaskPrefsComplete = true;
+                postFinish();
+            });
+        }        
+    }
+
+    displayWebResults(results) {
+        this.documentsShowLoader = false;
+        if (results && results.webPages && results.webPages.value && results.webPages.value.length > 0) {
+            
+            var webSearchResults = results.webPages.value;
+            this.webDocuments = webSearchResults.map(result => {
+                return {
+                    title: result.name,
+                    description: result.snippet,
+                    link: result.url,
+                    articleSurfacedBy : result.resultSurfacedBy || "Bing"
+                };
+            });
+            this.webDocuments = this.rankResultsBySource(this.webDocuments);
+        }
+    }
+
+    rankResultsBySource(resultsList) {
+        if (!resultsList || resultsList.length == 0) {
+            return [];
+        }
+        var seenSources = {};
+        var part1 = [];
+        var part2 = [];
+        resultsList.forEach(item => {
+            let itemUrl = new URL(item.link);
+            let itemSource = itemUrl.hostname;
+            if (seenSources.hasOwnProperty(itemSource)) {
+                if (seenSources[itemSource]>2)
+                part2.push(item);
+                else
+                {
+                    part1.push(item);
+                    seenSources[itemSource]++;
+                }
+            }
+            else {
+                part1.push(item);
+                seenSources[itemSource] = 1;
+            }
+        });
+        return part1.concat(part2);
+    }
+
+    mergeBingResults(results) {
+        var finalResults = results[0];
+        if (!(finalResults && finalResults.webPages && finalResults.webPages.value && finalResults.webPages.value.length > 0)) {
+            finalResults = {
+                webPages: {
+                    value: []
+                }
+            };
+        }
+        if (results.length>1) {
+            if (results[1] && results[1].webPages && results[1].webPages.value && results[1].webPages.value.length > 0) {
+                results[1].webPages.value.forEach(result => {
+                    var idx = finalResults.webPages.value.findIndex(x => x.url==result.url);
+                    if (idx<0) {
+                        finalResults.webPages.value.push(result);
+                    }
+                });
+            }
+        }
+        return finalResults;
+    }
+
     isInCaseSubmission(): boolean {
         return !!this._supportTopicService && !!this._supportTopicService.supportTopicId && this._supportTopicService.supportTopicId != '';
+    }
+
+    onSearchEnter(searchValue: { newValue: string }) {
+        console.log("Hitting search with", searchValue);
+        let searchTerm = searchValue.newValue;
+        if (searchTerm !== this.searchTerm) {
+            this.hitSearch();
+        }
+    }
+
+    hitSearch() {
+        if (this.searchTerm && this.searchTerm.length>1) {
+            var detectorsTask = this.searchDetectors();
+            var webDocuments = this.getDocuments();
+        }
+        else {
+            this.refreshPage();
+        }
+    }
+
+    insertInDetectorArray(detectorItem) {
+        if (this.withinGenie) {
+            if (this.detectors.findIndex(x => x.id === detectorItem.id) < 0 && detectorItem.score >= this.targetedScore) {
+                this.detectors.push(detectorItem);
+                this.loadingMessages.push("Checking " + detectorItem.name);
+            }
+        }
+        else if (this.detectors.findIndex(x => x.id === detectorItem.id) < 0) {
+            this.detectors.push(detectorItem);
+            this.loadingMessages.push("Checking " + detectorItem.name);
+        }
     }
 
     searchDetectors() {
@@ -282,22 +501,15 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
                             }
                         });
                     }
+                    this.startDetectorRendering(detectorList, null, false);
                 });
             }
         });
     }
 
-    getDocuments() {}
-
-    checkKeystoneSolutions() {}
-
-    fetchDetectorInsightsAndSolutions() {}
+    //checkKeystoneSolutions() {}
 
     startDetectorRendering(detectorList, downTime: DownTime, containsDownTime: boolean) {
-        if (this.showWebSearchTimeout) {
-            clearTimeout(this.showWebSearchTimeout);
-        }
-        this.showWebSearchTimeout = setTimeout(() => { this.showWebSearch = true; }, 3000);
         this.issueDetectedViewModels = [];
         const requests: Observable<any>[] = [];
 
@@ -305,7 +517,6 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
         this.detectorViewModels = this.detectorMetaData.map(detector => this.getDetectorViewModel(detector, downTime, containsDownTime));
         if (this.detectorViewModels.length > 0) {
             this.loadingChildDetectors = true;
-            this.startLoadingMessage();
         }
         this.detectorViewModels.forEach((metaData, index) => {
             requests.push((<Observable<DetectorResponse>>metaData.request).pipe(
@@ -438,7 +649,7 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
     ngOnChanges() {
     }
 
-    private getDetectorViewModel(detector: DetectorMetaData, downtime: DownTime, containsDownTime: boolean) {
+    getDetectorViewModel(detector: DetectorMetaData, downtime: DownTime, containsDownTime: boolean) {
         let startTimeString = this._detectorControl.startTimeString;
         let endTimeString = this._detectorControl.endTimeString;
 
@@ -462,7 +673,11 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
         };
     }
 
-    public openBladeDiagnoseDetectorId(category: string, detector: string, type: DetectorType = DetectorType.Detector) {
+    showDetectorById(detector: string) {
+
+    }
+
+    openBladeDiagnoseDetectorId(category: string, detector: string, type: DetectorType = DetectorType.Detector) {
         const bladeInfo = {
             title: category,
             detailBlade: 'SCIFrameBlade',
@@ -496,29 +711,6 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
         };
         let segments: string[] = [path];
         this._router.navigate(segments, navigationExtras);
-    }
-
-    startLoadingMessage(): void {
-        let self = this;
-        this.loadingMessageIndex = 0;
-        this.showLoadingMessage = true;
-
-        setTimeout(() => {
-            self.showLoadingMessage = false;
-        }, 3000)
-        this.loadingMessageTimer = setInterval(() => {
-            self.loadingMessageIndex++;
-            self.showLoadingMessage = true;
-
-            if (self.loadingMessageIndex === self.loadingMessages.length - 1) {
-                clearInterval(this.loadingMessageTimer);
-                return;
-            }
-
-            setTimeout(() => {
-                self.showLoadingMessage = false;
-            }, 3000)
-        }, 4000);
     }
 }
 
