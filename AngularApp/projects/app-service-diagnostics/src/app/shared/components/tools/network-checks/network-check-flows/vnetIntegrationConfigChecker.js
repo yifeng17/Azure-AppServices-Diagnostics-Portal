@@ -15,7 +15,6 @@ export class VnetIntegrationConfigChecker {
 
     async prepareDataAsync() {
         this.siteVnetInfo = await this.getWebAppVnetInfoAsync();
-
     }
 
     async getVnetIntegrationTypeAsync() {
@@ -44,7 +43,7 @@ export class VnetIntegrationConfigChecker {
         }
     }
 
-    async getVNetInfoPropertyAsync(property){
+    async getVNetInfoPropertyAsync(property) {
         await this.dataPreparePromise;
         var siteVnetInfo = this.siteVnetInfo;
         if (siteVnetInfo != null && siteVnetInfo["properties"] != null) {
@@ -61,11 +60,17 @@ export class VnetIntegrationConfigChecker {
         return subnetResourceId;
     }
 
-    async isSwiftSupportedAsync(){
+    async getSwiftVnetIdAsync(){
+        var subnetResourceId = await this.getVNetInfoPropertyAsync("subnetResourceId");
+        var vnetId = subnetResourceId.replace(/\/subnets.*/, "");
+        return vnetId;
+    }
+
+    async isSwiftSupportedAsync() {
         var swiftSupported = await this.getVNetInfoPropertyAsync("swiftSupported");
         return swiftSupported;
     }
-    
+
 
     isSubnetResourceIdFormatValid(subnetResourceId) {
         if (subnetResourceId != null && subnetResourceId.includes("/subnets/")) {
@@ -79,32 +84,46 @@ export class VnetIntegrationConfigChecker {
         return siteGWVnetInfo;
     }
 
-    subnetSalExists(subnetData){
+    subnetSalExists(subnetData) {
         var subnetProperties = subnetData["properties"];
         return subnetProperties["serviceAssociationLinks"] != null && subnetProperties["serviceAssociationLinks"].length > 0;
     }
 
-    isSubnetSalOwnerCorrect(subnetData, aspId){
-        if(this.subnetSalExists(subnetData)){
-            var sal =  subnetData["properties"]["serviceAssociationLinks"];
+    isSubnetSalOwnerCorrect(subnetData, aspId) {
+        if (this.subnetSalExists(subnetData)) {
+            var sal = subnetData["properties"]["serviceAssociationLinks"];
             var linkedAsp = sal[0]["properties"]["link"];
             return linkedAsp.toLowerCase() == aspId.toLowerCase();
-        }else{
+        } else {
             return false;
         }
     }
 
-    isSubnetDelegated(subnetData){
+    isSubnetDelegated(subnetData) {
         var subnetProperties = subnetData["properties"];
         var subnetDelegation = subnetProperties["delegations"];
-        if(subnetDelegation && subnetDelegation.length > 0 && subnetDelegation[0]["properties"]["serviceName"].toLowerCase() == ("Microsoft.Web/serverFarms").toLowerCase()){
+        if (subnetDelegation && subnetDelegation.length > 0 && subnetDelegation[0]["properties"]["serviceName"].toLowerCase() == ("Microsoft.Web/serverFarms").toLowerCase()) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-    async getAspConnectedSubnetsAsync(aspSitesData, limit = 1){
+    getSubnetMask(subnetData) {
+        var subnetAddressPrefix = subnetData["properties"] && subnetData["properties"]["addressPrefix"];
+        if (subnetAddressPrefix != null) {
+            var splitted = subnetAddressPrefix.split("/");
+            var subnetMask = splitted.length > 0 ? parseInt(splitted[1]) : NaN;
+            if(isNaN(subnetMask)){
+                return null;
+            }
+            return subnetMask;
+        }else{
+            return null;
+        }
+    }
+
+    async getAspConnectedSubnetsAsync(aspSitesData, limit = 1) {
         var aspSites = aspSitesData["value"];
         var subnets = new Set();
         if (aspSites != null) {
@@ -114,7 +133,7 @@ export class VnetIntegrationConfigChecker {
                 }
                 var siteResourceUri = aspSites[i]["id"];
                 var siteVnetInfo = await this.diagProvider.getArmResourceAsync(siteResourceUri + "/config/virtualNetwork", this.apiVersion);
-    
+
                 if (siteVnetInfo["properties"] != null && siteVnetInfo["properties"]["subnetResourceId"] != null) {
                     var subnetResourceId = siteVnetInfo["properties"]["subnetResourceId"];
                     subnets.add(subnetResourceId);
@@ -125,7 +144,7 @@ export class VnetIntegrationConfigChecker {
         return subnets.values();
     }
 
-    async getInstancesPrivateIpAsync(instanceData){
+    async getInstancesPrivateIpAsync(instanceData) {
         var instances = instanceData.value;
         var privateIpPromiseArray = [];
         for (var i = 0; i < instances.length; i++) {
@@ -136,10 +155,10 @@ export class VnetIntegrationConfigChecker {
             var privateIpPromise = this.diagProvider.getEnvironmentVariablesAsync(["WEBSITE_PRIVATE_IP"], instanceName);
             privateIpPromiseArray.push(privateIpPromise);
         }
-        try{
+        try {
             var ips = await Promise.all(privateIpPromiseArray);
             return ips;
-        }catch(e){
+        } catch (e) {
             this.diagProvider.logException(e, "getInstancesPrivateIpAsync");
             return null;
         }

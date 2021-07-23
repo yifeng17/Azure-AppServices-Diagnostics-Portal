@@ -4,6 +4,10 @@ export class VnetIntegrationWordings {
     constructor() {
         var commonWordings = new CommonWordings();
 
+        var makeBreakable = ((uri) => {
+            return uri.replaceAll("/", "<wbr/>/");
+        });
+
         this.vnetIntegrationResult = {
             get(integrationCheckStatus, subChecks) {
                 var integrationCheckTitle = null;
@@ -47,7 +51,7 @@ export class VnetIntegrationWordings {
 
         this.gatewayVnetValid = {
             get(vnetUri) {
-                vnetUri = vnetUri.replaceAll("/", "<wbr/>/");
+                vnetUri = makeBreakable(vnetUri);
                 return new CheckStepView({
                     title: `VNet ${vnetUri} is healthy`,
                     level: 0
@@ -121,7 +125,7 @@ export class VnetIntegrationWordings {
 
         this.subnetExists = {
             get(subnetId) {
-                subnetId = subnetId.replaceAll("/","<wbr/>/");
+                subnetId = makeBreakable(subnetId);
                 var view = new CheckStepView({
                     title: `Subnet ${subnetId} is valid`,
                     level: 0
@@ -185,6 +189,47 @@ export class VnetIntegrationWordings {
                     title: "Subnet is" + (isDelegated ? "" : " not") + " delegated to Microsoft.Web/serverFarms",
                     level: isDelegated ? 0 : 2
                 });
+                return view;
+            }
+        }
+
+        this.subnetSizeIsGood = {
+            get(mask){
+                var view = new CheckStepView({
+                    title: `Subnet mask = ${mask} is healthy`,
+                    level: 0
+                });
+                return view;
+            }
+        }
+
+        this.subnetSizeIsNotGood = {
+            get(subnetId, mask, sku, recommend, subChecks){
+                subChecks.push(new CheckStepView({
+                    title: `Subnet mask = ${mask} is not optimal, recommend mask value is ${recommend}`,
+                    level: 1
+                }));
+
+                subnetId = makeBreakable(subnetId);
+
+                var addressSpaceSize = Math.pow(2,32-recommend);
+
+                var msg = `- Subnet ${subnetId} is using a mask doesn't meet the minimum requirement of <b>/${recommend}</b>. Please increase size of the subnet.<br/>`;
+                msg += `<br/><table><tr><th>Subnet Mask</th><th>App Service Plan SKU</th><th>Recommended Subnet Mask</th><th>Available Addresses</th></tr>`;
+                msg += `<tr><td>/${mask}</td><td>${sku}</td><td><b>/${recommend}</b></td><td>${addressSpaceSize}-5 = <b>${addressSpaceSize-5}</b> Addresses</td></tr>`;
+                msg += `<tr><td colspan='5'><i>Note: Azure reserves 5 IP addresses within each subnet.</i></td></tr></table>\r\n\r\n`;
+                msg += `<u>Steps to increase the subnet size:</u>\r\n`;
+                msg += `- In this App Service Plan, disconnect all the Web Apps that are currently using Regional VNET integration. This would cause Apps to lose connectivity to VNet resource, so please plan this change accordingly.\r\n`;
+                msg += `- Increase the subnet size as per the recommendations.\r\n`;
+                msg += `- Reconnect the webapps to the same subnet.\r\n`;
+                msg += `<br/>`;
+
+                var view = new InfoStepView({
+                    infoType: 1,
+                    title: `Suboptimal configuration found: Subnet size`,
+                    markdown: msg
+                });
+
                 return view;
             }
         }
@@ -268,5 +313,25 @@ export class VnetIntegrationWordings {
                 return views;
             }
         }
-    }
+
+        this.subnetCheckResult = {
+            get(subnetStatus, subnetSubChecks){
+                var subnetCheckTitle = null;
+                if (subnetStatus == 0) {
+                    subnetCheckTitle = "Subnet configuration is healthy";
+                } else if (subnetStatus == 1) {
+                    subnetCheckTitle = "Subnet configuration needs attention";
+                } else {
+                    subnetCheckTitle = "Subnet configuration is unhealthy";
+                }
+                var subnetCheck = new CheckStepView({
+                    title: subnetCheckTitle,
+                    level: subnetStatus,
+                    subChecks: subnetSubChecks
+                });
+
+                return subnetCheck;
+            }
+        }
+    } 
 }

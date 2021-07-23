@@ -37,5 +37,14 @@ export class CommonWordings{
                 return views;
             }
         }
+
+        this.unExpectedError = {
+            get(){
+                return new CheckStepView({
+                    title: "Unexpected error, please retry.",
+                    level: 2
+                });
+            }
+        }
     }
 }
