@@ -66,3 +66,24 @@ br{
     margin: 10px 0px;
     overflow-wrap: break-word;
  }
+
+.article-link {
+    color:  #605e5c
+}
+
+.solutions-small-card-outer{
+    height: 50px;
+    padding: 5px;
+    margin: 10px 0px;
+    white-space: nowrap;
+}
+
+.solutions-small-card{
+    text-align: center;
+    font-size: 18px;
+    cursor: pointer;
+    border: 1px solid gray;
+    height: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

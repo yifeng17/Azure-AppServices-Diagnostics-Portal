@@ -79,10 +79,27 @@ export const HomeRoutes = RouterModule.forChild([
                 path: 'solutionorchestrator',
                 component: SolutionOrchestratorComponent,
                 data: {
-                    navigationTitle: 'SolORCH',
-                    cacheComponent: true
+                    navigationTitle: 'SolOrch',
+                    cacheComponent: false
                 },
-                pathMatch: 'full'
+                children: [
+                    {
+                        path: 'detectors/:detectorName',
+                        component: GenericDetectorComponent,
+                        data: {
+                            analysisMode: true,
+                            cacheComponent: false
+                        },
+                        resolve: {
+                            time: TimeControlResolver,
+                            navigationTitle: TabTitleResolver,
+                        }
+                    }
+                ],
+                resolve: {
+                    time: TimeControlResolver,
+                    navigationTitle: TabTitleResolver,
+                }
             },
             {
                 path: 'categoriesv3/:category',

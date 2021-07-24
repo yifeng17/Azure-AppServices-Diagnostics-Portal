@@ -76,6 +76,7 @@ export class DynamicDataComponent implements OnInit {
   @Input() compilationPackage: CompilationProperties;
   @Input() isAnalysisView: boolean = false;
   @Input() isRiskAlertDetector: boolean = false;
+  @Input() hideShieldComponent: boolean = false;
   private _instanceRef: DataRenderBaseComponent = null;
   private _xAxisPlotBands: xAxisPlotBand[] = null;
   @Input() public set xAxisPlotBands(value: xAxisPlotBand[]) {
@@ -187,7 +188,13 @@ export class DynamicDataComponent implements OnInit {
       case RenderingType.SummaryCard:
         return SummaryCardsComponent;
       case RenderingType.SearchComponent:
-        return DetectorSearchComponent;
+        if (!this.hideShieldComponent)
+        {
+          return DetectorSearchComponent;
+        }
+        else{
+          return null;
+        }
       case RenderingType.AppInsightEnablement:
         return ConnectAppInsightsComponent;
       case RenderingType.KeystoneComponent:
