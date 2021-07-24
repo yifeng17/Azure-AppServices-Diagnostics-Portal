@@ -5,6 +5,8 @@ import { VnetDnsConfigChecker } from './vnetDnsConfigChecker.js';
 import { VnetIntegrationWordings } from './vnetInegrationWordings.js';
 import { VnetIntegrationConfigChecker } from './vnetIntegrationConfigChecker.js';
 import { VnetDnsWordings } from './vnetDnsWordings.js';
+import { VnetAppSettingChecker } from './vnetAppSettingChecker.js';
+import { VnetAppSettingWordings } from './vnetAppSettingWordings.js';
 
 function delay(second) {
     return new Promise(resolve =>
@@ -68,7 +70,7 @@ export async function checkKuduAvailabilityAsync(diagProvider, flowMgr) {
     flowMgr.addViews(kuduAvailabilityCheckPromise, "Checking Kudu availability...");
     var completed = false;
     delay(10).then(t => {
-        if(!completed){
+        if (!completed) {
             flowMgr.setLoadText(`Checking Kudu availability, this process can take at most ${timeout}s...`);
         }
     });
@@ -1177,6 +1179,30 @@ export async function checkSubnetSizeAsync(diagProvider, subnetDataPromise, serv
     return { views, checkResult };
 }
 
+export async function checkAppSettingsAsync(siteInfo, diagProvider, flowMgr) {
+    var promiseCompletion = new PromiseCompletionSource();
+    flowMgr.addViews(promiseCompletion, "Checking App Settings...");
+    try {
+        var subChecks = [];
+        var appSettingChecker = new VnetAppSettingChecker(siteInfo, diagProvider);
+        var wordings = new VnetAppSettingWordings();
+
+        var routeAll = await appSettingChecker.getVnetRouteAllAsync();
+        subChecks.push(wordings.vnetRouteAll.get(routeAll));
+
+        var fallback = await appSettingChecker.getAlwaysFallbackToPublicDnsAsync();
+        subChecks.push(wordings.alwaysFallbackDns.get(fallback));
+
+        var check = wordings.vnetRelatedBehaviors.get(subChecks);
+
+        promiseCompletion.resolve([check]);
+
+    } catch (e) {
+        promiseCompletion.resolve([]);
+        throw e;
+    }
+}
+
 export async function checkDnsSettingV2Async(siteInfo, diagProvider, flowMgr, isKuduAccessiblePromise, dnsSettings) {
     var promiseCompletion = new PromiseCompletionSource();
     flowMgr.addViews(promiseCompletion, "Checking DNS settings...");
@@ -1188,7 +1214,7 @@ export async function checkDnsSettingV2Async(siteInfo, diagProvider, flowMgr, is
         if (await isKuduAccessiblePromise) {
             isContinue = true;
             var dnsChecker = new VnetDnsConfigChecker(siteInfo, diagProvider);
-            
+
             var appSettingDns = await dnsChecker.getAppSettingDnsAsync();
             if (appSettingDns[0] != null) {
                 var appSettingDnsSubChecks = [];
@@ -1268,13 +1294,13 @@ export async function checkDnsSettingV2Async(siteInfo, diagProvider, flowMgr, is
                         }
                     }
                     var fallbackToAzureDns = await dnsChecker.getAppSettingAlwaysFallbackToPublicDnsAsync();
-                    if(dnsSettings!=null && dnsSettings.length > 0){
-                        if(fallbackToAzureDns){
+                    if (dnsSettings != null && dnsSettings.length > 0) {
+                        if (fallbackToAzureDns) {
                             subChecks.push(wordings.fallbackToAzureDnsConfigured.get());
                         }
                     }
                     subChecks.push(wordings.configuredDns.get(dnsSettings, dnsSettingSource, fallbackToAzureDns));
-                    if(dnsSettings!=null && (dnsSettings.length == 0 || fallbackToAzureDns)){
+                    if (dnsSettings != null && (dnsSettings.length == 0 || fallbackToAzureDns)) {
                         dnsSettings.push("");
                     }
                 } else {
@@ -1289,7 +1315,7 @@ export async function checkDnsSettingV2Async(siteInfo, diagProvider, flowMgr, is
             var dnsCheckResult = flowMgr.getSubCheckLevel(subChecks);
             var dnsCheck = wordings.dnsCheckResult.get(dnsCheckResult, subChecks);
             views = [dnsCheck, ...views];
-        }else{
+        } else {
             views.push(wordings.cannotCheckWithoutKudu.get());
         }
         promiseCompletion.resolve(views);

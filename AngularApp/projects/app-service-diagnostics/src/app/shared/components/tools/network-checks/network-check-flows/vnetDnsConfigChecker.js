@@ -20,30 +20,34 @@ export class VnetDnsConfigChecker {
         this.appSettings = await this.diagProvider.getAppSettings();
     }
 
-    async getAppSettingDnsAsync(){
+    async getAppSettingDnsAsync() {
         await this.dataPreparePromise;
         var dnsSettings = [this.appSettings["WEBSITE_DNS_SERVER"], this.appSettings["WEBSITE_DNS_ALT_SERVER"]];
         return dnsSettings;
     }
 
-    async getAppSettingAlwaysFallbackToPublicDnsAsync(){
+    async getAppSettingAlwaysFallbackToPublicDnsAsync() {
         await this.dataPreparePromise;
         return this.appSettings["WEBSITE_ALWAYS_FALLBACK_TO_PUBLIC_DNS"];
     }
 
-    getVnetDnsSettings(vnetData){
-        if(vnetData && vnetData["properties"] && vnetData["properties"]["dhcpOptions"]){
+    getVnetDnsSettings(vnetData) {
+        if (vnetData && vnetData["properties"] && vnetData["properties"]["dhcpOptions"]) {
             return vnetData["properties"]["dhcpOptions"]["dnsServers"];
-        }else{
+        } else {
             return null;
         }
     }
 
-    async isDnsServerReachableAsync(server){
-        var result = await this.diagProvider.tcpPingAsync(server, 53);
-        if(result.status == 0){
-            //success
-            return true;
+    async isDnsServerReachableAsync(server) {
+        if (this.diagProvider.isIp(server)) {
+            var result = await this.diagProvider.tcpPingAsync(server, 53);
+            if (result.status == 0) {
+                //success
+                return true;
+            } else {
+                return false;
+            }
         }else{
             return false;
         }

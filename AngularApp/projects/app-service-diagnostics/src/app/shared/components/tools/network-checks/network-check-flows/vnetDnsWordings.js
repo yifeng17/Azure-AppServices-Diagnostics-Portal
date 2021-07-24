@@ -31,7 +31,7 @@ export class VnetDnsWordings {
         this.dnsIsUnhealthy = {
             get(dnsSettings, unreachableDns, configuredIn, subChecks, dnsSubChecks) {
                 subChecks.push(new CheckStepView({
-                    title: `DNS configurations in App Setting are unhealthy"}`,
+                    title: `DNS configurations in App Setting are unhealthy`,
                     level: 2,
                     subChecks: dnsSubChecks
                 }));

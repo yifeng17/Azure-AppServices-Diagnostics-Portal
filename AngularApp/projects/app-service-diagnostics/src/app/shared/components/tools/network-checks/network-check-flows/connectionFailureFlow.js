@@ -1,5 +1,5 @@
 import { DropdownStepView, InfoStepView, StepFlow, StepFlowManager, CheckStepView, StepViewContainer, InputStepView, ButtonStepView, PromiseCompletionSource, TelemetryService } from 'diagnostic-data';
-import { checkKuduAvailabilityAsync, checkVnetIntegrationV2Async, checkDnsSettingAsync, checkSubnetSizeAsync, checkDnsSettingV2Async} from './flowMisc.js';
+import { checkKuduAvailabilityAsync, checkVnetIntegrationV2Async, checkDnsSettingAsync, checkSubnetSizeAsync, checkDnsSettingV2Async, checkAppSettingsAsync} from './flowMisc.js';
 import {CommonWordings} from './commonWordings.js'
 import {VnetIntegrationConfigChecker} from './vnetIntegrationConfigChecker.js'
 export var connectionFailureFlow = {
@@ -17,6 +17,7 @@ export var connectionFailureFlow = {
         if(!isContinue){
             return;
         }
+        await checkAppSettingsAsync(siteInfo, diagProvider, flowMgr);
         checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, isKuduAccessiblePromise, dnsSettings);
 
     }
@@ -24,7 +25,6 @@ export var connectionFailureFlow = {
 
 async function runConnectivityCheck(hostname, port, dnsServers, diagProvider, lengthLimit) {
     var subChecks = [];
-    var fellbackToPublicDns = false;
     var nameResolvePromise = (async function checkNameResolve() {
         var ip = null;
         var subChecks = [];
@@ -32,15 +32,18 @@ async function runConnectivityCheck(hostname, port, dnsServers, diagProvider, le
             ip = hostname;
         } else {
             for (var i = 0; i < dnsServers.length; ++i) {
+                var dns = `DNS server ${dnsServers[i]}`;
+                if(dnsServers[i] == ""){
+                    dnsServers[i] = "168.63.129.16";
+                    dns = "Azure public DNS";
+                }
+                
                 var result = await diagProvider.nameResolveAsync(hostname, dnsServers[i]).catch(e => {
                     logDebugMessage(e);
                     return {};
                 });
-                var dns = (dnsServers[i] == "" ? "Azure DNS server" : `DNS server ${dnsServers[i]}`);
+                
                 if (result.ip != null) {
-                    if (dnsServers[i] == "") {
-                        fellbackToPublicDns = true;
-                    }
                     ip = result.ip;
                     subChecks.push({ title: `Successfully resolved hostname '${hostname}' with ${dns}`, level: 0 });
                     break;
