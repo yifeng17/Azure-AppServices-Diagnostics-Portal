@@ -7,24 +7,24 @@ export class AseCategoryService extends CategoryService {
 
   private _aseCategories: Category[] = [
     {
-        id: 'Networking',
+        id: 'networkingase',
         name: 'Networking',
-        overviewDetectorId: 'Networking',
-        description: 'Sometimes an ASE can be unhealthy and scaling operations can take a long time due to changes in NSG, UDRs, Express Route that may inadvertently harm the ASE. Find out if your network setup is configured correctly for your ASE.',
-        keywords: ['NSG', 'Connectivity', 'Outbound Connections', 'Subnet'],
+        description: 'Find out if your network setup is configured correctly for your ASE.',
+        keywords: ['NSG', 'Connectivity', 'Outbound Connections', 'Subnet', 'Express Route'],
         color: 'rgb(208, 175, 239)',
         createFlowForCategory: true,
-        chatEnabled: false
+        chatEnabled: false,
+        overviewDetectorId: 'networkingoverview_ase'
     },
     {
-      id: 'Scaling',
+      id: 'scalingase',
       name: 'Scaling',
-      overviewDetectorId: 'Scaling',
-      description: 'Find out the current status of your scale operations, why your scale operations may be taking a long time, or why they are failing',
+      description: 'Check the status of scale operations and troubleshoot latency and failures.',
       keywords: ['Scale Up', 'Scale Out', 'Deployment', 'Stuck'],
       color: 'rgb(249, 213, 180)',
       createFlowForCategory: true,
-      chatEnabled: false
+      chatEnabled: false,
+      overviewDetectorId: 'stuckscaling'
     }
   ];
 

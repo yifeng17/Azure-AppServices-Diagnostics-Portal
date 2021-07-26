@@ -1,3 +1,4 @@
+import { DropdownStepView, InfoStepView, StepFlow, StepFlowManager, CheckStepView, StepViewContainer, InputStepView, ButtonStepView, PromiseCompletionSource, TelemetryService } from 'diagnostic-data';
 export var learnMoreFlow = {
     title: "Learn more about VNet integration",
     async func(siteInfo, diagProvider, flowMgr) {

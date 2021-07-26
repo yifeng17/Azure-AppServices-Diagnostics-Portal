@@ -1,3 +1,4 @@
+import { SeverityLevel } from "../../models/telemetry";
 import { TelemetryService } from "../../services/telemetry/telemetry.service";
 import { Guid } from "../../utilities/guid";
 import { PIIUtilities } from "../../utilities/pii-utilities";
@@ -12,7 +13,8 @@ export enum StepViewType {
     dropdown,
     check,
     input,
-    info
+    info,
+    button
 }
 
 // for angular component variable binding
@@ -66,6 +68,17 @@ export class DropdownStepView extends StepView {
         this.expandByDefault = view.expandByDefault || false;
         this.onDismiss = view.onDismiss || (() => { });
         this.afterInit = view.afterInit || (() => { });
+    }
+}
+
+export class ButtonStepView extends StepView {
+    public callback: () => Promise<void>;
+    public text:string;
+    constructor(view: ButtonStepView) {
+        super(view);
+        this.type = StepViewType.button;
+        this.callback = view.callback;
+        this.text = view.text;
     }
 }
 
@@ -217,6 +230,8 @@ export class StepFlowManager {
         this._stepViewQueue.length = idx + 1;
         if (this._stepViewQueueMap[idx] != null) {
             this.stepViews.length = this._stepViewQueueMap[idx];
+        }else{
+            this.stepViews.length = 0;
         }
         this._stepViewQueue.push(new PromiseCompletionSource<StepView[]>());
         this._execute(idx + 1);
@@ -298,15 +313,34 @@ export class StepFlowManager {
         mgr.addView = this.addView;
         mgr.reset = this.reset.bind(this);
         mgr.logEvent = this.generateLogEventFunc(flow);
+        mgr.logException = this.generateLogExceptionFunc(flow);
         return mgr;
     }
 
     private generateLogEventFunc(flow: StepFlow) {
         var telemetryService = this._telemetryService;
-        return (eventName: string, payload: any) => telemetryService.logEvent(`NetworkCheck.Flow.${eventName}`, { flowId: flow.id, payload });
+        return (eventName: string, payload: any) => telemetryService.logEvent(`NetworkCheck.Flow.${eventName}`, { 
+            flowId: flow.id, 
+            payload,
+            "resourceUri": this._resourceUri,
+            "sessionId": this._sessionId,
+        });
+    }
+
+    private generateLogExceptionFunc(flow: StepFlow) {
+        var telemetryService = this._telemetryService;
+        return (exception: Error, handledAt?: string, properties?: any, severityLevel?: SeverityLevel) => {
+            if(handledAt == null){
+                handledAt = `NetworkCheck.Flow.${flow.id}`;
+            }else{
+                handledAt = `NetworkCheck.Flow.${flow.id}.` + handledAt;
+            }
+            telemetryService.logException(exception, handledAt, properties, severityLevel);
+        }
     }
 
     public logEvent: (eventName: string, payload: any) => void;
+    public logException: (exception: Error, handledAt?: string, properties?: any, severityLevel?: SeverityLevel) => void;
 }
 
 
@@ -342,6 +376,3 @@ export class PromiseCompletionSource<T> extends Promise<T>{
         this._resolve(val);
     }
 }
-
-var globalClasses = { DropdownStepView, CheckStepView, InputStepView, InfoStepView, PromiseCompletionSource };
-Object.keys(globalClasses).forEach(key => window[key] = globalClasses[key]);

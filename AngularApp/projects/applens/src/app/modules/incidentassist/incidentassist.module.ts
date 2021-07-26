@@ -5,7 +5,7 @@ import { ModuleWithProviders } from '@angular/compiler/src/core';
 import { RouterModule } from '@angular/router';
 import { SharedModule } from '../../shared/shared.module';
 import { FormsModule } from '@angular/forms';
-import { FabButtonModule } from '@angular-react/fabric';
+import { FabButtonModule, FabPanelModule } from '@angular-react/fabric';
 import {IncidentAssistanceService} from "./services/incident-assistance.service";
 import { HttpClientModule } from '@angular/common/http';
 
@@ -24,7 +24,8 @@ export const IncidentAssistModuleRoutes : ModuleWithProviders = RouterModule.for
     SharedModule,
     HttpClientModule,
     FormsModule,
-    FabButtonModule
+    FabButtonModule,
+    FabPanelModule
   ],
   providers: [IncidentAssistanceService],
   declarations: [IncidentValidationComponent]
