@@ -27,7 +27,7 @@
       </far-items>
     </fab-command-bar>
   </div>
-  <div class="row" *ngIf="!inDrillDownMode">
+  <div class="row" *ngIf="!inDrillDownMode" style="padding: 0 10%;">
     <div class="row" name="search-bar" style="margin: 20px auto;">
       <div style="margin: auto 25%;">
         <div class="row" style="font-size: 18px; font-weight: 700; padding: 12px;text-align: center;">Displaying Recommendations For ...</div>
@@ -50,7 +50,7 @@
         <div style="margin: 15px 0; min-width: 300px;" *ngIf="topLevelSolutions && topLevelSolutions.length>1">
           <span>Try these other options:</span>
           <div class="row">
-            <div *ngFor="let sol of topLevelSolutions; let i =index" class="col col-md-4 solutions-small-card-outer">
+            <div *ngFor="let sol of topLevelSolutions; let i =index" class="col col-md-4-special solutions-small-card-outer">
               <div class="solutions-small-card" [ngStyle]="{'background-color': mainSolutionIndex==i? '#e8e8e8': 'white'}" (click)="selectSolution(sol, i)">
                 <span>{{sol.Title}}</span>
               </div>
@@ -81,7 +81,7 @@
             <span style="margin-left:5px;font-weight:500;">Documents from the web</span>
           </div>
         </collapsible-list-item>
-        <collapsible-list-item body *ngFor="let doc of webDocuments;let i =index" style="display:inline-block; width: 90%; margin: 5px 2.5%;">
+        <collapsible-list-item body *ngFor="let doc of webDocuments;let i =index" style="display:inline-block; width: 90%; margin: 5px 2.5%;" [hidden]="(i < numArticlesExpanded ) ? false : !viewRemainingArticles">
           <div class="article" (click)="selectResult(doc)" tabindex="0" (keyup.enter)="selectResult(doc)" >
               <a style="font-weight:600;">{{doc.title}}
               <i class="fa fa-external-link"></i>
@@ -90,6 +90,10 @@
               <div class="web-doc-text">{{doc.description}}</div>
           </div>
         </collapsible-list-item>
+        <a  *ngIf="webDocuments.length>numArticlesExpanded"
+          (click)="showRemainingArticles()"> 
+          {{viewOrHideAnchorTagText(viewRemainingArticles , webDocuments.length , numArticlesExpanded )}}   
+        </a>
       </collapsible-list-fabric>
     </div>
     <div class="row" name="detector-results">
@@ -110,7 +114,7 @@
               <div class="insight-detector-name">{{viewModel.model.title}}</div>
             </div>
             <div class="insight-message">{{viewModel.insightTitle}}</div>
-            <div style="display: block;">
+            <div style="display: block;margin-left: 31px;">
               <fab-primary-button [styles]="solutionButtonStyle" *ngIf="viewModel.solutions && viewModel.solutions.length>0"
                   type="Submit" text='View solutions' (click)="showSolutions(viewModel)">
               </fab-primary-button>
@@ -136,7 +140,7 @@
               <div class="insight-detector-name">{{viewModel.model.title}}</div>
             </div>
             <div class="insight-message">{{viewModel.insightTitle}}</div>
-            <div style="display: block;">
+            <div style="display: block;margin-left: 31px;">
               <fab-link [href]="''" [styles]="successfulLinkStyle" (click)="viewDetectorData(viewModel, 'Successful checks')">View supporting data</fab-link>
             </div>
           </div>
@@ -148,7 +152,7 @@
     <a tabindex="0" (keyup.enter)="goBackToOrchestrator()" aria-label="Link to go back to the solutions view" role="button"
       (click)="goBackToOrchestrator()" >Return back to main screen</a>
   </div>
-  <div *ngIf="inDrillDownMode">
+  <div *ngIf="inDrillDownMode" style="padding: 0 10%;">
     <router-outlet></router-outlet>
   </div>
 </div>

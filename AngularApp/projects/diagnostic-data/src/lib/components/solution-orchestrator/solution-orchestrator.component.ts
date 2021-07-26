@@ -102,6 +102,36 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
     startTime: Moment;
     endTime: Moment;
     isPublic: boolean;
+
+    numArticlesExpanded: number = 3;
+    viewRemainingArticles : boolean = false;
+
+    viewOrHideAnchorTagText(viewRemainingArticles: boolean , totalDocuments : number, numDocumentsExpanded : number)
+    {
+        let remainingDocuments: string = "";
+        if (totalDocuments && numDocumentsExpanded){
+        remainingDocuments = `${totalDocuments - numDocumentsExpanded}`;
+        remainingDocuments = viewRemainingArticles ?  `last ${remainingDocuments} ` : remainingDocuments
+        }
+        return !viewRemainingArticles ? `View ${remainingDocuments} more documents` : 
+            `Hide ${remainingDocuments} documents`;
+    }
+
+
+    showRemainingArticles()
+    {
+        this.viewRemainingArticles =!this.viewRemainingArticles
+        if(this.viewRemainingArticles)
+        {
+            this.logEvent(TelemetryEventNames.MoreWebResultsClicked,
+                { 
+                    searchId: this.searchId, 
+                    searchTerm: this.searchTerm, 
+                    ts: Math.floor((new Date()).getTime() / 1000).toString() 
+                }
+            );
+        }
+    }
     
     supportDocumentContent: string = "";
     supportDocumentRendered: boolean = false;
