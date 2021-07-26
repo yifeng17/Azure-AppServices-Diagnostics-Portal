@@ -13,18 +13,6 @@ function delay(second) {
         setTimeout(resolve, second * 1000));
 }
 
-export class TextReference {
-    constructor(s = "") {
-        this.text = s;
-    }
-    set(s) {
-        this.text = s;
-    }
-    toString() {
-        return this.text;
-    }
-}
-
 export class ResourcePermissionCheckManager {
     constructor() {
         this.hidden = true;
