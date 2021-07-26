@@ -8,7 +8,7 @@
     </div>
   </fab-panel>
   <div class="row" name="header">
-    <fab-command-bar [attr.id]="'fab-command-bar-sol-orch'"  contentStyle="border-bottom:1px solid gray;font-weight:12px" contentClass="fab-command-bar-class" >
+    <fab-command-bar [attr.id]="'fab-command-bar-sol-orch'"  contentStyle="border-bottom: 1px solid #ccc;font-weight:12px" contentClass="fab-command-bar-class" >
       <items>
         <fab-command-bar-item *ngIf="inDrillDownMode" key="custom1" text="custom text">
           <render>
@@ -27,9 +27,6 @@
       </far-items>
     </fab-command-bar>
   </div>
-  <!--<div class="row" name="header1" *ngIf="inDrillDownMode">
-    <fab-breadcrumb [items]="breadcrumbItems"></fab-breadcrumb>
-  </div>-->
   <div class="row" *ngIf="!inDrillDownMode">
     <div class="row" name="search-bar" style="margin: 20px auto;">
       <div style="margin: auto 25%;">
@@ -39,7 +36,7 @@
         </fab-search-box>
       </div>
     </div>
-    <div class="row" name="top-solution">
+    <div class="row" name="top-solution" style="border-bottom: 1px solid #ccc;padding-bottom:15px;">
       <h3 style="font-size: 16px;font-weight: 700;margin: 2px 10px;">We think we found you a solution!</h3>
       <p style="margin: 2px 10px;">Customers with similar problems were able to solve it by following these solutions below</p>
       <div style="width: 60%;margin: 15px 20%;min-width: 300px;background-color: white;" *ngIf="topLevelSolutions && topLevelSolutions.length>0">
@@ -69,20 +66,16 @@
           <markdown *ngIf="supportDocumentContent.length>0" [data]="supportDocumentContent"></markdown>
         </div>
       </div>
-      <!--<div style="width: 50%;margin: 15px 25%;min-width: 300px;min-height: 100px;border: 1px solid gray;background-color: white; padding: 0px 10px;">
-        <h3>We found a solution for you</h3>
-        <p>Please go to Diagnose and Solve and debug using the <a href="/appDownAnalysis">Web App Down</a> detector.</p>
-      </div>-->
     </div>
     <div class="row" name="documentation-results">
       <collapsible-list-fabric [collapsed]="true" [title]="'View Documentation and Guides from the Web (' + 2 + ')'">
-        <collapsible-list-item body *ngIf="supportDocumentContent && supportDocumentContent.length>0"><p style="font-weight: 500;">Azure Guides</p></collapsible-list-item>
+        <collapsible-list-item body *ngIf="supportDocumentContent && supportDocumentContent.length>0" style="margin-left:25px;"><p style="font-weight: 500;">Azure Guides</p></collapsible-list-item>
         <collapsible-list-item body *ngIf="supportDocumentContent && supportDocumentContent.length>0" style="display:inline-block; width: 90%; margin: 5px 2.5%;">
           <div class="support-doc-section">
             <markdown *ngIf="supportDocumentContent.length>0" [data]="supportDocumentContent"></markdown>
           </div>
         </collapsible-list-item>
-        <collapsible-list-item body>
+        <collapsible-list-item body style="margin-left:25px;">
           <div>
             <i *ngIf="documentsShowLoader" class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true"></i>
             <span style="margin-left:5px;font-weight:500;">Documents from the web</span>
@@ -121,7 +114,7 @@
               <fab-primary-button [styles]="solutionButtonStyle" *ngIf="viewModel.solutions && viewModel.solutions.length>0"
                   type="Submit" text='View solutions' (click)="showSolutions(viewModel)">
               </fab-primary-button>
-              <fab-link [href]="''" [styles]="viewModel.solutions && viewModel.solutions.length>0? linkStyle: successfulLinkStyle" (click)="viewDetectorData(viewModel, 'Observations and solutions')">View diagnostic data</fab-link>
+              <fab-link [href]="''" [styles]="viewModel.solutions && viewModel.solutions.length>0? linkStyle: successfulLinkStyle" (click)="viewDetectorData(viewModel, 'Observations and solutions')">View supporting data</fab-link>
             </div>
           </div>
         </collapsible-list-item>
@@ -144,7 +137,7 @@
             </div>
             <div class="insight-message">{{viewModel.insightTitle}}</div>
             <div style="display: block;">
-              <fab-link [href]="''" [styles]="successfulLinkStyle" (click)="viewDetectorData(viewModel, 'Successful checks')">View diagnostic data</fab-link>
+              <fab-link [href]="''" [styles]="successfulLinkStyle" (click)="viewDetectorData(viewModel, 'Successful checks')">View supporting data</fab-link>
             </div>
           </div>
         </collapsible-list-item>

@@ -91,8 +91,7 @@ export const TelemetryEventNames = {
     SolutionOrchestratorSummary: 'SolutionOrchestratorSummary',
     SolutionOrchestratorOptionSelected: 'SolutionOrchestratorOptionSelected',
     SolutionOrchestratorViewSolutionsClicked: 'SolutionOrchestratorViewSolutionsClicked',
-    SolutionOrchestratorViewSupportingDataClicked: 'SolutionOrchestratorViewSupportingDataClicked',
-    SolutionOrchestratorViewDiagnosticDataClicked: 'SolutionOrchestratorViewDiagnosticDataClicked',
+    SolutionOrchestratorViewSupportingDataClicked: 'SolutionOrchestratorViewSupportingDataClicked'
 };
 
 export const TelemetrySource = {

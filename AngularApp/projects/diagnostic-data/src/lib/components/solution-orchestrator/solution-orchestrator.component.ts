@@ -472,7 +472,7 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
         let detectorId = null;
         if (viewModel != null && viewModel.model.metadata.id) {
             detectorId = viewModel.model.metadata.id;
-            this.telemetryService.logEvent(TelemetryEventNames.SolutionOrchestratorViewDiagnosticDataClicked, {searchId: this.searchId, detectorId: detectorId, insightTitle: viewModel.insightTitle, insightStatus: viewModel.model.status, score: viewModel.score, ts: Math.floor((new Date()).getTime() / 1000).toString()});
+            this.telemetryService.logEvent(TelemetryEventNames.SolutionOrchestratorViewSupportingDataClicked, {searchId: this.searchId, detectorId: detectorId, insightTitle: viewModel.insightTitle, insightStatus: viewModel.model.status, score: viewModel.score, ts: Math.floor((new Date()).getTime() / 1000).toString()});
             this.breadcrumbItems = [
                 {text: tabName, key: tabName, onClick: () => this.goBackToOrchestrator()},
                 {text: viewModel.model.metadata.name, key: viewModel.model.metadata.id}
