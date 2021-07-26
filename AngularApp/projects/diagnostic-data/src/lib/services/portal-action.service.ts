@@ -10,4 +10,6 @@ export class PortalActionGenericService {
   public openChangeAnalysisBlade(startTime?: string, endTime?: string, resourceUri?: string) {
 
   }
+
+  public openFeedbackPanel(){}
 }

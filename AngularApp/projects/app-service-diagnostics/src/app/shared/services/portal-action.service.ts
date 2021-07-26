@@ -10,6 +10,7 @@ import { AuthService } from '../../startup/services/auth.service';
 import { mergeMap, filter } from 'rxjs/operators';
 import { DetectorType } from 'diagnostic-data';
 import { VersionTestService } from '../../fabric-ui/version-test.service';
+import { Globals } from '../../globals';
 
 @Injectable()
 export class PortalActionService {
@@ -19,7 +20,7 @@ export class PortalActionService {
     private isLegacy:boolean;
     private resourceId: string;
     constructor(private _windowService: WindowService, private _portalService: PortalService, private _armService: ArmService,
-        private _authService: AuthService,private _versionTestService:VersionTestService) {
+        private _authService: AuthService,private _versionTestService:VersionTestService, private globals: Globals,) {
         this._versionTestService.isLegacySub.subscribe(isLegacy => this.isLegacy = isLegacy);
         this._authService.getStartupInfo().pipe(
             mergeMap((startUpInfo: StartupInfo) => {
@@ -279,5 +280,9 @@ export class PortalActionService {
             title: title,
             feature: feature
         };
+    }
+
+    public openFeedbackPanel(){
+        this.globals.openFeedback = !this.globals.openFeedback;
     }
 }

@@ -14,11 +14,9 @@ import { forkJoin as observableForkJoin, Observable, of } from 'rxjs';
 import { map, catchError, delay, retryWhen } from 'rxjs/operators';
 import { DetectorResponse, DetectorMetaData, HealthStatus, DetectorType, DownTime } from '../../models/detector';
 import { Insight, InsightUtils } from '../../models/insight';
-import { DataTableResponseColumn, DataTableResponseObject, DiagnosticData, RenderingType, Rendering, TimeSeriesType, TimeSeriesRendering } from '../../models/detector';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
 import { AppInsightsQueryService } from '../../services/appinsights.service';
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { AppInsightQueryMetadata, AppInsightData, BladeInfo } from '../../models/app-insights';
 import { GenericSupportTopicService } from '../../services/generic-support-topic.service';
 import {RenderingMode} from "../../models/solution-orchestrator";
 import { SearchAnalysisMode } from '../../models/search-mode';
@@ -29,7 +27,7 @@ import {detectorSearchEnabledPesIds, detectorSearchEnabledPesIdsInternal } from 
 import { GenericResourceService } from '../../services/generic-resource-service';
 import { WebSearchConfiguration } from '../../models/search';
 import { GenericContentService } from '../../services/generic-content.service';
-import {PanelType, ThemeSettingName} from "office-ui-fabric-react";
+import {PanelType} from "office-ui-fabric-react";
 
 @Component({
     selector: 'solution-orchestrator',
@@ -69,33 +67,15 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
     pesId: string = null;
 
     searchTermDisplayed: string = "";
+    fetchingDetectors: boolean = false;
 
-    topLevelSolutions = [
-        {
-            Title: "Review Application Insights Telmetry",
-            DescriptionMarkdown: `\n            ### Review Application Insights Data\n\n            It appears that application insights was integrated for this app so review Application Insights data to identify why\n            custom exceptions were thrown by application code or why app was taking a long time to load.\n\n            1. Go to **Application Insights** blade for this App.\n            2. Click on **View Application Insights Data**.\n            3. If that doesn't help, use **Azure Application Insights Snapshot Debugger** to debug the issue further.\n            `,
-            Score: 0.9
-        },
-        {
-            Title: "Collect .NET Profiler Trace",
-            DescriptionMarkdown: `\n        ### Collect .NET Profiler\n\n        If the issue is happening right now, collect .NET Profiler trace to troubleshoot the issue. A profiler trace helps \n        you easily identify the ExceptionType, message and callstack for a .NET exception without installing any additional \n        tools and without changing the state of the problem. Profiler trace helps you identify exceptions in both ASP.NET \n        and ASP.NET Core applications.\n\n        > If you already know the exact **ExceptionType, Exception Message** and **call stack**, then this tool may not be able to offer more. Try searching online in <a href='https://stackoverflow.com/questions/tagged/azure-web-sites' target='_blank'>StackOverflow.com</a>, <a href='https://social.msdn.microsoft.com/Forums/azure/en-US/home?forum=windowsazurewebsitespreview' target='_blank'>Microsoft forums</a> or open a Support Ticket to identify how to solve the exception.</i>\n        \n        `,
-            Score: 0.88
-        },
-        {
-            Title: "Configure AutoHealing Custom Action",
-            DescriptionMarkdown: `\n        ### Configure AutoHealing Custom Action\n\n         **If the issue is not reproducible or intermittent**, you can configure AutoHealing's custom action \n         to collect some data (like profiler trace or memory dump) that will help you debug the issue further.\n         The triggers and actions allow you to define various conditions based on request count, slow requests, \n         memory limit on which you can take specific actions like restarting the process, logging an event,\n          or starting another executable.\n        `,
-            Score: 0.6
-        }
-    ];
-
+    topLevelSolutions = [];
 
     issueDetectedViewModels: any[] = [];
     successfulViewModels: any[] = [];
     webDocuments = [];
 
     detectorList: any[] = [];
-
-    isDetectorView: boolean = false;
 
     documentsShowLoader = false;
     azureGuidesShowLoader = false;
@@ -110,7 +90,10 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
     panelHeaderText = "";
     panelSolutions: any[] = [];
     showPanel(solutions, headerText) {this.panelSolutions = solutions; this.panelHeaderText = headerText; this.isPanelOpen = true;}
-    showSolutions(viewModel) {this.showPanel(viewModel.solutions!=null? viewModel.solutions: [], `${viewModel.model.metadata.name} solutions`);}
+    showSolutions(viewModel) {
+        this.telemetryService.logEvent(TelemetryEventNames.SolutionOrchestratorViewSolutionsClicked, {searchId: this.searchId, insightTitle: viewModel.insightTitle, detectorId: viewModel.model.metadata.id, score: viewModel.score, ts: Math.floor((new Date()).getTime() / 1000).toString()});
+        this.showPanel(viewModel.solutions!=null? viewModel.solutions: [], `${viewModel.model.metadata.name} solutions`);
+    }
 
     mainSolutionIndex = 0;
 
@@ -126,19 +109,6 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
     readonly stringFormat: string = 'YYYY-MM-DDTHH:mm';
     public inDrillDownMode: boolean = false;
     drillDownDetectorId: string = '';
-
-    docs = [
-        {
-            Title: "Troubleshooting 502 errors on Azure",
-            Description: "App restarts can cause 502 errors. This is a guide to troubleshooting 502 errors when they occur.",
-            Url: "https://docs.azure.com/app-services/502-errors/troubleshoot"
-        },
-        {
-            Title: "Troubleshooting 503 errors on Azure",
-            Description: "App restarts can cause 503 errors. This is a guide to troubleshooting 503 errors when they occur.",
-            Url: "https://docs.azure.com/app-services/503-errors/troubleshoot"
-        }
-    ];
 
     linkStyle = {
         root: {
@@ -178,6 +148,7 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
 
     selectSolution(sol, i) {
         this.mainSolutionIndex = i;
+        this.telemetryService.logEvent(TelemetryEventNames.SolutionOrchestratorOptionSelected, {searchId: this.searchId, solutionTitle: sol.Title, solutionScore: sol.Score, solutionDetector: sol.DetectorId, solutionIndex: i, ts: Math.floor((new Date()).getTime() / 1000).toString()});
     }
 
     constructor(public _activatedRoute: ActivatedRoute, private _router: Router,
@@ -190,10 +161,6 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
 
         if (this.isPublic) {
             this.getPesId();
-            /*this._appInsightsService.CheckIfAppInsightsEnabled().subscribe(isAppinsightsEnabled => {
-                this.isAppInsightsEnabled = isAppinsightsEnabled;
-                this.loadingAppInsightsResource = false;
-            });*/
         }
     }
 
@@ -202,7 +169,6 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
     set downTime(downTime: DownTime) {
         if (!!downTime && !!downTime.StartTime && !!downTime.EndTime) {
             this._downTime = downTime;
-            //this.refresh();
         }
         else {
             this._downTime = null;
@@ -212,7 +178,7 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
     //Utility functions
     selectResult(doc: any) {
         window.open(doc.link, '_blank');
-        //this.logEvent(TelemetryEventNames.WebQueryResultClicked, { searchId: this.searchId, article: JSON.stringify(article), ts: Math.floor((new Date()).getTime() / 1000).toString() });
+        this.logEvent(TelemetryEventNames.WebQueryResultClicked, { searchId: this.searchId, article: JSON.stringify(doc), ts: Math.floor((new Date()).getTime() / 1000).toString() });
     }
 
     getLinkText(link: string) {
@@ -223,44 +189,49 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
         return detectorList.filter(element => (element.analysisTypes != null && element.analysisTypes.length > 0 && element.analysisTypes.findIndex(x => x == analysisId) >= 0)).map(element => { return { name: element.name, id: element.id }; });
     }
 
-    resetGlobals() {
-        this.detectors = [];
+    clearInsights() {
         this.detectorViewModels = [];
         this.issueDetectedViewModels = [];
-        this.allSolutions = [];
         this.successfulViewModels = [];
-        this.downTime = null;
-        this.isDetectorView = false;
-        /*this.loadingChildDetectors = false;
-        this.loadingMessages = [];
-        this.showWebSearch = false;
-        this.isSearchEmbedded = false;*/
+        this.allSolutions = [];
+        this.topLevelSolutions = [];
+        this.mainSolutionIndex = 0;
+    }
+
+    resetGlobals() {
+        this.detectors = [];
+        this.clearInsights();
+        this.inDrillDownMode = false;
     }
 
     ngOnInit() {
         this.getAzureGuides();
-        this._activatedRoute.queryParamMap.subscribe(qParams => {
-            this.resetGlobals();
-            this.searchTerm = qParams.get('searchTerm') === null ? this.searchTerm : qParams.get('searchTerm');
-            this.searchTermDisplayed = this.searchTerm;
-            if (this.searchTerm && this.searchTerm.length>1) {
-                this.hitSearch();
+        this._activatedRoute.paramMap.subscribe(params => {
+            let detectorId = params.get("detectorName") === null ? null : params.get("detectorName");
+            if (detectorId && detectorId.length>0) {
+                this.drillDownDetectorId = detectorId;
+                this.inDrillDownMode = true;
             }
-        });
-        this._detectorControl.update.subscribe(isValidUpdate => {
-            if (isValidUpdate) {
-                this.timeRefresh();
+            else {
+                this.drillDownDetectorId = null;
+                this.inDrillDownMode = false;
+                this._activatedRoute.queryParamMap.subscribe(qParams => {
+                    let searchTerm = qParams.get('searchTerm') === null ? null : qParams.get('searchTerm');
+                    if (searchTerm && searchTerm.length>1 && searchTerm != this.searchTerm) {
+                        this.searchTerm = searchTerm;
+                        this.searchTermDisplayed = this.searchTerm;
+                        this.hitSearch();
+                    }
+                    else if (this.startTime !== this._detectorControl.startTime || this.endTime !== this._detectorControl.endTime) {
+                        this.timeRefresh();
+                    }
+                });
             }
         });
     }
 
     timeRefresh() {
-        this.detectors = [];
-        this.detectorViewModels = [];
-        this.issueDetectedViewModels = [];
-        this.successfulViewModels = [];
-        this.allSolutions = [];
-        this.downTime = null;
+        this.clearInsights();
         this.startDetectorRendering(null, false);
     }
 
@@ -276,8 +247,6 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
 
     onSearchBoxFocus(){}
 
-    refreshPage() {}
-
     // Below two methods are for new version of time picker
     /*updateMessage(s: string) {
         this.time = s;
@@ -288,7 +257,9 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
         //this.updateAriaExpanded();
     }*/
 
-    sendFeedback() {}
+    sendFeedback() {
+        this.portalActionService.openFeedbackPanel();
+    }
 
     getAzureGuides() {
         if (!this.supportDocumentRendered) {
@@ -392,6 +363,14 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
                 };
             });
             this.webDocuments = this.rankResultsBySource(this.webDocuments);
+            this.logEvent(TelemetryEventNames.WebQueryResults, { searchId: this.searchId, query: this.searchTerm, results: JSON.stringify(this.webDocuments.map(result => {
+                return {
+                    title: result.title.replace(";"," "),
+                    description: result.description.replace(";", " "),
+                    link: result.link,
+                    articleSurfacedBy : result.articleSurfacedBy || "Bing"
+                };
+            })), ts: Math.floor((new Date()).getTime() / 1000).toString() });
         }
     }
 
@@ -445,12 +424,9 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
     }
 
     onSearchEnter(searchValue: { newValue: string }) {
-        console.log("Hitting search with", searchValue);
         let searchTerm = searchValue.newValue;
         if (searchTerm !== this.searchTerm) {
-            this.searchTerm = searchTerm;
-            this.searchTermDisplayed = this.searchTerm;
-            this.hitSearch();
+            this._router.navigate([`../solutionorchestrator`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true, queryParams: { searchTerm: searchTerm, hideShieldComponent: true } });
         }
     }
 
@@ -459,13 +435,9 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
     }
 
     hitSearch() {
-        if (this.searchTerm && this.searchTerm.length>1) {
-            var detectorsTask = this.searchDetectors();
-            var webDocuments = this.getDocuments();
-        }
-        else {
-            this.refreshPage();
-        }
+        this.resetGlobals();
+        var detectorsTask = this.searchDetectors();
+        var webDocuments = this.getDocuments();
     }
 
     insertInDetectorArray(detectorItem) {
@@ -474,41 +446,58 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
         }
     }
 
-    viewDetectorData(viewModel) {
+    getDetectorNameById(detectorId) {
+        let detector = this.detectorList.find(x => x.id == detectorId);
+        if (detector) {
+            return detector.name;
+        }
+        return null;
+    }
+
+    viewSolutionSupportingData(solution: Solution) {
+        let detectorId = solution.DetectorId;
+        let detectorName = this.getDetectorNameById(detectorId);
+        this.breadcrumbItems = [
+            {text: "Solutions", key: "mainSolutions", onClick: () => this.goBackToOrchestrator()},
+            {text: detectorName? detectorName: solution.Title, key: detectorId}
+        ];
+        this.telemetryService.logEvent(TelemetryEventNames.SolutionOrchestratorViewSupportingDataClicked, {searchId: this.searchId, detectorId: detectorId, score: solution.Score.toString(), solutionTitle: solution.Title, solutionIndex: this.mainSolutionIndex.toString(), ts: Math.floor((new Date()).getTime() / 1000).toString()});
+        if (detectorId) {
+            this._router.navigate([`../solutionorchestrator/detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true, queryParams: { searchTerm: this.searchTerm, hideShieldComponent: true } });
+            this.inDrillDownMode = true;
+        }
+    }
+
+    viewDetectorData(viewModel, tabName) {
         let detectorId = null;
         if (viewModel != null && viewModel.model.metadata.id) {
             detectorId = viewModel.model.metadata.id;
-            if (viewModel.model.status == 0) {
-                this.breadcrumbItems = [
-                    {text: "Observations and Solutions", key: "observationsAndSolutions", onClick: () => this.goBackToOrchestrator()},
-                    {text: viewModel.model.metadata.name, key: viewModel.model.metadata.id}
-                ];
-            }
-            else if (viewModel.model.status == 3) {
-                this.breadcrumbItems = [
-                    {text: "Successful checks", key: "successfulChecks", onClick: () => this.goBackToOrchestrator()},
-                    {text: viewModel.model.metadata.name, key: viewModel.model.metadata.id}
-                ]
-            }
+            this.telemetryService.logEvent(TelemetryEventNames.SolutionOrchestratorViewDiagnosticDataClicked, {searchId: this.searchId, detectorId: detectorId, insightTitle: viewModel.insightTitle, insightStatus: viewModel.model.status, score: viewModel.score, ts: Math.floor((new Date()).getTime() / 1000).toString()});
+            this.breadcrumbItems = [
+                {text: tabName, key: tabName, onClick: () => this.goBackToOrchestrator()},
+                {text: viewModel.model.metadata.name, key: viewModel.model.metadata.id}
+            ];
         }
         if (detectorId) {
             this._router.navigate([`../solutionorchestrator/detectors/${detectorId}`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true, queryParams: { searchTerm: this.searchTerm, hideShieldComponent: true } });
-            this.isDetectorView = true;
+            this.inDrillDownMode = true;
         }
     }
 
     goBackToOrchestrator() {
-        this.isDetectorView = false;
+        this.inDrillDownMode = false;
         this._router.navigate([`../../../solutionorchestrator`], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', preserveFragment: true, queryParams: { searchTerm: this.searchTerm } });
     }
 
     searchDetectors() {
-        console.log("SEARCHING FOR DETECTORS FOR", this.searchTerm);
+        //Empty out the old sorted detectors array
+        this.detectors = [];
         this._resourceService.getPesId().subscribe(pesId => {
             if (!((this.isPublic && detectorSearchEnabledPesIds.findIndex(x => x==pesId)<0) || (!this.isPublic && detectorSearchEnabledPesIdsInternal.findIndex(x => x==pesId)<0))){
                 this.searchId = uuid();
                 let searchTask = this._diagnosticService.getDetectorsSearch(this.searchTerm).pipe(map((res) => res), catchError(e => of([])));
                 let detectorsTask = this._diagnosticService.getDetectors().pipe(map((res) => res), catchError(e => of([])));
+                this.fetchingDetectors = true;
                 //this.showPreLoader = true;
                 observableForkJoin([searchTask, detectorsTask]).subscribe(results => {
                     var searchResults: DetectorMetaData[] = results[0];
@@ -540,7 +529,10 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
                         });
                     }
                     this.detectorList = detectorList;
+                    this.fetchingDetectors = false;
                     this.startDetectorRendering(null, false);
+                }, (err) => {
+                    this.fetchingDetectors = false;
                 });
             }
         });
@@ -554,9 +546,6 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
 
         this.detectorMetaData = this.detectorList.filter(detector => this.detectors.findIndex(d => d.id === detector.id) >= 0);
         this.detectorViewModels = this.detectorMetaData.map(detector => this.getDetectorViewModel(detector, downTime, containsDownTime));
-        if (this.detectorViewModels.length > 0) {
-            //this.loadingChildDetectors = true;
-        }
         this.detectorViewModels.forEach((metaData, index) => {
             requests.push((<Observable<DetectorResponse>>metaData.request).pipe(
                 map((response: DetectorResponse) => {
@@ -564,8 +553,8 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
 
                     if (this.detectorViewModels[index].loadingStatus !== LoadingStatus.Failed) {
                         if (this.detectorViewModels[index].status === HealthStatus.Critical || this.detectorViewModels[index].status === HealthStatus.Warning) {
-                            let insight = this.getDetectorInsight(this.detectorViewModels[index], 0);
-                            let issueDetectedViewModel = { model: this.detectorViewModels[index], insightTitle: insight.title, insightDescription: insight.description, solutions: insight.solutions };
+                            let insight = this.getDetectorInsight(this.detectorViewModels[index]);
+                            let issueDetectedViewModel = { model: this.detectorViewModels[index], insightTitle: insight.title, insightDescription: insight.description, solutions: insight.solutions, score: this.detectorViewModels[index].score };
 
                             if (this.issueDetectedViewModels.length > 0) {
                                 this.issueDetectedViewModels = this.issueDetectedViewModels.filter(iVM => (!!iVM.model && !!iVM.model.metadata && !!iVM.model.metadata.id && iVM.model.metadata.id != issueDetectedViewModel.model.metadata.id));
@@ -574,8 +563,8 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
                             this.issueDetectedViewModels.push(issueDetectedViewModel);
                             this.issueDetectedViewModels = this.issueDetectedViewModels.sort((n1, n2) => n1.model.status - n2.model.status);
                         } else {
-                            let insight = this.getDetectorInsight(this.detectorViewModels[index], 0);
-                            let successViewModel = { model: this.detectorViewModels[index], insightTitle: insight.title, insightDescription: insight.description };
+                            let insight = this.getDetectorInsight(this.detectorViewModels[index]);
+                            let successViewModel = { model: this.detectorViewModels[index], insightTitle: insight.title, insightDescription: insight.description, score: this.detectorViewModels[index].score };
 
                             if (this.successfulViewModels.length > 0) {
                                 this.successfulViewModels = this.successfulViewModels.filter(sVM => (!!sVM.model && !!sVM.model.metadata && !!sVM.model.metadata.id && sVM.model.metadata.id != successViewModel.model.metadata.id));
@@ -618,6 +607,14 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
             if (this.searchId && this.searchId.length > 0) {
                 this.childDetectorsEventProperties['SearchId'] = this.searchId;
             }
+            this.topLevelSolutions = this.allSolutions.filter(x => x.Score>this.detectorThresholdScore).sort((a, b) => {if (a.Score>b.Score) return -1; else return 1;});
+            this.logEvent(TelemetryEventNames.SolutionOrchestratorSummary, {searchId: this.searchId, searchTerm: this.searchTerm, proposedSolutions: this.topLevelSolutions.map(x => {
+                return {
+                    title: x.Title,
+                    detectorId: x.DetectorId,
+                    score: x.Score
+                };
+            }), ts: Math.floor((new Date()).getTime() / 1000).toString()});
             this.logEvent(TelemetryEventNames.ChildDetectorsSummary, this.childDetectorsEventProperties);
         });
 
@@ -655,7 +652,7 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
         return pendingCount;
     }
 
-    getDetectorInsight(viewModel: any, score: number): any {
+    getDetectorInsight(viewModel: any): any {
         let allInsights: Insight[] = InsightUtils.parseAllInsightsFromResponse(viewModel.response,true);
         let insight: any;
         if (allInsights.length > 0) {
@@ -676,6 +673,7 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
                 if (i.solutions != null) {
                     i.solutions.forEach(s => {
                         if (this.allSolutions.findIndex(x => x.Name === s.Name) === -1) {
+                            s.Score = viewModel.score;
                             this.allSolutions.push(s);
                         }
                     });
@@ -688,6 +686,7 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
     getDetectorViewModel(detector: DetectorMetaData, downtime: DownTime, containsDownTime: boolean) {
         let startTimeString = this._detectorControl.startTimeString;
         let endTimeString = this._detectorControl.endTimeString;
+        var detectorScore = this.detectors.find(x => x.id==detector.id).score;
 
         if (containsDownTime && !!downtime && !!downtime.StartTime && !!downtime.EndTime) {
             startTimeString = downtime.StartTime.format(this.stringFormat);
@@ -705,6 +704,7 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
             statusIcon: null,
             expanded: false,
             response: null,
+            score: detectorScore,
             request: this._diagnosticService.getDetector(detector.id, startTimeString, endTimeString)
         };
     }

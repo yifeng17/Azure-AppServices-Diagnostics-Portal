@@ -76,6 +76,7 @@ br{
     padding: 5px;
     margin: 10px 0px;
     white-space: nowrap;
+    display: table;
 }
 
 .solutions-small-card{
@@ -86,4 +87,13 @@ br{
     height: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.sections-loading-title{
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    padding-left: 1rem !important;
 }
