@@ -119,6 +119,7 @@ import { CheckStepComponent } from './components/step-views/check-step-view/chec
 import { CheckComponent, ConvertLevelToHealthStatusPipe } from './components/step-views/check-step-view/check.component';
 import {SolutionOrchestratorComponent} from "./components/solution-orchestrator/solution-orchestrator.component";
 import { RouterModule } from '@angular/router';
+import { ButtonStepComponent } from './components/step-views/button-step-view/button-step.component';
 @NgModule({
   imports: [
     CommonModule,
