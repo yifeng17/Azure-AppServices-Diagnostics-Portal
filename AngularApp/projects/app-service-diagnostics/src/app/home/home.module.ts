@@ -56,6 +56,7 @@ import { CrashMonitoringComponent } from '../shared/components/tools/crash-monit
 import { RiskTileComponent } from './components/risk-tile/risk-tile.component';
 import { IntegratedSolutionsViewComponent } from '../shared/components/integrated-solutions-view/integrated-solutions-view.component';
 import { HomeContainerComponent } from './components/home-container/home-container.component';
+import {SolutionOrchestratorComponent} from "diagnostic-data";
 
 export const HomeRoutes = RouterModule.forChild([
     {
@@ -73,6 +74,32 @@ export const HomeRoutes = RouterModule.forChild([
                     cacheComponent: true
                 },
                 pathMatch: 'full',
+            },
+            {
+                path: 'solutionorchestrator',
+                component: SolutionOrchestratorComponent,
+                data: {
+                    navigationTitle: 'SolOrch',
+                    cacheComponent: false
+                },
+                children: [
+                    {
+                        path: 'detectors/:detectorName',
+                        component: GenericDetectorComponent,
+                        data: {
+                            analysisMode: true,
+                            cacheComponent: false
+                        },
+                        resolve: {
+                            time: TimeControlResolver,
+                            navigationTitle: TabTitleResolver,
+                        }
+                    }
+                ],
+                resolve: {
+                    time: TimeControlResolver,
+                    navigationTitle: TabTitleResolver,
+                }
             },
             {
                 path: 'categoriesv3/:category',

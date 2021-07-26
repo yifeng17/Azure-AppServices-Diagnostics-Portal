@@ -15,11 +15,49 @@ export class SolutionViewContainerComponent implements OnInit {
     @Input() detector: string = "";
     @Input() isAnalysisView: boolean = false;
     @Input() isKeystoneDetector: boolean = false;
+    @Input() showFeedbackQuestion: boolean = true;
+    @Input() askReasonNotHelpful: boolean = false;
+    
+    calloutSubmitDisabled: boolean = false;
+    showReasonsCallout: boolean = false;
+    calloutOptions: any[] = [
+        {
+            key: "solutionIsVague",
+            text: "Solution is too vague"
+        },
+        {
+            key: "solutionIsNotActionable",
+            text: "Solution is not actionable"
+        },
+        {
+            key: "solutionRequiresEffort",
+            text: "Solution requires too much effort"
+        },
+        {
+            key: "solutionDoesntApply",
+            text: "Solution doesn't apply to me"
+        },
+        {
+            key: "other",
+            text: "Other"
+        }
+    ];
+
+    selectedCalloutOption: any = this.calloutOptions[0];
+
+    setCalloutSelection(event) {
+        this.selectedCalloutOption = event.option;
+    }
+
+    closeReasonsCallout(){
+        this.showReasonsCallout = false;
+    }
 
     solutionTitleImageSrc: string = "../../../../assets/img/case-submission-flow/Help-and-Support.svg";
 
     yesSelected: boolean;
     noSelected: boolean;
+    helpfulSelected: string;
     showThanksMessage: boolean = false;
     eventProps: { [name: string]: string } = {};
     isPublic: boolean;
@@ -48,17 +86,36 @@ export class SolutionViewContainerComponent implements OnInit {
          return this.isPublic ? publicImagePath : internalImagePath;
         }
 
+    onCalloutSubmit() {
+        this.calloutSubmitDisabled = true;
+        const feedbackEventProps = {
+            ...this.eventProps,
+            'IsHelpful': this.helpfulSelected,
+            ...(this.askReasonNotHelpful && this.noSelected)? {'NotHelpfulReason': this.selectedCalloutOption.text}: {}
+        }
+        this.telemetryService.logEvent("SolutionFeedback", feedbackEventProps);
+        this.showThanksMessage = this.yesSelected || this.noSelected;
+    }
+
     feedbackButtonClicked(helpful: boolean) {
+        this.helpfulSelected = String(helpful);
         this.yesSelected = helpful;
         this.noSelected = !helpful;
 
-        const feedbackEventProps = {
-            ...this.eventProps,
-            'IsHelpful': String(helpful)
+        if (this.noSelected && this.askReasonNotHelpful) {
+            this.showReasonsCallout = true;
         }
 
-        this.telemetryService.logEvent("SolutionFeedback", feedbackEventProps);
-        this.showThanksMessage = this.yesSelected || this.noSelected;
+        else {
+
+            const feedbackEventProps = {
+                ...this.eventProps,
+                'IsHelpful': String(helpful)
+            }
+
+            this.telemetryService.logEvent("SolutionFeedback", feedbackEventProps);
+            this.showThanksMessage = this.yesSelected || this.noSelected;
+        }
     }
 
 }

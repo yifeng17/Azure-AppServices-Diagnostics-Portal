@@ -25,6 +25,10 @@ export class SupportTopicService {
         "15551": ["32632390", "32632389", "32632430", "32632396", "32632397", "32632401", "32632431", "32632436", "32632434", "32632406", "32632389", "32632390", "32632430", "32632393", "32632398", "32632403", "32632409", "32632413", "32632414", "32632415", "32632385", "32632418", "32632419", "32632422", "32632424", "32632438", "32632399", "32632408", "32632421", "32632426", "32632405", "32683732", "32632427", "32632386", "32632387", "32632388", "32632395", "32632404", "32632416", "32632402", "32632420", "32632425", "32632428", "32632432", "32632437", "32632407", "32740235", "32740236", "32740237", "32740238", "32740239", "32740240", "32740234"]
     };
 
+    private solutionOrchestratorConfig = {
+        "14748": ["32629421"]
+    };
+
     constructor(protected _http: HttpClient, protected _authService: AuthService, protected _diagnosticService: DiagnosticService, protected _resourceService: ResourceService, protected _telemetryService: TelemetryService) {
     }
 
@@ -83,7 +87,13 @@ export class SupportTopicService {
                         }
                     }
                     else {
-                        detectorPath = `/analysis/searchResultsAnalysis/search`;
+                        if (this.solutionOrchestratorConfig && this.solutionOrchestratorConfig[this.pesId] && this.solutionOrchestratorConfig[this.pesId].length>0 && this.solutionOrchestratorConfig[this.pesId].findIndex(s => s==this.supportTopicId)>=0) {
+                            detectorPath = `solutionorchestrator`;
+                            return observableOf({ path: detectorPath, queryParams: queryParamsDic });
+                        }
+                        else {
+                            detectorPath = `/analysis/searchResultsAnalysis/search`;
+                        }
                     }
                 }
                 

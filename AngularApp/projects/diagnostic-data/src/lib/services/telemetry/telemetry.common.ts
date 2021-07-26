@@ -87,7 +87,11 @@ export const TelemetryEventNames = {
     PortalIFrameLoadingStart: 'PortalIFrameLoadingStart',
     SurveyPageLoaded: 'SurveyPageLoaded',
     SurveyLoadStatus: 'SurveyLoadStatus',
-    SurveySubmitStatus: 'SurveySubmitStatus'
+    SurveySubmitStatus: 'SurveySubmitStatus',
+    SolutionOrchestratorSummary: 'SolutionOrchestratorSummary',
+    SolutionOrchestratorOptionSelected: 'SolutionOrchestratorOptionSelected',
+    SolutionOrchestratorViewSolutionsClicked: 'SolutionOrchestratorViewSolutionsClicked',
+    SolutionOrchestratorViewSupportingDataClicked: 'SolutionOrchestratorViewSupportingDataClicked'
 };
 
 export const TelemetrySource = {

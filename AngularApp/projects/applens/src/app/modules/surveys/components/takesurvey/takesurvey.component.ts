@@ -47,7 +47,7 @@ export class TakeSurveyComponent implements OnInit {
     {key: "y", text: "Yes", styles: {field: {fontWeight: 400}}},
     {key: "n", text: "No", styles: {field: {fontWeight: 400}}}
   ];
-  detectorHelped: IChoiceGroupOption = {key: "y", text: "Yes"};
+  detectorHelped: IChoiceGroupOption = {key: "y", text: "Yes detectors helped"};
   detectorHelpedOptions = [
       {key: "y", text: "Yes detectors helped", styles: {field: {fontWeight: 400}}},
       {key: "n", text: "Detectors did not help", styles: {field: {fontWeight: 400}}}

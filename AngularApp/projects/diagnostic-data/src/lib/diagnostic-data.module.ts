@@ -83,7 +83,7 @@ import { AppDependenciesComponent } from './components/app-dependencies/app-depe
 import { HighchartsChartModule } from 'highcharts-angular';
 import { HighchartsGraphComponent } from './components/highcharts-graph/highcharts-graph.component';
 import { FabNavModule } from './components/fab-nav/fab-nav.module';
-import { FabPanelModule, FabIconModule, FabChoiceGroupModule, FabSearchBoxModule, FabDropdownModule, FabDetailsListModule, FabTextFieldModule, FabMessageBarModule, FabButtonModule, FabTooltipModule, FabSpinnerModule, FabCalloutModule, FabCheckboxModule, FabPivotModule } from '@angular-react/fabric';
+import { FabPanelModule, FabIconModule, FabChoiceGroupModule, FabCommandBarModule, FabSearchBoxModule, FabDropdownModule, FabDetailsListModule, FabTextFieldModule, FabMessageBarModule, FabButtonModule, FabTooltipModule, FabSpinnerModule, FabCalloutModule, FabCheckboxModule, FabPivotModule, FabLinkModule, FabBreadcrumbModule } from '@angular-react/fabric';
 import { SummaryCardsComponent } from './components/summary-cards/summary-cards.component';
 import { InsightsV4Component } from './components/insights-v4/insights-v4.component';
 import { CardSelectionV4Component } from './components/card-selection-v4/card-selection-v4.component';
@@ -117,6 +117,8 @@ import { InfoStepComponent } from './components/step-views/info-step-view/info-s
 import { DropDownStepComponent } from './components/step-views/dropdown-step-view/dropdown-step.component';
 import { CheckStepComponent } from './components/step-views/check-step-view/check-step.component';
 import { CheckComponent, ConvertLevelToHealthStatusPipe } from './components/step-views/check-step-view/check.component';
+import {SolutionOrchestratorComponent} from "./components/solution-orchestrator/solution-orchestrator.component";
+import { RouterModule } from '@angular/router';
 import { ButtonStepComponent } from './components/step-views/button-step-view/button-step.component';
 @NgModule({
   imports: [
@@ -132,6 +134,7 @@ import { ButtonStepComponent } from './components/step-views/button-step-view/bu
     FabIconModule,
     FabChoiceGroupModule,
     FabSearchBoxModule,
+    FabCommandBarModule,
     FabDropdownModule,
     InViewportModule,
     FabDetailsListModule,
@@ -143,6 +146,9 @@ import { ButtonStepComponent } from './components/step-views/button-step-view/bu
     FabCalloutModule,
     FabCheckboxModule,
     FabPivotModule,
+    FabLinkModule,
+    FabBreadcrumbModule,
+    RouterModule
   ],
   providers: [
     ClipboardService
@@ -195,6 +201,7 @@ import { ButtonStepComponent } from './components/step-views/button-step-view/bu
     CheckStepComponent,
     CheckComponent,
     ConvertLevelToHealthStatusPipe,
+    SolutionOrchestratorComponent
   ],
   entryComponents: [DetectorListAnalysisComponent],
   exports: [
@@ -226,6 +233,7 @@ import { ButtonStepComponent } from './components/step-views/button-step-view/bu
     CheckStepComponent,
     CheckComponent,
     ConvertLevelToHealthStatusPipe,
+    SolutionOrchestratorComponent
   ],
 })
 export class DiagnosticDataModule {

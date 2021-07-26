@@ -15,6 +15,7 @@ export class Solution {
     TypeTag: SolutionTypeTag;
     IsInternal: boolean;
     DetectorId: string;
+    Score: number;
 }
 
 export enum ActionType {
