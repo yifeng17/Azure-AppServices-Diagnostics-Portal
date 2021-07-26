@@ -26,7 +26,7 @@ export class SupportTopicService {
     };
 
     private solutionOrchestratorConfig = {
-        "14748": ["32629421"]
+        "14748": []
     };
 
     constructor(protected _http: HttpClient, protected _authService: AuthService, protected _diagnosticService: DiagnosticService, protected _resourceService: ResourceService, protected _telemetryService: TelemetryService) {
