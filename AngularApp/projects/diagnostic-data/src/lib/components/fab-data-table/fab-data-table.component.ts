@@ -21,8 +21,10 @@ export class FabDataTableComponent implements AfterContentInit {
   table:DataTableResponseObject;
 
   @Input("table") private set _table(t: DataTableResponseObject) {
-    this.table = t;
-    this.tableObserve.next(t);
+    if(!!t) {
+      this.table = t;
+      this.tableObserve.next(t);
+    }
   };
   @Input() columnOptions: TableColumnOption[] = [];
   @Input() descriptionColumnName: string = "";
@@ -277,7 +279,9 @@ export class FabDataTableComponent implements AfterContentInit {
 
   private checkColumIsVisible(name: string): boolean {
     const option = this.getColumnOption(name);
-    return option === null ? true : option.visible;
+    let visible = true;
+    if(option && option.visible === false) visible = false;
+    return option === null ? true : visible;
   }
 
   private getMinOrMaxColumnWidth(name: string, isMinWidth: boolean = true): number {
@@ -296,7 +300,7 @@ export class FabDataTableComponent implements AfterContentInit {
       return false;
     }
     const columns = this.table.columns;
-    return columns.findIndex(col => col.columnName === option.name) > -1;
+    return columns.findIndex(col => col.columnName === option.name) > -1 && this.table.rows.length > 0;
   }
 
   isMarkdown(s: any) {

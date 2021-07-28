@@ -630,7 +630,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
     }
 
     getDetectorInsight(viewModel: any): any {
-        let allInsights: Insight[] = InsightUtils.parseAllInsightsFromResponse(viewModel.response);
+        let allInsights: Insight[] = InsightUtils.parseAllInsightsFromResponse(viewModel.response,true);
         let insight: any;
         if (allInsights.length > 0) {
 
@@ -785,7 +785,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                 if (this.analysisId === "searchResultsAnalysis" && this.searchTerm && this.searchTerm.length > 0) {
                     //If in homepage then open second blade for Diagnostic Tool and second blade will continue to open third blade for
                     if (this.withinGenie) {
-                        const isHomepage = !this._activatedRoute.root.firstChild.firstChild.firstChild.firstChild.snapshot.params["category"];
+                        const isHomepage = !(!!this._activatedRoute.root.firstChild && !!this._activatedRoute.root.firstChild.firstChild && !!this._activatedRoute.root.firstChild.firstChild.firstChild && !!this._activatedRoute.root.firstChild.firstChild.firstChild.firstChild && !!this._activatedRoute.root.firstChild.firstChild.firstChild.firstChild.snapshot && !!this._activatedRoute.root.firstChild.firstChild.firstChild.firstChild.snapshot.params["category"]);
                         if (detectorId == 'appchanges' && !this._detectorControl.internalClient) {
                             this.portalActionService.openChangeAnalysisBlade(this._detectorControl.startTimeString, this._detectorControl.endTimeString);
                             return;

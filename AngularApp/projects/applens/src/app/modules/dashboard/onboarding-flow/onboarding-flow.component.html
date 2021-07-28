@@ -129,25 +129,159 @@
     </div>
   </ngx-smart-modal>
 
+  <fab-dialog [hidden]="publishDialogHidden" (onDismiss)="dismissDialog()">
+    <fab-dialog-content [title]="dialogTitle" [subText]="dialogSubText">
+      <fab-text-field [label]="branchName" [(value)]="Branch" [placeholder]="branchPlaceholder"></fab-text-field>
+      <fab-text-field [label]="PRName" [(value)]="PRTitle" [placeholder]="PRPlaceholder"></fab-text-field>
+      <fab-text-field [label]="PRDescription" [(value)]="PRDesc" [placeholder]="PRDescriptionPlaceholder" [required]="true" [multiline]="true"></fab-text-field>
+      <fab-primary-button [text]="publishButtonText" (onClick)="publish()"></fab-primary-button>
+      <fab-default-button [text]="cancelButtonText" (onClick)="publishDialogCancel()"></fab-default-button>
+    </fab-dialog-content>
+    <fab-dialog-footer>
+      
+    </fab-dialog-footer>
+  </fab-dialog>
+
+
+  <div class="timepicker" id="timePicker">
+    <!-- <div class="time-picker-container" *ngIf="globals.openTimePicker" (keydown.escape)="escapeHandler($event)" (keydown.Tab)="tabHandler($event)"> -->
+    <fab-callout *ngIf="openTimePickerCallout" [setInitialFocus]="true" [target]="target"
+      (onDismiss)="openTimePickerCallout = false;" [isBeakVisible]="false">
+      <div style="width: 300px;">
+        <div class="callout-padding">
+          <fab-choice-group [options]="choiceGroupOptions" [defaultSelectedKey]="defaultSelectedKey">
+          </fab-choice-group>
+          <div *ngIf="showTimePicker" class="row">
+            <div style="display: flex;" class="ml-3 mt-3">
+              <div class="mr-3 date-picker-label">Start </div>
+              <fab-date-picker contentClass="col-md-8" [minDate]="minDate" [maxDate]="maxDate"
+                placeholder="Select a date..." ariaLabel="Select start date" allowTextInput="true"
+                showMonthPickerAsOverlay="true" (onSelectDate)="onSelectStartDateHandler($event)" [formatDate]="formatDate"
+                [value]="startDate" contentStyle="width:100px;margin-right:4px">
+              </fab-date-picker>
+              <fab-masked-text-field contentClass="col-md-4" maxLength="6" [(value)]="startClock"
+                [iconProps]="{iconName: 'Clock'}" [mask]="'99:99'" [maskChar]="'-'" [validateOnFocusOut]="true"
+                [getErrorMessage]="getErrorMessageOnTextField" [ariaLabel]="'startTime'" [styles]="maskTextFieldStyles">
+              </fab-masked-text-field>
+            </div>
+    
+            <div style="display: flex;" class="ml-3 mt-3">
+              <div  class="mr-4 date-picker-label">End</div>
+              <fab-date-picker contentClass="col-md-8" [minDate]="minDate" [maxDate]="maxDate"
+                placeholder="Select a date..." ariaLabel="Select end date" allowTextInput="true"
+                showMonthPickerAsOverlay="true" (onSelectDate)="onSelectEndDateHandler($event)" [formatDate]="formatDate"
+                [value]="endDate" contentStyle="width:100px;margin-right:4px">
+              </fab-date-picker>
+              <fab-masked-text-field contentClass="col-md-4" maxLength="6" [(value)]="endClock"
+                [iconProps]="{iconName: 'Clock'}" [mask]="'99:99'" [maskChar]="'-'" [validateOnFocusOut]="true"
+                [getErrorMessage]="getErrorMessageOnTextField" [ariaLabel]="'endTime'" [styles]="maskTextFieldStyles">
+              </fab-masked-text-field>
+            </div>
+          </div>
+          <div *ngIf="timeDiffError != ''" style="color:red;">{{timeDiffError}}</div>
+        </div>
+        <div style="border-top: 1px solid gray;" class="pt-3 pb-3 callout-padding">
+          <div class="mr-4">
+            <fab-primary-button (onClick)="applyTimeRange()" contentClass="mr-3">Apply
+            </fab-primary-button>
+            <fab-default-button (onClick)="cancelTimeRange()">Cancel</fab-default-button>
+          </div>
+        </div>
+  
+      </div>
+    </fab-callout>
+    <!-- </div> -->
+  
+    <fab-calendar *ngIf="showCalendar"
+      contentStyle="position: absolute;top: 20px;right: 0px ;background: #FFFFFF; padding: 8px; color: #323130; font-size: 14px;">
+      <fab-calendar-strings [months]="dayPickerString.months" [shortMonths]="dayPickerString.shortMonths"
+        [days]="dayPickerString.days" [shortDays]="dayPickerString.shortDays" [goToToday]="dayPickerString.goToToday"
+        weekNumberFormatString="dayPickerString.weekNumberFormatString"></fab-calendar-strings>
+    </fab-calendar>
+  </div>
+
   <div *ngIf="showAlert" class="alert alert-container" [ngClass]="alertClass" role="alert">
     {{alertMessage}}
   </div>
   <loader-view *ngIf="!codeLoaded" message="Starting onboarding flow ..."></loader-view>
 
+  
+  <fab-command-bar [attr.id]="'fab-command-bar'"  contentStyle="border-bottom:1px solid gray;font-weight:12px" contentClass="fab-command-bar-class" >
+    <items>
+      <fab-command-bar-item key="run" text="Run" [iconProps]="{ iconName: 'Play' }"
+      (click)="runCompilation()"></fab-command-bar-item>
+      <fab-command-bar-item key="publish" text="Publish" [iconProps]="{ iconName: 'Upload' }"
+      (click)="showPublishDialog()"></fab-command-bar-item>
+      <fab-command-bar-item key="download" text="Download" [iconProps]="{ iconName: 'Download' }"
+      (click)="toggleOpenState()"></fab-command-bar-item>
+      <fab-command-bar-item key="gistVersion" text="Gist version" [iconProps]="{ iconName: 'BackToWindow' }"
+      (click)="toggleOpenState()"></fab-command-bar-item>
+      <fab-command-bar-item key="internal" text="Internal" [iconProps]="{ iconName: 'View' }"
+      (click)="toggleOpenState()"></fab-command-bar-item>
+      <fab-command-bar-item key="custom1" text="custom text">
+        <render>
+          <ng-template let-item="item">
+            <div style="padding-top:1px!important;">
+              <fab-default-button (onClick)="openTimePickerCallout = true;" [styles]="buttonStyle" [ariaLabel]="displayName" [iconProps]="{ iconName: 'clock' }">Time range (UTC) : </fab-default-button>
+              <fab-callout  *ngIf="isCallOutVisible" (onDismiss)="closeTime()" [setInitialFocus]="true" [target]="filterSelector">
+                <div>
+                  <fab-choice-group [options]="optionsForSingleChoice" [selectedKey]="selectedKey"></fab-choice-group>
+                </div>
+                  <fab-primary-button (onClick)="updateTableWithOptions()" (keyup.enter)="updateTableWithOptions()" [ariaLabel]="'Apply'" contentClass="mr-3 callout-button" contentStyle="border-radius: 2px;">Apply
+                  </fab-primary-button>
+                  <fab-default-button (onClick)="closeCallout()" (keyup.enter)="closeCallout()" [ariaLabel]="'Cancel'" contentStyle="border-radius: 2px;">Cancel</fab-default-button>
+              </fab-callout>
+            </div>
+          </ng-template>
+        </render>
+        <render-icon>
+          <ng-template let-contextualMenuItemProps="contextualMenuItemProps">
+            <div>custom icon</div>
+          </ng-template>
+        </render-icon>
+    
+      </fab-command-bar-item>
+      <fab-command-bar-item key="custom1" text="custom text">
+        <render>
+          <ng-template let-item="item">
+            <div style="padding-top:1px!important;">
+              <fab-default-button (click)="toggleCallout()" [styles]="buttonStyle" [ariaLabel]="displayName" [iconProps]="{ iconName: 'BranchSearch' }">Branch : </fab-default-button>
+              <fab-callout  *ngIf="isCallOutVisible" (onDismiss)="closeCallout()" [setInitialFocus]="true" [target]="filterSelector">
+                <div>
+                  <fab-choice-group [options]="optionsForSingleChoice" [selectedKey]="selectedKey"></fab-choice-group>
+                </div>
+                  <fab-primary-button (onClick)="updateTableWithOptions()" (keyup.enter)="updateTableWithOptions()" [ariaLabel]="'Apply'" contentClass="mr-3 callout-button" contentStyle="border-radius: 2px;">Apply
+                  </fab-primary-button>
+                  <fab-default-button (onClick)="closeCallout()" (keyup.enter)="closeCallout()" [ariaLabel]="'Cancel'" contentStyle="border-radius: 2px;">Cancel</fab-default-button>
+              </fab-callout>
+            </div>
+          </ng-template>
+        </render>
+        <render-icon>
+          <ng-template let-contextualMenuItemProps="contextualMenuItemProps">
+            <div>custom icon</div>
+          </ng-template>
+        </render-icon>
+    
+      </fab-command-bar-item>
+      
+    </items>
+  </fab-command-bar>
+  
   <div *ngIf="codeLoaded" class="onboarding-container">
     <split [direction]="horizontal" gutterSize="8" gutterColor="#dff0ff">
       <split-area size="60">
         <split direction="vertical" gutterSize="8" gutterColor="rgb(249, 233, 212)">
           <split-area size="85">
-            <detector-control *ngIf="mode === DevelopMode.Create || mode === DevelopMode.Edit">
-            </detector-control>
-            <div class="code-container-header">
+            <!-- <detector-control *ngIf="mode === DevelopMode.Create || mode === DevelopMode.Edit">
+            </detector-control> -->
+            <!-- <div class="code-container-header">
 
               <div class="file-tab active">
                 {{fileName}}
               </div>
 
-              <div (click)="checkAccessAndConfirmPublish()" class="action-button publish-button"
+              <div (click)="showPublishDialog()" class="action-button publish-button"
                 [class.disabled]="publishButtonDisabled">
                 <i class="fa fa-cloud-upload"></i>
                 {{publishButtonText}}
@@ -169,7 +303,7 @@
                 <i class="fa fa-cubes"></i>
                 Manage Package
               </div>
-            </div>
+            </div> -->
 
             <ngx-monaco-editor style="height:calc(100% - 100px)" [options]="editorOptions" [(ngModel)]="code">
             </ngx-monaco-editor>
@@ -184,7 +318,12 @@
 
       </split-area>
       <split-area size="40" *ngIf="!gistMode">
-        <div class="invocation-output-title-container">
+        <fab-pivot>
+          <fab-pivot-item [headerText]="'Data'"></fab-pivot-item>
+          <fab-pivot-item [headerText]="'Data source'"></fab-pivot-item>
+        </fab-pivot>
+        <!-- <div class="invocation-output-title-container">
+          
           <div class="invocation-title" [ngClass]="[!showDataSources ? 'active' : '']"
             (click)="queryResponse ? showDataSources=false : false">
             Detector Output
@@ -193,7 +332,7 @@
             (click)="queryResponse ? showDataSources=true : false">
             Data Sources
           </div>
-        </div>
+        </div> -->
 
         <div style="padding:10px">
           <detector-view *ngIf="queryResponse && !showDataSources" [detectorResponse]="queryResponse.invocationOutput"

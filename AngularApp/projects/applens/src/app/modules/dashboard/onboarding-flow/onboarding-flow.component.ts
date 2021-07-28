@@ -1,11 +1,11 @@
 import { AdalService } from 'adal-angular4';
 import {
-    CompilationProperties, DetectorControlService, DetectorResponse, QueryResponse
+    CompilationProperties, DetectorControlService, DetectorResponse, QueryResponse, TimePickerInfo, TimePickerOptions
 } from 'diagnostic-data';
 import * as momentNs from 'moment';
 import { NgxSmartModalService } from 'ngx-smart-modal';
 import { forkJoin, Observable, of } from 'rxjs';
-import { flatMap, map } from 'rxjs/operators';
+import { flatMap, map, tap } from 'rxjs/operators';
 import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Package } from '../../../shared/models/package';
 import { GithubApiService } from '../../../shared/services/github-api.service';
@@ -15,9 +15,54 @@ import { RecommendedUtterance } from '../../../../../../diagnostic-data/src/publ
 import { TelemetryService } from '../../../../../../diagnostic-data/src/lib/services/telemetry/telemetry.service';
 import {TelemetryEventNames} from '../../../../../../diagnostic-data/src/lib/services/telemetry/telemetry.common';
 import { environment } from '../../../../environments/environment';
+import { IButtonStyles, IChoiceGroupOption } from 'office-ui-fabric-react';
+import { addMonths } from 'office-ui-fabric-react/lib/utilities/dateMath/DateMath';
+
 
 const moment = momentNs;
 const newDetectorId:string = "NEW_DETECTOR";
+
+// const commandbaritems: ICommandBarItemProps[] = [
+//   {
+//     key: 'newItem',
+//     text: 'New',
+//     cacheKey: 'myCacheKey', // changing this key will invalidate this item's cache
+//     iconProps: { iconName: 'Add' },
+//     subMenuProps: {
+//       items: [
+//         {
+//           key: 'emailMessage',
+//           text: 'Email message',
+//           iconProps: { iconName: 'Mail' },
+//           ['data-automation-id']: 'newEmailButton', // optional
+//         },
+//         {
+//           key: 'calendarEvent',
+//           text: 'Calendar event',
+//           iconProps: { iconName: 'Calendar' },
+//         },
+//       ],
+//     },
+//   },
+//   {
+//     key: 'upload',
+//     text: 'Upload',
+//     iconProps: { iconName: 'Upload' },
+//     href: 'https://developer.microsoft.com/en-us/fluentui',
+//   },
+//   {
+//     key: 'share',
+//     text: 'Share',
+//     iconProps: { iconName: 'Share' },
+//     onClick: () => console.log('Share'),
+//   },
+//   {
+//     key: 'download',
+//     text: 'Download',
+//     iconProps: { iconName: 'Download' },
+//     onClick: () => console.log('Download'),
+//   },
+// ];
 
 export enum DevelopMode {
   Create,
@@ -70,6 +115,58 @@ export class OnboardingFlowComponent implements OnInit {
   allUtterances: any[] = [];
   recommendedUtterances: RecommendedUtterance[] = [];
   utteranceInput: string = "";
+  dialogTitle: string = "Publish for review";
+  dialogSubText: string = "Changes will be reviewed by team before getting merged. Once published, you will have a link to the PR.";
+  branchName: string = "Branch Name";
+  branchPlaceholder: string = "Enter Branch name";
+  PRName: string = "Pull Request Name";
+  PRPlaceholder: string = "Enter PR Name";
+  PRDescription: string = "Pull Request description";
+  PRDescriptionPlaceholder: string = "Enter description about the changes";
+  cancelButtonText: string = "Cancel";
+  publishDialogHidden: boolean = true;
+  PRTitle: string = "";
+  PRDesc: string = "";
+  Branch: string = "";
+  workingBranch: string = "";
+  optionsForSingleChoice: IChoiceGroupOption[] = [];
+  openTimePickerCallout: boolean = false;
+  timePickerButtonStr: string = "";
+  showCalendar: boolean = false;
+  showTimePicker: boolean = false;
+  defaultSelectedKey: string;
+
+  today: Date = new Date(Date.now());
+  maxDate: Date = this.convertUTCToLocalDate(this.today);
+  minDate: Date = this.convertUTCToLocalDate(addMonths(this.today, -1));
+
+  startDate: Date;
+  endDate: Date;
+  //set Last xx hours
+  hourDiff: number;
+
+  startClock: string;
+  endClock: string;
+  timeDiffError: string = "";
+  choiceGroupOptions: IChoiceGroupOption[] =
+    [
+      { key: TimePickerOptions.Last1Hour, text: TimePickerOptions.Last1Hour, onClick: () => { this.setTime(1) } },
+      { key: TimePickerOptions.Last6Hours, text: TimePickerOptions.Last6Hours, onClick: () => { this.setTime(6) } },
+      { key: TimePickerOptions.Last12Hour, text: TimePickerOptions.Last12Hour, onClick: () => { this.setTime(12) } },
+      { key: TimePickerOptions.Last24Hours, text: TimePickerOptions.Last24Hours, onClick: () => { this.setTime(24) } },
+      { key: TimePickerOptions.Custom, text: TimePickerOptions.Custom, onClick: () => { this.selectCustom() } },
+    ];
+  buttonStyle: IButtonStyles = {
+    root: {
+      color: "#323130",
+      borderRadius: "12px",
+      margin: " 0px 5px",
+      background: "rgba(0, 120, 212, 0.1)",
+      fontSize: "13",
+      fontWeight: "600",
+      height: "80%"
+    }
+  }
 
   modalPublishingButtonText: string;
   modalPublishingButtonDisabled: boolean;
@@ -131,6 +228,32 @@ export class OnboardingFlowComponent implements OnInit {
       this.initialized = true;
       this._telemetryService.logPageView(TelemetryEventNames.OnboardingFlowLoaded, {});
     }
+
+    this.diagnosticApiService.getBranches(this.resourceId).subscribe(branches => branches.forEach(option => {
+      this.optionsForSingleChoice.push({
+        key: String(option),
+        text: String(option)
+      });
+    }));
+    // try{
+    //   this.diagnosticApiService.getDetectorCode("darreldonald", "darreldonald-test-repo", "darreldonald-test-repo", "/5xxdetector/5xxdetector.csx").subscribe((resCode: string) => {
+    //     console.log( );
+    //     this.code = resCode;
+    //   },error => {
+    //     console.log(error);})
+    //   this.diagnosticApiService.pushDetectorChanges("darreldonald", "darreldonald-test-repo", "darreldonald-test-repo", "demo", "thisIsATest", "test/thisIsATest.txt", "comment", "add").subscribe(resPush => {
+    //     console.log(resPush);
+    //   },error => {
+    //     console.log(error);})
+    //   this.diagnosticApiService.makePullRequest("darreldonald", "darreldonald-test-repo", "darreldonald-test-repo", "demo", "master", "title").subscribe(resPR => {
+    //     console.log(resPR);
+    //   },error => {
+    //     console.log(error);})
+    // }
+    // catch(exception){
+    //   console.log(exception)
+    // }
+    
   }
 
   ngOnChanges() {
@@ -141,6 +264,120 @@ export class OnboardingFlowComponent implements OnInit {
 
   gistVersionChange(event: string) {
     this.temporarySelection[this.selectedGist] = event;
+  }
+
+  private convertDateTimeToString(date: Date, time: string): string {
+    const dateString = moment(date).format('YYYY-MM-DD');
+    const hour = Number.parseInt(time.split(':')[0]) < 10 ? `0${Number.parseInt(time.split(':')[0])}` : `${Number.parseInt(time.split(':')[0])}`;
+    const minute = Number.parseInt(time.split(':')[1]) < 10 ? `0${Number.parseInt(time.split(':')[1])}` : `${Number.parseInt(time.split(':')[1])}`;
+    return `${dateString} ${hour}:${minute}`;
+  }
+
+  //Press Escape,Click Cancel
+  cancelTimeRange() {
+    this.closeTimePicker();
+  }
+
+  //Click outside or tab to next component
+  closeTimePicker() {
+    this.openTimePickerCallout = false;
+    this.showTimePicker = this.defaultSelectedKey === TimePickerOptions.Custom;
+  }
+
+  //clickHandler for apply button
+  applyTimeRange() {
+    this._detectorControlService.changeFromTimePicker = true;
+
+    let startDateWithTime: string;
+    let endDateWithTime: string;
+    let timePickerInfo: TimePickerInfo;
+    //customize
+    if (this.showTimePicker) {
+      startDateWithTime = this.convertDateTimeToString(this.startDate, this.startClock);
+      endDateWithTime = this.convertDateTimeToString(this.endDate, this.endClock);
+      //for timer picker, date and hour,minute
+      let infoStartDate = new Date(this.startDate);
+      infoStartDate.setHours(Number.parseInt(this.startClock.split(":")[0]), Number.parseInt(this.startClock.split(":")[1]));
+      let infoEndDate = new Date(this.endDate);
+      infoEndDate.setHours(Number.parseInt(this.endClock.split(":")[0]), Number.parseInt(this.endClock.split(":")[1]));
+      timePickerInfo =
+      {
+        selectedKey: TimePickerOptions.Custom,
+        selectedText: TimePickerOptions.Custom,
+        startDate: infoStartDate,
+        endDate: infoEndDate
+      };
+    } else {
+      const localEndTime = this.today;
+      const localStartTime = new Date(localEndTime.getTime() - this.hourDiff * 60 * 60 * 1000);
+      startDateWithTime = this.convertLocalDateToUTC(localStartTime);
+      endDateWithTime = this.convertLocalDateToUTC(localEndTime);
+
+      //find which option contains the hourDiff number
+      const infoSelectOption = this.choiceGroupOptions.find(option => option.key.includes(this.hourDiff.toString()))
+      timePickerInfo = {
+        selectedKey: infoSelectOption.key,
+        selectedText: infoSelectOption.text
+      };
+    }
+
+    this.timeDiffError = this._detectorControlService.getTimeDurationError(startDateWithTime, endDateWithTime);
+    if (this.timeDiffError === '') {
+      this._detectorControlService.setCustomStartEnd(startDateWithTime, endDateWithTime);
+      this._detectorControlService.updateTimePickerInfo(timePickerInfo);
+    }
+    this.openTimePickerCallout = this.timeDiffError !== "";
+
+    const eventProperties = {
+      'Title': timePickerInfo.selectedKey
+    }
+    if (timePickerInfo.startDate) {
+      const startTimeString = moment(timePickerInfo.startDate).format(this._detectorControlService.stringFormat);
+      eventProperties['StartTime'] = startTimeString;
+    }
+    if (timePickerInfo.endDate) {
+      const endTimeString = moment(timePickerInfo.startDate).format(this._detectorControlService.stringFormat);
+      eventProperties['EndTime'] = endTimeString;
+    }
+    this._telemetryService.logEvent(TelemetryEventNames.TimePickerApplied, eventProperties);
+  }
+
+  private convertLocalDateToUTC(date: Date): string {
+    const moment = momentNs.utc(date.getTime());
+    return moment.format(this._detectorControlService.stringFormat);
+  }
+  
+  setTime(hourDiff: number) {
+    this.showTimePicker = false;
+    this.timeDiffError = '';
+    this.hourDiff = hourDiff;
+  }
+
+  private convertUTCToLocalDate(date: Date): Date {
+    const moment = momentNs.utc(date);
+    return new Date(
+      moment.year(), moment.month(), moment.date(),
+      moment.hour(), moment.minute()
+    );
+  }
+
+  selectCustom() {
+    this.showTimePicker = true;
+    this.timeDiffError = "";
+
+    const end = this.today;
+    const start = new Date(end.getTime() - this.hourDiff * 60 * 60 * 1000);
+    this.startDate = this.convertUTCToLocalDate(start);
+    this.endDate = this.convertUTCToLocalDate(end);
+
+    //startDate and endDate contains current hour and minute info
+    //only need HH:mm
+    this.startClock = this.getHourAndMinute(this.startDate);
+    this.endClock = this.getHourAndMinute(this.endDate);
+  }
+
+  private getHourAndMinute(date: Date): string {
+    return moment(date).format('HH:mm');
   }
 
   confirm() {
@@ -262,7 +499,8 @@ export class OnboardingFlowComponent implements OnInit {
 
     let isSystemInvoker: boolean = this.mode === DevelopMode.EditMonitoring || this.mode === DevelopMode.EditAnalytics;
 
-    this.diagnosticApiService.getCompilerResponse(body, isSystemInvoker, this.id, this._detectorControlService.startTimeString,
+    try{
+      this.diagnosticApiService.getCompilerResponse(body, isSystemInvoker, this.id, this._detectorControlService.startTimeString,
       this._detectorControlService.endTimeString, this.dataSource, this.timeRange, {
         scriptETag: this.compilationPackage.scriptETag,
         assemblyName: this.compilationPackage.assemblyName,
@@ -337,7 +575,10 @@ export class OnboardingFlowComponent implements OnInit {
         this.runButtonIcon = "fa fa-play";
         this.buildOutput.push("Something went wrong during detector invocation.");
         this.buildOutput.push("========== Build: 0 succeeded, 1 failed ==========");
-      }));
+      }));}
+      catch(ex){
+        console.log(ex);
+      }
   }
 
   getDetectorId():string {
@@ -375,6 +616,22 @@ export class OnboardingFlowComponent implements OnInit {
     this.publishingPackage.metadata = JSON.stringify({ "utterances": this.allUtterances });
   }
 
+  showPublishDialog(){
+    this.publishDialogHidden = false;
+  }
+  
+  publishDialogCancel(){
+    this.publishDialogHidden = true;
+  }
+
+  toggleOpenState(){
+
+  }
+  
+  dismissDialog(){
+    
+  }
+
   publish() {
     if (!this.publishingPackage ||
       this.publishingPackage.codeString === '' ||
@@ -410,7 +667,24 @@ export class OnboardingFlowComponent implements OnInit {
       this.ngxSmartModalService.getModal('publishModal').close();
       this.showAlertBox('alert-danger', 'Publishing failed. Please try again after some time.');
     });
+
+    // this.diagnosticApiService.pushDetectorChanges(this.Branch, this.code, "/test/fromapplens.csx", "test", "edit").subscribe(resPush => {
+    //     console.log(resPush);
+    //   },error => {
+    //     console.log(error);});
   }
+
+  isCallOutVisible: boolean = false;
+
+  toggleCallout() {
+    this.isCallOutVisible = !this.isCallOutVisible;
+  }
+
+  closeCallout() {
+    this.isCallOutVisible = false;
+  }
+
+  
 
   publishingAccessDeniedEmailOwners() {
     var toList: string = this.publishAccessControlResponse.resourceOwners.join("; ");

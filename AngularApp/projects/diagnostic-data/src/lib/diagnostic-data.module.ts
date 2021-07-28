@@ -83,7 +83,7 @@ import { AppDependenciesComponent } from './components/app-dependencies/app-depe
 import { HighchartsChartModule } from 'highcharts-angular';
 import { ChartMetricPipe, HighchartsGraphComponent } from './components/highcharts-graph/highcharts-graph.component';
 import { FabNavModule } from './components/fab-nav/fab-nav.module';
-import { FabPanelModule, FabIconModule, FabChoiceGroupModule, FabSearchBoxModule, FabDropdownModule, FabDetailsListModule, FabTextFieldModule, FabMessageBarModule, FabButtonModule, FabTooltipModule, FabSpinnerModule, FabCalloutModule, FabCheckboxModule, FabPivotModule, FabLinkModule, FabDatePickerModule, FabCalendarModule } from '@angular-react/fabric';
+import { FabPanelModule, FabIconModule, FabChoiceGroupModule, FabSearchBoxModule, FabDropdownModule, FabDetailsListModule, FabTextFieldModule, FabMessageBarModule, FabButtonModule, FabTooltipModule, FabSpinnerModule, FabCalloutModule, FabCheckboxModule, FabPivotModule, FabLinkModule, FabDatePickerModule, FabCalendarModule, FabCommandBarModule, FabBreadcrumbModule } from '@angular-react/fabric';
 import { SummaryCardsComponent } from './components/summary-cards/summary-cards.component';
 import { InsightsV4Component } from './components/insights-v4/insights-v4.component';
 import { CardSelectionV4Component } from './components/card-selection-v4/card-selection-v4.component';
@@ -117,6 +117,8 @@ import { InfoStepComponent } from './components/step-views/info-step-view/info-s
 import { DropDownStepComponent } from './components/step-views/dropdown-step-view/dropdown-step.component';
 import { CheckStepComponent } from './components/step-views/check-step-view/check-step.component';
 import { CheckComponent, ConvertLevelToHealthStatusPipe } from './components/step-views/check-step-view/check.component';
+import {SolutionOrchestratorComponent} from "./components/solution-orchestrator/solution-orchestrator.component";
+import { ButtonStepComponent } from './components/step-views/button-step-view/button-step.component';
 import { HighChartsHoverService } from './services/highcharts-hover.service';
 import { RouterModule } from '@angular/router';
 import { FabDataTableComponent } from './components/fab-data-table/fab-data-table.component';
@@ -140,6 +142,7 @@ import { FabricFeedbackComponent } from './components/fabric-feedback/fabric-fee
     FabIconModule,
     FabChoiceGroupModule,
     FabSearchBoxModule,
+    FabCommandBarModule,
     FabDropdownModule,
     InViewportModule,
     FabDetailsListModule,
@@ -152,6 +155,8 @@ import { FabricFeedbackComponent } from './components/fabric-feedback/fabric-fee
     FabCheckboxModule,
     FabPivotModule,
     FabLinkModule,
+    FabBreadcrumbModule,
+    RouterModule,
     FabDatePickerModule,
     FabCalendarModule
   ],
@@ -202,9 +207,11 @@ import { FabricFeedbackComponent } from './components/fabric-feedback/fabric-fee
     StepViewsRendererComponent,
     InfoStepComponent,
     DropDownStepComponent,
+    ButtonStepComponent,
     CheckStepComponent,
     CheckComponent,
     ConvertLevelToHealthStatusPipe,
+    SolutionOrchestratorComponent,
     FabCardComponent,
     FabDataTableComponent,
     SolutionsPanelComponent,
@@ -238,10 +245,11 @@ import { FabricFeedbackComponent } from './components/fabric-feedback/fabric-fee
     StepViewsRendererComponent,
     InfoStepComponent,
     DropDownStepComponent,
+    ButtonStepComponent,
     CheckStepComponent,
     CheckComponent,
     ConvertLevelToHealthStatusPipe,
-    FabTabComponent,
+    SolutionOrchestratorComponent,
     DetectorTimePickerComponent,
     FabDataTableComponent,
     FabricFeedbackComponent

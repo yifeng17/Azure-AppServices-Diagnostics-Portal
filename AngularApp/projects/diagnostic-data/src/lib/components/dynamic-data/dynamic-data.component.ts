@@ -46,6 +46,7 @@ import { StepViewsRendererComponent } from '../step-views/step-view-renderer/ste
 import { InfoStepComponent } from '../step-views/info-step-view/info-step.component';
 import { DropDownStepComponent } from '../step-views/dropdown-step-view/dropdown-step.component';
 import { CheckStepComponent } from '../step-views/check-step-view/check-step.component';
+import { ButtonStepComponent } from '../step-views/button-step-view/button-step.component';
 
 @Component({
   selector: 'dynamic-data',
@@ -56,7 +57,7 @@ import { CheckStepComponent } from '../step-views/check-step-view/check-step.com
     InsightsComponent, TimeSeriesInstanceGraphComponent, DynamicInsightComponent, MarkdownViewComponent,
     DetectorListComponent, DropdownComponent, CardSelectionComponent, SolutionComponent, GuageControlComponent, FormComponent,
     ChangeAnalysisOnboardingComponent, ChangesetsViewComponent, AppDependenciesComponent, AppInsightsMarkdownComponent, DetectorListAnalysisComponent, ConnectAppInsightsComponent, DetectorSearchComponent, SummaryCardsComponent, InsightsV4Component, DropdownV4Component, CardSelectionV4Component, DynamicInsightV4Component, DataTableV4Component, KeystoneInsightComponent, NotificationRenderingComponent, FabTabComponent, SectionsComponent,
-    StepViewsRendererComponent, InfoStepComponent, DropDownStepComponent, CheckStepComponent
+    StepViewsRendererComponent, InfoStepComponent, ButtonStepComponent, DropDownStepComponent, CheckStepComponent
   ]
 })
 export class DynamicDataComponent implements OnInit {
@@ -76,6 +77,7 @@ export class DynamicDataComponent implements OnInit {
   @Input() compilationPackage: CompilationProperties;
   @Input() isAnalysisView: boolean = false;
   @Input() isRiskAlertDetector: boolean = false;
+  @Input() hideShieldComponent: boolean = false;
   private _instanceRef: DataRenderBaseComponent = null;
   private _xAxisPlotBands: xAxisPlotBand[] = null;
   @Input() public set xAxisPlotBands(value: xAxisPlotBand[]) {
@@ -187,7 +189,13 @@ export class DynamicDataComponent implements OnInit {
       case RenderingType.SummaryCard:
         return SummaryCardsComponent;
       case RenderingType.SearchComponent:
-        return DetectorSearchComponent;
+        if (!this.hideShieldComponent)
+        {
+          return DetectorSearchComponent;
+        }
+        else{
+          return null;
+        }
       case RenderingType.AppInsightEnablement:
         return ConnectAppInsightsComponent;
       case RenderingType.KeystoneComponent:

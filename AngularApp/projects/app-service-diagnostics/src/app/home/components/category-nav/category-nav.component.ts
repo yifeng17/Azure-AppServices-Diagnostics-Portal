@@ -133,7 +133,6 @@ export class CategoryNavComponent implements OnInit {
                 })
             }
         });
-
         this.toolCategories.push(<SiteFilteredItem<any>>{
             appType: AppType.WebApp | AppType.FunctionApp,
             platform: OperatingSystem.windows,
@@ -152,6 +151,14 @@ export class CategoryNavComponent implements OnInit {
             }
         });
 
+        let supportTools = this.siteFeatureService.supportTools.filter(tool => this.stackMatchedForTools(tool)).map(tool => {
+            let isSelected = () => {
+                return this.checkIsSelected(tool.item.id);
+            };
+            let icon = this.getIconImagePath(tool.item.id);
+            return new CollapsibleMenuItem(tool.item.name, tool.item.clickAction, isSelected, icon);
+        });
+
         this.toolCategories.push(<SiteFilteredItem<any>>{
             appType: AppType.WebApp,
             platform: OperatingSystem.windows | OperatingSystem.HyperV,
@@ -160,13 +167,19 @@ export class CategoryNavComponent implements OnInit {
             stack: '',
             item: {
                 title: 'Support Tools',
-                tools: this.siteFeatureService.supportTools.filter(tool => this.stackMatchedForTools(tool)).map(tool => {
-                    let isSelected = () => {
-                        return this.checkIsSelected(tool.item.id);
-                    };
-                    let icon = this.getIconImagePath(tool.item.id);
-                    return new CollapsibleMenuItem(tool.item.name, tool.item.clickAction, isSelected, icon);
-                })
+                tools: supportTools
+            }
+        });
+
+        this.toolCategories.push(<SiteFilteredItem<any>>{
+            appType: AppType.FunctionApp,
+            platform: OperatingSystem.windows,
+            sku: Sku.All,
+            hostingEnvironmentKind: HostingEnvironmentKind.All,
+            stack: '',
+            item: {
+                title: 'Support Tools',
+                tools: supportTools
             }
         });
 

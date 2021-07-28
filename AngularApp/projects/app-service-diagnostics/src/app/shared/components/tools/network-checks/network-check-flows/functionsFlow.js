@@ -1,7 +1,8 @@
+import { DropdownStepView, InfoStepView, StepFlow, StepFlowManager, CheckStepView, StepViewContainer, InputStepView, ButtonStepView, PromiseCompletionSource, TelemetryService } from 'diagnostic-data';
 import {ResourcePermissionCheckManager, runKuduAccessibleCheck, isVnetIntegratedAsync, checkVnetIntegrationHealth, checkDnsSettingAsync, extractHostPortFromConnectionString, checkSubnetSizeAsync, extractHostPortFromKeyVaultReference} from './flowMisc.js';
 
 export var functionsFlow = {
-    title: "My Function App is not starting or executing or I see connection errors in logs",
+    title: "Connectivity issues",
     async func(siteInfo, diagProvider, flowMgr) {
         // Check that Kudu is accessible
         var isKuduAccessible = true;
@@ -212,7 +213,7 @@ async function networkCheckConnectionString(propertyName, connectionString, dnsS
         var hostPort = extractHostPortFromConnectionString(connectionString);
 
         if (hostPort.HostName != undefined && hostPort.Port != undefined) {
-            var connectivityCheckResult = await runConnectivityCheckAsync(hostPort.HostName, hostPort.Port, dnsServers, diagProvider, hostPort.HostName.length, isVnetIntegrated, failureDetailsMarkdown);
+            var connectivityCheckResult = await runConnectivityCheckAsync(hostPort.HostName, hostPort.Port, dnsServers, diagProvider, undefined, isVnetIntegrated, failureDetailsMarkdown);
             var maxCheckLevel = getMaxCheckLevel(connectivityCheckResult);
             var title = maxCheckLevel == 0 ? `Successfully accessed the endpoint "${hostPort.HostName}:${hostPort.Port}" configured in App Setting "${propertyName}"` :
                                              `Could not access the endpoint "${hostPort.HostName}:${hostPort.Port}" configured in App Setting "${propertyName}".`;
@@ -237,7 +238,7 @@ async function networkCheckKeyVaultReferenceAsync(propertyName, connectionString
     var subChecks = [];
     var hostPort = extractHostPortFromKeyVaultReference(connectionString);
     if (hostPort.HostName != undefined && hostPort.Port != undefined) {
-        var connectivityCheckResult = await runConnectivityCheckAsync(hostPort.HostName, hostPort.Port, dnsServers, diagProvider, hostPort.HostName.length, isVnetIntegrated, failureDetailsMarkdown);
+        var connectivityCheckResult = await runConnectivityCheckAsync(hostPort.HostName, hostPort.Port, dnsServers, diagProvider, undefined, isVnetIntegrated, failureDetailsMarkdown);
         var maxCheckLevel = getMaxCheckLevel(connectivityCheckResult);
         if(maxCheckLevel == 0) {
             subChecks.push({
@@ -334,7 +335,7 @@ async function checkNetworkConfigAndConnectivityAsync(siteInfo, diagProvider, fl
     return views;
 }
 
-async function runConnectivityCheckAsync(hostname, port, dnsServers, diagProvider, lengthLimit, isVnetIntegrated, failureDetailsMarkdown = undefined) {
+async function runConnectivityCheckAsync(hostname, port, dnsServers, diagProvider, lengthLimit = 50, isVnetIntegrated, failureDetailsMarkdown = undefined) {
     var fellbackToPublicDns = false;
     var nameResolvePromise = (async function checkNameResolve() {
         var ip = null;

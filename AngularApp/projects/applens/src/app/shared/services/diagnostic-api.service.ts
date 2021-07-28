@@ -1,5 +1,5 @@
 import { AdalService } from 'adal-angular4';
-import { DetectorMetaData, DetectorResponse, QueryResponse, TelemetryService } from 'diagnostic-data';
+import { DetectorMetaData, DetectorResponse, ExtendDetectorMetaData, QueryResponse, TelemetryService } from 'diagnostic-data';
 import { map, retry, catchError, tap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
@@ -54,6 +54,12 @@ export class DiagnosticApiService {
       path = path + "?" + queryParams.map(qp => qp.key + "=" + qp.value).join("&");
     }
     return this.invoke<DetectorResponse[]>(path, HttpMethod.POST, body, true, false, internalClient).pipe(retry(1), map(response => response.map(detector => detector.metadata)));
+  }
+
+  public getDetectorsWithExtendDefinition(version: string, resourceId: string, body?: any, internalClient: boolean = true): Observable<ExtendDetectorMetaData[]> {
+    // let path = `${version}${resourceId}/detectorsWithExtendDefinition`;
+    let path = `${version}${resourceId}/internal/detectors`;
+    return this.invoke<ExtendDetectorMetaData[]>(path, HttpMethod.POST, body, true, false, internalClient);
   }
 
   public getUserPhoto(userId: string, useCache: boolean = true, invalidateCache: boolean = false): Observable<any> {
@@ -384,5 +390,28 @@ export class DiagnosticApiService {
 
     return this.invoke<QueryResponse<DetectorResponse>>(path, HttpMethod.POST, body, false, undefined, undefined, undefined,
       additionalParams.getFullResponse, additionalHeaders);
+  }
+
+  public getDetectorCode(detectorPath: string){
+
+    let path = "devops/getCode?organization="+"&detectorPath="+detectorPath;
+    return this.invoke(path, HttpMethod.GET);
+  }
+
+  public pushDetectorChanges(branch: string, file: string, repoPath: string, comment: string, changeType: string){
+
+    let path = "devops/push?organization="+"&branch="+branch+"&file="+file+"&repoPath="+repoPath+"&comment="+comment+"&changeType="+changeType;
+    return this.invoke(path, HttpMethod.GET);
+  }
+
+  public makePullRequest(sourceBranch: string, targetBranch: string, title: string){
+
+    let path = "devops/makePR?organization="+"&sourceBranch="+sourceBranch+"&targetBranch="+targetBranch+"&title="+title;
+    return this.invoke(path, HttpMethod.GET);
+  }
+
+  public getBranches(resourceId: string): Observable<string []>{
+    let path = "devops/getBranches?resourceURI=" + resourceId;
+    return this.invoke(path, HttpMethod.GET);
   }
 }

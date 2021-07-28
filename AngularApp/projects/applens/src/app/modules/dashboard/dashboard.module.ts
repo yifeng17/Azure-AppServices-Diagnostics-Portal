@@ -24,8 +24,8 @@ import { ApplensDiagnosticService } from './services/applens-diagnostic.service'
 import { ApplensCommsService } from './services/applens-comms.service';
 import { ApplensSupportTopicService } from './services/applens-support-topic.service';
 import { ApplensContentService } from './services/applens-content.service';
-import { DiagnosticService, DiagnosticDataModule, CommsService, DetectorControlService, GenericSupportTopicService, GenericContentService, GenericDocumentsSearchService, GenieGlobals } from 'diagnostic-data';
-import { FabCommandBarModule, FabDetailsListModule, FabIconModule, FabPanelModule, FabSearchBoxModule, FabTextFieldModule } from '@angular-react/fabric';
+import { DiagnosticService, DiagnosticDataModule, CommsService, DetectorControlService, GenericSupportTopicService, GenericContentService, GenericDocumentsSearchService, GenieGlobals, SolutionOrchestratorComponent } from 'diagnostic-data';
+import { FabButtonModule, FabCalendarComponent, FabCalendarModule, FabCalloutModule, FabCheckboxModule, FabChoiceGroupModule, FabCommandBarModule, FabDatePickerModule, FabDetailsListModule, FabDialogModule, FabIconModule, FabPanelModule, FabPivotModule, FabSearchBoxModule, FabTextFieldModule } from '@angular-react/fabric';
 import { CollapsibleMenuModule } from '../../collapsible-menu/collapsible-menu.module';
 import { ObserverService } from '../../shared/services/observer.service';
 import { TabDataSourcesComponent } from './tabs/tab-data-sources/tab-data-sources.component';
@@ -47,7 +47,7 @@ import { CategoryPageComponent } from './category-page/category-page.component';
 import { AvatarModule } from 'ngx-avatar';
 import { SupportTopicPageComponent } from './support-topic-page/support-topic-page.component';
 import { SelfHelpContentComponent } from './self-help-content/self-help-content.component';
-import { UserProfileComponent } from './user-profile/user-profile.component';
+import { UserDetectorsComponent } from './user-detectors/user-detectors.component';
 import { SearchTermAdditionComponent } from './search-term-addition/search-term-addition.component';
 import { SearchResultsComponent } from './search-results/search-results.component';
 import { Sort } from '../../shared/pipes/sort.pipe';
@@ -60,12 +60,15 @@ import { L2SideNavComponent } from './l2-side-nav/l2-side-nav.component';
 import { ApplensCommandBarService } from './services/applens-command-bar.service';
 import { ApplensGlobal as ApplensGlobals } from '../../applens-global';
 import { ApplensDocsComponent } from './applens-docs/applens-docs.component';
+import { ResourceInfo } from '../../shared/models/resources';
+import { Dialog } from 'office-ui-fabric-react';
+import { FabBaseButtonComponent } from '@angular-react/fabric/src/lib/components/button/base-button.component';
 
 @Injectable()
-export class InitResolver implements Resolve<Observable<boolean>>{
+export class InitResolver implements Resolve<Observable<ResourceInfo>>{
     constructor(private _resourceService: ResourceService, private _detectorControlService: DetectorControlService) { }
 
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<ResourceInfo> {
         this._detectorControlService.setCustomStartEnd(route.queryParams['startTime'], route.queryParams['endTime']);
         return this._resourceService.waitForInitialization();
     }
@@ -88,7 +91,24 @@ export const DashboardModuleRoutes: ModuleWithProviders = RouterModule.forChild(
             },
             {
                 path: 'users/:userId',
-                component: UserProfileComponent,
+                children: [
+                    {
+                        path: 'detectors',
+                        component: UserDetectorsComponent,
+                        data: { 
+                            isDetector: true,
+                            allItems: false
+                        }
+                    },
+                    {
+                        path: 'gists',
+                        component: UserDetectorsComponent,
+                        data: { 
+                            isDetector: false,
+                            allItems: false
+                        }
+                    }
+                ]
             },
             {
                 path: 'categories/:category',
@@ -109,6 +129,10 @@ export const DashboardModuleRoutes: ModuleWithProviders = RouterModule.forChild(
             {
                 path: 'createGist',
                 component: GistComponent
+            },
+            {
+                path: 'solutionOrchestrator',
+                component: SolutionOrchestratorComponent
             },
             {
                 path: 'docs',
@@ -201,6 +225,14 @@ export const DashboardModuleRoutes: ModuleWithProviders = RouterModule.forChild(
                         },
                     }
                 ]
+            },
+            {
+                path: 'detectors/all',
+                component: UserDetectorsComponent,
+                data: {
+                    isDetector: true,
+                    allItems: true
+                }
             },
             {
                 path: 'detectors/:detector',
@@ -311,7 +343,15 @@ export const DashboardModuleRoutes: ModuleWithProviders = RouterModule.forChild(
         FabTextFieldModule,
         FabSearchBoxModule,
         FabDetailsListModule,
-        DiagnosticDataModule
+        DiagnosticDataModule,
+        FabDialogModule,
+        FabButtonModule,
+        FabCalloutModule,
+        FabCheckboxModule,
+        FabChoiceGroupModule,
+        FabPivotModule,
+        FabDatePickerModule,
+        FabCalendarModule
     ],
     providers: [
         ApplensDiagnosticService,
@@ -341,6 +381,6 @@ export const DashboardModuleRoutes: ModuleWithProviders = RouterModule.forChild(
         SearchMenuPipe, TabDataComponent, TabDevelopComponent, TabCommonComponent, TabDataSourcesComponent, TabMonitoringComponent,
         TabMonitoringDevelopComponent, TabAnalyticsDevelopComponent, TabAnalyticsDashboardComponent, GistComponent, TabGistCommonComponent,
         TabGistDevelopComponent, TabChangelistComponent, GistChangelistComponent, TabAnalysisComponent, CategoryPageComponent, SupportTopicPageComponent,
-        SelfHelpContentComponent, UserProfileComponent, FormatResourceNamePipe, Sort, SearchResultsComponent, ConfigurationComponent, DashboardContainerComponent, L2SideNavComponent, ApplensDocsComponent]
+        SelfHelpContentComponent, UserDetectorsComponent, FormatResourceNamePipe, Sort, SearchResultsComponent, ConfigurationComponent, DashboardContainerComponent, L2SideNavComponent, ApplensDocsComponent]
 })
 export class DashboardModule { }

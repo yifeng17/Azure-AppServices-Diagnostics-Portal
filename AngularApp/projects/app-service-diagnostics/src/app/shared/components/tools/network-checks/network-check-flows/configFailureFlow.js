@@ -1,4 +1,5 @@
 import { getArmData, getWebAppVnetInfo, getSubnet, addSubnetSelectionDropDownView } from './flowMisc.js';
+import { DropdownStepView, InfoStepView, StepFlow, StepFlowManager, CheckStepView, StepViewContainer, InputStepView, ButtonStepView, PromiseCompletionSource, TelemetryService } from 'diagnostic-data';
 import { ConfigFailureRecommendations } from './configFailureRecommendations.js'
 
 export var configFailureFlow = {

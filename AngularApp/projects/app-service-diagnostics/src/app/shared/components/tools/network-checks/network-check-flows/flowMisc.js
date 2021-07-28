@@ -87,7 +87,7 @@ export async function runKuduAccessibleCheck(diagProvider) {
             title: "Kudu is not reachable, diagnostic will be incomplete",
             level: 1
         }));
-        var commonRecommendations = new CommonRecommendations;
+        var commonRec = new CommonRecommendations;
 
         views.push(commonRec.KuduNotAccessible.Get(`https://${diagProvider.scmHostname}`));
     }
@@ -196,7 +196,7 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
                 if (siteGWVnetInfo[0]["properties"] != null && siteGWVnetInfo[0]["properties"]["vnetResourceId"] != null) {
                     //Check if Vnet exists that the gateway is connected to
                     vnetResourceId = siteGWVnetInfo[0]["properties"]["vnetResourceId"];
-                    var vnetData = await diagProvider.getArmResourceAsync(vnetResourceId, "2017-11-15");
+                    var vnetData = await diagProvider.getArmResourceAsync(vnetResourceId, "2018-07-01");
                     if (vnetData.status == 401) {
                         var missingPermissionResource = `Virtual Network: ${vnetResourceId.split("/virtualNetworks/")[1]}`;
                         var viewMissingPermissionsonResource = showMissingPermissionStatus(missingPermissionResource);
@@ -294,7 +294,8 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
 
                 //Get Virtual Network
                 vnetResourceId = subnetResourceId.split("/subnets/")[0];
-                var vnetData = await diagProvider.getArmResourceAsync(vnetResourceId, "2020-11-01");
+                var vnetDataPromise = diagProvider.getArmResourceAsync(vnetResourceId, "2018-07-01");
+                var vnetData = await vnetDataPromise;
                 if (vnetData.status == 401) {
                     var missingPermissionResource = `Virtual Network: ${vnetResourceId.split("/virtualNetworks/")[1]}`;
                     var viewMissingPermissionsonResource = showMissingPermissionStatus(missingPermissionResource);
@@ -304,9 +305,20 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
                     return { checks, isContinue, subnetData };
                 }
                 else if (vnetData.status == 404) {
-                    var resourceNotFound = `Virtual Network ${vnetResourceId.split("/virtualNetworks/")[1]}`;
-                    var viewResourceNotFound = showResourceNotFoundStatus(resourceNotFound);
-                    checks = checks.concat(viewResourceNotFound);
+                    var resource = `Virtual Network ${vnetResourceId.split("/virtualNetworks/")[1]}`;
+                    var views = [
+                        new CheckStepView({
+                            title: `${resource} does not exist`,
+                            level: 2
+                        }),
+                        new InfoStepView({
+                            infoType: 1,
+                            title: `Issue found: ${resource} does not exist`,
+                            markdown: `The app is integrated with a nonexistent VNet **${vnetResourceId}**. \r\n\r\n` +
+                                `Please re-configure the VNet integration with a valid VNet.`
+                        }),
+                    ];                
+                    checks = checks.concat(views);
                     var isContinue = false;
                     return { checks, isContinue, subnetData };
                 }
@@ -955,7 +967,7 @@ export async function checkDnsSettingAsync(siteInfo, diagProvider) {
             if (subnetResourceId != null) {
                 if (subnetResourceId.includes("/subnets/")) {
                     var vnetResourceId = subnetResourceId.split("/subnets/")[0];
-                    var vnetMetaData = await diagProvider.getArmResourceAsync(vnetResourceId, "2020-11-01");
+                    var vnetMetaData = await diagProvider.getArmResourceAsync(vnetResourceId, "2018-07-01");
                     if (vnetMetaData != null && vnetMetaData.status == 200) {
                         if (vnetMetaData["properties"] && vnetMetaData["properties"]["dhcpOptions"] && vnetMetaData["properties"]["dhcpOptions"]["dnsServers"] != null) {
                             vnetDns = vnetMetaData["properties"]["dhcpOptions"]["dnsServers"];
@@ -1088,7 +1100,7 @@ export function extractHostPortFromConnectionString(connectionString) {
     var connectionStringKVMap = connectionStringTokens.reduce(
         (dict, element) =>  {
             var kvpair = element.split("=");
-            if (kvpair.length = 2) {
+            if (kvpair.length == 2) {
                 (dict[kvpair[0]] = kvpair[1])
             }
             return dict;
@@ -1177,7 +1189,7 @@ export function addSubnetSelectionDropDownView(siteInfo, diagProvider, flowMgr, 
                 dropdownView.dropdowns.push(vnetDropdown);
             } else if (dropdownIdx === 1) {
                 dropdownView.dropdowns.length = 2;
-                var vnet = vnets[selectedIdx];
+                vnet = vnets[selectedIdx];
                 subnets = vnet.properties == null ? [] : vnet.properties.subnets.filter(s => s && s.name != null);
                 subnets = subnets.sort((s1, s2) => s1.name.toLowerCase() > s2.name.toLowerCase() ? 1 : -1);
                 var subnetDropdown = null;
@@ -1198,12 +1210,13 @@ export function addSubnetSelectionDropDownView(siteInfo, diagProvider, flowMgr, 
             } else {
                 flowMgr.reset(state);
                 var subnet = subnets[selectedIdx];
-                var promise = processSubnet(subnet);
+                var promise = processSubnet(subnet, vnet);
                 //flowMgr.addViews(promise, "Checking subnet...");
             }
         }
     });
     var subscriptions = null, vnets = null, subnets = null;
+    var vnet = null;
     var subscriptionDropdown = {
         description: "Subscription",
         options: [],

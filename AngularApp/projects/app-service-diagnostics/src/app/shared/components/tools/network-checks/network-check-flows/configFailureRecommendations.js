@@ -1,3 +1,4 @@
+import { DropdownStepView, InfoStepView, StepFlow, StepFlowManager, CheckStepView, StepViewContainer, InputStepView, ButtonStepView, PromiseCompletionSource, TelemetryService } from 'diagnostic-data';
 export class ConfigFailureRecommendations{
     constructor(){
         this.VnetNotSupported = {

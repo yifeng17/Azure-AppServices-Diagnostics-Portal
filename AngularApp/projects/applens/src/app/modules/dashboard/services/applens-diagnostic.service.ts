@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DiagnosticApiService } from '../../../shared/services/diagnostic-api.service';
 import { ResourceService } from '../../../shared/services/resource.service';
-import { DetectorResponse, DetectorMetaData } from 'diagnostic-data';
+import { DetectorResponse, DetectorMetaData, ExtendDetectorMetaData } from 'diagnostic-data';
 import { Observable } from 'rxjs';
 import { QueryResponse } from 'diagnostic-data';
 import { Package } from '../../../shared/models/package';
@@ -60,6 +60,16 @@ export class ApplensDiagnosticService {
         null,
         queryParams,
         internalClient);
+  }
+
+  getDetectorsWithExtendDefinition(internalClient: boolean = true): Observable<ExtendDetectorMetaData[]> {
+    let resourceId = this._resourceService.getCurrentResourceId(true);
+    if(!resourceId.startsWith('/')) resourceId = '/' + resourceId;
+
+    let versionPrefix = this._resourceService.versionPrefix;
+    if(versionPrefix.endsWith('/')) versionPrefix = versionPrefix.substring(0,versionPrefix.length - 1);
+
+    return this._diagnosticApi.getDetectorsWithExtendDefinition(versionPrefix,resourceId,null,internalClient);
   }
 
   getDetectorsSearch(query: string, internalClient: boolean = true): Observable<DetectorMetaData[]> {
@@ -171,5 +181,21 @@ export class ApplensDiagnosticService {
 
   getKustoMappings() : Observable<any> {
     return this._diagnosticApi.getKustoMappings(this._resourceService.getCurrentResourceId(true));
+  }
+
+  getDetectorCode(detectorPath: string){
+    return this._diagnosticApi.getDetectorCode(detectorPath);
+  }
+
+  pushDetectorChanges(branch: string, file: string, repoPath: string, comment: string, changeType: string){
+    return this._diagnosticApi.pushDetectorChanges(branch, file, repoPath, comment, changeType);
+  }
+
+  makePullRequest(sourceBranch: string, targetBranch: string, title: string){
+    return this._diagnosticApi.makePullRequest(sourceBranch, targetBranch, title);
+  }
+  
+  getBranches(resourceId: string){
+    return this._diagnosticApi.getBranches(resourceId);
   }
 }

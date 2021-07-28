@@ -125,6 +125,7 @@ export class DetectorViewComponent implements OnInit {
   @Input() isRiskAlertDetector: boolean = false;
   @Input() overWriteDetectorDescription: string = "";
   feedbackButtonLabel: string = 'Send Feedback';
+  hideShieldComponent: boolean = false;
 
   downTimes: DownTime[] = [];
   supportsDownTime: boolean = false;
@@ -197,6 +198,10 @@ export class DetectorViewComponent implements OnInit {
     // The detector name can be retrieved from  url column of application insight resource pageviews table.
     if (!this.insideDetectorList) {
       this.telemetryService.logPageView(TelemetryEventNames.DetectorViewLoaded, { "detectorId": this.detector });
+    }
+
+    if (this._route.snapshot.queryParamMap.has('hideShieldComponent') && !!this._route.snapshot.queryParams['hideShieldComponent']) {
+      this.hideShieldComponent = true;
     }
 
     this.detectorControlService.timePickerStrSub.subscribe(s => {
