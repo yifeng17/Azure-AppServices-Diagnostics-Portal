@@ -550,9 +550,19 @@ async function checkVnetIntegrationAsync(siteInfo, diagProvider, isKuduAccessibl
                     checks = checks.concat(views);
                     var isContinue = false;
                     return { checks, isContinue, subnetData };
+                }else if (vnetData.status != 200){
+                    var views = [
+                        new CheckStepView({
+                            title: `Failed to get ${resource}`,
+                            level: 2
+                        })
+                    ];
+                    checks = checks.concat(views);
+                    var isContinue = false;
+                    return { checks, isContinue, subnetData };
                 }
 
-                var vnetProperties = vnetData["properties"]
+                var vnetProperties = vnetData["properties"];
                 var subnets = vnetProperties["subnets"];
 
                 //Search for the subnet
