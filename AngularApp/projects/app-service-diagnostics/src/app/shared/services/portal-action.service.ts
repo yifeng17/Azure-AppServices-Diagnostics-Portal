@@ -243,10 +243,9 @@ export class PortalActionService {
     public openChangeAnalysisBlade(startTime?: string, endTime?: string, resourceUri?: string) {
         let bladeInfo = {
             extension: 'Microsoft_Azure_ChangeAnalysis',
-            detailBlade: 'ResourceChangesBlade',
+            detailBlade: 'ChangeAnalysisBaseBlade',
             detailBladeInputs: {
-                resourceId: resourceUri != null || resourceUri != undefined ? resourceUri : this.currentSite.id,
-                changeLevels: "important,normal",
+                resourceIds:  [resourceUri != null || resourceUri != undefined ? resourceUri : this.currentSite.id],
                 deepLinkOrigin: 'appservicediagnostics'
             }
         };
