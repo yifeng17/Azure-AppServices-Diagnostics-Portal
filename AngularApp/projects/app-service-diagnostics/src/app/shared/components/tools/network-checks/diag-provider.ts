@@ -1,3 +1,4 @@
+import { TelemetryService } from 'diagnostic-data';
 import { Globals } from 'projects/app-service-diagnostics/src/app/globals';
 import { ResponseMessageEnvelope } from '../../../models/responsemessageenvelope';
 import { Site, SiteInfoMetaData } from '../../../models/site';
@@ -22,16 +23,23 @@ export class DiagProvider {
     private _dict: Map<string, any>;
     public portalDomain: string;
     public scmHostName: string;
-    constructor(siteInfo: SiteInfoMetaData & Site & { fullSiteName: string }, armService: ArmService, siteService: SiteService, portalDomain: string, globals:Globals) {
+    private _telemetryService: TelemetryService;
+    constructor(siteInfo: SiteInfoMetaData & Site & { fullSiteName: string }, armService: ArmService, siteService: SiteService, portalDomain: string, globals:Globals, telemetryService:TelemetryService) {
         this._siteInfo = siteInfo;
         this._armService = armService;
         this._siteService = siteService;
         this._globals = globals;
+        this._telemetryService = telemetryService;
         this._dict = new Map<string, any>();
         var scmHostNameState = this._siteInfo.hostNameSslStates.filter(h => h.hostType == 1)[0];
         this.scmHostName = scmHostNameState == null ? null : scmHostNameState.name;
         this.portalDomain = portalDomain;
         armService.clearCache();
+    }
+
+
+    public get logException() {
+        return this._telemetryService.logException.bind(this._telemetryService);
     }
 
     public generateResourcePortalLink(resourceUri: string): string {

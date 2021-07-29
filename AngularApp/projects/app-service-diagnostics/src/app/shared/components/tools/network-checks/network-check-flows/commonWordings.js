@@ -1,8 +1,8 @@
 import { DropdownStepView, InfoStepView, StepFlow, StepFlowManager, CheckStepView, StepViewContainer,InputStepView, PromiseCompletionSource, TelemetryService } from 'diagnostic-data';
-export class CommonRecommendations{
+export class CommonWordings{
     constructor(){
-        this.KuduNotAccessible = {
-            Get(kuduUrl){
+        this.kuduNotAccessible = {
+            get(kuduUrl){
                 return new InfoStepView({
                     infoType: 1,
                     title: "Recommendations",
@@ -12,6 +12,37 @@ export class CommonRecommendations{
                         "your app may not be working properly as well. Please fix the problem to enable the check that depends on Kudu.  \r\n\r\n" +
                         `- Kudu extension is not working properly for unknown reason, please check if you can access Kudu by [${kuduUrl}](${kuduUrl}). \r\n\r\n`+
                         "The diagnostic results will be incomplete without Kudu access."
+                });
+            }
+        }
+
+        this.noAccessToResource = {
+            get(resourceUri, resourceType, portalDomain){
+                if(resourceUri.startsWith("/")){
+                    resourceUri = resourceUri.substr(1);
+                }
+                var views = [
+                    new CheckStepView({
+                        title: `No permission to ${resourceType}, diagnostics flow terminated`,
+                        level: 2
+                    }),
+
+                    new InfoStepView({
+                        infoType: 1,
+                        title: `Recommendations: Get access to ${resourceType}`,
+                        markdown: `Get access to ${resourceType} [${resourceUri}](${portalDomain}/#@/resource/${resourceUri})`
+                    })
+                ];
+
+                return views;
+            }
+        }
+
+        this.unExpectedError = {
+            get(){
+                return new CheckStepView({
+                    title: "Unexpected error, please retry.",
+                    level: 2
                 });
             }
         }

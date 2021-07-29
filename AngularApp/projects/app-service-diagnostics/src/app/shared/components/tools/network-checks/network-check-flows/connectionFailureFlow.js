@@ -1,42 +1,30 @@
 import { DropdownStepView, InfoStepView, StepFlow, StepFlowManager, CheckStepView, StepViewContainer, InputStepView, ButtonStepView, PromiseCompletionSource, TelemetryService } from 'diagnostic-data';
-import {ResourcePermissionCheckManager, checkVnetIntegrationHealth, checkDnsSettingAsync, checkSubnetSizeAsync} from './flowMisc.js';
-import {CommonRecommendations} from './commonRecommendations.js'
+import { checkKuduAvailabilityAsync, checkVnetIntegrationV2Async, checkDnsSettingAsync, checkSubnetSizeAsync, checkDnsSettingV2Async, checkAppSettingsAsync} from './flowMisc.js';
+import {CommonWordings} from './commonWordings.js'
+import {VnetIntegrationConfigChecker} from './vnetIntegrationConfigChecker.js'
 export var connectionFailureFlow = {
     title: "Connection issues",
     async func(siteInfo, diagProvider, flowMgr) {
-        var commonRec = new CommonRecommendations();
-        var isKuduAccessible = true;
+        var isKuduAccessiblePromise = checkKuduAvailabilityAsync(diagProvider, flowMgr);
 
-        var kuduAvailabilityCheckPromise = (async () => {
-            isKuduAccessible = await diagProvider.checkKuduReachable(30);
-            var views = [];
-            if (isKuduAccessible === false) {
-                views.push(new CheckStepView({
-                    title: "Kudu is not reachable, diagnostic will be incomplete",
-                    level: 1
-                }));
+        var isContinue = await checkVnetIntegrationV2Async(siteInfo, diagProvider, flowMgr, isKuduAccessiblePromise);
+        if(!isContinue){
+            return;
+        }
 
-                views.push(commonRec.KuduNotAccessible.Get(`https://${diagProvider.scmHostName}`));
-            }
-            return views;
-        })();
-        flowMgr.addViews(kuduAvailabilityCheckPromise, "Checking Kudu availability...");
-        var permMgr = new ResourcePermissionCheckManager();
-        flowMgr.addView(permMgr.checkView);
+        var dnsSettings = [];
+        isContinue = await checkDnsSettingV2Async(siteInfo, diagProvider, flowMgr, isKuduAccessiblePromise, dnsSettings);
+        if(!isContinue){
+            return;
+        }
+        await checkAppSettingsAsync(siteInfo, diagProvider, flowMgr);
+        checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, isKuduAccessiblePromise, dnsSettings);
 
-        var kuduReachablePromise = kuduAvailabilityCheckPromise.then(r => isKuduAccessible);
-
-        var promise = checkVnetIntegrationHealth(siteInfo, diagProvider, kuduReachablePromise, permMgr);
-        flowMgr.addViews(promise.then(d => d.views), "Checking VNet integration status...");
-        await promise;
-        var data = { subnetDataPromise: promise.then(d => d && d.subnetData), serverFarmId: siteInfo["serverFarmId"], kuduReachablePromise, isContinuedPromise: promise.then(d => d.isContinue) };
-        checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, data, permMgr);
     }
 }
 
 async function runConnectivityCheck(hostname, port, dnsServers, diagProvider, lengthLimit) {
     var subChecks = [];
-    var fellbackToPublicDns = false;
     var nameResolvePromise = (async function checkNameResolve() {
         var ip = null;
         var subChecks = [];
@@ -44,15 +32,18 @@ async function runConnectivityCheck(hostname, port, dnsServers, diagProvider, le
             ip = hostname;
         } else {
             for (var i = 0; i < dnsServers.length; ++i) {
+                var dns = `DNS server ${dnsServers[i]}`;
+                if(dnsServers[i] == ""){
+                    dnsServers[i] = "168.63.129.16";
+                    dns = "Azure public DNS";
+                }
+                
                 var result = await diagProvider.nameResolveAsync(hostname, dnsServers[i]).catch(e => {
                     logDebugMessage(e);
                     return {};
                 });
-                var dns = (dnsServers[i] == "" ? "Azure DNS server" : `DNS server ${dnsServers[i]}`);
+                
                 if (result.ip != null) {
-                    if (dnsServers[i] == "") {
-                        fellbackToPublicDns = true;
-                    }
                     ip = result.ip;
                     subChecks.push({ title: `Successfully resolved hostname '${hostname}' with ${dns}`, level: 0 });
                     break;
@@ -162,91 +153,15 @@ async function runConnectivityCheck(hostname, port, dnsServers, diagProvider, le
     return views;
 }
 
-function checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, data, permMgr) {
-    var subnetDataPromise = data.subnetDataPromise;
-    var isContinuedPromise = data.isContinuedPromise;
-    var serverFarmId = data.serverFarmId;
-    var kuduReachablePromise = data.kuduReachablePromise;
-    var kuduReachable = null;
-    var dnsServers = [];
-
-    var configCheckViewsPromise = (async function generateConfigCheckViews() {
-        var views = [], subChecks = [];
-        var level = 0, skipReason = null;
-        var titlePostfix = "";
-        var configCheckView = new CheckStepView({
-            title: "Network Configuration is healthy",
-            level: 0
-        });
-        views.push(configCheckView);
-        var subnetSizeCheckPromise = checkSubnetSizeAsync(diagProvider, subnetDataPromise, serverFarmId, permMgr);
-        var dnsCheckResultPromise = checkDnsSettingAsync(siteInfo, diagProvider);
-        var appSettings = await diagProvider.getAppSettings();
-        var vnetRouteAll = (appSettings["WEBSITE_VNET_ROUTE_ALL"] === "1");
-
-        if (vnetRouteAll) {
-            subChecks.push({ title: "WEBSITE_VNET_ROUTE_ALL is set to 1, all traffic will be routed to VNet", level: 3 });
-        } else {
-            subChecks.push({ title: "WEBSITE_VNET_ROUTE_ALL is not set or set to 0, only private network traffic(RFC1918) will be routed to VNet", level: 3 });
-        }
-
-        var subnetSizeResult = await subnetSizeCheckPromise;
-        if (subnetSizeResult != null) {
-            if (subnetSizeResult.checkResult.level == 1) {
-                level = 1;
-            }
-            views = views.concat(subnetSizeResult.views);
-            subChecks.push(subnetSizeResult.checkResult);
-        }
-
-        kuduReachable = await kuduReachablePromise;
-        if (kuduReachable) {
-            var dnsCheckResult = await dnsCheckResultPromise;
-            dnsServers = dnsCheckResult.dnsServers;
-            views = views.concat(dnsCheckResult.views);
-            subChecks = subChecks.concat(dnsCheckResult.subChecks);
-            if (dnsServers.length === 0) {
-                level = 2;
-            } else if (dnsCheckResult.level == 1) {
-                level = Math.max(level, 1);
-            }
-        } else {
-            subChecks.push({ title: "DNS check was skipped due to having no access to Kudu", level: 3 });
-            if (subnetSizeResult != null) {
-                titlePostfix = " (incomplete result)";
-            } else {
-                // no check is done
-                skipReason = "Kudu is inaccessible";
-                level = 3;
-            }
-        }
-
-        if (level == 1) {
-            configCheckView.title = "Network Configuration is suboptimal";
-            configCheckView.level = 1;
-        } else if (level == 2) {
-            configCheckView.title = "Network Configuration is unhealthy";
-            configCheckView.level = 2;
-        } else if (level == 3) {
-            configCheckView.title = `Network Configuration checks are skipped due to ${skipReason}`;
-            configCheckView.level = 3;
-        }
-        configCheckView.title += titlePostfix;
-        configCheckView.subChecks = subChecks;
-        return views;
-    })();
-
-    flowMgr.addViews(isContinuedPromise.then(c => c ? configCheckViewsPromise : null), "Checking Network Configuration...");
-
+async function checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, isKuduAccessiblePromise, dnsServers) {
     var state = null;
-    var connectivityCheckViewPromise = (async function generateConnectivityCheckViews() {
-        var isContinued = await isContinuedPromise;
-        await configCheckViewsPromise;
-        if (!kuduReachable) {
+    var isKuduAccessible = await isKuduAccessiblePromise;
+    var connectivityCheckViews = (function generateConnectivityCheckViews() {
+        if (!isKuduAccessible) {
             return [new CheckStepView({ title: "Connectivity check (tcpping and nameresolver) is not available due to Kudu is inaccessible.", level: 3 })];
         }
 
-        if (dnsServers.length === 0 || !isContinued) {
+        if (dnsServers.length === 0) {
             return [];
         }
 
@@ -300,5 +215,5 @@ function checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, data
             }
         })];
     })();
-    state = flowMgr.addViews(connectivityCheckViewPromise);
+    state = flowMgr.addViews(connectivityCheckViews);
 }

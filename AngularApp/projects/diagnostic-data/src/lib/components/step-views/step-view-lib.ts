@@ -1,3 +1,4 @@
+import { ChangeDetectorRef } from "@angular/core";
 import { SeverityLevel } from "../../models/telemetry";
 import { TelemetryService } from "../../services/telemetry/telemetry.service";
 import { Guid } from "../../utilities/guid";
@@ -188,12 +189,14 @@ export class StepFlowManager {
     private _sessionId: string;
     private _viewLogs: StepView[];
     private _resourceUri: string;
-    constructor(views: StepViewContainer[], telemetryService: TelemetryService, resourceUri: string) {
+    private _changeDetectorRef: ChangeDetectorRef;
+    constructor(views: StepViewContainer[], telemetryService: TelemetryService, resourceUri: string, changeDetectorRef: ChangeDetectorRef) {
         this.stepViews = views;
         this._telemetryService = telemetryService;
         this._stepViewQueue = [new PromiseCompletionSource<StepView[]>()];
         this._stepViewQueueMap = [];
         this._resourceUri = resourceUri;
+        this._changeDetectorRef = changeDetectorRef;
         this._execute();
     }
 
@@ -314,6 +317,8 @@ export class StepFlowManager {
         mgr.reset = this.reset.bind(this);
         mgr.logEvent = this.generateLogEventFunc(flow);
         mgr.logException = this.generateLogExceptionFunc(flow);
+        mgr.setLoadText = this.setLoadText.bind(this);
+        mgr.getSubCheckLevel = this.getSubCheckLevel;
         return mgr;
     }
 
@@ -341,6 +346,23 @@ export class StepFlowManager {
 
     public logEvent: (eventName: string, payload: any) => void;
     public logException: (exception: Error, handledAt?: string, properties?: any, severityLevel?: SeverityLevel) => void;
+    public setLoadText(text:string){
+        this.loadingView.loadingText = text;
+        this._changeDetectorRef.detectChanges();
+    }
+
+    public getSubCheckLevel(subChecks: Check[]){
+        var level = 0;
+        for(var i = 0; i<subChecks.length; ++i){
+            if(subChecks[i].level == 2){
+                return 2;
+            }else if (subChecks[i].level == 1){
+                level = 1;
+            }
+        }
+
+        return level;
+    }
 }
 
 

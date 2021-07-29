@@ -2,10 +2,14 @@
 
 .check-container{
 
+    .check-content{
+        margin: -21px 3px 0px 30px;
+    }
+
     .check-title{
         font-size: 13px;
-        margin-top: -20px;
-        margin-left: 30px;
+        display: inline;
+        margin-right: 45px;
     }
     
     .bold{
@@ -20,15 +24,17 @@
     }
 
     .details-link{
-        float: right;
-        margin-top: -16px;
-        padding-right: 5px;
+        margin-left: -35px;
+        display: inline;
     }
 
     .expand-icon{
-        float: right;
-        margin-top: -16px;
-        padding-right: 5px;
+        position: absolute;
+        margin-top: 1px;
+        margin-left: -35px;
+        .ms-Icon{
+            color: black;
+        }
     }
 }
 

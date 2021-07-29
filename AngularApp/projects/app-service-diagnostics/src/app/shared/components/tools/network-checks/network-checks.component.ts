@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, ViewEncapsulation, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ViewEncapsulation, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { Site, SiteInfoMetaData } from '../../../models/site';
 import { SiteService } from '../../../services/site.service';
 import { ArmService } from '../../../services/arm.service';
@@ -56,7 +56,7 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
 
     //checks: any[];
 
-    constructor(private _siteService: SiteService, private _armService: ArmService, private _telemetryService: TelemetryService, private _globals: Globals, private _route: ActivatedRoute, private _router: Router, private _portalService: PortalService) {
+    constructor(private _siteService: SiteService, private _armService: ArmService, private _telemetryService: TelemetryService, private _globals: Globals, private _route: ActivatedRoute, private _router: Router, private _portalService: PortalService, private _changeDetectorRef: ChangeDetectorRef) {
         try {
             var feedbackPanelConfig = { defaultFeedbackText: this._feedbackQuestions, detectorName: "NetworkCheckingTool", notResetOnDismissed: true, url: window.location.href }
             _globals.messagesData.feedbackPanelConfig = feedbackPanelConfig;
@@ -82,10 +82,10 @@ export class NetworkCheckComponent implements OnInit, AfterViewInit {
 
             var siteInfo = this._siteService.currentSiteMetaData.value;
             var fullSiteName = siteInfo.siteName + (siteInfo.slot == "" ? "" : "-" + siteInfo.slot);
-            this.stepFlowManager = new StepFlowManager(this.stepViews, _telemetryService, siteInfo.resourceUri);
+            this.stepFlowManager = new StepFlowManager(this.stepViews, _telemetryService, siteInfo.resourceUri, this._changeDetectorRef);
             this.siteInfo = { ...this._siteService.currentSiteMetaData.value, ...this._siteService.currentSite.value, fullSiteName };
 
-            this.diagProvider = new DiagProvider(this.siteInfo, _armService, _siteService, _portalService.shellSrc, _globals);
+            this.diagProvider = new DiagProvider(this.siteInfo, _armService, _siteService, _portalService.shellSrc, _globals, _telemetryService);
             this.loadFlowsAsync();
         } catch (error) {
             this.stepFlowManager.errorMsg = "Initialization failure, retry may not help.";

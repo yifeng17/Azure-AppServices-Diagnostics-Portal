@@ -1,12 +1,10 @@
 import { DropdownStepView, InfoStepView, StepFlow, StepFlowManager, CheckStepView, StepViewContainer, InputStepView, ButtonStepView, PromiseCompletionSource, TelemetryService } from 'diagnostic-data';
 import { SubnetDeletionWordings } from './subnetDeletionWordings.js';
 import { addSubnetSelectionDropDownView, getWebAppVnetInfo } from './flowMisc.js';
-import { CommonRecommendations } from './commonRecommendations.js';
 
 export var subnetDeletionFlow = {
     title: "Subnet/VNet deletion issue (Preview)",
     async func(siteInfo, diagProvider, flowMgr) {
-        var commonRec = new CommonRecommendations();
         addSubnetSelectionDropDownView(siteInfo, diagProvider, flowMgr, "Please select the subnet you want to delete", async (subnet, vnet) => {
             var lockPromise = checkSubnetLocksAsync(subnet, siteInfo, diagProvider, flowMgr);
             flowMgr.addViews(lockPromise.then(r => r.views), "Checking locks...");
