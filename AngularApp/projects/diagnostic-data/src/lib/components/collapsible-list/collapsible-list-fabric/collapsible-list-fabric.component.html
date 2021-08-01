@@ -1,9 +1,12 @@
-<div *ngIf="title" class="row collapsable-list">
+<div *ngIf="title" class="row" [ngClass]="{'collapsable-list-less-margin': lessMargin, 'collapsable-list': !lessMargin}">
   <button class="btn-outer" [attr.aria-expanded]="collapsed ?'false':'true'" (click)="clickHandler()"
     class="list-header">
     <span class="btn-inner" tabindex="-1">
       <div style="float:left" class="custom-caret" [class.custom-caret-down]="collapsed">
         <fab-icon iconName="ChevronUp" ariaLabel="ChevronUp"></fab-icon>
+      </div>
+      <div style="float:left" *ngIf="iconProps">
+        <fab-icon [iconName]="iconProps.iconName" ariaLabel="Section icon" [styles]="iconProps.styles"></fab-icon>
       </div>
       <div style="float:left">
         <span class="pl-3">{{title}}</span>
