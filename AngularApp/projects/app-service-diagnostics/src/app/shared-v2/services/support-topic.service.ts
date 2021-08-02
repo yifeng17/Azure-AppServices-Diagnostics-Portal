@@ -87,7 +87,7 @@ export class SupportTopicService {
                         }
                     }
                     else {
-                        if ((this._resourceService.subscriptionId == "c258f9c0-3d64-4761-8697-cab631f28422" || this._resourceService.subscriptionId == "ef90e930-9d7f-4a60-8a99-748e0eea69de")
+                        if ((this._resourceService.subscriptionId == "c258f9c0-3d64-4761-8697-cab631f28422")
                             && this.solutionOrchestratorConfig && this.solutionOrchestratorConfig[this.pesId]
                             && this.solutionOrchestratorConfig[this.pesId].length>0 && this.solutionOrchestratorConfig[this.pesId].findIndex(s => s==this.supportTopicId)>=0) {
                             detectorPath = `solutionorchestrator`;
