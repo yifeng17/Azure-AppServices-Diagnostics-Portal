@@ -3,8 +3,8 @@
     cursor: pointer;
     padding: 10px;
     background-color: white;
-    margin: 10px 0px;
     overflow-wrap: break-word;
+    box-shadow: 0px 1.6px 3.6px rgba(0, 0, 0, 0.132), 0px 0.3px 0.9px rgba(0, 0, 0, 0.108);
 }
 
 .article > h5 {
@@ -36,6 +36,7 @@ br{
     background-color: white;
     margin: -4px 10px 0px 0px;
     overflow-wrap: break-word;
+    box-shadow: 0px 1.6px 3.6px rgba(0, 0, 0, 0.132), 0px 0.3px 0.9px rgba(0, 0, 0, 0.108);
 }
 
 .insight-detector-name {
@@ -67,14 +68,11 @@ br{
     background-color: white;
     margin: 10px 0px;
     overflow-wrap: break-word;
+    box-shadow: 0px 1.6px 3.6px rgba(0, 0, 0, 0.132), 0px 0.3px 0.9px rgba(0, 0, 0, 0.108);
  }
 
 .article-link {
     color:  #605e5c
-}
-
-.col-md-4-special{
-    width: 30.31%;
 }
 
 .solutions-small-card-outer{
@@ -83,18 +81,19 @@ br{
     margin: 10px 0px;
     white-space: nowrap;
     display: table;
+    box-shadow: 0px 1.6px 3.6px rgba(0, 0, 0, 0.132), 0px 0.3px 0.9px rgba(0, 0, 0, 0.108);
 }
 
 .solutions-small-card{
-    border: 1px solid #bbbbbb;
+    //border: 1px solid #bbbbbb;
     text-align: center;
     font-size: 18px;
     cursor: pointer;
     height: 100%;
+    vertical-align: middle;
+    margin: 0 10px;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: table-cell;
-    vertical-align: middle;
 }
 
 .sections-loading-title{

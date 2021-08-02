@@ -11,6 +11,8 @@ export class CollapsibleListFabricComponent {
 
   @Input() title: string;
   @Input() collapsed: boolean;
+  @Input() lessMargin: boolean = false;
+  @Input() iconProps: any = null;
 
   @ContentChildren(CollapsibleListItemComponent) listItemComponents: QueryList<CollapsibleListItemComponent>;
 

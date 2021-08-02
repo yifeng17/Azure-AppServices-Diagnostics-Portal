@@ -98,31 +98,19 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
     mainSolutionIndex = 0;
 
     allSolutions: Solution[] = [];
+
+    timeoutToShowSolutions: number = 10000;
+    showSolutionsTimedout: boolean = false;
     
     startTime: Moment;
     endTime: Moment;
     isPublic: boolean;
 
-    numArticlesExpanded: number = 3;
-    viewRemainingArticles : boolean = false;
-
-    viewOrHideAnchorTagText(viewRemainingArticles: boolean , totalDocuments : number, numDocumentsExpanded : number)
-    {
-        let remainingDocuments: string = "";
-        if (totalDocuments && numDocumentsExpanded){
-        remainingDocuments = `${totalDocuments - numDocumentsExpanded}`;
-        remainingDocuments = viewRemainingArticles ?  `last ${remainingDocuments} ` : remainingDocuments
-        }
-        return !viewRemainingArticles ? `View ${remainingDocuments} more documents` : 
-            `Hide ${remainingDocuments} documents`;
-    }
-
-
-    showRemainingArticles()
-    {
-        this.viewRemainingArticles =!this.viewRemainingArticles
-        if(this.viewRemainingArticles)
-        {
+    /*numArticlesExpanded: number = 3;
+    articleSectionExpanded: boolean = false;
+    toggleArticleSection = () => {
+        this.articleSectionExpanded = !this.articleSectionExpanded;
+        if (this.articleSectionExpanded) {
             this.logEvent(TelemetryEventNames.MoreWebResultsClicked,
                 { 
                     searchId: this.searchId, 
@@ -130,6 +118,36 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
                     ts: Math.floor((new Date()).getTime() / 1000).toString() 
                 }
             );
+        }
+    };*/
+
+    documentationSectionIcon: any = {
+        iconName: "FileASPX",
+        styles: {
+            root: {
+                marginLeft: "11px",
+                fontSize: "16px"
+            }
+        }      
+    };
+    observationSectionIcon: any = {
+        iconName: "StatusErrorFull",
+        styles: {
+            root: {
+                color: "#A4262C",
+                marginLeft: "11px",
+                fontSize: "16px"
+            }
+        }
+    };
+    successfulSectionIcon: any = {
+        iconName: "SkypeCircleCheck",
+        styles: {
+            root: {
+                color: "#57A300",
+                marginLeft: "11px",
+                fontSize: "16px"
+            }
         }
     }
     
@@ -157,7 +175,8 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
 
     solutionButtonStyle = {
         root: {
-            marginTop: '10px',
+            //marginTop: '10px',
+            verticalAlign: "middle",
             height: '25px',
             fontSize: '13px',
             paddingBottom: '2px'
@@ -220,6 +239,7 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
     }
 
     clearInsights() {
+        this.showSolutionsTimedout = false;
         this.detectorViewModels = [];
         this.issueDetectedViewModels = [];
         this.successfulViewModels = [];
@@ -619,6 +639,11 @@ export class SolutionOrchestratorComponent extends DataRenderBaseComponent imple
         });
 
         // Log all the children detectors
+        setTimeout(() => {
+            if (this.getPendingDetectorCount()>0) {
+                this.showSolutionsTimedout = true;
+            }
+        }, this.timeoutToShowSolutions);
         observableForkJoin(requests).subscribe(childDetectorData => {
             setTimeout(() => {
                 let dataOutput = {};
