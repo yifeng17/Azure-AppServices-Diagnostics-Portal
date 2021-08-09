@@ -140,7 +140,7 @@
             "imgSrc": "assets/img/acr-logo.png",
             "versionPrefix": "",
             "azureCommImpactedServicesList": "registries",
-            "pesId": "16533",
+            "pesId": "16213",
             "staticSelfHelpContent": "",
             "searchSuffix": "Azure Container Registry"
         },
