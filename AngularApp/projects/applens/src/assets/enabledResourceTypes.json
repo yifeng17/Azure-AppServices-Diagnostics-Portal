@@ -40,6 +40,17 @@
         },
         {
             "service": "ResourceService",
+            "resourceType": "Microsoft.Web/workerApps",
+            "templateFileName": "WorkerApp",
+            "imgSrc": "assets/img/Azure-KubernetesService-Logo.png",
+            "versionPrefix": "",
+            "azureCommImpactedServicesList": "workerapp",
+            "pesId": "12345",
+            "staticSelfHelpContent": "microsoft.web",
+            "searchSuffix": "Azure Worker App"
+        },
+        {
+            "service": "ResourceService",
             "resourceType": "Microsoft.ContainerService/managedClusters",
             "templateFileName": "KubernetesService",
             "imgSrc": "assets/img/Azure-KubernetesService-Logo.png",
