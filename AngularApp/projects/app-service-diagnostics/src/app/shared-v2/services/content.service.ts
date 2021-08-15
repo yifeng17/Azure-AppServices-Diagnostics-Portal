@@ -112,7 +112,7 @@ export class ContentService {
 
       var listOfEnabledSupportTopics =  this._config.documentSearchEnabledSupportTopicIds[pesId];
     
-      var isDeepSearchEnabledForThisSupportTopic = listOfEnabledSupportTopics && (listOfEnabledSupportTopics.findIndex( x => x == supportTopicId ) > -1)
+      var isDeepSearchEnabledForThisSupportTopic = listOfEnabledSupportTopics && (listOfEnabledSupportTopics.length==0 || listOfEnabledSupportTopics.findIndex( x => x == supportTopicId ) > -1)
       this.featureEnabledForSupportTopic = isDeepSearchEnabledForThisSupportTopic ;
     }
    
