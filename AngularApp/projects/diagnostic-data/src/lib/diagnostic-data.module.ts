@@ -114,7 +114,7 @@ import { CollapsibleListItemComponent } from './components/collapsible-list/coll
 import { StepViewsRendererComponent } from './components/step-views/step-view-renderer/step-views-renderer.component';
 import { InputStepComponent } from './components/step-views/input-step-view/input-step.component';
 import { InfoStepComponent } from './components/step-views/info-step-view/info-step.component';
-import { DropDownStepComponent } from './components/step-views/dropdown-step-view/dropdown-step.component';
+import { DropDownStepComponent, GetDropdownOptionsPipe } from './components/step-views/dropdown-step-view/dropdown-step.component';
 import { CheckStepComponent } from './components/step-views/check-step-view/check-step.component';
 import { CheckComponent, ConvertLevelToHealthStatusPipe } from './components/step-views/check-step-view/check.component';
 import {SolutionOrchestratorComponent} from "./components/solution-orchestrator/solution-orchestrator.component";
@@ -201,6 +201,7 @@ import { ButtonStepComponent } from './components/step-views/button-step-view/bu
     CheckStepComponent,
     CheckComponent,
     ConvertLevelToHealthStatusPipe,
+    GetDropdownOptionsPipe,
     SolutionOrchestratorComponent
   ],
   entryComponents: [DetectorListAnalysisComponent],
@@ -233,6 +234,7 @@ import { ButtonStepComponent } from './components/step-views/button-step-view/bu
     CheckStepComponent,
     CheckComponent,
     ConvertLevelToHealthStatusPipe,
+    GetDropdownOptionsPipe,
     SolutionOrchestratorComponent
   ],
 })

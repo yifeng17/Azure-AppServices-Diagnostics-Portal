@@ -38,7 +38,7 @@ export class CommonWordings{
             }
         }
 
-        this.unExpectedError = {
+        this.unexpectedError = {
             get(){
                 return new CheckStepView({
                     title: "Unexpected error, please retry.",

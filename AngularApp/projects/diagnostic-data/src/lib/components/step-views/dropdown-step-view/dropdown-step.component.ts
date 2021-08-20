@@ -10,7 +10,7 @@ import { DropdownStepView, StepViewContainer } from '../step-view-lib';
   styleUrls: ['./dropdown-step.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class DropDownStepComponent implements OnInit,AfterViewInit {
+export class DropDownStepComponent implements OnInit, AfterViewInit {
   @Input() viewModel: StepViewContainer;
   dropdownStepView: DropdownStepView;
   dropdownOptions: IDropdownOption[][];
@@ -25,7 +25,7 @@ export class DropDownStepComponent implements OnInit,AfterViewInit {
 
   ngAfterViewInit(): void {
     var afterInit = this.dropdownStepView && this.dropdownStepView.afterInit;
-    if(afterInit!=null){
+    if (afterInit != null) {
       afterInit();
     }
   }
@@ -47,20 +47,16 @@ export class DropDownStepComponent implements OnInit,AfterViewInit {
         return this.dropdown;
       }
     };
-    this.dropdownOptions = this.dropdownStepView.dropdowns.map((dropdown, idx) => {
-      if(dropdown.defaultChecked != null){
+    this.dropdownStepView.dropdowns.forEach((dropdown, idx) => {
+      if (dropdown.defaultChecked != null) {
         this.dropdownStepView.callback(idx, dropdown.defaultChecked);
       }
-      return this.getOptions(dropdown);
     });
     var push = this.dropdownStepView.dropdowns.push.bind(this.dropdownStepView.dropdowns);
     this.dropdownStepView.dropdowns.push = (dropdown => {
-      this.dropdownOptions.length = this.dropdownStepView.dropdowns.length;
-      var options = this.getOptions(dropdown);
-      this.dropdownOptions.push(options);
       var result = push(dropdown);
-      if(dropdown.defaultChecked != null){
-        this.dropdownStepView.callback(this.dropdownStepView.dropdowns.length-1, dropdown.defaultChecked);
+      if (dropdown.defaultChecked != null) {
+        this.dropdownStepView.callback(this.dropdownStepView.dropdowns.length - 1, dropdown.defaultChecked);
       }
       return result;
     });
@@ -79,4 +75,24 @@ export class DropDownStepComponent implements OnInit,AfterViewInit {
 
 }
 
-
+@Pipe({
+  name: 'getDropdownOptions'
+})
+export class GetDropdownOptionsPipe implements PipeTransform {
+  transform(dropdown: {
+    description?: string,
+    options: string[],
+    defaultChecked?: number,
+    placeholder: string
+  }, args?: any): IDropdownOption[] {
+    // generate IDropdownOption from dropdown
+    if (dropdown == null) {
+      return [];
+    } else {
+      return [<IDropdownOption>{ key: -1, text: dropdown.placeholder, isSelected: dropdown.defaultChecked == null, hidden: true }]
+        .concat(dropdown.options.map((s, idx) => {
+          return { key: idx, text: s, isSelected: idx == dropdown.defaultChecked };
+        }));
+    }
+  }
+}

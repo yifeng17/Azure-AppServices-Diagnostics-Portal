@@ -11,6 +11,7 @@ export class VnetIntegrationConfigChecker {
         this.siteArmId = siteInfo.id;
         this.serverFarmId = siteInfo.serverFarmId;
         this.dataPreparePromise = this.prepareDataAsync();
+        this.vnetIntegrationType = null;
     }
 
     async prepareDataAsync() {
@@ -19,6 +20,9 @@ export class VnetIntegrationConfigChecker {
 
     async getVnetIntegrationTypeAsync() {
         //swift, gateway, none or null
+        if (this.vnetIntegrationType != null) {
+            return this.vnetIntegrationType;
+        }
         await this.dataPreparePromise;
         var siteVnetInfo = this.siteVnetInfo;
         if (siteVnetInfo != null && siteVnetInfo["properties"] != null) {
@@ -28,13 +32,16 @@ export class VnetIntegrationConfigChecker {
             //If subnetResourceId is null, it means Regional Vnet integration is not configured for the app
             var subnetResourceId = vnetInfo["subnetResourceId"];
             if (subnetResourceId != null) {
+                this.vnetIntegrationType = "swift";
                 return "swift";
             } else {
                 var siteGWVnetInfo = await this.getGatewayVnetInfoAsync();
                 if (siteGWVnetInfo != null && siteGWVnetInfo.length > 0) {
                     this.siteGWVnetInfo = siteGWVnetInfo;
+                    this.vnetIntegrationType = "gateway";
                     return "gateway";
                 } else {
+                    this.vnetIntegrationType = "none";
                     return "none";
                 }
             }
@@ -60,10 +67,15 @@ export class VnetIntegrationConfigChecker {
         return subnetResourceId;
     }
 
-    async getSwiftVnetIdAsync(){
-        var subnetResourceId = await this.getVNetInfoPropertyAsync("subnetResourceId");
-        var vnetId = subnetResourceId.replace(/\/subnets.*/, "");
-        return vnetId;
+    async getSwiftVnetIdAsync() {
+        var vnetIntegrationType = await this.getVnetIntegrationTypeAsync();
+        if (vnetIntegrationType == "swift") {
+            var subnetResourceId = await this.getVNetInfoPropertyAsync("subnetResourceId");
+            var vnetId = subnetResourceId.replace(/\/subnets.*/, "");
+            return vnetId;
+        } else {
+            throw new Error(`unexpected VnetIntegrationType ${vnetIntegrationType}`);
+        }
     }
 
     async isSwiftSupportedAsync() {
@@ -114,11 +126,11 @@ export class VnetIntegrationConfigChecker {
         if (subnetAddressPrefix != null) {
             var splitted = subnetAddressPrefix.split("/");
             var subnetMask = splitted.length > 0 ? parseInt(splitted[1]) : NaN;
-            if(isNaN(subnetMask)){
+            if (isNaN(subnetMask)) {
                 return null;
             }
             return subnetMask;
-        }else{
+        } else {
             return null;
         }
     }
