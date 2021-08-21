@@ -24,10 +24,10 @@ export var functionsFlow = {
                 await checkDnsSettingV2Async(siteInfo, diagProvider, flowMgr, isKuduAccessiblePromise, dnsSettings);
                 checkAppSettingsAsync(siteInfo, diagProvider, flowMgr);
                 dnsServers = dnsSettings;
-            }else{
+            } else {
                 return;
             }
-        }else{
+        } else {
             dnsServers = [""]; //default Azure DNS
         }
 
@@ -152,7 +152,15 @@ export var functionsFlow = {
                 var subChecksL2 = []; // These are the checks (and subchecks) for each binding of a function
                 var promisesL2 = functionInfo.connectionStringProperties.map(async (propertyName) => {
                     var connectionString = appSettings[propertyName];
-                    (await networkCheckConnectionString(propertyName, connectionString, dnsServers, diagProvider, isVnetIntegrated)).forEach(item => subChecksL2.push(item));
+                    if (connectionString != undefined) {
+                        (await networkCheckConnectionString(propertyName, connectionString, dnsServers, diagProvider, isVnetIntegrated)).forEach(item => subChecksL2.push(item));
+                    } else {
+                        subChecksL2.push({
+                            title: `The App Setting "${propertyName}" has not value.`,
+                            level: 2,
+                            detailsMarkdown: "Validation is not possible for this trigger/binding.  This issue likely affects normal functionality of functions that depend on it and should be corrected."
+                        });
+                    }
                 });
                 await Promise.all(promisesL2);
                 var functionName = functionInfo.name.split("/").length < 2 ? functionInfo.name : functionInfo.name.split("/")[1];
@@ -361,5 +369,3 @@ async function runConnectivityCheckAsync(hostname, port, dnsServers, diagProvide
     }
     return subChecks;
 }
-
-
