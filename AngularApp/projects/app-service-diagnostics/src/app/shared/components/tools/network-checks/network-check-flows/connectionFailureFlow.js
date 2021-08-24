@@ -1,5 +1,5 @@
 import { DropdownStepView, InfoStepView, StepFlow, StepFlowManager, CheckStepView, StepViewContainer, InputStepView, ButtonStepView, PromiseCompletionSource, TelemetryService } from 'diagnostic-data';
-import { checkKuduAvailabilityAsync, checkVnetIntegrationV2Async, checkDnsSettingAsync, checkSubnetSizeAsync, checkDnsSettingV2Async, checkAppSettingsAsync} from './flowMisc.js';
+import { checkKuduAvailabilityAsync, checkVnetIntegrationV2Async, checkDnsSettingV2Async, checkAppSettingsAsync} from './flowMisc.js';
 import {CommonWordings} from './commonWordings.js'
 import {VnetIntegrationConfigChecker} from './vnetIntegrationConfigChecker.js'
 export var connectionFailureFlow = {
