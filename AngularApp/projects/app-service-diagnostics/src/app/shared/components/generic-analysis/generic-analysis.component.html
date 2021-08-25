@@ -1,5 +1,5 @@
-<detector-container *ngIf="displayDetectorContainer" [detector]="analysisDetector"
-  [hideDetectorControl]='isCaseSubmissionSolutionIFrame' [isAnalysisView]="true"
+<detector-container #detectorContainer *ngIf="displayDetectorContainer" [detector]="analysisDetector"
+  [hideDetectorControl]='isCaseSubmissionSolutionIFrame' [isAnalysisView]="true" [downtimeZoomBehavior]="downtimeZoomBehavior"
   (downTimeChanged)="onDowntimeChanged($event)"></detector-container>
 <div *ngIf="showSearchBar" class="search-box">
   <span>Diagnostics based on </span>
@@ -16,7 +16,7 @@
 
 <detector-list-analysis #detectorListAnalysis detectorParmName="detectorName" [resourceId]="resourceId"
   [targetedScore]="targetedScore" [analysisId]="analysisId" [searchTerm]="searchTerm" [searchMode]="searchMode"
-  (onComplete)="updateLoadingStatus($event)"></detector-list-analysis>
+  (onComplete)="updateLoadingStatus($event)" (updateDowntimeZoomBehavior) = "onUpdateDowntimeZoomBehavior($event)"></detector-list-analysis>
 
 <div *ngIf="searchMode !== SearchAnalysisMode.Genie && detectorListAnalysis.inDrillDownMode">
   <router-outlet></router-outlet>
