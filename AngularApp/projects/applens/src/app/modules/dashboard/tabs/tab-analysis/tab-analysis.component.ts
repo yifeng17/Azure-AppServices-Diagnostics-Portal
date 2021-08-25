@@ -2,7 +2,7 @@ import { Component, OnInit, OnChanges, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApplensDiagnosticService } from '../../services/applens-diagnostic.service';
 import { DetectorListAnalysisComponent } from 'diagnostic-data';
-import { DownTime } from 'diagnostic-data';
+import { DownTime, zoomBehaviors } from 'diagnostic-data';
 
 @Component({
   selector: 'tab-analysis',
@@ -18,12 +18,17 @@ export class TabAnalysisComponent implements OnInit {
   readonly stringFormat: string = 'YYYY-MM-DDTHH:mm';
 
   @ViewChild('detectorListAnalysis', { static: true }) detectorListAnalysis: DetectorListAnalysisComponent
+  downtimeZoomBehavior = zoomBehaviors.Zoom;
 
   constructor(private _activatedRoute: ActivatedRoute, private _router: Router, private _diagnosticService: ApplensDiagnosticService) {
     this._activatedRoute.paramMap.subscribe(params => {
       this.analysisId = params.get('analysisId');
     });
 
+  }
+
+  onUpdateDowntimeZoomBehavior(zoomBehavior: zoomBehaviors) {
+    this.downtimeZoomBehavior = zoomBehavior;
   }
 
   ngOnInit() {
