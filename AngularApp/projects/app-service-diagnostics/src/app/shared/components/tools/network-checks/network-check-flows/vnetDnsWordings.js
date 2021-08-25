@@ -65,7 +65,7 @@ export class VnetDnsWordings {
         }
 
         this.noAccessToResource = commonWordings.noAccessToResource;
-        this.unExpectedError = commonWordings.unExpectedError;
+        this.unexpectedError = commonWordings.unexpectedError;
 
         this.appSettingDnsOverrideVnetDns = {
             get(){
@@ -109,10 +109,10 @@ export class VnetDnsWordings {
         }
 
         this.cannotCheckWithoutKudu = {
-            get(){
+            get(what){
                 return new CheckStepView({
-                    title: "Cannot validate DNS settings without kudu access",
-                    level: 2
+                    title: `Cannot validate ${what} without kudu access`,
+                    level: 3
                 });
             }
         }

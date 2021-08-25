@@ -62,6 +62,11 @@ export class DropdownStepView extends StepView {
         super(view);
         this.type = StepViewType.dropdown;
         this.dropdowns = view.dropdowns;
+        for(let i = 0; i<view.dropdowns.length; ++i){
+            if(view.dropdowns[i].options == null){
+                throw new Error("dropdown option should not be null");
+            }
+        }
         this.callback = view.callback;
         this.bordered = view.bordered || false;
         this.width = view.width || "100%";
