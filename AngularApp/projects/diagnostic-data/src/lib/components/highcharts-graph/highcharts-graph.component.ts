@@ -7,10 +7,12 @@ import { DetectorControlService } from '../../services/detector-control.service'
 import { HighChartTimeSeries } from '../../models/time-series';
 import { xAxisPlotBand, xAxisPlotBandStyles, zoomBehaviors, XAxisSelection } from '../../models/time-series';
 import { KeyValue } from '@angular/common';
+import { PointerEventObject } from 'highcharts';
+import { interval, Subscription } from 'rxjs';
 
 declare var require: any
 var Highcharts = require('highcharts'),
-HighchartsCustomEvents = require('highcharts-custom-events')(Highcharts);
+    HighchartsCustomEvents = require('highcharts-custom-events')(Highcharts);
 HC_exporting(Highcharts);
 AccessibilityModule(Highcharts);
 
@@ -96,12 +98,104 @@ export class HighchartsGraphComponent implements OnInit {
         }
     }
 
+    private _updateChartCursorTimer: Subscription;
+    private _updateChartCursor(currChart: Highcharts.Chart, cursorValue: string): void {
+        if (!!currChart) {
+            if (this.getCurrentChartContainerId()) {
+                let currChartContainer = <HTMLElement>document.getElementById(this.getCurrentChartContainerId());
+                if (currChartContainer.getElementsByClassName('highcharts-plot-border') && currChartContainer.getElementsByClassName('highcharts-plot-border').length > 0) {
+                    let plotBorderElement = (<HTMLElement>(currChartContainer.getElementsByClassName('highcharts-plot-border')[0]));
+                    if (!!plotBorderElement && (!this._updateChartCursorTimer || (!!this._updateChartCursorTimer && this._updateChartCursorTimer.closed))) {
+                        this._updateChartCursorTimer = interval(50).subscribe(() => {
+                            if (plotBorderElement.getAttribute('cursor') != cursorValue && plotBorderElement.getAttribute('fill') != 'white') {
+                                plotBorderElement.setAttribute('fill', 'white');
+                                plotBorderElement.setAttribute('opacity', '0.1');
+                                plotBorderElement.setAttribute('cursor', cursorValue);
+                            }
+                            else {
+                                this._updateChartCursorTimer.unsubscribe();
+                            }
+                        });
+                    }
+                }
+            }
+        }
+    }
+
     private _zoomBehavior: zoomBehaviors = zoomBehaviors.Zoom;
+    private _handleZoomBehaviorUpdate(value: zoomBehaviors) {
+        if (value & zoomBehaviors.GeryOutGraph) {
+            let currChart = this.getCurrentChart();
+            if (!!currChart) {
+                let currPlotBands = [];
+                if (currChart.options.xAxis instanceof Array && currChart.options.xAxis.length > 0) {
+                    currPlotBands = currChart.options.xAxis[0].plotBands;
+                }
+                let alreadyGreyedOut = currPlotBands.length > 1 && currPlotBands.some(plotBand => plotBand.color === '#e5e5e5');
+                if (!alreadyGreyedOut) {
+                    currPlotBands.push({
+                        color: '#e5e5e5',
+                        from: currChart.xAxis[0].min,
+                        to: currChart.xAxis[0].max,
+                        zIndex: -1, //This will place the grey plotband behind any exisitng plotbands
+                        borderWidth: 0,
+                        borderColor: 'darkgrey',
+                        id: ''
+                    });
+                    let newChartOptions = {
+                        xAxis: {
+                            plotBands: currPlotBands
+                        }
+                    };
+                    let currOptions = this.options;
+                    this._updateObject(currOptions, newChartOptions);
+                    currChart.update(currOptions);
+                    this._updateChartCursor(currChart, 'not-allowed');
+                }
+            }
+        }
+
+        if (value & zoomBehaviors.UnGreyGraph) {
+            let currChart = this.getCurrentChart();
+            if (!!currChart) {
+                let currPlotBands = [];
+                if (currChart.options.xAxis instanceof Array && currChart.options.xAxis.length > 0) {
+                    currPlotBands = currChart.options.xAxis[0].plotBands;
+                }
+                let alreadyGreyedOut = currPlotBands.length > 1 && currPlotBands.some(plotBand => plotBand.color === '#e5e5e5');
+                if (alreadyGreyedOut) {
+                    currPlotBands.forEach(plotBand => {
+                        if (plotBand.color === '#e5e5e5') {
+                            currPlotBands.splice(currPlotBands.indexOf(plotBand), 1);
+                        }
+                    });
+                    let newChartOptions = {
+                        xAxis: {
+                            plotBands: currPlotBands
+                        }
+                    };
+                    let currOptions = this.options;
+                    this._updateObject(currOptions, newChartOptions);
+                    currChart.update(currOptions);
+                    this._updateChartCursor(currChart, 'inherit');
+                }
+            }
+        }
+    }
+
+    private _zoomBehaviorUpdateTimer: Subscription;
+
     @Input() public set zoomBehavior(value: zoomBehaviors) {
         this._zoomBehavior = value;
-        setTimeout(() => {
-            HighchartsGraphComponent.addOrUpdateChartProperty('zoomBehavior', this._zoomBehavior, this.getCurrentChartContainerId());
-        }, 500);
+
+        if ((!this._zoomBehaviorUpdateTimer) || (!!this._zoomBehaviorUpdateTimer && this._zoomBehaviorUpdateTimer.closed)) {
+            this._zoomBehaviorUpdateTimer = interval(100).subscribe(() => {
+                if (HighchartsGraphComponent.addOrUpdateChartProperty('zoomBehavior', this._zoomBehavior, this.getCurrentChartContainerId())) {
+                    this._handleZoomBehaviorUpdate(this._zoomBehavior);
+                    this._zoomBehaviorUpdateTimer.unsubscribe();
+                }
+            });
+        }
     }
     public get zoomBehavior() {
         return this._zoomBehavior;
@@ -134,8 +228,8 @@ export class HighchartsGraphComponent implements OnInit {
         return null;
     }
 
-    highchartCallback: Highcharts.ChartLoadCallbackFunction = function() {
-        var chart:any = this;
+    highchartCallback: Highcharts.ChartLoadCallbackFunction = function () {
+        var chart: any = this;
         chart.customNamespace = {};
         chart.customNamespace["toggleSelectionButton"] = chart.renderer.button(
             "None", null, -10, function () {
@@ -145,38 +239,38 @@ export class HighchartsGraphComponent implements OnInit {
                     series[i].setVisible(statusToSet, false);
                 }
                 statusToSet = !statusToSet;
-                var textStr = statusToSet ? "All": "None";
-                var ariaLabel= statusToSet ? "Select all the series" : "Deselect all the series";
+                var textStr = statusToSet ? "All" : "None";
+                var ariaLabel = statusToSet ? "Select all the series" : "Deselect all the series";
                 this.attr({
                     role: 'button',
                     text: textStr,
                     "aria-label": ariaLabel,
                 });
             }, {
-                fill: 'none',
-                stroke: 'none',
-                'stroke-width': 0,
-                style: {
-                    color: '#015cda'
-                }
-            }, {
-                fill: 'grey',
-                stroke: 'none',
-                'stroke-width': 0,
-                style: {
-                    color: '#015cda'
-                }
-            }, null, null, null, true).add();
-
-            var namespace = chart.customNamespace || {};
-            if (namespace["toggleSelectionButton"]) {
-                namespace["toggleSelectionButton"].attr({
-                    role: 'button',
-                    tabindex: -1,
-                    x: chart.plotWidth -20,
-                    "aria-label": "Deselect all the series",
-                });
+            fill: 'none',
+            stroke: 'none',
+            'stroke-width': 0,
+            style: {
+                color: '#015cda'
             }
+        }, {
+            fill: 'grey',
+            stroke: 'none',
+            'stroke-width': 0,
+            style: {
+                color: '#015cda'
+            }
+        }, null, null, null, true).add();
+
+        var namespace = chart.customNamespace || {};
+        if (namespace["toggleSelectionButton"]) {
+            namespace["toggleSelectionButton"].attr({
+                role: 'button',
+                tabindex: -1,
+                x: chart.plotWidth - 20,
+                "aria-label": "Deselect all the series",
+            });
+        }
 
         var ToggleSelectionButton = function toggleSelectionButton(chart) {
             this.initBase(chart);
@@ -233,7 +327,7 @@ export class HighchartsGraphComponent implements OnInit {
         chart.update({
             accessibility: {
                 customComponents: {
-                 toggleSelectionButton: new ToggleSelectionButton(chart),
+                    toggleSelectionButton: new ToggleSelectionButton(chart),
                 },
                 keyboardNavigation: {
                     order: ["legend", "series", "zoom", "rangeSelector", "toggleSelectionButton"],
@@ -317,6 +411,35 @@ export class HighchartsGraphComponent implements OnInit {
     }
 
     loading: boolean = true;
+
+    @HostListener('click', ['$event'])
+    onClick(ev: MouseEvent) {
+        if (this.zoomBehavior & zoomBehaviors.ShowXAxisSelectionDisabledMessage) {
+            let currChart = this.getCurrentChart();
+            if (!!currChart) {
+                let waitMSG = 'Please wait for current analysis to complete.';
+                let normalizedEvent: PointerEventObject = currChart.pointer.normalize(ev);
+                let msg = currChart.renderer.label(waitMSG,
+                    (currChart.plotWidth / 2) - (waitMSG.length * 2),
+                    (currChart.plotHeight / 2),
+                    'rect', null, null, false, null, null
+                ).attr({
+                    zIndex: 100
+                })
+                    .css({
+                        color: 'black',
+                    })
+                    .add()
+                    .toFront()
+                    .hide();
+                msg.show();
+                msg.fadeOut(5000);
+                setTimeout(() => {
+                    msg.destroy(); //To avoid DOM leaks
+                }, 5300);
+            }
+        }
+    }
 
     @HostListener('mousemove', ['$event'])
     onMouseMove(ev: MouseEvent) {
@@ -444,7 +567,7 @@ export class HighchartsGraphComponent implements OnInit {
             let chartPlotBands = [];
             this.xAxisPlotBands.forEach(plotBand => {
                 var currPlotBand = {
-                    color: plotBand.color == '' ? '#FCFFC5' : plotBand.color,
+                    color: plotBand.color == '' ? '#e5f9fe' : plotBand.color,
                     from: plotBand.from.utc(true),
                     to: plotBand.to.utc(true),
                     zIndex: !!plotBand.style ? plotBand.style : xAxisPlotBandStyles.BehindPlotLines,
@@ -549,10 +672,10 @@ export class HighchartsGraphComponent implements OnInit {
                 events: {
                     selection: this.customChartSelectionCallbackFunction,
                     load: this.highchartCallback,
-                    render: function() {
-                        var chart:any = this;
+                    render: function () {
+                        var chart: any = this;
                         chart.customNamespace["toggleSelectionButton"].attr({
-                            x: this.plotWidth -20,
+                            x: this.plotWidth - 20,
                         });
                     }
                 },
