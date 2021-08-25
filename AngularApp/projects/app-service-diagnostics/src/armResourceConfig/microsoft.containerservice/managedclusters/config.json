@@ -18,8 +18,26 @@
 	},
     "categories": [
         {
-            "id": "Cluster Insights",
-            "name": "Cluster Insights",
+            "id": "Known Issues, Availability and Performance",
+            "name": "Known Issues, Availability and Performance",
+            "description": "this category helps you to address some known issues on your cluster availability and performance .",
+            "keywords": [ "Failed State", "Node Readiness", "Node Health", "Scaling", "CRUD", "Identity", "Certificates" ],
+            "color": "rgb(186, 211, 245)",
+            "createFlowForCategory": true,
+            "chatEnabled": false
+        },
+        {
+            "id": "Connectivity Issues",
+            "name": "Connectivity Issues",
+            "description": "address networking issues on subnet, DNS, etc.",
+            "keywords": [ "Network Configuration", "Subnet", "DNS", "FQDN", "VNet" ],
+            "color": "rgb(249, 213, 180)",
+            "createFlowForCategory": true,
+            "chatEnabled": false
+        },
+        {
+            "id": "Create, Upgrade, Delete and Scale",
+            "name": "Create, Upgrade, Delete and Scale",
             "description": "Is your cluster experiencing failures or unresponsiveness? Investigate and discover issues that may cause your cluster to no longer be manageable.",
             "keywords": [ "Failed State", "Node Readiness", "Node Health", "Scaling", "CRUD", "Identity", "Certificates" ],
             "color": "rgb(186, 211, 245)",
@@ -27,11 +45,29 @@
             "chatEnabled": false
         },
         {
-            "id": "Networking",
-            "name": "Networking",
-            "description": "Are you having networking issues with your cluster? Check out your cluster's network configuration and discover issues that may affect your cluster's traffic.",
-            "keywords": [ "Network Configuration", "Subnet", "DNS", "FQDN", "VNet" ],
-            "color": "rgb(249, 213, 180)",
+            "id": "Identity and Security",
+            "name": "Identity and Security",
+            "description": "Is your cluster experiencing failures or unresponsiveness? Investigate and discover issues that may cause your cluster to no longer be manageable.",
+            "keywords": [ "Failed State", "Node Readiness", "Node Health", "Scaling", "CRUD", "Identity", "Certificates" ],
+            "color": "rgb(186, 211, 245)",
+            "createFlowForCategory": true,
+            "chatEnabled": false
+        },
+        {
+            "id": "Node Health",
+            "name": "Node Health",
+            "description": "Is your cluster experiencing failures or unresponsiveness? Investigate and discover issues that may cause your cluster to no longer be manageable.",
+            "keywords": [ "Failed State", "Node Readiness", "Node Health", "Scaling", "CRUD", "Identity", "Certificates" ],
+            "color": "rgb(186, 211, 245)",
+            "createFlowForCategory": true,
+            "chatEnabled": false
+        },
+        {
+            "id": "Risk Assessment",
+            "name": "Risk Assessment",
+            "description": "Is your cluster experiencing failures or unresponsiveness? Investigate and discover issues that may cause your cluster to no longer be manageable.",
+            "keywords": [ "Failed State", "Node Readiness", "Node Health", "Scaling", "CRUD", "Identity", "Certificates" ],
+            "color": "rgb(186, 211, 245)",
             "createFlowForCategory": true,
             "chatEnabled": false
         }
