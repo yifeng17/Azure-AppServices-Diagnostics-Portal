@@ -27,7 +27,8 @@ import { PortalActionGenericService } from '../../services/portal-action.service
 import { detectorSearchEnabledPesIds, detectorSearchEnabledPesIdsInternal } from '../../models/search';
 import { GenericResourceService } from '../../services/generic-resource-service';
 import { zoomBehaviors } from '../../models/time-series';
-import moment = require('moment');
+import * as momentNs from 'moment';
+const moment = momentNs;
 
 const WAIT_TIME_IN_SECONDS_TO_ALLOW_DOWNTIME_INTERACTION: number = 58;
 const PERCENT_CHILD_DETECTORS_COMPLETED_TO_ALLOW_DOWNTIME_INTERACTION: number = 0.9;
