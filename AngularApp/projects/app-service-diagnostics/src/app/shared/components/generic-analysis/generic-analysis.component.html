@@ -1,4 +1,4 @@
-<detector-container #detectorContainer *ngIf="displayDetectorContainer" [detector]="analysisDetector"
+<detector-container *ngIf="displayDetectorContainer" [detector]="analysisDetector"
   [hideDetectorControl]='isCaseSubmissionSolutionIFrame' [isAnalysisView]="true" [downtimeZoomBehavior]="downtimeZoomBehavior"
   (downTimeChanged)="onDowntimeChanged($event)"></detector-container>
 <div *ngIf="showSearchBar" class="search-box">
