@@ -49,7 +49,10 @@ export enum xAxisPlotBandStyles {
 export enum zoomBehaviors {
   Zoom = 1,
   CancelZoom = 2,
-  FireXAxisSelectionEvent = 4
+  FireXAxisSelectionEvent = 4,
+  ShowXAxisSelectionDisabledMessage = 8,
+  GeryOutGraph = 16,
+  UnGreyGraph = 32,
 }
 
 export class XAxisSelection {

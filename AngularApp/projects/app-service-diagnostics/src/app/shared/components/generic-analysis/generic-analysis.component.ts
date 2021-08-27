@@ -8,6 +8,7 @@ import { DetectorListAnalysisComponent } from 'diagnostic-data';
 import { SearchAnalysisMode } from 'projects/diagnostic-data/src/lib/models/search-mode';
 import { CXPChatService } from 'diagnostic-data';
 import { GenericSupportTopicService } from '../../../../../../diagnostic-data/src/lib/services/generic-support-topic.service';
+import { zoomBehaviors } from 'projects/diagnostic-data/src/lib/models/time-series';
 
 
 @Component({
@@ -30,7 +31,8 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
     displayDetectorContainer: boolean = true;
     searchBarFocus: boolean = false;
     downTime: DownTime;
-    @ViewChild('detectorListAnalysis', { static: true }) detectorListAnalysis: DetectorListAnalysisComponent
+    @ViewChild('detectorListAnalysis', { static: true }) detectorListAnalysis: DetectorListAnalysisComponent;
+    downtimeZoomBehavior = zoomBehaviors.Zoom;
     isPublic: boolean = false;
     cxpChatTrackingId: string = '';
     supportTopicId: string = '';
@@ -41,6 +43,10 @@ export class GenericAnalysisComponent extends GenericDetectorComponent implement
         @Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig) {
         super(_activatedRouteLocal, _diagnosticServiceLocal, _resourceService, _authServiceInstance, _telemetryService, _navigator, _routerLocal);
         this.isPublic = config && config.isPublic;
+    }
+
+    onUpdateDowntimeZoomBehavior(zoomBehavior: zoomBehaviors) {
+        this.downtimeZoomBehavior = zoomBehavior;
     }
 
     onDowntimeChanged(event: DownTime) {

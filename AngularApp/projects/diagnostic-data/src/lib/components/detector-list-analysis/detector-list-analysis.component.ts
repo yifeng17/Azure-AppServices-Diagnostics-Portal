@@ -24,9 +24,14 @@ import { SearchAnalysisMode } from '../../models/search-mode';
 import { GenieGlobals } from '../../services/genie.service';
 import { SolutionService } from '../../services/solution.service';
 import { PortalActionGenericService } from '../../services/portal-action.service';
-import {detectorSearchEnabledPesIds, detectorSearchEnabledPesIdsInternal } from '../../models/search';
+import { detectorSearchEnabledPesIds, detectorSearchEnabledPesIdsInternal } from '../../models/search';
 import { GenericResourceService } from '../../services/generic-resource-service';
+import { zoomBehaviors } from '../../models/time-series';
+import * as momentNs from 'moment';
+const moment = momentNs;
 
+const WAIT_TIME_IN_SECONDS_TO_ALLOW_DOWNTIME_INTERACTION: number = 58;
+const PERCENT_CHILD_DETECTORS_COMPLETED_TO_ALLOW_DOWNTIME_INTERACTION: number = 0.9;
 @Component({
     selector: 'detector-list-analysis',
     templateUrl: './detector-list-analysis.component.html',
@@ -55,6 +60,10 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
     @Input() resourceId: string = "";
     @Input() targetedScore: number = 0.5;
     @Output() onComplete = new EventEmitter<any>();
+    @Output() updateDowntimeZoomBehavior = new EventEmitter<any>();
+    allowUpdateDowntimeZoomBehaviorEvent: boolean = false;
+    timeWhenAnalysisStarted: Moment;
+    downtimeResetTimer: any = null;
     @Input() searchTerm: string = "";
     @Input() keystoneSolutionView: boolean = false;
     detectorViewModels: any[];
@@ -101,6 +110,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
     readonly stringFormat: string = 'YYYY-MM-DDTHH:mm';
     public inDrillDownMode: boolean = false;
     drillDownDetectorId: string = '';
+    totalChildDetectorsLoaded: number = 0;
 
     constructor(public _activatedRoute: ActivatedRoute, private _router: Router,
         private _diagnosticService: DiagnosticService, private _detectorControl: DetectorControlService,
@@ -247,7 +257,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
         return !!this._supportTopicService && !!this._supportTopicService.supportTopicId && this._supportTopicService.supportTopicId != '';
     }
 
-    getQueryParamsForAnalysisDetector():string {
+    getQueryParamsForAnalysisDetector(): string {
         let allRouteQueryParams = this._activatedRoute.snapshot.queryParams;
         let additionalQueryString = '';
         let knownQueryParams = ['startTime', 'endTime'];
@@ -268,18 +278,18 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
         }
         return this._diagnosticService.getDetector(this.analysisId, this._detectorControl.startTimeString, this._detectorControl.endTimeString,
             false, this._detectorControl.isInternalView, this.getQueryParamsForAnalysisDetector()).pipe(
-            map((response: DetectorResponse) => {
-                let downTimeRenderingType = response.dataset.find(set => (<Rendering>set.renderingProperties).type === RenderingType.DownTime);
-                if (!!downTimeRenderingType && !this.isInCaseSubmission()) {
-                    //Allow downtimes only when not in case submission.
-                    return true;
-                }
-                else {
-                    return false;
-                }
-            }),
-            catchError(e => { return of(false) })
-        );
+                map((response: DetectorResponse) => {
+                    let downTimeRenderingType = response.dataset.find(set => (<Rendering>set.renderingProperties).type === RenderingType.DownTime);
+                    if (!!downTimeRenderingType && !this.isInCaseSubmission()) {
+                        //Allow downtimes only when not in case submission.
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }),
+                catchError(e => { return of(false) })
+            );
     }
 
     refresh() {
@@ -307,7 +317,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                                 this.searchTerm = qParams.get('searchTerm') === null ? this.searchTerm : qParams.get('searchTerm'); this.showAppInsightsSection = false;
                                 if (this.searchTerm && this.searchTerm.length > 1) {
                                     this.isDynamicAnalysis = true;
-                                    if(!!this.detectorId && this.detectorId !== '') {
+                                    if (!!this.detectorId && this.detectorId !== '') {
                                         this.updateDrillDownMode(true, null);
                                         this._diagnosticService.getDetectors().subscribe(detectorList => {
                                             if (detectorList) {
@@ -416,7 +426,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
 
     renderInsightsFromSearch(downTime: DownTime) {
         this._resourceService.getPesId().subscribe(pesId => {
-            if (!((this.isPublic && detectorSearchEnabledPesIds.findIndex(x => x==pesId)<0) || (!this.isPublic && detectorSearchEnabledPesIdsInternal.findIndex(x => x==pesId)<0))){
+            if (!((this.isPublic && detectorSearchEnabledPesIds.findIndex(x => x == pesId) < 0) || (!this.isPublic && detectorSearchEnabledPesIdsInternal.findIndex(x => x == pesId) < 0))) {
                 this.searchId = uuid();
                 let searchTask = this._diagnosticService.getDetectorsSearch(this.searchTerm).pipe(map((res) => res), catchError(e => of([])));
                 let detectorsTask = this._diagnosticService.getDetectors().pipe(map((res) => res), catchError(e => of([])));
@@ -462,18 +472,16 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                         this.showPreLoadingError = true;
                     });
             }
-            else
-            {
-                if (this.withinGenie)
-                {
+            else {
+                if (this.withinGenie) {
 
-                        let dataOutput = {};
-                        dataOutput["status"] = true;
-                        dataOutput["data"] = {
-                            'detectors': []
-                        };
+                    let dataOutput = {};
+                    dataOutput["status"] = true;
+                    dataOutput["data"] = {
+                        'detectors': []
+                    };
 
-                        this.onComplete.emit(dataOutput);
+                    this.onComplete.emit(dataOutput);
 
                 }
             }
@@ -494,6 +502,36 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
         });
     }
 
+    evaluateAndEmitDowntimeInteractionState(analysisContainsDownTime: boolean, totalChildDetectorsToLoad: number, zoomBehavior: zoomBehaviors, incrementTotalDetectorsLoadedCount: boolean = true) {
+        if (analysisContainsDownTime) {
+            if ((zoomBehavior & zoomBehaviors.ShowXAxisSelectionDisabledMessage) || (zoomBehavior & zoomBehaviors.GeryOutGraph)) {
+                this.updateDowntimeZoomBehavior.emit(zoomBehavior);
+                this.totalChildDetectorsLoaded = 0;
+                this.allowUpdateDowntimeZoomBehaviorEvent = true;
+                this.timeWhenAnalysisStarted = moment.utc();
+
+                //If a new anaysis is started, we need to get rid of the earlier timer
+                if (!!this.downtimeResetTimer) { clearTimeout(this.downtimeResetTimer); }
+                this.downtimeResetTimer = setTimeout(() => {
+                    //Adding this to reset zoom behavior once the timeout expires.
+                    this.updateDowntimeZoomBehavior.emit(zoomBehaviors.CancelZoom | zoomBehaviors.FireXAxisSelectionEvent | zoomBehaviors.UnGreyGraph);
+                    this.allowUpdateDowntimeZoomBehaviorEvent = false;
+                }, WAIT_TIME_IN_SECONDS_TO_ALLOW_DOWNTIME_INTERACTION * 1000);
+            }
+            else {
+                if (incrementTotalDetectorsLoadedCount) {
+                    this.totalChildDetectorsLoaded < totalChildDetectorsToLoad ? this.totalChildDetectorsLoaded++ : this.totalChildDetectorsLoaded = totalChildDetectorsToLoad;
+                }
+
+                if (this.totalChildDetectorsLoaded / totalChildDetectorsToLoad >= PERCENT_CHILD_DETECTORS_COMPLETED_TO_ALLOW_DOWNTIME_INTERACTION
+                    && this.allowUpdateDowntimeZoomBehaviorEvent === true) {
+                    this.updateDowntimeZoomBehavior.emit(zoomBehavior);
+                    this.allowUpdateDowntimeZoomBehaviorEvent = false;
+                }
+            }
+        }
+    }
+
     startDetectorRendering(detectorList, downTime: DownTime, containsDownTime: boolean) {
         if (this.showWebSearchTimeout) {
             clearTimeout(this.showWebSearchTimeout);
@@ -507,10 +545,12 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
         if (this.detectorViewModels.length > 0) {
             this.loadingChildDetectors = true;
             this.startLoadingMessage();
+            this.evaluateAndEmitDowntimeInteractionState(containsDownTime, this.detectorViewModels.length, zoomBehaviors.CancelZoom | zoomBehaviors.ShowXAxisSelectionDisabledMessage | zoomBehaviors.GeryOutGraph, false);
         }
         this.detectorViewModels.forEach((metaData, index) => {
             requests.push((<Observable<DetectorResponse>>metaData.request).pipe(
                 map((response: DetectorResponse) => {
+                    this.evaluateAndEmitDowntimeInteractionState(containsDownTime, this.detectorViewModels.length, zoomBehaviors.CancelZoom | zoomBehaviors.FireXAxisSelectionEvent | zoomBehaviors.UnGreyGraph);
                     this.detectorViewModels[index] = this.updateDetectorViewModelSuccess(metaData, response);
 
                     if (this.detectorViewModels[index].loadingStatus !== LoadingStatus.Failed) {
@@ -544,6 +584,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
                     };
                 })
                 , catchError(err => {
+                    this.evaluateAndEmitDowntimeInteractionState(containsDownTime, this.detectorViewModels.length, zoomBehaviors.CancelZoom | zoomBehaviors.FireXAxisSelectionEvent | zoomBehaviors.UnGreyGraph);
                     this.detectorViewModels[index].loadingStatus = LoadingStatus.Failed;
                     return of({});
                 })
@@ -626,7 +667,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
     }
 
     getDetectorInsight(viewModel: any): any {
-        let allInsights: Insight[] = InsightUtils.parseAllInsightsFromResponse(viewModel.response,true);
+        let allInsights: Insight[] = InsightUtils.parseAllInsightsFromResponse(viewModel.response, true);
         let insight: any;
         if (allInsights.length > 0) {
 

@@ -7,7 +7,7 @@ import { BehaviorSubject } from 'rxjs';
 import { VersionService } from '../../services/version.service';
 import { Moment } from 'moment';
 import * as momentNs from 'moment';
-import { XAxisSelection } from '../../models/time-series';
+import { XAxisSelection, zoomBehaviors } from '../../models/time-series';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
 import { Inject } from '@angular/core';
 const moment = momentNs;
@@ -43,6 +43,20 @@ export class DetectorContainerComponent implements OnInit {
 
   @Input() analysisMode: boolean = false;
   @Input() isAnalysisView: boolean = false;
+
+  private _downtimeZoomBehavior:zoomBehaviors = zoomBehaviors.Zoom;
+  @Input() public set downtimeZoomBehavior(zoomBehavior:zoomBehaviors) {
+    if(!!zoomBehavior) {
+      this._downtimeZoomBehavior = zoomBehavior;
+    }
+    else {
+      this._downtimeZoomBehavior = zoomBehaviors.Zoom;
+    }
+  }
+
+  public get downtimeZoomBehavior() {
+    return this._downtimeZoomBehavior;
+  }
 
   @Output() XAxisSelection: EventEmitter<XAxisSelection> = new EventEmitter<XAxisSelection>();
   public onXAxisSelection(event: XAxisSelection) {

@@ -1,8 +1,8 @@
 <div style="margin-left:20px">
   <comm-alert></comm-alert>
-  <detector-container [detector]="analysisId" [isAnalysisView]="true" (downTimeChanged)="onDowntimeChanged($event)"></detector-container>
+  <detector-container [detector]="analysisId" [isAnalysisView]="true" (downTimeChanged)="onDowntimeChanged($event)" [downtimeZoomBehavior]="downtimeZoomBehavior"></detector-container>
 </div>
 
-<detector-list-analysis #detectorListAnalysis detectorParmName="detector"></detector-list-analysis>
+<detector-list-analysis #detectorListAnalysis detectorParmName="detector" (updateDowntimeZoomBehavior) = "onUpdateDowntimeZoomBehavior($event)"></detector-list-analysis>
 
 <router-outlet (activate)="onActivate($event)"></router-outlet>

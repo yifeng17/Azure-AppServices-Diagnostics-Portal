@@ -105,8 +105,19 @@ export class DetectorViewComponent implements OnInit {
   supportsDownTime: boolean = false;
   selectedDownTime: DownTime;
   downtimeSelectionErrorStr: string = '';
+  downtimeFilterDisabled: boolean = false;
   public xAxisPlotBands: xAxisPlotBand[] = null;
   public zoomBehavior: zoomBehaviors = zoomBehaviors.Zoom;
+  @Input() set downtimeZoomBehavior(zoomBehavior: zoomBehaviors) {
+    if (!!zoomBehavior) {
+      this.zoomBehavior = zoomBehavior;
+    }
+    else {
+      this.zoomBehavior = zoomBehaviors.Zoom;
+    }
+    if (zoomBehavior & zoomBehaviors.GeryOutGraph) this.downtimeFilterDisabled = true;
+    if (zoomBehavior & zoomBehaviors.UnGreyGraph) this.downtimeFilterDisabled = false;
+  }
   @Output() XAxisSelection: EventEmitter<XAxisSelection> = new EventEmitter<XAxisSelection>();
   public onXAxisSelection(event: XAxisSelection) {
     let downTime = new DownTime();
@@ -147,12 +158,11 @@ export class DetectorViewComponent implements OnInit {
     this.loadDetector();
     this.errorSubject.subscribe((data: any) => {
       this.errorState = data;
-      if (!!this.errorState)
-      {
+      if (!!this.errorState) {
         let errorDetails = {
-            'isPublic': this.isPublic.toString(),
-            'errorDetails': JSON.stringify(this.errorState)
-          };
+          'isPublic': this.isPublic.toString(),
+          'errorDetails': JSON.stringify(this.errorState)
+        };
 
         this.logEvent("DetectorLoadingError", errorDetails);
       }
@@ -262,8 +272,7 @@ export class DetectorViewComponent implements OnInit {
 
         if (this.isAnalysisView) {
           let downTime = data.dataset.find(set => (<Rendering>set.renderingProperties).type === RenderingType.DownTime);
-          if(this.isInCaseSubmission())
-          {
+          if (this.isInCaseSubmission()) {
             //Disable downtimes in case submission
             downTime = null;
           }
@@ -379,12 +388,12 @@ export class DetectorViewComponent implements OnInit {
       this.xAxisPlotBands = [];
       if (!!customDownTime) {
         var currentPlotBand: xAxisPlotBand = {
-          color: '#FCFFC5',
+          color: '#e5f9fe',
           from: customDownTime.StartTime,
           to: customDownTime.EndTime,
           style: xAxisPlotBandStyles.BehindPlotLines,
           borderWidth: 1,
-          borderColor: 'red'
+          borderColor: '#015cda'
         };
         this.xAxisPlotBands.push(currentPlotBand);
       }
@@ -393,7 +402,7 @@ export class DetectorViewComponent implements OnInit {
           this.downTimes.forEach(downtime => {
             if (!!downtime && !!downtime.StartTime && !!downtime.EndTime) {
               var currentPlotBand: xAxisPlotBand = {
-                color: downtime.isSelected ? '#FFCAC4' : '#FCFFC5',
+                color: downtime.isSelected ? '#FFCAC4' : '#e5f9fe',
                 from: downtime.StartTime,
                 to: downtime.EndTime,
                 style: xAxisPlotBandStyles.BehindPlotLines
@@ -405,12 +414,12 @@ export class DetectorViewComponent implements OnInit {
         else {
           if (!!this.selectedDownTime && !!this.selectedDownTime.StartTime && !!this.selectedDownTime.EndTime) {
             var currentPlotBand: xAxisPlotBand = {
-              color: '#FCFFC5',
+              color: '#e5f9fe',
               from: this.selectedDownTime.StartTime,
               to: this.selectedDownTime.EndTime,
               style: xAxisPlotBandStyles.BehindPlotLines,
               borderWidth: 1,
-              borderColor: 'red'
+              borderColor: '#015cda'
             };
             this.xAxisPlotBands.push(currentPlotBand);
           }
@@ -692,13 +701,12 @@ export class DetectorViewComponent implements OnInit {
     }
   }
   protected logEvent(eventMessage: string, eventProperties?: any, measurements?: any) {
-    if (!!this.detectorEventProperties)
-    {
-        for (const id of Object.keys(this.detectorEventProperties)) {
-            if (this.detectorEventProperties.hasOwnProperty(id)) {
-              eventProperties[id] = String(this.detectorEventProperties[id]);
-            }
-          }
+    if (!!this.detectorEventProperties) {
+      for (const id of Object.keys(this.detectorEventProperties)) {
+        if (this.detectorEventProperties.hasOwnProperty(id)) {
+          eventProperties[id] = String(this.detectorEventProperties[id]);
+        }
+      }
     }
 
     this.telemetryService.logEvent(eventMessage, eventProperties, measurements);
@@ -716,7 +724,7 @@ export class DetectorViewComponent implements OnInit {
   renderCXPChatButton() {
     if (this.cxpChatTrackingId === '' && this.cxpChatUrl === '') {
       if (this._supportTopicService && this._cxpChatService && this._cxpChatService.isSupportTopicEnabledForLiveChat(this._supportTopicService.supportTopicId)) {
-        this.cxpChatTrackingId = this._cxpChatService.generateTrackingId( ((!!this._supportTopicService && !!this._supportTopicService.supportTopicId) ? this._supportTopicService.supportTopicId : ''));
+        this.cxpChatTrackingId = this._cxpChatService.generateTrackingId(((!!this._supportTopicService && !!this._supportTopicService.supportTopicId) ? this._supportTopicService.supportTopicId : ''));
         this.supportTopicId = this._supportTopicService.supportTopicId;
         this._cxpChatService.getChatURL(this._supportTopicService.supportTopicId, this.cxpChatTrackingId).subscribe((chatApiResponse: any) => {
           if (chatApiResponse && chatApiResponse != '') {

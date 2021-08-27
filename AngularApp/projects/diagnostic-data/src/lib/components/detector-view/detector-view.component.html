@@ -58,7 +58,7 @@
       <label for="downtimeFilter" tabindex="0" aria-label="Select a downtime to investigate."
         role="text"><strong>Downtime</strong></label>
       <fab-dropdown id="downtimeFilter" role="combobox" [options]="fabOptions" (onChange)="selectFabricKey($event)"
-        [defaultSelectedKey]="selectedKey"
+        [defaultSelectedKey]="selectedKey" [disabled]="downtimeFilterDisabled"
         contentStyle="margin-top: -5px; margin-left: 5px;width:{{fabDropdownWidth}}px;min-width:336px">
       </fab-dropdown>
     </div>
