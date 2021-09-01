@@ -18,7 +18,7 @@
 	},
     "categories": [
         {
-            "id": "Known Issues, Availability and Performance",
+            "id": "knowissueavailabilityperfaks",
             "name": "Known Issues, Availability and Performance",
             "description": "this category helps you to address some known issues on your cluster availability and performance .",
             "keywords": [ "Failed State", "Node Readiness", "Node Health", "Scaling", "CRUD", "Identity", "Certificates" ],
@@ -27,7 +27,7 @@
             "chatEnabled": false
         },
         {
-            "id": "Connectivity Issues",
+            "id": "connectivityissuesaks",
             "name": "Connectivity Issues",
             "description": "address networking issues on subnet, DNS, etc.",
             "keywords": [ "Network Configuration", "Subnet", "DNS", "FQDN", "VNet" ],
@@ -36,7 +36,7 @@
             "chatEnabled": false
         },
         {
-            "id": "Create, Upgrade, Delete and Scale",
+            "id": "crudaks",
             "name": "Create, Upgrade, Delete and Scale",
             "description": "Is your cluster experiencing failures or unresponsiveness? Investigate and discover issues that may cause your cluster to no longer be manageable.",
             "keywords": [ "Failed State", "Node Readiness", "Node Health", "Scaling", "CRUD", "Identity", "Certificates" ],
@@ -45,7 +45,7 @@
             "chatEnabled": false
         },
         {
-            "id": "Identity and Security",
+            "id": "identitysecurityaks",
             "name": "Identity and Security",
             "description": "Is your cluster experiencing failures or unresponsiveness? Investigate and discover issues that may cause your cluster to no longer be manageable.",
             "keywords": [ "Failed State", "Node Readiness", "Node Health", "Scaling", "CRUD", "Identity", "Certificates" ],
@@ -54,7 +54,7 @@
             "chatEnabled": false
         },
         {
-            "id": "Node Health",
+            "id": "riskassessmentaks",
             "name": "Node Health",
             "description": "Is your cluster experiencing failures or unresponsiveness? Investigate and discover issues that may cause your cluster to no longer be manageable.",
             "keywords": [ "Failed State", "Node Readiness", "Node Health", "Scaling", "CRUD", "Identity", "Certificates" ],
@@ -63,7 +63,7 @@
             "chatEnabled": false
         },
         {
-            "id": "Risk Assessment",
+            "id": "nodehealthaks",
             "name": "Risk Assessment",
             "description": "Is your cluster experiencing failures or unresponsiveness? Investigate and discover issues that may cause your cluster to no longer be manageable.",
             "keywords": [ "Failed State", "Node Readiness", "Node Health", "Scaling", "CRUD", "Identity", "Certificates" ],
