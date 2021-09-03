@@ -294,14 +294,12 @@ export class ArmService {
         return this._cache.get(url, request, invalidateCache);
     }
 
-    get<T>(url: string): Observable<T> {
+    get(url: string): Observable<any> {
 
-        const request = this._http.get<T>(url, {
-            headers: this.getHeaders()
-        }).pipe(
-            retry(2),
-            catchError(this.handleError.bind(this))
-        );
+        const request = this._http.get(url, {
+            headers: this.getHeaders(),
+            observe: "response"
+        });
 
         return request;
     }
@@ -366,13 +364,13 @@ export class ArmService {
     }
 
 
-    post<T, S>(url: string, body?: S): Observable<boolean | {} | ResponseMessageEnvelope<T>> {
+    post(url: string, body?: any): Observable<any> {
         let bodyString: string = '';
         if (body) {
             bodyString = JSON.stringify(body);
         }
 
-        const request = this._http.post<S>(url, bodyString, { headers: this.getHeaders() }).pipe(
+        const request = this._http.post(url, bodyString, { headers: this.getHeaders() }).pipe(
             retry(2),
             catchError(this.handleError.bind(this))
         );

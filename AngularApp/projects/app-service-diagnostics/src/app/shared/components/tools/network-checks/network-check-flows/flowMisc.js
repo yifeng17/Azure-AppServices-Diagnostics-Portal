@@ -155,6 +155,14 @@ export async function checkVnetIntegrationV2Async(siteInfo, diagProvider, flowMg
             var subnetDataPromise = diagProvider.getArmResourceAsync(subnetResourceId, vnetChecker.apiVersion);
             var aspSitesDataPromise = diagProvider.getArmResourceAsync(vnetChecker.serverFarmId + "/sites", vnetChecker.apiVersion);
             var instanceDataPromise = diagProvider.getArmResourceAsync(vnetChecker.siteArmId + "/instances", vnetChecker.apiVersion);
+            var isKuduAccessible = await isKuduAccessiblePromise;
+            var instanceData = await instanceDataPromise;
+            var swiftIntegrationOk = false;
+
+            if(isKuduAccessible){
+                var swiftIntegrationOk = await vnetChecker.checkWorkerPingMeshAsync(instanceData);
+                debugger;
+            }
 
             if (subnetResourceId != null) {
                 if (!vnetChecker.isSubnetResourceIdFormatValid(subnetResourceId)) {
@@ -252,9 +260,9 @@ export async function checkVnetIntegrationV2Async(siteInfo, diagProvider, flowMg
                 }
 
                 if (isContinue) {
-                    var isKuduAccessible = await isKuduAccessiblePromise;
+                   
                     if (isKuduAccessible) {
-                        var instanceData = await instanceDataPromise;
+                        
                         if (instanceData.status == 200) {
                             var ips = await vnetChecker.getInstancesPrivateIpAsync(instanceData);
                             if (ips != null) {
@@ -320,6 +328,29 @@ export async function checkVnetIntegrationV2Async(siteInfo, diagProvider, flowMg
     } catch (e) {
         promiseCompletion.resolve([]);
         throw e;
+    }
+}
+
+export async function checkWorkerPingMeshAsync(siteInfo, diagProvider, flowMgr) {
+    var views = [];
+    var wordings = new VnetIntegrationWordings();
+    var vnetChecker = new VnetIntegrationConfigChecker(siteInfo, diagProvider);
+    var instanceData = await diagProvider.getArmResourceAsync(vnetChecker.siteArmId + "/instances", vnetChecker.apiVersion);
+    if (instanceData.status == 200) {
+        var ips = await vnetChecker.getInstancesPrivateIpAsync(instanceData);
+        if (ips != null) {
+            var total = ips.length;
+            var notAllocated = ips.filter(ip => ip == null).length;
+            if (notAllocated > 0) {
+                views.push(wordings.swiftPrivateIpNotAssigned.get(notAllocated, subchecks));
+            } else {
+                subChecks.push(wordings.swiftPrivateIpAssigned.get(total));
+            }
+        } else {
+            // failed to get instance private ip
+        }
+    } else if (instanceData.status == 401) {
+        views.push(wordings.noAccessToResource.get(vnetResourceId, "vnet", diagProvider.portalDomain));
     }
 }
 
@@ -464,7 +495,7 @@ export async function checkDnsSettingV2Async(siteInfo, diagProvider, flowMgr, is
             } else {
                 views.push(wordings.cannotCheckWithoutKudu.get("DNS settings"));
             }
-        }else{
+        } else {
             isContinue = true;
         }
         promiseCompletion.resolve(views);
@@ -545,13 +576,13 @@ export function addSubnetSelectionDropDownView(siteInfo, diagProvider, flowMgr, 
             if (dropdownIdx === 0) {
                 dropdownView.dropdowns.length = 1;
                 var subscription = subscriptions[selectedIdx];
-                
+
                 dropdownView.dropdowns.push({
                     description: "Virtual Network",
                     options: [],
                     placeholder: "Loading..."
                 });
-                
+
                 vnets = await diagProvider.getArmResourceAsync(`/subscriptions/${subscription.subscriptionId}/providers/Microsoft.Network/virtualNetworks`, "2018-07-01");
                 dropdownView.dropdowns.length = 1;
                 vnets = vnets.value.filter(v => v && v.name != null).sort((s1, s2) => s1.name.toLowerCase() > s2.name.toLowerCase() ? 1 : -1);
@@ -601,8 +632,8 @@ export function addSubnetSelectionDropDownView(siteInfo, diagProvider, flowMgr, 
     });
     var subscriptions = null, vnets = null, subnets = null;
     var vnet = null;
-    
-    
+
+
     dropdownView.dropdowns.push({
         description: "Subscription",
         options: [],

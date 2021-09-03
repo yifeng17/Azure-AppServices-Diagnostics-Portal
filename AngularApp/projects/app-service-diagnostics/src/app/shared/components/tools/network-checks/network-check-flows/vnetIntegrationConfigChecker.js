@@ -174,7 +174,6 @@ export class VnetIntegrationConfigChecker {
             this.diagProvider.logException(e, "getInstancesPrivateIpAsync");
             return null;
         }
-
     }
 
     async getWebAppVnetInfoAsync() {
@@ -183,5 +182,36 @@ export class VnetIntegrationConfigChecker {
         var siteVnetInfo = await this.diagProvider.getArmResourceAsync(swiftUrl, this.apiVersion);
 
         return siteVnetInfo;
+    }
+
+    async checkWorkerPingMeshAsync(instanceData) {
+        var ips = await this.getInstancesPrivateIpAsync(instanceData);
+        if (ips == null) {
+            return null;
+        } else {
+            if (ips.includes(null)) {
+                return false;
+            } else {
+                if (ips.length == 1) {
+                    return true;
+                } else {
+                    var promises = [];
+                    for (var i = 0; i < ips.length; ++i) {
+                        promises.push(this.diagProvider.getExtensionApiAsync(`/DaaS/api/udpechotest?ip=${ips[i]}`));
+                    }
+                    try {
+                        var results = await Promise.all(promises);
+                        if (results.some(r => r.success == 0)) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    } catch (e) {
+                        this.diagProvider.logException(e, "checkWorkerPingMeshAsync");
+                        return null;
+                    }
+                }
+            }
+        }
     }
 }
