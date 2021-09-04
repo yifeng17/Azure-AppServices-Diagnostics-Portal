@@ -333,5 +333,35 @@ export class VnetIntegrationWordings {
                 return subnetCheck;
             }
         }
+
+        this.workerVnetConnectionIsGood = {
+            get() {
+                var view =  new CheckStepView({
+                    title: "Connection between App Service worker(s) and VNet is healthy",
+                    level: 0
+                });
+                return view;
+            }
+        }
+
+        this.workerVnetConnectionIsBad = {
+            get() {
+                var view =  new CheckStepView({
+                    title: "One or more App Service worker(s) failed to connect to VNet",
+                    level: 2
+                });
+                return view;
+            }
+        }
+
+        this.cannotCheckWorkerVnetConnection = {
+            get() {
+                var view =  new CheckStepView({
+                    title: "Cannot check connection between App Service worker(s) and VNet, please retry",
+                    level: 3
+                });
+                return view;
+            }
+        }
     } 
 }

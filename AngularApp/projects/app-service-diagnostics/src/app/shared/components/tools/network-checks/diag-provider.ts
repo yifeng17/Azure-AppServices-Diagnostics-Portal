@@ -155,7 +155,7 @@ export class DiagProvider {
         var promise = this._armService.post(`https://${prefix}/api/${uri}${postfix}`, body)
             .toPromise()
             .catch(e => {
-                e.stack = stack.replace("error_message_placeholder", e.message || e);
+                e.stack = stack.replace("error_message_placeholder", e.message || "");
                 throw e;
             });
         var timeoutPromise = delay(timeoutInSec).then(() => {
@@ -192,6 +192,7 @@ export class DiagProvider {
     public async tcpPingAsync(hostname: string, port: number, count: number = 1, timeout: number = 10, instance?: string): Promise<{ status: ConnectionCheckStatus, statuses: ConnectionCheckStatus[] }> {
         var stack = new Error("error_message_placeholder").stack;
         var promise = (async () => {
+            // TODO: implement tcpping in DaaS extension to replace the CLI
             var pingPromise = this.runKuduCommand(`tcpping -n ${count} -w ${timeout} ${hostname}:${port}`, undefined, instance).catch(e => {
                 this._globals.logDebugMessage("tcpping failed", e);
                 return null;
@@ -234,7 +235,8 @@ export class DiagProvider {
             ip = hostname;
         } else {
             try {
-                var result = await this.runKuduCommand(`nameresolver ${hostname} ${dns}`, undefined, instance);
+                 // TODO: implement nameresolver in DaaS extension to replace the CLI
+                var result = await this.runKuduCommand(`nameresolver ${hostname} ${dns || ""}`, undefined, instance);
                 if (result != null) {
                     if (result.includes("Aliases")) {
                         var match = result.match(/Addresses:\s*([\S\s]*)Aliases:\s*([\S\s]*)$/);
@@ -245,7 +247,7 @@ export class DiagProvider {
                     } else {
                         var match = result.match(/Addresses:\s*([\S\s]*)$/);
                         if (match != null) {
-                            ip = match[1].split("\r\n").filter(i => i.length > 0).join(";");
+                            ip = match[1].split("\r\n").map(s => s.trim()).filter(s => s.length > 0).join(";");
                         }
                     }
                 }
@@ -299,11 +301,18 @@ export class DiagProvider {
         return siteVnetInfo;
     }
 
-    public isIp(s: string) {
+    public async getWebConfigAsync(): Promise<any> {
+        //This is the regional VNet Integration endpoint
+        var swiftUrl = this._siteInfo["id"] + "/config/web";
+        var webConfig = await this.getArmResourceAsync(swiftUrl, "2018-02-01");
+        return webConfig;
+    }
+
+    public isIp(s: string, ipV4Only = false) {
         if (s.match(/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/)) {
             // ipv4
             return true;
-        } else if (s.match(/^(?:[a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}$/)) {
+        } else if (!ipV4Only && s.match(/^(?:[a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}$/)) {
             // ipv6
             return true;
         }

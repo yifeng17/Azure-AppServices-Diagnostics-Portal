@@ -16,16 +16,24 @@ export class VnetAppSettingChecker {
 
     async prepareDataAsync() {
         this.appSettings = await this.diagProvider.getAppSettings();
+        this.webConfig = await this.diagProvider.getWebConfigAsync();
     }
 
 
     async getAlwaysFallbackToPublicDnsAsync(){
         await this.dataPreparePromise;
-        return this.appSettings["WEBSITE_ALWAYS_FALLBACK_TO_PUBLIC_DNS"];
+        if(this.appSettings["WEBSITE_ALWAYS_FALLBACK_TO_PUBLIC_DNS"]!=null){
+            return this.appSettings["WEBSITE_ALWAYS_FALLBACK_TO_PUBLIC_DNS"] === '1';
+        }
+        return null;
     }
 
     async getVnetRouteAllAsync(){
         await this.dataPreparePromise;
-        return this.appSettings["WEBSITE_VNET_ROUTE_ALL"];
+        if(this.webConfig.properties && this.webConfig.properties.vnetRouteAllEnabled != null){
+            return this.webConfig.properties.vnetRouteAllEnabled || (this.appSettings["WEBSITE_VNET_ROUTE_ALL"] === '1');
+        }
+        return null;
     }
+
 }

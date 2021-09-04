@@ -193,11 +193,11 @@ export class VnetIntegrationConfigChecker {
                 return false;
             } else {
                 if (ips.length == 1) {
-                    return true;
+                    return null;
                 } else {
                     var promises = [];
                     for (var i = 0; i < ips.length; ++i) {
-                        promises.push(this.diagProvider.getExtensionApiAsync(`/DaaS/api/udpechotest?ip=${ips[i]}`));
+                        promises.push(this.diagProvider.getExtensionApiAsync("DaaS/api/udpechotest", [`ip=${ips[i][0]}`]));
                     }
                     try {
                         var results = await Promise.all(promises);
