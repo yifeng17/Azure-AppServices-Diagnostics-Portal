@@ -68,6 +68,10 @@ export const Routes = RouterModule.forRoot([
             loadChildren: './modules/site/site.module#SiteModule'
           },
           {
+            path: 'workerapps/:workerapp',
+            loadChildren: './modules/workerapp/workerapp.module#WorkerAppModule'
+          },
+          {
             path: 'icm/:incidentId',
             loadChildren: './modules/incidentassist/incidentassist.module#IncidentAssistModule'
           },

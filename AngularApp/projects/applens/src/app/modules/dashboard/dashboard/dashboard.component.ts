@@ -128,6 +128,12 @@ export class DashboardComponent implements OnDestroy {
                 this.resourceService.imgSrc = this.resourceService.altIcons['Xenon'];
             }
         }
+        else if (serviceInputs.resourceType.toString() === 'Microsoft.Web/workerApps')
+        {
+          this._diagnosticApiService.GeomasterServiceAddress = this.resource.ServiceAddress;
+          this._diagnosticApiService.GeomasterName = this.resource.GeoMasterName;
+          this.observerLink = "https://wawsobserver.azurewebsites.windows.net/partner/workerapp/" + this.resource.WorkerAppName;
+        }
 
         this.keys = Object.keys(this.resource);
       }

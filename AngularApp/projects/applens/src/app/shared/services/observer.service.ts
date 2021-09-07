@@ -23,6 +23,17 @@ export class ObserverService {
       }));
   }
 
+  public getWorkerApp(workerAppName: string): Observable<Observer.ObserverWorkerAppResponse> {
+    return this._diagnosticApiService.get<Observer.ObserverWorkerAppResponse>(`api/workerapps/${workerAppName}`).pipe(
+      map((workerAppRes: Observer.ObserverWorkerAppResponse) => {
+        if (workerAppRes && workerAppRes.details && isArray(workerAppRes.details)) {
+          workerAppRes.details.map(info => info);
+        }
+
+        return workerAppRes;
+      }));
+  }
+
   public getAse(ase: string): Observable<Observer.ObserverAseResponse> {
     return this._diagnosticApiService.get<Observer.ObserverAseResponse>(`api/hostingEnvironments/${ase}`);
   }
