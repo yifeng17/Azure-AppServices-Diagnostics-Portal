@@ -39,10 +39,10 @@
             "searchSuffix": "Azure Logic App"
         },
         {
-            "service": "ResourceService",
+            "service": "WorkerAppService",
             "resourceType": "Microsoft.Web/workerApps",
             "templateFileName": "WorkerApp",
-            "imgSrc": "assets/img/Azure-KubernetesService-Logo.png",
+            "imgSrc": "assets/img/Azure-Ase-Logo.png",
             "versionPrefix": "",
             "azureCommImpactedServicesList": "workerapp",
             "pesId": "12345",

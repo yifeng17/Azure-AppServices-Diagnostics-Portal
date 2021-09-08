@@ -6,6 +6,8 @@ namespace AppLensV3
     {
         Task<ObserverResponse> GetSite(string siteName);
 
+        Task<ObserverResponse> GetWorkerApp(string workerAppName);
+
         Task<ObserverResponse> GetSite(string stamp, string siteName, bool details = false);
 
         Task<ObserverResponse> GetResourceGroup(string site);

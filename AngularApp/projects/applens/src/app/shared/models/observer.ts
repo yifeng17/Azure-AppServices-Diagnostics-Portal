@@ -3,6 +3,11 @@ namespace Observer {
         siteName: string;
         details: ObserverSiteInfo[];
     }
+
+    export interface ObserverWorkerAppResponse {
+        workerAppName: string;
+        details: ObserverWorkerAppInfo[];
+    }
   
     export interface ObserverSiteInfo {
         SiteName: string;
@@ -19,6 +24,17 @@ namespace Observer {
         VnetName: string;
         LinuxFxVersion: string;
         WindowsFxVersion: string;
+    }
+
+    export interface ObserverWorkerAppInfo {
+        WorkerAppName: string;
+        Tags: string;
+        ResourceGroupName: string;
+        SubscriptionName: string;
+        KubeEnvironmentName: string;
+        GeoMasterName: string;
+        ServiceAddress: string;
+        Kind: string;
     }
 
     export interface ObserverSiteDetailsResponse {

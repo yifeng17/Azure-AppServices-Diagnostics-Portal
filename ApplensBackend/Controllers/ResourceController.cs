@@ -10,7 +10,8 @@ namespace AppLensV3
     {
         IObserverClientService _observerService;
 
-        public ResourceController(IObserverClientService observerService) {
+        public ResourceController(IObserverClientService observerService)
+        {
             _observerService = observerService;
         }
 
@@ -19,6 +20,13 @@ namespace AppLensV3
         public async Task<IActionResult> GetSite(string siteName)
         {
             return await GetSiteInternal(null, siteName);
+        }
+
+        [HttpGet("api/workerapps/{workerAppName}")]
+        [HttpOptions("api/workerapps/{workerAppName}")]
+        public async Task<IActionResult> GetWorkerApp(string workerAppName)
+        {
+            return await GetWorkerAppInternal(workerAppName);
         }
 
         [HttpGet]
@@ -81,6 +89,25 @@ namespace AppLensV3
             };
 
             if (siteDetailsResponse.StatusCode == HttpStatusCode.NotFound)
+            {
+                return NotFound(response);
+            }
+
+            return Ok(response);
+        }
+
+        private async Task<IActionResult> GetWorkerAppInternal(string workerAppName)
+        {
+            var workerAppsTask = _observerService.GetWorkerApp(workerAppName);
+            var workerAppsResponse = await workerAppsTask;
+
+            var response = new
+            {
+                WorkerAppName = workerAppName,
+                Details = workerAppsResponse.Content
+            };
+
+            if (workerAppsResponse.StatusCode == HttpStatusCode.NotFound)
             {
                 return NotFound(response);
             }

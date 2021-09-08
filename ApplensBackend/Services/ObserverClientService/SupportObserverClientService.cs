@@ -21,7 +21,7 @@ namespace AppLensV3
     /// <summary>
     /// Client for Support Observer API communication
     /// </summary>
-    public sealed class SupportObserverClientService: IObserverClientService
+    public sealed class SupportObserverClientService : IObserverClientService
     {
         private static AuthenticationContext _authContext;
         private static ClientCredential _aadCredentials;
@@ -37,14 +37,16 @@ namespace AppLensV3
 
         private IConfiguration _configuration;
 
-        public SupportObserverClientService(IConfiguration configuration) {
+        public SupportObserverClientService(IConfiguration configuration)
+        {
             _configuration = configuration;
         }
 
         /// <summary>
         /// Support API Endpoint
         /// </summary>
-        private string SupportObserverApiEndpoint {
+        private string SupportObserverApiEndpoint
+        {
             get
             {
                 if (string.IsNullOrWhiteSpace(_endpoint))
@@ -119,6 +121,15 @@ namespace AppLensV3
         }
 
         /// <summary>
+        /// Get worker app details for workerAppName
+        /// </summary>
+        /// <param name="workerAppName">Worker App Name</param>
+        public async Task<ObserverResponse> GetWorkerApp(string workerAppName)
+        {
+            return await GetWorkerAppInternal(SupportObserverApiEndpoint + "partner/workerapp/" + workerAppName);
+        }
+
+        /// <summary>
         /// Get site details for siteName
         /// </summary>
         /// <param name="stamp">Stamp</param>
@@ -136,11 +147,26 @@ namespace AppLensV3
                 RequestUri = new Uri(endpoint),
                 Method = HttpMethod.Get
             };
-            
+
             request.Headers.Add("Authorization", await GetSupportObserverAccessToken());
             var response = await _httpClient.SendAsync(request);
 
             ObserverResponse res = await CreateObserverResponse(response, "GetAdminSite");
+            return res;
+        }
+
+        private async Task<ObserverResponse> GetWorkerAppInternal(string endpoint)
+        {
+            var request = new HttpRequestMessage()
+            {
+                RequestUri = new Uri(endpoint),
+                Method = HttpMethod.Get
+            };
+
+            request.Headers.Add("Authorization", await GetSupportObserverAccessToken());
+            var response = await _httpClient.SendAsync(request);
+
+            ObserverResponse res = await CreateObserverResponse(response, "GetWorkerApp");
             return res;
         }
 
@@ -156,7 +182,7 @@ namespace AppLensV3
                 RequestUri = new Uri(SupportObserverApiEndpoint + "sites/" + site + "/resourcegroupname"),
                 Method = HttpMethod.Get
             };
-          
+
             var serializedParameters = JsonConvert.SerializeObject(new Dictionary<string, string>() { { "site", site } });
             request.Headers.Add("Authorization", await GetSupportObserverAccessToken());
             var response = await _httpClient.SendAsync(request);
@@ -249,7 +275,7 @@ namespace AppLensV3
                 var responseString = await response.Content.ReadAsStringAsync();
                 observerResponse.Content = JsonConvert.DeserializeObject(responseString);
             }
-            else if(response.StatusCode == HttpStatusCode.NotFound)
+            else if (response.StatusCode == HttpStatusCode.NotFound)
             {
                 observerResponse.Content = "Resource Not Found. API : " + apiName;
             }

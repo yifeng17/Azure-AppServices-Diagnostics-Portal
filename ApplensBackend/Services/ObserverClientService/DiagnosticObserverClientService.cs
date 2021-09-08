@@ -54,6 +54,11 @@ namespace AppLensV3
             return GetSiteInternal(null, siteName);
         }
 
+        public async Task<ObserverResponse> GetWorkerApp(string workerAppName)
+        {
+            return await GetWorkerAppInternal(workerAppName);
+        }
+
         public Task<ObserverResponse> GetSite(string stamp, string siteName, bool details = false)
         {
             return GetSiteInternal(stamp, siteName);
@@ -68,6 +73,19 @@ namespace AppLensV3
             return new ObserverResponse
             {
                 StatusCode = siteDetailsResponse.StatusCode,
+                Content = content
+            };
+        }
+
+        private async Task<ObserverResponse> GetWorkerAppInternal(string workerAppName)
+        {
+            var path = $"partner/workerapp/{workerAppName}";
+            var workerAppDetailsResponse = await ExecuteDiagCall(path);
+            var contentJson = await workerAppDetailsResponse.Content.ReadAsStringAsync();
+            var content = JsonConvert.DeserializeObject(contentJson);
+            return new ObserverResponse
+            {
+                StatusCode = workerAppDetailsResponse.StatusCode,
                 Content = content
             };
         }

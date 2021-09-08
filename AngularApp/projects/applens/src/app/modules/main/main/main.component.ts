@@ -61,6 +61,14 @@ export class MainComponent implements OnInit {
       displayName: 'Azure Virutal Machine',
       enabled: true,
       caseId: false
+    },
+    {
+      resourceType: ResourceType.WorkerApp,
+      resourceTypeLabel: 'Worker App Name',
+      routeName: (name) => `workerapps/${name}`,
+      displayName: 'Worker App',
+      enabled: true,
+      caseId: false
     }
   ];
 

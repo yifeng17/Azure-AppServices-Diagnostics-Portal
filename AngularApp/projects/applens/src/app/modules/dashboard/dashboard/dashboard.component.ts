@@ -111,13 +111,13 @@ export class DashboardComponent implements OnDestroy {
       if (resource) {
         this.resource = resource;
 
-        if (serviceInputs.resourceType.toString() === 'Microsoft.Web/hostingEnvironments' && this.resource && this.resource.Name)
+        if (serviceInputs.resourceType.toString().toLowerCase() === 'microsoft.web/hostingenvironments' && this.resource && this.resource.Name)
         {
             this.observerLink = "https://wawsobserver.azurewebsites.windows.net/MiniEnvironments/"+ this.resource.Name;
             this._diagnosticApiService.GeomasterServiceAddress = this.resource["GeomasterServiceAddress"];
             this._diagnosticApiService.GeomasterName = this.resource["GeomasterName"];
         }
-        else if (serviceInputs.resourceType.toString() === 'Microsoft.Web/sites')
+        else if (serviceInputs.resourceType.toString().toLowerCase() === 'microsoft.web/sites')
         {
             this._diagnosticApiService.GeomasterServiceAddress = this.resource["GeomasterServiceAddress"];
             this._diagnosticApiService.GeomasterName = this.resource["GeomasterName"];
@@ -127,6 +127,12 @@ export class DashboardComponent implements OnDestroy {
             if (resource['IsXenon']) {
                 this.resourceService.imgSrc = this.resourceService.altIcons['Xenon'];
             }
+        }
+        else if (serviceInputs.resourceType.toString().toLowerCase() === 'microsoft.web/workerapps')
+        {
+          this._diagnosticApiService.GeomasterServiceAddress = this.resource.ServiceAddress;
+          this._diagnosticApiService.GeomasterName = this.resource.GeoMasterName;
+          this.observerLink = "https://wawsobserver.azurewebsites.windows.net/partner/workerapp/" + this.resource.WorkerAppName;
         }
 
         this.keys = Object.keys(this.resource);

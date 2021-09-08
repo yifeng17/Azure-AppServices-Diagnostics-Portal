@@ -4,7 +4,8 @@ import { InjectionToken } from '@angular/core';
 export enum ResourceType {
     Site,
     Function,
-    AppServiceEnvironment
+    AppServiceEnvironment,
+    WorkerApp
 }
 
 export interface ResourceTypeState {
