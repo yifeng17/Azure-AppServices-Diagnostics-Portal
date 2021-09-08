@@ -8,7 +8,7 @@
 	"searchSuffix": "AKS",
 	"azureServiceName": "Azure Kubernetes Service",
 	"armApiConfig": {
-		"armApiVersion": "2021-09-01"
+		"armApiVersion": "2019-04-01"
 	},
 	"isSearchEnabled": true,
 	"keystoneDetectorId": "",
