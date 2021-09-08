@@ -8,7 +8,7 @@
 	"searchSuffix": "AKS",
 	"azureServiceName": "Azure Kubernetes Service",
 	"armApiConfig": {
-		"armApiVersion": "2019-04-01"
+		"armApiVersion": "2021-09-01"
 	},
 	"isSearchEnabled": true,
 	"keystoneDetectorId": "",
@@ -24,7 +24,8 @@
             "keywords": [ "Failed State", "Node Readiness", "Node Health", "Scaling", "CRUD", "Identity", "Certificates" ],
             "color": "rgb(186, 211, 245)",
             "createFlowForCategory": true,
-            "chatEnabled": false
+            "chatEnabled": false,
+            "overviewDetectorId": "aks-category-availability-perf"
         },
         {
             "id": "connectivityissuesaks",
@@ -33,7 +34,8 @@
             "keywords": [ "Network Configuration", "Subnet", "DNS", "FQDN", "VNet" ],
             "color": "rgb(249, 213, 180)",
             "createFlowForCategory": true,
-            "chatEnabled": false
+            "chatEnabled": false,
+            "overviewDetectorId": "aks-category-connectivity"
         },
         {
             "id": "crudaks",
@@ -42,7 +44,8 @@
             "keywords": [ "Failed State", "Node Readiness", "Node Health", "Scaling", "CRUD", "Identity", "Certificates" ],
             "color": "rgb(186, 211, 245)",
             "createFlowForCategory": true,
-            "chatEnabled": false
+            "chatEnabled": false,
+            "overviewDetectorId": "aks-category-crud"
         },
         {
             "id": "identitysecurityaks",
@@ -51,25 +54,28 @@
             "keywords": [ "Failed State", "Node Readiness", "Node Health", "Scaling", "CRUD", "Identity", "Certificates" ],
             "color": "rgb(186, 211, 245)",
             "createFlowForCategory": true,
-            "chatEnabled": false
+            "chatEnabled": false,
+            "overviewDetectorId": "aks-category-identity-security"
         },
         {
             "id": "riskassessmentaks",
-            "name": "Node Health",
-            "description": "Is your cluster experiencing failures or unresponsiveness? Investigate and discover issues that may cause your cluster to no longer be manageable.",
-            "keywords": [ "Failed State", "Node Readiness", "Node Health", "Scaling", "CRUD", "Identity", "Certificates" ],
-            "color": "rgb(186, 211, 245)",
-            "createFlowForCategory": true,
-            "chatEnabled": false
-        },
-        {
-            "id": "nodehealthaks",
             "name": "Risk Assessment",
             "description": "Is your cluster experiencing failures or unresponsiveness? Investigate and discover issues that may cause your cluster to no longer be manageable.",
             "keywords": [ "Failed State", "Node Readiness", "Node Health", "Scaling", "CRUD", "Identity", "Certificates" ],
             "color": "rgb(186, 211, 245)",
             "createFlowForCategory": true,
-            "chatEnabled": false
+            "chatEnabled": false,
+            "overviewDetectorId": "aks-category-risk-assessment"
+        },
+        {
+            "id": "nodehealthaks",
+            "name": "Node Health",
+            "description": "Is your cluster experiencing failures or unresponsiveness? Investigate and discover issues that may cause your cluster to no longer be manageable.",
+            "keywords": [ "Failed State", "Node Readiness", "Node Health", "Scaling", "CRUD", "Identity", "Certificates" ],
+            "color": "rgb(186, 211, 245)",
+            "createFlowForCategory": true,
+            "chatEnabled": false,
+            "overviewDetectorId": "aks-category-node-health"
         }
     ],
 	"pesId": "16450"
