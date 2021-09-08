@@ -24,7 +24,7 @@ export class DiagProvider {
     public portalDomain: string;
     public scmHostName: string;
     private _telemetryService: TelemetryService;
-    constructor(siteInfo: SiteInfoMetaData & Site & { fullSiteName: string }, armService: ArmService, siteService: SiteService, portalDomain: string, globals:Globals, telemetryService:TelemetryService) {
+    constructor(siteInfo: SiteInfoMetaData & Site & { fullSiteName: string }, armService: ArmService, siteService: SiteService, portalDomain: string, globals: Globals, telemetryService: TelemetryService) {
         this._siteInfo = siteInfo;
         this._armService = armService;
         this._siteService = siteService;
@@ -72,9 +72,9 @@ export class DiagProvider {
     }
 
     public getArmResourceAsync(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Promise<any> {
-        var stack = new Error("replace_placeholder").stack;
-        var key = "GET;"+resourceUri+";"+apiVersion;
-        if(!invalidateCache && this._dict.has(key)){
+        var stack = new Error("error_message_placeholder").stack;
+        var key = "GET;" + resourceUri + ";" + apiVersion;
+        if (!invalidateCache && this._dict.has(key)) {
             return this._dict.get(key);
         }
         var result = this._armService.requestResource<any, any>("GET", resourceUri, null, apiVersion)
@@ -85,14 +85,13 @@ export class DiagProvider {
                 return result;
             })
             .catch(e => {
-                var err = new Error(e);
-                err.stack = stack.replace("replace_placeholder", e.message);
-                this._globals.logDebugMessage(err, e);
+                e.stack = stack.replace("error_message_placeholder", e.message || "");
+                this._globals.logDebugMessage(e);
 
-                if(e.status != null){
+                if (e.status != null) {
                     return e;
                 }
-                throw err;
+                throw e;
             });
         this._dict.set(key, result);
         return result;
@@ -103,55 +102,61 @@ export class DiagProvider {
     }
 
     public postArmResourceAsync<T, S>(resourceUri: string, body?: S, apiVersion?: string, invalidateCache: boolean = false, appendBodyToCacheKey: boolean = false): Promise<boolean | {} | ResponseMessageEnvelope<T>> {
-        var stack = new Error("replace_placeholder").stack;
+        var stack = new Error("error_message_placeholder").stack;
         return this._armService.postResource<T, S>(resourceUri, body, apiVersion, invalidateCache, appendBodyToCacheKey)
             .toPromise()
             .catch(e => {
-                var err = new Error(e);
-                err.stack = stack.replace("replace_placeholder", e);
-                throw err;
+                e.stack = stack.replace("error_message_placeholder", e.message || "");
+                throw e;
             });
     }
 
-    public requestResourceAsync<T, S>(method:string, resourceUri: string, body?: S, apiVersion?: string): Promise<boolean | {} | ResponseMessageEnvelope<T>> {
-        var stack = new Error("replace_placeholder").stack;
+    public requestResourceAsync<T, S>(method: string, resourceUri: string, body?: S, apiVersion?: string): Promise<boolean | {} | ResponseMessageEnvelope<T>> {
+        var stack = new Error("error_message_placeholder").stack;
         return this._armService.requestResource<T, S>(method, resourceUri, body, apiVersion)
             .toPromise()
             .catch(e => {
-                if(e.status != null){
+                if (e.status != null) {
                     return e;
                 }
-                var err = new Error(e);
-                err.stack = stack.replace("replace_placeholder", e.message);
-                throw err;
+                e.stack = stack.replace("error_message_placeholder", e.message || "");
+                throw e;
             });
     }
 
-    public getKuduApiAsync<T>(uri: string, instance?: string, timeoutInSec: number = 15, scm = false): Promise<T> {
-        var stack = new Error("replace_placeholder").stack;
-        var params = [instance == null ? null : `instance=${instance}`, scm ? null : "api-version=2015-08-01"].filter(s => s != null).join("&");
-        var postfix = (params == "" ? "" : `?${params}`);
+    public getKuduApiAsync(uri: string, instance?: string, timeoutInSec: number = 15, scm = false): Promise<any> {
+        var stack = new Error("error_message_placeholder").stack;
+        var params = [];
+        if(instance != null){
+            params.push(`instance=${instance}`);
+        }
+        return this.getExtensionApiAsync("api/" + uri, params, timeoutInSec, scm);
+    }
+
+    public getExtensionApiAsync(uri: string, params = [], timeoutInSec: number = 15, scm = false): Promise<any> {
+        var stack = new Error("error_message_placeholder").stack;
         var prefix = scm ? this.scmHostName : `management.azure.com/${this._siteInfo.resourceUri}/extensions`;
-        return this._armService.get<T>(`https://${prefix}/api/${uri}${postfix}`)
+        if(!scm){
+            params.push("api-version=2015-08-01");
+        }
+        return this._armService.get(`https://${prefix}/${uri}?${params.join("&")}`)
             .toPromise()
             .catch(e => {
-                var err = new Error(e);
-                err.stack = stack.replace("replace_placeholder", e);
-                throw err;
+                e.stack = stack.replace("error_message_placeholder", e.message || e);
+                throw e;
             });
     }
 
-    public postKuduApiAsync<T, S>(uri: string, body?: S, instance?: string, timeoutInSec: number = 15, scm = false): Promise<boolean | {} | ResponseMessageEnvelope<T>> {
+    public postKuduApiAsync(uri: string, body?: any, instance?: string, timeoutInSec: number = 15, scm = false): Promise<any> {
         var params = [instance == null ? null : `instance=${instance}`, scm ? null : "api-version=2015-08-01"].filter(s => s != null).join("&");
         var postfix = (params == "" ? "" : `?${params}`);
         var prefix = scm ? this.scmHostName : `management.azure.com/${this._siteInfo.resourceUri}/extensions`;
-        var stack = new Error("replace_placeholder").stack;
-        var promise = this._armService.post<T, S>(`https://${prefix}/api/${uri}${postfix}`, body)
+        var stack = new Error("error_message_placeholder").stack;
+        var promise = this._armService.post(`https://${prefix}/api/${uri}${postfix}`, body)
             .toPromise()
             .catch(e => {
-                var err = new Error(e);
-                err.stack = stack.replace("replace_placeholder", e);
-                throw err;
+                e.stack = stack.replace("error_message_placeholder", e.message || "");
+                throw e;
             });
         var timeoutPromise = delay(timeoutInSec).then(() => {
             throw new Error(`postKuduApiAsync timeout after ${timeoutInSec}s`);
@@ -165,7 +170,7 @@ export class DiagProvider {
     }
 
     public getEnvironmentVariablesAsync(names: string[], instance?: string) {
-        var stack = new Error("replace_placeholder").stack;
+        var stack = new Error("error_message_placeholder").stack;
         var promise = (async () => {
             names = names.map(n => `%${n}%`);
             var echoPromise = this.runKuduCommand(`echo ${names.join(";")}`, undefined, instance).catch(e => {
@@ -179,15 +184,15 @@ export class DiagProvider {
         })();
 
         return promise.catch(e => {
-            var err = new Error(e);
-            err.stack = stack.replace("replace_placeholder", e.message || e);
-            throw err;
+            e.stack = stack.replace("error_message_placeholder", e.message || "");
+            throw e;
         });
     }
 
     public async tcpPingAsync(hostname: string, port: number, count: number = 1, timeout: number = 10, instance?: string): Promise<{ status: ConnectionCheckStatus, statuses: ConnectionCheckStatus[] }> {
-        var stack = new Error("replace_placeholder").stack;
+        var stack = new Error("error_message_placeholder").stack;
         var promise = (async () => {
+            // TODO: implement tcpping in DaaS extension to replace the CLI
             var pingPromise = this.runKuduCommand(`tcpping -n ${count} -w ${timeout} ${hostname}:${port}`, undefined, instance).catch(e => {
                 this._globals.logDebugMessage("tcpping failed", e);
                 return null;
@@ -219,9 +224,8 @@ export class DiagProvider {
         })();
 
         return promise.catch(e => {
-            var err = new Error(e);
-            err.stack = stack.replace("replace_placeholder", e.message || e);
-            throw err;
+            e.stack = stack.replace("error_message_placeholder", e.message || "");
+            throw e;
         });
     }
 
@@ -231,7 +235,8 @@ export class DiagProvider {
             ip = hostname;
         } else {
             try {
-                var result = await this.runKuduCommand(`nameresolver ${hostname} ${dns}`, undefined, instance);
+                 // TODO: implement nameresolver in DaaS extension to replace the CLI
+                var result = await this.runKuduCommand(`nameresolver ${hostname} ${dns || ""}`, undefined, instance);
                 if (result != null) {
                     if (result.includes("Aliases")) {
                         var match = result.match(/Addresses:\s*([\S\s]*)Aliases:\s*([\S\s]*)$/);
@@ -242,7 +247,7 @@ export class DiagProvider {
                     } else {
                         var match = result.match(/Addresses:\s*([\S\s]*)$/);
                         if (match != null) {
-                            ip = match[1].split("\r\n").filter(i => i.length > 0).join(";");
+                            ip = match[1].split("\r\n").map(s => s.trim()).filter(s => s.length > 0).join(";");
                         }
                     }
                 }
@@ -254,7 +259,7 @@ export class DiagProvider {
     }
 
     public async checkConnectionAsync(hostname: string, port: number, count?: number, timeout?: number, dns: string = "", instance?: string): Promise<{ status: ConnectionCheckStatus, ip: string, aliases: string, statuses: ConnectionCheckStatus[] }> {
-        var stack = new Error("replace_placeholder").stack;
+        var stack = new Error("error_message_placeholder").stack;
         var promise = (async () => {
             var nameResolverPromise = this.nameResolveAsync(hostname, dns, instance);
 
@@ -275,9 +280,8 @@ export class DiagProvider {
         })();
 
         return promise.catch(e => {
-            var err = new Error(e);
-            err.stack = stack.replace("replace_placeholder", e.message || e);
-            throw err;
+            e.stack = stack.replace("error_message_placeholder", e.message || "");
+            throw e;
         });
     }
 
@@ -297,11 +301,18 @@ export class DiagProvider {
         return siteVnetInfo;
     }
 
-    public isIp(s: string) {
+    public async getWebConfigAsync(): Promise<any> {
+        //This is the regional VNet Integration endpoint
+        var swiftUrl = this._siteInfo["id"] + "/config/web";
+        var webConfig = await this.getArmResourceAsync(swiftUrl, "2018-02-01");
+        return webConfig;
+    }
+
+    public isIp(s: string, ipV4Only = false) {
         if (s.match(/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/)) {
             // ipv4
             return true;
-        } else if (s.match(/^(?:[a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}$/)) {
+        } else if (!ipV4Only && s.match(/^(?:[a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}$/)) {
             // ipv6
             return true;
         }

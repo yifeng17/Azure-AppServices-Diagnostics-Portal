@@ -7,7 +7,7 @@ export class VnetAppSettingWordings {
         this.alwaysFallbackDns = {
             get(value) {
                 var msg = "Azure public DNS <b>WON'T</b> be applied if you have custom DNS set up in App Settings or VNet";
-                if (value == "1") {
+                if (value === true) {
                     return new CheckStepView({
                         title: "WEBSITE_ALWAYS_FALLBACK_TO_PUBLIC_DNS is set to 1, Azure public DNS 168.63.129.16 will be applied",
                         level: 3,
@@ -30,19 +30,19 @@ export class VnetAppSettingWordings {
             get(value) {
                 var msg = '<b>ONLY</b> traffic to <a href="https://en.wikipedia.org/wiki/Private_network#Private_IPv4_addresses"' +
                     ' target="_blank">RFC1918 private addresses</a> will be sent to VNet, traffic to other public addresses will be sent via public internet';
-                if (value == "1") {
+                if (value === true) {
                     return new CheckStepView({
-                        title: "WEBSITE_VNET_ROUTE_ALL is set to 1, traffic to any IP address will be sent to VNet",
+                        title: "VNet Route All is enabled, traffic to any IP address will be sent to VNet",
                         level: 3,
                     });
                 } else if (value == null) {
                     return new CheckStepView({
-                        title: "WEBSITE_VNET_ROUTE_ALL is not set, " + msg,
+                        title: "VNet Route All is not enabled, " + msg,
                         level: 3,
                     });
                 } else {
                     return new CheckStepView({
-                        title: "WEBSITE_VNET_ROUTE_ALL is set to 0 (or an invalid value), " + msg,
+                        title: "VNet Route All is disabled, " + msg,
                         level: 3,
                     });
                 }

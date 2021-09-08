@@ -155,134 +155,162 @@ export async function checkVnetIntegrationV2Async(siteInfo, diagProvider, flowMg
             var subnetDataPromise = diagProvider.getArmResourceAsync(subnetResourceId, vnetChecker.apiVersion);
             var aspSitesDataPromise = diagProvider.getArmResourceAsync(vnetChecker.serverFarmId + "/sites", vnetChecker.apiVersion);
             var instanceDataPromise = diagProvider.getArmResourceAsync(vnetChecker.siteArmId + "/instances", vnetChecker.apiVersion);
+            var isKuduAccessible = await isKuduAccessiblePromise;
+            var instanceData = await instanceDataPromise;
+            var swiftIntegrationOk = null;
 
-            if (subnetResourceId != null) {
-                if (!vnetChecker.isSubnetResourceIdFormatValid(subnetResourceId)) {
-                    views.push(wordings.swiftInvalidSubnet.get(subChecks))
-                    isContinue = false;
+            if (isKuduAccessible) {
+                if (instanceData.status == 200) {
+                    swiftIntegrationOk = await vnetChecker.checkWorkerPingMeshAsync(instanceData);
+                } else {
+                    diagProvider.logException(new Error(`Unexpected instanceData status: ${instanceData.status}`));
                 }
 
-                if (isContinue) {
-                    if (!(await vnetChecker.isSwiftSupportedAsync())) {
-                        views.push(wordings.wrongArmTemplate.get(subChecks));
+                if (swiftIntegrationOk == null) {
+                    // views.push(wordings.cannotCheckWorkerVnetConnection.get());
+                    // check failed for some reason, hide this from users
+                    flowMgr.logEvent("NullWorkerPingMeshResult", {});
+                } else if (swiftIntegrationOk) {
+                    views.push(wordings.workerVnetConnectionIsGood.get());
+                } else {
+                    views.push(wordings.workerVnetConnectionIsBad.get());
+                }
+
+            }
+            if (swiftIntegrationOk == null || !swiftIntegrationOk) {
+                if (subnetResourceId != null) {
+                    if (!vnetChecker.isSubnetResourceIdFormatValid(subnetResourceId)) {
+                        views.push(wordings.swiftInvalidSubnet.get(subChecks))
                         isContinue = false;
                     }
-                }
-                if (isContinue) {
-                    var subnetSubChecks = [];
-                    var subnetStatus = null; // 0 - healthy, 1 - needs attention, 2 - unhealthy
-                    var subnetData = await subnetDataPromise;
-                    if (subnetData.status == 200) {
-                        subnetStatus = 0;
-                        subnetSubChecks.push(wordings.subnetExists.get(subnetResourceId));
-                        if (vnetChecker.subnetSalExists(subnetData)) {
-                            if (vnetChecker.isSubnetSalOwnerCorrect(subnetData, vnetChecker.serverFarmId)) {
-                                subnetSubChecks.push(wordings.subnetSalValid.get());
-                            } else {
-                                subnetSubChecks.push(wordings.subnetWrongSalOwner.get());
-                                subnetStatus = 1;
-                            }
-                        } else {
-                            subnetSubChecks.push(wordings.subnetSalMissing.get());
-                            subnetStatus = 2;
+
+                    if (isContinue) {
+                        if (!(await vnetChecker.isSwiftSupportedAsync())) {
+                            views.push(wordings.wrongArmTemplate.get(subChecks));
                             isContinue = false;
                         }
-
-                        if (vnetChecker.isSubnetDelegated(subnetData)) {
-                            subnetSubChecks.push(wordings.subnetDelegationResult.get(true));
-                        } else {
-                            subnetSubChecks.push(wordings.subnetDelegationResult.get(false));
-                            subnetStatus = 2;
-                            isContinue = false;
-                        }
-
-
-                        var subnetMask = vnetChecker.getSubnetMask(subnetData, subnetMaskThresh);
-                        if (subnetMask != null) {
-                            var subnetMaskThresh = 27;
-                            if (siteInfo["sku"].startsWith("P")) {
-                                //premium
-                                subnetMaskThresh = 26;
-                            }
-
-                            if (subnetMask > subnetMaskThresh) {
-                                subnetStatus = 1;
-                                views.push(wordings.subnetSizeIsNotGood.get(subnetResourceId, subnetMask, siteInfo["sku"], subnetMaskThresh, subnetSubChecks));
-                            } else {
-                                subnetSubChecks.push(wordings.subnetSizeIsGood.get(subnetMask));
-                            }
-
-                        } else {
-                            diagProvider.logException(new Error("Unexpected null subnetMask"));
-                        }
-
-                    } else {
-                        if (subnetData.status == 401) {
-                            views.push(wordings.noAccessToResource.get(subnetResourceId, "subnet", diagProvider.portalDomain));
-                        } else if (subnetData.status == 404) {
-                            views.push(wordings.subnetNotFound.get(subnetSubChecks, subnetResourceId));
-                            subnetStatus = 2;
-                        } else {
-                            throw new Error(`Unexpected subnet data status:${subnetData.status}`);
-                        }
-                        isContinue = false;
                     }
-                }
-
-                if (subnetStatus != null) {
-                    subChecks.push(wordings.subnetCheckResult.get(subnetStatus, subnetSubChecks));
-                }
-
-                if (isContinue) {
-                    var aspSitesData = await aspSitesDataPromise;
-                    if (aspSitesData.status == 200) {
-                        var subnets = vnetChecker.getAspConnectedSubnetsAsync(aspSitesData);
-                        if (subnets.length == 1) {
-                            subChecks.push(wordings.swiftAspUnderLimitation.get(subnets, 1));
-                        } else if (subnets.length > 1) {
-                            views.push(wordings.swiftAspExceedsLimitation.get(subnets, 1, vnetChecker.serverFarmId, subChecks));
-                        }
-                    } else {
-                        if (aspSitesData.status == 401) {
-                            // skip asp check
-                        } else {
-                            diagProvider.logException(new Error(`Unexpected aspSitesData status: ${aspSitesData.status}`));
-                        }
-                    }
-                }
-
-                if (isContinue) {
-                    var isKuduAccessible = await isKuduAccessiblePromise;
-                    if (isKuduAccessible) {
-                        var instanceData = await instanceDataPromise;
-                        if (instanceData.status == 200) {
-                            var ips = await vnetChecker.getInstancesPrivateIpAsync(instanceData);
-                            if (ips != null) {
-                                var total = ips.length;
-                                var notAllocated = ips.filter(ip => ip == null).length;
-                                if (notAllocated > 0) {
-                                    views.push(wordings.swiftPrivateIpNotAssigned.get(notAllocated, subchecks));
+                    if (isContinue) {
+                        var subnetSubChecks = [];
+                        var subnetStatus = null; // 0 - healthy, 1 - needs attention, 2 - unhealthy
+                        var subnetData = await subnetDataPromise;
+                        if (subnetData.status == 200) {
+                            subnetStatus = 0;
+                            subnetSubChecks.push(wordings.subnetExists.get(subnetResourceId));
+                            if (vnetChecker.subnetSalExists(subnetData)) {
+                                if (vnetChecker.isSubnetSalOwnerCorrect(subnetData, vnetChecker.serverFarmId)) {
+                                    subnetSubChecks.push(wordings.subnetSalValid.get());
                                 } else {
-                                    subChecks.push(wordings.swiftPrivateIpAssigned.get(total));
+                                    subnetSubChecks.push(wordings.subnetWrongSalOwner.get());
+                                    subnetStatus = 1;
                                 }
                             } else {
-                                // failed to get instance private ip
+                                subnetSubChecks.push(wordings.subnetSalMissing.get());
+                                subnetStatus = 2;
+                                isContinue = false;
+                            }
+
+                            if (vnetChecker.isSubnetDelegated(subnetData)) {
+                                subnetSubChecks.push(wordings.subnetDelegationResult.get(true));
+                            } else {
+                                subnetSubChecks.push(wordings.subnetDelegationResult.get(false));
+                                subnetStatus = 2;
+                                isContinue = false;
+                            }
+
+
+                            var subnetMask = vnetChecker.getSubnetMask(subnetData, subnetMaskThresh);
+                            if (subnetMask != null) {
+                                var subnetMaskThresh = 27;
+                                if (siteInfo["sku"].startsWith("P")) {
+                                    //premium
+                                    subnetMaskThresh = 26;
+                                }
+
+                                if (subnetMask > subnetMaskThresh) {
+                                    subnetStatus = 1;
+                                    views.push(wordings.subnetSizeIsNotGood.get(subnetResourceId, subnetMask, siteInfo["sku"], subnetMaskThresh, subnetSubChecks));
+                                } else {
+                                    subnetSubChecks.push(wordings.subnetSizeIsGood.get(subnetMask));
+                                }
+
+                            } else {
+                                diagProvider.logException(new Error("Unexpected null subnetMask"));
+                            }
+
+                        } else {
+                            if (subnetData.status == 401) {
+                                views.push(wordings.noAccessToResource.get(subnetResourceId, "subnet", diagProvider.portalDomain));
+                            } else if (subnetData.status == 404) {
+                                views.push(wordings.subnetNotFound.get(subnetSubChecks, subnetResourceId));
+                                subnetStatus = 2;
+                            } else {
+                                throw new Error(`Unexpected subnet data status:${subnetData.status}`);
+                            }
+                            isContinue = false;
+                        }
+                    }
+
+                    if (subnetStatus != null) {
+                        subChecks.push(wordings.subnetCheckResult.get(subnetStatus, subnetSubChecks));
+                    }
+
+                    if (isContinue) {
+                        var aspSitesData = await aspSitesDataPromise;
+                        if (aspSitesData.status == 200) {
+                            var subnets = vnetChecker.getAspConnectedSubnetsAsync(aspSitesData);
+                            if (subnets.length == 1) {
+                                subChecks.push(wordings.swiftAspUnderLimitation.get(subnets, 1));
+                            } else if (subnets.length > 1) {
+                                views.push(wordings.swiftAspExceedsLimitation.get(subnets, 1, vnetChecker.serverFarmId, subChecks));
                             }
                         } else {
-                            diagProvider.logException(new Error(`Unexpected instanceData status: ${instanceData.status}`));
+                            if (aspSitesData.status == 401) {
+                                // skip asp check
+                            } else {
+                                diagProvider.logException(new Error(`Unexpected aspSitesData status: ${aspSitesData.status}`));
+                            }
                         }
-                    } else {
-                        //NoKuduAccess, skip
                     }
-                }
-                integrationCheckStatus = flowMgr.getSubCheckLevel(subChecks);
-                var integrationCheck = wordings.vnetIntegrationResult.get(integrationCheckStatus, subChecks);
-                views = [integrationCheck, ...views];
 
-            } else {
-                //invalid subnetResourceId
-                diagProvider.logException(new Error(`invalid subnetResourceId ${subnetResourceId}`));
+                    if (isContinue) {
+
+                        if (isKuduAccessible) {
+
+                            if (instanceData.status == 200) {
+                                var ips = await vnetChecker.getInstancesPrivateIpAsync(instanceData);
+                                if (ips != null) {
+                                    var total = ips.length;
+                                    var notAllocated = ips.filter(ip => ip == null).length;
+                                    if (notAllocated > 0) {
+                                        views.push(wordings.swiftPrivateIpNotAssigned.get(notAllocated, subchecks));
+                                    } else {
+                                        subChecks.push(wordings.swiftPrivateIpAssigned.get(total));
+                                    }
+                                } else {
+                                    // failed to get instance private ip
+                                }
+                            } else {
+                                diagProvider.logException(new Error(`Unexpected instanceData status: ${instanceData.status}`));
+                            }
+                        } else {
+                            //NoKuduAccess, skip
+                        }
+                    }
+                    integrationCheckStatus = flowMgr.getSubCheckLevel(subChecks);
+                    var integrationCheck = wordings.vnetIntegrationResult.get(integrationCheckStatus, subChecks);
+                    views = [integrationCheck, ...views];
+
+                } else {
+                    //invalid subnetResourceId
+                    diagProvider.logException(new Error(`invalid subnetResourceId ${subnetResourceId}`));
+                }
+                if(isContinue && swiftIntegrationOk == false){
+                    // TODO: one or more worker failed meshping test
+                    isContinue = false;
+                }
             }
+            
         } else if (vnetIntegrationType == "gateway") {
             subChecks.push(wordings.gatewayConfigured.get());
             integrationCheckStatus = 0;
@@ -320,6 +348,29 @@ export async function checkVnetIntegrationV2Async(siteInfo, diagProvider, flowMg
     } catch (e) {
         promiseCompletion.resolve([]);
         throw e;
+    }
+}
+
+export async function checkWorkerPingMeshAsync(siteInfo, diagProvider, flowMgr) {
+    var views = [];
+    var wordings = new VnetIntegrationWordings();
+    var vnetChecker = new VnetIntegrationConfigChecker(siteInfo, diagProvider);
+    var instanceData = await diagProvider.getArmResourceAsync(vnetChecker.siteArmId + "/instances", vnetChecker.apiVersion);
+    if (instanceData.status == 200) {
+        var ips = await vnetChecker.getInstancesPrivateIpAsync(instanceData);
+        if (ips != null) {
+            var total = ips.length;
+            var notAllocated = ips.filter(ip => ip == null).length;
+            if (notAllocated > 0) {
+                views.push(wordings.swiftPrivateIpNotAssigned.get(notAllocated, subchecks));
+            } else {
+                subChecks.push(wordings.swiftPrivateIpAssigned.get(total));
+            }
+        } else {
+            // failed to get instance private ip
+        }
+    } else if (instanceData.status == 401) {
+        views.push(wordings.noAccessToResource.get(vnetResourceId, "vnet", diagProvider.portalDomain));
     }
 }
 
@@ -464,7 +515,7 @@ export async function checkDnsSettingV2Async(siteInfo, diagProvider, flowMgr, is
             } else {
                 views.push(wordings.cannotCheckWithoutKudu.get("DNS settings"));
             }
-        }else{
+        } else {
             isContinue = true;
         }
         promiseCompletion.resolve(views);
@@ -545,13 +596,13 @@ export function addSubnetSelectionDropDownView(siteInfo, diagProvider, flowMgr, 
             if (dropdownIdx === 0) {
                 dropdownView.dropdowns.length = 1;
                 var subscription = subscriptions[selectedIdx];
-                
+
                 dropdownView.dropdowns.push({
                     description: "Virtual Network",
                     options: [],
                     placeholder: "Loading..."
                 });
-                
+
                 vnets = await diagProvider.getArmResourceAsync(`/subscriptions/${subscription.subscriptionId}/providers/Microsoft.Network/virtualNetworks`, "2018-07-01");
                 dropdownView.dropdowns.length = 1;
                 vnets = vnets.value.filter(v => v && v.name != null).sort((s1, s2) => s1.name.toLowerCase() > s2.name.toLowerCase() ? 1 : -1);
@@ -601,8 +652,8 @@ export function addSubnetSelectionDropDownView(siteInfo, diagProvider, flowMgr, 
     });
     var subscriptions = null, vnets = null, subnets = null;
     var vnet = null;
-    
-    
+
+
     dropdownView.dropdowns.push({
         description: "Subscription",
         options: [],

@@ -1,20 +1,22 @@
 import { DropdownStepView, InfoStepView, StepFlow, StepFlowManager, CheckStepView, StepViewContainer, InputStepView, ButtonStepView, PromiseCompletionSource, TelemetryService } from 'diagnostic-data';
-import { checkKuduAvailabilityAsync, checkVnetIntegrationV2Async, checkDnsSettingV2Async, checkAppSettingsAsync} from './flowMisc.js';
-import {CommonWordings} from './commonWordings.js'
-import {VnetIntegrationConfigChecker} from './vnetIntegrationConfigChecker.js'
+import { checkKuduAvailabilityAsync, checkVnetIntegrationV2Async, checkDnsSettingV2Async, checkAppSettingsAsync } from './flowMisc.js';
+import { CommonWordings } from './commonWordings.js';
+import { VnetIntegrationConfigChecker } from './vnetIntegrationConfigChecker.js';
+import { NameResolvingAndIpWordings } from './nameResolvingAndIpWordings.js';
+import { VnetAppSettingChecker } from './vnetAppSettingChecker.js';
 export var connectionFailureFlow = {
     title: "Connection issues",
     async func(siteInfo, diagProvider, flowMgr) {
         var isKuduAccessiblePromise = checkKuduAvailabilityAsync(diagProvider, flowMgr);
 
         var isContinue = await checkVnetIntegrationV2Async(siteInfo, diagProvider, flowMgr, isKuduAccessiblePromise);
-        if(!isContinue){
+        if (!isContinue) {
             return;
         }
 
         var dnsSettings = [];
         isContinue = await checkDnsSettingV2Async(siteInfo, diagProvider, flowMgr, isKuduAccessiblePromise, dnsSettings);
-        if(!isContinue){
+        if (!isContinue) {
             return;
         }
         await checkAppSettingsAsync(siteInfo, diagProvider, flowMgr);
@@ -23,75 +25,17 @@ export var connectionFailureFlow = {
     }
 }
 
-async function runConnectivityCheck(hostname, port, dnsServers, diagProvider, lengthLimit) {
+async function runConnectivityCheck(hostname, port, diagProvider, lengthLimit) {
     var subChecks = [];
-    var nameResolvePromise = (async function checkNameResolve() {
-        var ip = null;
-        var subChecks = [];
-        if (diagProvider.isIp(hostname)) {
-            ip = hostname;
-        } else {
-            for (var i = 0; i < dnsServers.length; ++i) {
-                var dns = `DNS server ${dnsServers[i]}`;
-                if(dnsServers[i] == ""){
-                    dnsServers[i] = "168.63.129.16";
-                    dns = "Azure public DNS";
-                }
-                
-                var result = await diagProvider.nameResolveAsync(hostname, dnsServers[i]).catch(e => {
-                    logDebugMessage(e);
-                    return {};
-                });
-                
-                if (result.ip != null) {
-                    ip = result.ip;
-                    subChecks.push({ title: `Successfully resolved hostname '${hostname}' with ${dns}`, level: 0 });
-                    break;
-                } else {
-                    subChecks.push({ title: `Failed to resolve hostname '${hostname}' with ${dns}`, level: 1 });
-                }
-            }
-        }
-        return { ip, subChecks };
-    })();
-    var tcpPingPromise = diagProvider.tcpPingAsync(hostname, port).catch(e => {
+    var tcpPingResult = await diagProvider.tcpPingAsync(hostname, port).catch(e => {
         logDebugMessage(e);
         return {};
     });
-
-    await Promise.all([nameResolvePromise, tcpPingPromise]);
-
-    var nameResolveResult = await nameResolvePromise;
-    var ip = nameResolveResult.ip;
-    subChecks = nameResolveResult.subChecks;
-
-    var tcpPingResult = await tcpPingPromise;
     var status = tcpPingResult.status;
 
     var markdown = null;
     var views = [];
-    var resolvedIp = "";
-    if (ip != hostname) {
-        hostname = hostname.length > lengthLimit ? hostname.substr(0, lengthLimit) + "..." : hostname;
-        if (ip == null) {
-            markdown = `DNS server cannot resolve the hostname **${hostname}**, possible reasons can be:\r\n` +
-                `-  hostname **${hostname}** does not exist, please double check if the hostname is correct\r\n\r\n` +
-                (dnsServers.filter(s => s != "").length == 0 ? "" : `-  Your custom DNS server was used for resolving hostname, but there is no DNS entry on the server for **${hostname}**, please check your DNS server.\r\n\r\n`) +
-                "-  If your target endpoint is an Azure service with Private Endpoint enabled, please check its Private Endpoint DNS Zone settings.\r\n\r\n"
-            views.push(new CheckStepView({
-                title: `failed to resolve the IP of ${hostname}`,
-                subChecks: subChecks,
-                level: 2
-            }));
-            views.push(new InfoStepView({
-                infoType: 1,
-                title: "Explanation of the result and recommended next steps",
-                markdown: markdown
-            }));
-            return views;
-        }
-        resolvedIp = `hostname **${hostname}** was resolved to IP: ` + ip;
-    }
+
     var msg = `Connecting to ${hostname}:${port} from your App instance`;
     if (status == 0) {
         markdown = "Connectivity test succeeded at TCP level. " +
@@ -101,8 +45,7 @@ async function runConnectivityCheck(hostname, port, dnsServers, diagProvider, le
             "-  Endpoint firewall blocks Web App or Function App's IP address, please check the IP restriction or application level firewall.\r\n\r\n" +
             "-  The traffic was blocked by Network Security Group or Firewall, please check your NSG or/and Firewall configuration if there is any.\r\n\r\n" +
             "-  The traffic was routed to a wrong destination, please check your User Defined Route Table if there is any.\r\n\r\n" +
-            "-  The endpoint is an Azure Resource in a VNet in a different region. "
-        resolvedIp;
+            "-  The endpoint is an Azure Resource in a VNet in a different region. ";
         subChecks.push({ title: `TCP ping to ${hostname} was succeeded`, level: 0 });
         views.push(new CheckStepView({
             title: msg + " - OK (TCP level)",
@@ -121,8 +64,7 @@ async function runConnectivityCheck(hostname, port, dnsServers, diagProvider, le
             "-  If the IP address resolved from hostname is no expected, then please check your DNS record configured in your DNS server or private DNS zone. \r\n\r\n" +
             "-  The endpoint is not reachable from the VNet, please double check if the endpoint server is correctly configured. \r\n\r\n" +
             "-  There is a TCP level firewall or a Network Security Group Rule blocking the traffic from this app. Please check your firewall or NSG rules if there are any. \r\n\r\n" +
-            "-  WEBSITE_ALWAYS_FALLBACK_TO_PUBLIC_DNS setting is not supported by this connectivity check yet, if custom DNS server fails to resolve the hostname, the check will fail.\r\n\r\n" +
-            resolvedIp;
+            "-  WEBSITE_ALWAYS_FALLBACK_TO_PUBLIC_DNS setting is not supported by this connectivity check yet, if custom DNS server fails to resolve the hostname, the check will fail.\r\n\r\n";
 
         subChecks.push({ title: `TCP ping to ${hostname} failed, timeout because target is unreachable`, level: 2 });
         views.push(new CheckStepView({
@@ -153,15 +95,75 @@ async function runConnectivityCheck(hostname, port, dnsServers, diagProvider, le
     return views;
 }
 
+async function checkNameResolvingAsync(hostname, siteInfo, diagProvider) {
+    var isContinue = true;
+    var views = [];
+    var ips = null;
+    var isIp = false;
+    var wordings = new NameResolvingAndIpWordings();
+    if (diagProvider.isIp(hostname)) {
+        ips = [hostname];
+        isIp = true;
+    }
+    else {
+        var result = await diagProvider.nameResolveAsync(hostname).catch(e => {
+            logDebugMessage(e);
+            return {};
+        });
+
+        if (result.ip != null) {
+            ips = result.ip.split(';');
+        } else {
+            isContinue = false;
+            views = views.concat(wordings.failedToResolveHostname.get(hostname));
+        }
+    }
+    if (isContinue) {
+        var appSettingChecker = new VnetAppSettingChecker(siteInfo, diagProvider);
+        var routeAll = await appSettingChecker.getVnetRouteAllAsync();
+        var ipResults = ips.filter(ip => diagProvider.isIp(ip, true)).map(ip => [ip, isRfc1918Ip(ip)]).map(p => [p[0], p[1], p[1] || routeAll]);
+        views.push(wordings.ipAnalysis.get(isIp ? null : hostname, ipResults));
+        var allRouteToVnet = routeAll || ipResults.map(r => r[2]).every(i => i);
+        if (allRouteToVnet) {
+            views.push(wordings.allIpRouteToVnet.get(hostname));
+        } else {
+            var allNotRouteToVnet = ipResults.map(r => r[2]).every(i => !i);
+            if (allNotRouteToVnet) {
+                views = views.concat(wordings.allIpNotRouteToVnet.get(hostname));
+            } else {
+                views = views.concat(wordings.notAllIpRouteToVnet.get(hostname));
+            }
+            isContinue = false;
+        }
+    }
+    return { views, isContinue };
+}
+
+function isRfc1918Ip(ip) {
+    var baseIps = ["10.0.0.0", "172.16.0.0", "192.168.0.0"];
+    var masks = ["255.0.0.0", "255.240.0.0", "255.255.0.0"];
+    var splitted = ip.split('.').map(i => parseInt(i));
+    for (var i = 0; i < 3; ++i) {
+        let maskSplitted = masks[i].split('.').map(i => parseInt(i));
+        let maskedIp = splitted.map((num, idx) => num & maskSplitted[idx]).join('.');
+        if (maskedIp == baseIps[i]) {
+            return true;
+        }
+    }
+    return false;
+}
+
 async function checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr, isKuduAccessiblePromise, dnsServers) {
     var state = null;
     var isKuduAccessible = await isKuduAccessiblePromise;
+    var vnetConfigChecker = new VnetIntegrationConfigChecker(siteInfo, diagProvider);
+    var vnetIntegrationType = await vnetConfigChecker.getVnetIntegrationTypeAsync();
     var connectivityCheckViews = (function generateConnectivityCheckViews() {
         if (!isKuduAccessible) {
             return [new CheckStepView({ title: "Connectivity check (tcpping and nameresolver) is not available due to Kudu is inaccessible.", level: 3 })];
         }
 
-        if (dnsServers.length === 0) {
+        if (dnsServers == null) {
             return [];
         }
 
@@ -210,7 +212,15 @@ async function checkNetworkConfigAndConnectivity(siteInfo, diagProvider, flowMgr
                         userInput = userInput.length > userInputLimitInUI ? userInput.substr(0, userInputLimitInUI) + "..." : userInput;
                     }
                 }
-                flowMgr.addViews(runConnectivityCheck(hostname, port, dnsServers, diagProvider, userInputLimitInUI), `Connecting to ${userInput}...`);
+                var isContinue = true;
+                if (vnetIntegrationType == "swift") {
+                    var nameResolvingPromise = checkNameResolvingAsync(hostname, siteInfo, diagProvider);
+                    flowMgr.addViews(nameResolvingPromise.then(p => p.views), "Analyzing target server ip...");
+                    isContinue = (await nameResolvingPromise).isContinue;
+                }
+                if (isContinue) {
+                    flowMgr.addViews(runConnectivityCheck(hostname, port, diagProvider, userInputLimitInUI), `Connecting to ${userInput}...`);
+                }
                 this.collapsed = true;
             }
         })];
