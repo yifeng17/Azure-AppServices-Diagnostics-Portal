@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, wtfStartTimeRange } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../startup/services/auth.service';
 import { ResourceService } from '../../../shared-v2/services/resource.service';
@@ -49,6 +49,15 @@ export class PortalReferrerResolverComponent implements OnInit {
 
   matchReferrerAndRoute(referrer: PortalReferrerInfo): void {
     let path = `resource${this._resourceService.resourceIdForRouting}`;
+    let startTimeStr = "";
+    let endTimeStr = "";
+    let queryParamsJson:{} = { "redirectFrom": "referrer" };
+    if (referrer.StartTime && referrer.EndTime)
+    {
+        startTimeStr = referrer.StartTime;
+        endTimeStr = referrer.EndTime;
+        queryParamsJson = {...queryParamsJson, startTime: startTimeStr, endTime: endTimeStr};
+    }
 
     if (
       referrer.DetectorType && (referrer.DetectorType.toLowerCase() === DetectorType.Analysis.toLowerCase() || referrer.DetectorType.toLowerCase() === DetectorType.Detector.toLowerCase()) &&
@@ -59,7 +68,9 @@ export class PortalReferrerResolverComponent implements OnInit {
         details: 'Redirect decided by Ibiza parameters.',
         referrerInformation: JSON.stringify(referrer),
         targetType: referrer.DetectorType,
-        target: referrer.DetectorId
+        target: referrer.DetectorId,
+        startTime: startTimeStr,
+        endTime: endTimeStr
       });
 
       if (referrer.DetectorType.toLowerCase() === DetectorType.Analysis.toLowerCase()) {
@@ -93,7 +104,9 @@ export class PortalReferrerResolverComponent implements OnInit {
           details: 'Redirect decided by detector map.',
           referrerInformation: JSON.stringify(referrer),
           targetType: referrerMatch.DetectorType,
-          target: referrerMatch.DetectorId
+          target: referrerMatch.DetectorId,
+          startTime: startTimeStr,
+          endTime: endTimeStr
         });
       }
       else {
@@ -107,6 +120,6 @@ export class PortalReferrerResolverComponent implements OnInit {
     }
 
     this.isEvaluating = false;
-    this._router.navigate([path], { queryParamsHandling: 'merge', queryParams: { "redirectFrom": "referrer" } });
+    this._router.navigate([path], { queryParamsHandling: 'merge', queryParams: queryParamsJson });
   }
 }

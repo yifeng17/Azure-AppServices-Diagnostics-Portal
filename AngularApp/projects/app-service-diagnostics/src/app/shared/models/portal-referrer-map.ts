@@ -13,5 +13,7 @@ export interface PortalReferrerInfo {
     BladeName: string,
     TabName: string,
     DetectorType?: DetectorType,
-    DetectorId?: string
+    DetectorId?: string,
+    StartTime?: string,
+    EndTime?: string
 }

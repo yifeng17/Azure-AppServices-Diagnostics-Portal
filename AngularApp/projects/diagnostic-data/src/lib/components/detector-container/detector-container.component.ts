@@ -193,19 +193,21 @@ export class DetectorContainerComponent implements OnInit {
     let additionalQueryString = '';
     let knownQueryParams = ['startTime', 'endTime'];
     let queryParamsToSkipForAnalysis = ['startTimeChildDetector', 'endTimeChildDetector'];
+
     Object.keys(allRouteQueryParams).forEach(key => {
-      if (knownQueryParams.indexOf(key) < 0) {
-        if (this.isAnalysisDetector()) {
-          if (queryParamsToSkipForAnalysis.indexOf(key) < 0) {
-            additionalQueryString += `&${key}=${encodeURIComponent(allRouteQueryParams[key])}`;
-          }
-        }
-        else {
-          additionalQueryString += `&${key}=${encodeURIComponent(allRouteQueryParams[key])}`;
-        }
+      if (knownQueryParams.indexOf(key) >= 0 || this.isAnalysisDetector() && queryParamsToSkipForAnalysis.indexOf(key) < 0)
+      {
+         additionalQueryString += `&${key}=${encodeURIComponent(allRouteQueryParams[key])}`;
       }
     });
 
+    if (allRouteQueryParams['startTime'] && allRouteQueryParams['endTime'])
+    {
+        startTime = allRouteQueryParams['startTime'];
+        endTime = allRouteQueryParams['endTime'];
+    }
+
+    // If the current detector is a child detector under an analysis view, overwrite startTime and endTime
     if (this.analysisMode) {
       var startTimeChildDetector: string = allRouteQueryParams['startTimeChildDetector'];
       var endTimeChildDetector: string = allRouteQueryParams['endTimeChildDetector'];
@@ -217,8 +219,6 @@ export class DetectorContainerComponent implements OnInit {
         endTime = endTimeChildDetector;
       }
     }
-
-
 
     this._diagnosticService.getDetector(this.detectorName, startTime, endTime,
       invalidateCache, this.detectorControlService.isInternalView, additionalQueryString)
