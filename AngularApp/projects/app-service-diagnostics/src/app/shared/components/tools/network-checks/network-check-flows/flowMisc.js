@@ -205,7 +205,7 @@ export async function checkVnetIntegrationV2Async(siteInfo, diagProvider, flowMg
                                     subnetStatus = 1;
                                 }
                             } else {
-                                subnetSubChecks.push(wordings.subnetSalMissing.get());
+                                views.push(wordings.subnetSalMissing.get(subnetResourceId, subnetSubChecks));
                                 subnetStatus = 2;
                                 isContinue = false;
                             }
@@ -239,7 +239,7 @@ export async function checkVnetIntegrationV2Async(siteInfo, diagProvider, flowMg
                             }
 
                         } else {
-                            if (subnetData.status == 401) {
+                            if (subnetData.status == 401 || subnetData.status == 403) {
                                 views.push(wordings.noAccessToResource.get(subnetResourceId, "subnet", diagProvider.portalDomain));
                             } else if (subnetData.status == 404) {
                                 views.push(wordings.subnetNotFound.get(subnetSubChecks, subnetResourceId));

@@ -174,12 +174,26 @@ export class VnetIntegrationWordings {
         }
 
         this.subnetSalMissing = {
-            get() {
-                var view = new CheckStepView({
+            get(subnetName, subChecks) {
+                subChecks.push(new CheckStepView({
                     title: "Subnet doesn't have an AppServiceLink Service Association Link",
                     level: 1
+                }));
+
+                subnetName = makeBreakable(subnetName);
+
+                var msg = `<table>`;
+                msg += `<tr><td><b>VNet Integration Status</b></td><td>Failed</td></tr>`;
+                msg += `<tr><td><b>Cause</b></td><td>Service Association Link is missing on the subnet <b>${subnetName}</b> </td></tr>`;
+                msg += `<tr><td><b>Recommended Action</b></td><td>Please disconnect all the apps that are connected to subnet <b>${subnetName}</b> and connect again to generate service association link.</td></tr>`;
+                msg += `</table>`;
+
+                var stepView = new InfoStepView({
+                    infoType: 1,
+                    title: "Issue found: Service Association Link not initialized",
+                    markdown: msg
                 });
-                return view;
+                return stepView;
             }
         }
 
