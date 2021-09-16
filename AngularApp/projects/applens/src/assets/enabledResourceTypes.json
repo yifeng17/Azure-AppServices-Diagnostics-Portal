@@ -430,6 +430,14 @@
             "pesId": "",
             "staticSelfHelpContent": "",
             "searchSuffix": "Azure Stack Hub"
-        }        
+        },
+        {
+            "service": "ResourceService",
+            "resourceType": "Microsoft.ResourceConnector/appliances",
+            "templateFileName": "ArcAppliance",
+            "imgSrc": "assets/img/ArcK8s-Logo.svg",
+            "versionPrefix": "",
+            "azureCommImpactedServicesList": ""
+        }
     ]
 }
