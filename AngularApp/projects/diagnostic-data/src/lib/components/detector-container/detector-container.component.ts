@@ -191,8 +191,9 @@ export class DetectorContainerComponent implements OnInit {
     let invalidateCache = hardRefresh ? hardRefresh : this.detectorControlService.shouldRefresh;
     let allRouteQueryParams = this._route.snapshot.queryParams;
     let additionalQueryString = '';
+    // Keeping knownQueryParams in case we need to append query parameters in the future
     let knownQueryParams = [];
-    let queryParamsToSkipForAnalysis = ['startTimeChildDetector', 'endTimeChildDetector'];
+    let queryParamsToSkipForAnalysis = ['startTime','endTime','startTimeChildDetector', 'endTimeChildDetector'];
 
     Object.keys(allRouteQueryParams).forEach(key => {
       if (knownQueryParams.indexOf(key) >= 0 || this.isAnalysisDetector() && queryParamsToSkipForAnalysis.indexOf(key) < 0)
