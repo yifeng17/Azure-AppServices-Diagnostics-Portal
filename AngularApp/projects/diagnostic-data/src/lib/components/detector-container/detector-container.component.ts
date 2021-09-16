@@ -191,7 +191,7 @@ export class DetectorContainerComponent implements OnInit {
     let invalidateCache = hardRefresh ? hardRefresh : this.detectorControlService.shouldRefresh;
     let allRouteQueryParams = this._route.snapshot.queryParams;
     let additionalQueryString = '';
-    let knownQueryParams = ['startTime', 'endTime'];
+    let knownQueryParams = [];
     let queryParamsToSkipForAnalysis = ['startTimeChildDetector', 'endTimeChildDetector'];
 
     Object.keys(allRouteQueryParams).forEach(key => {
@@ -200,12 +200,6 @@ export class DetectorContainerComponent implements OnInit {
          additionalQueryString += `&${key}=${encodeURIComponent(allRouteQueryParams[key])}`;
       }
     });
-
-    if (allRouteQueryParams['startTime'] && allRouteQueryParams['endTime'])
-    {
-        startTime = allRouteQueryParams['startTime'];
-        endTime = allRouteQueryParams['endTime'];
-    }
 
     // If the current detector is a child detector under an analysis view, overwrite startTime and endTime
     if (this.analysisMode) {

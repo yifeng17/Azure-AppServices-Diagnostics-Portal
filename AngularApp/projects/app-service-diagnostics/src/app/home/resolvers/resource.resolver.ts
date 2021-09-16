@@ -11,6 +11,13 @@ export class ResourceResolver implements Resolve<Observable<{} | ArmResource>> {
     // Live Chat Service is included here so that we ensure an instance is created
 
     resolve(activatedRouteSnapshot: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<{} | ArmResource> {
+        let startTime = activatedRouteSnapshot.queryParams['startTime'];
+        let endTime = activatedRouteSnapshot.queryParams['endTime'];
+        if (!!startTime && !!endTime)
+        {
+            this._detectorControlService.setCustomStartEnd(startTime, endTime);
+        }
+
         if (!this._detectorControlService.startTime) {
 
             this._detectorControlService.setDefault();
@@ -21,7 +28,7 @@ export class ResourceResolver implements Resolve<Observable<{} | ArmResource>> {
             .filter(x => x.path !== 'new' && x.path !== 'categories')
             .map(x => x.path)
             .join('/');
-        
+
         if (this.checkResourceUriIsEmpty(resourceUri)) {
             const url = state.url;
             const startIndex = url.indexOf("subscriptions/") > -1 ? url.indexOf("subscriptions/") : 0;
@@ -35,11 +42,11 @@ export class ResourceResolver implements Resolve<Observable<{} | ArmResource>> {
         }
 
         if(this.validateResourceUri(resourceUri)){
-            return this._resourceService.registerResource(resourceUri);    
+            return this._resourceService.registerResource(resourceUri);
         }else {
             return of({});
         }
-        
+
     }
 
     private checkResourceUriIsEmpty(resourceUri: string): boolean {

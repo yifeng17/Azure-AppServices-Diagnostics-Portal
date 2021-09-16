@@ -77,7 +77,7 @@ export class PortalActionService {
                 },
                 {
                     key: "endTime",
-                    value: startTime
+                    value: endTime
                 }]
             }
         };
