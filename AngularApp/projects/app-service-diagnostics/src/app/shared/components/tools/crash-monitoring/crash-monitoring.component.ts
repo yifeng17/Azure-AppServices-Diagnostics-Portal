@@ -40,9 +40,7 @@ export class CrashMonitoringComponent implements OnInit {
   today: Date = new Date(Date.now());
   memoryDumpOptions: IDropdownOption[] = [];
 
-  // TODO: Revert this to 30 days after timer overflow issue is fixed
-  //maxDate: Date = this.convertUTCToLocalDate(addMonths(this.today, 1))
-  maxDate: Date = this.convertUTCToLocalDate(addDays(this.today, 20));
+  maxDate: Date = this.convertUTCToLocalDate(addMonths(this.today, 1));
   minDate: Date = this.convertUTCToLocalDate(this.today);
   startDate: Date = this.minDate;
   endDate: Date = addDays(this.startDate, 15);
@@ -130,9 +128,7 @@ export class CrashMonitoringComponent implements OnInit {
   resetGlobals() {
     this.today = new Date(Date.now());
 
-    // TODO: Revert this to 30 days after timer overflow issue is fixed
-    //this.maxDate = this.convertUTCToLocalDate(addMonths(this.today, 1))
-    this.maxDate = this.convertUTCToLocalDate(addDays(this.today, 20));
+    this.maxDate = this.convertUTCToLocalDate(addMonths(this.today, 1));
     this.minDate = this.convertUTCToLocalDate(this.today)
     this.startDate = this.minDate;
     this.endDate = addDays(this.startDate, 15);
