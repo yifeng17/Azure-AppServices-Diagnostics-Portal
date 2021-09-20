@@ -51,7 +51,7 @@ export class PortalActionService {
         this._portalService.openBlade(bladeInfo, 'troubleshoot');
     }
 
-    public openBladeDiagnoseDetectorId(category: string, detector: string, type: DetectorType = DetectorType.Detector) {
+    public openBladeDiagnoseDetectorId(category: string, detector: string, type: DetectorType = DetectorType.Detector, startTime?: string, endTime ?: string) {
         const bladeInfo = {
             title: category,
             detailBlade: 'SCIFrameBlade',
@@ -70,6 +70,14 @@ export class PortalActionService {
                 {
                     key: "detectorType",
                     value: type
+                },
+                {
+                    key: "startTime",
+                    value: startTime
+                },
+                {
+                    key: "endTime",
+                    value: endTime
                 }]
             }
         };

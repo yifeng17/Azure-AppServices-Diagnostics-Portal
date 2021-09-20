@@ -59,6 +59,14 @@ export class ResourceRedirectComponent implements OnInit {
           let path = 'resource' + info.resourceId.toLowerCase();
           var caseSubject = null;
           if (Array.isArray(info.optionalParameters)) {
+            let startTime = info.optionalParameters.find(param => param.key === "startTime");
+            let endTime = info.optionalParameters.find(param => param.key === "endTime");
+
+            if (startTime && endTime)
+            {
+                navigationExtras.queryParams = {...navigationExtras.queryParams, startTime: startTime.value, endTime: endTime.value};
+            }
+
             var caseSubjectParam = info.optionalParameters.find(param => param.key === "caseSubject");
             if (caseSubjectParam) {
               caseSubject = caseSubjectParam.value;
@@ -75,6 +83,7 @@ export class ResourceRedirectComponent implements OnInit {
           if (info.supportTopicId) {
             path += `/supportTopicId`;
             navigationExtras.queryParams = {
+              ...navigationExtras.queryParams,
               supportTopicId: info.supportTopicId,
               caseSubject: caseSubject,
               pesId: info.pesId
@@ -98,6 +107,8 @@ export class ResourceRedirectComponent implements OnInit {
                 let detectorTypeParam = info.optionalParameters.find(param => param.key === "detectorType");
                 let detectorIdParam = info.optionalParameters.find(param => param.key === "detectorId");
                 let toolIdParam = info.optionalParameters.find(param => param.key === "toolId");
+                let startTime = info.optionalParameters.find(param => param.key === "startTime");
+                let endTime = info.optionalParameters.find(param => param.key === "endTime");
 
                 if (detectorIdParam && detectorTypeParam) {
                   if (detectorTypeParam.value === DetectorType.Detector) {
@@ -109,13 +120,17 @@ export class ResourceRedirectComponent implements OnInit {
                   path += `/tools/${toolIdParam.value}`;
                 }
 
+                if (startTime && endTime)
+                {
+                    navigationExtras.queryParams = {...navigationExtras.queryParams, startTime: startTime.value, endTime: endTime.value};
+                }
+
                 this._router.navigateByUrl(
                   this._router.createUrlTree([path], navigationExtras)
                 );
               }
             }
           }
-
         } else {
           if (!environment.production) {
             this._router.navigateByUrl('/test');
