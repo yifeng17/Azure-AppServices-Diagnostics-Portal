@@ -14,7 +14,6 @@ function delay(second: number): Promise<void> {
         setTimeout(resolve, second * 1000));
 }
 
-
 export class DiagProvider {
     private _siteInfo: SiteInfoMetaData & Site & { fullSiteName: string };
     private _armService: ArmService;
@@ -122,6 +121,29 @@ export class DiagProvider {
                 e.stack = stack.replace("error_message_placeholder", e.message || "");
                 throw e;
             });
+    }
+
+    public postDaaSExtApiAsync(api: string, body?: any, timeoutInSec: number = 15): Promise<any>  {
+        var params = "api-version=2015-08-01";
+        var prefix = `management.azure.com/${this._siteInfo.resourceUri}/extensions/DaaS/api`;
+
+        var stack = new Error("error_message_placeholder").stack;
+        var promise = this._armService.post(`https://${prefix}/${api}?${params}`, body)
+            .toPromise()
+            .catch(e => {
+                e.stack = stack.replace("error_message_placeholder", e);
+                throw e;
+            });
+        var timeoutPromise = delay(timeoutInSec).then(() => {
+            throw new Error(`postDaaSExtApiAsync timeout after ${timeoutInSec}s`);
+        });
+        return Promise.race([promise, timeoutPromise]);
+    }
+
+    public async checkConnectionStringAsync(connectionString: string, type: string, timeoutInSec: number = 30): Promise<any> 
+    {
+        var result: any = await this.postDaaSExtApiAsync("connectionstringvalidation/validate", { "ConnectionString": connectionString, "Type": type }, timeoutInSec);
+        return result;
     }
 
     public getKuduApiAsync(uri: string, instance?: string, timeoutInSec: number = 15, scm = false): Promise<any> {
@@ -289,6 +311,16 @@ export class DiagProvider {
         try {
             var result = await this.runKuduCommand("echo ok", undefined, undefined, timeoutInSec);
             return result == "ok";
+        } catch (error) {
+            return false;
+        }
+    }
+
+    public async checkDaasExtReachable(timeoutInSec: number): Promise<boolean> {
+        try {
+            var result = await this.checkConnectionStringAsync("dummy-connection-string", "StorageAccount");
+            
+            return (result != undefined);
         } catch (error) {
             return false;
         }

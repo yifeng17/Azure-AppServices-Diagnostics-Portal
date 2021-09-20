@@ -61,7 +61,7 @@ root
 - Clone repo `git clone https://github.com/Azure/Azure-AppServices-Diagnostics-Portal.git`
 - Either:
   - Install required dependencies locally by navigating to the angular root folder `AngularApp` and runing `npm install` (This will install all the required packages.) OR
-  - Build and run a docker container that has all dependencies. Run AngularApp/buildimage.sh (or buildimage.bat on Windows) once to build an image locally and then AngularApp/startcontainer.sh (or startcontaine.bat on Windows) to build a container from that image and open a terminal on it.  Once the container is created, you can use the docker UI to stop/start and open a terminal to the container.
+  - Build and run a docker container that has all dependencies. Run AngularApp/buildimage.sh (or buildimage.bat on Windows) once to build an image locally and then AngularApp/startcontainer.sh (or startcontainer.bat on Windows) to build a container from that image and open a terminal on it.  Once the container is created, you can use the docker UI to stop/start and open a terminal to the container.
 
 ## App Service Diagnostics Portal
 
@@ -87,8 +87,11 @@ root
 6. Run the SSL server
    - Run `npm run ssl-local`
    - Navigate to `https://localhost:3000` to confirm the server is up
-   - Access the resource denoted by the Resource ID you copied using the [Local Portal Test URL](https://ms.portal.azure.com/?websitesextension_ext=asd.env%3Dlocal)
-   - This will load the iframe from `https://localhost:3000`. Must be running in *ssl* mode.
+
+
+### Testing Local Changes in the Azure Portal
+  - Navigate to the Auzure portal with website extension specified as local: [Local Portal Test URL](https://ms.portal.azure.com/?websitesextension_ext=asd.env%3Dlocal)
+   - This will load the "Diagnose and solve problems" iframe from `https://localhost:3000`. (Must be running in *ssl* mode).
    - Any changes made to the locally hosted project will be automatically refreshed in the Portal
 
 ### Testing Local Changes in the Portal
