@@ -207,11 +207,8 @@ export class DetectorControlService {
     if (this.getTimeDurationError(start, end) === '') {
       this._startTime = startTime;
       this._endTime = endTime;
-      if (!!refreshInstanceId)
+      if (!refreshInstanceId)
       {
-        this._refreshData(refreshInstanceId)
-      }
-      else{
         this._refreshData("V3ControlRefresh");
       }
     }
