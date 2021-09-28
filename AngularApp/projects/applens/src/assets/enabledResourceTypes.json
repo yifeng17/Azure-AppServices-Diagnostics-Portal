@@ -409,11 +409,22 @@
             "staticSelfHelpContent": "",
             "searchSuffix": "Azure Media Service"
         },
-         {
+        {
             "service": "ResourceService",
             "resourceType": "Microsoft.HybridNetwork/networkFunctions",
             "templateFileName": "networkFunctions",
             "imgSrc": "assets/img/Azure-Network-Function-Manager-Logo.svg",
+            "versionPrefix": "",
+            "azureCommImpactedServicesList": "",
+            "pesId": "",
+            "staticSelfHelpContent": "",
+            "searchSuffix": "Azure Network Function Manager"
+        },
+        {
+            "service": "ResourceService",
+            "resourceType": "Microsoft.HybridNetwork/devices",
+            "templateFileName": "devices",
+            "imgSrc": "assets/img/Azure-Network-Function-Manager-Device-Logo.svg",
             "versionPrefix": "",
             "azureCommImpactedServicesList": "",
             "pesId": "",
