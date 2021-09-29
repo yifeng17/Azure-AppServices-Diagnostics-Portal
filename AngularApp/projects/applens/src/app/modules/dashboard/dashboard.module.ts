@@ -17,7 +17,7 @@ import { ResourceService } from '../../shared/services/resource.service';
 import { ResourceServiceFactory } from '../../shared/providers/resource.service.provider';
 import { ResourceHomeComponent } from './resource-home/resource-home.component';
 import { OnboardingFlowComponent } from './onboarding-flow/onboarding-flow.component';
-import { TabCommonComponent } from './tabs/tab-common/tab-common.component';
+import { TabCommonComponent, TabKey } from './tabs/tab-common/tab-common.component';
 import { TabDataComponent } from './tabs/tab-data/tab-data.component';
 import { TabDevelopComponent } from './tabs/tab-develop/tab-develop.component';
 import { ApplensDiagnosticService } from './services/applens-diagnostic.service';
@@ -25,7 +25,7 @@ import { ApplensCommsService } from './services/applens-comms.service';
 import { ApplensSupportTopicService } from './services/applens-support-topic.service';
 import { ApplensContentService } from './services/applens-content.service';
 import { DiagnosticService, DiagnosticDataModule, CommsService, DetectorControlService, GenericSupportTopicService, GenericContentService, GenericDocumentsSearchService, GenieGlobals, SolutionOrchestratorComponent } from 'diagnostic-data';
-import { FabButtonModule, FabCalendarComponent, FabCalendarModule, FabCalloutModule, FabCheckboxModule, FabChoiceGroupModule, FabCommandBarModule, FabDatePickerModule, FabDetailsListModule, FabDialogModule, FabIconModule, FabPanelModule, FabPivotModule, FabSearchBoxModule, FabTextFieldModule } from '@angular-react/fabric';
+import { FabButtonModule, FabCalendarComponent, FabCalendarModule, FabCalloutModule, FabCheckboxModule, FabChoiceGroupModule, FabCommandBarModule, FabDatePickerModule, FabDetailsListModule, FabDialogModule, FabDropdownModule, FabIconModule, FabPanelModule, FabPivotModule, FabSearchBoxModule, FabTextFieldModule } from '@angular-react/fabric';
 import { CollapsibleMenuModule } from '../../collapsible-menu/collapsible-menu.module';
 import { ObserverService } from '../../shared/services/observer.service';
 import { TabDataSourcesComponent } from './tabs/tab-data-sources/tab-data-sources.component';
@@ -243,7 +243,10 @@ export const DashboardModuleRoutes: ModuleWithProviders = RouterModule.forChild(
                 children: [
                     {
                         path: '',
-                        component: TabDataComponent
+                        component: TabDataComponent,
+                        data: {
+                            tabKey: TabKey.Data
+                        }
                     },
                     {
                         path: 'data',
@@ -251,7 +254,10 @@ export const DashboardModuleRoutes: ModuleWithProviders = RouterModule.forChild(
                     },
                     {
                         path: 'edit',
-                        component: TabDevelopComponent
+                        component: TabDevelopComponent,
+                        data: {
+                            tabKey: TabKey.Develop
+                        }
                     }, {
                         path: 'changelist',
                         component: TabChangelistComponent
@@ -351,7 +357,8 @@ export const DashboardModuleRoutes: ModuleWithProviders = RouterModule.forChild(
         FabChoiceGroupModule,
         FabPivotModule,
         FabDatePickerModule,
-        FabCalendarModule
+        FabCalendarModule,
+        FabDropdownModule
     ],
     providers: [
         ApplensDiagnosticService,
