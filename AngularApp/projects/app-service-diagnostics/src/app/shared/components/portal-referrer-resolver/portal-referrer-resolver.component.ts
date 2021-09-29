@@ -52,6 +52,12 @@ export class PortalReferrerResolverComponent implements OnInit {
     let startTimeStr = "";
     let endTimeStr = "";
     let queryParamsJson:{} = { "redirectFrom": "referrer" };
+
+    if (!!referrer.CategoryId) {
+        let categoryId = referrer.CategoryId;
+        path += `/categories/${categoryId}`;
+    }
+
     if (referrer.StartTime && referrer.EndTime)
     {
         startTimeStr = referrer.StartTime;
