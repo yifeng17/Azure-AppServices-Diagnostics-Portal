@@ -43,7 +43,11 @@ export class SiteRiskAlertService extends RiskAlertService {
         enableForCaseSubmissionFlow: true,
     }];
 
-    private _linuxAppRiskAlertConfigs = [];
+    private _linuxAppRiskAlertConfigs = [{
+        title: "Availability",
+        riskAlertDetectorId: "liuxAppAvailablityRiskAlert",
+        enableForCaseSubmissionFlow: true,
+    }];
 
     private _siteRiskAlertConfigs: SiteFilteredItem<RiskAlertConfig[]>[] = [
         {

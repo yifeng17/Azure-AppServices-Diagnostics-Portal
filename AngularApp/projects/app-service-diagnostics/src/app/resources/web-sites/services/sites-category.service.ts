@@ -65,7 +65,7 @@ export class SitesCategoryService extends CategoryService {
         chatEnabled: false
       }
     },
-    // Linux App Service 
+    // Linux App Service
     {
       appType: AppType.WebApp,
       platform: OperatingSystem.linux,
@@ -330,7 +330,7 @@ export class SitesCategoryService extends CategoryService {
         overridePath: `resource${siteId}/diagnosticTools`
       }
     },
-    // Linux App Service                                       
+    // Linux App Service
     {
         appType: AppType.WebApp,
         platform: OperatingSystem.linux,
@@ -358,7 +358,7 @@ export class SitesCategoryService extends CategoryService {
         item: {
           id: 'DiagnosticTools',
           name: 'Diagnostic Tools',
-          overviewDetectorId:'DiagnosticTools',
+          overviewDetectorId:'LinuxDiagnosticTools',
           description: 'Run proactive tools to automatically mitigate the app.',
           keywords: ['Auto-Heal'],
           color: 'rgb(170, 192, 208)',
