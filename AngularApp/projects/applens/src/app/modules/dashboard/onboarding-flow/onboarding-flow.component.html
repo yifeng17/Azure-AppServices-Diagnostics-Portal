@@ -151,10 +151,10 @@
   </fab-dialog>
 
   <fab-dialog [hidden]="gistDialogHidden" (onDismiss)="dismissGistDialog()">
-    <fab-dialog-content [title]="gistUpdateTitle" subText="tempSubText">
+    <fab-dialog-content [title]="gistUpdateTitle">
       <fab-dropdown *ngIf="gists.length > 0" label="Gist name" placeholder="Field value"
         [options]="gistsDropdownOptions" (onChange)="updateGistVersionOptions($event)"></fab-dropdown>
-      <fab-dropdown *ngIf="gistName" label="Gist version" (onChange)="gistVersionOnChange($event)" placeholder="Field value" [options]="gistVersionOptions">
+      <fab-dropdown [disabled]="!gistName" label="Gist version" (onChange)="gistVersionOnChange($event)" placeholder="Field value" [options]="gistVersionOptions">
       </fab-dropdown>
       <div class="mt-5">
         <fab-primary-button *ngIf="gists.length > 0" text="Update" (onClick)="gistVersionChange()" class="mr-3"></fab-primary-button>

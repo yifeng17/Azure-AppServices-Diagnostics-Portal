@@ -406,7 +406,7 @@ export class OnboardingFlowComponent implements OnInit {
       });
     });    
     if (this.gists.length == 0){
-      this.gistUpdateTitle = "no gists available";
+      this.gistUpdateTitle = "No gists available";
     }
     else{
       this.gistUpdateTitle = "Update Gist version"
