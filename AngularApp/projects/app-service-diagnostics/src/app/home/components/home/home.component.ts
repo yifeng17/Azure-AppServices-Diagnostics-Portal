@@ -54,9 +54,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
     showRiskSection: boolean = true;
     private _showSwitchBanner: boolean = false;
     get showSwitchBanner():boolean {
-        //Enable banner for Linux Web App
-        if(this.isLinuxApp && this.isWebApp) return true;
-        const typeSwitchItem = allowV3PResourceTypeList.find(item => this._resourceService.resource && this._resourceService.resource.type.toLowerCase() === item.type.toLowerCase());
+        //Enable banner for Linux Web/Function App
+        if(this.isLinuxApp) return true;
+        const typeSwitchItem = allowV3PResourceTypeList.find(item => this._resourceService.resource && this._resourceService.resource.type && this._resourceService.resource.type.toLowerCase() === item.type.toLowerCase());
         const allowResourceTypeSwitch = typeSwitchItem === undefined ? false : typeSwitchItem.allowSwitchBack;
         return allowResourceTypeSwitch && this._showSwitchBanner;
     }

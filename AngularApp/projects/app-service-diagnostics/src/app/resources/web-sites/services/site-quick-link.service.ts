@@ -36,6 +36,19 @@ export class SiteQuickLinkService extends QuickLinkService {
             ],
         },
         {
+            appType: AppType.WebApp,
+            platform: OperatingSystem.linux,
+            stack: '',
+            sku: Sku.All,
+            hostingEnvironmentKind: HostingEnvironmentKind.All,
+            item: [
+                'LinuxLogViewer',
+                'LinuxAppDown',
+                'LinuxAppSlow',
+                'LinuxProcessFullList'
+            ],
+        },
+        {
             appType: AppType.FunctionApp,
             platform: OperatingSystem.windows | OperatingSystem.linux,
             stack: '',

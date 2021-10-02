@@ -81,7 +81,7 @@ export class VersionTestService {
     private isVnextResourceType(site: Site, resourceType: ResourceType): boolean {
         let isLinuxPlatform = site && site.kind && site.kind.toLowerCase().indexOf('linux') >= 0;
         // return resourceType === ResourceType.Site && site && (site.appType === AppType.WebApp || site.appType == AppType.FunctionApp) && !isLinuxPlatform;
-        return resourceType === ResourceType.Site && site && (site.appType === AppType.WebApp || (site.appType == AppType.FunctionApp && !isLinuxPlatform));
+        return resourceType === ResourceType.Site && site && (site.appType === AppType.WebApp || site.appType == AppType.FunctionApp);
     }
 
     private isVnextSubscription(subscriptionId: string, percentageToRelease: number = 0.1): boolean {
