@@ -15,7 +15,7 @@ import { RecommendedUtterance } from '../../../../../../diagnostic-data/src/publ
 import { TelemetryService } from '../../../../../../diagnostic-data/src/lib/services/telemetry/telemetry.service';
 import { TelemetryEventNames } from '../../../../../../diagnostic-data/src/lib/services/telemetry/telemetry.common';
 import { environment } from '../../../../environments/environment';
-import { IButtonStyles, IChoiceGroupOption, IDropdownOption, IDropdownProps, IPanelProps, IPivotProps, PanelType } from 'office-ui-fabric-react';
+import { IButtonStyles, IChoiceGroupOption, IContextualMenuItem, IDropdownOption, IDropdownProps, IPanelProps, IPivotProps, PanelType } from 'office-ui-fabric-react';
 import { addMonths } from 'office-ui-fabric-react/lib/utilities/dateMath/DateMath';
 import { BehaviorSubject } from 'rxjs';
 import { ICommandBarItemOptions } from '@angular-react/fabric/src/lib/components/command-bar/public-api';
@@ -159,10 +159,13 @@ export class OnboardingFlowComponent implements OnInit {
     root: { cursor: "default" }
   };
   publishButtonStyle: any = {
-    root: { cursor: "not-allowed" }
+    root: {
+      cursor: "not-allowed",
+      color: "grey"
+    }
   };
 
-  
+
 
   detectorGraduation: boolean = false;
 
@@ -202,12 +205,21 @@ export class OnboardingFlowComponent implements OnInit {
     }
   }
 
+  runIcon: any = { iconName: 'Play' };
+
+  publishIcon: any = {
+    iconName: 'Upload',
+    styles: {
+      root: { color: "grey" }
+    }
+  };
+
   submittedPanelStyles: IPanelProps["styles"] = {
     root: {
       height: "120px"
     },
-    content:{
-      padding:"0px"
+    content: {
+      padding: "0px"
     }
   }
 
@@ -283,10 +295,10 @@ export class OnboardingFlowComponent implements OnInit {
       });
     }));
 
-    if (this._detectorControlService.isInternalView){
+    if (this._detectorControlService.isInternalView) {
       this.internalExternalText = this.internalViewText;
     }
-    else{
+    else {
       this.internalExternalText = this.externalViewText;
     }
     // try{
@@ -310,11 +322,11 @@ export class OnboardingFlowComponent implements OnInit {
 
   }
 
-  internalExternalToggle(){
-    if (this.internalExternalText === this.externalViewText){
+  internalExternalToggle() {
+    if (this.internalExternalText === this.externalViewText) {
       this.internalExternalText = this.internalViewText;
     }
-    else{
+    else {
       this.internalExternalText = this.externalViewText;
     }
 
@@ -329,7 +341,7 @@ export class OnboardingFlowComponent implements OnInit {
 
   gistVersionChange() {
     var newGist;
-    
+
     Object.keys(this.temporarySelection).forEach(id => {
       if (this.temporarySelection[id]['version'] !== this.configuration['dependencies'][id]) {
         this.configuration['dependencies'][id] = this.temporarySelection[id]['version'];
@@ -340,23 +352,28 @@ export class OnboardingFlowComponent implements OnInit {
     this.gistDialogHidden = true;
   }
 
-  updateGistVersionOptions(event: string){
+  updateGistVersionOptions(event: string) {
     this.gistName = event["option"].text;
     this.gistVersionOptions = [];
+    var tempList = [];
     this.githubService.getChangelist(this.gistName)
-    .subscribe((version: Commit[]) => {
-      version.forEach(v => this.gistVersionOptions.push({
-        key: String(`${v["sha"]}`),
-        text: String(`${v["author"]}: ${v["dateTime"]}`),
-        title: String(`${this.gistName}`)
-      }));
-    });
+      .subscribe((version: Commit[]) => {
+        version.forEach(v => tempList.push({
+          key: String(`${v["sha"]}`),
+          text: String(`${v["author"]}: ${v["dateTime"]}`),
+          title: String(`${this.gistName}`)
+        }));
+        this.gistVersionOptions = tempList.reverse();
+        //this.gistVersionOptions = tempList.sort((a, b) => a.text.substring(a.text.indexOf(":")) < b.text.substring(b.text.indexOf(":")) ? -1 : 1);
+        if (this.gistVersionOptions.length > 10) { this.gistVersionOptions = this.gistVersionOptions.slice(0, 10); }
+      });
+
   }
 
-  gistVersionOnChange(event: string){
+  gistVersionOnChange(event: string) {
     this.temporarySelection[event["option"]["title"]]['version'] = event["option"]["key"];
-    
-    this.githubService.getCommitContent(event["option"]["title"], this.temporarySelection[event["option"]["title"]]['version'] ).subscribe(x => {
+
+    this.githubService.getCommitContent(event["option"]["title"], this.temporarySelection[event["option"]["title"]]['version']).subscribe(x => {
       this.temporarySelection[event["option"]["title"]]['code'] = x;
     });
   }
@@ -371,14 +388,34 @@ export class OnboardingFlowComponent implements OnInit {
   disableRunButton() {
     this.runButtonDisabled = true;
     this.runButtonStyle = {
-      root: { cursor: "not-allowed" }
+      root: {
+        cursor: "not-allowed",
+        color: "grey"
+      }
+    };
+    this.runIcon = {
+      iconName: 'Play',
+      styles: {
+        root: {
+          color: 'grey'
+        }
+      }
     };
   }
 
   disablePublishButton() {
     this.publishButtonDisabled = true;
     this.publishButtonStyle = {
-      root: { cursor: "not-allowed" }
+      root: {
+        cursor: "not-allowed",
+        color: "grey"
+      }
+    };
+    this.publishIcon = {
+      iconName: 'Upload',
+      styles: {
+        root: { color: "grey" }
+      }
     };
   }
 
@@ -387,6 +424,7 @@ export class OnboardingFlowComponent implements OnInit {
     this.runButtonStyle = {
       root: { cursor: "default" }
     };
+    this.runIcon = { iconName: 'Play' };
   }
 
   enablePublishButton() {
@@ -394,9 +432,10 @@ export class OnboardingFlowComponent implements OnInit {
     this.publishButtonStyle = {
       root: { cursor: "default" }
     };
+    this.publishIcon = { iconName: 'Upload' };
   }
 
-  showGistDialog(){
+  showGistDialog() {
     this.gistsDropdownOptions = [];
     this.gists = Object.keys(this.configuration['dependencies']);
     this.gists.forEach(g => {
@@ -404,17 +443,17 @@ export class OnboardingFlowComponent implements OnInit {
         key: String(g),
         text: String(g)
       });
-    });    
-    if (this.gists.length == 0){
+    });
+    if (this.gists.length == 0) {
       this.gistUpdateTitle = "No gists available";
     }
-    else{
+    else {
       this.gistUpdateTitle = "Update Gist version"
     }
     this.gistDialogHidden = false;
     this.gists.forEach(g => this.temporarySelection[g] = { version: this.configuration['dependencies'][g], code: '' });
   }
-  dismissGistDialog(){
+  dismissGistDialog() {
     this.gistDialogHidden = true;
   }
 
@@ -790,7 +829,7 @@ export class OnboardingFlowComponent implements OnInit {
     this.currentTime = moment(Date.now()).format("hh:mm A");
     this.submittedPanelTimer = setTimeout(() => {
       this.dismissPublishSuccessHandler();
-    }, 3000);
+    }, 100000);
   }
 
   dismissPublishSuccessHandler() {
@@ -832,7 +871,7 @@ export class OnboardingFlowComponent implements OnInit {
       this.detectorName = this.publishingPackage.id;
       this.publishSuccess = true;
       //this.showAlertBox('alert-success', 'Detector published successfully. Changes will be live shortly.');
-      
+
       this._telemetryService.logEvent("SearchTermPublish", { detectorId: this.id, numUtterances: this.allUtterances.length.toString(), ts: Math.floor((new Date()).getTime() / 1000).toString() });
     }, err => {
       this.enableRunButton();
@@ -865,7 +904,7 @@ export class OnboardingFlowComponent implements OnInit {
 
     //this.diagnosticApiService.makePullRequest()
   }*/
-  
+
 
   isCallOutVisible: boolean = false;
 
@@ -1034,9 +1073,9 @@ export class OnboardingFlowComponent implements OnInit {
         });
       }
 
-      if (!this.hideModal && !this.gistMode) {
-        this.ngxSmartModalService.getModal('devModeModal').open();
-      }
+      // if (!this.hideModal && !this.gistMode) {
+      //   this.ngxSmartModalService.getModal('devModeModal').open();
+      // }
     });
   }
 
