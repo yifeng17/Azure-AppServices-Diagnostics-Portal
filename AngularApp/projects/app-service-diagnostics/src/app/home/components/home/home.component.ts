@@ -93,6 +93,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
             subscriptionId: this.subscriptionId,
             resourceName: this.resourceName,
         };
+        this._telemetryService.logEvent('DiagnosticsViewLoaded', eventProps);
         
         if (_resourceService.armResourceConfig && _resourceService.armResourceConfig.homePageText
             && _resourceService.armResourceConfig.homePageText.title && _resourceService.armResourceConfig.homePageText.title.length > 1
