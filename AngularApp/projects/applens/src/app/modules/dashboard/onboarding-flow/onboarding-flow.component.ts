@@ -1,6 +1,6 @@
 import { AdalService } from 'adal-angular4';
 import {
-    CompilationProperties, DetectorControlService, DetectorResponse, QueryResponse
+    CompilationProperties, DetectorControlService, DetectorResponse, QueryResponse, CompilationTraceOutputDetails, LocationSpan, Position, HealthStatus
 } from 'diagnostic-data';
 import * as momentNs from 'moment';
 import { NgxSmartModalService } from 'ngx-smart-modal';
@@ -53,6 +53,7 @@ export class OnboardingFlowComponent implements OnInit {
   queryResponse: QueryResponse<DetectorResponse>;
   errorState: any;
   buildOutput: string[];
+  detailedCompilationTraces: CompilationTraceOutputDetails[];
   runButtonDisabled: boolean;
   publishButtonDisabled: boolean;
   localDevButtonDisabled: boolean;
@@ -106,6 +107,7 @@ export class OnboardingFlowComponent implements OnInit {
     };
 
     this.buildOutput = [];
+    this.detailedCompilationTraces = [];
     this.localDevButtonDisabled = false;
     this.runButtonDisabled = false;
     this.publishButtonDisabled = true;
@@ -137,6 +139,14 @@ export class OnboardingFlowComponent implements OnInit {
     if (this.initialized) {
       this.initialize();
     }
+  }
+
+  getfaIconClass(item:CompilationTraceOutputDetails): string {
+    if(item.severity == HealthStatus.Critical) return 'fa-exclamation-circle';
+    if(item.severity == HealthStatus.Warning) return 'fa-exclamation-triangle';
+    if(item.severity == HealthStatus.Info) return 'fa-info-circle';
+    if(item.severity == HealthStatus.Success) return 'fa-check-circle';
+    return '';
   }
 
   gistVersionChange(event: string) {
@@ -245,6 +255,21 @@ export class OnboardingFlowComponent implements OnInit {
   runCompilation() {
     this.buildOutput = [];
     this.buildOutput.push("------ Build started ------");
+    this.detailedCompilationTraces = [];
+    this.detailedCompilationTraces.push({
+      severity: HealthStatus.None,
+      message: '------ Build started ------',
+      location: {
+        start:{
+          linePos:0,
+          colPos:0
+        } as Position,
+        end :{
+          linePos:0,
+          colPos: 0
+        } as Position
+      } as LocationSpan
+    } as CompilationTraceOutputDetails);
     let currentCode = this.code;
 
     var body = {
@@ -288,6 +313,11 @@ export class OnboardingFlowComponent implements OnInit {
             this.buildOutput.push(element);
           });
         }
+        if(this.queryResponse.compilationOutput.detailedCompilationTraces) {
+          this.queryResponse.compilationOutput.detailedCompilationTraces.forEach(traceElement => {
+            this.detailedCompilationTraces.push(traceElement);
+          });
+        }
         // If the script etag returned by the server does not match the previous script-etag, update the values in memory
         if (response.headers.get('diag-script-etag') != undefined && this.compilationPackage.scriptETag !== response.headers.get('diag-script-etag')) {
           this.compilationPackage.scriptETag = response.headers.get('diag-script-etag');
@@ -300,10 +330,39 @@ export class OnboardingFlowComponent implements OnInit {
           this.publishButtonDisabled = false;
           this.preparePublishingPackage(this.queryResponse, currentCode);
           this.buildOutput.push("========== Build: 1 succeeded, 0 failed ==========");
+          this.detailedCompilationTraces.push({
+            severity: HealthStatus.None,
+            message: '========== Build: 1 succeeded, 0 failed ==========',
+            location: {
+              start:{
+                linePos:0,
+                colPos:0
+              } as Position,
+              end :{
+                linePos:0,
+                colPos: 0
+              } as Position
+            } as LocationSpan
+          } as CompilationTraceOutputDetails);
+
         } else {
           this.publishButtonDisabled = true;
           this.publishingPackage = null;
           this.buildOutput.push("========== Build: 0 succeeded, 1 failed ==========");
+          this.detailedCompilationTraces.push({
+            severity: HealthStatus.None,
+            message: '========== Build: 0 succeeded, 1 failed ==========',
+            location: {
+              start:{
+                linePos:0,
+                colPos:0
+              } as Position,
+              end :{
+                linePos:0,
+                colPos: 0
+              } as Position
+            } as LocationSpan
+          } as CompilationTraceOutputDetails);
         }
 
         if (this.queryResponse.runtimeLogOutput) {
@@ -314,9 +373,38 @@ export class OnboardingFlowComponent implements OnInit {
                 element.exception.ClassName + ": " +
                 element.exception.Message + "\r\n" +
                 element.exception.StackTraceString);
+              
+              this.detailedCompilationTraces.push({
+                severity:HealthStatus.Critical,
+                message: `${element.timeStamp}: ${element.message}: ${element.exception.ClassName}: ${element.exception.Message}: ${element.exception.StackTraceString}`,
+                location: {
+                  start: {
+                    linePos:0,
+                    colPos: 0
+                  },
+                  end: {
+                    linePos: 0,
+                    colPos: 0
+                  }
+                }
+              });
             }
             else {
               this.buildOutput.push(element.timeStamp + ": " + element.message);
+              this.detailedCompilationTraces.push({
+                severity:HealthStatus.Info,
+                message: `${element.timeStamp}: ${element.message}`,
+                location: {
+                  start: {
+                    linePos:0,
+                    colPos: 0
+                  },
+                  end: {
+                    linePos: 0,
+                    colPos: 0
+                  }
+                }
+              });
             }
           });
         }
@@ -337,6 +425,35 @@ export class OnboardingFlowComponent implements OnInit {
         this.runButtonIcon = "fa fa-play";
         this.buildOutput.push("Something went wrong during detector invocation.");
         this.buildOutput.push("========== Build: 0 succeeded, 1 failed ==========");
+        this.detailedCompilationTraces.push({
+          severity:HealthStatus.Critical,
+          message: 'Something went wrong during detector invocation.',
+          location: {
+            start: {
+              linePos:0,
+              colPos: 0
+            },
+            end: {
+              linePos: 0,
+              colPos: 0
+            }
+          }
+        });
+        this.detailedCompilationTraces.push({
+          severity:HealthStatus.Critical,
+          message: '========== Build: 0 succeeded, 1 failed ==========',
+          location: {
+            start: {
+              linePos:0,
+              colPos: 0
+            },
+            end: {
+              linePos: 0,
+              colPos: 0
+            }
+          }
+        });
+
       }));
   }
 

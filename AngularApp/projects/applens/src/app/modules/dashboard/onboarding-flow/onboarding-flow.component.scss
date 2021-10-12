@@ -107,6 +107,37 @@ body {
     padding: 10px;
 }
 
+.compilation-detailed-output-container {
+    display: flex; 
+    flex-flow: column nowrap;
+}
+
+.compilation-detailed-output-rowEntry{
+    display: flex;
+    flex-flow: row nowrap;
+    border:none;
+}
+
+.compilation-detailed-output-rowEntry:hover{
+    border-style: dotted;
+    border-color: black;
+    border-width: thin;
+    border-spacing: 2px;
+}
+
+.compilation-detailed-output-clickable {
+    cursor: pointer;
+}
+.compilation-detailed-output-entryCell {
+    display:flex;
+    flex-flow: row nowrap;
+    padding: 2px;
+}
+
+.compilation-detailed-output-iconCell{
+    width: 2em;
+}
+
 .compilation-output {
     font-size: 14px;
     color: #6b6b6b;
