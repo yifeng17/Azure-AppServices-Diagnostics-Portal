@@ -46,8 +46,6 @@ import { MemoryDumpToolComponent } from './components/tools/memorydump-tool/memo
 import { JavaMemoryDumpToolComponent } from './components/tools/java-memorydump-tool/java-memorydump-tool.component';
 import { JavaThreadDumpToolComponent } from './components/tools/java-threaddump-tool/java-threaddump-tool.component';
 import { IncidentNotificationComponent } from './components/incident-notification/incident-notification.component';
-import { HttpLogAnalysisToolComponent } from './components/tools/http-loganalysis-tool/http-loganalysis-tool.component';
-import { PhpLogsAnalyzerToolComponent } from './components/tools/php-logsanalyzer-tool/php-logsanalyzer-tool.component';
 import { ConnectionDiagnoserToolComponent } from './components/tools/connection-diagnoser-tool/connection-diagnoser-tool.component';
 import { NetworkTraceToolComponent } from './components/tools/network-trace-tool/network-trace-tool.component';
 import { ServiceIncidentService } from './services/service-incident.service';
@@ -132,6 +130,8 @@ import { RiskAlertsPanelComponent } from './components/risk-alerts-panel/risk-al
 import { IntegratedSolutionsViewComponent } from './components/integrated-solutions-view/integrated-solutions-view.component';
 import { MarkdownModule } from 'ngx-markdown';
 import { NetworkCheckComponent } from './components/tools/network-checks/network-checks.component';
+import { DaasV2Component } from './components/daas/daas-v2/daas-v2.component';
+import { ProfilerV2Component } from './components/daas/profiler-v2/profiler-v2.component';
 import { ABTestingService } from './services/abtesting.service';
 
 @NgModule({
@@ -168,8 +168,6 @@ import { ABTestingService } from './services/abtesting.service';
         JavaMemoryDumpToolComponent,
         JavaThreadDumpToolComponent,
         IncidentNotificationComponent,
-        HttpLogAnalysisToolComponent,
-        PhpLogsAnalyzerToolComponent,
         ConnectionDiagnoserToolComponent,
         NetworkTraceToolComponent,
         IncidentSummaryComponent,
@@ -202,7 +200,9 @@ import { ABTestingService } from './services/abtesting.service';
         CrashMonitoringAnalysisComponent,
         RiskAlertsNotificationComponent,
         RiskAlertsPanelComponent,
-        IntegratedSolutionsViewComponent
+        IntegratedSolutionsViewComponent,
+        DaasV2Component,
+        ProfilerV2Component
     ],
     imports: [
         HttpClientModule,
@@ -283,8 +283,6 @@ import { ABTestingService } from './services/abtesting.service';
         JavaMemoryDumpToolComponent,
         JavaThreadDumpToolComponent,
         IncidentNotificationComponent,
-        HttpLogAnalysisToolComponent,
-        PhpLogsAnalyzerToolComponent,
         ConnectionDiagnoserToolComponent,
         NetworkTraceToolComponent,
         IncidentSummaryComponent,
