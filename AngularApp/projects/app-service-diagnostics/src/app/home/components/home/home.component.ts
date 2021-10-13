@@ -94,7 +94,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
             resourceName: this.resourceName,
         };
         this._telemetryService.logEvent('DiagnosticsViewLoaded', eventProps);
-
+        
         if (_resourceService.armResourceConfig && _resourceService.armResourceConfig.homePageText
             && _resourceService.armResourceConfig.homePageText.title && _resourceService.armResourceConfig.homePageText.title.length > 1
             && _resourceService.armResourceConfig.homePageText.description && _resourceService.armResourceConfig.homePageText.description.length > 1
@@ -227,7 +227,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.riskAlertNotifications = this._riskAlertService.riskAlertNotifications;
         this.riskAlertConfigs = this._riskAlertService.riskAlertConfigs;
         this.showRiskSection = this._isRiskAlertEnabled();
-        this._telemetryService.logEvent("telemetry service logging", {});
     };
 
     ngAfterViewInit() {
