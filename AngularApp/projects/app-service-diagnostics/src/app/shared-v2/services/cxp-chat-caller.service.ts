@@ -61,10 +61,8 @@ export class CXPChatCallerService {
       this.logChatEligibilityCheck(supportTopicIdToCheck, 'CXPChatEnabled', 'false');
       return false;
     }
-    this.logChatEligibilityCheck(supportTopicIdToCheck, 'CXPChatEnabled', 'true');
 
     if (this.supportedSupportTopicIds.length === 1 && this.supportedSupportTopicIds[0] === '*') {
-      this.logChatEligibilityCheck(supportTopicIdToCheck, 'SupportTopicEnabledForCXPChat', `${supportTopicIdToCheck} is enabled.`);
       return true;
     }
     else {
@@ -75,9 +73,6 @@ export class CXPChatCallerService {
         returnValue = (supportTopicIdToCheck === currValue || currValue === '*');
         return returnValue;
       });
-
-      this.logChatEligibilityCheck(supportTopicIdToCheck, 'SupportTopicEnabledForCXPChat', `${supportTopicIdToCheck} is ${!returnValue ? 'not ' : ''}enabled.`);
-
       return returnValue;
     }
   }
@@ -90,7 +85,6 @@ export class CXPChatCallerService {
     let generatedGuid: string = '';
     try {
       generatedGuid = Guid.newGuid();
-      this.logChatEligibilityCheck(supportTopicId, 'GenerateCXPChatTrackingId', generatedGuid);
       return generatedGuid;
     } catch (error) {
       this.logChatEligibilityCheck(supportTopicId, 'GenerateCXPChatTrackingId', `Error while generating tracking ID : ${JSON.stringify(error)}`);
@@ -252,19 +246,7 @@ export class CXPChatCallerService {
 
       //Make a call to the CXP Chat API to get the URL, the call is piped via SCI Frame blade in the portal.
       try {
-        this._telemetryService.logEvent(TelemetryEventNames.GetCXPChatURL, {
-          "cxpChatTrackingId": trackingIdGuid,
-          "passedInput": JSON.stringify(input),
-          "returnValue": `About to make a call to CXP chat portal RPC API.${forceFetchReasonStr}`
-        });
-
         this._portalService.postMessage(Verbs.getChatUrl, JSON.stringify(input));
-
-        this._telemetryService.logEvent(TelemetryEventNames.GetCXPChatURL, {
-          "cxpChatTrackingId": trackingIdGuid,
-          "passedInput": JSON.stringify(input),
-          "returnValue": 'Made a call to CXP chat portal RPC API. Waiting on response...'
-        });
       } catch (error) {
         this._telemetryService.logEvent(TelemetryEventNames.GetCXPChatURL, {
           "cxpChatTrackingId": trackingIdGuid,
@@ -293,12 +275,6 @@ export class CXPChatCallerService {
               stringToLog = 'NULL object returned. Likely cause, unknown. Followup with CXP team with trackingId.';
             }
           }
-
-          this._telemetryService.logEvent(TelemetryEventNames.GetCXPChatURL, {
-            "cxpChatTrackingId": trackingIdGuid,
-            "passedInput": JSON.stringify(input),
-            "returnValue": stringToLog
-          });
           return of(returnValue);
         }));
       } catch (error) {
