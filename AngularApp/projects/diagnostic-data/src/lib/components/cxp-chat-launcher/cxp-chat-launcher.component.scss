@@ -99,6 +99,16 @@ $zIndex: 99;
     justify-content: space-between;
 }
 
+.cxpChat-moreDetailsContainer {
+    display: flex;
+	align-items: baseline;
+	padding: 0.5em;
+}
+
+.cxpChat-optionsContainer {
+    width: 4em;
+}
+
 .cxpChat-ConsentOptionContainer {
     display: flex;
 }
