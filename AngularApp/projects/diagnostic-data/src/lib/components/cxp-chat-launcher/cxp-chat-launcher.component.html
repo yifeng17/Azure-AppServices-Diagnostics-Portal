@@ -21,9 +21,9 @@
       <div *ngIf="showDiagnosticsConsentOption" class="cxpChat-ConsentContainer">
         <div class="cxpChat-ConsentOptionContainer">
           <div>
-            <span>Share diagnostic information?</span>
+            <span>Allow collection of advanced diagnostic information?</span>
           </div>
-          <div class="cxpChat-ConsentText">
+          <div class="cxpChat-ConsentText cxpChat-moreDetailsContainer">
             <sup class="cxpChat-Required"> * </sup>
             <a target="_blank" role="link" aria-label="Click to learn more about the information we collect"
               title="Click to learn more about the information we collect."
@@ -32,7 +32,7 @@
             </a>
           </div>
         </div>
-        <div>
+        <div class="cxpChat-optionsContainer">
           <div role="radiogroup"
             aria-roledescription="Consent options to allow Microsoft access to diagnostic information."
             aria-required="true">

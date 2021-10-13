@@ -97,6 +97,11 @@ export class CategoryNavComponent implements OnInit {
     }
 
     getCurrentItemId() {
+        if(this._activatedRoute && this._activatedRoute.snapshot && this._activatedRoute.snapshot.params["category"] && this._route.url.split("?")[0].endsWith("/overview")) {
+            this.currentDetectorId = null;
+            return;
+        }
+
         if (this._activatedRoute && this._activatedRoute.firstChild && this._activatedRoute.firstChild.snapshot) {
             if (!this._activatedRoute.firstChild.snapshot.params['analysisId']) {
                 if (this._activatedRoute.firstChild.snapshot.params['detectorName']) {
