@@ -1,4 +1,4 @@
-import { HealthStatus } from "dist/diagnostic-data/lib/models/detector";
+import { HealthStatus } from "./detector";
 
 export interface CompilerResponse {
     compilationSucceeded: boolean;
