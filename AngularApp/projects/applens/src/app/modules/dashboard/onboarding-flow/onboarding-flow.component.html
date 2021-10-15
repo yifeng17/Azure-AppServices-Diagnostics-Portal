@@ -176,8 +176,11 @@
 
           </split-area>
           <split-area size="15">
-            <div class="compilation-output-container">              
-              <div class = "compilation-detailed-output-container">
+            <div class="compilation-output-container">
+              <div *ngIf="!showDetailedCompilationTraces">
+                <div *ngFor="let item of buildOutput" class="compilation-output">{{item}}</div>
+              </div>
+              <div *ngIf="showDetailedCompilationTraces" class = "compilation-detailed-output-container">
                 <div class = "compilation-detailed-output-rowEntry" *ngFor = "let item of detailedCompilationTraces"
                 [ngClass]="[isCompilationTraceClickable(item)? 'compilation-detailed-output-clickable' : '']" 
                 (click) = navigateToEditorIfApplicable(item) >

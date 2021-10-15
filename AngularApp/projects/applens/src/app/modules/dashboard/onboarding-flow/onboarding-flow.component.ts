@@ -54,6 +54,7 @@ export class OnboardingFlowComponent implements OnInit {
   errorState: any;
   buildOutput: string[];
   detailedCompilationTraces: CompilationTraceOutputDetails[];
+  public showDetailedCompilationTraces:boolean = true;
   runButtonDisabled: boolean;
   publishButtonDisabled: boolean;
   localDevButtonDisabled: boolean;
@@ -382,9 +383,13 @@ export class OnboardingFlowComponent implements OnInit {
           });
         }
         if(this.queryResponse.compilationOutput.detailedCompilationTraces) {
+          this.showDetailedCompilationTraces = true;
           this.queryResponse.compilationOutput.detailedCompilationTraces.forEach(traceElement => {
             this.detailedCompilationTraces.push(traceElement);
           });
+        }
+        else {
+          this.showDetailedCompilationTraces = false;
         }
         // If the script etag returned by the server does not match the previous script-etag, update the values in memory
         if (response.headers.get('diag-script-etag') != undefined && this.compilationPackage.scriptETag !== response.headers.get('diag-script-etag')) {
