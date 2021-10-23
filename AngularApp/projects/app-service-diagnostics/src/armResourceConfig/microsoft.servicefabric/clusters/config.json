@@ -17,13 +17,14 @@
         "supportTopicIds": []
     },
 	"categories": [{
-			"id": "Cluster Insights",
+			"id": "clusterinsightssf",
 			"name": "Cluster Insights",
-			"description": "Get recommendations for your configuration, find common issues, and identify possible improvements for reliability.",
-			"keywords": ["Health", "Deployment", "Performance", "Scaling", "Upgrade", "Update", "Configuration", "Reliability", "Security"],
+			"description": "Analyze your cluster for optimal configuration",
+			"keywords": ["Performance", "Reliability", "Durability", "Certificate"],
 			"color": "rgb(186, 211, 245)",
 			"createFlowForCategory": true,
-			"chatEnabled": false
+			"chatEnabled": false,
+            "overviewDetectorId": "apim-availability-and-performance"
 		}
 	]
 }
