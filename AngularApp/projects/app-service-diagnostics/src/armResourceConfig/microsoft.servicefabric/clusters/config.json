@@ -20,7 +20,7 @@
 			"id": "clusterinsightssf",
 			"name": "Cluster Insights",
 			"description": "Analyze your cluster for optimal configuration.",
-			"keywords": ["Performance", "Reliability", "Durability", "Certificate"],
+			"keywords": ["Performance", "Reliability", "Durability", "SKU"],
 			"color": "rgb(186, 211, 245)",
 			"createFlowForCategory": true,
 			"chatEnabled": false,
