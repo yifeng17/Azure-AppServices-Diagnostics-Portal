@@ -1,8 +1,8 @@
 {
 	"homePageText": {
 		"title": "Azure Service Fabric Diagnostics",
-		"description": "Use Azure Service Fabric Diagnostics to investigate how your app is performing, diagnose issues, and discover how to improve its reliability. Select the problem category that best matches the information or tool that you're interested in:",
-		"searchBarPlaceHolder": "Search for common problems or error codes"
+		"description": "Investigate how your cluster is performing, diagnose issues, and discover how to improve its reliability.",
+		"searchBarPlaceHolder": "Search for common problems or tools"
 	},
 	"matchRegEx": "/Microsoft.ServiceFabric/clusters/",
 	"searchSuffix": "SF",
@@ -19,12 +19,12 @@
 	"categories": [{
 			"id": "clusterinsightssf",
 			"name": "Cluster Insights",
-			"description": "Analyze your cluster for optimal configuration",
+			"description": "Analyze your cluster for optimal configuration.",
 			"keywords": ["Performance", "Reliability", "Durability", "Certificate"],
 			"color": "rgb(186, 211, 245)",
 			"createFlowForCategory": true,
 			"chatEnabled": false,
-            "overviewDetectorId": "apim-availability-and-performance"
+            "overviewDetectorId": "ServiceFabricClusterInsights"
 		}
 	]
 }
