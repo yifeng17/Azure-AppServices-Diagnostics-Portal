@@ -18,7 +18,7 @@
 	},
     "categories": [
         {
-            "id": "knowissueavailabilityperfaks",
+            "id": "knownissueavailabilityperfaks",
             "name": "Known Issues, Availability and Performance",
             "description": "This category help address performance issues that are related latency, upgrade, pods, configuration and scale",
             "keywords": [ "Tiller", "Helm-2  State", "Scale ", "Upgrade", "OOMKilled pod", "CRUD", "Configuration", "Throttling", "IO saturation", "Latency", "Auto-Scalar", "VMSS", "API Server"],
