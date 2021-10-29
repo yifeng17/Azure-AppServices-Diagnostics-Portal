@@ -232,7 +232,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.riskAlertConfigs = this._riskAlertService.riskAlertConfigs;
         this.showRiskSection = this._isRiskAlertEnabled();
 
-        if (this._resourceService && !!this._resourceService.resource && this._resourceService.resource.type === 'Microsoft.Web/containerApps') {
+        if (this._resourceService && !!this._resourceService.resource && this._resourceService.resource.type.toLowerCase() === 'microsoft.web/containerapps') {
             let location = this._resourceService.resource.location;
             let kubeEnvironmentId = this._resourceService.resource.properties? this._resourceService.resource.properties.kubeEnvironmentId: null;
             let fqdn = null;
