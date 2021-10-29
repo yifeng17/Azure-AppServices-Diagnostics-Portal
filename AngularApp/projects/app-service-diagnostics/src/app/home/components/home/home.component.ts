@@ -255,14 +255,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
         }
     }
 
-    public objectToQueryString(obj) {
-        var str = [];
-        for (var p in obj)
-          if (obj.hasOwnProperty(p)) {
-            str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-          }
-        return str.join("&");
-    }
 
 
     public get useStaticAksText(): boolean {
