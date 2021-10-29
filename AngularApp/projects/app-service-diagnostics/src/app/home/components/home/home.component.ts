@@ -256,7 +256,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
 
 
-
     public get useStaticAksText(): boolean {
         return this.armService.isMooncake
             && ResourceDescriptor.parseResourceUri(this._resourceService.resourceIdForRouting).provider.toLowerCase() == 'microsoft.containerservice';
