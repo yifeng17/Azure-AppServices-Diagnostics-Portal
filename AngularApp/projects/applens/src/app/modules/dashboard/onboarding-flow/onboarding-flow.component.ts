@@ -4,8 +4,10 @@ import {
 } from 'diagnostic-data';
 import * as momentNs from 'moment';
 import { NgxSmartModalService } from 'ngx-smart-modal';
-import { forkJoin
-  , Observable, of } from 'rxjs';
+import {
+  forkJoin
+  , Observable, of
+} from 'rxjs';
 import { flatMap, map, tap } from 'rxjs/operators';
 import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Package } from '../../../shared/models/package';
@@ -277,26 +279,26 @@ export class OnboardingFlowComponent implements OnInit {
     this.publishAccessControlResponse = {};
   }
 
-  updateTempBranch(event: any){
+  updateTempBranch(event: any) {
     //console.log(event);
     this.tempBranch = event.option.key;
   }
 
-  updateBranch(){
+  updateBranch() {
     this.Branch = this.tempBranch;
     this.displayBranch = this.Branch;
-    this.diagnosticApiService.getDetectorCode(`${this.id}/${this.id}.csx`, this.Branch, this.resourceId).subscribe(x =>{
+    this.diagnosticApiService.getDetectorCode(`${this.id}/${this.id}.csx`, this.Branch, this.resourceId).subscribe(x => {
       this.code = x;
     })
     this.closeCallout();
   }
 
-  noBranchesAvailable(){
+  noBranchesAvailable() {
     this.displayBranch = "NA (not published)";
     this.disableBranchButton();
   }
 
-  disableBranchButton(){
+  disableBranchButton() {
     this.branchButtonDisabled = true;
     this.branchButtonStyle = {
       root: {
@@ -313,9 +315,9 @@ export class OnboardingFlowComponent implements OnInit {
   }
 
   branchChoiceCharLimit: number = 25;
-  defaultBranch:string;
+  defaultBranch: string;
 
-  publishButtonOnClick(){
+  publishButtonOnClick() {
     if (this.detectorGraduation) {
       this.showPublishDialog();
     }
@@ -323,7 +325,7 @@ export class OnboardingFlowComponent implements OnInit {
       this.publish()
     }
   }
-  
+
 
   ngOnInit() {
     if (!this.initialized) {
@@ -350,7 +352,7 @@ export class OnboardingFlowComponent implements OnInit {
     }
   }
 
-  getBranchList(){
+  getBranchList() {
     this.optionsForSingleChoice = [];
     this.showBranches = [];
 
@@ -361,10 +363,10 @@ export class OnboardingFlowComponent implements OnInit {
           key: String(option["item1"]),
           text: String(option["item1"])
         });
-        if (option["item2"]){
+        if (option["item2"]) {
           this.defaultBranch = String(option["item1"]);
         }
-        if (option["item2"] && !(this.mode == DevelopMode.Create)){// if main branch and in edit mode
+        if (option["item2"] && !(this.mode == DevelopMode.Create)) {// if main branch and in edit mode
           this.showBranches.push({
             key: String(option["item1"]),
             text: String(option["item1"])
@@ -946,14 +948,14 @@ export class OnboardingFlowComponent implements OnInit {
     this.publishingPackage.metadata = JSON.stringify({ "utterances": this.allUtterances });
   }
 
-  setBranch(){
+  setBranch() {
     this.Branch;
   }
 
-  targetInShowBranches(target){
+  targetInShowBranches(target) {
     var match;
     this.showBranches.forEach(x => {
-      if (x.key === target){
+      if (x.key === target) {
         match = true;
       }
     });
@@ -962,18 +964,18 @@ export class OnboardingFlowComponent implements OnInit {
 
   showPublishDialog() {
     var targetBranch = `dev/${this.userName.split("@")[0]}/detector/${this.id}`
-    if (this.publishButtonDisabled){
+    if (this.publishButtonDisabled) {
       return;
     }
-    if (this.Branch === this.defaultBranch && this.targetInShowBranches(targetBranch)){
+    if (this.Branch === this.defaultBranch && this.targetInShowBranches(targetBranch)) {
       this.Branch = targetBranch;
       this.displayBranch = `${targetBranch}`;
     }
-    else if (!(this.showBranches.length > 1 ) || this.Branch === this.defaultBranch){
+    else if (!(this.showBranches.length > 1) || this.Branch === this.defaultBranch) {
       this.displayBranch = `${targetBranch} (not published)`;
       this.Branch = targetBranch;
     }
-    if (this.mode == DevelopMode.Create){
+    if (this.mode == DevelopMode.Create) {
       this.PRTitle = `Creating ${this.id}`;
     }
     else {
@@ -1006,7 +1008,7 @@ export class OnboardingFlowComponent implements OnInit {
     this.publishFailed = false;
   }
 
-  
+
 
   publish() {
     if (this.publishButtonDisabled) {
@@ -1026,9 +1028,9 @@ export class OnboardingFlowComponent implements OnInit {
     this.modalPublishingButtonDisabled = true;
     this.modalPublishingButtonText = "Publishing";
     var isOriginalCodeMarkedPublic: boolean = this.IsDetectorMarkedPublic(this.originalCode);
-    if(this.detectorGraduation){
+    if (this.detectorGraduation) {
       this.gradPublish(this.publishingPackage);
-    } 
+    }
     else {
       this.diagnosticApiService.publishDetector(this.emailRecipients, this.publishingPackage, `${this.resourceService.ArmResource.provider}/${this.resourceService.ArmResource.resourceTypeName}`, isOriginalCodeMarkedPublic).subscribe(data => {
         this.originalCode = this.publishingPackage.codeString;
@@ -1043,7 +1045,7 @@ export class OnboardingFlowComponent implements OnInit {
         this.detectorName = this.publishingPackage.id;
         this.publishSuccess = true;
         //this.showAlertBox('alert-success', 'Detector published successfully. Changes will be live shortly.');
-  
+
         this._telemetryService.logEvent("SearchTermPublish", { detectorId: this.id, numUtterances: this.allUtterances.length.toString(), ts: Math.floor((new Date()).getTime() / 1000).toString() });
       }, err => {
         this.enableRunButton();
@@ -1058,69 +1060,42 @@ export class OnboardingFlowComponent implements OnInit {
     }
   }
 
-  gradPublish(publishingPackage: Package){
+  gradPublish(publishingPackage: Package) {
     this.publishDialogHidden = true;
 
-    const editDetectorCodeObservable = this.diagnosticApiService.pushDetectorChanges(this.Branch, publishingPackage.codeString, `/${publishingPackage.id}/${publishingPackage.id}.csx`, `Editing detector code for ${publishingPackage.id}`, "edit", this.resourceId);
-    const editMetaDataObservable =  this.diagnosticApiService.pushDetectorChanges(this.Branch, publishingPackage.metadata, `/${publishingPackage.id}/metadata.json`, `Editing metadata.json for ${publishingPackage.id}`, "edit", this.resourceId);
-    const editPackageObservable =  this.diagnosticApiService.pushDetectorChanges(this.Branch, publishingPackage.packageConfig, `/${publishingPackage.id}/package.json`, `Editing package.json for ${publishingPackage.id}`, "edit", this.resourceId);
-    const addDetectorCodeObservable = this.diagnosticApiService.pushDetectorChanges(this.Branch, publishingPackage.codeString, `/${publishingPackage.id}/${publishingPackage.id}.csx`, `Adding detector code for ${publishingPackage.id}`, "add", this.resourceId);
-    const addMetaDataObservable =  this.diagnosticApiService.pushDetectorChanges(this.Branch, publishingPackage.metadata, `/${publishingPackage.id}/metadata.json`, `Adding metadata.json for ${publishingPackage.id}`, "add", this.resourceId);
-    const addPackageObservable =  this.diagnosticApiService.pushDetectorChanges(this.Branch, publishingPackage.packageConfig, `/${publishingPackage.id}/package.json`, `Adding package.json for ${publishingPackage.id}`, "add", this.resourceId);
+    const commitType = this.mode == DevelopMode.Create ? "add" : "edit";
+    const commitMessageStart = this.mode == DevelopMode.Create ? "Adding" : "Editing";
+
+    const DetectorCodeObservable = this.diagnosticApiService.pushDetectorChanges(this.Branch, publishingPackage.codeString, `/${publishingPackage.id}/${publishingPackage.id}.csx`, `Adding detector code for ${publishingPackage.id}`, "add", this.resourceId);
+    const MetaDataObservable = this.diagnosticApiService.pushDetectorChanges(this.Branch, publishingPackage.metadata, `/${publishingPackage.id}/metadata.json`, `Adding metadata.json for ${publishingPackage.id}`, "add", this.resourceId);
+    const PackageObservable = this.diagnosticApiService.pushDetectorChanges(this.Branch, publishingPackage.packageConfig, `/${publishingPackage.id}/package.json`, `Adding package.json for ${publishingPackage.id}`, "add", this.resourceId);
     const makePullRequestObservable = this.diagnosticApiService.makePullRequest(this.Branch, this.defaultBranch, this.PRTitle, this.resourceId);
-    
-    if (!(this.mode == DevelopMode.Create)){
-      editDetectorCodeObservable.subscribe(_ => {
-        editMetaDataObservable.subscribe(_ => {
-          editPackageObservable.subscribe(_ => {
-            makePullRequestObservable.subscribe(_ => {
-              this.publishSuccess = true;
-              this.postPublish();
-            }, err => {
-              this.publishFailed = true;
-              this.postPublish();
-            });
-          },err => {
+
+    DetectorCodeObservable.subscribe(_ => {
+      MetaDataObservable.subscribe(_ => {
+        PackageObservable.subscribe(_ => {
+          makePullRequestObservable.subscribe(_ => {
+            this.publishSuccess = true;
+            this.postPublish();
+          }, err => {
             this.publishFailed = true;
             this.postPublish();
           });
-        },err => {
+        }, err => {
           this.publishFailed = true;
           this.postPublish();
         });
-      },err => {
+      }, err => {
         this.publishFailed = true;
         this.postPublish();
       });
-    }
-    else {
-      addDetectorCodeObservable.subscribe(_ => {
-        addMetaDataObservable.subscribe(_ => {
-          addPackageObservable.subscribe(_ => {
-            makePullRequestObservable.subscribe(_ => {
-              this.publishSuccess = true;
-              this.postPublish();
-            }, err => {
-              this.publishFailed = true;
-              this.postPublish();
-            });
-          },err => {
-            this.publishFailed = true;
-            this.postPublish();
-          });
-        },err => {
-          this.publishFailed = true;
-          this.postPublish();
-        });
-      },err => {
-        this.publishFailed = true;
-        this.postPublish();
-      });
-    }
-    
+    }, err => {
+      this.publishFailed = true;
+      this.postPublish();
+    });
   }
 
-  postPublish(){
+  postPublish() {
     this.modalPublishingButtonText = "Publish";
     this.getBranchList();
     this.enablePublishButton();
@@ -1130,8 +1105,8 @@ export class OnboardingFlowComponent implements OnInit {
 
   isCallOutVisible: boolean = false;
 
-  branchToggleCallout(){
-    if (!this.branchButtonDisabled){
+  branchToggleCallout() {
+    if (!this.branchButtonDisabled) {
       this.isCallOutVisible = !this.isCallOutVisible;
     }
   }
