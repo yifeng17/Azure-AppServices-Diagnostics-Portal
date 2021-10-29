@@ -405,7 +405,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     private initalABTestingBanner() {
         this.isPreview = this.abTestingService.isPreview;
-        this.enableABTesting = this.abTestingService.enableABTesting;
+
+        var isContainerApps = this._resourceService && !!this._resourceService.resource && this._resourceService.resource.type.toLowerCase() === 'microsoft.web/containerapps';
+        this.enableABTesting = this.abTestingService.enableABTesting && !isContainerApps;
+
         if (this.isPreview) {
             this.abTestingBannerText = "Welcome to the new and improved version of Diagnose and Solve Problems. If you'd like to switch back to the old experience";
         } else {
