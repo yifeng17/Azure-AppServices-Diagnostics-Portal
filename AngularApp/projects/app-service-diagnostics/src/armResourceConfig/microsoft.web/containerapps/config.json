@@ -30,7 +30,7 @@
       "color": "rgb(208, 175, 239)",
       "createFlowForCategory": true,
       "chatEnabled": false,
-      "overviewDetectorId": "ContainerAppAvailabilityMetrics"
+      "overviewDetectorId": "ContainerAppAvailabilityDetector"
 		}
 	],
     "disableGenie": true,
