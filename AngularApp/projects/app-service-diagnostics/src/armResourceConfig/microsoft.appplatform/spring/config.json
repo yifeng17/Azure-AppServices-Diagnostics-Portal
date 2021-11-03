@@ -20,7 +20,7 @@
 			"id": "availabilityandperformancespring",
 			"name": "Availability and Performance",
 			"description": "Investigate and discover issues that may impact your app availability.",
-			"keywords": ["Downtime", "Discovery", "Config Sever", "App Health", "Deploy Jar Artifact"],
+			"keywords": ["Downtime", "Discovery", "App Health", "Deploy Jar Artifact"],
 			"color": "rgb(208, 228, 176)",
 			"createFlowForCategory": true,
 			"chatEnabled": false,
@@ -29,7 +29,7 @@
 		{
 			"id": "configurationsandmanagementspring",
 			"name": "Configurations and Management",
-			"description": "Discover issues with your own virtual network connectivity.",
+			"description": "Find out if you misconfigured some features of Azure Spring Cloud.",
 			"keywords": ["Log", "Metrics", "Distributed Tracing", "Scaling", "Swap", "Custom Domain", "SSL"],
 			"color": "rgb(249, 213, 180)",
 			"createFlowForCategory": true,

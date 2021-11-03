@@ -58,6 +58,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     enableABTesting: boolean = false;
     isPreview: boolean = false;
     abTestingBannerText: string = "";
+    disableGenie: boolean = false;
+
     get showSwitchBanner(): boolean {
         //Enable banner for Linux Web/Function App
         if(this.isLinuxApp) return true;
@@ -89,12 +91,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.versionTestService.isLegacySub.subscribe(isLegacy => this.useLegacy = isLegacy);
         this.versionTestService.initializedPortalVersion.subscribe(v => this.initializedPortalVersion = v);
         this.resourceName = this._resourceService.resource ? this._resourceService.resource.name : "";
+        this.disableGenie = this._resourceService.isGenieDisabled();
+
         let eventProps = {
             subscriptionId: this.subscriptionId,
             resourceName: this.resourceName,
         };
         this._telemetryService.logEvent('DiagnosticsViewLoaded', eventProps);
-        
+
         if (_resourceService.armResourceConfig && _resourceService.armResourceConfig.homePageText
             && _resourceService.armResourceConfig.homePageText.title && _resourceService.armResourceConfig.homePageText.title.length > 1
             && _resourceService.armResourceConfig.homePageText.description && _resourceService.armResourceConfig.homePageText.description.length > 1
@@ -227,6 +231,21 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.riskAlertNotifications = this._riskAlertService.riskAlertNotifications;
         this.riskAlertConfigs = this._riskAlertService.riskAlertConfigs;
         this.showRiskSection = this._isRiskAlertEnabled();
+
+        if (this._resourceService && !!this._resourceService.resource && this._resourceService.resource.type.toLowerCase() === 'microsoft.web/containerapps') {
+            let location = this._resourceService.resource.location;
+            let kubeEnvironmentId = this._resourceService.resource.properties? this._resourceService.resource.properties.kubeEnvironmentId: null;
+            let fqdn = null;
+            if (this._resourceService.resource.properties.configuration) {
+                fqdn = this._resourceService.resource.properties.configuration.ingress? this._resourceService.resource.properties.configuration.ingress.fqdn: null;
+            }
+            var containerAppQueryParams = {
+                location: encodeURIComponent(location),
+                kubeEnvironmentId: encodeURIComponent(kubeEnvironmentId),
+                fqdn: encodeURIComponent(fqdn)
+            };
+            this._router.navigate([], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', queryParams: containerAppQueryParams });
+        }
     };
 
     ngAfterViewInit() {
@@ -386,7 +405,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     private initalABTestingBanner() {
         this.isPreview = this.abTestingService.isPreview;
-        this.enableABTesting = this.abTestingService.enableABTesting;
+
+        var isContainerApps = this._resourceService && !!this._resourceService.resource && this._resourceService.resource.type.toLowerCase() === 'microsoft.web/containerapps';
+        this.enableABTesting = this.abTestingService.enableABTesting && !isContainerApps;
+
         if (this.isPreview) {
             this.abTestingBannerText = "Welcome to the new and improved version of Diagnose and Solve Problems. If you'd like to switch back to the old experience";
         } else {
