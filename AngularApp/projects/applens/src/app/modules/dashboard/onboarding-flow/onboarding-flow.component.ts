@@ -162,6 +162,11 @@ export class OnboardingFlowComponent implements OnInit {
   publishFailed: boolean = false;
   detectorName: string = "";
   submittedPanelTimer: any = null;
+  deleteButtonText: string = "Delete";
+  deleteDialogTitle: string = "Delete Detector";
+  deleteDialogHidden: boolean = true;
+  deleteAvailable: boolean = false;
+  deletingDetector: boolean = false;
   openTimePickerSubject: BehaviorSubject<boolean> = new BehaviorSubject(false);
   runButtonStyle: any = {
     root: { cursor: "default" }
@@ -283,6 +288,14 @@ export class OnboardingFlowComponent implements OnInit {
     this.publishAccessControlResponse = {};
   }
 
+  showDeleteDialog() {
+    this.deleteDialogHidden = false;
+  }
+
+  dismissDeleteDialog() {
+    this.deleteDialogHidden = true;
+  }
+
   updateTempBranch(event: any) {
     //console.log(event);
     this.tempBranch = event.option.key;
@@ -334,32 +347,32 @@ export class OnboardingFlowComponent implements OnInit {
   ngOnInit() {
     this.diagnosticApiService.getDetectorGraduationSetting().subscribe(graduationFlag => {
       this.detectorGraduation = graduationFlag;
-    
 
-    if (!this.initialized) {
-      this.initialize();
-      this.initialized = true;
-      this._telemetryService.logPageView(TelemetryEventNames.OnboardingFlowLoaded, {});
-    }
 
-    this._detectorControlService.timePickerStrSub.subscribe(s => {
-      this.timePickerButtonStr = s;
+      if (!this.initialized) {
+        this.initialize();
+        this.initialized = true;
+        this._telemetryService.logPageView(TelemetryEventNames.OnboardingFlowLoaded, {});
+      }
+
+      this._detectorControlService.timePickerStrSub.subscribe(s => {
+        this.timePickerButtonStr = s;
+      });
+
+      this.diagnosticApiService.getAutoMergeSetting().subscribe(x => {
+        this.autoMerge = x;
+      });
+
+      this.getBranchList();
+
+      if (this._detectorControlService.isInternalView) {
+        this.internalExternalText = this.internalViewText;
+      }
+      else {
+        this.internalExternalText = this.externalViewText;
+      }
+
     });
-
-    this.diagnosticApiService.getAutoMergeSetting().subscribe(x => {
-      this.autoMerge = x;
-    });
-
-    this.getBranchList();
-
-    if (this._detectorControlService.isInternalView) {
-      this.internalExternalText = this.internalViewText;
-    }
-    else {
-      this.internalExternalText = this.externalViewText;
-    }
-
-  });
   }
 
   getBranchList() {
@@ -1039,7 +1052,7 @@ export class OnboardingFlowComponent implements OnInit {
     this.modalPublishingButtonText = "Publishing";
     var isOriginalCodeMarkedPublic: boolean = this.IsDetectorMarkedPublic(this.originalCode);
     if (this.detectorGraduation) {
-      this.gradPublish(this.publishingPackage);
+      this.gradPublish();
     }
     else {
       this.diagnosticApiService.publishDetector(this.emailRecipients, this.publishingPackage, `${this.resourceService.ArmResource.provider}/${this.resourceService.ArmResource.resourceTypeName}`, isOriginalCodeMarkedPublic).subscribe(data => {
@@ -1070,50 +1083,108 @@ export class OnboardingFlowComponent implements OnInit {
     }
   }
 
-  gradPublish(publishingPackage: Package) {
+  gradPublish() {
     this.publishDialogHidden = true;
 
     const commitType = this.mode == DevelopMode.Create ? "add" : "edit";
     const commitMessageStart = this.mode == DevelopMode.Create ? "Adding" : "Editing";
 
     let gradPublishFiles: string[] = [
-      publishingPackage.codeString,
-      publishingPackage.metadata,
-      publishingPackage.packageConfig
+      this.publishingPackage.codeString,
+      this.publishingPackage.metadata,
+      this.publishingPackage.packageConfig
     ];
 
 
     let gradPublishFileTitles: string[] = [
-      `/${publishingPackage.id}/${publishingPackage.id}.csx`,
-      `/${publishingPackage.id}/metadata.json`,
-      `/${publishingPackage.id}/package.json`
+      `/${this.publishingPackage.id}/${this.publishingPackage.id}.csx`,
+      `/${this.publishingPackage.id}/metadata.json`,
+      `/${this.publishingPackage.id}/package.json`
+    ];
+
+    if (this.autoMerge) {
+      this.Branch = this.defaultBranch;
+    }
+
+    if (this.deletingDetector) {
+      const deleteDetectorFiles = this.diagnosticApiService.pushDetectorChanges(this.Branch, gradPublishFiles, gradPublishFileTitles, `deleteing detector: ${this.publishingPackage.id}`, "delete", this.resourceId);
+      deleteDetectorFiles.subscribe(_ => {
+        this.publishSuccess = true;
+        this.postPublish();
+      }, err => {
+        this.publishFailed = true;
+        this.postPublish();
+      });
+    }
+    else {
+      const DetectorObservable = this.diagnosticApiService.pushDetectorChanges(this.Branch, gradPublishFiles, gradPublishFileTitles, `${commitMessageStart} ${this.publishingPackage.id}`, commitType, this.resourceId);
+      const makePullRequestObservable = this.diagnosticApiService.makePullRequest(this.Branch, this.defaultBranch, this.PRTitle, this.resourceId);
+
+      DetectorObservable.subscribe(_ => {
+        if (!this.autoMerge) {
+          makePullRequestObservable.subscribe(_ => {
+            this.publishSuccess = true;
+            this.postPublish();
+          }, err => {
+            this.publishFailed = true;
+            this.postPublish();
+          });
+        }
+        else {
+          this.publishSuccess = true;
+          this.postPublish();
+        }
+      }, err => {
+        this.publishFailed = true;
+        this.postPublish();
+      });
+    }
+  }
+
+  deleteDetector() {
+    this.deletingDetector = true;
+
+    let gradPublishFiles: string[] = [
+      "delete code",
+      "delete metadata",
+      "delete package"
+    ];
+
+
+    let gradPublishFileTitles: string[] = [
+      `/${this.id}/${this.id}.csx`,
+      `/${this.id}/metadata.json`,
+      `/${this.id}/package.json`
     ];
 
     if (this.autoMerge){
       this.Branch = this.defaultBranch;
     }
 
-    const DetectorObservable = this.diagnosticApiService.pushDetectorChanges(this.Branch, gradPublishFiles, gradPublishFileTitles, `${commitMessageStart} ${publishingPackage.id}`, commitType, this.resourceId);
+    const deleteDetectorFiles = this.diagnosticApiService.pushDetectorChanges(this.Branch, gradPublishFiles, gradPublishFileTitles, `deleteing detector: ${this.id}`, "delete", this.resourceId);
     const makePullRequestObservable = this.diagnosticApiService.makePullRequest(this.Branch, this.defaultBranch, this.PRTitle, this.resourceId);
-
-    DetectorObservable.subscribe(_ => {
-          if (!this.autoMerge){
-            makePullRequestObservable.subscribe(_ => {
-              this.publishSuccess = true;
-              this.postPublish();
-            }, err => {
-              this.publishFailed = true;
-              this.postPublish();
-            });
-          }
-          else{
+      deleteDetectorFiles.subscribe(_ => {
+        if (!this.autoMerge) {
+          makePullRequestObservable.subscribe(_ => {
             this.publishSuccess = true;
             this.postPublish();
-          }
-    }, err => {
-      this.publishFailed = true;
-      this.postPublish();
-    });
+          }, err => {
+            this.publishFailed = true;
+            this.postPublish();
+          });
+        }
+        else {
+          this.publishSuccess = true;
+          this.postPublish();
+        }
+      }, err => {
+        this.publishFailed = true;
+        this.postPublish();
+      });
+
+
+    this.dismissDeleteDialog();
+    this.deletingDetector = false
   }
 
   postPublish() {
@@ -1222,7 +1293,7 @@ export class OnboardingFlowComponent implements OnInit {
     let detectorFile: Observable<string>;
     this.recommendedUtterances = [];
     this.utteranceInput = "";
-    if (this.detectorGraduation){
+    if (this.detectorGraduation) {
       this.diagnosticApiService.getDetectorCode(`${this.id}/metadata.json`, this.Branch, this.resourceId).subscribe(res => {
         this.allUtterances = JSON.parse(res).utterances;
       },
@@ -1230,7 +1301,7 @@ export class OnboardingFlowComponent implements OnInit {
           this.allUtterances = [];
         });
     }
-    else{
+    else {
       this.githubService.getMetadataFile(this.id).subscribe(res => {
         this.allUtterances = JSON.parse(res).utterances;
       },
@@ -1251,7 +1322,8 @@ export class OnboardingFlowComponent implements OnInit {
       }
       case DevelopMode.Edit: {
         this.fileName = `${this.id}.csx`;
-        if (this.detectorGraduation){
+        if (this.detectorGraduation) {
+          this.deleteAvailable = true;
           detectorFile = this.diagnosticApiService.getDetectorCode(`${this.id}/${this.id}.csx`, this.Branch, this.resourceId)
         }
         else {

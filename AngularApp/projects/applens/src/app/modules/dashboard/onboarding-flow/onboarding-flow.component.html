@@ -136,7 +136,7 @@
     </div>
   </ngx-smart-modal>
 
-  <fab-dialog [hidden]="publishDialogHidden || !detectorGraduation" (onDismiss)="dismissDialog()">
+  <fab-dialog [hidden]="publishDialogHidden || !detectorGraduation" (onDismiss)="publishDialogCancel()">
     <div class="callout-padding">
     <fab-dialog-content [title]="dialogTitle" [subText]="dialogSubText">
       <p>Branch Name: </p><p style="text-decoration: underline; font-weight: bold;">{{Branch}}</p>
@@ -153,6 +153,17 @@
     <fab-dialog-footer>
 
     </fab-dialog-footer>
+  </fab-dialog>
+
+  <fab-dialog [hidden]="deleteDialogHidden" (onDismiss)="dismissDeleteDialog()">
+    <fab-dialog-content [title]="deleteDialogTitle">
+      <p>This action will remove the detector from the repo. Are you sure you want to delete?</p>
+      <div class="mt-5">
+        <fab-primary-button text="Delete" (onClick)="deleteDetector()" class="mr-3">
+        </fab-primary-button>
+        <fab-default-button text="Cancel" (onClick)="dismissDeleteDialog()"></fab-default-button>
+      </div>
+    </fab-dialog-content>
   </fab-dialog>
 
   <fab-dialog [hidden]="gistDialogHidden" (onDismiss)="dismissGistDialog()">
@@ -206,9 +217,7 @@
   </div>
   <loader-view *ngIf="!codeLoaded" message="Starting onboarding flow ..."></loader-view>
 
-
-  <fab-command-bar [attr.id]="'fab-command-bar'"
-    contentStyle="border-bottom:1px solid gray;font-weight:12px; height:40px" contentClass="fab-command-bar-class">
+  <fab-command-bar [attr.id]="'fab-command-bar'" contentClass="fab-command-bar-class">
     <items>
       <fab-command-bar-item key="run" [text]="runButtonText" [iconProps]="runIcon" (click)="runCompilation()"
         [buttonStyles]="runButtonStyle"></fab-command-bar-item>
@@ -219,6 +228,8 @@
         (click)="getDevOptions()"></fab-command-bar-item>
       <fab-command-bar-item key="gistVersion" text="Gist version" [iconProps]="{ iconName: 'BackToWindow' }"
         (click)="showGistDialog()"></fab-command-bar-item>
+      <fab-command-bar-item key="delete" text="Delete" [iconProps]="{iconName: 'Delete'}"
+        (click)="showDeleteDialog()"></fab-command-bar-item>
       <!-- <fab-command-bar-item key="internal" [text]="internalExternalText" [iconProps]="{ iconName: 'View' }"
         (click)="internalExternalToggle()"></fab-command-bar-item> -->
       <far-items>
