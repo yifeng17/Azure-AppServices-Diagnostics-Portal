@@ -18,12 +18,13 @@ import { RecommendedUtterance } from '../../../../../../diagnostic-data/src/publ
 import { TelemetryService } from '../../../../../../diagnostic-data/src/lib/services/telemetry/telemetry.service';
 import { TelemetryEventNames } from '../../../../../../diagnostic-data/src/lib/services/telemetry/telemetry.common';
 import { environment } from '../../../../environments/environment';
-import { IButtonStyles, IChoiceGroupOption, IContextualMenuItem, IDropdownOption, IDropdownProps, IPanelProps, IPivotProps, PanelType } from 'office-ui-fabric-react';
+import { IButtonStyles, IChoiceGroupOption, IContextualMenuItem, IDialogContentProps, IDialogProps, IDropdownOption, IDropdownProps, IPanelProps, IPivotProps, PanelType } from 'office-ui-fabric-react';
 import { addMonths } from 'office-ui-fabric-react/lib/utilities/dateMath/DateMath';
 import { BehaviorSubject } from 'rxjs';
 import { ICommandBarItemOptions } from '@angular-react/fabric/src/lib/components/command-bar/public-api';
 import { Commit } from '../../../shared/models/commit';
 import { Body } from '@angular/http/src/body';
+import { ApplensCommandBarService } from '../services/applens-command-bar.service';
 
 
 const moment = momentNs;
@@ -126,7 +127,7 @@ export class OnboardingFlowComponent implements OnInit {
   allUtterances: any[] = [];
   recommendedUtterances: RecommendedUtterance[] = [];
   utteranceInput: string = "";
-  dialogTitle: string = "Publish for review";
+  dialogTitle: string = "Send for review";
   dialogSubText: string = "Changes will be reviewed by team before getting merged. Once published, you will have a link to the PR.";
   branchName: string = "Branch Name";
   branchPlaceholder: string = "Enter Branch name";
@@ -168,6 +169,7 @@ export class OnboardingFlowComponent implements OnInit {
   deleteAvailable: boolean = false;
   deletingDetector: boolean = false;
   openTimePickerSubject: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  failureMessage:string = "";
   runButtonStyle: any = {
     root: { cursor: "default" }
   };
@@ -177,9 +179,10 @@ export class OnboardingFlowComponent implements OnInit {
       color: "grey"
     }
   };
+  PRLink: string = "";
 
-  detectorGraduation: boolean;
-  autoMerge: boolean;
+  detectorGraduation: boolean = true;
+  autoMerge: boolean = false;
 
   buttonStyle: IButtonStyles = {
     root: {
@@ -230,6 +233,15 @@ export class OnboardingFlowComponent implements OnInit {
     }
   }
 
+  publishDialogStyles: IDialogContentProps['styles'] = {
+    inner: {
+      padding: "0px"
+    },
+    innerContent: {
+      padding: "0px"
+    }
+  }
+
   modalPublishingButtonText: string;
   modalPublishingButtonDisabled: boolean;
   publishAccessControlResponse: any;
@@ -254,7 +266,8 @@ export class OnboardingFlowComponent implements OnInit {
   constructor(private cdRef: ChangeDetectorRef, private githubService: GithubApiService,
     private diagnosticApiService: ApplensDiagnosticService, private resourceService: ResourceService,
     private _detectorControlService: DetectorControlService, private _adalService: AdalService,
-    public ngxSmartModalService: NgxSmartModalService, private _telemetryService: TelemetryService) {
+    public ngxSmartModalService: NgxSmartModalService, private _telemetryService: TelemetryService,
+    private _applensCommandBarService:ApplensCommandBarService) {
     this.editorOptions = {
       theme: 'vs',
       language: 'csharp',
@@ -278,8 +291,8 @@ export class OnboardingFlowComponent implements OnInit {
     this.devOptionsIcon = "fa fa-download";
     this.runButtonText = "Run";
     this.runButtonIcon = "fa fa-play";
-    this.publishButtonText = "Publish";
-    this.modalPublishingButtonText = "Publish";
+    this.publishButtonText = "Create";
+    this.modalPublishingButtonText = this.detectorGraduation? "Create PR" : "Publish";
     this.modalPublishingButtonDisabled = false;
     this.showAlert = false;
 
@@ -343,6 +356,9 @@ export class OnboardingFlowComponent implements OnInit {
     }
   }
 
+  ableToDelete(){
+    return this.detectorGraduation && this.mode !== DevelopMode.Create;
+  }
 
   ngOnInit() {
     this.diagnosticApiService.getDetectorGraduationSetting().subscribe(graduationFlag => {
@@ -1023,7 +1039,7 @@ export class OnboardingFlowComponent implements OnInit {
     this.currentTime = moment(Date.now()).format("hh:mm A");
     this.submittedPanelTimer = setTimeout(() => {
       this.dismissPublishSuccessHandler();
-    }, 100000);
+    }, 10000);
   }
 
   dismissPublishSuccessHandler() {
@@ -1049,7 +1065,7 @@ export class OnboardingFlowComponent implements OnInit {
     this.disableRunButton();
     this.disablePublishButton();
     this.modalPublishingButtonDisabled = true;
-    this.modalPublishingButtonText = "Publishing";
+    this.modalPublishingButtonText = this.detectorGraduation? "Sending PR" : "Publishing";
     var isOriginalCodeMarkedPublic: boolean = this.IsDetectorMarkedPublic(this.originalCode);
     if (this.detectorGraduation) {
       this.gradPublish();
@@ -1061,9 +1077,8 @@ export class OnboardingFlowComponent implements OnInit {
         this.utteranceInput = "";
         this.enableRunButton();
         this.localDevButtonDisabled = false;
-        this.publishButtonText = "Publish";
         this.enablePublishButton();
-        this.modalPublishingButtonText = "Publish";
+        this.modalPublishingButtonText = this.detectorGraduation? "Create PR" : "Publish";
         this.ngxSmartModalService.getModal('publishModal').close();
         this.detectorName = this.publishingPackage.id;
         this.publishSuccess = true;
@@ -1073,9 +1088,8 @@ export class OnboardingFlowComponent implements OnInit {
       }, err => {
         this.enableRunButton();
         this.localDevButtonDisabled = false;
-        this.publishButtonText = "Publish";
         this.enablePublishButton();
-        this.modalPublishingButtonText = "Publish";
+        this.modalPublishingButtonText = this.detectorGraduation? "Create PR" : "Publish";
         this.ngxSmartModalService.getModal('publishModal').close();
         this.showAlertBox('alert-danger', 'Publishing failed. Please try again after some time.');
         this.publishFailed = true;
@@ -1106,25 +1120,16 @@ export class OnboardingFlowComponent implements OnInit {
       this.Branch = this.defaultBranch;
     }
 
-    if (this.deletingDetector) {
-      const deleteDetectorFiles = this.diagnosticApiService.pushDetectorChanges(this.Branch, gradPublishFiles, gradPublishFileTitles, `deleteing detector: ${this.publishingPackage.id}`, "delete", this.resourceId);
-      deleteDetectorFiles.subscribe(_ => {
-        this.publishSuccess = true;
-        this.postPublish();
-      }, err => {
-        this.publishFailed = true;
-        this.postPublish();
-      });
-    }
-    else {
       const DetectorObservable = this.diagnosticApiService.pushDetectorChanges(this.Branch, gradPublishFiles, gradPublishFileTitles, `${commitMessageStart} ${this.publishingPackage.id}`, commitType, this.resourceId);
       const makePullRequestObservable = this.diagnosticApiService.makePullRequest(this.Branch, this.defaultBranch, this.PRTitle, this.resourceId);
 
       DetectorObservable.subscribe(_ => {
         if (!this.autoMerge) {
           makePullRequestObservable.subscribe(_ => {
+            this.PRLink = `${_["item2"]["webUrl"]}/pullrequest/${_["item1"]["pullRequestId"]}`
             this.publishSuccess = true;
             this.postPublish();
+            this._applensCommandBarService.refreshPage();
           }, err => {
             this.publishFailed = true;
             this.postPublish();
@@ -1133,12 +1138,14 @@ export class OnboardingFlowComponent implements OnInit {
         else {
           this.publishSuccess = true;
           this.postPublish();
+          this._applensCommandBarService.refreshPage();
         }
       }, err => {
         this.publishFailed = true;
         this.postPublish();
       });
-    }
+
+      
   }
 
   deleteDetector() {
@@ -1166,6 +1173,7 @@ export class OnboardingFlowComponent implements OnInit {
       deleteDetectorFiles.subscribe(_ => {
         if (!this.autoMerge) {
           makePullRequestObservable.subscribe(_ => {
+            this.PRLink = `${_["repository"]["webUrl"]}/pullrequest/${_["pullRequestId"]}`
             this.publishSuccess = true;
             this.postPublish();
           }, err => {
@@ -1188,7 +1196,7 @@ export class OnboardingFlowComponent implements OnInit {
   }
 
   postPublish() {
-    this.modalPublishingButtonText = "Publish";
+    this.modalPublishingButtonText = this.detectorGraduation? "Create PR" : "Publish";
     this.getBranchList();
     this.enablePublishButton();
     this.enableRunButton();
