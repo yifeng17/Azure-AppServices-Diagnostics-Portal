@@ -82,7 +82,6 @@ import { DetectorListAnalysisComponent } from './components/detector-list-analys
 import { AppDependenciesComponent } from './components/app-dependencies/app-dependencies.component';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { HighchartsGraphComponent } from './components/highcharts-graph/highcharts-graph.component';
-import { FabNavModule } from './components/fab-nav/fab-nav.module';
 import { FabPanelModule, FabIconModule, FabChoiceGroupModule, FabCommandBarModule, FabSearchBoxModule, FabDropdownModule, FabDetailsListModule, FabTextFieldModule, FabMessageBarModule, FabButtonModule, FabTooltipModule, FabSpinnerModule, FabCalloutModule, FabCheckboxModule, FabPivotModule, FabLinkModule, FabBreadcrumbModule } from '@angular-react/fabric';
 import { SummaryCardsComponent } from './components/summary-cards/summary-cards.component';
 import { InsightsV4Component } from './components/insights-v4/insights-v4.component';
@@ -215,7 +214,6 @@ import { ButtonStepComponent } from './components/step-views/button-step-view/bu
     ChangesViewComponent,
     DetectorListAnalysisComponent,
     AppInsightsMarkdownComponent,
-    FabNavModule,
     FeedbackComponent,
     CxpChatLauncherComponent,
     AppInsightsEnablementComponent,
@@ -258,7 +256,6 @@ export class DiagnosticDataModule {
         FeatureNavigationService,
         AppInsightsQueryService,
         ParseResourceService,
-        FabNavModule
       ]
     };
   }
