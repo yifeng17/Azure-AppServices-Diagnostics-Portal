@@ -231,21 +231,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.riskAlertNotifications = this._riskAlertService.riskAlertNotifications;
         this.riskAlertConfigs = this._riskAlertService.riskAlertConfigs;
         this.showRiskSection = this._isRiskAlertEnabled();
-
-        if (this._resourceService && !!this._resourceService.resource && this._resourceService.resource.type.toLowerCase() === 'microsoft.web/containerapps') {
-            let location = this._resourceService.resource.location;
-            let kubeEnvironmentId = this._resourceService.resource.properties? this._resourceService.resource.properties.kubeEnvironmentId: null;
-            let fqdn = null;
-            if (this._resourceService.resource.properties.configuration) {
-                fqdn = this._resourceService.resource.properties.configuration.ingress? this._resourceService.resource.properties.configuration.ingress.fqdn: null;
-            }
-            var containerAppQueryParams = {
-                location: encodeURIComponent(location),
-                kubeEnvironmentId: encodeURIComponent(kubeEnvironmentId),
-                fqdn: encodeURIComponent(fqdn)
-            };
-            this._router.navigate([], { relativeTo: this._activatedRoute, queryParamsHandling: 'merge', queryParams: containerAppQueryParams });
-        }
     };
 
     ngAfterViewInit() {
