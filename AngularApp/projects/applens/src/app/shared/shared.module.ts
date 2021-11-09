@@ -17,6 +17,7 @@ import { AadAuthGuard } from './auth/aad-auth-guard.service';
 import { LoginComponent } from './components/login/login.component';
 import { RouterModule } from '@angular/router';
 import { CaseCleansingApiService } from './services/casecleansing-api.service';
+import { ApplensBannerComponent } from './applens-banner/applens-preview-banner.component';
 
 @NgModule({
   imports: [
@@ -25,8 +26,8 @@ import { CaseCleansingApiService } from './services/casecleansing-api.service';
     FormsModule,
     RouterModule,
   ],
-  declarations: [TreeViewComponent, LoginComponent],
-  exports: [TreeViewComponent]
+  declarations: [TreeViewComponent, LoginComponent, ApplensBannerComponent],
+  exports: [TreeViewComponent, ApplensBannerComponent]
 })
 export class SharedModule {
   static forRoot(): ModuleWithProviders {

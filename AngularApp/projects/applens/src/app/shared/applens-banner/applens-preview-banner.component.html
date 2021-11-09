@@ -1,0 +1,9 @@
+<div [ngStyle]="{'background-color': isPreview ? '#F0F6FF' : '#F9F3FC'}" class="home-banner" *ngIf="showBanner">
+  <span *ngIf="isPreview else oldApplensBanner"><a (click)="switchView($event)">Click here</a> to switch back to the old experience. Please email applensv2team with any issues you’ve found.</span>
+</div>
+
+<ng-template #oldApplensBanner>
+  <span>AppLens VNext is now in public preview. <a (click)="switchView($event)">Click here</a> to try the new & improved experience</span>
+</ng-template>
+
+
