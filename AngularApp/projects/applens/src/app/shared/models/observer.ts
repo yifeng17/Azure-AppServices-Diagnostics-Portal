@@ -32,6 +32,8 @@ namespace Observer {
         ResourceGroupName: string;
         SubscriptionName: string;
         KubeEnvironmentName: string;
+        Fqdn: string;
+        Location: string;
         GeoMasterName: string;
         ServiceAddress: string;
         Kind: string;
