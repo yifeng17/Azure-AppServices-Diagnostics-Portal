@@ -7,7 +7,7 @@ import { DetectorControlService } from '../../services/detector-control.service'
 import { HighChartTimeSeries } from '../../models/time-series';
 import { xAxisPlotBand, xAxisPlotBandStyles, zoomBehaviors, XAxisSelection } from '../../models/time-series';
 import { KeyValue } from '@angular/common';
-import { PointerEventObject } from 'highcharts';
+import { PointerEventObject, theme} from 'highcharts';
 import { interval, Subscription } from 'rxjs';
 
 declare var require: any

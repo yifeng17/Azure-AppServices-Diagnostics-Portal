@@ -804,3 +804,7 @@ hr {
         color: white;
     }
 }
+
+label, .text-label{
+    color: var(----labelText);
+}
