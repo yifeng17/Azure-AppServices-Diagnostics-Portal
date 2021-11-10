@@ -15,9 +15,9 @@
             <h3 class="box-title">Case {{surveyInfo.caseInfo.caseId}}: &nbsp; {{surveyInfo.caseInfo.caseTitle}}</h3>
             <span class="case-details" (click)="showDetails($event)">View case information in sidebar</span>
           </div>
-  
+
           <div style="height: calc(100vh - 140px);">
-            <fab-panel [isOpen]="showCaseDetails" (onDismiss)="hideDetails()" [type]="panelType">
+            <fab-panel [isOpen]="showCaseDetails" [isBlocking]="false" (onDismiss)="hideDetails()" [type]="panelType">
               <div style="display:block">
               <h3 class="panel-title">Case <a href="{{'https://azuresupportcenter.msftcloudes.com/ticketdetails?srId=' + surveyInfo.caseInfo.caseId}}" target="_blank">{{surveyInfo.caseInfo.caseId}}<i class="fa fa-external-link" style="padding-left: 5px;font-size: 12px;" aria-hidden="true"></i></a></h3>
               </div>

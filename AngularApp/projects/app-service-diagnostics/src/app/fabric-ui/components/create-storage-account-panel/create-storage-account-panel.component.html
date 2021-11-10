@@ -1,6 +1,6 @@
 <fab-panel [isOpen]="globals.openCreateStorageAccountPanel" [type]="type" [customWidth]="width"
-  [isHiddenOnDismiss]="true" [isLightDismiss]="true" [hasCloseButton]="true" [closeButtonAriaLabel]="'close'"
-  (onDismissed)="dismissedHandler()">
+  [isHiddenOnDismiss]="true" [isLightDismiss]="true" [hasCloseButton]="true" [isBlocking]="false" [closeButtonAriaLabel]="'close'"
+  (onDismiss)="dismissedHandler()">
 
   <div style="margin-bottom: 10px">
     <h2>Choose Storage account</h2>
@@ -36,7 +36,7 @@
     <div class="col-md-6" *ngIf="createNewMode">
       <fab-text-field [value]="newStorageAccountName" (onChange)="updateStorageAccount($event)">
       </fab-text-field>
-      
+
     </div>
     <div class="col-md-6" *ngIf="!createNewMode">
       <fab-dropdown *ngIf="!loadingStroageAccounts" id="chooseStorageAccount" role="combobox"

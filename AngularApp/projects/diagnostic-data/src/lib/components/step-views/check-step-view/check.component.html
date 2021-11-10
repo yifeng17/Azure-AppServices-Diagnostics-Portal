@@ -12,12 +12,12 @@
   </div>
   <div class="subchecks-container" *ngIf="expanded">
     <div class="sub-check" *ngFor="let subCheck of check.subChecks; let i = index">
-      <check [check]="subCheck"></check> 
+      <check [check]="subCheck"></check>
     </div>
   </div>
   <fab-panel *ngIf="check.detailsMarkdown!=null" [isOpen]="detailsPanelOpened" [type]="7" customWidth="fit-content" [isHiddenOnDismiss]="true"
-  [styles]="{overlay:{visibility: 'hidden'}, content:{minWidth:'300px', maxWidth:'60vw'}}" [isLightDismiss]="true" [hasCloseButton]="false" 
-  (onDismissed)="detailsPanelDismissedHandler()">
+  [styles]="{overlay:{visibility: 'hidden'}, content:{minWidth:'300px', maxWidth:'60vw'}}" [isLightDismiss]="true" [isBlocking]="false" [hasCloseButton]="false"
+  (onDismiss)="detailsPanelDismissedHandler()">
     <div class="check-markdown">
       <div class="markdown-container">
         <div class="markdown"><markdown ngPreserveWhitespaces [data]="check.detailsMarkdown"></markdown></div>

@@ -51,8 +51,8 @@
   <div class="content-wrapper gray-background">
     <router-outlet></router-outlet>
     <fab-panel [isOpen]="openResourceInfoPanel" [type]="type" [customWidth]="width" [isHiddenOnDismiss]="true"
-      [styles]="panelStyles" [isLightDismiss]="true" [hasCloseButton]="true" [closeButtonAriaLabel]="'close'"
-      (onDismissed)="dismissedHandler()">
+      [styles]="panelStyles" [isLightDismiss]="true" [isBlocking]="false" [hasCloseButton]="true" [closeButtonAriaLabel]="'close'"
+      (onDismiss)="dismissedHandler()">
       <div>
         <div class="row">
           <div>
